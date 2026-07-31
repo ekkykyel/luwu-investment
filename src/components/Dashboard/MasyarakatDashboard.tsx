@@ -1,4 +1,5 @@
 import { requestSmartFullscreen, exitSmartFullscreen } from "../../utils/fullscreen.js";
+import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useCallback } from "react";
 import { 
   X, Send, MapPin, Building2, Phone, User, AlertCircle, Camera, 
@@ -369,7 +370,7 @@ export default function MasyarakatDashboard({
       document.cookie = "sb-access-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
       localStorage.removeItem("luwu_session_token");
       exitSmartFullscreen();
-                window.location.href = '/';
+                navigate('/');
     }
   };
 

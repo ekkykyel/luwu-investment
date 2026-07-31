@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { isMobileOrAndroidDevice } from "../hooks/useDeviceAutomation.js";
 import { requestSmartFullscreen } from "../utils/fullscreen.js";
@@ -1688,7 +1689,7 @@ export default function LandingPage({
                     if (onEnter) {
                       onEnter(Role.INVESTOR);
                     } else {
-                      window.location.href = "/peta-spasial";
+                      navigate("/peta-spasial");
                     }
                   },
                 },
@@ -1700,7 +1701,7 @@ export default function LandingPage({
                   action: (e: any) => {
                     e?.preventDefault?.();
                     handleRequestFullscreen();
-                    window.location.href = "/login?role=masyarakat";
+                    navigate("/login?role=masyarakat");
                   }
                 },
               ].map((item) => (
@@ -1760,7 +1761,7 @@ export default function LandingPage({
                       onClick={(e) => {
                         e.preventDefault();
                         handleRequestFullscreen();
-                        window.location.href = "/register?tab=investor";
+                        navigate("/register?tab=investor");
                       }}
                       className="w-full text-left px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 hover:text-emerald-600 dark:hover:text-emerald-400 rounded-lg transition-colors flex items-center gap-2"
                     >
@@ -1770,7 +1771,7 @@ export default function LandingPage({
                       onClick={(e) => {
                         e.preventDefault();
                         handleRequestFullscreen();
-                        window.location.href = "/register?tab=masyarakat";
+                        navigate("/register?tab=masyarakat");
                       }}
                       className="w-full text-left px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg transition-colors flex items-center gap-2"
                     >
@@ -1787,7 +1788,7 @@ export default function LandingPage({
                   e.preventDefault();
                   e.stopPropagation();
                   handleRequestFullscreen();
-                  window.location.href = "/login";
+                  navigate("/login");
                 }}
                 className="hidden sm:flex items-center gap-2 px-6 py-2.5 min-h-[44px] rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-bold transition-all duration-300 shadow-[0_4px_15px_rgba(37,99,235,0.25)] hover:shadow-[0_6px_20px_rgba(37,99,235,0.4)] hover:-translate-y-0.5 relative overflow-hidden group"
               >
@@ -1840,7 +1841,7 @@ export default function LandingPage({
                       if (onEnter) {
                         onEnter(Role.INVESTOR);
                       } else {
-                        window.location.href = "/peta-spasial";
+                        navigate("/peta-spasial");
                       }
                     },
                   },
@@ -1852,7 +1853,7 @@ export default function LandingPage({
                     action: (e: any) => {
                       e?.preventDefault?.();
                       handleRequestFullscreen();
-                      window.location.href = "/login?role=masyarakat";
+                      navigate("/login?role=masyarakat");
                     }
                   },
                 ].map((item) => (
@@ -1886,7 +1887,7 @@ export default function LandingPage({
                         e.preventDefault();
                         setIsMobileMenuOpen(false);
                         handleRequestFullscreen();
-                        window.location.href = "/register?tab=investor";
+                        navigate("/register?tab=investor");
                       }}
                       className="w-full flex items-center justify-center gap-2 px-5 py-2.5 min-h-[40px] rounded-lg bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-sm font-bold transition-all border border-emerald-200 dark:border-emerald-500/30"
                     >
@@ -1899,7 +1900,7 @@ export default function LandingPage({
                         e.preventDefault();
                         setIsMobileMenuOpen(false);
                         handleRequestFullscreen();
-                        window.location.href = "/register?tab=masyarakat";
+                        navigate("/register?tab=masyarakat");
                       }}
                       className="w-full flex items-center justify-center gap-2 px-5 py-2.5 min-h-[40px] rounded-lg bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-sm font-bold transition-all border border-blue-200 dark:border-blue-500/30"
                     >
@@ -1916,7 +1917,7 @@ export default function LandingPage({
                       e.stopPropagation();
                       setIsMobileMenuOpen(false);
                       handleRequestFullscreen();
-                      window.location.href = "/login";
+                      navigate("/login");
                     }}
                     className="w-full flex items-center justify-center gap-2 px-5 py-3.5 min-h-[44px] rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-98 text-white text-sm font-bold transition-all"
                   >
@@ -2215,7 +2216,7 @@ export default function LandingPage({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                window.location.href = "/peta-spasial";
+                navigate("/peta-spasial");
               }}
               className={`shrink-0 px-6 py-3 min-h-[44px] rounded-full font-bold text-xs sm:text-sm tracking-wider uppercase border flex items-center gap-2 transition-all duration-300 backdrop-blur-xl ${
                 isDark
@@ -2373,7 +2374,7 @@ export default function LandingPage({
                               if (onEnter) {
                                 onEnter(Role.INVESTOR);
                               } else {
-                                window.location.href = `/peta-spasial?id=${inv.id}`;
+                                navigate(`/peta-spasial?id=${inv.id}`);
                               }
                             }
                           }}
@@ -2389,7 +2390,7 @@ export default function LandingPage({
                           type="button"
                           onClick={(e) => {
                             e.preventDefault();
-                            window.location.href = "/login?role=investor";
+                            navigate("/login?role=investor");
                           }}
                           className="group flex-1 py-2.5 px-3 rounded-xl text-sm font-semibold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 hover:shadow-lg hover:shadow-emerald-500/25 flex items-center justify-center gap-1.5"
                         >
@@ -3986,7 +3987,7 @@ export default function LandingPage({
               whileTap={{ scale: 0.97 }}
               onClick={() => {
                 handleRequestFullscreen();
-                window.location.href = "/login?role=investor";
+                navigate("/login?role=investor");
               }}
               className={`px-8 py-4 min-h-[44px] rounded-2xl font-bold uppercase tracking-wider border backdrop-blur-md transition-all duration-500 ease-out flex items-center justify-center gap-2.5 group bg-gradient-to-r from-emerald-500 via-teal-500 to-indigo-600 text-white shadow-[0_0_15px_rgba(16,185,129,0.35)] hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] hover:-translate-y-0.5 border-emerald-400/40`}
             >
@@ -4290,7 +4291,7 @@ export default function LandingPage({
                     if (onEnter) {
                       onEnter(Role.INVESTOR);
                     } else {
-                      window.location.href = "/peta-spasial";
+                      navigate("/peta-spasial");
                     }
                   }}
                   className="hover:text-blue-500 transition-colors font-medium text-blue-500"
@@ -4344,7 +4345,7 @@ export default function LandingPage({
                 if (onEnter) {
                   onEnter(Role.INVESTOR);
                 } else {
-                  window.location.href = "/peta-spasial";
+                  navigate("/peta-spasial");
                 }
               }}
               className="flex-1 flex flex-col items-center justify-center h-full py-2 transition-all active:scale-90 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
@@ -4614,7 +4615,7 @@ export default function LandingPage({
             if (onEnter) {
               onEnter(Role.INVESTOR);
             } else {
-              window.location.href = "/peta-spasial";
+              navigate("/peta-spasial");
             }
           }}
           className={`flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-[10px] font-bold transition-all active:scale-90 ${
@@ -4636,7 +4637,7 @@ export default function LandingPage({
         </motion.button>
         <motion.button whileTap={{ scale: 0.95 }}
           type="button"
-          onClick={() => { handleRequestFullscreen(); window.location.href = "/login?role=investor"; }}
+          onClick={() => { handleRequestFullscreen(); navigate("/login?role=investor"); }}
           className="flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-[10px] font-black text-white bg-gradient-to-r from-emerald-500 via-teal-500 to-indigo-600 shadow-md shadow-emerald-500/30 active:scale-90 border border-emerald-300/40"
         >
           <UserPlus size={19} className="mb-0.5 text-amber-300" />
@@ -4644,7 +4645,7 @@ export default function LandingPage({
         </motion.button>
         <motion.button whileTap={{ scale: 0.95 }}
           type="button"
-          onClick={() => { handleRequestFullscreen(); window.location.href = "/login"; }}
+          onClick={() => { handleRequestFullscreen(); navigate("/login"); }}
           className="flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-[10px] font-black text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 shadow-md shadow-blue-500/30 active:scale-90 border border-blue-300/40"
         >
           <Zap size={19} className="mb-0.5 text-yellow-300" />

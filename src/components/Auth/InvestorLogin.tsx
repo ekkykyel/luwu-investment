@@ -1,4 +1,5 @@
 import { requestSmartFullscreen } from "../../utils/fullscreen.js";
+import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
@@ -117,7 +118,7 @@ export default function InvestorLogin() {
         setIsSuccess(true);
         // Route to dashboard after a brief delay
         setTimeout(() => {
-          window.location.href = '/dashboard';
+          navigate('/dashboard');
         }, 1000);
       }
     } catch (err: any) {
@@ -263,7 +264,7 @@ export default function InvestorLogin() {
                     requestSmartFullscreen()
                   }
                 } catch (e) {}
-                window.location.href = '/?skipSplash=true&fullscreen=true';
+                navigate('/?skipSplash=true&fullscreen=true');
               }}
               className="text-xs text-slate-400 hover:text-white transition-colors flex items-center justify-center gap-1 mx-auto cursor-pointer"
             >

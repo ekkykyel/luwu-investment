@@ -1,4 +1,5 @@
 import { requestSmartFullscreen, exitSmartFullscreen } from "../../utils/fullscreen.js";
+import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { OssRoiSimulatorInputs } from "../OssRoiSimulatorInputs.js";
@@ -238,7 +239,7 @@ export default function AdminPortalDashboard() {
 
         const { data: { session } } = await supabase.auth.getSession();
         if (!session?.user) {
-          window.location.href = "/login";
+          navigate("/login");
           return;
         }
         
@@ -265,7 +266,7 @@ export default function AdminPortalDashboard() {
           }
         }
         if (!profile || (profile.role !== 'admin_dalak' && profile.role !== 'admin_oss' && profile.role !== 'admin_promosi' && profile.role !== 'superadmin')) {
-          window.location.href = "/403-forbidden";
+          navigate("/403-forbidden");
           return;
         }
 
@@ -627,7 +628,7 @@ export default function AdminPortalDashboard() {
                 document.cookie = 'sb-access-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=None; Secure;';
                 localStorage.removeItem("luwu_session_token");
                 exitSmartFullscreen();
-                window.location.href = '/';
+                navigate('/');
               }}
               className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer"
             >
@@ -1455,7 +1456,7 @@ export default function AdminPortalDashboard() {
                           }
                         } catch (e) {}
                         exitSmartFullscreen();
-                        window.location.href = '/?skipSplash=true';
+                        navigate('/?skipSplash=true');
                       }}
                       className="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1"
                     >
@@ -1588,7 +1589,7 @@ export default function AdminPortalDashboard() {
                         }
                       } catch (e) {}
                       exitSmartFullscreen();
-                        window.location.href = '/?skipSplash=true';
+                        navigate('/?skipSplash=true');
                     }}
                     className="group p-4 bg-slate-950 border border-slate-800 hover:border-emerald-500/30 hover:bg-emerald-500/5 rounded-2xl transition-all duration-300 text-left flex items-start justify-between"
                   >

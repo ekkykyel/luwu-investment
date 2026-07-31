@@ -1,4 +1,5 @@
 import { requestSmartFullscreen } from "../../utils/fullscreen.js";
+import { useNavigate } from "react-router-dom";
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
@@ -413,7 +414,7 @@ export default function InvestorRegistrationForm() {
               <button
                 id="btn-go-to-portal"
                 onClick={() => {
-                  window.location.href = '/dashboard';
+                  navigate('/dashboard');
                 }}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition-all active:scale-95 cursor-pointer"
               >
@@ -780,7 +781,7 @@ export default function InvestorRegistrationForm() {
               <div className="mt-4 text-center">
                 <button 
                   type="button"
-                  onClick={() => window.location.href = '/login'}
+                  onClick={() => navigate('/login')}
                   className="text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors flex items-center justify-center gap-1 mx-auto cursor-pointer"
                 >
                   {t('register.alreadyHaveAccount', 'Sudah punya akun? Masuk Portal Investor / Masyarakat')}
