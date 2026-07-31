@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { isMobileOrAndroidDevice } from "../hooks/useDeviceAutomation.js";
+import { requestSmartFullscreen } from "../utils/fullscreen.js";
 import {
   ChevronRight,
   Globe,
