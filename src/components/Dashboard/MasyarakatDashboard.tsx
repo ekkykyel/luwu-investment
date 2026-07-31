@@ -25,6 +25,7 @@ export default function MasyarakatDashboard({
   districts = [],
   onToggleTheme,
 }: MasyarakatDashboardProps) {
+  const navigate = useNavigate();
   useEffect(() => { return () => { exitSmartFullscreen(); }; }, []);
 
   // Helper to extract phone / whatsapp number from various profile structures

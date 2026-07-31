@@ -50,6 +50,7 @@ const dataWilayahLuwu: Record<string, string[]> = {
 };
 
 export default function InvestorRegistrationForm() {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -314,7 +315,7 @@ export default function InvestorRegistrationForm() {
   };
 
   return (
-    <div id="investor-registration-page" className="min-h-screen bg-slate-950 flex flex-col justify-center py-6 sm:py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div id="investor-registration-page" className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col justify-center py-6 sm:py-12 sm:px-6 lg:px-8 relative overflow-hidden transition-colors duration-300">
       {/* Background Ambience Accent */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl"></div>
@@ -332,19 +333,19 @@ export default function InvestorRegistrationForm() {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="p-3.5 bg-emerald-600/20 text-emerald-400 rounded-2xl border border-emerald-500/30 shadow-lg shadow-emerald-500/5"
+            className="p-3.5 bg-emerald-600/20 text-emerald-600 dark:text-emerald-400 rounded-2xl border border-emerald-500/30 shadow-lg shadow-emerald-500/5"
             id="secure-shield-icon-container"
           >
             <ShieldCheck size={36} id="shield-icon" />
           </motion.div>
         </div>
-        <h2 id="registration-title" className="text-center text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2">
+        <h2 id="registration-title" className="text-center text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
           {activeTab === 'investor' 
             ? t('register.title', 'Investor Account Registration')
             : t('register.titleMasyarakat', 'Registrasi Akun Masyarakat (Lapor!)')
           }
         </h2>
-        <p id="registration-subtitle" className="text-center text-sm text-slate-400 max-w-xs sm:max-w-sm mx-auto px-4">
+        <p id="registration-subtitle" className="text-center text-sm text-slate-600 dark:text-slate-400 max-w-xs sm:max-w-sm mx-auto px-4">
           {activeTab === 'investor'
             ? t('register.subtitle', 'Join the MPP Simpurusiang digital ecosystem to access private contact data and investment documents.')
             : t('register.subtitleMasyarakat', 'Registrasi akun publik untuk menyampaikan aduan tata ruang, lingkungan, dan perizinan Kabupaten Luwu.')
@@ -357,11 +358,11 @@ export default function InvestorRegistrationForm() {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1, duration: 0.5 }}
-          className="bg-slate-900/80 border border-slate-800/80 py-8 px-4 shadow-2xl sm:rounded-2xl sm:px-10 backdrop-blur-md"
+          className="bg-white dark:bg-slate-900/80 border border-slate-300 dark:border-slate-800/80 py-8 px-4 shadow-2xl sm:rounded-2xl sm:px-10 backdrop-blur-md transition-colors"
           id="registration-card"
         >
           {/* Tab Switcher */}
-          <div className="flex border-b border-slate-800 mb-6">
+          <div className="flex border-b border-slate-300 dark:border-slate-800 mb-6">
             <button
               type="button"
               onClick={() => {
@@ -370,8 +371,8 @@ export default function InvestorRegistrationForm() {
               }}
               className={`flex-1 pb-3 text-sm font-semibold tracking-wide border-b-2 transition-all cursor-pointer ${
                 activeTab === 'investor'
-                  ? 'border-emerald-500 text-emerald-400'
-                  : 'border-transparent text-slate-500 hover:text-slate-400'
+                  ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400'
+                  : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-400'
               }`}
             >
               {t('register.tabInvestor', 'Investor / Mitra')}
@@ -384,8 +385,8 @@ export default function InvestorRegistrationForm() {
               }}
               className={`flex-1 pb-3 text-sm font-semibold tracking-wide border-b-2 transition-all cursor-pointer ${
                 activeTab === 'masyarakat'
-                  ? 'border-emerald-500 text-emerald-400'
-                  : 'border-transparent text-slate-500 hover:text-slate-400'
+                  ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400'
+                  : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-400'
               }`}
             >
               {t('register.tabMasyarakat', 'Masyarakat Publik')}
@@ -428,13 +429,13 @@ export default function InvestorRegistrationForm() {
               {/* KTP Upload for Masyarakat */}
               {activeTab === 'masyarakat' && (
                 <div className="mb-4 animate-fade-in-up">
-                   <label className="block text-sm font-medium text-slate-300 mb-2">
+                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                      Unggah Foto KTP Asli
                    </label>
-                   <div className="border-2 border-dashed border-slate-700 bg-slate-900/50 rounded-xl p-5 text-center hover:border-emerald-500/50 transition-colors">
+                   <div className="border-2 border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 rounded-xl p-5 text-center hover:border-emerald-500/50 transition-colors">
                      {ktpPreview || ktpFile ? (
                        <div className="flex flex-col items-center">
-                          <div className="w-full max-h-36 bg-slate-950/80 rounded-lg flex items-center justify-center overflow-hidden mb-3 border border-slate-800 p-1">
+                          <div className="w-full max-h-36 bg-slate-100 dark:bg-slate-950/80 rounded-lg flex items-center justify-center overflow-hidden mb-3 border border-slate-300 dark:border-slate-800 p-1">
                             <img src={ktpPreview || (ktpFile ? URL.createObjectURL(ktpFile) : '')} alt="KTP Preview" className="max-h-32 object-contain rounded-md" />
                           </div>
                           <button 
@@ -443,7 +444,7 @@ export default function InvestorRegistrationForm() {
                               setKtpFile(null);
                               setKtpPreview('');
                             }}
-                            className="text-xs text-rose-500 hover:text-rose-400 font-bold transition-colors cursor-pointer"
+                            className="text-xs text-rose-600 dark:text-rose-400 hover:text-rose-500 font-bold transition-colors cursor-pointer"
                           >
                             Hapus & Ganti KTP
                           </button>
@@ -452,9 +453,9 @@ export default function InvestorRegistrationForm() {
                        <>
                          <div className="flex justify-center gap-4 mb-3">
                            {/* OPTION 1: LIVE CAMERA */}
-                           <label className="flex flex-col items-center justify-center w-28 h-24 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl cursor-pointer transition-all group p-2">
-                             <Camera className="w-6 h-6 text-emerald-500 mb-1.5 group-hover:scale-110 transition-transform" />
-                             <span className="text-[10px] font-bold text-slate-300">Buka Kamera</span>
+                           <label className="flex flex-col items-center justify-center w-28 h-24 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-xl cursor-pointer transition-all group p-2">
+                             <Camera className="w-6 h-6 text-emerald-600 dark:text-emerald-500 mb-1.5 group-hover:scale-110 transition-transform" />
+                             <span className="text-[10px] font-bold text-slate-800 dark:text-slate-300">Buka Kamera</span>
                              <span className="text-[9px] text-slate-500">Foto Langsung</span>
                              <input 
                                type="file" 
@@ -466,9 +467,9 @@ export default function InvestorRegistrationForm() {
                            </label>
 
                            {/* OPTION 2: GALLERY */}
-                           <label className="flex flex-col items-center justify-center w-28 h-24 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl cursor-pointer transition-all group p-2">
-                             <ImageIcon className="w-6 h-6 text-blue-500 mb-1.5 group-hover:scale-110 transition-transform" />
-                             <span className="text-[10px] font-bold text-slate-300">Pilih Galeri</span>
+                           <label className="flex flex-col items-center justify-center w-28 h-24 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-xl cursor-pointer transition-all group p-2">
+                             <ImageIcon className="w-6 h-6 text-blue-600 dark:text-blue-500 mb-1.5 group-hover:scale-110 transition-transform" />
+                             <span className="text-[10px] font-bold text-slate-800 dark:text-slate-300">Pilih Galeri</span>
                              <span className="text-[9px] text-slate-500">Pilih File Foto</span>
                              <input 
                                type="file" 
@@ -490,12 +491,12 @@ export default function InvestorRegistrationForm() {
                 <>
                   {/* Full Name */}
                   <div>
-                    <label htmlFor="reg-full-name" className="block text-sm font-medium text-slate-300">
+                    <label htmlFor="reg-full-name" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                       {activeTab === 'investor' ? t('register.fullName', 'Full Name') : t('register.fullNameMasyarakat', 'Nama Lengkap (Sesuai KTP)')}
                     </label>
                     <div className="mt-1.5 relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <User className="h-5 w-5 text-slate-500" />
+                        <User className="h-5 w-5 text-slate-400 dark:text-slate-500" />
                       </div>
                       <input
                         id="reg-full-name"
@@ -503,7 +504,7 @@ export default function InvestorRegistrationForm() {
                         required
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
-                        className={`block w-full pl-10 pr-3 py-2.5 border border-slate-800 rounded-xl bg-slate-950/60 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm`}
+                        className={`block w-full pl-10 pr-3 py-2.5 border border-slate-300 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm`}
                         placeholder="Nama Sesuai KTP"
                       />
                     </div>
@@ -512,12 +513,12 @@ export default function InvestorRegistrationForm() {
                   {/* Company Name (only for investor) */}
                   {activeTab === 'investor' && (
                     <div>
-                      <label htmlFor="reg-company-name" className="block text-sm font-medium text-slate-300">
+                      <label htmlFor="reg-company-name" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                         {t('register.companyName', 'Company / Institution Name')}
                       </label>
                       <div className="mt-1.5 relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Building2 className="h-5 w-5 text-slate-500" />
+                          <Building2 className="h-5 w-5 text-slate-400 dark:text-slate-500" />
                         </div>
                         <input
                           id="reg-company-name"
@@ -525,7 +526,7 @@ export default function InvestorRegistrationForm() {
                           required
                           value={companyName}
                           onChange={(e) => setCompanyName(e.target.value)}
-                          className="block w-full pl-10 pr-3 py-2.5 border border-slate-800 rounded-xl bg-slate-950/60 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm"
+                          className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm"
                           placeholder="PT. Luwu Maju Sejahtera"
                         />
                       </div>
@@ -535,11 +536,11 @@ export default function InvestorRegistrationForm() {
                   {/* Field Negara Asal */}
                   {activeTab === 'investor' && (
                     <div>
-                      <label className="block text-sm font-medium text-slate-300">{t('investor_origin')}</label>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">{t('investor_origin')}</label>
                       <select
                         value={negara}
                         onChange={(e) => setNegara(e.target.value)}
-                        className="mt-1.5 block w-full py-2.5 px-3 border border-slate-800 rounded-xl bg-slate-950/60 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm"
+                        className="mt-1.5 block w-full py-2.5 px-3 border border-slate-300 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm"
                       >
                         {daftarNegara.map((n) => (
                           <option key={n} value={n}>{n}</option>
@@ -551,12 +552,12 @@ export default function InvestorRegistrationForm() {
                   {/* Field Status PMA/PMDN (Auto-filled & Disabled) */}
                   {activeTab === 'investor' && (
                     <div>
-                      <label className="block text-sm font-medium text-slate-300">{t('pma_pmdn_status')}</label>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">{t('pma_pmdn_status')}</label>
                       <input
                         type="text"
                         value={statusModal === 'PMDN' ? 'PMDN (Penanaman Modal Dalam Negeri)' : 'PMA (Penanaman Modal Asing)'}
                         disabled
-                        className="mt-1.5 block w-full py-2.5 px-3 border border-slate-800 rounded-xl bg-slate-800/60 text-emerald-400 font-bold cursor-not-allowed opacity-90 sm:text-sm"
+                        className="mt-1.5 block w-full py-2.5 px-3 border border-slate-300 dark:border-slate-800 rounded-xl bg-slate-100 dark:bg-slate-800/60 text-emerald-700 dark:text-emerald-400 font-bold cursor-not-allowed opacity-90 sm:text-sm"
                       />
                     </div>
                   )}
@@ -564,12 +565,12 @@ export default function InvestorRegistrationForm() {
                   {/* Email */}
                   {activeTab === 'investor' && (
                     <div>
-                      <label htmlFor="reg-email" className="block text-sm font-medium text-slate-300">
+                      <label htmlFor="reg-email" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                         {t('register.email', 'Corporate Email')}
                       </label>
                       <div className="mt-1.5 relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Mail className="h-5 w-5 text-slate-500" />
+                          <Mail className="h-5 w-5 text-slate-400 dark:text-slate-500" />
                         </div>
                         <input
                           id="reg-email"
@@ -577,7 +578,7 @@ export default function InvestorRegistrationForm() {
                           required
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="block w-full pl-10 pr-3 py-2.5 border border-slate-800 rounded-xl bg-slate-950/60 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm"
+                          className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm"
                           placeholder="email@domain.com"
                         />
                       </div>
@@ -587,12 +588,12 @@ export default function InvestorRegistrationForm() {
                   {/* NIB (only for investor) */}
                   {activeTab === 'investor' && (
                     <div>
-                      <label htmlFor="reg-nib" className="block text-sm font-medium text-slate-300">
+                      <label htmlFor="reg-nib" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                         {t('register.nib', 'Business Registration Number (NIB) / Corporate ID')}
                       </label>
                       <div className="mt-1.5 relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <FileText className="h-5 w-5 text-slate-500" />
+                          <FileText className="h-5 w-5 text-slate-400 dark:text-slate-500" />
                         </div>
                         <input
                           id="reg-nib"
@@ -601,7 +602,7 @@ export default function InvestorRegistrationForm() {
                           maxLength={13}
                           value={nib}
                           onChange={(e) => handleValidateNib(e.target.value)}
-                          className="block w-full pl-10 pr-3 py-2.5 border border-slate-800 rounded-xl bg-slate-950/60 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm"
+                          className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm"
                           placeholder="1234567890123"
                         />
                       </div>
@@ -614,12 +615,12 @@ export default function InvestorRegistrationForm() {
                   {/* NIK (only for masyarakat) */}
                   {activeTab === 'masyarakat' && (
                     <div>
-                      <label htmlFor="reg-nik" className="block text-sm font-medium text-slate-300">
+                      <label htmlFor="reg-nik" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                         {t('register.nik', 'Nomor Induk Kependudukan (NIK)')}
                       </label>
                       <div className="mt-1.5 relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <FileText className="h-5 w-5 text-slate-500" />
+                          <FileText className="h-5 w-5 text-slate-400 dark:text-slate-500" />
                         </div>
                         <input
                           id="reg-nik"
@@ -628,7 +629,7 @@ export default function InvestorRegistrationForm() {
                           maxLength={16}
                           value={nik}
                           onChange={(e) => handleValidateNik(e.target.value)}
-                          className="block w-full pl-10 pr-3 py-2.5 border border-slate-800 rounded-xl bg-slate-950/60 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm"
+                          className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm"
                           placeholder="7317xxxxxxxxxxxx"
                         />
                       </div>
@@ -642,12 +643,12 @@ export default function InvestorRegistrationForm() {
                   {activeTab === 'masyarakat' && (
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label htmlFor="reg-kecamatan" className="block text-sm font-medium text-slate-300">
+                        <label htmlFor="reg-kecamatan" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                           Kecamatan
                         </label>
                         <div className="mt-1.5 relative">
                           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <MapPin className="h-5 w-5 text-slate-500" />
+                            <MapPin className="h-5 w-5 text-slate-400 dark:text-slate-500" />
                           </div>
                           <select
                             id="reg-kecamatan"
@@ -657,7 +658,7 @@ export default function InvestorRegistrationForm() {
                               setKecamatan(e.target.value);
                               setDesa('');
                             }}
-                            className="block w-full pl-10 pr-3 py-2.5 border border-slate-800 rounded-xl bg-slate-950/60 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm"
+                            className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm"
                           >
                              <option value="" disabled>Pilih Kecamatan</option>
                              {Object.keys(dataWilayahLuwu).map((kec) => (
@@ -667,12 +668,12 @@ export default function InvestorRegistrationForm() {
                         </div>
                       </div>
                       <div>
-                        <label htmlFor="reg-desa" className="block text-sm font-medium text-slate-300">
+                        <label htmlFor="reg-desa" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                           Desa / Kelurahan
                         </label>
                         <div className="mt-1.5 relative">
                           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <MapPin className="h-5 w-5 text-slate-500" />
+                            <MapPin className="h-5 w-5 text-slate-400 dark:text-slate-500" />
                           </div>
                           <select
                             id="reg-desa"
@@ -680,7 +681,7 @@ export default function InvestorRegistrationForm() {
                             disabled={!kecamatan}
                             value={desa}
                             onChange={(e) => setDesa(e.target.value)}
-                            className="block w-full pl-10 pr-3 py-2.5 border border-slate-800 rounded-xl bg-slate-950/60 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <option value="" disabled>Pilih Desa/Kelurahan</option>
                             {availableDesaOptions.map((desaName: string) => (
@@ -695,12 +696,12 @@ export default function InvestorRegistrationForm() {
                   {/* WhatsApp (only for masyarakat) */}
                   {activeTab === 'masyarakat' && (
                     <div>
-                      <label htmlFor="reg-whatsapp" className="block text-sm font-medium text-slate-300">
+                      <label htmlFor="reg-whatsapp" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                         {t('register.whatsapp', 'Nomor WhatsApp (Aktif)')}
                       </label>
                       <div className="mt-1.5 relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Phone className="h-5 w-5 text-slate-500" />
+                          <Phone className="h-5 w-5 text-slate-400 dark:text-slate-500" />
                         </div>
                         <input
                           id="reg-whatsapp"
@@ -708,7 +709,7 @@ export default function InvestorRegistrationForm() {
                           required
                           value={whatsapp}
                           onChange={(e) => setWhatsapp(e.target.value)}
-                          className="block w-full pl-10 pr-3 py-2.5 border border-slate-800 rounded-xl bg-slate-950/60 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm"
+                          className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm"
                           placeholder="Contoh: 081234567xxx"
                         />
                       </div>
@@ -720,12 +721,12 @@ export default function InvestorRegistrationForm() {
 
                   {/* Password */}
                   <div>
-                    <label htmlFor="reg-password" className="block text-sm font-medium text-slate-300">
+                    <label htmlFor="reg-password" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                       {t('register.password', 'Password')}
                     </label>
                     <div className="mt-1.5 relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Lock className="h-5 w-5 text-slate-500" />
+                        <Lock className="h-5 w-5 text-slate-400 dark:text-slate-500" />
                       </div>
                       <input
                         id="reg-password"
@@ -733,7 +734,7 @@ export default function InvestorRegistrationForm() {
                         required
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="block w-full pl-10 pr-3 py-2.5 border border-slate-800 rounded-xl bg-slate-950/60 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm"
+                        className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors sm:text-sm"
                         placeholder="••••••••"
                       />
                     </div>
@@ -741,7 +742,7 @@ export default function InvestorRegistrationForm() {
 
                   {/* Error messages */}
                   {error && (
-                    <div id="registration-error-container" className="flex items-start gap-2 text-rose-400 bg-rose-500/10 border border-rose-500/20 p-3 rounded-xl text-xs">
+                    <div id="registration-error-container" className="flex items-start gap-2 text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 p-3 rounded-xl text-xs">
                       <AlertCircle size={16} className="shrink-0 mt-0.5" />
                       <span>{error}</span>
                     </div>
@@ -798,4 +799,5 @@ export default function InvestorRegistrationForm() {
 
 // feat: implement dynamic dependent dropdown for wilayah
 // ux polish: dual-option camera and gallery for ktp registration
+// hotfix: fix floating navbar, apply light mode to auth, and translate OSS simulator
 

@@ -4,6 +4,7 @@ import { OSS_CAPEX_VARIABLES, OSS_OPEX_VARIABLES } from '../lib/ossVariables.js'
 import { useTranslation } from 'react-i18next';
 import { Settings2, Calculator, ChevronDown, ChevronUp, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { formatRupiahSingkat } from '../lib/formatters.js';
 
 export function OssRoiSimulatorInputs({
   sector,
@@ -90,13 +91,13 @@ export function OssRoiSimulatorInputs({
   const getBusinessScaleBadge = (capitalStr: string) => {
     const capitalVal = parseFloat(capitalStr) || 0;
     if (capitalVal <= 1000000000) {
-      return { label: "Usaha Mikro", color: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800" };
+      return { label: t("business_micro", "Usaha Mikro"), color: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800" };
     } else if (capitalVal <= 5000000000) {
-      return { label: "Usaha Kecil", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-800" };
+      return { label: t("business_small", "Usaha Kecil"), color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-800" };
     } else if (capitalVal <= 10000000000) {
-      return { label: "Usaha Menengah", color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-200 dark:border-amber-800" };
+      return { label: t("business_medium", "Usaha Menengah"), color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-200 dark:border-amber-800" };
     } else {
-      return { label: "Usaha Besar", color: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800" };
+      return { label: t("business_large", "Usaha Besar"), color: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800" };
     }
   };
 
@@ -109,7 +110,7 @@ export function OssRoiSimulatorInputs({
       <div className={`flex items-start sm:items-center justify-between gap-2 p-3 sm:p-4 rounded-2xl border transition-all duration-300 ${isDetailed ? 'bg-gradient-to-r from-emerald-500/10 to-teal-500/5 border-emerald-500/30 shadow-lg shadow-emerald-500/5' : 'bg-slate-100 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700/50 hover:border-slate-300 dark:hover:border-slate-600'}`}>
         <div className="flex flex-row items-center gap-2 flex-wrap">
           <div className="p-2 md:p-2.5 rounded-xl bg-emerald-500/20 dark:bg-emerald-400/20 mr-1"><Settings2 className="w-5 h-5 md:w-6 md:h-6 text-emerald-600 dark:text-emerald-400" /></div>
-          <div className="flex flex-col mt-0.5 sm:mt-0"><span className="text-sm md:text-base font-bold leading-tight mb-0.5 text-emerald-700 dark:text-emerald-300">Gunakan Standar OSS / Odoo</span><span className="text-[11px] md:text-xs leading-tight font-medium text-emerald-600/70 dark:text-emerald-400/70">Kalkulasi rinci (CAPEX, OPEX, Naker)</span></div>
+          <div className="flex flex-col mt-0.5 sm:mt-0"><span className="text-sm md:text-base font-bold leading-tight mb-0.5 text-emerald-700 dark:text-emerald-300">{t("use_oss_standard", "Gunakan Standar OSS / Odoo")}</span><span className="text-[11px] md:text-xs leading-tight font-medium text-emerald-600/70 dark:text-emerald-400/70">{t("detailed_calc_desc", "Kalkulasi rinci (CAPEX, OPEX, Naker)")}</span></div>
         </div>
         <label className="relative inline-flex items-center cursor-pointer">
           <input
@@ -191,7 +192,7 @@ export function OssRoiSimulatorInputs({
             className="space-y-6"
           >
             {/* CAPEX Detailed Form */}
-            <div className={`p-3 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl border transition-all duration-300 ${isDark ? "bg-slate-900/60 border-slate-700/50 hover:border-slate-600/80 shadow-xl shadow-black/20" : "bg-white border-slate-200 hover:border-slate-300 shadow-xl shadow-slate-200/50"}`}>
+            <div className={`p-3 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl border overflow-hidden transition-all duration-300 ${isDark ? "bg-slate-900/60 border-slate-700/50 hover:border-slate-600/80 shadow-xl shadow-black/20" : "bg-white border-slate-200 hover:border-slate-300 shadow-xl shadow-slate-200/50"}`}>
               <button 
                 type="button"
                 onClick={() => setIsCapexExpanded(!isCapexExpanded)}
@@ -199,7 +200,7 @@ export function OssRoiSimulatorInputs({
               >
                 <div className="flex flex-row items-center gap-2 flex-wrap">
                   <Calculator className="w-4 h-4 text-emerald-500" />
-                  <h4 className="font-bold text-sm md:text-base uppercase tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-300">Rincian CAPEX</h4>
+                  <h4 className="font-bold text-sm md:text-base uppercase tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-300">{t("capex_breakdown", "Rincian CAPEX")}</h4>
                   {capital && parseFloat(capital) > 0 && (
                      <span className={`ml-2 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wider ${getBusinessScaleBadge(capital).color}`}>
                         {getBusinessScaleBadge(capital).label}
@@ -221,15 +222,16 @@ export function OssRoiSimulatorInputs({
                       {capexFields.map((field) => (
                         <div key={field.id}>
                           <label className={`block text-[10px] font-medium uppercase tracking-wider mb-1 ${textMuted}`}>
-                            {field.label}
+                            {t(field.id, field.label)}
                           </label>
                           <div className="relative">
-                            <span className={`absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 text-[12px] sm:text-[13px] font-medium ${textMuted}`}>
+                            <span className={`absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none select-none ${textMuted}`}>
                               Rp
                             </span>
                             <input
                               type="text"
                               inputMode="numeric"
+                              placeholder="0"
                               value={formatInputAmount(capexDetails[field.id] || "")}
                               onFocus={(e) => {
                                 e.target.select();
@@ -238,18 +240,18 @@ export function OssRoiSimulatorInputs({
                                 const numericValue = e.target.value.replace(/\D/g, "");
                                 setCapexDetails(prev => ({ ...prev, [field.id]: numericValue }));
                               }}
-                              className={`w-full pl-8 sm:pl-9 pr-2 sm:pr-3 py-2.5 md:py-3 text-[13px] sm:text-sm md:text-base font-semibold rounded-xl border outline-none transition-all focus:ring-2 focus:ring-emerald-500/30 ${inputBg}`}
+                              className={`w-full pl-10 sm:pl-11 pr-3 py-2.5 md:py-3 text-[13px] sm:text-sm md:text-base font-semibold rounded-xl border outline-none transition-all focus:ring-2 focus:ring-emerald-500/30 ${inputBg}`}
                             />
                           </div>
                         </div>
                       ))}
                     </div>
-                    <div className="mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-dashed border-slate-300 dark:border-slate-600 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 bg-slate-50/50 dark:bg-slate-800/30 -mx-3 sm:-mx-5 md:-mx-6 -mb-3 sm:-mb-5 md:-mb-6 px-3 sm:px-5 md:px-6 py-3 sm:py-4 rounded-b-2xl sm:rounded-b-3xl">
+                    <div className="mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-dashed border-slate-300 dark:border-slate-600 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 bg-slate-50/50 dark:bg-slate-800/30 -mx-3 sm:-mx-5 md:-mx-6 -mb-3 sm:-mb-5 md:-mb-6 px-3 sm:px-5 md:px-6 py-3 sm:py-4 rounded-b-2xl sm:rounded-b-3xl overflow-hidden">
                       <div className="flex items-center gap-3">
-                        <span className="text-sm font-semibold">Total CAPEX:</span>
+                        <span className="text-xs sm:text-sm font-semibold">{t("total_capex", "Total CAPEX:")}</span>
                       </div>
-                      <span className="text-lg sm:text-xl md:text-2xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">
-                        Rp {formatInputAmount(capital)}
+                      <span className="text-base sm:text-lg md:text-xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight whitespace-nowrap sm:text-right shrink-0">
+                        {formatRupiahSingkat(capital)}
                       </span>
                     </div>
                   </motion.div>
@@ -258,7 +260,7 @@ export function OssRoiSimulatorInputs({
             </div>
 
             {/* Labor Detailed Form */}
-            <div className={`p-3 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl border transition-all duration-300 ${isDark ? "bg-slate-900/60 border-slate-700/50 hover:border-slate-600/80 shadow-xl shadow-black/20" : "bg-white border-slate-200 hover:border-slate-300 shadow-xl shadow-slate-200/50"}`}>
+            <div className={`p-3 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl border overflow-hidden transition-all duration-300 ${isDark ? "bg-slate-900/60 border-slate-700/50 hover:border-slate-600/80 shadow-xl shadow-black/20" : "bg-white border-slate-200 hover:border-slate-300 shadow-xl shadow-slate-200/50"}`}>
               <button 
                 type="button"
                 onClick={() => setIsLaborExpanded(!isLaborExpanded)}
@@ -266,7 +268,7 @@ export function OssRoiSimulatorInputs({
               >
                 <div className="flex flex-row items-center gap-2 flex-wrap">
                   <Users className="w-4 h-4 text-indigo-500" />
-                  <h4 className="font-bold text-sm md:text-base uppercase tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-500 dark:from-indigo-400 dark:to-blue-300">Biaya Tenaga Kerja</h4>
+                  <h4 className="font-bold text-sm md:text-base uppercase tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-500 dark:from-indigo-400 dark:to-blue-300">{t("labor_costs_section", "Biaya Tenaga Kerja")}</h4>
                 </div>
                 <div className={`p-2 rounded-full transition-colors ${isDark ? 'bg-slate-800 group-hover:bg-slate-700' : 'bg-slate-100 group-hover:bg-slate-200'}`}><ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isLaborExpanded ? 'rotate-180 text-indigo-500' : textMuted}`} /></div>
               </button>
@@ -283,11 +285,11 @@ export function OssRoiSimulatorInputs({
                       {/* TKL Input Group */}
                       <div className="space-y-4">
                         <div className="border-b pb-2 border-slate-200 dark:border-slate-700">
-                          <h5 className={`text-xs font-bold uppercase tracking-wider ${textMuted}`}>Tenaga Kerja Lokal (TKL)</h5>
+                          <h5 className={`text-xs font-bold uppercase tracking-wider ${textMuted}`}>{t("local_workers", "Tenaga Kerja Lokal (TKL)")}</h5>
                         </div>
                         <div>
                           <label className={`block text-[10px] font-medium uppercase tracking-wider mb-1 ${textMuted}`}>
-                            Jumlah TKL (Orang)
+                            {t("qty_local_workers", "Jumlah TKL (Orang)")}
                           </label>
                           <input
                             type="text"
@@ -301,18 +303,18 @@ export function OssRoiSimulatorInputs({
                         </div>
                         <div>
                           <label className={`block text-[10px] font-medium uppercase tracking-wider mb-1 ${textMuted}`}>
-                            Gaji Pokok / Bulan
+                            {t("base_salary", "Gaji Pokok / Bulan")}
                           </label>
                           <div className="relative">
-                            <span className={`absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 text-[12px] sm:text-[13px] font-medium ${textMuted}`}>Rp</span>
+                            <span className={`absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none select-none ${textMuted}`}>Rp</span>
                             <input
                               type="text"
                               inputMode="numeric"
                               value={formatInputAmount(tklSalary)}
                               onFocus={(e) => { e.target.select(); setTklSalary(""); }}
                               onChange={(e) => setTklSalary(e.target.value.replace(/\D/g, ""))}
-                              className={`w-full pl-8 sm:pl-9 pr-2 sm:pr-3 py-2.5 md:py-3 text-[13px] sm:text-sm md:text-base font-semibold rounded-xl border outline-none transition-all focus:ring-2 focus:ring-emerald-500/30 ${inputBg}`}
-                              placeholder="UMR Standar"
+                              className={`w-full pl-10 sm:pl-11 pr-3 py-2.5 md:py-3 text-[13px] sm:text-sm md:text-base font-semibold rounded-xl border outline-none transition-all focus:ring-2 focus:ring-emerald-500/30 ${inputBg}`}
+                              placeholder={t("std_umr", "UMR Standar")}
                             />
                           </div>
                         </div>
@@ -321,11 +323,11 @@ export function OssRoiSimulatorInputs({
                       {/* TKA Input Group */}
                       <div className="space-y-4">
                         <div className="border-b pb-2 border-slate-200 dark:border-slate-700">
-                          <h5 className={`text-xs font-bold uppercase tracking-wider ${textMuted}`}>Tenaga Kerja Asing (TKA)</h5>
+                          <h5 className={`text-xs font-bold uppercase tracking-wider ${textMuted}`}>{t("foreign_workers", "Tenaga Kerja Asing (TKA)")}</h5>
                         </div>
                         <div>
                           <label className={`block text-[10px] font-medium uppercase tracking-wider mb-1 ${textMuted}`}>
-                            Jumlah TKA (Orang)
+                            {t("qty_foreign_workers", "Jumlah TKA (Orang)")}
                           </label>
                           <input
                             type="text"
@@ -339,28 +341,28 @@ export function OssRoiSimulatorInputs({
                         </div>
                         <div>
                           <label className={`block text-[10px] font-medium uppercase tracking-wider mb-1 ${textMuted}`}>
-                            Gaji Pokok / Bulan
+                            {t("base_salary", "Gaji Pokok / Bulan")}
                           </label>
                           <div className="relative">
-                            <span className={`absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 text-[12px] sm:text-[13px] font-medium ${textMuted}`}>Rp</span>
+                            <span className={`absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none select-none ${textMuted}`}>Rp</span>
                             <input
                               type="text"
                               inputMode="numeric"
                               value={formatInputAmount(tkaSalary)}
                               onFocus={(e) => { e.target.select(); setTkaSalary(""); }}
                               onChange={(e) => setTkaSalary(e.target.value.replace(/\D/g, ""))}
-                              className={`w-full pl-8 sm:pl-9 pr-2 sm:pr-3 py-2.5 md:py-3 text-[13px] sm:text-sm md:text-base font-semibold rounded-xl border outline-none transition-all focus:ring-2 focus:ring-emerald-500/30 ${inputBg}`}
-                              placeholder="Standar TKA"
+                              className={`w-full pl-10 sm:pl-11 pr-3 py-2.5 md:py-3 text-[13px] sm:text-sm md:text-base font-semibold rounded-xl border outline-none transition-all focus:ring-2 focus:ring-emerald-500/30 ${inputBg}`}
+                              placeholder={t("std_tka", "Standar TKA")}
                             />
                           </div>
                         </div>
                       </div>
                     </div>
                     
-                    <div className="mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-dashed border-slate-300 dark:border-slate-600 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 bg-slate-50/50 dark:bg-slate-800/30 -mx-3 sm:-mx-5 md:-mx-6 -mb-3 sm:-mb-5 md:-mb-6 px-3 sm:px-5 md:px-6 py-3 sm:py-4 rounded-b-2xl sm:rounded-b-3xl">
-                      <span className="text-sm font-semibold">Total Biaya TK / Tahun:</span>
-                      <span className="text-lg sm:text-xl md:text-2xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight">
-                        Rp {formatInputAmount((((parseInt(tkaCount) || 0) * (parseInt(tkaSalary) || 0)) + ((parseInt(tklCount) || 0) * (parseInt(tklSalary) || 0))) * 12 + "")}
+                    <div className="mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-dashed border-slate-300 dark:border-slate-600 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 bg-slate-50/50 dark:bg-slate-800/30 -mx-3 sm:-mx-5 md:-mx-6 -mb-3 sm:-mb-5 md:-mb-6 px-3 sm:px-5 md:px-6 py-3 sm:py-4 rounded-b-2xl sm:rounded-b-3xl overflow-hidden">
+                      <span className="text-xs sm:text-sm font-semibold">{t("total_labor_year", "Total Biaya TK / Tahun:")}</span>
+                      <span className="text-base sm:text-lg md:text-xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight whitespace-nowrap sm:text-right shrink-0">
+                        {formatRupiahSingkat((((parseInt(tkaCount) || 0) * (parseInt(tkaSalary) || 0)) + ((parseInt(tklCount) || 0) * (parseInt(tklSalary) || 0))) * 12)}
                       </span>
                     </div>
                   </motion.div>
@@ -369,7 +371,7 @@ export function OssRoiSimulatorInputs({
             </div>
 
             {/* OPEX Detailed Form */}
-            <div className={`p-3 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl border transition-all duration-300 ${isDark ? "bg-slate-900/60 border-slate-700/50 hover:border-slate-600/80 shadow-xl shadow-black/20" : "bg-white border-slate-200 hover:border-slate-300 shadow-xl shadow-slate-200/50"}`}>
+            <div className={`p-3 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl border overflow-hidden transition-all duration-300 ${isDark ? "bg-slate-900/60 border-slate-700/50 hover:border-slate-600/80 shadow-xl shadow-black/20" : "bg-white border-slate-200 hover:border-slate-300 shadow-xl shadow-slate-200/50"}`}>
               <button 
                 type="button"
                 onClick={() => setIsOpexExpanded(!isOpexExpanded)}
@@ -377,7 +379,7 @@ export function OssRoiSimulatorInputs({
               >
                 <div className="flex flex-row items-center gap-2 flex-wrap">
                   <Calculator className="w-4 h-4 text-blue-500" />
-                  <h4 className="font-bold text-sm md:text-base uppercase tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300">Rincian OPEX</h4>
+                  <h4 className="font-bold text-sm md:text-base uppercase tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-cyan-300">{t("opex_breakdown", "Rincian OPEX")}</h4>
                 </div>
                 <div className={`p-2 rounded-full transition-colors ${isDark ? 'bg-slate-800 group-hover:bg-slate-700' : 'bg-slate-100 group-hover:bg-slate-200'}`}><ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isOpexExpanded ? 'rotate-180 text-blue-500' : textMuted}`} /></div>
               </button>
@@ -394,15 +396,16 @@ export function OssRoiSimulatorInputs({
                       {opexFields.map((field) => (
                         <div key={field.id}>
                           <label className={`block text-[10px] font-medium uppercase tracking-wider mb-1 ${textMuted}`}>
-                            {field.label}
+                            {t(field.id, field.label)}
                           </label>
                           <div className="relative">
-                            <span className={`absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 text-[12px] sm:text-[13px] font-medium ${textMuted}`}>
+                            <span className={`absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none select-none ${textMuted}`}>
                               Rp
                             </span>
                             <input
                               type="text"
                               inputMode="numeric"
+                              placeholder="0"
                               value={formatInputAmount(opexDetails[field.id] || "")}
                               onFocus={(e) => {
                                 e.target.select();
@@ -411,16 +414,16 @@ export function OssRoiSimulatorInputs({
                                 const numericValue = e.target.value.replace(/\D/g, "");
                                 setOpexDetails(prev => ({ ...prev, [field.id]: numericValue }));
                               }}
-                              className={`w-full pl-8 sm:pl-9 pr-2 sm:pr-3 py-2.5 md:py-3 text-[13px] sm:text-sm md:text-base font-semibold rounded-xl border outline-none transition-all focus:ring-2 focus:ring-emerald-500/30 ${inputBg}`}
+                              className={`w-full pl-10 sm:pl-11 pr-3 py-2.5 md:py-3 text-[13px] sm:text-sm md:text-base font-semibold rounded-xl border outline-none transition-all focus:ring-2 focus:ring-emerald-500/30 ${inputBg}`}
                             />
                           </div>
                         </div>
                       ))}
                     </div>
-                    <div className="mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-dashed border-slate-300 dark:border-slate-600 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 bg-slate-50/50 dark:bg-slate-800/30 -mx-3 sm:-mx-5 md:-mx-6 -mb-3 sm:-mb-5 md:-mb-6 px-3 sm:px-5 md:px-6 py-3 sm:py-4 rounded-b-2xl sm:rounded-b-3xl">
-                      <span className="text-sm font-semibold">Total OPEX:</span>
-                      <span className="text-lg sm:text-xl md:text-2xl font-black text-blue-600 dark:text-blue-400 tracking-tight">
-                        Rp {formatInputAmount(opex)}
+                    <div className="mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-dashed border-slate-300 dark:border-slate-600 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 bg-slate-50/50 dark:bg-slate-800/30 -mx-3 sm:-mx-5 md:-mx-6 -mb-3 sm:-mb-5 md:-mb-6 px-3 sm:px-5 md:px-6 py-3 sm:py-4 rounded-b-2xl sm:rounded-b-3xl overflow-hidden">
+                      <span className="text-xs sm:text-sm font-semibold">{t("total_opex", "Total OPEX:")}</span>
+                      <span className="text-base sm:text-lg md:text-xl font-black text-blue-600 dark:text-blue-400 tracking-tight whitespace-nowrap sm:text-right shrink-0">
+                        {formatRupiahSingkat(opex)}
                       </span>
                     </div>
                   </motion.div>
@@ -433,3 +436,5 @@ export function OssRoiSimulatorInputs({
     </div>
   );
 }
+
+// ui polish: applied formatRupiahSingkat to prevent text truncation

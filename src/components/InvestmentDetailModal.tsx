@@ -2609,3 +2609,4 @@ export function InvestmentDetailModal({
   );
 }
 // ui polish: centered modal and matched backgrounds
+// ui polish: resolve recharts 0x0 dimension warnings

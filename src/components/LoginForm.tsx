@@ -284,3 +284,4 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
   );
 }
 // ux polish: contextual login routing and hero button text
+// hotfix: fix floating navbar, apply light mode to auth, and translate OSS simulator

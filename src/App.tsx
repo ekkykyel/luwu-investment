@@ -2893,8 +2893,8 @@ export default function App() {
                     </span>
                   </div>
                 </div>
-                <div className="h-14 w-full relative">
-                  <ResponsiveContainer width="100%" height={56} minWidth={0} minHeight={0}>
+                <div className="h-14 min-h-[56px] w-full relative">
+                  <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                     <AreaChart data={trendData}>
                       <Area type="monotone" dataKey="val" stroke={stat.hex} fill={stat.hex} fillOpacity={0.1} strokeWidth={2} dot={false} activeDot={false} />
                     </AreaChart>
@@ -6383,3 +6383,4 @@ export default function App() {
 // hotfix: fixed duplicate lucide-react imports
 
 // ui polish: implement symmetrical command bar for admin actions
+// ui polish: resolve recharts 0x0 dimension warnings

@@ -57,6 +57,7 @@ import {
   Building2,
 } from "lucide-react";
 import { Role, Investment, District, SektorInvestasi } from "../types.js";
+import { formatRupiahSingkat } from "../lib/formatters.js";
 import { OssRoiSimulatorInputs } from "./OssRoiSimulatorInputs.js";
 import { supabase } from "../lib/supabaseClient.js";
 import RoiAiAnalysisModal from "./RoiAiAnalysisModal.js";
@@ -261,6 +262,7 @@ export default function LandingPage({
   onSelectInvestment,
   isLoading = false,
 }: LandingPageProps) {
+  const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const isZh = i18n.language?.startsWith("zh");
   const isEn = i18n.language?.startsWith("en");
@@ -1240,33 +1242,7 @@ export default function LandingPage({
   }, [messages, isAiTyping]);
 
   const formatRupiah = (val: number) => {
-    const lang = i18n.language;
-    const isZh = lang?.startsWith("zh");
-    const isEn = lang?.startsWith("en");
-
-    if (val >= 1000000000000) {
-      const num = val / 1000000000000;
-      const numStr = num.toFixed(1);
-      const finalNum = isZh || isEn ? numStr : numStr.replace(".", ",");
-      const suffix = isZh ? " 万亿" : isEn ? " Trillion" : " Triliun";
-      return `Rp ${finalNum}${suffix}`;
-    }
-    if (val >= 1000000000) {
-      const num = val / 1000000000;
-      const numStr = num.toFixed(1);
-      const finalNum = isZh || isEn ? numStr : numStr.replace(".", ",");
-      const suffix = isZh ? " 十亿" : isEn ? " Billion" : " Miliar";
-      return `Rp ${finalNum}${suffix}`;
-    }
-    if (val >= 1000000) {
-      const num = val / 1000000;
-      const numStr = num.toFixed(1);
-      const finalNum = isZh || isEn ? numStr : numStr.replace(".", ",");
-      const suffix = isZh ? " 百万" : isEn ? " Million" : " Juta";
-      return `Rp ${finalNum}${suffix}`;
-    }
-    const locale = isZh ? "zh-CN" : isEn ? "en-US" : "id-ID";
-    return `Rp ${val.toLocaleString(locale)}`;
+    return formatRupiahSingkat(val);
   };
 
   // Metrics Logic
@@ -3012,9 +2988,9 @@ export default function LandingPage({
                       <span className={`w-2 h-2 rounded-full animate-pulse shadow-sm
                         ${roiResult.status === 'FEASIBLE' ? 'bg-emerald-400 shadow-emerald-400/50'
                           : roiResult.status === 'NOT_FEASIBLE' ? 'bg-rose-400 shadow-rose-400/50' : 'bg-amber-400 shadow-amber-400/50'}`} />
-                      {roiResult.status === 'FEASIBLE' ? 'Sangat layak'
-                        : roiResult.status === 'NOT_FEASIBLE' ? 'Tidak layak'
-                        : 'Zona moderat'}
+                      {roiResult.status === 'FEASIBLE' ? t('feasible', 'Sangat Layak')
+                        : roiResult.status === 'NOT_FEASIBLE' ? t('not_feasible', 'Tidak Layak')
+                        : t('moderate_zone', 'Zona Moderat')}
                     </div>
                   )}
                 </div>
@@ -4691,3 +4667,5 @@ export default function LandingPage({
 // ux polish: rename dashboard button to login admin for clear rbac entry
 
 // ui polish: update registrasi button to a dropdown with role choices
+// hotfix: fix floating navbar, apply light mode to auth, and translate OSS simulator
+// ui polish: applied formatRupiahSingkat to prevent text truncation

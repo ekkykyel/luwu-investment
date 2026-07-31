@@ -1061,8 +1061,8 @@ export default function InvestmentMapReport({
                 <h5 className="text-[10px] font-black text-slate-800 mb-2 text-center uppercase tracking-widest border-b border-slate-100 pb-2">
                   Komposisi Sektoral
                 </h5>
-                <div className="flex-1 w-full flex items-center justify-center min-h-[220px]">
-                  <ResponsiveContainer width="100%" height={260} minWidth={0} minHeight={0}>
+                <div className="flex-1 w-full flex items-center justify-center h-[260px] min-h-[260px]">
+                  <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                     <PieChart>
                       <Pie
                         data={sectorStats}
@@ -1093,8 +1093,8 @@ export default function InvestmentMapReport({
                 <h5 className="text-[10px] font-black text-slate-800 mb-2 text-center uppercase tracking-widest border-b border-slate-100 pb-2">
                   Sebaran Nilai per Desa
                 </h5>
-                <div className="flex-1 w-full min-h-[220px]">
-                  <ResponsiveContainer width="100%" height={260} minWidth={0} minHeight={0}>
+                <div className="flex-1 w-full h-[260px] min-h-[260px]">
+                  <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                     <BarChart
                       data={villageStats}
                       margin={{ top: 20, right: 10, left: -5, bottom: 45 }}
@@ -1146,3 +1146,4 @@ export default function InvestmentMapReport({
 }
 
 // hotfix: dynamic data binding for pdf composer
+// ui polish: resolve recharts 0x0 dimension warnings

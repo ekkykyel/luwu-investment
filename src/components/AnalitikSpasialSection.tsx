@@ -830,3 +830,6 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
     </>
   );
 };
+
+// ui polish: resolve recharts 0x0 dimension warnings
+

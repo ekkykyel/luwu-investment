@@ -32,14 +32,14 @@ export default function InvestmentSectorChart({ data, isDarkMode }: InvestmentSe
         </div>
       </div>
 
-      <div className="h-52 w-full relative flex items-center justify-center">
+      <div className="h-52 min-h-[208px] w-full relative flex items-center justify-center">
         {data.length === 0 ? (
           <div className="text-xs text-slate-500 italic py-6 flex flex-col items-center gap-2">
             <Ban className="h-8 w-8 text-slate-600 opacity-50" />
             <span>{t('mapAnalytics.noData', 'Belum ada data sektor investasi diinput.')}</span>
           </div>
         ) : (
-          <ResponsiveContainer width="100%" height={208} minWidth={0} minHeight={0}>
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
             <PieChart>
               <Pie
                 data={data}
@@ -100,3 +100,5 @@ export default function InvestmentSectorChart({ data, isDarkMode }: InvestmentSe
     </div>
   );
 }
+
+// ui polish: resolve recharts 0x0 dimension warnings

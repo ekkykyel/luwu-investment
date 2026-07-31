@@ -46,8 +46,10 @@ import jsPDF from "jspdf";
 import { safeHtml2Canvas, pdfRenderQueue, waitForDomAndIdle } from "../../lib/html2canvasShim.js";
 import DalakMap from "./DalakMap.js";
 import AISiteSelection from '../AISiteSelection.js';
+import AdminSidebar from './AdminSidebar.js';
 
 export default function AdminPortalDashboard() {
+  const navigate = useNavigate();
   useEffect(() => { return () => { exitSmartFullscreen(); }; }, []);
 
   const { t } = useTranslation();
@@ -249,26 +251,17 @@ export default function AdminPortalDashboard() {
           setUserRole(profile.role);
           if (profile.role === 'admin_oss') {
             setActiveTab('overview_perizinan');
-            try {
-              const res = await fetch("/api/investment-interests", {
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": "Bearer " + (session.access_token || ""),
-                }
-              });
-              if (res.ok) {
-                const data = await res.json();
-                setLoiTickets(data || []);
-              }
-            } catch (err) {
-              console.error("Direct fetch error:", err);
-            }
+          } else {
+            setActiveTab('overview');
           }
         }
-        if (!profile || (profile.role !== 'admin_dalak' && profile.role !== 'admin_oss' && profile.role !== 'admin_promosi' && profile.role !== 'superadmin')) {
+        if (!profile || (profile.role !== 'admin_dalak' && profile.role !== 'admin_oss' && profile.role !== 'admin_promosi' && profile.role !== 'superadmin' && profile.role !== 'admin_data')) {
           navigate("/403-forbidden");
           return;
         }
+
+        fetchLoiTickets();
+        fetchComplaints();
 
         const u = session.user;
         const meta = u.user_metadata || {};
@@ -557,6 +550,367 @@ export default function AdminPortalDashboard() {
     ];
   }, [userRole]);
 
+  const handleLogout = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        requestSmartFullscreen();
+      }
+    } catch (err) {}
+    await supabase.auth.signOut();
+    document.cookie = 'sb-access-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=None; Secure;';
+    localStorage.removeItem("luwu_session_token");
+    exitSmartFullscreen();
+    navigate('/');
+  };
+
+  const getWorkspaceTitle = (role: string) => {
+    switch (role) {
+      case 'admin_promosi': return 'Meja Kerja Bidang Promosi & Penanaman Modal';
+      case 'admin_dalak': return 'Meja Kerja Bidang Pengendalian & Pengawasan';
+      case 'admin_oss': return 'Meja Kerja Pelayanan Perizinan Terpadu';
+      case 'admin_data': return 'Meja Kerja Bidang Perencanaan, Data & Spasial';
+      case 'superadmin': default: return 'Dashboard Eksekutif Utama';
+    }
+  };
+
+  const getWorkspaceSubtitle = (role: string) => {
+    switch (role) {
+      case 'admin_promosi': return 'Kelola minat investasi (LoI), promosi potensi daerah (IPRO), dan rekomendasi lokasi cerdas.';
+      case 'admin_dalak': return 'Pengawasan realisasi investasi, verifikasi pengaduan masyarakat, dan jadwal site visit mediasi.';
+      case 'admin_oss': return 'Verifikasi kesesuaian tata ruang (PKKPR), penerbitan berkas perizinan, dan pemantauan NIB OSS-RBA.';
+      case 'admin_data': return 'Analisis data spasial, GIS peta tematik, dan laporan indikator makroekonomi investasi.';
+      case 'superadmin': default: return 'Monitoring lintas bidang, analitik performa investasi, dan tata kelola sistem DPMPTSP Luwu.';
+    }
+  };
+
+  const renderTaskQueue = () => {
+    if (userRole === 'admin_promosi') {
+      const pendingPromosi = loiTickets.filter(t => !t.status || t.status === 'Menunggu Verifikasi' || t.status === 'Draft' || t.status === 'Persiapan Site Visit');
+      return (
+        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <span>Antrean Tugas: Verifikasi Minat Investasi (LoI Masuk)</span>
+                <span className="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-0.5 rounded-full font-mono font-bold">{pendingPromosi.length} Berkas</span>
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">Daftar calon investor yang mengajukan Letter of Intent (LoI) dan menunggu verifikasi kelayakan promosi.</p>
+            </div>
+            <button 
+              onClick={fetchLoiTickets}
+              className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition-all cursor-pointer"
+              title="Segarkan data"
+            >
+              <Activity size={16} className={loadingLoiTickets ? "animate-spin text-emerald-400" : ""} />
+            </button>
+          </div>
+
+          {loadingLoiTickets ? (
+            <div className="py-12 flex flex-col items-center justify-center gap-2">
+              <Loader2 className="w-6 h-6 text-emerald-500 animate-spin" />
+              <p className="text-xs text-slate-400">Memuat antrean LoI...</p>
+            </div>
+          ) : pendingPromosi.length === 0 ? (
+            <div className="py-12 text-center text-slate-500 text-xs">
+              Belum ada permohonan LoI baru yang memerlukan verifikasi promosi.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-800 text-slate-400 font-semibold uppercase tracking-wider">
+                    <th className="py-3 px-2">Tanggal</th>
+                    <th className="py-3 px-2">Investor / Perusahaan</th>
+                    <th className="py-3 px-2">Potensi Lokasi</th>
+                    <th className="py-3 px-2">Nilai Rencana</th>
+                    <th className="py-3 px-2">Status</th>
+                    <th className="py-3 px-2 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/50">
+                  {pendingPromosi.map((ticket) => (
+                    <tr key={ticket.id} className="hover:bg-slate-800/30 transition-colors">
+                      <td className="py-3.5 px-2 text-slate-400 font-mono">
+                        {new Date(ticket.created_at).toLocaleDateString("id-ID")}
+                      </td>
+                      <td className="py-3.5 px-2 font-medium text-white">
+                        <div>{ticket.company_name || ticket.investor_name}</div>
+                        <div className="text-[10px] text-slate-500 font-mono">{ticket.contact_info}</div>
+                      </td>
+                      <td className="py-3.5 px-2 text-slate-300">
+                        {ticket.potensi_name || "Luwu General"}
+                      </td>
+                      <td className="py-3.5 px-2 text-emerald-400 font-mono font-bold">
+                        {formatRupiahSingkat(Number(ticket.nilai_investasi) || 0)}
+                      </td>
+                      <td className="py-3.5 px-2">
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-400/10 text-amber-400 border border-amber-400/20">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                          {ticket.status || 'Menunggu Verifikasi'}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-2 text-right">
+                        <button
+                          onClick={() => {
+                            setSelectedTicketForAction(ticket);
+                            setInputNib(ticket.nib_oss || '');
+                            setInputCatatan(ticket.catatan_admin || '');
+                            setIsActionModalOpen(true);
+                          }}
+                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[11px] font-bold transition-all shadow-lg shadow-emerald-900/20 cursor-pointer"
+                        >
+                          Verifikasi Promosi
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (userRole === 'admin_dalak') {
+      const pendingDalakLoI = loiTickets.filter(t => t.status === 'Persiapan Site Visit' || t.status === 'Verifikasi OSS Berjalan');
+      const pendingComplaints = complaints.filter(c => !c.status || c.status === 'Menunggu Verifikasi' || c.status === 'Diproses');
+
+      return (
+        <div className="space-y-6">
+          {/* Antrean Pengaduan Masyarakat */}
+          <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <span>Antrean Tugas: Pengaduan & Aduan Masyarakat</span>
+                  <span className="text-xs bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2.5 py-0.5 rounded-full font-mono font-bold">{pendingComplaints.length} Laporan</span>
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">Sengketa, kendala lapangan, dan laporan dari masyarakat yang membutuhkan tindak lanjut Dalak.</p>
+              </div>
+              <button 
+                onClick={fetchComplaints}
+                className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition-all cursor-pointer"
+                title="Segarkan aduan"
+              >
+                <Activity size={16} className={loadingComplaints ? "animate-spin text-rose-400" : ""} />
+              </button>
+            </div>
+
+            {loadingComplaints ? (
+              <div className="py-8 flex flex-col items-center justify-center gap-2">
+                <Loader2 className="w-6 h-6 text-rose-500 animate-spin" />
+                <p className="text-xs text-slate-400">Memuat aduan masyarakat...</p>
+              </div>
+            ) : pendingComplaints.length === 0 ? (
+              <div className="py-8 text-center text-slate-500 text-xs">
+                Tidak ada pengaduan masyarakat aktif yang memerlukan penanganan saat ini.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-800 text-slate-400 font-semibold uppercase tracking-wider">
+                      <th className="py-3 px-2">Tanggal</th>
+                      <th className="py-3 px-2">Pelapor</th>
+                      <th className="py-3 px-2">Topik / Isu</th>
+                      <th className="py-3 px-2">Status</th>
+                      <th className="py-3 px-2 text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/50">
+                    {pendingComplaints.map((item) => (
+                      <tr key={item.id} className="hover:bg-slate-800/30 transition-colors">
+                        <td className="py-3.5 px-2 text-slate-400 font-mono">
+                          {new Date(item.created_at).toLocaleDateString("id-ID")}
+                        </td>
+                        <td className="py-3.5 px-2 font-medium text-white">
+                          <div>{item.nama_pelapor || "Masyarakat Luwu"}</div>
+                          <div className="text-[10px] text-slate-500 font-mono">{item.kontak_pelapor || "-"}</div>
+                        </td>
+                        <td className="py-3.5 px-2 text-slate-300">
+                          <div className="font-semibold text-rose-300">{item.judul || item.kategori}</div>
+                          <div className="text-[10px] text-slate-400 truncate max-w-xs">{item.deskripsi}</div>
+                        </td>
+                        <td className="py-3.5 px-2">
+                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                            <span className="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+                            {item.status || 'Menunggu Verifikasi'}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-2 text-right">
+                          <button
+                            onClick={() => openDalakModal(item)}
+                            className="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-[11px] font-bold transition-all cursor-pointer shadow-md"
+                          >
+                            Tindak Lanjut & Site Visit
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* Antrean Persiapan Site Visit / Mediasi */}
+          <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <span>Antrean Tugas: Persiapan Site Visit & Mediasi Investor</span>
+                  <span className="text-xs bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-0.5 rounded-full font-mono font-bold">{pendingDalakLoI.length} Permohonan</span>
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">Investor yang membutuhkan verifikasi lapangan dan pendampingan teknis lokasi.</p>
+              </div>
+            </div>
+
+            {pendingDalakLoI.length === 0 ? (
+              <div className="py-8 text-center text-slate-500 text-xs">
+                Tidak ada agenda site visit investor yang tertunda.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-800 text-slate-400 font-semibold uppercase tracking-wider">
+                      <th className="py-3 px-2">Tanggal</th>
+                      <th className="py-3 px-2">Perusahaan / Investor</th>
+                      <th className="py-3 px-2">Potensi Lokasi</th>
+                      <th className="py-3 px-2">Status</th>
+                      <th className="py-3 px-2 text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/50">
+                    {pendingDalakLoI.map((ticket) => (
+                      <tr key={ticket.id} className="hover:bg-slate-800/30 transition-colors">
+                        <td className="py-3.5 px-2 text-slate-400 font-mono">
+                          {new Date(ticket.created_at).toLocaleDateString("id-ID")}
+                        </td>
+                        <td className="py-3.5 px-2 font-medium text-white">
+                          <div>{ticket.company_name || ticket.investor_name}</div>
+                        </td>
+                        <td className="py-3.5 px-2 text-slate-300">
+                          {ticket.potensi_name || "Luwu General"}
+                        </td>
+                        <td className="py-3.5 px-2">
+                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                            {ticket.status}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-2 text-right">
+                          <button
+                            onClick={() => {
+                              setSelectedTicketForAction(ticket);
+                              setInputNib(ticket.nib_oss || '');
+                              setInputCatatan(ticket.catatan_admin || '');
+                              setIsActionModalOpen(true);
+                            }}
+                            className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-[11px] font-bold transition-all cursor-pointer"
+                          >
+                            Update Mediasi
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    if (userRole === 'admin_oss') {
+      const pendingOss = loiTickets.filter(t => t.status === 'Mediasi Lapangan Selesai' || t.status === 'Verifikasi OSS Berjalan');
+
+      return (
+        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <span>Antrean Tugas: Verifikasi PKKPR & Penerbitan NIB</span>
+                <span className="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-mono font-bold">{pendingOss.length} Berkas</span>
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">Daftar permohonan yang telah menyelesaikan mediasi lapangan dan siap diterbitkan izin perizinan terpadu.</p>
+            </div>
+            <button 
+              onClick={fetchLoiTickets}
+              className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition-all cursor-pointer"
+              title="Segarkan data"
+            >
+              <Activity size={16} className={loadingLoiTickets ? "animate-spin text-emerald-400" : ""} />
+            </button>
+          </div>
+
+          {loadingLoiTickets ? (
+            <div className="py-12 flex flex-col items-center justify-center gap-2">
+              <Loader2 className="w-6 h-6 text-emerald-500 animate-spin" />
+              <p className="text-xs text-slate-400">Memuat berkas perizinan...</p>
+            </div>
+          ) : pendingOss.length === 0 ? (
+            <div className="py-12 text-center text-slate-500 text-xs">
+              Tidak ada antrean perizinan atau PKKPR yang tertunda saat ini.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-800 text-slate-400 font-semibold uppercase tracking-wider">
+                    <th className="py-3 px-2">Tanggal</th>
+                    <th className="py-3 px-2">Investor / Perusahaan</th>
+                    <th className="py-3 px-2">Potensi Lokasi</th>
+                    <th className="py-3 px-2">Status</th>
+                    <th className="py-3 px-2 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/50">
+                  {pendingOss.map((ticket) => (
+                    <tr key={ticket.id} className="hover:bg-slate-800/30 transition-colors">
+                      <td className="py-3.5 px-2 text-slate-400 font-mono">
+                        {new Date(ticket.created_at).toLocaleDateString("id-ID")}
+                      </td>
+                      <td className="py-3.5 px-2 font-medium text-white">
+                        <div>{ticket.company_name || ticket.investor_name}</div>
+                        <div className="text-[10px] text-slate-500 font-mono">{ticket.contact_info}</div>
+                      </td>
+                      <td className="py-3.5 px-2 text-slate-300">
+                        {ticket.potensi_name || "Luwu General"}
+                      </td>
+                      <td className="py-3.5 px-2">
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                          {ticket.status}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-2 text-right">
+                        <button
+                          onClick={() => {
+                            setSelectedTicketForAction(ticket);
+                            setInputNib(ticket.nib_oss || '');
+                            setInputCatatan(ticket.catatan_admin || '');
+                            setIsActionModalOpen(true);
+                          }}
+                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[11px] font-bold transition-all cursor-pointer shadow-md"
+                        >
+                          Terbitkan NIB / PKKPR
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   if (isAuthLoading) {
     return <LoadingScreen />;
   }
@@ -577,67 +931,15 @@ export default function AdminPortalDashboard() {
         </div>
       </div>
 
-      {/* Sidebar */}
-      <div className={`
-        fixed inset-y-0 left-0 z-10 w-64 bg-slate-900 border-r border-slate-800 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
-        <div className="h-full flex flex-col">
-          <div className="p-6 hidden md:flex items-center gap-3">
-            <LuwuLogo className="h-10 w-10" />
-            <div className="flex flex-col">
-              <span className="font-bold text-white tracking-tight text-lg leading-tight">Admin</span>
-  <span className="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider">{userRole.replace('_', ' ').toUpperCase()}</span>
-            </div>
-          </div>
-          
-          <div className="flex-1 px-4 py-6 md:py-2 space-y-2">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => {
-                    setActiveTab(tab.id as any);
-                    setIsSidebarOpen(false);
-                  }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                    isActive 
-                      ? 'bg-emerald-600/10 text-emerald-400 font-medium border border-emerald-500/20 shadow-inner' 
-                      : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                  }`}
-                >
-                  <Icon size={18} className={isActive ? 'text-emerald-400' : 'text-slate-500'} />
-                  <span className="text-sm">{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="p-4 border-t border-slate-800">
-            <button 
-              onClick={async () => {
-                try {
-                  if (!document.fullscreenElement) {
-                    const elem = document.documentElement as any;
-                    requestSmartFullscreen();
-                  }
-                } catch (err) {}
-                await supabase.auth.signOut();
-                document.cookie = 'sb-access-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=None; Secure;';
-                localStorage.removeItem("luwu_session_token");
-                exitSmartFullscreen();
-                navigate('/');
-              }}
-              className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer"
-            >
-              <LogOut size={18} />
-              <span className="text-sm">{t('dashboard.logout', 'Keluar')}</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      {/* Dynamic Unified Sidebar */}
+      <AdminSidebar
+        userRole={userRole}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+        onLogout={handleLogout}
+      />
 
       {/* Main Content */}
       <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto flex flex-col">
@@ -966,8 +1268,8 @@ export default function AdminPortalDashboard() {
                       <h3 className="text-base font-bold text-white">Status Penyelesaian Izin</h3>
                       <p className="text-xs text-slate-400">Distribusi realisasi dan progres penyelesaian berkas izin usaha.</p>
                       
-                      <div className="h-64 flex items-center justify-center">
-                        <ResponsiveContainer width="100%" height={256} minWidth={0} minHeight={0}>
+                      <div className="h-64 min-h-[256px] w-full flex items-center justify-center relative">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                           <PieChart>
                             <Pie
                               data={[
@@ -1280,15 +1582,18 @@ export default function AdminPortalDashboard() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800/60 pb-6">
               <div>
                 <h1 className="text-2xl font-bold text-white mb-2 tracking-tight flex items-center gap-2">
-                  <span>{t('dashboard.welcomeTitle', 'Selamat Datang di Portal Investor')}</span>
+                  <span>{getWorkspaceTitle(userRole)}</span>
                   <Sparkles size={20} className="text-emerald-400 animate-pulse" />
                 </h1>
-                <p className="text-slate-400 text-sm">{t('dashboard.welcomeSub', 'Akses layanan, data spasial, dan simulasi kelayakan finansial secara terpadu di Kabupaten Luwu.')}</p>
+                <p className="text-slate-400 text-sm">{getWorkspaceSubtitle(userRole)}</p>
               </div>
               <div className="text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1.5 rounded-xl uppercase tracking-wider font-bold">
                 {t('dashboard.onlineSyncActive', 'Online Sync Active')}
               </div>
             </div>
+
+            {/* Conditional Task Queue per Role */}
+            {renderTaskQueue()}
 
             {/* 1. Top Row: Quick Statistic Cards (4 Columns) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -1481,8 +1786,8 @@ export default function AdminPortalDashboard() {
                       <p className="text-xs text-center px-4">{t('dashboard.emptySectorData', 'Belum ada data sektor investasi diinput.')}</p>
                     </div>
                   ) : (
-                    <div className="relative h-48 w-full flex items-center justify-center">
-                      <ResponsiveContainer width="100%" height={192} minWidth={0} minHeight={0}>
+                    <div className="relative h-48 min-h-[192px] w-full flex items-center justify-center">
+                      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                         <PieChart>
                           <Pie
                             data={stats.sectorData}
@@ -2453,8 +2758,8 @@ export default function AdminPortalDashboard() {
                       <p className="text-xs text-slate-400 mt-1">Pergerakan NPV berdasarkan fluktuasi WACC (Suku Bunga Diskonto) di bawah tiga skenario makroekonomi.</p>
                     </div>
 
-                    <div className="h-80 w-full font-mono text-xs">
-                      <ResponsiveContainer width="100%" height={320} minWidth={0} minHeight={0}>
+                    <div className="h-80 min-h-[320px] w-full font-mono text-xs relative">
+                      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                         <LineChart
                           data={chartData}
                           margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
@@ -2872,3 +3177,5 @@ export default function AdminPortalDashboard() {
 }
 
 // ui polish: executive premium fin-tech polish
+// ui polish: resolve recharts 0x0 dimension warnings
+// architecture refactor: implemented dynamic role-based unified workspace

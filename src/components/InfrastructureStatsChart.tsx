@@ -125,7 +125,7 @@ export default function InfrastructureStatsChart({ infrastructure = [], isDarkMo
       </div>
 
       {/* Chart Visualization Area */}
-      <div className="h-56 w-full relative flex items-center justify-center">
+      <div className="h-56 min-h-[224px] w-full relative flex items-center justify-center">
         {aggregatedData.length === 0 ? (
           <div className="text-center italic py-6 flex flex-col items-center gap-2 font-sans">
             <Ban className="h-8 w-8 text-rose-500 animate-pulse opacity-80" />
@@ -137,7 +137,7 @@ export default function InfrastructureStatsChart({ infrastructure = [], isDarkMo
             </span>
           </div>
         ) : chartType === "bar" ? (
-          <ResponsiveContainer width="100%" height={224} minWidth={0} minHeight={0}>
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
             <BarChart
               data={aggregatedData}
               layout="vertical"
@@ -178,7 +178,7 @@ export default function InfrastructureStatsChart({ infrastructure = [], isDarkMo
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <ResponsiveContainer width="100%" height={224} minWidth={0} minHeight={0}>
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
             <PieChart>
               <Pie
                 data={aggregatedData}
@@ -237,3 +237,5 @@ export default function InfrastructureStatsChart({ infrastructure = [], isDarkMo
     </div>
   );
 }
+
+// ui polish: resolve recharts 0x0 dimension warnings

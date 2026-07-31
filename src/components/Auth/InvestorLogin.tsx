@@ -8,6 +8,7 @@ import { supabase } from '../../lib/supabaseClient.js';
 import { isMobileOrAndroidDevice } from '../../hooks/useDeviceAutomation.js';
 
 export default function InvestorLogin() {
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -129,7 +130,7 @@ export default function InvestorLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-6 sm:py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col justify-center py-6 sm:py-12 sm:px-6 lg:px-8 relative overflow-hidden transition-colors duration-300">
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-10 left-10 w-72 h-72 bg-emerald-600/10 rounded-full blur-3xl"></div>
@@ -142,14 +143,14 @@ export default function InvestorLogin() {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <div className="flex justify-center mb-6">
-          <div className="p-3 bg-blue-600/20 text-blue-500 rounded-2xl">
+          <div className="p-3 bg-blue-600/20 text-blue-600 dark:text-blue-500 rounded-2xl">
             <Building2 size={32} />
           </div>
         </div>
-        <h2 className="text-center text-3xl font-bold tracking-tight text-white mb-2">
+        <h2 className="text-center text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
           {t('auth.portalTitle', 'Login Portal Dashboard')}
         </h2>
-        <p className="text-center text-sm text-slate-400">
+        <p className="text-center text-sm text-slate-600 dark:text-slate-400">
           {loginRole === 'masyarakat' 
             ? t('auth.subtitleMasyarakat', 'Masyarakat/Publik') 
             : loginRole === 'investor'
@@ -159,20 +160,20 @@ export default function InvestorLogin() {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <div className="bg-slate-900/80 border border-slate-800 py-8 px-4 shadow-2xl sm:rounded-2xl sm:px-10 backdrop-blur-sm">
+        <div className="bg-white dark:bg-slate-900/80 border border-slate-300 dark:border-slate-800 py-8 px-4 shadow-2xl sm:rounded-2xl sm:px-10 backdrop-blur-sm transition-colors">
           <form className="space-y-6" onSubmit={handleSubmit}>
             
             {/* Dropdown Role Login */}
             {new URLSearchParams(window.location.search).get('role') !== 'masyarakat' && new URLSearchParams(window.location.search).get('role') !== 'investor' && (
             <div className="mb-4">
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">{t('auth.loginAs', 'Masuk Sebagai')}</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('auth.loginAs', 'Masuk Sebagai')}</label>
               <select
                 value={loginRole}
                 onChange={(e) => {
                   setLoginRole(e.target.value);
                   setIdentifier(''); // Reset input when changing roles
                 }}
-                className="block w-full pl-3 pr-10 py-2.5 border border-slate-700 rounded-xl bg-slate-950/50 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors sm:text-sm appearance-none"
+                className="block w-full pl-3 pr-10 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-950/50 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors sm:text-sm appearance-none"
               >
                 <option value="admin_dalak">{t('auth.roleDalak', 'Admin - Bidang Dalak')}</option>
                 <option value="admin_promosi">{t('auth.rolePromosi', 'Admin - Bidang Promosi')}</option>
@@ -183,12 +184,12 @@ export default function InvestorLogin() {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-slate-300">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                 {loginRole === 'masyarakat' ? t('auth.nikLabel', 'Nomor Induk Kependudukan (NIK)') : t('auth.emailLabel', 'Alamat Email')}
               </label>
               <div className="mt-2 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-slate-500" />
+                  <Mail className="h-5 w-5 text-slate-400 dark:text-slate-500" />
                 </div>
                 <input
                   type={loginRole === 'masyarakat' ? 'text' : 'email'}
@@ -196,40 +197,40 @@ export default function InvestorLogin() {
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   maxLength={loginRole === 'masyarakat' ? 16 : 255}
-                  className="block w-full pl-10 pr-3 py-2.5 border border-slate-700 rounded-xl bg-slate-950/50 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors sm:text-sm"
+                  className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-950/50 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors sm:text-sm"
                   placeholder={loginRole === 'masyarakat' ? t('auth.nikPlaceholder', 'Masukkan 16 digit NIK...') : t('auth.emailPlaceholder', 'email@domain.com')}
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                 {t('auth.password', 'Password')}
               </label>
               <div className="mt-2 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-slate-500" />
+                  <Lock className="h-5 w-5 text-slate-400 dark:text-slate-500" />
                 </div>
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2.5 border border-slate-700 rounded-xl bg-slate-950/50 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors sm:text-sm"
+                  className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-950/50 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors sm:text-sm"
                   placeholder="••••••••"
                 />
               </div>
             </div>
 
             {error && (
-              <div className="flex items-start gap-2 text-rose-400 bg-rose-500/10 border border-rose-500/20 p-3 rounded-xl text-xs">
+              <div className="flex items-start gap-2 text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 p-3 rounded-xl text-xs">
                 <AlertCircle size={16} className="shrink-0 mt-0.5" />
                 <span>{error}</span>
               </div>
             )}
 
             {isSuccess && (
-              <div className="flex items-start gap-2 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-xl text-xs">
+              <div className="flex items-start gap-2 text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 p-3 rounded-xl text-xs">
                 <LogIn size={16} className="shrink-0 mt-0.5" />
                 <span>{t('auth.loginSuccess', 'Login sukses, mengarahkan ke dashboard...')}</span>
               </div>
@@ -266,7 +267,7 @@ export default function InvestorLogin() {
                 } catch (e) {}
                 navigate('/?skipSplash=true&fullscreen=true');
               }}
-              className="text-xs text-slate-400 hover:text-white transition-colors flex items-center justify-center gap-1 mx-auto cursor-pointer"
+              className="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center justify-center gap-1 mx-auto cursor-pointer"
             >
               {t('auth.backToHome', 'Kembali ke Landing Page')}
             </button>
@@ -278,5 +279,7 @@ export default function InvestorLogin() {
     </div>
   );
 }
+
+// hotfix: fix floating navbar, apply light mode to auth, and translate OSS simulator
 
 // ux polish: contextual login routing and hero button text

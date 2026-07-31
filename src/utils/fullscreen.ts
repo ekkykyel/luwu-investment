@@ -1,12 +1,12 @@
 import { isMobileOrAndroidDevice } from "../hooks/useDeviceAutomation.js";
 
-export function requestSmartFullscreen() {
+export async function requestSmartFullscreen() {
   if (typeof window === 'undefined') return;
   if (!isMobileOrAndroidDevice()) return;
 
   const elem = document.documentElement as any;
   if (elem.requestFullscreen) {
-    elem.requestFullscreen().catch(() => {});
+    await elem.requestFullscreen();
   } else if (elem.webkitRequestFullscreen) {
     elem.webkitRequestFullscreen();
   } else if (elem.msRequestFullscreen) {

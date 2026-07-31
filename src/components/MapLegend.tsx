@@ -1400,8 +1400,8 @@ export default function MapLegend({
                       {chartData.length === 0 ? (
                         <div className="italic text-center py-4 flex-1 flex items-center justify-center text-slate-500">Data chart tidak tersedia</div>
                       ) : (
-                        <div className="flex-1 min-h-[120px] w-full mt-2">
-                          <ResponsiveContainer width="100%" height={120} minWidth={0} minHeight={0}>
+                        <div className="flex-1 h-[120px] min-h-[120px] w-full mt-2">
+                          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                               <XAxis dataKey="name" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
                               <YAxis stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
@@ -1481,3 +1481,5 @@ export default function MapLegend({
   </>
   );
 }
+
+// ui polish: resolve recharts 0x0 dimension warnings

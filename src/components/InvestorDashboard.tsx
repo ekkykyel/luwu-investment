@@ -1582,8 +1582,8 @@ export default function InvestorDashboard({
                 {t('mapAnalytics.last5Years')}
               </span>
             </div>
-            <div className="h-32 w-full mt-1.5">
-              <ResponsiveContainer width="100%" height={128} minWidth={0} minHeight={0}>
+            <div className="h-32 min-h-[128px] w-full mt-1.5 relative">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                 <LineChart 
                   data={selectedDistrictStats ? selectedDistrictStats.roiHistory : globalLuwuStats.roiHistory} 
                   margin={{ top: 5, right: 10, left: -25, bottom: 0 }}
@@ -1627,8 +1627,8 @@ export default function InvestorDashboard({
               </div>
               <TrendingUp className={`h-4 w-4 ${isDarkMode ? "text-emerald-400" : "text-emerald-600"}`} />
             </div>
-            <div className="h-52 w-full">
-              <ResponsiveContainer width="100%" height={208} minWidth={0} minHeight={0}>
+            <div className="h-52 min-h-[208px] w-full relative">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                 <AreaChart data={historicalTrendsData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
@@ -1670,8 +1670,8 @@ export default function InvestorDashboard({
               </div>
               <TrendingUp className={`h-4 w-4 ${isDarkMode ? "text-sky-400" : "text-sky-600"}`} />
             </div>
-            <div className="h-52 w-full">
-              <ResponsiveContainer width="100%" height={208} minWidth={0} minHeight={0}>
+            <div className="h-52 min-h-[208px] w-full relative">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                 <LineChart data={monthlyTrendsData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? "#1e293b" : "#f1f5f9"} />
                   <XAxis dataKey="month" stroke="#64748b" fontSize={9} />
@@ -1823,8 +1823,8 @@ export default function InvestorDashboard({
 
             {/* Recharts Chart Panel */}
             <div className="xl:col-span-2 flex flex-col justify-between">
-              <div className="h-64 w-full">
-                <ResponsiveContainer width="100%" height={256} minWidth={0} minHeight={0}>
+              <div className="h-64 min-h-[256px] w-full relative">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                   <AreaChart data={forecastChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorHist" x1="0" y1="0" x2="0" y2="1">
@@ -2054,8 +2054,8 @@ export default function InvestorDashboard({
             </div>
             <Grid className={`h-4 w-4 ${isDarkMode ? "text-indigo-400" : "text-indigo-600"}`} />
           </div>
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height={256} minWidth={0} minHeight={0}>
+          <div className="h-64 min-h-[256px] w-full relative">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
               <ScatterChart margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? "#1e293b" : "#f1f5f9"} />
                 <XAxis type="number" dataKey="area" name={t('mapAnalytics.scatterArea', 'Luas (Ha)')} stroke="#64748b" fontSize={10} tickFormatter={(v) => `${v} Ha`} />
@@ -2392,8 +2392,8 @@ export default function InvestorDashboard({
           </div>
 
           {}
-          <div className="h-56 w-full mt-2">
-            <ResponsiveContainer width="100%" height={224} minWidth={0} minHeight={0}>
+          <div className="h-56 min-h-[224px] w-full mt-2 relative">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
               <BarChart
                 data={strategicHotspotsData}
                 layout="vertical"
@@ -2575,3 +2575,4 @@ export default function InvestorDashboard({
 }
 
 // architecture pivot: implement strict mobile-first responsive design
+// ui polish: resolve recharts 0x0 dimension warnings

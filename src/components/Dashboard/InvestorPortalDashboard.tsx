@@ -46,6 +46,7 @@ import { safeHtml2Canvas, pdfRenderQueue, waitForDomAndIdle } from "../../lib/ht
 import AISiteSelection from '../AISiteSelection.js';
 
 export default function InvestorPortalDashboard() {
+  const navigate = useNavigate();
   useEffect(() => { return () => { exitSmartFullscreen(); }; }, []);
 
   const { t, i18n } = useTranslation();
@@ -714,8 +715,8 @@ export default function InvestorPortalDashboard() {
                       <p className="text-xs text-center px-4">{t('dashboard.emptySectorData', 'Belum ada data sektor investasi diinput.')}</p>
                     </div>
                   ) : (
-                    <div className="relative h-48 w-full flex items-center justify-center">
-                      <ResponsiveContainer width="100%" height={192} minWidth={0} minHeight={0}>
+                    <div className="relative h-48 min-h-[192px] w-full flex items-center justify-center">
+                      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                         <PieChart>
                           <Pie
                             data={stats.sectorData}
@@ -1562,8 +1563,8 @@ export default function InvestorPortalDashboard() {
                       </p>
                     </div>
 
-                    <div className="h-80 w-full font-mono text-xs">
-                      <ResponsiveContainer width="100%" height={320} minWidth={0} minHeight={0}>
+                    <div className="h-80 min-h-[320px] w-full font-mono text-xs relative">
+                      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                         <LineChart
                           data={chartData}
                           margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
@@ -1876,3 +1877,4 @@ export default function InvestorPortalDashboard() {
 }
 
 // ui polish: executive premium fin-tech polish
+// ui polish: resolve recharts 0x0 dimension warnings
