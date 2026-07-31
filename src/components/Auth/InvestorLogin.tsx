@@ -136,40 +136,7 @@ export default function InvestorLogin() {
 
       {/* Top Header Controls: Back to Landing Page & Fullscreen Toggle */}
       <div className="w-full max-w-md mx-auto px-4 mb-4 flex items-center justify-between relative z-20">
-        <button
-          type="button"
-          onClick={() => {
-            try {
-              if (!document.fullscreenElement) {
-                const elem = document.documentElement as any;
-                requestSmartFullscreen()
-              }
-            } catch (e) {}
-            window.location.href = "/?skipSplash=true&fullscreen=true";
-          }}
-          className="flex items-center gap-2 px-3.5 py-2 min-h-[44px] bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl border border-slate-700/80 text-xs font-semibold transition-all cursor-pointer shadow-md active:scale-95"
-        >
-          <ArrowLeft size={16} />
-          <span>{t('auth.backToHome', 'Kembali ke Landing Page')}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            if (!document.fullscreenElement) {
-              const elem = document.documentElement as any;
-              requestSmartFullscreen()
-            } else {
-              (window as any).__lastExitFullscreenTime = Date.now();
-              document.exitFullscreen().catch(() => {});
-            }
-          }}
-          className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-slate-900/90 hover:bg-slate-800 text-emerald-400 rounded-xl border border-slate-700/80 text-xs font-bold transition-all cursor-pointer shadow-md active:scale-95"
-          title={isFullscreen ? "Keluar Layar Penuh" : "Mode Layar Penuh"}
-        >
-          {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-          <span>{isFullscreen ? "Keluar Penuh" : "Layar Penuh"}</span>
-        </button>
+        
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">

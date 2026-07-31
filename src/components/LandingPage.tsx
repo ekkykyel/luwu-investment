@@ -339,22 +339,7 @@ export default function LandingPage({
   const [launchReadyToEnter, setLaunchReadyToEnter] = useState(true);
 
   const handleRequestFullscreen = () => {
-    // Gunakan fungsi deteksi device cerdas alih-alih hanya berpatokan pada lebar layar
-    const isMobile = isMobileOrAndroidDevice();
-    if (!isMobile) return;
-
-    const elem = document.documentElement;
-    if (elem.requestFullscreen) {
-      elem
-        .requestFullscreen()
-        .catch((err) =>
-          undefined,
-        );
-    } else if ((elem as any).webkitRequestFullscreen) {
-      (elem as any).webkitRequestFullscreen();
-    } else if ((elem as any).msRequestFullscreen) {
-      (elem as any).msRequestFullscreen();
-    }
+    requestSmartFullscreen();
   };
 
   const handleLaunchApp = () => {
@@ -1658,19 +1643,7 @@ export default function LandingPage({
         />
       </div>
 
-      {/* Floating Android Fullscreen Badge (when not in fullscreen on mobile devices) */}
-      {!isFullscreen && isMobileOrAndroidDevice() && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="fixed top-20 sm:top-24 left-1/2 -translate-x-1/2 z-[90] px-4 py-2 bg-slate-900/95 border border-emerald-500/50 text-emerald-400 rounded-full shadow-[0_10px_30px_rgba(16,185,129,0.3)] text-xs font-bold flex items-center gap-2 backdrop-blur-md cursor-pointer hover:bg-slate-800 active:scale-95 transition-all group"
-          onClick={() => handleRequestFullscreen()}
-        >
-          <Smartphone size={15} className="text-emerald-400 animate-pulse" />
-          <span>📱 Mode Android Fullscreen — Ketuk Layar</span>
-          <Maximize2 size={13} className="text-amber-300 ml-0.5 group-hover:scale-125 transition-transform" />
-        </motion.div>
-      )}
+      
 
       {/* TOP NAVIGATION BAR */}
       <motion.nav
@@ -1752,24 +1725,7 @@ export default function LandingPage({
             <div className="flex items-center gap-2 sm:gap-3">
               <LanguageSwitcher isDark={isDark} />
 
-              <motion.button whileTap={{ scale: 0.95 }}
-                type="button"
-                onClick={() => {
-                  if (!isFullscreen) {
-                    handleRequestFullscreen();
-                  } else {
-                    handleExitFullscreen();
-                  }
-                }}
-                className={`p-2.5 rounded-full transition-all duration-300 hover:scale-110 flex items-center justify-center ${
-                  isDark
-                    ? "bg-slate-800/80 text-emerald-400 hover:text-emerald-300 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]"
-                    : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-                }`}
-                title={isFullscreen ? "Keluar Layar Penuh" : "Layar Penuh (Android Mode)"}
-              >
-                {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
-              </motion.button>
+              
               
               <motion.button whileTap={{ scale: 0.95 }}
                 onClick={handleToggleTheme}
