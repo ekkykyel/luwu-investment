@@ -2040,57 +2040,7 @@ export default function LandingPage({
                 {t("hero.subtitle")}
               </motion.p>
 
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: {
-                    opacity: 1,
-                    transition: { staggerChildren: 0.2, delayChildren: 0.3 }
-                  }
-                }}
-                className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
-              >
-                <motion.button
-                  variants={{
-                    hidden: { opacity: 0, y: 20, scale: 0.95 },
-                    visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 300, damping: 20 } }
-                  }}
-                  whileHover={{ scale: 1.04, boxShadow: "0 0 40px rgba(20,184,166,0.7), 0 0 70px rgba(99,102,241,0.55)" }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleRequestFullscreen();
-                    window.location.href = "/login?role=investor";
-                  }}
-                  className="px-8 py-4 min-h-[44px] rounded-2xl font-black text-white uppercase tracking-wider bg-gradient-to-r from-emerald-500 via-teal-500 via-cyan-500 to-indigo-600 bg-[length:250%_100%] hover:bg-right transition-all duration-500 ease-out shadow-[0_0_25px_rgba(20,184,166,0.45),0_0_50px_rgba(99,102,241,0.25)] flex items-center justify-center gap-2.5 group relative overflow-hidden border border-emerald-300/50"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
-                  <span className="relative flex items-center gap-2.5 z-10">
-                    <UserPlus size={20} className="text-amber-300 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300 drop-shadow-md" />
-                    <span className="bg-gradient-to-r from-white via-slate-100 to-amber-200 bg-clip-text text-transparent font-black tracking-wider text-sm sm:text-base drop-shadow-sm">
-                      {t("hero.explore")}
-                    </span>
-                    <ChevronRight size={20} className="text-amber-300 group-hover:translate-x-2 transition-transform duration-300 drop-shadow-md" />
-                  </span>
-                </motion.button>
-                <motion.button
-                  variants={{
-                    hidden: { opacity: 0, y: 20, scale: 0.95 },
-                    visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 300, damping: 20 } }
-                  }}
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => {
-                    document.getElementById("analytics-section")?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className={`px-8 py-4 min-h-[44px] rounded-2xl font-bold uppercase tracking-wider border backdrop-blur-md transition-all duration-500 ease-out flex items-center justify-center gap-2.5 group bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.35)] hover:shadow-[0_0_25px_rgba(20,184,166,0.5)] hover:-translate-y-0.5 border-emerald-400/40`}
-                >
-                  <Activity size={19} className={`transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12 ${isDark ? "text-emerald-400" : "text-emerald-600"}`} />
-                  {t("hero.learnPotential")}
-                </motion.button>
-              </motion.div>
+              
             </motion.div>
 
             {/* Elegant Gradient Divider */}
