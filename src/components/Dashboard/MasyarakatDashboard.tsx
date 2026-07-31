@@ -521,11 +521,11 @@ export default function MasyarakatDashboard({
             {/* Logo Luwu */}
             <div className="w-12 h-14 md:w-14 md:h-16 flex items-center justify-center shrink-0">
               <img 
-                src="/logo-luwu.svg" 
+                src="/transparant.png" 
                 alt="Logo Pemkab Luwu" 
                 className="w-full h-full object-contain drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]" 
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = "/logo-192.png";
+                  (e.target as HTMLImageElement).src = "https://i.ibb.co.com/KxKKb5d8/transparant.png";
                 }}
               />
             </div>
@@ -1658,3 +1658,4 @@ export default function MasyarakatDashboard({
 // ux polish: add explicit live camera and gallery split buttons for evidence upload
 // bugfix: resolve mobile keyboard overlap on textarea and fix broken header logo
 // bugfix: fix logo path in masyarakat dashboard
+// branding hotfix: applied transparant.png to PWA manifest and UI components

@@ -14,10 +14,13 @@ export function LuwuLogo({ className = "", size = "md" }: LuwuLogoProps) {
 
   return (
     <img
-      src={"https://i.ibb.co.com/KxKKb5d8/transparant.png"}
+      src="/transparant.png"
       alt="Logo Kabupaten Luwu"
       className={`${dimensions} ${className} select-none inline-block object-contain`}
       style={{ imageRendering: "-webkit-optimize-contrast" }}
+      onError={(e) => {
+        (e.target as HTMLImageElement).src = "https://i.ibb.co.com/KxKKb5d8/transparant.png";
+      }}
     />
   );
 }
