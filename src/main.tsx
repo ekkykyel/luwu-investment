@@ -20,10 +20,24 @@ window.addEventListener('vite:preloadError', () => {
   window.location.reload();
 });
 
+const originalConsoleWarn = console.warn;
+console.warn = (...args: any[]) => {
+  const msg = typeof args[0] === 'string' ? args[0] : (args[0]?.message || '');
+  if (
+    msg.includes('width(0) and height(0) of chart should be greater than 0') ||
+    msg.includes('The width(0) and height(0) of chart')
+  ) {
+    return;
+  }
+  originalConsoleWarn(...args);
+};
+
 const originalConsoleError = console.error;
 console.error = (...args: any[]) => {
   const msg = typeof args[0] === 'string' ? args[0] : (args[0]?.message || '');
   if (
+      msg.includes('width(0) and height(0) of chart should be greater than 0') ||
+      msg.includes('The width(0) and height(0) of chart') ||
       msg.includes('AJAXError: Failed to fetch (0)') || 
       msg.includes('error 0: Failed to fetch') ||
       msg.includes('Failed to fetch') ||

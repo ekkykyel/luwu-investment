@@ -715,7 +715,7 @@ export default function InvestorPortalDashboard() {
                     </div>
                   ) : (
                     <div className="relative h-48 w-full flex items-center justify-center">
-                      <ResponsiveContainer width="100%" height={192}>
+                      <ResponsiveContainer width="100%" height={192} minWidth={0} minHeight={0}>
                         <PieChart>
                           <Pie
                             data={stats.sectorData}
@@ -1563,7 +1563,7 @@ export default function InvestorPortalDashboard() {
                     </div>
 
                     <div className="h-80 w-full font-mono text-xs">
-                      <ResponsiveContainer width="100%" height={320}>
+                      <ResponsiveContainer width="100%" height={320} minWidth={0} minHeight={0}>
                         <LineChart
                           data={chartData}
                           margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
