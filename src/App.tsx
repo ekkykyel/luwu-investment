@@ -440,31 +440,8 @@ export default function App() {
       setIsFullscreen(!!document.fullscreenElement);
     };
 
-    // Auto-fullscreen on user gesture ONLY for Android / Smartphone / Mobile devices.
-    // Explicitly disabled on Desktop / Laptop / PC to save memory, prevent memory leaks, and maintain proportional desktop views.
-    const handleAutoFullscreenGesture = () => {
-      if (!isMobileOrAndroidDevice()) {
-        return; // Desktop/PC exception
-      }
-
-      // Do not re-enter fullscreen if user recently exited manually within the last 3 seconds
-      const lastExit = (window as any).__lastExitFullscreenTime || 0;
-      if (Date.now() - lastExit < 3000) {
-        return;
-      }
-
-      if (!document.fullscreenElement) {
-        const elem = document.documentElement as any;
-        requestSmartFullscreen();
-      }
-    };
-
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
     document.addEventListener("fullscreenchange", handleFullscreenChange);
-
-    // Capture user touch/click events globally across all menus to trigger auto-fullscreen on Android
-    window.addEventListener("click", handleAutoFullscreenGesture, { passive: true });
-    window.addEventListener("touchstart", handleAutoFullscreenGesture, { passive: true });
 
     // If launched in standalone PWA, auto hide installation banners
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
@@ -475,9 +452,7 @@ export default function App() {
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
-      window.removeEventListener("click", handleAutoFullscreenGesture);
-      window.removeEventListener("touchstart", handleAutoFullscreenGesture);
-    };
+      };
   }, [isAndroid]);
 
   const handleInstallPwa = async () => {

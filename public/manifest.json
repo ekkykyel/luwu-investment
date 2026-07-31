@@ -1,11 +1,12 @@
 {
   "name": "Peta Potensi Investasi Kabupaten Luwu",
-  "short_name": "Invest Luwu",
+  "short_name": "InvestLuwu",
   "description": "Portal Investasi Kabupaten Luwu",
-  "start_url": "/?fullscreen=true",
-  "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "start_url": "/",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#020617",
+  "theme_color": "#020617",
   "icons": [
     {
       "src": "/logo-192.png",
