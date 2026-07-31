@@ -1,0 +1,135 @@
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+[
+  {
+    "id": 10,
+    "geom": {
+      "type": "Point",
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "EPSG:4326"
+        }
+      },
+      "coordinates": [
+        120.36547889067685,
+        -3.394828505594006
+      ]
+    },
+    "nama_infrastruktur": "Kantor Bupati Luwu",
+    "kategori": "Perkantoran Daerah",
+    "keterangan_singkat": "Kantor Bupati Luwu",
+    "status": "Published",
+    "updated_at": "2026-06-06T15:53:25.635+00:00",
+    "created_at": "2026-07-09T12:22:59.667194+00:00"
+  },
+  {
+    "id": 9,
+    "geom": {
+      "type": "Point",
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "EPSG:4326"
+        }
+      },
+      "coordinates": [
+        120.35794806101296,
+        -3.37644610992929
+      ]
+    },
+    "nama_infrastruktur": "Pasar Sentral Belopa",
+    "kategori": "Pusat Perdagangan",
+    "keterangan_singkat": "Pasar Sentral Belopa",
+    "status": "Published",
+    "updated_at": "2026-06-06T15:53:36.356+00:00",
+    "created_at": "2026-07-09T12:22:59.667194+00:00"
+  },
+  {
+    "id": 8,
+    "geom": {
+      "type": "Point",
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "EPSG:4326"
+        }
+      },
+      "coordinates": [
+        120.36930532613906,
+        -3.408870133207785
+      ]
+    },
+    "nama_infrastruktur": "Kepolisian Resort Luwu",
+    "kategori": "Kantor Polisi",
+    "keterangan_singkat": "Kepolisian Resort Luwu",
+    "status": "Published",
+    "updated_at": "2026-06-06T15:53:42.584+00:00",
+    "created_at": "2026-07-09T12:22:59.667194+00:00"
+  },
+  {
+    "id": 7,
+    "geom": {
+      "type": "Point",
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "EPSG:4326"
+        }
+      },
+      "coordinates": [
+        120.35719728255344,
+        -3.367913100409524
+      ]
+    },
+    "nama_infrastruktur": "RSUD Batara Guru",
+    "kategori": "Rumah Sakit",
+    "keterangan_singkat": "RSUD Batara Guru Belopa",
+    "status": "Published",
+    "updated_at": "2026-06-06T15:53:52.295+00:00",
+    "created_at": "2026-07-09T12:22:59.667194+00:00"
+  },
+  {
+    "id": 5,
+    "geom": {
+      "type": "Point",
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "EPSG:4326"
+        }
+      },
+      "coordinates": [
+        120.39793462368112,
+        -3.386061643485775
+      ]
+    },
+    "nama_infrastruktur": "Pelabuhan Ulo-Ulo Belopa",
+    "kategori": "Pelabuhan",
+    "keterangan_singkat": "Pelabuhan Ulo-Ulo Belopa",
+    "status": "Published",
+    "updated_at": "2026-06-06T15:53:59.345+00:00",
+    "created_at": "2026-07-09T12:22:59.667194+00:00"
+  },
+  {
+    "id": 4,
+    "geom": {
+      "type": "Point",
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "EPSG:4326"
+        }
+      },
+      "coordinates": [
+        120.24132322502385,
+        -3.086338491260946
+      ]
+    },
+    "nama_infrastruktur": "Bandara Udara Bua",
+    "kategori": "Bandara",
+    "keterangan_singkat": "Bandara Udara Bua",
+    "status": "Published",
+    "updated_at": "2026-06-06T15:54:10.478+00:00",
+    "created_at": "2026-07-09T12:22:59.667194+00:00"
+  }
+]

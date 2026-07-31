@@ -1,0 +1,73 @@
+app.get("/api/spatial-layers", async (req, res) => {
+  const { districtId, kecamatan } = req.query;
+  const cacheKey = `spatial_layers_${districtId || "all"}_${kecamatan || "none"}`;
+  const now = Date.now();
+
+  // Check if valid cache exists
+  if (cache[cacheKey] && (now - cache[cacheKey].timestamp < CACHE_DURATION)) {
+    console.log(`[CACHE] Serving cached spatial layers for ${cacheKey} (age: ${now - cache[cacheKey].timestamp}ms)`);
+    res.setHeader(
+      'Cache-Control',
+      'public, s-maxage=300, stale-while-revalidate=86400'
+    );
+    return res.json(cache[cacheKey].data);
+  }
+
+  try {
+    // We wrap ensureDbHydrated with withTimeout to prevent hanging on cold starts
+    await withTimeout(ensureDbHydrated(), 15000, "Database hydration timed out");
+
+    try {
+      const { data: kecData, error: kecErr } = await supabase.from('gis_kecamatan').select('id, objectid, kecamatan, sum_jum_pd, luas, kpdt_pddk, jlh_desa, kelompok, geom');
+      if (!kecErr && kecData && kecData.length > 0) {
+        const kecIndex = spatialLayers.findIndex(l => l.id === "layer_kecamatan");
+        if (kecIndex !== -1) {
+          spatialLayers[kecIndex].geojson = {
+            type: "FeatureCollection",
+            features: kecData.map((row: any) => {
+              const rawKecName = row.kecamatan || row.name || `Kecamatan ${row.id}`;
+              const cleanKecName = rawKecName
+                .toLowerCase()
+                .split(" ")
+                .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ")
+                .replace(/Kec\.\s*/i, "")
+                .trim();
+              const districtId = `dist_${cleanKecName.toLowerCase().replace(/\s+/g, "_")}`;
+              return {
+                type: "Feature",
+                geometry: row.geom || row.geojson,
+                properties: { ...row, id: districtId, _id: row.id, name: cleanKecName, rawName: rawKecName }
+              };
+            })
+          };
+        }
+      }
+    } catch (e) {}
+
+    try {
+      const { data: desaData, error: desaErr } = await supabase.from('gis_desa').select('id, name, kecamatan, label, jum_desa, luaskm_bps, jum_rt, jum_pdd, kepadatan, rata_pddrt, luas_gis, persenluas, kodebps, nama_desa, adm, aa, geom');
+      if (!desaErr && desaData && desaData.length > 0) {
+        const desaIndex = spatialLayers.findIndex(l => l.id === "layer_desa");
+        
+        let newVillagesData: any[] = [];
+        
+        const mappedFeatures = desaData.map((row: any) => {
+          let rawKecName = row.kecamatan || row.WADMKC || row.KECAMATAN || "";
+          
+          // Fallback spatial join in fetch handler using Turf
+          if (!rawKecName && (row.geom || row.geojson)) {
+            try {
+              const kecLayer = spatialLayers.find(l => l.id === "layer_kecamatan");
+              const kecFeatures = kecLayer?.geojson?.features || [];
+              const matchedKec = kecFeatures.find((kf: any) => {
+                if (!kf.geometry) return false;
+                try {
+                  return turf.booleanIntersects(
+                    { type: "Feature", geometry: row.geom || row.geojson, properties: {} },
+                    kf
+                  );
+                } catch (err) {
+                  return false;
+                }
+              });

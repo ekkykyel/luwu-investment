@@ -1,0 +1,26 @@
+--- src/App.tsx
++++ src/App.tsx
+@@ -662,0 +663,22 @@
++  useEffect(() => {
++    if (activeWorkspace === "OPERATOR") {
++      // It's handled by redirect now
++    }
++  }, [activeWorkspace]);
++
++  const loc = useLocation();
++  useEffect(() => {
++    const path = loc.pathname;
++    // Gunakan endsWith agar tidak salah tangkap rute parent!
++    if (path.endsWith("/investments/add")) {
++      setIsAddModalOpen(true);
++    }
++    if (path.endsWith("/users/add")) {
++      setIsCreateOperatorModalOpen(true);
++    }
++    if (path.endsWith("/tickets")) {
++      setIsLoiTicketsModalOpen(true);
++    }
++    if (path.endsWith("/enterprise")) {
++      setIsManagementPanelOpen(true);
++    }
++  }, [loc.pathname]);
