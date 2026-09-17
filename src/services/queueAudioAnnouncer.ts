@@ -8,8 +8,6 @@
  * 3. Chime Bandara Penutup (3-Tone Airport Bell: C5 - A4 - F4)
  */
 
-import { speakCrystalClearText } from '../utils/mppAudioEngine';
-
 let audioCtx: AudioContext | null = null;
 
 function getAudioContext(): AudioContext | null {
@@ -220,14 +218,38 @@ async function executeSingleAnnouncement(queueNumber: string, counterName: strin
       }
 
       try {
-        speakCrystalClearText(announcementText, {
-          lang: 'id',
-          rate: 0.88,
-          pitch: 1.02,
-          volume: 1.0,
-          onEnd: () => playClosingChime(),
-          onError: () => playClosingChime()
-        });
+        window.speechSynthesis.cancel(); // Hentikan ucapan sebelumnya
+
+        const utterance = new SpeechSynthesisUtterance(announcementText);
+        utterance.lang = 'id-ID';
+        utterance.rate = 0.85; // Kecepatan tenang khas petugas pengumuman bandara
+        utterance.pitch = 1.02; // Nada hangat dan jelas
+        utterance.volume = 1.0;
+
+        // Pilih suara bahasa Indonesia berwibawa jika tersedia
+        const voices = window.speechSynthesis.getVoices();
+        const idVoice = voices.find(v => 
+          v.lang.startsWith('id') || 
+          v.lang.includes('ID') || 
+          v.name.toLowerCase().includes('indonesia') ||
+          v.name.toLowerCase().includes('gadis') ||
+          v.name.toLowerCase().includes('ardi')
+        );
+        if (idVoice) {
+          utterance.voice = idVoice;
+        }
+
+        utterance.onend = () => {
+          // Putar Chime Penutup setelah pengumuman suara selesai
+          playClosingChime();
+        };
+
+        utterance.onerror = (e) => {
+          console.warn('TTS utterance error:', e);
+          playClosingChime();
+        };
+
+        window.speechSynthesis.speak(utterance);
       } catch (e) {
         console.warn('Speech synthesis execution error:', e);
         playClosingChime();

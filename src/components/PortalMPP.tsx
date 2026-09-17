@@ -1218,12 +1218,12 @@ export default function PortalMPP() {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-8">
-              <a className="text-emerald-700 dark:text-[#00FF99] border-b-2 border-[#00FF99] pb-0.5 font-sans text-sm font-semibold hover:text-slate-900 dark:text-white transition-colors" href="#hero">{t("mppPortal.nav.beranda")}</a>
-              <a className="text-slate-600 dark:text-gray-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:text-[#00FF99] transition-colors" href="#layanan">{t("mppPortal.nav.layanan")}</a>
-              <a className="text-slate-600 dark:text-gray-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:text-[#00FF99] transition-colors" href="#instansi">{t("mppPortal.nav.instansi")}</a>
-              <a className="text-slate-600 dark:text-gray-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:text-[#00FF99] transition-colors" href="#fasilitas">{t("mppPortal.nav.fasilitas")}</a>
-              <a className="text-slate-600 dark:text-gray-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:text-[#00FF99] transition-colors" href="#umkm">{t("mppPortal.nav.umkm", "Katalog UMKM")}</a>
-              <a className="text-slate-600 dark:text-gray-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:text-[#00FF99] transition-colors" href="#statistik">{t("mppPortal.nav.statistik")}</a>
+              <a className="text-emerald-700 dark:text-[#00FF99] border-b-2 border-emerald-600 dark:border-[#00FF99] pb-0.5 font-sans text-sm font-semibold hover:text-slate-900 dark:hover:text-white transition-colors" href="#hero">{t("mppPortal.nav.beranda")}</a>
+              <a className="text-slate-600 dark:text-slate-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:hover:text-[#00FF99] transition-colors" href="#layanan">{t("mppPortal.nav.layanan")}</a>
+              <a className="text-slate-600 dark:text-slate-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:hover:text-[#00FF99] transition-colors" href="#instansi">{t("mppPortal.nav.instansi")}</a>
+              <a className="text-slate-600 dark:text-slate-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:hover:text-[#00FF99] transition-colors" href="#fasilitas">{t("mppPortal.nav.fasilitas")}</a>
+              <a className="text-slate-600 dark:text-slate-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:hover:text-[#00FF99] transition-colors" href="#umkm">{t("mppPortal.nav.umkm", "Katalog UMKM")}</a>
+              <a className="text-slate-600 dark:text-slate-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:hover:text-[#00FF99] transition-colors" href="#statistik">{t("mppPortal.nav.statistik")}</a>
             </nav>
 
             {/* Header Right Actions */}
@@ -1489,7 +1489,7 @@ export default function PortalMPP() {
                   hidden: { opacity: 0, y: 15 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
                 }}
-                className="grid grid-cols-3 gap-6 lg:gap-8 w-full max-w-4xl"
+                className="grid grid-cols-3 gap-2.5 sm:gap-6 lg:gap-8 w-full max-w-4xl"
               >
                 <motion.button 
                   type="button"
@@ -1497,14 +1497,14 @@ export default function PortalMPP() {
                   whileHover={{ scale: 1.035, y: -4 }}
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                  className="w-full min-h-[48px] bg-white/75 dark:bg-[#0f172a]/50 backdrop-blur-2xl border border-slate-200/70 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.25)] rounded-3xl p-5 sm:p-8 flex flex-col items-center justify-center gap-2 sm:gap-4 group hover:border-emerald-500/90 hover:shadow-[0_20px_40px_rgba(16,185,129,0.18)] dark:hover:shadow-[0_0_35px_rgba(0,255,153,0.3)] transition-all duration-300 cursor-pointer relative overflow-hidden"
+                  className="w-full min-h-[48px] bg-white/75 dark:bg-[#0f172a]/50 backdrop-blur-2xl border border-slate-200/70 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.25)] rounded-2xl sm:rounded-3xl p-3 sm:p-7 md:p-8 flex flex-col items-center justify-center gap-2 sm:gap-4 group hover:border-emerald-500/90 hover:shadow-[0_20px_40px_rgba(16,185,129,0.18)] dark:hover:shadow-[0_0_35px_rgba(0,255,153,0.3)] transition-all duration-300 cursor-pointer relative overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-emerald-500/0 to-emerald-500/5 group-hover:to-emerald-500/10 transition-colors pointer-events-none" />
-                  <div className="w-11 h-11 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/20 dark:border-emerald-400/20 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform duration-300 shadow-inner">
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/20 dark:border-emerald-400/20 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform duration-300 shadow-inner">
                     <Ticket className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 stroke-[2.2]" />
                   </div>
                   <div className="flex flex-col items-center text-center">
-                    <span className="font-sans text-xs sm:text-base md:text-lg font-bold text-slate-800 dark:text-white tracking-tight leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                    <span className="font-sans text-[11px] sm:text-base md:text-lg font-bold text-slate-800 dark:text-white tracking-tight leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                       {t("mppPortal.quickActions.antrean")}
                     </span>
                     <span className="hidden sm:inline-block text-xs text-slate-500 dark:text-slate-400 leading-normal mt-1 max-w-[180px]">{t("mppPortal.quickActions.antreanDesc")}</span>
@@ -1517,14 +1517,14 @@ export default function PortalMPP() {
                   whileHover={{ scale: 1.035, y: -4 }}
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                  className="w-full min-h-[48px] bg-white/75 dark:bg-[#0f172a]/50 backdrop-blur-2xl border border-slate-200/70 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.25)] rounded-3xl p-5 sm:p-8 flex flex-col items-center justify-center gap-2 sm:gap-4 group hover:border-blue-500/90 hover:shadow-[0_20px_40px_rgba(59,130,246,0.18)] dark:hover:shadow-[0_0_35px_rgba(96,165,250,0.3)] transition-all duration-300 cursor-pointer relative overflow-hidden"
+                  className="w-full min-h-[48px] bg-white/75 dark:bg-[#0f172a]/50 backdrop-blur-2xl border border-slate-200/70 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.25)] rounded-2xl sm:rounded-3xl p-3 sm:p-7 md:p-8 flex flex-col items-center justify-center gap-2 sm:gap-4 group hover:border-blue-500/90 hover:shadow-[0_20px_40px_rgba(59,130,246,0.18)] dark:hover:shadow-[0_0_35px_rgba(96,165,250,0.3)] transition-all duration-300 cursor-pointer relative overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-blue-500/0 to-blue-500/5 group-hover:to-blue-500/10 transition-colors pointer-events-none" />
-                  <div className="w-11 h-11 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-2xl bg-blue-500/10 dark:bg-blue-500/15 border border-blue-500/20 dark:border-blue-500/20 flex items-center justify-center text-blue-700 dark:text-blue-400 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform duration-300 shadow-inner">
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-blue-500/10 dark:bg-blue-500/15 border border-blue-500/20 dark:border-blue-500/20 flex items-center justify-center text-blue-700 dark:text-blue-400 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform duration-300 shadow-inner">
                     <SearchCheck className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 stroke-[2.2]" />
                   </div>
                   <div className="flex flex-col items-center text-center">
-                    <span className="font-sans text-xs sm:text-base md:text-lg font-bold text-slate-800 dark:text-white tracking-tight leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    <span className="font-sans text-[11px] sm:text-base md:text-lg font-bold text-slate-800 dark:text-white tracking-tight leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       {t("mppPortal.quickActions.cekStatus")}
                     </span>
                     <span className="hidden sm:inline-block text-xs text-slate-500 dark:text-slate-400 leading-normal mt-1 max-w-[180px]">{t("mppPortal.quickActions.cekStatusDesc")}</span>
@@ -1540,14 +1540,14 @@ export default function PortalMPP() {
                   whileHover={{ scale: 1.035, y: -4 }}
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                  className="w-full min-h-[48px] bg-white/75 dark:bg-[#0f172a]/50 backdrop-blur-2xl border border-slate-200/70 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.25)] rounded-3xl p-5 sm:p-8 flex flex-col items-center justify-center gap-2 sm:gap-4 group hover:border-amber-500/90 hover:shadow-[0_20px_40px_rgba(245,158,11,0.18)] dark:hover:shadow-[0_0_35px_rgba(255,215,0,0.3)] transition-all duration-300 cursor-pointer relative overflow-hidden"
+                  className="w-full min-h-[48px] bg-white/75 dark:bg-[#0f172a]/50 backdrop-blur-2xl border border-slate-200/70 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.25)] rounded-2xl sm:rounded-3xl p-3 sm:p-7 md:p-8 flex flex-col items-center justify-center gap-2 sm:gap-4 group hover:border-amber-500/90 hover:shadow-[0_20px_40px_rgba(245,158,11,0.18)] dark:hover:shadow-[0_0_35px_rgba(255,215,0,0.3)] transition-all duration-300 cursor-pointer relative overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 via-amber-500/0 to-amber-500/5 group-hover:to-amber-500/10 transition-colors pointer-events-none" />
-                  <div className="w-11 h-11 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-2xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/20 dark:border-amber-500/20 flex items-center justify-center text-amber-700 dark:text-amber-400 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform duration-300 shadow-inner">
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/20 dark:border-amber-500/20 flex items-center justify-center text-amber-700 dark:text-amber-400 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform duration-300 shadow-inner">
                     <Pointer className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 stroke-[2.2]" />
                   </div>
                   <div className="flex flex-col items-center text-center">
-                    <span className="font-sans text-xs sm:text-base md:text-lg font-bold text-slate-800 dark:text-white tracking-tight leading-tight group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                    <span className="font-sans text-[11px] sm:text-base md:text-lg font-bold text-slate-800 dark:text-white tracking-tight leading-tight group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                       {t("mppPortal.quickActions.mandiri")}
                     </span>
                     <span className="hidden sm:inline-block text-xs text-slate-500 dark:text-slate-400 leading-normal mt-1 max-w-[180px]">{t("mppPortal.quickActions.mandiriDesc")}</span>

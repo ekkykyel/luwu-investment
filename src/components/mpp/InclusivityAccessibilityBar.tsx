@@ -9,7 +9,6 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { resolveMppVoiceQuery, VoiceAssistantResponse, appendVoiceClosing } from '../../utils/mppVoiceKnowledge';
-import { speakCrystalClearText, stopAllSpeech, formatTextForCrystalClearTts } from '../../utils/mppAudioEngine';
 
 interface InclusivityAccessibilityBarProps {
   isDark?: boolean;
@@ -399,35 +398,100 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
   };
 
   /**
-   * Crystal Clear High-Fidelity Anti-Stutter Speech Engine:
-   * 1. Phonetically converts acronyms (MPP -> M P P, PBG -> P B G) & removes local apostrophes.
-   * 2. Retains persistent global SpeechSynthesisUtterance references to block JavaScript V8 Garbage Collector mid-speech.
-   * 3. Runs active Chromium audio keep-alive interval to prevent Chrome freeze on long sentences.
-   * 4. Smart sentence chunking with 60ms micro-pauses for natural human breathing cadence.
+   * Crystal Clear High-Fidelity TTS Engine:
+   * 1. Detects best synthesizer voice (Google, Natural, Neural) for ID, EN, or ZH.
+   * 2. Splits long text into sentence chunks to bypass Android Chrome's utterance truncation bug.
+   * 3. Sets articulate, calm pacing suitable for public service explanations.
    */
   const speakMessage = (text: string, lang = voiceLanguage, customRate = speechRate) => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
     
     speechSessionRef.current += 1;
+    const currentSessionId = speechSessionRef.current;
+
+    window.speechSynthesis.cancel();
+    if (!text.trim()) return;
+
+    // Sentence splitting to prevent Android Chrome truncation on long strings
+    const sentenceChunks = text
+      .split(/(?<=[.?!;。\n！？])\s+/)
+      .map(s => s.trim())
+      .filter(s => s.length > 0);
+
+    if (sentenceChunks.length === 0) return;
+
     setIsSpeaking(true);
 
-    speakCrystalClearText(text, {
-      lang,
-      rate: customRate,
-      pitch: 1.0,
-      volume: 1.0,
-      availableVoices,
-      onStart: () => setIsSpeaking(true),
-      onEnd: () => setIsSpeaking(false),
-      onError: () => setIsSpeaking(false)
-    });
+    const voiceList = availableVoices.length > 0 ? availableVoices : window.speechSynthesis.getVoices();
+    let targetVoice: SpeechSynthesisVoice | null = null;
+
+    if (lang === 'en') {
+      targetVoice = voiceList.find(v => (v.lang.includes('en-US') || v.lang.includes('en_US')) && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Samantha') || v.name.includes('Daniel') || v.name.includes('Jenny'))) ||
+                    voiceList.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Guy'))) ||
+                    voiceList.find(v => v.lang.startsWith('en')) || null;
+    } else if (lang === 'zh') {
+      targetVoice = voiceList.find(v => (v.lang.includes('zh-CN') || v.lang.includes('zh_CN')) && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Xiaoxiao') || v.name.includes('Yunxi') || v.name.includes('Tingting') || v.name.includes('Meijia'))) ||
+                    voiceList.find(v => (v.lang.startsWith('zh') || v.lang.includes('cmn')) && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Neural'))) ||
+                    voiceList.find(v => v.lang.startsWith('zh') || v.lang.includes('cmn')) || null;
+    } else {
+      targetVoice = voiceList.find(v => v.lang.includes('id') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Damayanti') || v.name.includes('Gadis') || v.name.includes('Ardi'))) ||
+                    voiceList.find(v => v.lang.startsWith('id')) || null;
+    }
+
+    let currentIdx = 0;
+
+    const playNextChunk = () => {
+      if (speechSessionRef.current !== currentSessionId) return;
+
+      if (currentIdx >= sentenceChunks.length) {
+        setIsSpeaking(false);
+        return;
+      }
+
+      const chunk = sentenceChunks[currentIdx];
+      const utterance = new SpeechSynthesisUtterance(chunk);
+      
+      if (lang === 'en') {
+        utterance.lang = 'en-US';
+      } else if (lang === 'zh') {
+        utterance.lang = 'zh-CN';
+      } else {
+        utterance.lang = 'id-ID';
+      }
+
+      if (targetVoice) utterance.voice = targetVoice;
+      utterance.rate = customRate;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+
+      utterance.onend = () => {
+        if (speechSessionRef.current !== currentSessionId) return;
+        currentIdx++;
+        playNextChunk();
+      };
+
+      utterance.onerror = (e) => {
+        if (speechSessionRef.current !== currentSessionId) return;
+        if (e.error === 'canceled' || e.error === 'interrupted') {
+          return;
+        }
+        currentIdx++;
+        playNextChunk();
+      };
+
+      window.speechSynthesis.speak(utterance);
+    };
+
+    playNextChunk();
   };
 
   const stopSpeaking = () => {
     speechSessionRef.current += 1;
-    stopAllSpeech();
-    setIsSpeaking(false);
-    notify(voiceLanguage === 'zh' ? '已停止语音朗读。' : voiceLanguage === 'en' ? 'Voice guide stopped.' : 'Suara panduan dihentikan.');
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      notify(voiceLanguage === 'zh' ? '已停止语音朗读。' : voiceLanguage === 'en' ? 'Voice guide stopped.' : 'Suara panduan dihentikan.');
+    }
   };
 
   const toggleHighContrast = () => {
@@ -1305,12 +1369,12 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
         )}
       </AnimatePresence>
 
-      {/* Floating Action Button (FAB) for Voice Assistant - Always visible & Cool */}
+      {/* Floating Action Button (FAB) for Voice Assistant - Visible on Desktop, Clean on Mobile */}
       <motion.div
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", delay: 1 }}
-        className="fixed bottom-24 right-4 sm:bottom-12 sm:right-12 z-[60]"
+        className="hidden md:flex fixed bottom-28 right-8 z-[45]"
       >
         {/* Animated rings for 'listening' mode */}
         {isListening && (

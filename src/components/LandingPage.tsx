@@ -1713,7 +1713,7 @@ export default function LandingPage({
           <div className="flex items-center justify-between h-16 sm:h-20 gap-1.5 sm:gap-4">
             {/* Logo area */}
             <div
-              className="flex items-center gap-1.5 sm:gap-3 cursor-pointer shrink min-w-0 group"
+              className="flex items-center gap-1.5 sm:gap-3 cursor-pointer shrink-0 group"
               onClick={() => scrollToSection("hero-section")}
             >
               <div className="p-1 sm:p-2 rounded-[12px] bg-gradient-to-br from-blue-600/10 to-emerald-600/10 shrink-0 border border-blue-500/10 group-hover:shadow-md group-hover:scale-105 transition-all duration-300">
@@ -1725,9 +1725,9 @@ export default function LandingPage({
                 />
               </div>
               <span
-                className={`font-bold text-sm sm:text-xl tracking-tight whitespace-nowrap truncate block transition-colors duration-500 ${isDark ? "text-white" : "text-slate-900"}`}
+                className={`font-extrabold text-sm sm:text-xl tracking-tight whitespace-nowrap block transition-colors duration-500 ${isDark ? "text-white" : "text-slate-900"}`}
               >
-                InvestLuwu<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-emerald-500 font-bold ml-0.5">{t("landing.hub", "Hub")}</span>
+                InvestLuwu<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-emerald-500 font-extrabold ml-0.5">{t("landing.hub", "Hub")}</span>
               </span>
             </div>
 
@@ -1856,7 +1856,7 @@ export default function LandingPage({
               <motion.button whileTap={{ scale: 0.95 }}
                 type="button"
                 onClick={() => onOpenDiagnostic && onOpenDiagnostic()}
-                className={`flex items-center justify-center p-2 w-10 h-10 sm:w-11 sm:h-11 min-h-[40px] sm:min-h-[44px] rounded-full border transition-all duration-300 shadow-sm hover:-translate-y-0.5 relative overflow-hidden group shrink-0
+                className={`hidden sm:flex items-center justify-center p-2 w-10 h-10 sm:w-11 sm:h-11 min-h-[40px] sm:min-h-[44px] rounded-full border transition-all duration-300 shadow-sm hover:-translate-y-0.5 relative overflow-hidden group shrink-0
                   ${isDark 
                     ? "border-slate-700 bg-slate-800/80 text-emerald-400 hover:bg-slate-700 hover:text-emerald-300 shadow-black/20" 
                     : "border-slate-200 bg-white text-emerald-600 hover:bg-slate-50 hover:text-emerald-700"}`}
@@ -2265,7 +2265,7 @@ export default function LandingPage({
                     <div className={`p-1.5 sm:p-2 rounded-lg sm:rounded-xl ${stat.iconBg} mb-1.5 sm:mb-2`}>
                       <stat.icon size={18} className={`${stat.iconColor} sm:w-5 sm:h-5`} />
                     </div>
-                    <div className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight mb-0.5 sm:mb-1 text-center truncate max-w-full">{stat.value}</div>
+                    <div className="text-sm sm:text-xl md:text-2xl font-black tracking-tight mb-0.5 sm:mb-1 text-center whitespace-nowrap overflow-hidden text-ellipsis max-w-full px-1 text-slate-900 dark:text-white" title={String(stat.value)}>{stat.value}</div>
                     <div className={`text-[11px] sm:text-xs uppercase tracking-wider sm:tracking-widest font-bold mb-1.5 sm:mb-2 text-center ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
                       {stat.label}
                     </div>
@@ -4460,27 +4460,6 @@ export default function LandingPage({
         )}
       </AnimatePresence>
 
-      {/* Floating Android Native Fullscreen Action Pill (Menyerupai Aplikasi Android Asli) */}
-      <AnimatePresence>
-        {!isFullscreen && isMobile && (
-          <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.85 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 30, scale: 0.85 }}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            className="md:hidden fixed bottom-[72px] left-1/2 -translate-x-1/2 z-[110] pointer-events-auto"
-          >
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleRequestFullscreen(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/95 dark:bg-emerald-950/95 text-emerald-400 text-xs font-bold shadow-xl shadow-black/50 backdrop-blur-xl border border-emerald-500/50 transition-all cursor-pointer animate-pulse"
-            >
-              <Maximize2 className="w-3.5 h-3.5 text-amber-300" />
-              <span>{t("nav.fullscreenApp", "Mode Layar Penuh (Fullscreen)")}</span>
-            </motion.button>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Android Native-Style Bottom Navigation Dock for Landing Page */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-white/85 dark:bg-slate-950/85 backdrop-blur-xl border-t border-slate-200/80 dark:border-white/10 px-3 py-1.5 flex items-center justify-around shadow-2xl shadow-emerald-950/20 pb-[calc(env(safe-area-inset-bottom,0px)+6px)]">
