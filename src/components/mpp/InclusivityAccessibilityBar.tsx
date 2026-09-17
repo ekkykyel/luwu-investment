@@ -197,7 +197,13 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
 
   // Clean up timers on unmount
   useEffect(() => {
+    const handleTriggerVoice = () => {
+      startVoiceListening();
+    };
+    window.addEventListener('open-mpp-voice-assistant', handleTriggerVoice);
+
     return () => {
+      window.removeEventListener('open-mpp-voice-assistant', handleTriggerVoice);
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
       if (silenceTimeoutRef.current) clearTimeout(silenceTimeoutRef.current);
       if (recognitionRef.current) {
@@ -1369,49 +1375,87 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
         )}
       </AnimatePresence>
 
-      {/* Floating Action Button (FAB) for Voice Assistant - Visible on Desktop, Clean on Mobile */}
+      {/* Floating Action Button (FAB) Mode Fly - Selalu tampil saat scroll, khusus dioptimalkan untuk Android & Mobile */}
       <motion.div
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", delay: 1 }}
-        className="hidden md:flex fixed bottom-28 right-8 z-[45]"
+        initial={{ scale: 0, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        transition={{ type: "spring", damping: 20, stiffness: 300, delay: 0.5 }}
+        className="fixed bottom-24 right-3 sm:bottom-28 sm:right-6 z-40"
       >
-        {/* Animated rings for 'listening' mode */}
-        {isListening && (
+        {/* Animated Sonar Rings saat aktif atau Ambient Pulse Glow saat siaga */}
+        {isListening ? (
           <>
             <div className="absolute inset-0 bg-rose-500 rounded-full animate-ping opacity-75"></div>
-            <div className="absolute inset-0 bg-rose-400 rounded-full animate-ping opacity-50" style={{ animationDelay: "0.2s" }}></div>
+            <div className="absolute -inset-1.5 bg-rose-400 rounded-full animate-ping opacity-40" style={{ animationDelay: "0.2s" }}></div>
           </>
+        ) : (
+          <div className="absolute -inset-1 bg-emerald-500/25 rounded-full blur-md animate-pulse pointer-events-none"></div>
         )}
-        
-        <button
+
+        <motion.button
+          id="mpp-floating-voice-assistant-button"
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.93 }}
           onClick={startVoiceListening}
-          className={`relative flex items-center justify-center rounded-full w-14 h-14 sm:w-16 sm:h-16 shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all cursor-pointer ${
-            isListening 
-              ? 'bg-rose-500 text-white ring-4 ring-rose-500/50' 
-              : 'bg-gradient-to-br from-emerald-400 to-emerald-600 text-white hover:shadow-[0_0_40px_rgba(16,185,129,0.8)] border-2 border-emerald-300/30'
+          className={`relative flex items-center gap-2 sm:gap-2.5 p-1.5 pr-3.5 sm:pr-4 rounded-full shadow-2xl transition-all cursor-pointer backdrop-blur-xl border-2 select-none group ${
+            isListening
+              ? 'bg-rose-600/95 text-white border-rose-300 shadow-[0_0_30px_rgba(244,63,94,0.7)] ring-4 ring-rose-500/40 animate-pulse'
+              : 'bg-slate-900/95 text-white border-emerald-400/80 shadow-[0_8px_30px_rgba(16,185,129,0.45)] hover:border-emerald-300 hover:shadow-[0_10px_35px_rgba(16,185,129,0.65)]'
           }`}
-          title="Tanya Suara Asisten Cerdas MPP"
+          title="Tanya Suara Asisten Cerdas MPP (Tekan untuk Berbicara)"
+          aria-label="Tanya Suara Asisten Cerdas MPP"
         >
-          {isListening ? (
-            <Mic className="w-6 h-6 sm:w-8 sm:h-8 text-white animate-pulse" />
-          ) : (
-            <div className="relative flex items-center justify-center group">
-              <Bot className="w-6 h-6 sm:w-7 sm:h-7 text-white group-hover:scale-110 transition-transform" />
-              <motion.div 
-                animate={{ rotate: 360 }}
-                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                className="absolute -top-1 -right-1"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-300 drop-shadow-[0_0_5px_rgba(252,211,77,0.8)]" />
-              </motion.div>
-              {/* Micro badge indicator */}
-              <span className="absolute -bottom-1 -right-1 bg-amber-500 text-[9px] font-black px-1.5 py-0.5 rounded-full border-2 border-emerald-600 text-white shadow-sm tracking-wider">
-                AI
+          {/* Ikon Lingkaran Berwarna & Bercahaya (Inspirasi Ramah Inklusif & Tanya Suara Header) */}
+          <div className={`relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full shadow-md shrink-0 transition-transform ${
+            isListening
+              ? 'bg-white text-rose-600'
+              : 'bg-gradient-to-tr from-emerald-500 via-teal-400 to-[#00FF99] text-slate-950 shadow-[0_0_16px_rgba(0,255,153,0.7)]'
+          }`}>
+            {isListening ? (
+              <Mic className="w-5 h-5 sm:w-6 sm:h-6 animate-pulse" />
+            ) : (
+              <>
+                <Mic className="w-5 h-5 sm:w-5.5 sm:h-5.5 text-slate-950 group-hover:scale-110 transition-transform" />
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
+                  className="absolute -top-1 -right-1"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-300 drop-shadow-[0_0_6px_rgba(252,211,77,0.95)]" />
+                </motion.div>
+              </>
+            )}
+          </div>
+
+          {/* Label Informasi Teks & Badge Bahasa */}
+          <div className="flex flex-col items-start text-left leading-tight">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11.5px] sm:text-xs font-black tracking-wide font-sans text-white">
+                {isListening 
+                  ? (voiceLanguage === 'zh' ? '正在倾听...' : voiceLanguage === 'en' ? 'Listening...' : 'Mendengarkan...')
+                  : (voiceLanguage === 'zh' ? '政务问答' : voiceLanguage === 'en' ? 'Voice Ask' : 'Tanya Suara')}
+              </span>
+              <span className={`text-[8.5px] font-mono font-black px-1.5 py-0.2 rounded-full border ${
+                isListening 
+                  ? 'bg-white/20 text-white border-white/40' 
+                  : 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40'
+              }`}>
+                {voiceLanguage.toUpperCase()}
               </span>
             </div>
-          )}
-        </button>
+            <span className="text-[9px] sm:text-[9.5px] font-bold text-emerald-400 dark:text-emerald-300 font-sans tracking-tight">
+              {isListening 
+                ? 'Bicara sekarang...' 
+                : (voiceLanguage === 'zh' ? '智能语音助手' : voiceLanguage === 'en' ? 'MPP Voice AI' : 'Asisten Ramah MPP')}
+            </span>
+          </div>
+
+          {/* Live Micro Status Dot */}
+          <div className="relative flex items-center justify-center pl-0.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping absolute"></span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+          </div>
+        </motion.button>
       </motion.div>
     </>
   );
