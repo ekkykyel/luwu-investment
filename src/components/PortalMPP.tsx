@@ -1175,7 +1175,7 @@ export default function PortalMPP() {
         <AuroraBackground />
       </div>
       
-      <div className="relative z-10 pb-28 md:pb-20 w-full">
+      <div className="relative z-10 pb-36 md:pb-24 w-full">
         {/* Inclusivity & Accessibility Bar (Mode Ramah Disabilitas, Text-to-Speech & High Contrast) */}
         <InclusivityAccessibilityBar isDark={isDark} />
 
@@ -1598,18 +1598,34 @@ export default function PortalMPP() {
           >
             {/* Header Seksi */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
-              <span className="text-[11px] sm:text-xs md:text-sm font-semibold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-2 block text-center font-sans bg-emerald-500/10 px-3 py-1 rounded-full">
-                {t("mppPortal.motto.badge")}
-              </span>
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug text-slate-900 dark:text-white font-sans mt-1">
-                {t("mppPortal.motto.title")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-400 dark:from-emerald-400 dark:to-[#F3C01E]">{t("mppPortal.motto.magatti")}</span>
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-500/10 dark:bg-emerald-400/10 border border-emerald-500/25 dark:border-emerald-400/25 mb-3 shadow-xs">
+                <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-300 font-sans">
+                  {t("mppPortal.motto.badge")}
+                </span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans mt-1">
+                {t("mppPortal.motto.title")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-500 dark:from-emerald-400 dark:via-teal-300 dark:to-[#00FF99]">{t("mppPortal.motto.magatti")}</span>
               </h2>
-              <p className="text-base text-slate-500 dark:text-slate-350 max-w-[96%] mx-auto leading-relaxed mt-3 mb-5 text-center italic text-balance">
-                {t("mppPortal.motto.subtitle")}
-              </p>
-              <div className="flex items-center gap-1.5 mt-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                <div className="w-10 h-[2px] rounded-full bg-gradient-to-r from-emerald-500 to-transparent"></div>
+              
+              {/* Motto Tagline Pill Indicators */}
+              <div className="mt-3.5 mb-3 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">
+                <span className="px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/70 dark:border-emerald-500/30">Murah</span>
+                <span className="text-slate-300 dark:text-slate-700 font-bold">•</span>
+                <span className="px-2.5 py-0.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200/70 dark:border-teal-500/30">Gampang</span>
+                <span className="text-slate-300 dark:text-slate-700 font-bold">•</span>
+                <span className="px-2.5 py-0.5 rounded-lg bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 border border-cyan-200/70 dark:border-cyan-500/30">Cepat</span>
+                <span className="text-slate-300 dark:text-slate-700 font-bold">•</span>
+                <span className="px-2.5 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/70 dark:border-blue-500/30">Tepat</span>
+                <span className="text-slate-300 dark:text-slate-700 font-bold">•</span>
+                <span className="px-2.5 py-0.5 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/70 dark:border-amber-500/30">Inovatif</span>
+              </div>
+
+              {/* Polished Subtle Divider */}
+              <div className="flex items-center justify-center gap-2 mt-1">
+                <div className="w-8 h-[2px] rounded-full bg-gradient-to-r from-transparent to-emerald-500/40"></div>
+                <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                <div className="w-8 h-[2px] rounded-full bg-gradient-to-l from-transparent to-emerald-500/40"></div>
               </div>
             </div>
 
@@ -1635,21 +1651,21 @@ export default function PortalMPP() {
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
                 </div>
               ) : (
-                <div className="relative z-10 w-full h-full rounded-3xl shadow-2xl border border-emerald-500/30 bg-gradient-to-br from-slate-900 via-emerald-950/70 to-slate-950 flex flex-col items-center justify-center p-4 sm:p-8 text-center overflow-hidden">
-                  <div className="absolute -top-24 -left-24 w-72 h-72 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
-                  <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none" />
-                  <div className="relative z-10 flex flex-col items-center gap-2 sm:gap-3">
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center mb-1 shadow-[0_0_25px_rgba(16,185,129,0.3)]">
-                      <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-400" />
+                <div className="relative z-10 w-full h-full rounded-3xl shadow-xl dark:shadow-2xl border border-emerald-500/20 dark:border-emerald-500/30 bg-gradient-to-br from-white via-emerald-50/40 to-teal-50/30 dark:from-slate-900 dark:via-emerald-950/70 dark:to-slate-950 flex flex-col items-center justify-center p-6 sm:p-10 text-center overflow-hidden transition-colors">
+                  <div className="absolute -top-24 -left-24 w-72 h-72 bg-emerald-400/15 dark:bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
+                  <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-cyan-400/15 dark:bg-cyan-500/20 rounded-full blur-3xl pointer-events-none" />
+                  <div className="relative z-10 flex flex-col items-center gap-2.5 sm:gap-3">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-emerald-500/15 dark:bg-emerald-500/20 border border-emerald-500/30 dark:border-emerald-500/40 flex items-center justify-center mb-1 shadow-sm dark:shadow-[0_0_25px_rgba(16,185,129,0.3)] text-emerald-600 dark:text-emerald-400">
+                      <Sparkles className="w-6 h-6 sm:w-8 sm:h-8" />
                     </div>
-                    <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-widest text-emerald-400 mb-1 block">
+                    <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-0.5 block">
                       {t("mppPortal.motto.portalName")}
                     </span>
-                    <h3 className="text-sm sm:text-base md:text-lg font-medium text-white font-sans">
-                      {t("mppPortal.motto.title")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">{t("mppPortal.motto.magatti")}</span>
+                    <h3 className="text-base sm:text-xl md:text-2xl font-bold text-slate-900 dark:text-white font-sans">
+                      {t("mppPortal.motto.title")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-cyan-400">{t("mppPortal.motto.magatti")}</span>
                     </h3>
-                    <p className="text-xs sm:text-sm text-slate-300 italic max-w-xl leading-normal">
-                      "{t("mppPortal.motto.subtitle")}"
+                    <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
+                      Pelayanan Publik Terpadu, Cepat, dan Transparan untuk Seluruh Masyarakat Kabupaten Luwu
                     </p>
                   </div>
                 </div>
@@ -1699,13 +1715,13 @@ export default function PortalMPP() {
           >
             {/* Header Seksi Antrean Online Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
-              <span className="text-[11px] sm:text-xs md:text-sm font-semibold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-2 block text-center font-sans bg-emerald-500/10 px-3 py-1 rounded-full">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                 {t("mppPortal.antrean.badge")}
               </span>
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug text-slate-900 dark:text-white font-sans mt-1">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans mt-1">
                 {t("mppPortal.antrean.title")}
               </h2>
-              <p className="text-base text-slate-500 dark:text-slate-350 max-w-[96%] mx-auto leading-relaxed mt-3 mb-5 text-center text-balance">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-5 text-center text-balance">
                 {t("mppPortal.antrean.subtitle")}
               </p>
               <div className="flex items-center gap-1.5 mt-2">
@@ -1841,13 +1857,13 @@ export default function PortalMPP() {
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
-              <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-2 block text-center font-sans">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                 {t("mppPortal.instansi.badge")}
               </span>
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug text-slate-900 dark:text-white font-sans">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
                 {t("mppPortal.instansi.title")}
               </h2>
-              <p className="text-base text-slate-600 dark:text-slate-300 max-w-[96%] mx-auto leading-relaxed mt-3 mb-6 text-center text-balance">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-6 text-center text-balance">
                 {t("mppPortal.instansi.desc")}
               </p>
               <div className="w-12 sm:w-16 h-1 bg-emerald-500 rounded-full mx-auto mt-3 sm:mt-4 mb-2"></div>
@@ -1989,13 +2005,13 @@ export default function PortalMPP() {
           >
             {/* Section Header Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
-              <span className="text-[11px] sm:text-xs md:text-sm font-semibold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-2 block text-center font-sans bg-emerald-500/10 px-3 py-1 rounded-full">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                 {t("mppPortal.layanan.badge")}
               </span>
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug text-slate-900 dark:text-white font-sans mt-1">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans mt-1">
                 {t("mppPortal.layanan.title")}
               </h2>
-              <p className="text-base text-slate-500 dark:text-slate-350 max-w-[96%] mx-auto leading-relaxed mt-3 mb-5 text-center">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-5 text-center">
                 {t("mppPortal.layanan.subtitle")}
               </p>
               <div className="flex items-center gap-1.5 mt-2">
@@ -2184,13 +2200,13 @@ export default function PortalMPP() {
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
-              <span className="text-[11px] sm:text-xs md:text-sm font-semibold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-2 block text-center font-sans bg-emerald-500/10 px-3 py-1 rounded-full">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                 {t("mppPortal.fasilitas.badge")}
               </span>
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug text-slate-900 dark:text-white font-sans mt-1">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans mt-1">
                 {t("mppPortal.fasilitas.title")}
               </h2>
-              <p className="text-base text-slate-500 dark:text-slate-350 max-w-[96%] mx-auto leading-relaxed mt-3 mb-5 text-center">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-5 text-center">
                 {t("mppPortal.fasilitas.subtitle")}
               </p>
               <div className="flex items-center gap-1.5 mt-2 mb-2">
@@ -2487,7 +2503,7 @@ export default function PortalMPP() {
                 <Store className="w-3.5 h-3.5" />
                 {t("umkm_catalog", "Katalog Kemitraan UMKM Luwu")}
               </span>
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug text-slate-900 dark:text-white font-sans">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
                 {t("umkm_catalog_title", "Galeri & Kemitraan UMKM Unggulan MPP")}
               </h2>
               <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 max-w-[96%] mx-auto leading-relaxed mt-3 mb-6 text-center">
@@ -2695,13 +2711,13 @@ export default function PortalMPP() {
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
-              <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-2 block text-center font-sans">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                 {t("mppPortal.statistik.badge")}
               </span>
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug text-slate-900 dark:text-white font-sans">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
                 {t("mppPortal.statistik.title")}
               </h2>
-              <p className="text-base text-slate-600 dark:text-slate-300 max-w-[96%] mx-auto leading-relaxed mt-3 mb-6 text-center">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-6 text-center">
                 {t("mppPortal.statistik.subtitle")}
               </p>
               <div className="w-12 sm:w-16 h-1 bg-emerald-500 rounded-full mx-auto mt-4"></div>
@@ -2876,13 +2892,13 @@ export default function PortalMPP() {
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
-              <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-2 block text-center font-sans">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                 {t("mppPortal.survey.badge")}
               </span>
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug text-slate-900 dark:text-white font-sans">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
                 {t("mppPortal.survey.title")}
               </h2>
-              <p className="text-base text-slate-600 dark:text-slate-300 max-w-[96%] mx-auto leading-relaxed mt-3 mb-6 text-center">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-6 text-center">
                 {t("mppPortal.survey.subtitle")}
               </p>
               <div className="w-12 sm:w-16 h-1 bg-emerald-500 rounded-full mx-auto mt-4"></div>
@@ -2965,13 +2981,13 @@ export default function PortalMPP() {
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
-              <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-2 block text-center font-sans">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                 {t("mppPortal.pengaduan.badge")}
               </span>
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug text-slate-900 dark:text-white font-sans">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
                 {t("mppPortal.pengaduan.title")}
               </h2>
-              <p className="text-base text-slate-600 dark:text-slate-300 max-w-[96%] mx-auto leading-relaxed mt-3 mb-6 text-center">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-6 text-center">
                 {t("mppPortal.pengaduan.subtitle")}
               </p>
               <div className="w-12 sm:w-16 h-1 bg-emerald-500 rounded-full mx-auto mt-4"></div>
@@ -3162,13 +3178,13 @@ export default function PortalMPP() {
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
-              <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-2 block text-center font-sans">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                 {t("mppPortal.alur.badge")}
               </span>
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug text-slate-900 dark:text-white font-sans">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
                 {t("mppPortal.alur.title")}
               </h2>
-              <p className="text-base text-slate-600 dark:text-slate-300 max-w-[96%] mx-auto leading-relaxed mt-3 mb-6 text-center">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-6 text-center">
                 {t("mppPortal.alur.subtitle")}
               </p>
               <div className="w-12 sm:w-16 h-1 bg-emerald-500 rounded-full mx-auto mt-4"></div>
@@ -3423,10 +3439,10 @@ export default function PortalMPP() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 gap-4">
               <div>
-                <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-2 block font-sans">
+                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                   {t("mppPortal.news.badge", "Publikasi Resmi")}
                 </span>
-                <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug text-slate-900 dark:text-white font-sans">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
                   {t("mppPortal.news.title", "Berita & Pengumuman")}
                 </h2>
                 <p className="text-base text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed mt-2">
@@ -3523,10 +3539,10 @@ export default function PortalMPP() {
               transition={{ duration: 0.35, ease: "easeOut" }}
               className="relative z-10 max-w-4xl mx-auto px-4 text-center mb-8 sm:mb-12 flex flex-col items-center"
             >
-              <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-widest text-emerald-400 mb-2 block text-center font-sans">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/15 border border-emerald-500/30 px-3.5 py-1 rounded-full">
                 {t("mppPortal.ulasan.badge")}
               </span>
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug text-white font-sans">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-white font-sans">
                 {t("mppPortal.ulasan.title")}
               </h2>
               <p className="text-base text-slate-300 max-w-2xl mx-auto leading-relaxed mt-3 mb-6 text-center">
@@ -3608,13 +3624,13 @@ export default function PortalMPP() {
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
-              <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-2 block text-center font-sans">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                 {t("mppPortal.kontak.badge")}
               </span>
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug text-slate-900 dark:text-white font-sans">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
                 {t("mppPortal.kontak.title")}
               </h2>
-              <p className="text-base text-slate-600 dark:text-slate-300 max-w-[96%] mx-auto leading-relaxed mt-3 mb-6 text-center">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-6 text-center">
                 {t("mppPortal.kontak.subtitle")}
               </p>
               <div className="w-12 sm:w-16 h-1 bg-emerald-500 rounded-full mx-auto mt-4"></div>
@@ -3735,10 +3751,10 @@ export default function PortalMPP() {
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
-              <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-2 block text-center font-sans">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                 {t("mppPortal.sosialMedia.badge")}
               </span>
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug text-slate-900 dark:text-white font-sans">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
                 {t("mppPortal.sosialMedia.title")}
               </h2>
               <p className="text-base text-slate-600 dark:text-slate-300 max-w-[96%] mx-auto leading-relaxed mt-3 mb-6 text-center">
@@ -4092,7 +4108,7 @@ export default function PortalMPP() {
                   <Globe className="w-3.5 h-3.5" />
                   {t("mppPortal.map.geospatialBadge", "Eksplorasi Geospasial")}
                 </span>
-                <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug text-white font-sans">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-white font-sans">
                   {t("mppPortal.webgisTitle", "WebGIS & Potensi Investasi Luwu")}
                 </h2>
                 <p className="text-sm sm:text-base text-slate-300 leading-relaxed mb-8 max-w-lg">
@@ -4154,13 +4170,13 @@ export default function PortalMPP() {
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
-              <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-2 block text-center font-sans">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                 {t("mppPortal.faq.badge")}
               </span>
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug text-slate-900 dark:text-white font-sans">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
                 {t("mppPortal.faq.title")}
               </h2>
-              <p className="text-base text-slate-600 dark:text-slate-300 max-w-[96%] mx-auto leading-relaxed mt-3 mb-6 text-center">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-6 text-center">
                 {t("mppPortal.faq.subtitle")}
               </p>
               <div className="w-12 sm:w-16 h-1 bg-emerald-500 rounded-full mx-auto mt-4"></div>
@@ -4552,8 +4568,8 @@ export default function PortalMPP() {
             <span className="text-[10px] font-semibold font-sans">{t("mppPortal.nav.layanan")}</span>
           </a>
 
-          {/* Elevated Center Action: Asisten Digital Ta' with Breathing Effect */}
-          <div className="relative -top-4 flex flex-col items-center">
+          {/* Elevated Center Action: Asisten AI with Breathing Effect */}
+          <div className="relative -top-3.5 flex flex-col items-center">
             <motion.div 
               animate={{ scale: [1, 1.05, 1] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -4570,7 +4586,7 @@ export default function PortalMPP() {
                 <Bot className="w-6 h-6 animate-pulse" />
               </motion.button>
             </motion.div>
-            <span className="text-[9px] font-extrabold text-emerald-600 dark:text-emerald-400 font-sans mt-0.5 tracking-tight">Asisten Digital Ta'</span>
+            <span className="text-[10px] font-extrabold text-emerald-700 dark:text-emerald-400 font-sans mt-0.5 tracking-tight whitespace-nowrap">Asisten AI</span>
           </div>
 
           <a href="#instansi" className="flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400 hover:text-emerald-500 dark:hover:text-emerald-400 active:text-emerald-500 min-h-[48px] min-w-[50px] transition-colors">
