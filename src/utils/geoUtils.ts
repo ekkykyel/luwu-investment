@@ -867,7 +867,7 @@ export function getPbgRequirements(pkkpr: PkkprZoningResult | null): PbgGatewayI
       id: "doc-legalitas-2",
       category: "Lingkungan & Legalitas",
       title: "Dokumen Persetujuan Lingkungan (Amdal / UKL-UPL / SPPL)",
-      description: "Persetujuan kelayakan lingkungan hidup sesuai KBLI investasi dari Dinas Lingkungan Hidup Kabupaten Luwu.",
+      description: "Persetujuan kelayakan lingkungan hidup sesuai KBLI investasi dari Dinas Lingkungan Hidup Luwu.",
       mandatory: true,
       standard: "PP No. 22 Tahun 2021 tentang Penyelenggaraan Lingkungan Hidup",
     },
