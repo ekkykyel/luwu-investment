@@ -39,6 +39,7 @@ const getGlobalTurf = () => {
     distance: () => 0,
     circle: (center: any, radius: number, options?: any) => ({ type: "Feature", geometry: { type: "Polygon", coordinates: [] } }),
     nearestPointOnLine: () => ({ type: "Feature", geometry: { type: "Point", coordinates: [0, 0] } }),
+    pointOnFeature: (feat: any) => ({ type: "Feature", geometry: { type: "Point", coordinates: [0, 0] }, properties: {} }),
     booleanClockwise: () => false,
     booleanIntersects: () => false,
     intersect: () => null,
@@ -103,3 +104,6 @@ export const midpoint = (pt1: any, pt2: any) => (turfProxy as any).midpoint(pt1,
 export const explode = (feature: any) => (turfProxy as any).explode(feature);
 export const nearestPoint = (targetPoint: any, points: any) => (turfProxy as any).nearestPoint(targetPoint, points);
 export const booleanClockwise = (line: any) => (turfProxy as any).booleanClockwise(line);
+export const pointOnFeature = (feat: any) => (turfProxy as any).pointOnFeature(feat);
+export const lineDistance = (line: any, options?: any) => (turfProxy as any).lineDistance(line, options);
+export const along = (line: any, distance: number, options?: any) => (turfProxy as any).along(line, distance, options);
