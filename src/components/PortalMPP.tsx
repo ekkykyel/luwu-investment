@@ -38,7 +38,7 @@ import { MppServicesMatrixModal } from './mpp/MppServicesMatrixModal';
 import { MppServicesWorkflowCarousel } from './mpp/MppServicesWorkflowCarousel';
 import { MppNewsCatalogModal } from './mpp/MppNewsCatalogModal';
 import { MppMagattiGallerySlideshow } from './mpp/MppMagattiGallerySlideshow';
-import { MppNewsItem, getStoredMppNews } from '../data/mppNewsData';
+import { MppNewsItem, getStoredMppNews, syncMppNewsWithServer } from '../data/mppNewsData';
 import TenantDashboard from './mpp/TenantDashboard';
 import { PetugasGeraiLoginModal } from './mpp/PetugasGeraiLoginModal';
 import { MppAirportKioskModal } from './MppAirportKioskModal';
@@ -281,8 +281,26 @@ export default function PortalMPP() {
       setPortalNews(getStoredMppNews());
     };
     handleNewsUpdate();
+
+    // Sync with server asynchronously so that newly created news in admin displays on all devices (including mobile Android)
+    syncMppNewsWithServer().then(res => {
+      if (res && res.length > 0) {
+        setPortalNews(res);
+      }
+    });
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'mpp_news_data_v1' || e.key === 'mpp_portal_news') {
+        handleNewsUpdate();
+      }
+    };
+
     window.addEventListener('mpp_news_updated', handleNewsUpdate);
-    return () => window.removeEventListener('mpp_news_updated', handleNewsUpdate);
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('mpp_news_updated', handleNewsUpdate);
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const handleShareUMKM = async (umkm: any) => {
@@ -1653,20 +1671,16 @@ export default function PortalMPP() {
               </div>
             </div>
 
-            {/* Desain Gambar Terpusat (Offset Accent Card) */}
-            <motion.div 
-              whileHover={{ scale: 1.01 }} 
-              transition={{ duration: 0.2 }}
-              className="relative w-full max-w-4xl aspect-video md:aspect-[21/9]"
-            >
-              {/* Elemen Latar (Aksen Bayangan) */}
-              <div className="absolute inset-0 bg-emerald-500/15 dark:bg-emerald-500/20 rounded-3xl translate-x-2.5 translate-y-2.5 md:translate-x-3.5 md:translate-y-3.5"></div>
+            {/* Desain Card Galeri Gedung & Ruang MPP Simpurusiang (Besar, Elegan & Modern) */}
+            <div className="relative w-full max-w-5xl lg:max-w-6xl mx-auto px-2 sm:px-4">
+              {/* Elemen Latar (Aksen Cahaya Emerald Modern) */}
+              <div className="absolute -inset-1.5 bg-gradient-to-r from-emerald-500/20 via-teal-500/10 to-blue-500/20 rounded-3xl blur-xl opacity-70 pointer-events-none"></div>
 
-              {/* Elemen Gambar & Slideshow Utama */}
-              <div className="relative z-10 w-full h-full">
+              {/* Komponen Slideshow Utama Beresolusi Tinggi */}
+              <div className="relative z-10 w-full">
                 <MppMagattiGallerySlideshow isDark={isDark} />
               </div>
-            </motion.div>
+            </div>
           </motion.section>
 
           {/* Seksi VIP Investor Concierge & Fast-Track Desk */}

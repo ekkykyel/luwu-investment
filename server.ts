@@ -3208,6 +3208,124 @@ app.post("/api/admin/market-ticker", async (req, res) => {
   });
 });
 
+// =========================================================================
+// MPP SIMPURUSIANG NEWS & ANNOUNCEMENTS API (CROSS-DEVICE PERSISTENCE)
+// =========================================================================
+const MPP_NEWS_FILE = path.join(process.cwd(), "data", "mpp_news.json");
+
+async function loadServerMppNews(): Promise<any[]> {
+  try {
+    if (fs.existsSync(MPP_NEWS_FILE)) {
+      const raw = fs.readFileSync(MPP_NEWS_FILE, "utf-8");
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+    // Try Supabase site_settings
+    const { data: dbData } = await supabase
+      .from('site_settings')
+      .select('setting_value')
+      .eq('setting_key', 'mpp_portal_news')
+      .maybeSingle();
+
+    if (dbData?.setting_value) {
+      let parsed = dbData.setting_value;
+      if (typeof parsed === 'string') {
+        try { parsed = JSON.parse(parsed); } catch (e) {}
+      }
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        try {
+          fs.writeFileSync(MPP_NEWS_FILE, JSON.stringify(parsed, null, 2));
+        } catch (e) {}
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.warn("[loadServerMppNews] Error loading news:", err);
+  }
+  return [];
+}
+
+async function saveServerMppNews(newsItems: any[]): Promise<boolean> {
+  try {
+    const dir = path.dirname(MPP_NEWS_FILE);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(MPP_NEWS_FILE, JSON.stringify(newsItems, null, 2));
+
+    // Also attempt sync with Supabase site_settings
+    try {
+      await supabase
+        .from('site_settings')
+        .upsert({
+          setting_key: 'mpp_portal_news',
+          setting_value: JSON.stringify(newsItems),
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'setting_key' });
+    } catch (dbErr) {
+      console.warn("[saveServerMppNews] Supabase sync notice:", dbErr);
+    }
+    return true;
+  } catch (err) {
+    console.error("[saveServerMppNews] Error saving news:", err);
+    return false;
+  }
+}
+
+// GET all MPP news
+app.get("/api/mpp-news", async (req, res) => {
+  try {
+    const items = await loadServerMppNews();
+    return res.json(items);
+  } catch (err) {
+    return res.json([]);
+  }
+});
+
+// POST new news item or full news list
+app.post("/api/mpp-news", async (req, res) => {
+  try {
+    const payload = req.body;
+    let current = await loadServerMppNews();
+
+    if (Array.isArray(payload)) {
+      // Full list replacement / sync
+      current = payload;
+    } else if (payload && typeof payload === 'object') {
+      // Single news item addition or update
+      const existingIdx = current.findIndex((item: any) => item.id === payload.id);
+      if (existingIdx >= 0) {
+        current[existingIdx] = { ...current[existingIdx], ...payload };
+      } else {
+        current = [payload, ...current];
+      }
+    } else {
+      return res.status(400).json({ success: false, error: "Invalid payload format." });
+    }
+
+    await saveServerMppNews(current);
+    return res.json({ success: true, data: current });
+  } catch (err) {
+    console.error("[POST /api/mpp-news] Error:", err);
+    return res.status(500).json({ success: false, error: "Failed to persist news." });
+  }
+});
+
+// DELETE a news item by ID
+app.delete("/api/mpp-news/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    let current = await loadServerMppNews();
+    current = current.filter((item: any) => item.id !== id);
+    await saveServerMppNews(current);
+    return res.json({ success: true, data: current });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: "Failed to delete news item." });
+  }
+});
+
 // Endpoint to prevent Supabase from pausing due to inactivity
 app.get("/api/keep-alive", async (req, res) => {
   try {
@@ -3384,7 +3502,8 @@ app.use(async (req, res, next) => {
     "/gemini/translate",
     "/api/investment-interests",
     "/api/profiles",
-    "/api/testimonials"
+    "/api/testimonials",
+    "/api/mpp-news"
   ];
   const isPublicPath = isGeminiPath || isKioskPath || isRagPath || isPublicTestimonialSubmit || publicPaths.includes(req.path);
   const isWriteMethod = ["POST", "PUT", "DELETE"].includes(req.method);

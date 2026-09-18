@@ -5,7 +5,7 @@ import {
   X, Image as ImageIcon, Sparkles, RefreshCw, AlertCircle, FileText,
   Calendar, User, Tag, Layers, Share2, Filter, Globe
 } from 'lucide-react';
-import { MppNewsItem, getStoredMppNews, saveMppNews, INITIAL_MPP_NEWS } from '../../data/mppNewsData';
+import { MppNewsItem, getStoredMppNews, saveMppNews, INITIAL_MPP_NEWS, syncMppNewsWithServer } from '../../data/mppNewsData';
 
 const PRESET_IMAGES = [
   { name: 'Giat MPP & Gedung', url: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80' },
@@ -47,6 +47,9 @@ export const MppNewsAdminManager: React.FC = () => {
   const loadNews = () => {
     const data = getStoredMppNews();
     setNewsList(data);
+    syncMppNewsWithServer().then(res => {
+      if (res && res.length > 0) setNewsList(res);
+    });
   };
 
   const showNotif = (type: 'success' | 'error', message: string) => {

@@ -43,7 +43,7 @@ import {
 } from "lucide-react";
 import { supabase } from "../../../lib/supabaseClient";
 import { MPPTenant, MPPService } from "../../../types/mpp";
-import { MppNewsItem, getStoredMppNews, saveMppNews } from "../../../data/mppNewsData";
+import { MppNewsItem, getStoredMppNews, saveMppNews, syncMppNewsWithServer } from "../../../data/mppNewsData";
 
 interface ImageUploadFieldProps {
   id: string;
@@ -830,6 +830,11 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
 
     const savedNews = getStoredMppNews();
     setNewsList(savedNews);
+    syncMppNewsWithServer().then((res) => {
+      if (res && res.length > 0) {
+        setNewsList(res);
+      }
+    });
   };
 
   const handleAddUmkm = (e: React.FormEvent) => {

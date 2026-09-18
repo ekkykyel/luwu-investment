@@ -5,7 +5,7 @@ import {
   Share2, ArrowRight, Tag, Bookmark, ChevronLeft, Sparkles,
   CheckCircle2, ExternalLink, ThumbsUp, MessageSquare, Clock
 } from 'lucide-react';
-import { MppNewsItem, getStoredMppNews } from '../../data/mppNewsData';
+import { MppNewsItem, getStoredMppNews, syncMppNewsWithServer } from '../../data/mppNewsData';
 
 interface MppNewsCatalogModalProps {
   isOpen: boolean;
@@ -34,6 +34,12 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
     const data = getStoredMppNews();
     setNewsList(data);
 
+    if (isOpen) {
+      syncMppNewsWithServer().then(res => {
+        if (res && res.length > 0) setNewsList(res);
+      });
+    }
+
     const handleUpdate = (e: any) => {
       if (e.detail) {
         setNewsList(e.detail);
@@ -44,7 +50,7 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
 
     window.addEventListener('mpp_news_updated', handleUpdate);
     return () => window.removeEventListener('mpp_news_updated', handleUpdate);
-  }, []);
+  }, [isOpen]);
 
   // Handle auto-selecting specific news if passed
   useEffect(() => {

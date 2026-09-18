@@ -129,6 +129,25 @@ Penerapan standar ISO Pelayanan Publik dan kepastian waktu penyelesaian (SLA) tr
 ];
 
 const LOCAL_STORAGE_KEY = 'mpp_news_data_v1';
+const BROADCAST_CHANNEL_NAME = 'mpp_news_sync_channel';
+
+// Setup BroadcastChannel for cross-tab real-time sync
+let newsBroadcastChannel: BroadcastChannel | null = null;
+if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+  try {
+    newsBroadcastChannel = new BroadcastChannel(BROADCAST_CHANNEL_NAME);
+    newsBroadcastChannel.onmessage = (event) => {
+      if (event.data?.type === 'MPP_NEWS_SYNC' && Array.isArray(event.data?.payload)) {
+        try {
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(event.data.payload));
+          window.dispatchEvent(new CustomEvent('mpp_news_updated', { detail: event.data.payload }));
+        } catch (e) {}
+      }
+    };
+  } catch (e) {
+    console.warn('[BroadcastChannel] Initialization notice:', e);
+  }
+}
 
 export function getStoredMppNews(): MppNewsItem[] {
   try {
@@ -204,8 +223,51 @@ export function getStoredMppNews(): MppNewsItem[] {
   }
 }
 
+/**
+ * Fetch latest news from backend API so newly created news on Admin (e.g. desktop)
+ * is immediately available on mobile/Android devices and across all browsers.
+ */
+export async function syncMppNewsWithServer(): Promise<MppNewsItem[]> {
+  try {
+    const res = await fetch('/api/mpp-news');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const serverNews: MppNewsItem[] = await res.json();
+    if (Array.isArray(serverNews) && serverNews.length > 0) {
+      // Normalize items
+      const normalized = serverNews.map(item => ({
+        ...item,
+        id: String(item.id || `news-${Date.now()}`),
+        judul: item.judul || (item as any).title || "Berita MPP Luwu",
+        ringkasan: item.ringkasan || (item as any).content || "Informasi pelayanan publik MPP Simpurusiang.",
+        isiLengkap: item.isiLengkap || (item as any).content || item.ringkasan || "Informasi pelayanan publik MPP Simpurusiang.",
+        image: item.image || (item as any).photo || "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+        kategori: item.kategori || (item as any).category || "Giat Kegiatan MPP",
+        penulis: item.penulis || "Admin MPP Luwu",
+        tanggal: item.tanggal || (item as any).date || new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+        status: item.status || "published"
+      }));
+
+      // Cache locally
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(normalized));
+      
+      // Dispatch update events for React state listeners
+      window.dispatchEvent(new CustomEvent('mpp_news_updated', { detail: normalized }));
+      if (newsBroadcastChannel) {
+        try {
+          newsBroadcastChannel.postMessage({ type: 'MPP_NEWS_SYNC', payload: normalized });
+        } catch (e) {}
+      }
+      return normalized;
+    }
+  } catch (err) {
+    console.warn('[syncMppNewsWithServer] Failed to sync with server:', err);
+  }
+  return getStoredMppNews();
+}
+
 export function saveMppNews(newsList: MppNewsItem[]): void {
   try {
+    // 1. Instant local persistence
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newsList));
     // Jaga kompatibilitas dengan key mpp_portal_news
     const legacyFormat = newsList.map(n => ({
@@ -218,8 +280,22 @@ export function saveMppNews(newsList: MppNewsItem[]): void {
     }));
     localStorage.setItem("mpp_portal_news", JSON.stringify(legacyFormat));
 
-    // Dispatch custom event for instant cross-component updates
+    // 2. Dispatch event for same-tab React components
     window.dispatchEvent(new CustomEvent('mpp_news_updated', { detail: newsList }));
+
+    // 3. Broadcast to all open tabs/windows
+    if (newsBroadcastChannel) {
+      try {
+        newsBroadcastChannel.postMessage({ type: 'MPP_NEWS_SYNC', payload: newsList });
+      } catch (e) {}
+    }
+
+    // 4. Send to backend server & Supabase so Android phones and other devices see it
+    fetch('/api/mpp-news', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newsList)
+    }).catch(err => console.warn('[saveMppNews] Server persistence notice:', err));
   } catch (err) {
     console.error('Failed to save mpp news to localStorage:', err);
   }
