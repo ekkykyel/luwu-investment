@@ -240,6 +240,58 @@ export function InvestmentDetailModal({
     return Math.round((pbgPreparedCount / pbgInfo.documents.length) * 100);
   }, [pbgPreparedCount, pbgInfo]);
 
+  const handleOpenLoi = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        Swal.fire({
+          title: t('investmentProfile.authRequiredTitle', 'Akses Investor Diperlukan'),
+          text: t('investmentProfile.authRequiredMessage', 'Silakan Login atau Registrasi sebagai Investor untuk mengajukan Letter of Intent (LoI).'),
+          icon: "info",
+          showCancelButton: true,
+          confirmButtonText: "Login Sekarang",
+          cancelButtonText: "Batal",
+          confirmButtonColor: "#059669",
+          cancelButtonColor: "#64748b",
+          background: isDarkMode ? "#0f172a" : "#ffffff",
+          color: isDarkMode ? "#f8fafc" : "#0f172a"
+        }).then((res) => {
+          if (res.isConfirmed) {
+            try {
+              navigate('/login?role=investor');
+            } catch (e) {
+              window.location.href = '/login?role=investor';
+            }
+          }
+        });
+        return;
+      }
+
+      const u = session.user;
+      let profileName = "";
+      try {
+        const { data: profile } = await supabase.from('profiles').select('*').eq('id', u.id).single();
+        if (profile) {
+          profileName = profile.full_name || "";
+        }
+      } catch (e) {}
+
+      const meta = u.user_metadata || {};
+      const fullNameVal = profileName || meta.company_name || meta.full_name || u.email || "";
+      const companyVal = meta.company_name || meta.company || "";
+      const contactVal = u.email || meta.phone || meta.contact || "";
+
+      setLoiInvestorName(fullNameVal);
+      setLoiCompanyName(companyVal);
+      setLoiContactInfo(contactVal);
+      setIsLoiFieldsLocked(true);
+      setIsLoiModalOpen(true);
+    } catch (err) {
+      console.error("Auth check error:", err);
+      setIsLoiModalOpen(true);
+    }
+  };
+
   const handleAjukanPbg = () => {
     const invName = profileData?.name || geo?.nama_potensi || "Proyek Investasi Daerah";
     const locName = `${getActualVillageName()}, Kec. ${getActualDistrictName()}`;
@@ -3060,7 +3112,7 @@ export function InvestmentDetailModal({
 
         {/* FOOTER */}
         <div
-          className={`p-4 shrink-0 border-t ${sectionBorder} flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-start gap-3 ${isDarkMode ? "bg-slate-900" : "bg-white"}`}
+          className={`p-4 shrink-0 border-t ${sectionBorder} flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 ${isDarkMode ? "bg-slate-900" : "bg-white"}`}
         >
           <div className="flex gap-2 items-center flex-wrap">
             <motion.button whileTap={{ scale: 0.95 }}
@@ -3072,7 +3124,7 @@ export function InvestmentDetailModal({
             <motion.button whileTap={{ scale: 0.95 }}
               onClick={handleGeneratePdf}
               disabled={isGeneratingPdf}
-              className="w-full sm:w-auto px-4 py-3 sm:py-2 flex justify-center items-center gap-2 font-bold text-xs uppercase tracking-wider rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm border border-emerald-500 disabled:opacity-60 transition-all cursor-pointer"
+              className="w-full sm:w-auto px-4 py-3 sm:py-2 flex justify-center items-center gap-2 font-bold text-xs uppercase tracking-wider rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 shadow-sm border border-slate-300 dark:border-slate-700 disabled:opacity-60 transition-all cursor-pointer"
             >
               {isGeneratingPdf ? (
                 <>
@@ -3098,6 +3150,14 @@ export function InvestmentDetailModal({
               </motion.button>
             )}
           </div>
+
+          <motion.button whileTap={{ scale: 0.95 }}
+            onClick={handleOpenLoi}
+            className="w-full sm:w-auto px-5 py-3 sm:py-2 flex justify-center items-center gap-2 font-black text-xs uppercase tracking-wider rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md shadow-emerald-500/20 border border-emerald-400/40 transition-all cursor-pointer"
+          >
+            <Handshake className="w-4 h-4 text-emerald-100 shrink-0" />
+            <span>{t('investmentProfile.btnAjukanMinat', 'Ajukan Minat (LOI)')}</span>
+          </motion.button>
         </div>
             </div>
           )}

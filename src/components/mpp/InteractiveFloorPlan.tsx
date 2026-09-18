@@ -241,7 +241,11 @@ const ZONES_DATA: RoomZone[] = [
 ];
 
 export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language || 'id';
+  const isEn = currentLang.startsWith('en');
+  const isZh = currentLang.startsWith('zh');
+
   const [activeFloor, setActiveFloor] = useState<1 | 2>(1);
   const [selectedZone, setSelectedZone] = useState<RoomZone | null>(ZONES_DATA[0]);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -269,14 +273,14 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
           <div className="flex items-center gap-2">
             <h3 className="text-lg sm:text-xl font-medium tracking-tight font-sans text-slate-900 dark:text-white flex items-center gap-2">
               <Navigation className="w-5 h-5 text-emerald-500" />
-              <span>{t("mppPortal.interactiveFloorPlan.title", "Digital Wayfinding & Denah Interaktif MPP")}</span>
+              <span>{isEn ? 'Interactive Digital Wayfinding & Floor Plan' : isZh ? '数字大厅导航与互动楼层平面图' : t("mppPortal.interactiveFloorPlan.title", "Digital Wayfinding & Denah Interaktif MPP")}</span>
             </h3>
             <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono">
-              RAMAH DISABILITAS
+              {isEn ? 'BARRIER-FREE ACCESSIBLE' : isZh ? '无障碍通行友好' : 'RAMAH DISABILITAS'}
             </span>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Peta denah navigasi Lantai 1 & Lantai 2 dengan penunjuk arah ramah kursi roda dan rute loket terpadu
+            {isEn ? 'Interactive navigation map for Floor 1 & Floor 2 with wheelchair accessibility routes and direct counter directions.' : isZh ? '1层与2层互动导航地图，配备轮椅无障碍指引及各窗口精准路线。' : 'Peta denah navigasi Lantai 1 & Lantai 2 dengan penunjuk arah ramah kursi roda dan rute loket terpadu'}
           </p>
         </div>
 
@@ -293,10 +297,14 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
                   ? 'bg-slate-800 text-slate-300 border-slate-700 hover:text-white'
                   : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
             }`}
-            title="Sorot Fasilitas & Rute Khusus Kursi Roda"
+            title={isEn ? "Highlight Wheelchair Accessible Routes" : isZh ? "高亮显示无障碍与轮椅专属路线" : "Sorot Fasilitas & Rute Khusus Kursi Roda"}
           >
             <Accessibility className="w-4 h-4 text-blue-400" />
-            <span>{isWheelchairFilterActive ? 'Mode Difabel Aktif' : 'Rute Kursi Roda'}</span>
+            <span>
+              {isWheelchairFilterActive 
+                ? (isEn ? 'Accessible Mode Active' : isZh ? '无障碍模式已开启' : 'Mode Difabel Aktif')
+                : (isEn ? 'Wheelchair Route' : isZh ? '无障碍路线' : 'Rute Kursi Roda')}
+            </span>
           </button>
 
           {/* Floor Tabs */}
@@ -317,7 +325,7 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
-              <span>Lantai 1</span>
+              <span>{isEn ? 'Floor 1' : isZh ? '1 楼' : 'Lantai 1'}</span>
             </button>
 
             <button
@@ -334,7 +342,7 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
-              <span>Lantai 2</span>
+              <span>{isEn ? 'Floor 2' : isZh ? '2 楼' : 'Lantai 2'}</span>
             </button>
           </div>
         </div>
@@ -347,7 +355,7 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Cari loket atau fasilitas di denah (Contoh: Disdukcapil, Laktasi, Pajak, Musholla, Kursi Roda)..."
+          placeholder={isEn ? "Search booth or facility on floor plan (e.g. ID Office, Lactation, Tax, VIP Lounge, Wheelchair)..." : isZh ? "在平面图中搜索窗口或设施 (如: 户籍大厅, 母婴室, 税务, VIP厅, 轮椅)..." : "Cari loket atau fasilitas di denah (Contoh: Disdukcapil, Laktasi, Pajak, Musholla, Kursi Roda)..."}
           className="w-full pl-10 pr-9 py-2.5 rounded-2xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-sans"
         />
         {searchQuery && (
@@ -375,14 +383,14 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
             <div className="flex items-center gap-2">
               <Compass className="w-4 h-4 text-emerald-500 animate-spin" style={{ animationDuration: '12s' }} />
               <span className="text-xs font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500 font-mono">
-                GEDUNG MPP SIMPURUSIANG • LANTAI {activeFloor}
+                {isEn ? `MPP SIMPURUSIANG BUILDING • FLOOR ${activeFloor}` : isZh ? `辛普鲁西亚政务中心大楼 • ${activeFloor} 层` : `GEDUNG MPP SIMPURUSIANG • LANTAI ${activeFloor}`}
               </span>
             </div>
 
             {isWheelchairFilterActive && (
               <span className="text-[11px] font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1">
                 <Accessibility className="w-3.5 h-3.5" />
-                <span>Menampilkan Akses Kursi Roda</span>
+                <span>{isEn ? 'Displaying Wheelchair Accessible' : isZh ? '显示无障碍轮椅通道' : 'Menampilkan Akses Kursi Roda'}</span>
               </span>
             )}
           </div>
@@ -414,7 +422,7 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
 
                     <div className="flex items-center gap-1">
                       {zone.wheelchairAccessible && (
-                        <span className="p-1 rounded-md bg-blue-500/10 text-blue-500 border border-blue-500/20" title="Akses Kursi Roda">
+                        <span className="p-1 rounded-md bg-blue-500/10 text-blue-500 border border-blue-500/20" title={isEn ? 'Wheelchair Accessible' : isZh ? '无障碍通行' : 'Akses Kursi Roda'}>
                           <Accessibility className="w-3 h-3" />
                         </span>
                       )}
@@ -442,7 +450,7 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
                       <Clock className="w-3 h-3 text-emerald-500" /> {zone.hours.split(' ')[0]}
                     </span>
                     <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold">
-                      <span>Rute Petunjuk</span>
+                      <span>{isEn ? 'Wayfinding Route' : isZh ? '查看指引路线' : 'Rute Petunjuk'}</span>
                       <ChevronRight className="w-3 h-3" />
                     </span>
                   </div>
@@ -453,7 +461,7 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
 
           <div className="relative z-10 text-center text-[10px] text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-center gap-2">
             <Footprints className="w-3.5 h-3.5 text-amber-500" />
-            <span>Guiding Block (ubin pemandu kuning) terpasang di seluruh koridor untuk penyandang tunanetra.</span>
+            <span>{isEn ? 'Yellow tactile guiding blocks installed along all corridors for visually impaired visitors.' : isZh ? '全楼道铺设黄色无障碍盲道引导地砖，便利视障人士安全通行。' : 'Guiding Block (ubin pemandu kuning) terpasang di seluruh koridor untuk penyandang tunanetra.'}</span>
           </div>
         </div>
 
@@ -484,10 +492,10 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                     <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
                       <span className="text-xs font-bold bg-emerald-600 px-2.5 py-1 rounded-lg">
-                        Lantai {selectedZone.floor}
+                        {isEn ? `Floor ${selectedZone.floor}` : isZh ? `${selectedZone.floor} 楼` : `Lantai ${selectedZone.floor}`}
                       </span>
                       <span className="text-xs font-semibold bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-lg font-mono">
-                        Kapasitas: {selectedZone.capacity}
+                        {isEn ? `Capacity: ${selectedZone.capacity}` : isZh ? `容纳人数: ${selectedZone.capacity}` : `Kapasitas: ${selectedZone.capacity}`}
                       </span>
                     </div>
                   </div>
@@ -511,7 +519,7 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
                   <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
                     <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-1.5 font-mono">
                       <Navigation className="w-3.5 h-3.5 text-emerald-500" />
-                      <span>Panduan Langkah Rute (Wayfinding):</span>
+                      <span>{isEn ? 'Step-by-Step Route Guidance (Wayfinding):' : isZh ? '分步导航指引 (路线步骤):' : 'Panduan Langkah Rute (Wayfinding):'}</span>
                     </h5>
                     <div className="space-y-1.5">
                       {selectedZone.wayfindingRoute.map((step, idx) => (
@@ -528,7 +536,7 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
                   {/* Facilities / Services */}
                   <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
                     <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2 font-mono">
-                      Layanan & Fasilitas:
+                      {isEn ? 'Services & Facilities Available:' : isZh ? '窗口服务与配套设施:' : 'Layanan & Fasilitas:'}
                     </h5>
                     <div className="space-y-1">
                       {selectedZone.services.map((srv, idx) => (
@@ -544,7 +552,7 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
                 {/* Footer Action */}
                 <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
                   <div className="flex-1 text-[11px] text-slate-500 dark:text-slate-400">
-                    <span className="block font-semibold text-slate-700 dark:text-slate-300">Jam Layanan:</span>
+                    <span className="block font-semibold text-slate-700 dark:text-slate-300">{isEn ? 'Operating Hours:' : isZh ? '办理服务时间:' : 'Jam Layanan:'}</span>
                     {selectedZone.hours}
                   </div>
                   <button
@@ -554,7 +562,7 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
                     }}
                     className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
                   >
-                    <span>Ambil Antrean Loket</span>
+                    <span>{isEn ? 'Get Counter Ticket' : isZh ? '在线取号取票' : 'Ambil Antrean Loket'}</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
                   </button>
                 </div>

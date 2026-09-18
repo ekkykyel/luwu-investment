@@ -17,6 +17,7 @@ import {
   Zap,
   Filter
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface AgencyItem {
   nama: string;
@@ -50,6 +51,11 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
   onSelectAgency,
   isDark = false,
 }) => {
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language || 'id';
+  const isEn = currentLang.startsWith('en');
+  const isZh = currentLang.startsWith('zh');
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
@@ -60,35 +66,35 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
       if (!category) {
         const nameLower = (ag.nama || '').toLowerCase();
         if (nameLower.includes('dinas') || nameLower.includes('dpamtpsp') || nameLower.includes('disdukcapil') || nameLower.includes('bapenda') || nameLower.includes('dinas kesehatan')) {
-          category = 'OPD Pemkab Luwu';
+          category = isEn ? 'Luwu Regional Agencies (OPD)' : isZh ? '鲁乌县政府职能部门 (OPD)' : 'OPD Pemkab Luwu';
         } else if (nameLower.includes('kpp') || nameLower.includes('bpn') || nameLower.includes('kemenag') || nameLower.includes('imigrasi') || nameLower.includes('pengadilan')) {
-          category = 'Kementerian & Lembaga';
+          category = isEn ? 'Ministries & State Agencies' : isZh ? '部委与国家直属机构' : 'Kementerian & Lembaga';
         } else if (nameLower.includes('bank') || nameLower.includes('bpjs') || nameLower.includes('pdam') || nameLower.includes('pos')) {
-          category = 'BUMN / BUMD & Perbankan';
+          category = isEn ? 'SOE / BUMD & Banking' : isZh ? '国有企业 / 地方国企与银行' : 'BUMN / BUMD & Perbankan';
         } else if (nameLower.includes('polres') || nameLower.includes('samsat') || nameLower.includes('kejaksaan')) {
-          category = 'Kepolisian & Law';
+          category = isEn ? 'Police & Legal Services' : isZh ? '警察与司法政法机构' : 'Kepolisian & Law';
         } else {
-          category = 'Layanan Terintegrasi';
+          category = isEn ? 'Integrated Services' : isZh ? '综合便民服务' : 'Layanan Terintegrasi';
         }
       }
       return { ...ag, calculatedCategory: category };
     });
-  }, [agencies]);
+  }, [agencies, isEn, isZh]);
 
-  const categoriesList = [
-    { id: 'all', label: 'Semua Instansi', count: categorizedAgencies.length },
-    { id: 'opd', label: 'OPD Pemkab Luwu', keyword: 'OPD Pemkab Luwu' },
-    { id: 'vertikal', label: 'Kementerian / Lembaga', keyword: 'Kementerian & Lembaga' },
-    { id: 'bumn', label: 'BUMN / BUMD / Bank', keyword: 'BUMN / BUMD & Perbankan' },
-    { id: 'hukum', label: 'Kepolisian & Hukum', keyword: 'Kepolisian & Law' },
-  ];
+  const categoriesList = useMemo(() => [
+    { id: 'all', label: isEn ? 'All Agencies' : isZh ? '全部入驻部门' : 'Semua Instansi', count: categorizedAgencies.length },
+    { id: 'opd', label: isEn ? 'Luwu Regional Agencies' : isZh ? '县政府职能局 (OPD)' : 'OPD Pemkab Luwu', keyword: 'OPD' },
+    { id: 'vertikal', label: isEn ? 'Ministries & State Agencies' : isZh ? '部委与垂直机构' : 'Kementerian / Lembaga', keyword: 'Kementerian' },
+    { id: 'bumn', label: isEn ? 'SOE / BUMD & Banks' : isZh ? '国企/银行 (BUMN)' : 'BUMN / BUMD / Bank', keyword: 'BUMN' },
+    { id: 'hukum', label: isEn ? 'Police & Law' : isZh ? '公安交警与司法' : 'Kepolisian & Hukum', keyword: 'Kepolisian' },
+  ], [categorizedAgencies.length, isEn, isZh]);
 
   const filteredAgencies = useMemo(() => {
     return categorizedAgencies.filter((ag) => {
       // Category filter
       if (selectedCategory !== 'all') {
         const catObj = categoriesList.find((c) => c.id === selectedCategory);
-        if (catObj && catObj.keyword && !ag.calculatedCategory.includes(catObj.keyword)) {
+        if (catObj && catObj.keyword && !String(ag.calculatedCategory || '').toLowerCase().includes(catObj.keyword.toLowerCase())) {
           return false;
         }
       }
@@ -102,7 +108,7 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
       const matchLoket = (ag.loket || '').toLowerCase().includes(q);
       return matchName || matchFullName || matchServices || matchLoket;
     });
-  }, [categorizedAgencies, selectedCategory, searchQuery]);
+  }, [categorizedAgencies, selectedCategory, searchQuery, categoriesList]);
 
   if (!isOpen) return null;
 
@@ -137,14 +143,14 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
-                      Direktori Resmi
+                      {isEn ? 'Official Directory' : isZh ? '官方机构名录' : 'Direktori Resmi'}
                     </span>
                     <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 dark:text-slate-400">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> Terintegrasi MPP Simpurusiang
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> {isEn ? 'MPP Simpurusiang Integrated' : isZh ? '辛普鲁西亚政务中心一体化' : 'Terintegrasi MPP Simpurusiang'}
                     </span>
                   </div>
                   <h2 className="text-base sm:text-lg md:text-xl font-extrabold tracking-tight">
-                    Instansi & Layanan Publik Tergabung
+                    {isEn ? 'Integrated Agencies & Public Service Booths' : isZh ? '已入驻部门机构与公共服务窗口' : 'Instansi & Layanan Publik Tergabung'}
                   </h2>
                 </div>
               </div>
@@ -164,26 +170,26 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
               <div className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 flex items-center gap-2">
                 <Building2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                 <div className="min-w-0">
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block leading-none">Total Instansi</span>
-                  <span className="text-xs font-black text-slate-900 dark:text-white">{categorizedAgencies.length} Gerai</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block leading-none">{isEn ? 'Total Agencies' : isZh ? '入驻部门总数' : 'Total Instansi'}</span>
+                  <span className="text-xs font-black text-slate-900 dark:text-white">{categorizedAgencies.length} {isEn ? 'Booths' : isZh ? '个窗口' : 'Gerai'}</span>
                 </div>
               </div>
 
               <div className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 flex items-center gap-2">
                 <Layers className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                 <div className="min-w-0">
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block leading-none">Total Layanan</span>
-                  <span className="text-xs font-black text-slate-900 dark:text-white">148+ Layanan</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block leading-none">{isEn ? 'Total Services' : isZh ? '服务事项总数' : 'Total Layanan'}</span>
+                  <span className="text-xs font-black text-slate-900 dark:text-white">148+ {isEn ? 'Services' : isZh ? '项服务' : 'Layanan'}</span>
                 </div>
               </div>
 
               <div className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                 <div className="min-w-0">
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block leading-none">Status Jam Buka</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block leading-none">{isEn ? 'Service Hours Status' : isZh ? '窗口运行状态' : 'Status Jam Buka'}</span>
                   <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Aktif
+                    {isEn ? 'Active & Open' : isZh ? '正常办理中' : 'Aktif Buka'}
                   </span>
                 </div>
               </div>
@@ -196,7 +202,7 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari instansi atau nama layanan (cth: KTP, NIB, SIM, PBB, BPN)..."
+                placeholder={isEn ? "Search agency or service name (e.g. ID card, Business License, Tax, Police)..." : isZh ? "搜索部门或服务事项 (如: 身份证, 营业执照, 税务, 驾照, 土地局)..." : "Cari instansi atau nama layanan (cth: KTP, NIB, SIM, PBB, BPN)..."}
                 className="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-inner"
               />
               {searchQuery && (
@@ -241,10 +247,10 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
                   <Search className="w-6 h-6" />
                 </div>
                 <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                  Tidak ditemukan instansi atau layanan dengan kata kunci "{searchQuery}"
+                  {isEn ? `No agencies or services found for "${searchQuery}"` : isZh ? `未找到与 "${searchQuery}" 相关的部门或服务` : `Tidak ditemukan instansi atau layanan dengan kata kunci "${searchQuery}"`}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Coba kata kunci lain seperti "Disdukcapil", "KTP", "Perizinan", atau "BPJS".
+                  {isEn ? 'Try keywords like "Disdukcapil", "ID Card", "License", or "BPJS".' : isZh ? '请尝试搜索 "Disdukcapil", "身份证", "许可证", 或 "BPJS"。' : 'Coba kata kunci lain seperti "Disdukcapil", "KTP", "Perizinan", atau "BPJS".'}
                 </p>
                 <button
                   type="button"
@@ -254,7 +260,7 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
                   }}
                   className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 text-xs font-bold shadow-md cursor-pointer"
                 >
-                  Reset Pencarian
+                  {isEn ? 'Reset Search' : isZh ? '重置搜索' : 'Reset Pencarian'}
                 </button>
               </div>
             ) : (
@@ -289,7 +295,7 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
                           </span>
                           <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1">
                             <MapPin className="w-3 h-3 text-emerald-500" />
-                            {agency.loket || 'Gerai MPP'}
+                            {agency.loket || (isEn ? 'MPP Booth' : isZh ? '政务大厅窗口' : 'Gerai MPP')}
                           </span>
                         </div>
                       </div>
@@ -319,7 +325,7 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
                         }}
                         className="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs flex items-center gap-1 transition-all cursor-pointer shadow-sm active:scale-95"
                       >
-                        <span>Lihat Detail</span>
+                        <span>{isEn ? 'View Details' : isZh ? '查看详情' : 'Lihat Detail'}</span>
                         <ChevronRight className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -332,14 +338,14 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
           {/* Modal Footer Bar */}
           <div className="p-4 px-5 sm:px-7 bg-slate-50 dark:bg-slate-800/90 border-t border-slate-200/80 dark:border-slate-800 shrink-0 flex items-center justify-between gap-3">
             <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-500" /> Layanan Terintegrasi Satu Pintu Pemkab Luwu
+              <Sparkles className="w-3.5 h-3.5 text-emerald-500" /> {isEn ? 'Luwu Regency Integrated One-Stop Public Service' : isZh ? '鲁乌县一门式公共政务综合服务大厅' : 'Layanan Terintegrasi Satu Pintu Pemkab Luwu'}
             </span>
             <button
               type="button"
               onClick={onClose}
               className="px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 text-xs font-extrabold transition-all cursor-pointer shadow-md"
             >
-              Selesai
+              {isEn ? 'Close' : isZh ? '关闭' : 'Selesai'}
             </button>
           </div>
         </motion.div>
@@ -347,3 +353,4 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
     </AnimatePresence>
   );
 };
+

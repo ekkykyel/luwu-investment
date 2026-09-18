@@ -1,3 +1,5 @@
+import { supabase, handleSupabaseError } from '../lib/supabaseClient';
+
 export interface MppNewsItem {
   id: string;
   judul: string;
@@ -17,6 +19,8 @@ export interface MppNewsItem {
   isPinned?: boolean;
   status: 'published' | 'draft';
   viewsCount?: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export const INITIAL_MPP_NEWS: MppNewsItem[] = [
@@ -149,6 +153,33 @@ if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
   }
 }
 
+/**
+ * Normalizes raw Supabase row or API object to a strongly-typed MppNewsItem.
+ */
+export function mapSupabaseRowToNewsItem(row: any): MppNewsItem {
+  return {
+    id: String(row.id || `news-${Date.now()}`),
+    judul: row.title || row.judul || "Berita MPP Simpurusiang",
+    judul_en: row.title_en || row.judul_en,
+    judul_zh: row.title_zh || row.judul_zh,
+    kategori: row.category || row.kategori || "Giat Kegiatan MPP",
+    penulis: row.author || row.penulis || "Humas Pemkab Luwu",
+    tanggal: row.date || row.tanggal || (row.created_at ? new Date(row.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }) : "Terbaru"),
+    image: row.image_url || row.image || row.photo || "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80",
+    ringkasan: row.summary || row.ringkasan || (row.content ? (row.content.length > 180 ? row.content.slice(0, 180) + "..." : row.content) : "Informasi pelayanan publik MPP Simpurusiang."),
+    ringkasan_en: row.summary_en || row.ringkasan_en,
+    ringkasan_zh: row.summary_zh || row.ringkasan_zh,
+    isiLengkap: row.content || row.isiLengkap || row.summary || "Informasi pelayanan publik MPP Simpurusiang.",
+    isiLengkap_en: row.content_en || row.isiLengkap_en,
+    isiLengkap_zh: row.content_zh || row.isiLengkap_zh,
+    isPinned: Boolean(row.is_pinned ?? row.isPinned),
+    status: (row.status === 'draft' ? 'draft' : 'published'),
+    viewsCount: Number(row.views_count ?? row.viewsCount ?? 10),
+    created_at: row.created_at,
+    updated_at: row.updated_at
+  };
+}
+
 export function getStoredMppNews(): MppNewsItem[] {
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -165,57 +196,8 @@ export function getStoredMppNews(): MppNewsItem[] {
       items = [...INITIAL_MPP_NEWS];
     }
 
-    // Normalize each item to ensure status and required fields are guaranteed
-    items = items.map(item => ({
-      ...item,
-      id: String(item.id || `news-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`),
-      judul: item.judul || (item as any).title || "Berita MPP Luwu",
-      ringkasan: item.ringkasan || (item as any).content || "Informasi pelayanan publik MPP Simpurusiang.",
-      isiLengkap: item.isiLengkap || (item as any).content || item.ringkasan || "Informasi pelayanan publik MPP Simpurusiang.",
-      image: item.image || (item as any).photo || "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
-      kategori: item.kategori || (item as any).category || "Giat Kegiatan MPP",
-      penulis: item.penulis || "Admin MPP Luwu",
-      tanggal: item.tanggal || (item as any).date || new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
-      status: item.status || "published"
-    }));
-
-    // Sinkronisasi otomatis data berita yang dibuat dari Halaman Admin MPP (key: mpp_portal_news)
-    const rawPortalNews = localStorage.getItem("mpp_portal_news");
-    if (rawPortalNews) {
-      try {
-        const portalNewsArr = JSON.parse(rawPortalNews);
-        if (Array.isArray(portalNewsArr) && portalNewsArr.length > 0) {
-          let hasNewImports = false;
-          for (const legacy of portalNewsArr) {
-            const titleToMatch = legacy.title || legacy.judul;
-            if (titleToMatch && !items.some(n => n.id === legacy.id || n.judul === titleToMatch)) {
-              const convertedItem: MppNewsItem = {
-                id: legacy.id ? String(legacy.id) : `news-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-                judul: legacy.title || legacy.judul || "Berita MPP Luwu",
-                ringkasan: legacy.content ? (legacy.content.length > 180 ? legacy.content.slice(0, 180) + "..." : legacy.content) : "Informasi pelayanan publik MPP Simpurusiang.",
-                isiLengkap: legacy.content || legacy.isiLengkap || "Informasi pelayanan publik MPP Simpurusiang.",
-                image: legacy.photo || legacy.image || "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
-                kategori: legacy.category === "Pemerintahan" || legacy.category === "Pengumuman" ? "Berita Daerah" : legacy.category === "Kegiatan" ? "Giat Kegiatan MPP" : (legacy.category as any || "Giat Kegiatan MPP"),
-                penulis: legacy.penulis || "Admin MPP Luwu",
-                tanggal: legacy.date || legacy.tanggal || new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
-                status: "published",
-                isPinned: false,
-                viewsCount: 10
-              };
-              items.unshift(convertedItem);
-              hasNewImports = true;
-            }
-          }
-
-          if (hasNewImports) {
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(items));
-          }
-        }
-      } catch (err) {
-        console.warn("Error parsing legacy mpp_portal_news:", err);
-      }
-    }
-
+    // Normalize each item
+    items = items.map(mapSupabaseRowToNewsItem);
     return items;
   } catch (err) {
     console.warn('Failed to read mpp news from localStorage:', err);
@@ -224,62 +206,131 @@ export function getStoredMppNews(): MppNewsItem[] {
 }
 
 /**
- * Fetch latest news from backend API so newly created news on Admin (e.g. desktop)
- * is immediately available on mobile/Android devices and across all browsers.
+ * Result structure for Supabase News Query with Honest Fallback & Error State
+ */
+export interface FetchMppNewsResult {
+  data: MppNewsItem[];
+  error: string | null;
+  fromSource: 'supabase' | 'server_api' | 'local_cache';
+}
+
+/**
+ * Robust fetch for MPP News directly targeting Supabase 'news' table with column selection,
+ * handling public Row-Level Security (RLS) policies, and honest error fallback.
+ */
+export async function fetchMppNewsWithFallback(options?: {
+  includeDrafts?: boolean;
+  category?: string;
+}): Promise<FetchMppNewsResult> {
+  const includeDrafts = options?.includeDrafts ?? false;
+  const categoryFilter = options?.category && options.category !== 'Semua' ? options.category : null;
+
+  // 1. Direct Supabase Query with Explicit Columns and Proper RLS targeting
+  try {
+    let query = supabase
+      .from('news')
+      .select('id, title, title_en, title_zh, category, author, date, created_at, updated_at, image_url, summary, summary_en, summary_zh, content, content_en, content_zh, is_pinned, status, views_count')
+      .order('is_pinned', { ascending: false })
+      .order('created_at', { ascending: false });
+
+    // Under public RLS, filter only published status for general public/investors
+    if (!includeDrafts) {
+      query = query.eq('status', 'published');
+    }
+
+    if (categoryFilter) {
+      query = query.eq('category', categoryFilter);
+    }
+
+    const { data: dbData, error: dbError } = await query;
+
+    if (dbError) {
+      await handleSupabaseError(dbError);
+      console.warn('[fetchMppNewsWithFallback] Supabase query notice:', dbError.message);
+    } else if (Array.isArray(dbData) && dbData.length > 0) {
+      const mapped = dbData.map(mapSupabaseRowToNewsItem);
+      // Update local storage cache
+      try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(mapped));
+      } catch (e) {}
+      return {
+        data: mapped,
+        error: null,
+        fromSource: 'supabase'
+      };
+    }
+  } catch (err: any) {
+    console.warn('[fetchMppNewsWithFallback] Direct Supabase error:', err?.message || err);
+  }
+
+  // 2. Secondary Gateway: Server-side API Proxy (/api/mpp-news)
+  try {
+    const url = includeDrafts ? '/api/mpp-news?includeDrafts=true' : '/api/mpp-news';
+    const res = await fetch(url);
+    if (res.ok) {
+      const serverNews = await res.json();
+      if (Array.isArray(serverNews) && serverNews.length > 0) {
+        let filtered = serverNews.map(mapSupabaseRowToNewsItem);
+        if (!includeDrafts) {
+          filtered = filtered.filter(n => n.status !== 'draft');
+        }
+        if (categoryFilter) {
+          filtered = filtered.filter(n => n.kategori === categoryFilter);
+        }
+        try {
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(filtered));
+        } catch (e) {}
+        return {
+          data: filtered,
+          error: null,
+          fromSource: 'server_api'
+        };
+      }
+    }
+  } catch (apiErr: any) {
+    console.warn('[fetchMppNewsWithFallback] Server API proxy error:', apiErr?.message || apiErr);
+  }
+
+  // 3. Fallback: Local Cache (Honest Fallback)
+  const cached = getStoredMppNews();
+  const finalFiltered = cached.filter(item => {
+    if (!includeDrafts && item.status === 'draft') return false;
+    if (categoryFilter && item.kategori !== categoryFilter) return false;
+    return true;
+  });
+
+  return {
+    data: finalFiltered,
+    error: 'Menggunakan data cadangan lokal. Silakan periksa koneksi internet Anda.',
+    fromSource: 'local_cache'
+  };
+}
+
+/**
+ * Synchronize news from server or Supabase and notify all tabs/listeners
  */
 export async function syncMppNewsWithServer(): Promise<MppNewsItem[]> {
-  try {
-    const res = await fetch('/api/mpp-news');
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const serverNews: MppNewsItem[] = await res.json();
-    if (Array.isArray(serverNews) && serverNews.length > 0) {
-      // Normalize items
-      const normalized = serverNews.map(item => ({
-        ...item,
-        id: String(item.id || `news-${Date.now()}`),
-        judul: item.judul || (item as any).title || "Berita MPP Luwu",
-        ringkasan: item.ringkasan || (item as any).content || "Informasi pelayanan publik MPP Simpurusiang.",
-        isiLengkap: item.isiLengkap || (item as any).content || item.ringkasan || "Informasi pelayanan publik MPP Simpurusiang.",
-        image: item.image || (item as any).photo || "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
-        kategori: item.kategori || (item as any).category || "Giat Kegiatan MPP",
-        penulis: item.penulis || "Admin MPP Luwu",
-        tanggal: item.tanggal || (item as any).date || new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
-        status: item.status || "published"
-      }));
-
-      // Cache locally
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(normalized));
-      
-      // Dispatch update events for React state listeners
-      window.dispatchEvent(new CustomEvent('mpp_news_updated', { detail: normalized }));
-      if (newsBroadcastChannel) {
-        try {
-          newsBroadcastChannel.postMessage({ type: 'MPP_NEWS_SYNC', payload: normalized });
-        } catch (e) {}
-      }
-      return normalized;
+  const res = await fetchMppNewsWithFallback();
+  if (res.data && res.data.length > 0) {
+    window.dispatchEvent(new CustomEvent('mpp_news_updated', { detail: res.data }));
+    if (newsBroadcastChannel) {
+      try {
+        newsBroadcastChannel.postMessage({ type: 'MPP_NEWS_SYNC', payload: res.data });
+      } catch (e) {}
     }
-  } catch (err) {
-    console.warn('[syncMppNewsWithServer] Failed to sync with server:', err);
+    return res.data;
   }
   return getStoredMppNews();
 }
 
+/**
+ * Persists news items locally and synchronizes to Supabase & Backend API
+ */
 export function saveMppNews(newsList: MppNewsItem[]): void {
   try {
     // 1. Instant local persistence
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newsList));
-    // Jaga kompatibilitas dengan key mpp_portal_news
-    const legacyFormat = newsList.map(n => ({
-      id: n.id,
-      title: n.judul,
-      content: n.isiLengkap || n.ringkasan,
-      photo: n.image,
-      category: n.kategori,
-      date: n.tanggal
-    }));
-    localStorage.setItem("mpp_portal_news", JSON.stringify(legacyFormat));
-
+    
     // 2. Dispatch event for same-tab React components
     window.dispatchEvent(new CustomEvent('mpp_news_updated', { detail: newsList }));
 
@@ -290,7 +341,7 @@ export function saveMppNews(newsList: MppNewsItem[]): void {
       } catch (e) {}
     }
 
-    // 4. Send to backend server & Supabase so Android phones and other devices see it
+    // 4. Send to backend server & Supabase news table
     fetch('/api/mpp-news', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -300,3 +351,4 @@ export function saveMppNews(newsList: MppNewsItem[]): void {
     console.error('Failed to save mpp news to localStorage:', err);
   }
 }
+

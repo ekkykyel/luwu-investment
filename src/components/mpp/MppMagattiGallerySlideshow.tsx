@@ -205,7 +205,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
       {/* MAIN GRAND CINEMATIC SLIDESHOW SHOWCASE (CLEAN, IMMERSIVE & ELEGANT)      */}
       {/* ========================================================================= */}
       <div 
-        className="relative w-full h-[460px] xs:h-[500px] sm:h-[540px] md:h-[590px] lg:h-[630px] rounded-3xl overflow-hidden shadow-2xl border border-slate-200/50 dark:border-white/10 group"
+        className="relative w-full h-[500px] xs:h-[530px] sm:h-[560px] md:h-[600px] lg:h-[640px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200/50 dark:border-white/10 group"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         onTouchStart={handleTouchStart}
@@ -243,7 +243,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
         </div>
 
         {/* Minimalist Top Right Micro Action Pill Cluster */}
-        <div className="absolute top-3.5 right-3.5 z-20 pointer-events-auto">
+        <div className="absolute top-2.5 right-2.5 sm:top-3.5 sm:right-3.5 z-20 pointer-events-auto">
           <div className="flex items-center gap-1 p-1 rounded-full bg-slate-950/60 hover:bg-slate-950/85 backdrop-blur-xl border border-white/15 shadow-xl transition-all">
             {/* Room Features Toggle */}
             <button
@@ -338,7 +338,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
             <button
               type="button"
               onClick={prevSlide}
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 p-2.5 sm:p-3 rounded-full bg-slate-950/70 backdrop-blur-md text-white hover:bg-emerald-600 hover:text-white border border-white/15 transition-all shadow-xl opacity-85 sm:opacity-0 group-hover:opacity-100 active:scale-90 cursor-pointer"
+              className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-3 rounded-full bg-slate-950/70 backdrop-blur-md text-white hover:bg-emerald-600 hover:text-white border border-white/15 transition-all shadow-xl opacity-85 sm:opacity-0 group-hover:opacity-100 active:scale-90 cursor-pointer"
               aria-label="Foto Ruangan Sebelumnya"
             >
               <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -347,7 +347,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
             <button
               type="button"
               onClick={nextSlide}
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 p-2.5 sm:p-3 rounded-full bg-slate-950/70 backdrop-blur-md text-white hover:bg-emerald-600 hover:text-white border border-white/15 transition-all shadow-xl opacity-85 sm:opacity-0 group-hover:opacity-100 active:scale-90 cursor-pointer"
+              className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-3 rounded-full bg-slate-950/70 backdrop-blur-md text-white hover:bg-emerald-600 hover:text-white border border-white/15 transition-all shadow-xl opacity-85 sm:opacity-0 group-hover:opacity-100 active:scale-90 cursor-pointer"
               aria-label="Foto Ruangan Selanjutnya"
             >
               <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -358,8 +358,8 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
         {/* ========================================================================= */}
         {/* REFINED FLOATING CAPTION ISLAND WITH NEON GLOW PAGINATION DOTS            */}
         {/* ========================================================================= */}
-        <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 z-20 pointer-events-auto">
-          <div className="bg-slate-950/85 backdrop-blur-2xl border border-white/15 rounded-2xl p-3.5 sm:p-5 shadow-[0_12px_40px_rgba(0,0,0,0.6)] space-y-2">
+        <div className="absolute bottom-2 left-2 right-2 sm:bottom-4 sm:left-4 sm:right-4 z-20 pointer-events-auto">
+          <div className="bg-slate-950/85 backdrop-blur-2xl border border-white/15 rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-[0_12px_40px_rgba(0,0,0,0.6)] space-y-1.5 sm:space-y-2">
             
             {/* Top Row: Location Tag & Glow Pagination Indicators */}
             <div className="flex items-center justify-between gap-3">

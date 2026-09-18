@@ -42,6 +42,8 @@ export async function handleSupabaseError(error: any): Promise<boolean> {
   return false;
 }
 
+import { safeFetchWithBackoff } from "./globalApiRetry";
+
 const layerDataMemoryCache: Record<string, Promise<any>> = {};
 
 /**
@@ -90,10 +92,12 @@ export async function safeFetchLayerData(tableName: string, timeoutMs = 12000): 
     const urlsToTry = [`/${tableName}.json`, `./${tableName}.json`];
     for (const url of urlsToTry) {
       try {
-        const staticRes = await fetch(url, {
-          headers: { Accept: "application/json" }
+        const staticRes = await safeFetchWithBackoff(url, {
+          headers: { Accept: "application/json" },
+          maxRetries: 3,
+          initialDelayMs: 300
         });
-        if (staticRes.ok) {
+        if (staticRes && staticRes.ok) {
           const json = await staticRes.json();
           if (json && (json.features?.length > 0 || (Array.isArray(json) && json.length > 0))) {
             return json;

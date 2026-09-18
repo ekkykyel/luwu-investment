@@ -62,6 +62,11 @@ import {
   getLocalizedReview, 
   getLocalizedStats 
 } from '../data/mppAgenciesData';
+import {
+  mergeFacilitiesWithDb,
+  syncOrSeedMppFacilitiesToSupabase,
+  DEFAULT_OFFICIAL_MPP_FACILITIES
+} from '../data/mppFacilitiesData';
 
 const FALLBACK_IMAGE_URL = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600' viewBox='0 0 800 600'%3E%3Crect width='800' height='600' fill='%230f172a'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2334d399' font-family='sans-serif' font-size='22' font-weight='bold'%3EMPP Simpurusiang Kab. Luwu%3C/text%3E%3C/svg%3E";
 
@@ -869,11 +874,54 @@ export default function PortalMPP() {
         .from('mpp_facilities')
         .select('*')
         .order('created_at', { ascending: true });
-      if (!error && data && data.length > 0) {
-        setDbFacilities(data);
+
+      if (error) {
+        const isRlsError = error.code === '42501' || error.message?.toLowerCase().includes('permission denied') || error.message?.toLowerCase().includes('row-level security');
+        console.error('[PortalMPP] Error fetching live facilities from Supabase:', {
+          code: error.code,
+          message: error.message,
+          hint: error.hint,
+          details: error.details,
+          isRlsBlocked: isRlsError,
+          diagnosis: isRlsError 
+            ? 'RLS is blocking guest session. Run migration 20260918_mpp_facilities_rls.sql to allow public SELECT.' 
+            : 'Database query returned an error.'
+        });
+        return;
       }
-    } catch (err) {
-      console.warn("Notice loading mpp_facilities:", err);
+
+      if (data && data.length > 0) {
+        setDbFacilities(data);
+        if (data.length < 9) {
+          console.info(`[PortalMPP] Found ${data.length} facilities in database (standard is 9). Triggering background sync...`);
+          syncOrSeedMppFacilitiesToSupabase().then(() => {
+            supabase
+              .from('mpp_facilities')
+              .select('*')
+              .order('created_at', { ascending: true })
+              .then(res => {
+                if (res.data && res.data.length > 0) {
+                  setDbFacilities(res.data);
+                }
+              });
+          });
+        }
+      } else {
+        console.info('[PortalMPP] No custom facilities in database. Seeding official standard facilities...');
+        syncOrSeedMppFacilitiesToSupabase().then(() => {
+          supabase
+            .from('mpp_facilities')
+            .select('*')
+            .order('created_at', { ascending: true })
+            .then(res => {
+              if (res.data && res.data.length > 0) {
+                setDbFacilities(res.data);
+              }
+            });
+        });
+      }
+    } catch (err: any) {
+      console.error("[PortalMPP] Unexpected exception loading mpp_facilities:", err);
     }
   }, []);
 
@@ -1501,56 +1549,7 @@ export default function PortalMPP() {
   }, [isUlasanPaused]);
 
   const facilitiesData = useMemo(() => {
-    if (dbFacilities && dbFacilities.length > 0) {
-      return dbFacilities.map((df: any) => {
-        const getIcon = (name: string) => {
-          const n = (name || '').toLowerCase();
-          if (n.includes('anak') || n.includes('kid') || n.includes('bermain')) return Gamepad2;
-          if (n.includes('baca') || n.includes('pustaka') || n.includes('buku')) return BookOpen;
-          if (n.includes('laktasi') || n.includes('bayi') || n.includes('ibu')) return Baby;
-          if (n.includes('disabilitas') || n.includes('prioritas')) return Accessibility;
-          if (n.includes('ibadah') || n.includes('musholla') || n.includes('shalat')) return Moon;
-          if (n.includes('kiosk') || n.includes('digital') || n.includes('mandiri')) return Laptop;
-          if (n.includes('pengaduan') || n.includes('aduan')) return HeartHandshake;
-          if (n.includes('umkm') || n.includes('kemitraan')) return Store;
-          return Armchair;
-        };
-        const configMatch = (FACILITIES_CONFIG || []).find(c => 
-          (c.key && (df.name || '').toLowerCase().includes(c.key.toLowerCase())) || 
-          (c.id && (df.name || '').toLowerCase().includes(c.id.toLowerCase()))
-        );
-        return {
-          id: String(df.id),
-          key: `db_${df.id}`,
-          name: df.name,
-          shortName: df.name.length > 20 ? df.name.slice(0, 20) + '...' : df.name,
-          subtitle: df.floor || 'Lantai 1',
-          tag: df.floor || 'Fasilitas Utama',
-          description: df.description || 'Fasilitas penunjang kenyamanan terpadu di Gedung Mal Pelayanan Publik Simpurusiang Luwu.',
-          icon: configMatch ? configMatch.icon : getIcon(df.name),
-          image: df.image_url || configMatch?.image || 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1000&q=80',
-          features: [
-            'Aksesibilitas Prima & Ramah Semua Kalangan',
-            'Kebersihan dan Kenyamanan Berstandar Nasional',
-            'Terhubung Sistem Operasional MPP Simpurusiang'
-          ]
-        };
-      });
-    }
-
-    return (FACILITIES_CONFIG || [])?.map(fac => {
-      const rawFeatures = t(`mppPortal.facilitiesData.${fac.key}.features`, { returnObjects: true });
-      const features = Array.isArray(rawFeatures) ? (rawFeatures as string[]) : [];
-      return {
-        ...fac,
-        name: t(`mppPortal.facilitiesData.${fac.key}.name`),
-        shortName: t(`mppPortal.facilitiesData.${fac.key}.shortName`),
-        subtitle: t(`mppPortal.facilitiesData.${fac.key}.subtitle`),
-        tag: t(`mppPortal.facilitiesData.${fac.key}.tag`),
-        description: t(`mppPortal.facilitiesData.${fac.key}.desc`),
-        features,
-      };
-    }) || [];
+    return mergeFacilitiesWithDb(dbFacilities, t);
   }, [dbFacilities, t]);
 
   const activeFacility = (facilitiesData || []).find(f => f.id === activeFacilityId) || facilitiesData?.[0];
@@ -1870,7 +1869,7 @@ export default function PortalMPP() {
         )}
 
         {/* Main Content Area */}
-        <main className="w-full max-w-[1440px] mx-auto px-2 md:px-8 lg:px-16 pt-4 pb-28 sm:pb-32 md:py-12 flex flex-col gap-0 overflow-x-clip">
+        <main className="w-full max-w-[1440px] mx-auto px-1 sm:px-4 md:px-8 lg:px-16 pt-3 pb-28 sm:pb-32 md:py-12 flex flex-col gap-0 overflow-x-clip">
           
           {/* Hero Section */}
           <section id="hero" className="flex flex-col items-center text-center relative pt-2 sm:pt-4 md:pt-8 pb-6 md:pb-12 scroll-mt-24">
@@ -2018,7 +2017,7 @@ export default function PortalMPP() {
                   hidden: { opacity: 0, y: 15 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
                 }}
-                className="grid grid-cols-3 gap-2.5 sm:gap-6 lg:gap-8 w-full max-w-4xl"
+                className="grid grid-cols-3 gap-1.5 sm:gap-6 lg:gap-8 w-full max-w-4xl px-0 sm:px-2"
               >
                 {activePersona === 'investor' ? (
                   <>
@@ -2156,7 +2155,7 @@ export default function PortalMPP() {
                   hidden: { opacity: 0, y: 15 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
                 }}
-                className="w-full max-w-3xl mt-5 sm:mt-8 px-1 sm:px-4"
+                className="w-full max-w-3xl mt-5 sm:mt-8 px-0 sm:px-4"
               >
                 <div 
                   onClick={() => setIsCommandPaletteOpen(true)}
@@ -2199,7 +2198,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-5xl mx-auto  flex flex-col items-center text-center py-12 sm:py-16 md:py-24 px-2 sm:px-5 md:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-5xl lg:max-w-6xl mx-auto flex flex-col items-center text-center py-8 sm:py-16 md:py-24 px-0 sm:px-4 md:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
@@ -2235,9 +2234,9 @@ export default function PortalMPP() {
             </div>
 
             {/* Desain Card Galeri Gedung & Ruang MPP Simpurusiang (Besar, Elegan & Modern) */}
-            <div className="relative w-full max-w-5xl lg:max-w-6xl mx-auto px-2 sm:px-4">
+            <div className="relative w-full max-w-5xl lg:max-w-6xl mx-auto px-0 sm:px-2">
               {/* Elemen Latar (Aksen Cahaya Emerald Modern) */}
-              <div className="absolute -inset-1.5 bg-gradient-to-r from-emerald-500/20 via-teal-500/10 to-blue-500/20 rounded-3xl blur-xl opacity-70 pointer-events-none"></div>
+              <div className="absolute -inset-1.5 bg-gradient-to-r from-emerald-500/20 via-teal-500/10 to-blue-500/20 rounded-2xl sm:rounded-3xl blur-xl opacity-70 pointer-events-none"></div>
 
               {/* Komponen Slideshow Utama Beresolusi Tinggi */}
               <div className="relative z-10 w-full">
@@ -2252,7 +2251,7 @@ export default function PortalMPP() {
           </div>
 
           {/* Seksi Operational Status Banner & Heatmap Jam Ramai vs Sepi */}
-          <div id="operasional-heatmap" className="max-w-[1440px] mx-auto px-2 md:px-8 lg:px-16">
+          <div id="operasional-heatmap" className="w-full max-w-[1440px] mx-auto px-0.5 sm:px-4 md:px-8 lg:px-16">
             <OperationalHeatmap isDark={isDark} />
           </div>
 
@@ -2284,7 +2283,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto  mt-12 sm:mt-16 md:mt-24 mb-8 px-2 sm:px-5 md:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto mt-10 sm:mt-16 md:mt-24 mb-8 px-0.5 sm:px-5 md:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Antrean Online Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
@@ -2529,7 +2528,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }} 
             transition={{ duration: 0.35, ease: "easeOut" }} 
             viewport={{ once: true, amount: 0.1 }} 
-            className="w-full max-w-6xl mx-auto  py-12 sm:py-16 md:py-24 px-2 sm:px-5 md:px-8"
+            className="w-full max-w-6xl mx-auto py-10 sm:py-16 md:py-24 px-0.5 sm:px-5 md:px-8"
           >
             <div className="w-full bg-white/80 dark:bg-slate-800/40 backdrop-blur-xl shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 border border-slate-100 dark:border-white/5 rounded-3xl p-4 sm:p-8 md:p-10 relative overflow-hidden transition-all duration-300">
               <div className="hidden dark:block absolute inset-0 bg-gradient-to-br from-emerald-950/20 to-transparent pointer-events-none"></div>
@@ -2785,7 +2784,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto  flex flex-col gap-6 lg:gap-8 scroll-mt-28 py-12 sm:py-16 md:py-24 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto flex flex-col gap-6 lg:gap-8 scroll-mt-28 py-10 sm:py-16 md:py-24 px-0.5 sm:px-5 md:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
@@ -3084,7 +3083,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-28 py-12 sm:py-16 md:py-24 px-3 sm:px-5 md:px-8 relative"
+            className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-28 py-10 sm:py-16 md:py-24 px-0.5 sm:px-5 md:px-8 relative"
           >
             {/* Header Seksi */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
@@ -3296,7 +3295,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto  flex flex-col scroll-mt-28 py-12 sm:py-16 md:py-24 px-2 sm:px-5 md:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-28 py-10 sm:py-16 md:py-24 px-0.5 sm:px-5 md:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
@@ -3948,7 +3947,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-7xl mx-auto  py-12 sm:py-16 md:py-24 px-2 sm:px-5 md:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-7xl mx-auto py-10 sm:py-16 md:py-24 px-0.5 sm:px-5 md:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 gap-4">
@@ -4009,11 +4008,16 @@ export default function PortalMPP() {
                           />
                           <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
                             <span className="px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-[10px] font-bold uppercase tracking-wider text-emerald-400 border border-emerald-500/30 font-sans shadow-sm">
-                              {item.kategori}
+                              {item.kategori === 'Giat Kegiatan MPP' ? (isEn ? 'MPP Activities' : isZh ? '政务大厅动态' : item.kategori) :
+                               item.kategori === 'Berita Daerah' ? (isEn ? 'Regional News' : isZh ? '地方要闻' : item.kategori) :
+                               item.kategori === 'Berita Nasional' ? (isEn ? 'National News' : isZh ? '国家要闻' : item.kategori) :
+                               item.kategori === 'Berita Internasional' ? (isEn ? 'International News' : isZh ? '国际资讯' : item.kategori) :
+                               item.kategori === 'Tips & Edukasi' ? (isEn ? 'Tips & Guide' : isZh ? '办事指南与科普' : item.kategori) :
+                               item.kategori}
                             </span>
                             {item.isPinned && (
                               <span className="px-2.5 py-1 rounded-full bg-amber-500 text-slate-950 text-[10px] font-bold font-sans">
-                                Pinned
+                                {isEn ? 'PINNED' : isZh ? '置顶' : 'UTAMA'}
                               </span>
                             )}
                           </div>
@@ -4033,7 +4037,7 @@ export default function PortalMPP() {
                       </div>
 
                       <div className="px-6 pb-5 pt-0 flex items-center justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                        <span>Baca Selengkapnya</span>
+                        <span>{isEn ? 'Read More' : isZh ? '阅读全文' : t('mppPortal.news.readMore', 'Baca Selengkapnya')}</span>
                         <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                       </div>
                     </motion.div>
@@ -4061,7 +4065,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="relative bg-slate-900/90 overflow-hidden rounded-t-[2.5rem] md:rounded-t-[4rem] md: w-full py-12 sm:py-16 md:py-24"
+            className="relative bg-slate-900/90 overflow-hidden rounded-t-[2rem] sm:rounded-t-[2.5rem] md:rounded-t-[4rem] w-full py-10 sm:py-16 md:py-24 px-0.5 sm:px-4"
           >
             {/* Latar Belakang Absolut dengan Blur & Gradien Emerald Tipis */}
             <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -4192,7 +4196,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-[95%] sm:w-[90%] lg:w-[85%] mx-auto scroll-mt-28 py-12 sm:py-16 md:py-24 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto scroll-mt-28 py-10 sm:py-16 md:py-24 px-0.5 sm:px-5 md:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
@@ -4323,7 +4327,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-[95%] sm:w-[90%] lg:w-[85%] mx-auto py-12 sm:py-16 md:py-24 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto py-10 sm:py-16 md:py-24 px-0.5 sm:px-5 md:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
@@ -4690,7 +4694,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-[95%] sm:w-[90%] lg:w-[85%] mx-auto scroll-mt-28 py-12 sm:py-16 md:py-24"
+            className="w-full max-w-6xl mx-auto scroll-mt-28 py-10 sm:py-16 md:py-24 px-0.5 sm:px-5 md:px-8"
           >
             <div className="bg-gradient-to-br from-slate-900 to-slate-950 rounded-[2.5rem] p-4 sm:p-8 relative overflow-hidden shadow-2xl flex flex-col md:flex-row items-center gap-10">
               {/* Pattern Background */}
@@ -4760,7 +4764,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="max-w-5xl mx-auto  w-full scroll-mt-28 py-12 sm:py-16 md:py-24 px-2 sm:px-5 md:px-8"
+            className="max-w-5xl mx-auto w-full scroll-mt-28 py-10 sm:py-16 md:py-24 px-0.5 sm:px-5 md:px-8"
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
@@ -4917,12 +4921,12 @@ export default function PortalMPP() {
           </motion.section>
 
           {/* Widget Prakiraan Cuaca Kabupaten Luwu (Paling Bawah Di Atas Footer) */}
-          <div className="w-[95%] sm:w-[90%] lg:w-[85%] max-w-4xl mx-auto my-12 flex justify-center">
+          <div className="w-full max-w-4xl mx-auto my-8 px-0.5 sm:px-4 flex justify-center">
             <WeatherWidget />
           </div>
 
           {/* BURSA KOMODITAS - LIVE MARKET TICKER SECTION (Elegant Bottom Page Section) */}
-          <div className="w-[95%] sm:w-[90%] lg:w-[85%] max-w-4xl mx-auto my-8 flex flex-col items-center">
+          <div className="w-full max-w-4xl mx-auto my-6 px-0.5 sm:px-4 flex flex-col items-center">
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-[#00FF99] border border-emerald-500/20 text-[10px] font-bold tracking-wider uppercase font-sans mb-3">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               Bursa Komoditas Luwu

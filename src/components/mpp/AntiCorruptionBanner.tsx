@@ -10,7 +10,10 @@ interface AntiCorruptionBannerProps {
 }
 
 export function AntiCorruptionBanner({ isDark = false, className = '', variant = 'full' }: AntiCorruptionBannerProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language || 'id';
+  const isEn = currentLang.startsWith('en');
+  const isZh = currentLang.startsWith('zh');
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   return (
@@ -29,7 +32,7 @@ export function AntiCorruptionBanner({ isDark = false, className = '', variant =
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
             <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-rose-600 dark:text-rose-400 font-sans">
-              Zona Integritas Bebas Korupsi (WBK / WBBM)
+              {isEn ? 'Zero-Corruption Integrity Zone (WBK / WBBM)' : isZh ? '廉洁示范与反腐败诚信专区 (WBK/WBBM)' : 'Zona Integritas Bebas Korupsi (WBK / WBBM)'}
             </span>
           </div>
           <button
@@ -37,7 +40,7 @@ export function AntiCorruptionBanner({ isDark = false, className = '', variant =
             onClick={() => setIsDetailModalOpen(true)}
             className="text-[10.5px] sm:text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1 transition-colors cursor-pointer"
           >
-            <span>Maklumat Integritas</span>
+            <span>{isEn ? 'Integrity Declaration' : isZh ? '廉洁履职声明' : 'Maklumat Integritas'}</span>
             <ExternalLink className="w-3 h-3 text-rose-500" />
           </button>
         </div>
@@ -61,10 +64,10 @@ export function AntiCorruptionBanner({ isDark = false, className = '', variant =
                 </div>
               </div>
               <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white tracking-widest font-sans">
-                KORUPSI
+                {isEn ? 'NO CORRUPTION' : isZh ? '坚决杜绝贪腐' : 'KORUPSI'}
               </span>
               <span className="text-[9.5px] sm:text-[10.5px] text-slate-500 dark:text-slate-400 mt-1">
-                Tolak Semua Praktik
+                {isEn ? 'Zero Tolerance Policy' : isZh ? '严厉打击腐败行为' : 'Tolak Semua Praktik'}
               </span>
             </motion.div>
 
@@ -83,10 +86,10 @@ export function AntiCorruptionBanner({ isDark = false, className = '', variant =
                 <span className="text-xl sm:text-2xl font-black text-rose-600 dark:text-rose-400">P</span>
               </div>
               <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white tracking-wider font-sans">
-                GRATIFIKASI
+                {isEn ? 'NO GRATUITY' : isZh ? '严禁礼品馈赠' : 'GRATIFIKASI'}
               </span>
               <span className="text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 mt-1 leading-tight line-clamp-2">
-                Dilarang Memberi & Menerima
+                {isEn ? 'No Giving or Receiving' : isZh ? '严禁收取任何礼品红包' : 'Dilarang Memberi & Menerima'}
               </span>
             </motion.div>
 
@@ -102,10 +105,10 @@ export function AntiCorruptionBanner({ isDark = false, className = '', variant =
                 <span className="text-[8px] font-black tracking-tighter leading-none">STOP</span>
               </div>
               <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white tracking-wider font-sans">
-                STOP PUNGLI
+                {isEn ? 'NO EXTORTION' : isZh ? '拒绝违规乱收费' : 'STOP PUNGLI'}
               </span>
               <span className="text-[9.5px] sm:text-[10.5px] text-slate-500 dark:text-slate-400 mt-1">
-                Biaya Nol / Resmi Bank
+                {isEn ? 'Official Bank Rates Only' : isZh ? '官方银行透明收费' : 'Biaya Nol / Resmi Bank'}
               </span>
             </motion.div>
 
@@ -117,15 +120,15 @@ export function AntiCorruptionBanner({ isDark = false, className = '', variant =
               }`}
             >
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-red-700 text-white flex flex-col items-center justify-center shadow-md mb-2 p-1 font-serif italic text-center">
-                <span className="text-[7.5px] font-black leading-tight tracking-wider">BERANI</span>
-                <span className="text-[10px] font-black leading-tight">JUJUR</span>
-                <span className="text-[7.5px] font-black leading-tight tracking-wider">HEBAT!</span>
+                <span className="text-[7.5px] font-black leading-tight tracking-wider">{isEn ? 'BE' : isZh ? '廉洁' : 'BERANI'}</span>
+                <span className="text-[10px] font-black leading-tight">{isEn ? 'HONEST' : isZh ? '奉公' : 'JUJUR'}</span>
+                <span className="text-[7.5px] font-black leading-tight tracking-wider">{isEn ? 'PROUD' : isZh ? '为民' : 'HEBAT!'}</span>
               </div>
               <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white tracking-wider font-sans">
-                INTEGRITAS
+                {isEn ? 'INTEGRITY' : isZh ? '诚信执政' : 'INTEGRITAS'}
               </span>
               <span className="text-[9.5px] sm:text-[10.5px] text-slate-500 dark:text-slate-400 mt-1">
-                Budaya Anti-Korupsi
+                {isEn ? 'Anti-Corruption Culture' : isZh ? '崇廉拒腐政务生态' : 'Budaya Anti-Korupsi'}
               </span>
             </motion.div>
           </div>
@@ -133,7 +136,12 @@ export function AntiCorruptionBanner({ isDark = false, className = '', variant =
           {/* Subtext Banner */}
           <div className="mt-4 pt-3 border-t border-slate-200/60 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
             <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300">
-              <strong className="text-rose-600 dark:text-rose-400">Pemberitahuan Resmi:</strong> Seluruh pelayanan di Mal Pelayanan Publik (MPP) Simpurusiang tidak dipungut biaya selain tarif retribusi resmi yang disetor langsung melalui kas daerah / Bank BPD Sulselbar.
+              <strong className="text-rose-600 dark:text-rose-400">{isEn ? 'Official Notice:' : isZh ? '官方郑重声明:' : 'Pemberitahuan Resmi:'}</strong>{' '}
+              {isEn 
+                ? 'All services at MPP Simpurusiang are free of charge, except for official regional retribution fees deposited directly into the regional treasury or Bank BPD Sulselbar.'
+                : isZh 
+                ? '鲁乌县辛普鲁西亚公共服务大厅的所有政务与行政审批事项均不收取额外费用，法定行政事业规费一律直接缴入财政专户或南苏拉威西地方银行。'
+                : 'Seluruh pelayanan di Mal Pelayanan Publik (MPP) Simpurusiang tidak dipungut biaya selain tarif retribusi resmi yang disetor langsung melalui kas daerah / Bank BPD Sulselbar.'}
             </p>
             <span className="shrink-0 text-[10px] font-mono px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 font-bold">
               PERPRES NO. 87/2016
@@ -168,10 +176,10 @@ export function AntiCorruptionBanner({ isDark = false, className = '', variant =
                 </div>
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-widest text-rose-600 dark:text-rose-400 block font-mono">
-                    PEMERINTAH KABUPATEN LUWU • DPMPTSP
+                    {isEn ? 'GOVERNMENT OF LUWU REGENCY • DPMPTSP' : isZh ? '鲁乌县政府 • 投资与一站式综合服务局' : 'PEMERINTAH KABUPATEN LUWU • DPMPTSP'}
                   </span>
                   <h3 className="text-lg sm:text-xl font-black font-sans">
-                    Komitmen Zona Integritas & Pelayanan Bersih
+                    {isEn ? 'Commitment to Integrity Zone & Clean Governance' : isZh ? '廉洁示范专区与清廉政务建设承诺' : 'Komitmen Zona Integritas & Pelayanan Bersih'}
                   </h3>
                 </div>
               </div>
@@ -179,21 +187,25 @@ export function AntiCorruptionBanner({ isDark = false, className = '', variant =
               <div className="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                 <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20">
                   <strong className="text-rose-700 dark:text-rose-300 block mb-1">
-                    🛑 Larangan Keras Gratifikasi & Pungutan Liar:
+                    {isEn ? '🛑 Strict Prohibition on Gratuities & Illegal Levies:' : isZh ? '🛑 严禁任何形式的礼金受贿与乱收费:' : '🛑 Larangan Keras Gratifikasi & Pungutan Liar:'}
                   </strong>
                   <p>
-                    Petugas dilarang meminta atau menerima uang, hadiah, bingkisan, atau fasilitas apapun dari pemohon layanan. Masyarakat dan investor dihimbau untuk tidak memberikan imbalan dalam bentuk apapun.
+                    {isEn 
+                      ? 'Officers are strictly prohibited from soliciting or receiving money, gifts, parcels, or any benefits from applicants. Citizens and investors are requested not to provide gratuities in any form.'
+                      : isZh
+                      ? '窗口工作人员严禁索要或收受任何礼金、有价证券、礼品红包或便利待遇。请广大市民与中外投资者切勿提供任何形式的私下报酬。'
+                      : 'Petugas dilarang meminta atau menerima uang, hadiah, bingkisan, atau fasilitas apapun dari pemohon layanan. Masyarakat dan investor dihimbau untuk tidak memberikan imbalan dalam bentuk apapun.'}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700">
-                    <strong className="text-slate-900 dark:text-white block mb-1">Kanal Pengaduan Resmi:</strong>
-                    <p className="text-xs">Laporkan setiap indikasi pungli atau gratifikasi melalui SP4N-LAPOR! atau Call Center Inspektorat Kab. Luwu.</p>
+                    <strong className="text-slate-900 dark:text-white block mb-1">{isEn ? 'Official Complaint Channels:' : isZh ? '官方监督举报渠道:' : 'Kanal Pengaduan Resmi:'}</strong>
+                    <p className="text-xs">{isEn ? 'Report any extortion via national SP4N-LAPOR! or Luwu Regency Inspectorate.' : isZh ? '可通过国家 SP4N-LAPOR! 系统或鲁乌县监察局热线举报违规行为。' : 'Laporkan setiap indikasi pungli atau gratifikasi melalui SP4N-LAPOR! atau Call Center Inspektorat Kab. Luwu.'}</p>
                   </div>
                   <div className="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700">
-                    <strong className="text-slate-900 dark:text-white block mb-1">Perlindungan Pelapor:</strong>
-                    <p className="text-xs">Kerahasiaan identitas pelapor (*Whistleblower*) dijamin penuh oleh Undang-Undang Perlindungan Saksi dan Korban.</p>
+                    <strong className="text-slate-900 dark:text-white block mb-1">{isEn ? 'Whistleblower Protection:' : isZh ? '举报人保密保护机制:' : 'Perlindungan Pelapor:'}</strong>
+                    <p className="text-xs">{isEn ? 'The confidentiality of whistleblowers is fully guaranteed by witness protection legislation.' : isZh ? '依法对实名及匿名举报人信息提供严格的法律保密保障。' : 'Kerahasiaan identitas pelapor (*Whistleblower*) dijamin penuh oleh Undang-Undang Perlindungan Saksi dan Korban.'}</p>
                   </div>
                 </div>
               </div>
@@ -204,7 +216,7 @@ export function AntiCorruptionBanner({ isDark = false, className = '', variant =
                   onClick={() => setIsDetailModalOpen(false)}
                   className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs cursor-pointer transition-colors"
                 >
-                  Tutup Informasi
+                  {isEn ? 'Close Window' : isZh ? '关闭窗口' : 'Tutup Informasi'}
                 </button>
               </div>
             </motion.div>

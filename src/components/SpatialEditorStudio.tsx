@@ -330,11 +330,14 @@ export default function SpatialEditorStudio({
   const [geoJSONDiagnostics, setGeoJSONDiagnostics] = useState<{isValid: boolean, messages: {text: string, type: 'error'|'warning'|'success'}[]}>({isValid: true, messages: []});
 
 
+  const isFetchingRoadLayerRef = useRef(false);
+
   // Auto-aktifkan layer jalan sebagai referensi digitasi jika mode digitasi aktif
   useEffect(() => {
-    if (editorMode !== "VIEW") {
-      const roadLayer = Object.values(spatialLayers).find((l) => l.id === "layer_jalan");
+    if (editorMode !== "VIEW" && !isFetchingRoadLayerRef.current) {
+      const roadLayer = spatialLayers["layer_jalan"] || Object.values(spatialLayers).find((l) => l.id === "layer_jalan");
       if (roadLayer && !roadLayer.isActive) {
+        isFetchingRoadLayerRef.current = true;
         const token = localStorage.getItem("luwu_session_token");
         fetch('/api/spatial-layers/layer_jalan', {
           method: 'PUT',
@@ -361,10 +364,13 @@ export default function SpatialEditorStudio({
                layer_jalan: updatedLayer
              }));
           }
-        }).catch(err => console.error("Gagal auto-aktifkan layer jalan:", err));
+        }).catch(err => console.error("Gagal auto-aktifkan layer jalan:", err))
+        .finally(() => {
+          isFetchingRoadLayerRef.current = false;
+        });
       }
     }
-  }, [editorMode, spatialLayers]);
+  }, [editorMode, spatialLayers?.layer_jalan?.isActive]);
 
   // 1. Filtered active layer object
   const activeLayer = useMemo(() => {

@@ -10,7 +10,11 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 export function VipInvestorConcierge({ isDark = false }: { isDark?: boolean }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language || 'id';
+  const isEn = currentLang.startsWith('en');
+  const isZh = currentLang.startsWith('zh');
+
   const navigate = useNavigate();
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [bookingSubmitted, setBookingSubmitted] = useState(false);
@@ -51,21 +55,21 @@ export function VipInvestorConcierge({ isDark = false }: { isDark?: boolean }) {
       title: t("mppPortal.vipInvestor.pillar1Title", "Kesesuaian Tata Ruang (PKKPR Spasial)"),
       desc: t("mppPortal.vipInvestor.pillar1Desc", "Pengecekan instan zonasi peruntukan ruang berbasis Peta GIS RTRW Kabupaten Luwu."),
       icon: Layers,
-      actionText: t("mppPortal.vipInvestor.pillar1Action", "Buka Peta Spasial GIS"),
+      actionText: t("mppPortal.vipInvestor.pillar1Action", isEn ? "Open Spatial GIS Map" : isZh ? "打开 GIS 空间地图" : "Buka Peta Spasial GIS"),
       onAction: () => navigate('/peta-spasial')
     },
     {
       title: t("mppPortal.vipInvestor.pillar2Title", "Fasilitasi Insentif & Tax Allowance"),
       desc: t("mppPortal.vipInvestor.pillar2Desc", "Pendampingan insentif pembebasan/keringanan pajak daerah dan kemudahan izin usaha."),
       icon: DollarSign,
-      actionText: t("mppPortal.vipInvestor.pillar2Action", "Konsultasi Insentif"),
+      actionText: t("mppPortal.vipInvestor.pillar2Action", isEn ? "Incentive Consultation" : isZh ? "咨询优惠政策" : "Konsultasi Insentif"),
       onAction: () => setIsBookingModalOpen(true)
     },
     {
       title: t("mppPortal.vipInvestor.pillar3Title", "Pendampingan End-to-End OSS-RBA"),
       desc: t("mppPortal.vipInvestor.pillar3Desc", "Asistensi personal pemenuhan komitmen izin lingkungan (Amdal/UKL-UPL) & PBG."),
       icon: ShieldCheck,
-      actionText: t("mppPortal.vipInvestor.pillar3Action", "Booking VIP Desk"),
+      actionText: t("mppPortal.vipInvestor.pillar3Action", isEn ? "Book VIP Desk" : isZh ? "预约 VIP 专席" : "Booking VIP Desk"),
       onAction: () => setIsBookingModalOpen(true)
     }
   ];
@@ -187,10 +191,10 @@ export function VipInvestorConcierge({ isDark = false }: { isDark?: boolean }) {
                 <div className="p-6 text-center space-y-3 my-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 rounded-2xl">
                   <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto animate-bounce" />
                   <h4 className="text-sm font-bold text-emerald-900 dark:text-emerald-200 font-sans">
-                    Permohonan Konsultasi Berhasil Terkirim!
+                    {isEn ? 'Consultation Request Sent Successfully!' : isZh ? 'VIP 预约咨询申请已成功提交！' : 'Permohonan Konsultasi Berhasil Terkirim!'}
                   </h4>
                   <p className="text-xs text-emerald-700 dark:text-emerald-300">
-                    Tim Fast-Track VIP Concierge DPMPTSP Luwu akan menghubungi Anda melalui WhatsApp/Email dalam 1x24 jam kerja untuk konfirmasi jadwal.
+                    {isEn ? 'The Fast-Track VIP Concierge Team of DPMPTSP Luwu will contact you via WhatsApp/Email within 1 business day to confirm the schedule.' : isZh ? '鲁乌县投资局 VIP 快捷服务团队将在 1 个工作日内通过 WhatsApp/邮件联系您确认面谈安排。' : 'Tim Fast-Track VIP Concierge DPMPTSP Luwu akan menghubungi Anda melalui WhatsApp/Email dalam 1x24 jam kerja untuk konfirmasi jadwal.'}
                   </p>
                 </div>
               ) : (
@@ -204,7 +208,7 @@ export function VipInvestorConcierge({ isDark = false }: { isDark?: boolean }) {
                       required
                       value={bookingData.name}
                       onChange={(e) => setBookingData(p => ({ ...p, name: e.target.value }))}
-                      placeholder="Contoh: Budi Santoso"
+                      placeholder={isEn ? "e.g., John Doe" : isZh ? "例如：张伟 / 投资代表" : "Contoh: Budi Santoso"}
                       className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                   </div>
@@ -219,7 +223,7 @@ export function VipInvestorConcierge({ isDark = false }: { isDark?: boolean }) {
                         required
                         value={bookingData.company}
                         onChange={(e) => setBookingData(p => ({ ...p, company: e.target.value }))}
-                        placeholder="PT Luwu Cocoa Industry"
+                        placeholder={isEn ? "e.g. Luwu Agro Global Ltd" : isZh ? "如：鲁乌农产品实业有限公司" : "PT Luwu Cocoa Industry"}
                         className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                       />
                     </div>
@@ -232,7 +236,7 @@ export function VipInvestorConcierge({ isDark = false }: { isDark?: boolean }) {
                         required
                         value={bookingData.phone}
                         onChange={(e) => setBookingData(p => ({ ...p, phone: e.target.value }))}
-                        placeholder="081234567890"
+                        placeholder="+62 812-3456-7890"
                         className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                       />
                     </div>
@@ -247,12 +251,12 @@ export function VipInvestorConcierge({ isDark = false }: { isDark?: boolean }) {
                       onChange={(e) => setBookingData(p => ({ ...p, sector: e.target.value }))}
                       className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     >
-                      <option>Pertanian & Perkebunan Kakao/Kopi</option>
-                      <option>Energi Terbarukan (PLTA/PLTMH)</option>
-                      <option>Perikanan & Kelautan</option>
-                      <option>Pariwisata & Perhotelan</option>
-                      <option>Pertambangan & Olahan Mineral</option>
-                      <option>Properti & Infrastruktur</option>
+                      <option value="Pertanian & Perkebunan Kakao/Kopi">{isEn ? 'Agriculture & Cocoa/Coffee Plantations' : isZh ? '现代农业与可可/咖啡种植加工' : 'Pertanian & Perkebunan Kakao/Kopi'}</option>
+                      <option value="Energi Terbarukan (PLTA/PLTMH)">{isEn ? 'Renewable Energy (Hydropower PLTA/PLTMH)' : isZh ? '清洁能源 (水电与微水电开发)' : 'Energi Terbarukan (PLTA/PLTMH)'}</option>
+                      <option value="Perikanan & Kelautan">{isEn ? 'Fisheries & Marine Cultivation' : isZh ? '海洋渔业与水产养殖加工' : 'Perikanan & Kelautan'}</option>
+                      <option value="Pariwisata & Perhotelan">{isEn ? 'Tourism & Hospitality' : isZh ? '生态文旅与高端酒店服务业' : 'Pariwisata & Perhotelan'}</option>
+                      <option value="Pertambangan & Olahan Mineral">{isEn ? 'Mining & Mineral Processing' : isZh ? '矿产开采与精深加工产业' : 'Pertambangan & Olahan Mineral'}</option>
+                      <option value="Properti & Infrastruktur">{isEn ? 'Property, Logistics & Infrastructure' : isZh ? '智慧物流、园区与重大基础设施' : 'Properti & Infrastruktur'}</option>
                     </select>
                   </div>
 

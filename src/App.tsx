@@ -23,10 +23,11 @@ import ExecutiveDashboard from "./components/ExecutiveDashboard";
 import GisErrorBoundary from "./components/GisErrorBoundary";
 import InfrastructureStatsChart from "./components/InfrastructureStatsChart";
 import { lazyWithRetry } from "./utils/lazyWithRetry";
+import { safeFetchWithBackoff } from "./lib/globalApiRetry";
 const UploadGeoJsonPanel = lazyWithRetry(() => import('./components/UploadGeoJsonPanel'));
 const UploadRagPanel = lazyWithRetry(() => import('./components/UploadRagPanel'));
 const SpatialQueryPanel = lazyWithRetry(() => import('./components/SpatialQueryPanel'));
-import SmartInvestmentFormEngine from "./components/SmartInvestmentFormEngine";
+const SmartInvestmentFormEngine = lazyWithRetry(() => import("./components/SmartInvestmentFormEngine"));
 const InvestmentDetailModal = lazyWithRetry(() => import('./components/InvestmentDetailModal').then(m => ({ default: m.InvestmentDetailModal })));
 const ReportPdfModal = lazyWithRetry(() => import('./components/ReportPdfModal'));
 const MapPrintScaleModal = lazyWithRetry(() => import('./components/MapPrintScaleModal'));
@@ -44,12 +45,12 @@ const HeroSettings = lazyWithRetry(() => import('./components/HeroSettings'));
 const StaffImageSettings = lazyWithRetry(() => import('./components/StaffImageSettings'));
 import { calculateShortestPathGeoJSON } from "./utils/routeService";
 import { calculateBoundingBox, normalizeGeoJSON, normalizeName, normalizeDistrictName, validateAndCleanFeatureProperties, calculateDistanceMeters, calculateDistanceKm } from "./utils/geoUtils";
-import SpatialEditorStudio from "./components/SpatialEditorStudio";
+const SpatialEditorStudio = lazyWithRetry(() => import("./components/SpatialEditorStudio"));
 const LoginForm = lazyWithRetry(() => import("./components/LoginForm"));
 const GerbangOperatorLogin = lazyWithRetry(() => import("./components/Auth/GerbangOperatorLogin"));
 const AdminLayout = lazyWithRetry(() => import('./components/Admin/AdminLayout'));
 const InvestorLogin = lazyWithRetry(() => import("./components/Auth/InvestorLogin"));
-import InvestorRegistrationForm from "./components/Auth/InvestorRegistrationForm";
+const InvestorRegistrationForm = lazyWithRetry(() => import("./components/Auth/InvestorRegistrationForm"));
 const InvestorPortalDashboard = lazyWithRetry(() => import('./components/Dashboard/InvestorPortalDashboard'));
 const AdminPortalDashboard = lazyWithRetry(() => import('./components/Dashboard/AdminPortalDashboard'));
 const OperatorLaborWidget = lazyWithRetry(() => import('./components/Dashboard/OperatorLaborWidget').then(m => ({ default: m.OperatorLaborWidget })));
@@ -200,80 +201,44 @@ const getAuthHeadersOnly = (): Record<string, string> => {
   };
 };
 
-// Robust fetch helper with automated retries and plain text rate limit / error detection with AbortController timeout
+// Robust fetch helper with automated retries, exponential backoff, jitter, Retry-After header support, and deduplication
 async function fetchWithRetry(
   url: string,
   options: RequestInit = {},
-  retries = 3,
-  delay = 300,
-  timeoutMs = 60000
+  retries = 4,
+  delay = 400,
+  timeoutMs = 30000
 ): Promise<Response> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => {
-    controller.abort();
-  }, timeoutMs);
-
-  const onExternalAbort = () => {
-    controller.abort();
-  };
-
-  if (options.signal) {
-    if (options.signal.aborted) {
-      controller.abort();
-    } else {
-      options.signal.addEventListener("abort", onExternalAbort);
-    }
-  }
-
   try {
-    const res = await fetch(url, {
+    const res = await safeFetchWithBackoff(url, {
       ...options,
-      signal: controller.signal,
+      maxRetries: retries,
+      initialDelayMs: delay,
+      timeoutMs,
     });
-    
-    clearTimeout(timeoutId);
-    if (options.signal) {
-      options.signal.removeEventListener("abort", onExternalAbort);
-    }
 
-    if (!res) {
-      return null as any;
-    }
-    
-    // Check if it is a rate limit or server error
-    if (res.status && (res.status === 429 || res.status >= 500) && retries > 0) {
-      await new Promise((resolve) => setTimeout(resolve, delay));
-      return fetchWithRetry(url, options, retries - 1, delay * 2, timeoutMs);
-    }
-    
+    if (!res) return null as any;
+
     // Check if it's 200 OK but body actually contains plain non-JSON text error (like Nginx/Proxy rate limit)
     if (res.ok) {
       const contentType = res.headers ? res.headers.get("content-type") : null;
-      if (contentType && !contentType.includes("application/json") && !url.endsWith(".json")) {
+      if (contentType && !contentType.includes("application/json") && !url.endsWith(".json") && !url.endsWith(".geojson")) {
         const textClone = await res.clone().text();
         const lowerText = textClone.toLowerCase();
         if (lowerText.includes("rate exceeded") || lowerText.includes("too many requests") || lowerText.includes("rate limit")) {
           if (retries > 0) {
-            await new Promise((resolve) => setTimeout(resolve, delay));
+            const jitterDelay = delay * 2 + Math.floor(Math.random() * 250);
+            await new Promise((resolve) => setTimeout(resolve, jitterDelay));
             return fetchWithRetry(url, options, retries - 1, delay * 2, timeoutMs);
           }
         }
       }
     }
+
     return res;
-  } catch (err: any) {
-    clearTimeout(timeoutId);
-    if (options.signal) {
-      options.signal.removeEventListener("abort", onExternalAbort);
-    }
-    if (err?.name === "AbortError") {
-      throw err;
-    }
-    if (retries > 0) {
-      await new Promise((resolve) => setTimeout(resolve, delay));
-      return fetchWithRetry(url, options, retries - 1, delay * 2, timeoutMs);
-    }
-    throw err;
+  } catch (err) {
+    console.warn(`[fetchWithRetry] Request failed for ${url}:`, err);
+    return null as any;
   }
 }
 
@@ -514,6 +479,34 @@ export default function App() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showPwaBanner, setShowPwaBanner] = useState(false);
+
+  // Proactive Android Device Detection & Root Class Sync
+  useEffect(() => {
+    const syncAndroidMode = () => {
+      if (typeof window === "undefined" || typeof document === "undefined") return;
+      const ua = (navigator.userAgent || navigator.vendor || (window as any).opera || "").toLowerCase();
+      const isAndroidUa = /android/i.test(ua);
+      const isMobileScreen = window.innerWidth <= 768;
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
+
+      if (isAndroidUa || isAndroid || (isMobileScreen && isMobileOrAndroidDevice()) || (isStandalone && isMobileScreen)) {
+        document.documentElement.classList.add("android-fullscreen-mode");
+        document.body.classList.add("android-fullscreen-mode");
+      } else {
+        document.documentElement.classList.remove("android-fullscreen-mode");
+        document.body.classList.remove("android-fullscreen-mode");
+      }
+    };
+
+    syncAndroidMode();
+    window.addEventListener("resize", syncAndroidMode);
+    window.addEventListener("orientationchange", syncAndroidMode);
+
+    return () => {
+      window.removeEventListener("resize", syncAndroidMode);
+      window.removeEventListener("orientationchange", syncAndroidMode);
+    };
+  }, [isAndroid]);
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {

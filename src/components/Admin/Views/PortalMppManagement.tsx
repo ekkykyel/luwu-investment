@@ -45,6 +45,7 @@ import { supabase } from "../../../lib/supabaseClient";
 import { MPPTenant, MPPService } from "../../../types/mpp";
 import { MppNewsItem, getStoredMppNews, saveMppNews, syncMppNewsWithServer } from "../../../data/mppNewsData";
 import { MppSocialMediaAdminManager } from "../../mpp/MppSocialMediaAdminManager";
+import { DEFAULT_OFFICIAL_MPP_FACILITIES, syncOrSeedMppFacilitiesToSupabase } from "../../../data/mppFacilitiesData";
 
 interface ImageUploadFieldProps {
   id: string;
@@ -727,12 +728,26 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
           }))
         );
       } else {
-        const savedFac = JSON.parse(localStorage.getItem("mpp_portal_facilities") || "[]");
-        if (savedFac.length > 0) setFacilities(savedFac);
+        setFacilities(
+          DEFAULT_OFFICIAL_MPP_FACILITIES.map(f => ({
+            id: f.id,
+            name: f.name,
+            photo: f.image,
+            desc: f.description,
+            floor: f.floor
+          }))
+        );
       }
     } catch {
-      const savedFac = JSON.parse(localStorage.getItem("mpp_portal_facilities") || "[]");
-      if (savedFac.length > 0) setFacilities(savedFac);
+      setFacilities(
+        DEFAULT_OFFICIAL_MPP_FACILITIES.map(f => ({
+          id: f.id,
+          name: f.name,
+          photo: f.image,
+          desc: f.description,
+          floor: f.floor
+        }))
+      );
     }
 
     const savedFloor = JSON.parse(localStorage.getItem("mpp_portal_floorplan") || "null");
@@ -805,6 +820,30 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
       triggerStatus("success", "Fasilitas berhasil dihapus dari database.");
     } catch (err: any) {
       triggerStatus("error", `Gagal menghapus fasilitas: ${err?.message || "Error"}`);
+    }
+  };
+
+  const handleSyncStandardFacilities = async () => {
+    try {
+      const res = await syncOrSeedMppFacilitiesToSupabase();
+      const { data } = await supabase
+        .from("mpp_facilities")
+        .select("*")
+        .order("created_at", { ascending: true });
+      if (data && data.length > 0) {
+        setFacilities(
+          data.map((f: any) => ({
+            id: f.id,
+            name: f.name,
+            photo: f.image_url || "https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&q=80&w=400",
+            desc: f.description,
+            floor: f.floor || "Lantai 1"
+          }))
+        );
+      }
+      triggerStatus("success", `Sinkronisasi berhasil! ${res.count > 0 ? `${res.count} fasilitas resmi ditambahkan ke database.` : 'Seluruh 9 fasilitas standar telah lengkap di database.'}`);
+    } catch (err: any) {
+      triggerStatus("error", `Gagal sinkronisasi: ${err?.message || "Error"}`);
     }
   };
 
@@ -1997,14 +2036,24 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
 
             {/* Kelola Fasilitas MPP */}
             <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-6">
-              <div className="space-y-1">
-                <h3 className="text-base font-bold text-white flex items-center gap-2 font-sans">
-                  <Armchair className="w-4 h-4 text-emerald-400" />
-                  <span>Manajemen Fasilitas Gedung MPP</span>
-                </h3>
-                <p className="text-xs text-slate-400">
-                  Ubah, tambahkan fasilitas fisik MPP (Pojok Baca, Disabilitas, Musholla, Kid's Play Corner) lengkap dengan deskripsi dan foto real-time.
-                </p>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div className="space-y-1">
+                  <h3 className="text-base font-bold text-white flex items-center gap-2 font-sans">
+                    <Armchair className="w-4 h-4 text-emerald-400" />
+                    <span>Manajemen Fasilitas Gedung MPP ({facilities.length} Fasilitas)</span>
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    Ubah, tambahkan fasilitas fisik MPP (Pojok Baca, Disabilitas, Musholla, Kid's Play Corner) lengkap dengan deskripsi dan foto real-time.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleSyncStandardFacilities}
+                  className="px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30 text-xs font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer w-fit"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Sinkronkan 9 Fasilitas Resmi</span>
+                </button>
               </div>
 
               {/* Form Tambah Fasilitas */}
