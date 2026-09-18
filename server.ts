@@ -2160,6 +2160,8 @@ app.get("/api/weather/current", async (req, res) => {
 });
 
 // Periodic Commodity Sync
+let cachedMarketTicker: any[] = [];
+
 const syncCommodityPrices = async () => {
   const fallbackData = [
     { symbol: 'CC=F', shortName: 'Kakao (Cocoa)', regularMarketPrice: 125000, regularMarketChange: 2500, regularMarketChangePercent: 2.04 },
@@ -2202,7 +2204,7 @@ const syncCommodityPrices = async () => {
         }
       }
     } catch (yhErr) {
-      console.warn("Yahoo Finance fetch failed, using default globals:", yhErr);
+      console.warn("Yahoo Finance fetch notice, using default globals:", yhErr);
     }
 
     const mappedData = [
@@ -2210,30 +2212,65 @@ const syncCommodityPrices = async () => {
       ...fallbackData.filter(d => !['CC=F', 'KC=F'].includes(d.symbol))
     ];
 
-    const dbPool = getPostgisPool();
-    if (dbPool) {
-      await dbPool.query(
-        "INSERT INTO site_settings (setting_key, setting_value, updated_at) VALUES ('market_ticker_data', $1, NOW()) ON CONFLICT (setting_key) DO UPDATE SET setting_value = EXCLUDED.setting_value, updated_at = NOW()",
-        [JSON.stringify(mappedData)]
-      );
-      console.log('Commodity prices synced successfully via YahooFinance');
-    } else {
-      console.log('Commodity prices synced in-memory (PostGIS pool not connected)');
-    }
-  } catch (error) {
-    console.error("Commodity sync error (using fallback):", error);
-    // Selalu pastikan database terisi fallback agar running text tidak kosong
+    cachedMarketTicker = mappedData;
+
+    // 1. Primary: Persist via Supabase REST API (HTTPS port 443 - zero connection timeout)
+    let savedToDb = false;
     try {
+      const { error: sbErr } = await supabase
+        .from('site_settings')
+        .upsert({
+          setting_key: 'market_ticker_data',
+          setting_value: JSON.stringify(mappedData),
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'setting_key' });
+
+      if (!sbErr) {
+        savedToDb = true;
+        console.log('[Commodity Sync] Market ticker synced successfully via Supabase REST');
+      } else {
+        console.warn('[Commodity Sync] Supabase REST notice:', sbErr.message);
+      }
+    } catch (sbEx: any) {
+      console.warn('[Commodity Sync] Supabase REST error:', sbEx?.message || sbEx);
+    }
+
+    // 2. Secondary: Fallback to PostGIS pool only if Supabase REST failed
+    if (!savedToDb) {
       const dbPool = getPostgisPool();
       if (dbPool) {
-        await dbPool.query(
-          "INSERT INTO site_settings (setting_key, setting_value, updated_at) VALUES ('market_ticker_data', $1, NOW()) ON CONFLICT (setting_key) DO UPDATE SET setting_value = EXCLUDED.setting_value, updated_at = NOW()",
-          [JSON.stringify(fallbackData)]
-        );
+        try {
+          const poolQuery = dbPool.query(
+            "INSERT INTO site_settings (setting_key, setting_value, updated_at) VALUES ('market_ticker_data', $1, NOW()) ON CONFLICT (setting_key) DO UPDATE SET setting_value = EXCLUDED.setting_value, updated_at = NOW()",
+            [JSON.stringify(mappedData)]
+          );
+          await Promise.race([
+            poolQuery,
+            new Promise<never>((_, reject) => setTimeout(() => reject(new Error("PostGIS pool query timeout")), 3000))
+          ]);
+          console.log('[Commodity Sync] Market ticker synced via PostGIS pool');
+        } catch (poolErr: any) {
+          console.warn('[Commodity Sync] PostGIS pool direct connection skipped (in-memory cached):', poolErr?.message || poolErr);
+        }
+      } else {
+        console.log('[Commodity Sync] Market ticker cached in-memory');
       }
-    } catch (dbErr) {
-      console.error("Failed to write fallback data to DB:", dbErr);
     }
+  } catch (error: any) {
+    console.warn("[Commodity Sync] Sync notice (retaining current ticker):", error?.message || error);
+    if (!cachedMarketTicker || cachedMarketTicker.length === 0) {
+      cachedMarketTicker = fallbackData;
+    }
+    // Attempt graceful fallback persistence via Supabase REST
+    try {
+      await supabase
+        .from('site_settings')
+        .upsert({
+          setting_key: 'market_ticker_data',
+          setting_value: JSON.stringify(cachedMarketTicker),
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'setting_key' });
+    } catch (_) {}
   }
 };
 setInterval(syncCommodityPrices, 3600000); // 1 hour
@@ -3186,7 +3223,9 @@ app.get("/api/market-ticker", async (req, res) => {
       .single();
 
     if (error) {
-      console.warn("Could not fetch market_ticker_data from Supabase:", error);
+      if (cachedMarketTicker && cachedMarketTicker.length > 0) {
+        return res.json(cachedMarketTicker);
+      }
       return res.json([]);
     }
 
@@ -3200,11 +3239,18 @@ app.get("/api/market-ticker", async (req, res) => {
         }
       }
       if (Array.isArray(parsed)) {
+        cachedMarketTicker = parsed;
         return res.json(parsed);
       }
     }
+    if (cachedMarketTicker && cachedMarketTicker.length > 0) {
+      return res.json(cachedMarketTicker);
+    }
     return res.json([]);
   } catch (err) {
+    if (cachedMarketTicker && cachedMarketTicker.length > 0) {
+      return res.json(cachedMarketTicker);
+    }
     return res.json([]);
   }
 });
