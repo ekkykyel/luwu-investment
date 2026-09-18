@@ -89,6 +89,7 @@ import RtrwZoningCheckerModal from "./RtrwZoningCheckerModal";
 import IncentiveCalculatorModal from "./IncentiveCalculatorModal";
 import ProximityDistanceMatrixModal from "./ProximityDistanceMatrixModal";
 import IproPitchDeckModal from "./IproPitchDeckModal";
+import { FastTrackConsultationModal } from "./FastTrackConsultationModal";
 import SmartMatrixFilterPanel, { SmartFilterState } from "./SmartMatrixFilterPanel";
 
 import TickerMarquee from "./TickerMarquee";
@@ -603,6 +604,9 @@ export default function LandingPage({
   const [isIncentiveModalOpen, setIsIncentiveModalOpen] = useState(false);
   const [isProximityModalOpen, setIsProximityModalOpen] = useState(false);
   const [isIproPitchModalOpen, setIsIproPitchModalOpen] = useState(false);
+  const [selectedIproForModal, setSelectedIproForModal] = useState<Investment | null>(null);
+  const [isFastTrackConsultationOpen, setIsFastTrackConsultationOpen] = useState(false);
+  const [selectedInvestmentForConsultation, setSelectedInvestmentForConsultation] = useState<Investment | null>(null);
   const [isMppModalOpen, setIsMppModalOpen] = useState(false);
 
   // GIS Booting State
@@ -2494,7 +2498,7 @@ export default function LandingPage({
           </div>
 
           {/* SMART MATRIX FILTER PANEL */}
-          <div className="mb-8">
+          <div className="mb-6">
             <SmartMatrixFilterPanel
               filters={smartFilterState}
               onChangeFilters={setSmartFilterState}
@@ -2502,6 +2506,46 @@ export default function LandingPage({
               totalResults={filteredInvestmentsList.length}
               isDark={isDark}
             />
+          </div>
+
+          {/* SMART FISCAL & INCENTIVE ESTIMATOR (Inovasi Khusus Investor) */}
+          <div className={`p-4 sm:p-5 rounded-2xl border mb-8 backdrop-blur-xl flex flex-col lg:flex-row lg:items-center justify-between gap-4 transition-all ${
+            isDark 
+              ? 'bg-gradient-to-r from-emerald-950/40 via-slate-900/70 to-amber-950/30 border-emerald-500/30 shadow-lg shadow-emerald-950/20' 
+              : 'bg-gradient-to-r from-emerald-50/90 via-white to-amber-50/80 border-emerald-200 shadow-md shadow-emerald-500/5'
+          }`}>
+            <div className="flex items-start sm:items-center gap-3.5">
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/25 shrink-0">
+                <Calculator className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-sm sm:text-base font-bold font-sans text-slate-900 dark:text-white">
+                    Smart Fiscal Estimator: Kalkulator Insentif Daerah & ROI
+                  </h3>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 uppercase tracking-wider">
+                    Perda Luwu & PP 24/2019
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 max-w-2xl">
+                  Simulasikan pembebasan retribusi PBG, pengurangan PBB-P2 konstruksi, fasilitasi penyediaan lahan, serta percepatan perizinan OSS-RBA.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5 shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsIncentiveModalOpen(true);
+                }}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white flex items-center justify-center gap-2 shadow-md shadow-emerald-600/25 transition-all cursor-pointer active:scale-95"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Buka Kalkulator Insentif</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {isLoading ? (
@@ -2559,12 +2603,38 @@ export default function LandingPage({
                         imgClassName="transform group-hover:scale-110 transition-transform duration-700"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19] to-transparent opacity-80 mix-blend-multiply pointer-events-none" />
-                      <div className="absolute top-4 left-4">
+                      <div className="absolute top-4 left-4 flex flex-col items-start gap-1.5 z-10">
                         <div
-                          className={`px-3 py-1 min-h-[44px] rounded-full text-xs font-medium backdrop-blur-md shadow-lg ${getSectorColor(inv.sector).badgeBg}`}
+                          className={`px-3 py-1 min-h-[28px] rounded-full text-xs font-semibold backdrop-blur-md shadow-lg ${getSectorColor(inv.sector).badgeBg}`}
                         >
                           {t(getSectorI18nKey(inv.sector))}
                         </div>
+
+                        {/* BADGE PROJECT READINESS TIER (BKPM RI Standard) */}
+                        {(() => {
+                          const isTier1 = (inv as any).readinessTier === 'Tier 1' || 
+                                          (inv as any).readiness_tier === 'Tier 1' || 
+                                          (inv as any).status_kesiapan?.toLowerCase().includes('ready') ||
+                                          Boolean(inv.investmentValue && inv.investmentValue > 0 && inv.areaHa && inv.areaHa > 0 && inv.landStatus);
+
+                          return isTier1 ? (
+                            <div 
+                              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/85 text-emerald-300 border border-emerald-400/40 backdrop-blur-md shadow-md"
+                              title="Ready to Offer (Tier 1): Full FS Siap, Lahan Clean & Clear, Kesesuaian RTRW Terkonfirmasi (Standar BKPM RI)"
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                              <span>Tier 1: Ready to Offer</span>
+                            </div>
+                          ) : (
+                            <div 
+                              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-950/85 text-amber-300 border border-amber-400/40 backdrop-blur-md shadow-md"
+                              title="Under Development (Tier 2): Pre-FS Tersedia, Kajian Tata Ruang Sedang Difinalisasi (Standar BKPM RI)"
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                              <span>Tier 2: Under Development</span>
+                            </div>
+                          );
+                        })()}
                       </div>
                       {(inv.smartData?.aiScore || inv.smartData?.ai_score) && (
                         <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 min-h-[44px] rounded-full bg-black/55 backdrop-blur-md border border-white/15">
@@ -2642,43 +2712,79 @@ export default function LandingPage({
                           </div>
                         );
                       })()}
-                      <div className={`mt-auto pt-4 flex gap-2 border-t ${isDark ? 'border-slate-800/60' : 'border-slate-100'}`}>
-                        <motion.button whileTap={{ scale: 0.95 }}
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            undefined;
-                            if (onSelectInvestment) {
-                              onSelectInvestment(inv.id);
-                            } else {
-                              window.history.pushState({}, "", `/peta-spasial?id=${inv.id}`);
-                              if (onEnter) {
-                                onEnter(Role.INVESTOR);
+                      <div className={`mt-auto pt-4 flex flex-col gap-2 border-t ${isDark ? 'border-slate-800/60' : 'border-slate-100'}`}>
+                        {/* Baris Tombol Utama */}
+                        <div className="flex gap-2">
+                          <motion.button whileTap={{ scale: 0.95 }}
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              undefined;
+                              if (onSelectInvestment) {
+                                onSelectInvestment(inv.id);
                               } else {
-                                navigate(`/peta-spasial?id=${inv.id}`);
+                                window.history.pushState({}, "", `/peta-spasial?id=${inv.id}`);
+                                if (onEnter) {
+                                  onEnter(Role.INVESTOR);
+                                } else {
+                                  navigate(`/peta-spasial?id=${inv.id}`);
+                                }
                               }
-                            }
-                          }}
-                          className={`group flex-1 py-2.5 px-3 rounded-xl border text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-1.5 hover:scale-[1.02] active:scale-[0.97]
-                                      ${isDark
-                                        ? 'border-slate-700/80 bg-slate-800/60 text-slate-200 hover:border-emerald-500/50 hover:bg-gradient-to-r hover:from-slate-800 hover:to-emerald-950/60 hover:text-emerald-700 dark:hover:text-emerald-400 hover:shadow-md hover:shadow-emerald-500/10'
-                                        : 'border-slate-200 bg-slate-50 text-slate-800 dark:text-slate-200 hover:border-emerald-300 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-blue-50 hover:text-emerald-700 hover:shadow-md hover:shadow-emerald-500/10'}`}
-                        >
-                          <Search size={14} className="group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
-                          <span>{t("common.detail", "Detail")}</span>
-                        </motion.button>
-                        <motion.button whileTap={{ scale: 0.95 }}
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            navigate("/login?role=investor");
-                          }}
-                          className="group flex-1 py-2.5 px-3 rounded-xl text-sm font-semibold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 hover:shadow-lg hover:shadow-emerald-500/25 flex items-center justify-center gap-1.5"
-                        >
-                          <span>{t("landing.ajukanMinat", "Ajukan minat")}</span>
-                          <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform duration-300" />
-                        </motion.button>
+                            }}
+                            className={`group flex-1 py-2.5 px-3 rounded-xl border text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-1.5 hover:scale-[1.02] active:scale-[0.97]
+                                        ${isDark
+                                          ? 'border-slate-700/80 bg-slate-800/60 text-slate-200 hover:border-emerald-500/50 hover:bg-gradient-to-r hover:from-slate-800 hover:to-emerald-950/60 hover:text-emerald-700 dark:hover:text-emerald-400 hover:shadow-md hover:shadow-emerald-500/10'
+                                          : 'border-slate-200 bg-slate-50 text-slate-800 dark:text-slate-200 hover:border-emerald-300 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-blue-50 hover:text-emerald-700 hover:shadow-md hover:shadow-emerald-500/10'}`}
+                          >
+                            <Search size={14} className="group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
+                            <span>{t("common.detail", "Detail")}</span>
+                          </motion.button>
+                          <motion.button whileTap={{ scale: 0.95 }}
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              navigate("/login?role=investor");
+                            }}
+                            className="group flex-1 py-2.5 px-3 rounded-xl text-sm font-semibold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 hover:shadow-lg hover:shadow-emerald-500/25 flex items-center justify-center gap-1.5"
+                          >
+                            <span>{t("landing.ajukanMinat", "Ajukan minat")}</span>
+                            <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform duration-300" />
+                          </motion.button>
+                        </div>
+
+                        {/* Inovasi Khusus Investor: One-Click Executive IPRO Teaser & Fast-Track Konsultasi VIP */}
+                        <div className="grid grid-cols-2 gap-2 pt-0.5">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setSelectedIproForModal(inv);
+                              setIsIproPitchModalOpen(true);
+                            }}
+                            className="min-h-[38px] px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs group/btn"
+                            title="Unduh Executive Summary Resmi IPRO (PDF Standar BKPM RI)"
+                          >
+                            <FileText className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 group-hover/btn:scale-110 transition-transform shrink-0" />
+                            <span className="truncate">Teaser IPRO (PDF)</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setSelectedInvestmentForConsultation(inv);
+                              setIsFastTrackConsultationOpen(true);
+                            }}
+                            className="min-h-[38px] px-2.5 py-1.5 rounded-xl text-xs font-bold bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs group/btn"
+                            title="Jadwalkan Konsultasi VIP DPMPTSP Kabupaten Luwu (Online/Offline)"
+                          >
+                            <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 group-hover/btn:scale-110 transition-transform shrink-0" />
+                            <span className="truncate">Konsultasi VIP</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -4506,8 +4612,12 @@ export default function LandingPage({
         {isIproPitchModalOpen && (
           <IproPitchDeckModal
             isOpen={isIproPitchModalOpen}
-            onClose={() => setIsIproPitchModalOpen(false)}
+            onClose={() => {
+              setIsIproPitchModalOpen(false);
+              setSelectedIproForModal(null);
+            }}
             investment={(() => {
+              if (selectedIproForModal) return selectedIproForModal;
               const selectedInv = investments.find(inv => inv.id === selectedInvestmentId);
               const simCtx = getSimulationContext();
               if (selectedInv) return selectedInv;
@@ -4538,7 +4648,22 @@ export default function LandingPage({
               }
               return investments[0] || null;
             })()}
-            district={districts.find(d => d.id === (investments.find(inv => inv.id === selectedInvestmentId)?.districtId)) || null}
+            district={districts.find(d => d.id === ((selectedIproForModal || investments.find(inv => inv.id === selectedInvestmentId))?.districtId)) || null}
+            isDarkMode={isDark}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* FAST-TRACK INVESTOR CONSULTATION MODAL (DPMPTSP KABUPATEN LUWU) */}
+      <AnimatePresence>
+        {isFastTrackConsultationOpen && (
+          <FastTrackConsultationModal
+            isOpen={isFastTrackConsultationOpen}
+            onClose={() => {
+              setIsFastTrackConsultationOpen(false);
+              setSelectedInvestmentForConsultation(null);
+            }}
+            selectedInvestment={selectedInvestmentForConsultation}
             isDarkMode={isDark}
           />
         )}
