@@ -12,7 +12,7 @@ import {
   HardHat, MapPin, User, Mail, Phone, X, Check, Briefcase,
   Instagram, Youtube, Facebook, Music2, Heart, MessageCircle, Share2, ExternalLink,
   Send, FileText, QrCode, Printer, Copy, RotateCcw, Download, FileCheck, Clock3, AlertCircle, Loader2
-, Globe, Map, Package, BadgeCheck, Lock, Unlock, Plus, Trash2, Volume2, VolumeX, Radio } from 'lucide-react';
+, Globe, Map, Package, BadgeCheck, Lock, Unlock, Plus, Trash2, Volume2, VolumeX, Radio, Info } from 'lucide-react';
 import { WeatherWidget } from './WeatherWidget';
 import ThemeToggle from './ThemeToggle';
 import LanguageToggle from './LanguageToggle';
@@ -35,6 +35,7 @@ import { MppCitizenSurveyMenu } from './mpp/MppCitizenSurveyMenu';
 import { MppVisitorAnalyticsModal } from './mpp/MppVisitorAnalyticsModal';
 import { MppAgenciesCatalogModal } from './mpp/MppAgenciesCatalogModal';
 import { MppServicesMatrixModal } from './mpp/MppServicesMatrixModal';
+import { MppServiceDetailModal, ServiceDetailItem } from './mpp/MppServiceDetailModal';
 import { MppServicesWorkflowCarousel } from './mpp/MppServicesWorkflowCarousel';
 import { MppNewsCatalogModal } from './mpp/MppNewsCatalogModal';
 import { MppMagattiGallerySlideshow } from './mpp/MppMagattiGallerySlideshow';
@@ -514,6 +515,7 @@ export default function PortalMPP() {
 
   // --- State Fase 5 (Fitur 10: Modal Detail Instansi, Fitur 11: Modal Booking Antrean Online & Fitur 12: Tracking Dokumen) ---
   const [selectedAgencyDetail, setSelectedAgencyDetail] = useState<InstansiItem | null>(null);
+  const [selectedServiceDetail, setSelectedServiceDetail] = useState<ServiceDetailItem | null>(null);
   const [isQueueBookingOpen, setIsQueueBookingOpen] = useState(false);
   const [queueForm, setQueueForm] = useState({
     nama: '',
@@ -2517,8 +2519,7 @@ export default function PortalMPP() {
                       transition={{ type: "spring", stiffness: 360, damping: 24 }}
                       key={service.id}
                       onClick={() => {
-                        setQueueForm(prev => ({ ...prev, service: service.title }));
-                        setIsQueueBookingOpen(true);
+                        setSelectedServiceDetail(service as any);
                       }}
                       className="w-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-3xl overflow-hidden group shadow-xl shadow-slate-950/5 dark:shadow-emerald-950/20 hover:border-emerald-500/80 dark:hover:border-emerald-400/80 hover:shadow-2xl hover:shadow-emerald-500/20 dark:hover:shadow-[0_20px_45px_rgba(16,185,129,0.22)] transition-all duration-300 flex flex-col justify-between cursor-pointer relative"
                     >
@@ -2562,7 +2563,10 @@ export default function PortalMPP() {
 
                         {/* Interactive Touch Target Strip for Android */}
                         <div className="w-full pt-4 mt-5 border-t border-slate-100 dark:border-white/10 flex items-center justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400 group-hover:text-emerald-500 font-sans">
-                          <span>{t("mppPortal.layanan.detailLayanan", "Akses Layanan & Antrean")}</span>
+                          <span className="flex items-center gap-1.5">
+                            <Info className="w-3.5 h-3.5" />
+                            {t("mppPortal.layanan.detailLayanan", "Lihat Spesifikasi & Dokumentasi")}
+                          </span>
                           <div className="w-8 h-8 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300 shadow-sm">
                             <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                           </div>
@@ -6409,6 +6413,19 @@ export default function PortalMPP() {
           onSelectRequirement={(serviceName) => {
             const el = document.getElementById('syarat-dokumen');
             if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+          isDark={isDark}
+        />
+
+        {/* Modal Spesifikasi Lengkap & Dokumentasi Layanan (Service Showcase Modal) */}
+        <MppServiceDetailModal
+          isOpen={!!selectedServiceDetail}
+          service={selectedServiceDetail}
+          onClose={() => setSelectedServiceDetail(null)}
+          onBookQueue={(serviceTitle) => {
+            setSelectedServiceDetail(null);
+            setQueueForm(prev => ({ ...prev, service: serviceTitle }));
+            setIsQueueBookingOpen(true);
           }}
           isDark={isDark}
         />
