@@ -36,7 +36,7 @@ export const MppServicesMatrixModal: React.FC<MppServicesMatrixModalProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
-  if (!isOpen) return null;
+  
 
   // Real Luwu MPP Public Services Catalog
   const allServices = [
@@ -192,6 +192,7 @@ export const MppServicesMatrixModal: React.FC<MppServicesMatrixModalProps> = ({
 
   return (
     <AnimatePresence>
+      {isOpen && (
       <div
         className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/75 backdrop-blur-md overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]"
         onClick={onClose}
@@ -405,6 +406,7 @@ export const MppServicesMatrixModal: React.FC<MppServicesMatrixModalProps> = ({
           </div>
         </motion.div>
       </div>
+    )}
     </AnimatePresence>
   );
 };
