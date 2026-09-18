@@ -5060,8 +5060,8 @@ Output JSON format (strictly required):
   "lokasiLoket": "MPP 窗口位置"
 }`;
     } else {
-      systemPrompt = `Anda adalah Asisten Suara Resmi Mal Pelayanan Publik (MPP) Simpurusiang Kabupaten Luwu.
-Tugas Anda adalah memberikan jawaban yang ramah, sopan (WAJIB diawali kalimat pembuka persis seperti ini: "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu"), sangat akurat, dan lengkap mengenai pelayanan publik, perizinan, dan dokumen kependudukan di MPP Luwu.
+      systemPrompt = `Anda adalah Asisten Suara Resmi Mal Pelayanan Publik (MPP) Simpurusiang Luwu.
+Tugas Anda adalah memberikan jawaban yang ramah, sopan (WAJIB diawali kalimat pembuka persis seperti ini: "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu"), sangat akurat, dan lengkap mengenai pelayanan publik, perizinan, dan dokumen kependudukan di MPP Luwu.
 
 Ketika pengguna menanyakan persyaratan suatu izin atau layanan (misal PBG, KTP, SIM, SKCK, NIB, Sertifikat Tanah BPN, dll.), Anda WAJIB menyajikan:
 1. Nama Resmi Layanan & Instansi Penyelenggara di MPP Simpurusiang.
@@ -5070,13 +5070,13 @@ Ketika pengguna menanyakan persyaratan suatu izin atau layanan (misal PBG, KTP, 
 4. Estimasi Waktu Penyelesaian (SLA) & Biaya/Retribusi (apakah Gratis atau ada PNBP/Perda resmi).
 5. Lokasi Loket di Gedung MPP Simpurusiang Belopa.
 
-Juga buat 'speechText' yang ringkas, runtut, bertempo santun, dan sangat mudah didengar ketika dibacakan oleh mesin Text-to-Speech (TTS). Kalimat 'speechText' WAJIB diawali dengan: "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu" selanjutnya isi jawaban Anda, dan di akhir 'speechText' Anda WAJIB menyematkan kalimat penutup kearifan lokal Tana Luwu: "Terima Kasih, Salama' Ki' ta Pada Salama'."
+Juga buat 'speechText' yang ringkas, runtut, bertempo santun, dan sangat mudah didengar ketika dibacakan oleh mesin Text-to-Speech (TTS). Kalimat 'speechText' WAJIB diawali dengan: "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu" selanjutnya isi jawaban Anda, dan di akhir 'speechText' Anda WAJIB menyematkan kalimat penutup kearifan lokal Tana Luwu: "Terima Kasih, Salama' Ki' ta Pada Salama'."
 
 Format keluaran JSON yang WAJIB dipatuhi:
 {
   "serviceTitle": "Nama Layanan",
   "instansi": "Nama Instansi di MPP Luwu",
-  "speechText": "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. Untuk pengurusan ... Terima Kasih, Salama' Ki' ta Pada Salama'.",
+  "speechText": "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. Untuk pengurusan ... Terima Kasih, Salama' Ki' ta Pada Salama'.",
   "persyaratan": ["Syarat 1", "Syarat 2", "..."],
   "alurProses": ["Tahap 1", "Tahap 2", "..."],
   "biaya": "Penjelasan biaya / Gratis",
@@ -5137,9 +5137,12 @@ Format keluaran JSON yang WAJIB dipatuhi:
     const ensureOpening = (txt: string) => {
       let trimmed = (txt || '').trim();
       if (lang === 'id') {
-        const idOpening = "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu.";
-        if (trimmed.startsWith("Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu")) {
-          return trimmed;
+        const idOpening = "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu.";
+        if (
+          trimmed.startsWith("Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu") ||
+          trimmed.startsWith("Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu")
+        ) {
+          return trimmed.replace("Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu", "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu");
         }
         trimmed = trimmed.replace(/^(Tabe['’`]?[\,\.]?\s*)+/gi, '');
         trimmed = trimmed.replace(/^(Selamat\s+datang[^\.\!\?]*[\.\!\?]\s*)/gi, '');

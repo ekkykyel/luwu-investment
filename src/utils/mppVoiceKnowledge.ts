@@ -24,22 +24,25 @@ export interface VoiceAssistantResponse {
 
 /**
  * Kalimat sambutan pembuka resmi TTS Suara Asisten Ramah MPP:
- * - ID: "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu."
+ * - ID: "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu."
  * - EN: "Welcome to Mal Pelayanan Publik Simpurusiang Luwu Regency, thank you for your inquiry."
  * - ZH: "欢迎来到鲁武县欣普鲁香公共服务大楼，感谢您的提问与咨询。"
  */
 export const OPENING_GREETINGS: Record<'id' | 'en' | 'zh', string> = {
-  id: "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu.",
-  en: "Welcome to Mal Pelayanan Publik Simpurusiang Luwu Regency, thank you for your inquiry.",
+  id: "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu.",
+  en: "Welcome to Mal Pelayanan Publik Simpurusiang Luwu, thank you for your inquiry.",
   zh: "欢迎来到鲁武县欣普鲁香公共服务大楼，感谢您的提问与咨询。"
 };
 
 export function prependVoiceGreeting(speechText: string, lang: 'id' | 'en' | 'zh' = 'id'): string {
   const trimmed = (speechText || '').trim();
   if (lang === 'id') {
-    const idOpening = "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu.";
-    if (trimmed.startsWith("Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu")) {
-      return trimmed;
+    const idOpening = "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu.";
+    if (
+      trimmed.startsWith("Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu") ||
+      trimmed.startsWith("Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu")
+    ) {
+      return trimmed.replace("Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu", "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu");
     }
     const cleanBody = trimmed
       .replace(/^(Tabe['’`]?[\,\.]?\s*)+/gi, '')
@@ -346,11 +349,11 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
       "2. Verifikasi Dokumen: Tim Penilai Teknis (TPT) Dinas PUPR memeriksa kelengkapan administrasi dan dokumen teknis perencanaan.",
       "3. Konsultasi Teknis: Pemohon dan perencana mengikuti sidang konsultasi teknis bersama Tim Profesi Ahli (TPA) / TPT.",
       "4. Penetapan & Pembayaran Retribusi: Dinas PUPR menerbitkan Surat Ketetapan Retribusi Daerah (SKRD), pemohon membayar di loket Bank Sulselbar MPP.",
-      "5. Penerbitan Izin PBG: DPMPTSP Kabupaten Luwu menerbitkan dokumen resmi PBG dengan Tanda Tangan Elektronik (BSrE)."
+      "5. Penerbitan Izin PBG: DPMPTSP Luwu menerbitkan dokumen resmi PBG dengan Tanda Tangan Elektronik (BSrE)."
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Untuk mengurus izin Persetujuan Bangunan Gedung atau PBG di MPP Simpurusiang Luwu, berikut persyaratan lengkapnya: " +
       "Pertama, KTP dan NPWP pemohon atau NIB untuk badan usaha. " +
       "Kedua, Bukti kepemilikan tanah yang sah seperti sertifikat SHM, HGB, atau surat perjanjian pemanfaatan tanah. " +
@@ -409,7 +412,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Untuk pengurusan KTP elektronik di Loket Disdukcapil MPP Simpurusiang Luwu: " +
       "Persyaratannya adalah: Jika pembuatan baru usia tujuh belas tahun, cukup membawa fotokopi Kartu Keluarga dan hadir langsung untuk perekaman foto serta sidik jari. " +
       "Jika KTP rusak, bawa fisik KTP lama dan fotokopi KK. Jika KTP hilang, bawa Surat Kehilangan dari Kepolisian dan fotokopi KK. " +
@@ -457,7 +460,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Untuk perpanjangan SIM A atau SIM C di Gerai Satlantas Polres Luwu di MPP Simpurusiang: " +
       "Persyaratannya adalah membawa fisik SIM lama yang masih berlaku, fotokopi KTP elektronik dua lembar, Surat Keterangan Sehat dari dokter, dan Surat Lulus Tes Psikologi yang keduanya dapat langsung dilakukan di gedung MPP. " +
       "Alur prosesnya: Ambil nomor antrean, lakukan tes kesehatan dan psikologi di tempat, verifikasi berkas, bayar biaya PNBP resmi, foto biometrik, dan SIM baru langsung dicetak. " +
@@ -501,7 +504,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Untuk pembuatan atau perpanjangan SKCK di Gerai Polres Luwu MPP Simpurusiang: " +
       "Persyaratannya adalah fotokopi KTP, fotokopi Kartu Keluarga, fotokopi Akta Lahir atau Ijazah terakhir, pasfoto ukuran empat kali enam latar merah empat lembar, dan rumus sidik jari bagi pemohon baru. " +
       "Alur prosesnya: Ambil tiket antrean, verifikasi berkas dan rumus sidik jari, bayar biaya PNBP resmi tiga puluh ribu rupiah, dan SKCK langsung dicetak serta dilegalisir. " +
@@ -542,7 +545,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const alurProses = [
-      "1. Tiba di Loket Helpdesk OSS DPMPTSP Kabupaten Luwu Lantai 1 MPP.",
+      "1. Tiba di Loket Helpdesk OSS DPMPTSP Luwu Lantai 1 MPP.",
       "2. Pembuatan hak akses akun OSS (oss.go.id) didampingi petugas.",
       "3. Pengisian formulir data pelaku usaha, pemilihan KBLI 5 digit, dan validasi tata ruang PKKPR otomatis.",
       "4. Validasi komitmen lingkungan (SPPL) secara sistemik.",
@@ -550,7 +553,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Untuk pengurusan NIB atau Nomor Induk Berusaha melalui sistem OSS di DPMPTSP MPP Luwu: " +
       "Persyaratannya sangat mudah, yaitu KTP elektronik, NPWP, nomor WhatsApp dan email aktif, serta rincian jenis usaha dan modal usaha Anda. " +
       "Alur prosesnya: Petugas Helpdesk kami di MPP akan mendampingi pembuatan akun OSS, pengisian data usaha KBLI, validasi tata ruang, hingga NIB dan izin edar resmi langsung terbit di tempat. " +
@@ -559,7 +562,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     return {
       matched: true,
       serviceTitle: "Penerbitan Nomor Induk Berusaha (NIB) OSS-RBA",
-      instansi: "DPMPTSP Kabupaten Luwu (Penyelenggara Perizinan Berusaha)",
+      instansi: "DPMPTSP Luwu (Penyelenggara Perizinan Berusaha)",
       speechText,
       query,
       persyaratan,
@@ -597,7 +600,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Untuk pengurusan Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang atau PKKPR di MPP Luwu: " +
       "Persyaratannya meliputi KTP pemohon, titik koordinat poligon lahan, bukti alas hak sertifikat tanah, dan rencana teknis penggunaan lahan. " +
       "Alur prosesnya: Pendaftaran via OSS atau loket tata ruang MPP, pengecekan spasial GIS terhadap Perda RTRW Luwu, kajian teknis zonasi oleh Dinas PUTR, dan penerbitan Surat Konfirmasi PKKPR resmi sebagai syarat utama izin PBG dan NIB. " +
@@ -646,7 +649,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Untuk layanan pertanahan dan sertifikat di Gerai BPN ATR MPP Simpurusiang: " +
       "Persyaratannya adalah KTP dan KK pemohon, sertifikat tanah asli, akta jual beli atau waris dari PPAT, serta bukti lunas PBB dan validasi BPHTB dari Bapenda. " +
       "Alur prosesnya: Ambil antrean, verifikasi berkas di loket BPN MPP, pembayaran biaya PNBP resmi di Bank Sulselbar, dan proses pencatatan di buku tanah hingga sertifikat diserahkan. " +
@@ -692,7 +695,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Untuk pengurusan paspor di Unit Layanan Imigrasi MPP Simpurusiang Luwu: " +
       "Persyaratannya adalah membawa KTP asli, Kartu Keluarga, Akta Lahir atau Buku Nikah atau Ijazah, serta paspor lama bagi yang melakukan perpanjangan. " +
       "Alur prosesnya: Daftar nomor antrean di aplikasi M-Paspor, datang ke loket Imigrasi MPP untuk verifikasi berkas, foto biometrik dan wawancara, bayar kode billing di bank, dan paspor dapat diambil setelah tiga sampai empat hari kerja. " +
@@ -738,7 +741,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Untuk pengurusan BPJS Kesehatan dan BPJS Ketenagakerjaan di MPP Simpurusiang Luwu: " +
       "Persyaratannya adalah membawa KTP dan Kartu Keluarga, buku rekening bank untuk autodebet iuran, atau surat pengantar kerja bagi karyawan badan usaha. " +
       "Alur prosesnya: Ambil tiket antrean, verifikasi data di loket BPJS, dan petugas akan langsung memproses pendaftaran baru, pindah faskes, atau klaim kepesertaan secara cepat. " +
@@ -784,7 +787,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Untuk pembayaran pajak kendaraan bermotor tahunan di Gerai SAMSAT MPP Simpurusiang: " +
       "Persyaratannya cukup membawa STNK asli dan KTP asli pemilik kendaraan beserta fotokopinya. " +
       "Alur prosesnya: Ambil antrean, serahkan STNK dan KTP di loket SAMSAT, bayar pajak di kasir Bank Sulselbar, dan pengesahan STNK tahunan langsung dicetak di tempat tanpa perlu antre berjam-jam. " +
@@ -829,7 +832,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Untuk pembayaran PBB-P2 dan validasi BPHTB di Loket Bapenda MPP Simpurusiang: " +
       "Persyaratannya adalah membawa lembar SPPT PBB dan KTP wajib pajak, serta bukti akta jual beli notaris untuk validasi BPHTB. " +
       "Alur prosesnya: Ambil antrean, pengecekan data NJOP di loket Bapenda, pembayaran di loket Bank Sulselbar, dan bukti lunas resmi langsung diterbitkan. " +
@@ -875,7 +878,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Untuk pendaftaran nikah dan layanan Balai Nikah Terpadu di MPP Simpurusiang Luwu: " +
       "Persyaratannya adalah surat pengantar N1 dari desa atau kelurahan, fotokopi KTP, KK, Akta Lahir calon pengantin, pasfoto latar biru, dan sertifikat Elsimil kesehatan. " +
       "Alur prosesnya: Pendaftaran di loket Kemenag MPP, pemeriksaan berkas catin, pelaksanaan akad nikah di Balai Nikah MPP, dan langsung menerima layanan tiga in satu yaitu Buku Nikah, KTP status kawin baru, dan KK baru di hari yang sama. " +
@@ -920,7 +923,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Untuk penerbitan Surat Rekomendasi BBM Bersubsidi bagi nelayan dan pembudidaya tambak di MPP Luwu: " +
       "Persyaratannya adalah membawa fotokopi KTP Luwu, bukti kepemilikan perahu atau surat tambak, surat pengantar dari kepala desa, serta data mesin kapal atau pompa tambak. " +
       "Alur prosesnya: Ambil antrean, verifikasi data di loket Dinas Perikanan MPP, dan Surat Rekomendasi BBM langsung dicetak tanpa biaya retribusi. " +
@@ -929,7 +932,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     return {
       matched: true,
       serviceTitle: "Rekomendasi BBM Bersubsidi Nelayan & Tambak",
-      instansi: "Dinas Perikanan Kabupaten Luwu (Lantai 1 MPP)",
+      instansi: "Dinas Perikanan Luwu (Lantai 1 MPP)",
       speechText,
       query,
       persyaratan,
@@ -964,8 +967,8 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
-      "MPP Simpurusiang Kabupaten Luwu menyediakan fasilitas inklusif lengkap ramah disabilitas dan lansia. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "MPP Simpurusiang Luwu menyediakan fasilitas inklusif lengkap ramah disabilitas dan lansia. " +
       "Tersedia kursi roda gratis di pintu masuk utama, jalur pemandu ubin taktil kuning untuk tunanetra, loket prioritas tanpa antre panjang, toilet difabel dengan handrail pengaman, serta pendampingan petugas Front Office dan Juru Bahasa Isyarat. " +
       "Semua fasilitas ini disediakan gratis untuk melayani seluruh warga Luwu dengan setara.";
 
@@ -1008,7 +1011,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Untuk penerbitan Akta Kelahiran atau Akta Kematian di Loket Disdukcapil MPP Simpurusiang: " +
       "Persyaratannya adalah membawa surat keterangan lahir atau kematian dari puskesmas atau desa, Kartu Keluarga asli, KTP orang tua atau pelapor, buku nikah orang tua, dan KTP dua orang saksi. " +
       "Alur prosesnya: Ambil nomor antrean, verifikasi berkas di loket, dan akta resmi langsung diterbitkan beserta pembaharuan Kartu Keluarga secara otomatis. " +
@@ -1051,7 +1054,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Untuk aktivasi Identitas Kependudukan Digital atau IKD dan pembuatan Kartu Identitas Anak di MPP Luwu: " +
       "Persyaratannya sangat mudah: Cukup membawa smartphone Anda, nomor HP dan email aktif, serta KTP fisik. " +
       "Alur prosesnya: Unduh aplikasi IKD Kemendagri, isi NIK dan email, lalu scan barcode aktivasi bersama petugas Helpdesk Dukcapil di lobi MPP. KTP digital Anda langsung aktif seketika. " +
@@ -1095,7 +1098,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Untuk pembuatan NPWP pribadi atau badan usaha di Gerai Pajak KPP Pratama MPP Simpurusiang: " +
       "Persyaratannya adalah membawa KTP elektronik, Kartu Keluarga, nomor HP, dan email aktif. " +
       "Alur prosesnya: Petugas gerai pajak kami akan mendampingi validasi NIK Anda menjadi NPWP enam belas digit melalui sistem CoreTax, dan kartu NPWP beserta Surat Keterangan Terdaftar langsung terbit di tempat. " +
@@ -1137,7 +1140,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Jam operasional pelayanan Mal Pelayanan Publik Simpurusiang Kabupaten Luwu adalah: " +
       "Buka setiap hari Senin hingga Jumat, mulai pukul tujuh tiga puluh pagi sampai dengan pukul enam belas nol nol Waktu Indonesia Tengah. " +
       "Untuk hari Sabtu, Minggu, dan hari libur nasional, loket fisik tutup namun Anda tetap dapat mengajukan perizinan secara daring melalui portal ini dua puluh empat jam. " +
@@ -1180,7 +1183,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
       "Sistem antrean di MPP Simpurusiang menggunakan Kiosk Digital Cerdas di lobi utama. " +
       "Caranya sangat mudah: Setibanya di gedung MPP, pilih instansi yang dituju pada layar sentuh mesin antrean. Struk nomor antrean akan otomatis tercetak dan panggilan loket disiarkan melalui layar LED serta audio cerdas. " +
       "Bagi lansia dan penyandang disabilitas tersedia Jalur Antrean Prioritas Khusus di meja Front Office tanpa perlu mengantre umum.";
@@ -1224,8 +1227,8 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     ];
 
     const speechText = 
-      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
-      "Pemerintah Kabupaten Luwu melalui DPMPTSP memberikan karpet merah dan kemudahan insentif bagi para investor dalam dan luar negeri. " +
+      "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+      "Pemerintah Luwu melalui DPMPTSP memberikan karpet merah dan kemudahan insentif bagi para investor dalam dan luar negeri. " +
       "Kami memiliki potensi unggulan pada sektor hilirisasi nikel dan smelter, komoditas kakao dan kopi arabika Latimojong, budidaya udang vaname dan rumput laut, serta kawasan industri terpadu dekat Bandara Bua dan Pelabuhan Tadokkong. " +
       "Petugas Promosi Investasi di Loket 06 MPP siap mendampingi Anda dari konsultasi tata ruang hingga izin terbit.";
 
@@ -1247,7 +1250,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
 
   // 15. DEFAULT SMART KNOWLEDGE FALLBACK
   const genericSpeechText = 
-    "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
+    "Selamat Datang di Mal Pelayanan Publik Simpurusiang Luwu, Terima kasih atas pertanyaan Bapak/Ibu. " +
     `Mengenai pertanyaan Anda seputar "${query}", ` +
     "Mal Pelayanan Publik Simpurusiang Kabupaten Luwu menyediakan 19 instansi resmi pemerintah dan BUMN dengan lebih dari 120 layanan terpadu. " +
     "Anda dapat mengunjungi loket terkait di Lantai 1 Gedung MPP Simpurusiang Belopa pada hari Senin hingga Jumat mulai pukul 07.30 sampai pukul 16.00 WITA. " +
