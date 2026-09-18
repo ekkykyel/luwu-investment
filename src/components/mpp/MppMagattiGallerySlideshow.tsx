@@ -202,42 +202,10 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
   return (
     <div className={`relative w-full select-none font-sans ${className}`}>
       {/* ========================================================================= */}
-      {/* 1. ROOM QUICK SELECTOR RIBBON (MODERN ROOM NAVIGATION BAR)                */}
-      {/* ========================================================================= */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-3 pt-1 scrollbar-none px-1">
-        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 shrink-0 flex items-center gap-1.5 mr-1">
-          <Compass size={13} className="text-emerald-500" />
-          <span>Jelajahi Ruang:</span>
-        </span>
-        {photos.map((p, idx) => {
-          const isActive = idx === currentIndex;
-          return (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => {
-                setDirection(idx > currentIndex ? 1 : -1);
-                setCurrentIndex(idx);
-                setProgress(0);
-              }}
-              className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
-                isActive
-                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30 scale-102 ring-2 ring-emerald-400/40'
-                  : 'bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/80 border border-slate-200/80 dark:border-slate-700/70 shadow-xs'
-              }`}
-            >
-              {getCategoryIcon(p.category)}
-              <span className="whitespace-nowrap">{p.category}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* ========================================================================= */}
-      {/* 2. MAIN GRAND SLIDESHOW CARD                                              */}
+      {/* MAIN GRAND CINEMATIC SLIDESHOW SHOWCASE (CLEAN, IMMERSIVE & ELEGANT)      */}
       {/* ========================================================================= */}
       <div 
-        className="relative w-full h-[470px] xs:h-[510px] sm:h-[550px] md:h-[600px] lg:h-[640px] rounded-3xl overflow-hidden shadow-2xl border border-slate-200/50 dark:border-white/10 group"
+        className="relative w-full h-[460px] xs:h-[500px] sm:h-[540px] md:h-[590px] lg:h-[630px] rounded-3xl overflow-hidden shadow-2xl border border-slate-200/50 dark:border-white/10 group"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         onTouchStart={handleTouchStart}
@@ -269,46 +237,25 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
             </motion.div>
           </AnimatePresence>
 
-          {/* Minimalist, Gentle Gradient - 80%+ of the photo remains crystal clear! */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/25 to-slate-950/35 pointer-events-none" />
+          {/* Pure Cinematic Vignette - Foto Ruangan & Gedung 100% Bersih & Tampak Megah */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/20 to-slate-950/30 pointer-events-none" />
           <div className="absolute inset-0 bg-emerald-500/5 mix-blend-overlay pointer-events-none" />
         </div>
 
-        {/* Top Header Controls Bar */}
-        <div className="absolute top-3.5 left-3.5 right-3.5 z-20 flex items-center justify-between gap-2 pointer-events-auto">
-          <div className="flex items-center gap-2 flex-wrap">
-            {/* Category Badge */}
-            <span className="px-3 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md text-[11px] sm:text-xs font-bold text-emerald-400 border border-emerald-500/30 uppercase tracking-wider shadow-lg flex items-center gap-1.5">
-              {getCategoryIcon(currentPhoto.category)}
-              <span>{currentPhoto.category}</span>
-            </span>
-
-            {/* Location Pill */}
-            {currentPhoto.location && (
-              <span className="hidden xs:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-950/70 backdrop-blur-md text-[10px] sm:text-[11px] font-medium text-slate-300 border border-white/10 shadow-sm">
-                <MapPin size={11} className="text-emerald-400" />
-                <span>{currentPhoto.location}</span>
-              </span>
-            )}
-          </div>
-
-          {/* Action Buttons: Pause/Play, Room Info, Fullscreen */}
-          <div className="flex items-center gap-1.5">
-            {/* Photo Counter */}
-            <span className="px-2.5 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-[11px] font-bold text-slate-300 border border-white/10 shadow-md font-mono">
-              {currentIndex + 1} / {activePhotosCount}
-            </span>
-
+        {/* Minimalist Top Right Micro Action Pill Cluster */}
+        <div className="absolute top-3.5 right-3.5 z-20 pointer-events-auto">
+          <div className="flex items-center gap-1 p-1 rounded-full bg-slate-950/60 hover:bg-slate-950/85 backdrop-blur-xl border border-white/15 shadow-xl transition-all">
             {/* Room Features Toggle */}
             <button
               type="button"
               onClick={() => setShowRoomDetails(!showRoomDetails)}
-              className={`p-2 rounded-full backdrop-blur-md border transition-all shadow-md active:scale-90 cursor-pointer ${
+              className={`p-2 rounded-full transition-all shadow-xs active:scale-90 cursor-pointer ${
                 showRoomDetails
-                  ? 'bg-emerald-500 text-white border-emerald-400'
-                  : 'bg-slate-950/80 text-white/80 hover:text-white hover:bg-emerald-600/80 border-white/10'
+                  ? 'bg-emerald-500 text-white shadow-[0_0_12px_rgba(16,185,129,0.8)]'
+                  : 'text-slate-300 hover:text-white hover:bg-white/15'
               }`}
-              title="Informasi Fasilitas Ruangan"
+              title="Informasi Spesifikasi Ruangan"
+              aria-label="Informasi Spesifikasi Ruangan"
             >
               <Info size={14} />
             </button>
@@ -317,18 +264,20 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
             <button
               type="button"
               onClick={() => setIsPaused(!isPaused)}
-              className="p-2 rounded-full bg-slate-950/80 backdrop-blur-md text-white/80 hover:text-white hover:bg-emerald-600/80 border border-white/10 transition-all shadow-md active:scale-90 cursor-pointer"
+              className="p-2 rounded-full text-slate-300 hover:text-white hover:bg-white/15 transition-all shadow-xs active:scale-90 cursor-pointer"
               title={isPaused ? "Lanjutkan Slideshow" : "Jeda Slideshow"}
+              aria-label={isPaused ? "Lanjutkan Slideshow" : "Jeda Slideshow"}
             >
-              {isPaused ? <Play size={14} /> : <Pause size={14} />}
+              {isPaused ? <Play size={14} className="text-emerald-400" /> : <Pause size={14} />}
             </button>
 
             {/* Fullscreen HD Inspection */}
             <button
               type="button"
               onClick={() => setIsFullscreen(true)}
-              className="p-2 rounded-full bg-slate-950/80 backdrop-blur-md text-white/80 hover:text-white hover:bg-emerald-600/80 border border-white/10 transition-all shadow-md active:scale-90 cursor-pointer"
-              title="Lihat Foto Seluruh Gedung Resolusi Penuh"
+              className="p-2 rounded-full text-slate-300 hover:text-white hover:bg-white/15 transition-all shadow-xs active:scale-90 cursor-pointer"
+              title="Lihat Foto Layar Penuh HD"
+              aria-label="Lihat Foto Layar Penuh HD"
             >
               <Maximize2 size={14} />
             </button>
@@ -407,59 +356,68 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
         )}
 
         {/* ========================================================================= */}
-        {/* 3. INNOVATIVE FLOATING DYNAMIC ISLAND CAPTION BAR (ANTI-CLUTTER ON MOBILE) */}
+        {/* REFINED FLOATING CAPTION ISLAND WITH NEON GLOW PAGINATION DOTS            */}
         {/* ========================================================================= */}
-        <div className="absolute bottom-3.5 left-3.5 right-3.5 z-20 pointer-events-auto">
-          <div className="bg-slate-950/80 backdrop-blur-xl border border-white/15 rounded-2xl p-3.5 sm:p-5 shadow-2xl space-y-2">
+        <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 z-20 pointer-events-auto">
+          <div className="bg-slate-950/85 backdrop-blur-2xl border border-white/15 rounded-2xl p-3.5 sm:p-5 shadow-[0_12px_40px_rgba(0,0,0,0.6)] space-y-2">
             
-            {/* Top Motto Badge & Mobile Location */}
-            <div className="flex items-center justify-between gap-2 flex-wrap">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] sm:text-xs font-bold uppercase tracking-wider backdrop-blur-xs">
-                <Sparkles size={11} className="text-emerald-400 shrink-0" />
-                <span>Pelayanan Magatti • MPP Simpurusiang</span>
+            {/* Top Row: Location Tag & Glow Pagination Indicators */}
+            <div className="flex items-center justify-between gap-3">
+              {/* Location Tag */}
+              <div className="flex items-center gap-1.5 text-emerald-400 text-xs font-semibold">
+                <MapPin size={12} className="text-emerald-400 shrink-0" />
+                <span className="text-slate-200 font-medium text-[11px] sm:text-xs">
+                  {currentPhoto.location || 'MPP Simpurusiang Belopa'}
+                </span>
               </div>
 
-              {/* Progress Indicators */}
+              {/* Glowing Pagination Dots & Slide Counter */}
               {activePhotosCount > 1 && (
-                <div className="flex items-center gap-1">
-                  {photos.map((p, idx) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => {
-                        setDirection(idx > currentIndex ? 1 : -1);
-                        setCurrentIndex(idx);
-                        setProgress(0);
-                      }}
-                      className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                        idx === currentIndex
-                          ? 'w-6 sm:w-8 bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.9)]'
-                          : 'w-1.5 sm:w-2 bg-white/30 hover:bg-white/60'
-                      }`}
-                      aria-label={`Ke foto ruangan ${idx + 1}`}
-                    />
-                  ))}
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
+                    {photos.map((p, idx) => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => {
+                          setDirection(idx > currentIndex ? 1 : -1);
+                          setCurrentIndex(idx);
+                          setProgress(0);
+                        }}
+                        className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                          idx === currentIndex
+                            ? 'w-6 sm:w-8 bg-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.95)]'
+                            : 'w-1.5 sm:w-2 bg-white/25 hover:bg-white/50'
+                        }`}
+                        aria-label={`Ke foto ruangan ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-[10px] sm:text-[11px] font-mono text-slate-400/90 pl-1 font-semibold">
+                    {String(currentIndex + 1).padStart(2, '0')}/{String(activePhotosCount).padStart(2, '0')}
+                  </span>
                 </div>
               )}
             </div>
 
-            {/* Photo Title */}
-            <h3 className="text-sm sm:text-base md:text-xl font-bold text-white leading-snug font-sans drop-shadow-sm">
-              {currentPhoto.title}
+            {/* Photo Title with Emerald Accent Dot */}
+            <h3 className="text-sm sm:text-base md:text-lg font-bold text-white leading-snug font-sans drop-shadow-sm flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
+              <span className="truncate">{currentPhoto.title}</span>
             </h3>
 
-            {/* Short Caption */}
+            {/* Short Refined Caption */}
             {settings.showCaption && currentPhoto.caption && (
-              <p className="text-xs sm:text-sm text-slate-200/90 leading-relaxed font-normal line-clamp-2">
+              <p className="text-xs sm:text-sm text-slate-300/95 leading-relaxed font-normal line-clamp-2">
                 {currentPhoto.caption}
               </p>
             )}
 
             {/* Auto-Play Progress Bar at bottom */}
             {settings.autoPlay && !isPaused && (
-              <div className="w-full bg-white/10 h-0.5 rounded-full overflow-hidden mt-1.5">
+              <div className="w-full bg-white/10 h-0.5 rounded-full overflow-hidden mt-2">
                 <div 
-                  className="bg-emerald-400 h-full transition-all duration-75 ease-linear"
+                  className="bg-emerald-400 h-full transition-all duration-75 ease-linear shadow-[0_0_8px_rgba(16,185,129,0.8)]"
                   style={{ width: `${progress}%` }}
                 />
               </div>
