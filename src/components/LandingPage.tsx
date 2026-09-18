@@ -1747,8 +1747,20 @@ export default function LandingPage({
                   },
                 },
                 { name: t("nav.potensi"), id: "potensi-section" },
-                { name: t("nav.infrastruktur"), id: "infrastruktur-section" },
-                
+                {
+                  name: "MPP",
+                  action: (e: any) => {
+                    e?.preventDefault?.();
+                    if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+                      window.history.scrollRestoration = 'manual';
+                    }
+                    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+                    if (document.documentElement) document.documentElement.scrollTop = 0;
+                    if (document.body) document.body.scrollTop = 0;
+                    handleRequestFullscreen();
+                    navigate("/mpp");
+                  },
+                },
                 {
                   name: t("nav.pengaduan"),
                   action: (e: any) => {
@@ -1913,8 +1925,21 @@ export default function LandingPage({
                     },
                   },
                   { name: t("nav.potensi"), id: "potensi-section" },
-                  { name: t("nav.infrastruktur"), id: "infrastruktur-section" },
-                  
+                  {
+                    name: "MPP",
+                    action: (e: any) => {
+                      setIsMobileMenuOpen(false);
+                      e?.preventDefault?.();
+                      if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+                        window.history.scrollRestoration = 'manual';
+                      }
+                      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+                      if (document.documentElement) document.documentElement.scrollTop = 0;
+                      if (document.body) document.body.scrollTop = 0;
+                      handleRequestFullscreen();
+                      navigate("/mpp");
+                    },
+                  },
                   {
                     name: t("nav.pengaduanMasyarakat"),
                     action: (e: any) => {
@@ -4501,14 +4526,25 @@ export default function LandingPage({
               </div>
               <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
                 {[
-                  { name: t('nav.home', 'Beranda'), icon: Home },
-                  { name: t('nav.potensiRegional', 'Potensi Regional'), icon: Map },
-                  { name: t('nav.infrastructure', 'Infrastruktur'), icon: HardDrive },
-                  { name: t('nav.interactiveDashboard', 'Dashboard Interaktif'), icon: BarChart2 }
+                  { name: t('nav.home', 'Beranda'), icon: Home, action: () => scrollToSection("hero-section") },
+                  { name: t('nav.potensiRegional', 'Potensi Regional'), icon: Map, action: () => scrollToSection("potensi-section") },
+                  { 
+                    name: 'Portal MPP', 
+                    icon: Building2, 
+                    action: () => {
+                      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+                      navigate("/mpp");
+                    } 
+                  },
+                  { name: t('nav.interactiveDashboard', 'Dashboard Interaktif'), icon: BarChart2, action: () => scrollToSection("hero-section") }
                 ].map((link) => {
                   const IconComponent = link.icon;
                   return (
-                    <button key={link.name} className={`flex items-center gap-1.5 text-[11px] font-semibold hover:text-emerald-500 transition-colors ${isDark ? "text-slate-400" : "text-slate-600"}`}>
+                    <button 
+                      key={link.name} 
+                      onClick={link.action}
+                      className={`flex items-center gap-1.5 text-[11px] font-semibold hover:text-emerald-500 transition-colors cursor-pointer ${isDark ? "text-slate-400" : "text-slate-600"}`}
+                    >
                       <IconComponent className="w-3.5 h-3.5" />
                       {link.name}
                     </button>
