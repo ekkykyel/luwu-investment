@@ -5,7 +5,8 @@ import {
   ShieldCheck, MapPin, Compass, ArrowRight, UserCheck, AlertCircle,
   FileText, Clock, DollarSign, Building2, Copy, Play, Square, Share2,
   Globe, Radio, RotateCcw, Send, Gauge, Search, ChevronRight, ChevronLeft,
-  Minimize2, Maximize2, MessageSquareText
+  Minimize2, Maximize2, MessageSquareText, Baby, Users, Award, BookOpen,
+  MessageCircle, Ear, Car, Heart, CheckSquare, Sparkle, ExternalLink
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -97,7 +98,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
   
   // State for Accessibility Assistance Hub Modal
   const [isAssistanceModalOpen, setIsAssistanceModalOpen] = useState(false);
-  const [assistanceTab, setAssistanceTab] = useState<'fasilitas' | 'request' | 'jbi'>('fasilitas');
+  const [assistanceTab, setAssistanceTab] = useState<'fasilitas' | 'kelompok_rentan' | 'jbi' | 'request' | 'standar'>('fasilitas');
   
   // Trilingual Voice Assistant State (ID: Bahasa Indonesia, EN: English, ZH: 中文/Mandarin)
   const [voiceLanguage, setVoiceLanguage] = useState<'id' | 'en' | 'zh'>(() => {
@@ -1454,55 +1455,77 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
         )}
       </AnimatePresence>
 
-      {/* --- MODAL PUSAT LAYANAN INKLUSIF & DISABILITAS --- */}
+      {/* --- MODAL PUSAT LAYANAN INKLUSIF & DISABILITAS (STANDAR NASIONAL PERMENPAN-RB & PERMEN PUPR) --- */}
       <AnimatePresence>
         {isAssistanceModalOpen && (
           <div 
-            className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-md"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-2.5 sm:p-4 md:p-6 bg-slate-950/75 backdrop-blur-md overflow-y-auto"
             onClick={() => setIsAssistanceModalOpen(false)}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.94, y: 20 }}
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.94, y: 20 }}
-              className="w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-emerald-500/30 rounded-3xl p-5 sm:p-7 shadow-2xl overflow-y-auto max-h-[90vh] text-slate-900 dark:text-white font-['Plus_Jakarta_Sans',sans-serif]"
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ duration: 0.2 }}
+              className="w-full max-w-4xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-emerald-500/30 rounded-3xl p-4 sm:p-6 md:p-7 shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col text-slate-900 dark:text-white font-['Plus_Jakarta_Sans',sans-serif]"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Modal Header */}
-              <div className="flex items-start justify-between pb-4 border-b border-slate-100 dark:border-white/10 gap-3">
-                <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow-inner">
+              {/* Modal Header with Standard Badges */}
+              <div className="flex items-start justify-between pb-4 border-b border-slate-200/80 dark:border-slate-800 gap-3 shrink-0">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow-xs">
                     <Accessibility className="w-6 h-6 sm:w-7 sm:h-7" />
                   </div>
                   <div>
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <h2 className="text-base sm:text-lg md:text-xl font-extrabold text-slate-900 dark:text-white font-['Plus_Jakarta_Sans',sans-serif]">
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1">
+                      <h2 className="text-base sm:text-lg md:text-xl font-black text-slate-900 dark:text-white">
                         Layanan Ramah Inklusif & Disabilitas
                       </h2>
-                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-['Plus_Jakarta_Sans',sans-serif]">
-                        UU No. 8/2016
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25">
+                        Standar Nasional
                       </span>
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-['Plus_Jakarta_Sans',sans-serif]">
-                      Standar Fasilitas Khusus, Asistensi Petugas, dan Pendampingan Bebas Retribusi MPP Kab. Luwu
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl">
+                      Fasilitas Aksesibilitas Khusus, Asistensi Front Office, dan Pendampingan Bebas Retribusi MPP Simpurusiang Kab. Luwu
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setIsAssistanceModalOpen(false)}
-                  className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shrink-0 cursor-pointer"
-                  aria-label="Tutup"
+                  className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shrink-0 cursor-pointer"
+                  aria-label="Tutup Dialog"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              {/* Tabs Segmented Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 my-4 p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/80">
+              {/* Regulatory Reference Badges */}
+              <div className="flex items-center gap-1.5 sm:gap-2 py-2.5 overflow-x-auto no-scrollbar shrink-0 border-b border-slate-100 dark:border-slate-800/80">
+                <span className="text-[10.5px] font-bold text-slate-500 dark:text-slate-400 shrink-0 flex items-center gap-1">
+                  <Award className="w-3.5 h-3.5 text-amber-500" /> Regulasi:
+                </span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+                  UU No. 8/2016 (Disabilitas)
+                </span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+                  PermenPAN-RB No. 10/2023 (Inklusi)
+                </span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+                  Permen PUPR No. 14/2017 (Akses Bangunan)
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 shrink-0">
+                  ✓ 100% Bebas Biaya (Gratis)
+                </span>
+              </div>
+
+              {/* 5 Segmented Navigation Tabs */}
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 my-3 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shrink-0">
                 {[
-                  { id: 'fasilitas', label: 'Panduan Fasilitas', icon: ShieldCheck },
-                  { id: 'request', label: 'Booking Kursi Roda', icon: HeartHandshake },
-                  { id: 'jbi', label: 'Juru Bahasa Isyarat', icon: PhoneCall },
+                  { id: 'fasilitas', label: 'Fisik & Sensorik', icon: ShieldCheck, badge: '8 Sarana' },
+                  { id: 'kelompok_rentan', label: 'Laktasi & Anak', icon: Baby, badge: 'Prioritas' },
+                  { id: 'jbi', label: 'Bahasa Isyarat', icon: Ear, badge: 'BISINDO' },
+                  { id: 'request', label: 'Booking Kursi Roda', icon: HeartHandshake, badge: 'Form' },
+                  { id: 'standar', label: 'SOP & Regulasi', icon: BookOpen, badge: 'PermenPAN' },
                 ].map((tab) => {
                   const Icon = tab.icon;
                   const isActive = assistanceTab === tab.id;
@@ -1510,189 +1533,537 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                     <button
                       key={tab.id}
                       onClick={() => setAssistanceTab(tab.id as any)}
-                      className={`min-h-[42px] px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer font-['Plus_Jakarta_Sans',sans-serif] ${
+                      className={`min-h-[44px] px-2 py-1.5 rounded-xl text-xs font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 transition-all cursor-pointer ${
                         isActive
-                          ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/25'
-                          : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700/60'
+                          ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                          : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-700/60'
                       }`}
                     >
                       <Icon className="w-4 h-4 shrink-0" />
-                      <span className="truncate">{tab.label}</span>
+                      <span className="truncate text-center sm:text-left">{tab.label}</span>
                     </button>
                   );
                 })}
               </div>
 
-              {/* TAB 1: Panduan Fasilitas Fisik */}
-              {assistanceTab === 'fasilitas' && (
-                <div className="space-y-4 text-xs sm:text-sm font-['Plus_Jakarta_Sans',sans-serif]">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 shadow-sm">
-                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
-                        <MapPin className="w-4 h-4 text-emerald-500 shrink-0" />
-                        Jalur Ramp Landai Kursi Roda
-                      </div>
-                      <p className="text-slate-600 dark:text-slate-400 mt-1.5 text-xs leading-relaxed">
-                        Kemiringan landai ≤ 6° (maksimal 6 derajat) dari area parkir khusus disabilitas langsung menuju lobi utama lantai 1.
-                      </p>
-                    </div>
-
-                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 shadow-sm">
-                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
-                        <Compass className="w-4 h-4 text-amber-500 shrink-0" />
-                        Guiding Block Tunanetra
-                      </div>
-                      <p className="text-slate-600 dark:text-slate-400 mt-1.5 text-xs leading-relaxed">
-                        Ubin pemandu kuning taktil bertekstur garis dan titik mengarahkan langkah dari pintu masuk ke semua loket layanan.
-                      </p>
-                    </div>
-
-                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 shadow-sm">
-                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
-                        <Accessibility className="w-4 h-4 text-blue-500 shrink-0" />
-                        Loket Meja Rendah (≤ 80 cm)
-                      </div>
-                      <p className="text-slate-600 dark:text-slate-400 mt-1.5 text-xs leading-relaxed">
-                        Meja layanan didesain setinggi pengguna kursi roda agar komunikasi tatap muka nyaman, ramah, dan sejajar.
-                      </p>
-                    </div>
-
-                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 shadow-sm">
-                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
-                        <ShieldCheck className="w-4 h-4 text-rose-500 shrink-0" />
-                        Toilet Khusus Difabel + Handrail
-                      </div>
-                      <p className="text-slate-600 dark:text-slate-400 mt-1.5 text-xs leading-relaxed">
-                        Pintu geser lebar, pegangan besi pengaman (handrail), tombol darurat, dan kloset duduk standar aksesibilitas.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-900 dark:text-emerald-300 flex items-start gap-2.5">
-                    <Info className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <div className="text-xs leading-relaxed">
-                      <strong>Jalur Antrean Prioritas Khusus:</strong> Bagi penyandang disabilitas, lansia di atas 60 tahun, dan ibu hamil, silakan langsung menuju meja Front Office untuk mendapatkan nomor tiket jalur prioritas tanpa antre umum.
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* TAB 2: Form Booking Kursi Roda & Pendamping */}
-              {assistanceTab === 'request' && (
-                <div className="space-y-4 text-xs sm:text-sm">
-                  {isRequestSubmitted ? (
-                    <div className="p-6 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-center space-y-3">
-                      <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto animate-bounce" />
-                      <h3 className="font-bold text-base text-emerald-700 dark:text-emerald-400">Permohonan Asistensi Berhasil Dikirim</h3>
-                      <p className="text-xs text-slate-600 dark:text-slate-300 max-w-md mx-auto">
-                        Petugas Front Office MPP Simpurusiang telah menerima jadwal kedatangan Anda. Kami siap menyambut Anda dengan fasilitas kursi roda di lobi utama.
-                      </p>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleRequestSubmit} className="space-y-3">
-                      <div>
-                        <label className="block text-xs font-semibold mb-1">Nama Pemohon / Pendamping</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Masukkan nama lengkap..."
-                          value={requestForm.nama}
-                          onChange={(e) => setRequestForm({ ...requestForm, nama: e.target.value })}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                          <label className="block text-xs font-semibold mb-1">Nomor WhatsApp</label>
-                          <input
-                            type="tel"
-                            required
-                            placeholder="0812xxxxxxx"
-                            value={requestForm.phone}
-                            onChange={(e) => setRequestForm({ ...requestForm, phone: e.target.value })}
-                            className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none"
-                          />
+              {/* Scrollable Tab Content Container */}
+              <div className="overflow-y-auto pr-1 flex-1 space-y-4">
+                
+                {/* TAB 1: Fasilitas Fisik & Sensorik (8 Sarana Standar Nasional) */}
+                {assistanceTab === 'fasilitas' && (
+                  <div className="space-y-4 text-xs sm:text-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      
+                      {/* Card 1: Ramp Landai */}
+                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 shadow-2xs hover:border-emerald-500/40 transition-colors">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+                            <MapPin className="w-4 h-4 text-emerald-500 shrink-0" />
+                            Ramp Landai Kursi Roda
+                          </div>
+                          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                            Kemiringan ≤ 6°
+                          </span>
                         </div>
+                        <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                          Jalur landai bertekstur anti-slip dengan handrail ganda (ketinggian 70 cm & 90 cm) dari area parkir difabel menuju lobi utama lantai 1.
+                        </p>
+                      </div>
 
+                      {/* Card 2: Guiding Block */}
+                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 shadow-2xs hover:border-amber-500/40 transition-colors">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+                            <Compass className="w-4 h-4 text-amber-500 shrink-0" />
+                            Guiding Block Tunanetra
+                          </div>
+                          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                            Ubin Taktil
+                          </span>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                          Ubin pemandu kuning cerah bertekstur garis (*guiding tile*) dan titik (*warning tile*) memandu langkah aman dari pintu gerbang ke setiap loket layanan.
+                        </p>
+                      </div>
+
+                      {/* Card 3: Loket Rendah Aksesibel */}
+                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 shadow-2xs hover:border-blue-500/40 transition-colors">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+                            <Accessibility className="w-4 h-4 text-blue-500 shrink-0" />
+                            Loket Meja Rendah
+                          </div>
+                          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                            Tinggi ≤ 80 cm
+                          </span>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                          Meja pelayanan dirancang ergonomis tanpa sekat kaca tinggi, sejajar dengan ketinggian kursi roda untuk kenyamanan tatap muka inklusif.
+                        </p>
+                      </div>
+
+                      {/* Card 4: Toilet Khusus Difabel + Alarm */}
+                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 shadow-2xs hover:border-rose-500/40 transition-colors">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+                            <ShieldCheck className="w-4 h-4 text-rose-500 shrink-0" />
+                            Toilet Khusus + Panic Button
+                          </div>
+                          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                            Lebar Pintu ≥ 90cm
+                          </span>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                          Pintu geser otomatis/lebar, kloset duduk, pegangan pengaman (handrail L-bar), wastafel rendah, serta tombol darurat (*panic alarm*) terhubung ke Front Office.
+                        </p>
+                      </div>
+
+                      {/* Card 5: Parkir Khusus Difabel */}
+                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 shadow-2xs hover:border-indigo-500/40 transition-colors">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+                            <Car className="w-4 h-4 text-indigo-500 shrink-0" />
+                            Parkir Khusus Difabel
+                          </div>
+                          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+                            Marka Standar 3.7m
+                          </span>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                          Slot parkir kendaraan roda 4 dan roda 2 khusus difabel terletak paling dekat dengan pintu masuk utama, dilengkapi marka internasional dan kanopi peneduh.
+                        </p>
+                      </div>
+
+                      {/* Card 6: Kursi Roda & Alat Bantu Jalan */}
+                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 shadow-2xs hover:border-teal-500/40 transition-colors">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+                            <HeartHandshake className="w-4 h-4 text-teal-500 shrink-0" />
+                            Kursi Roda & Tongkat Gratis
+                          </div>
+                          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20">
+                            Ready di Lobi
+                          </span>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                          Unit kursi roda standar medis, kruk ketiak, dan tongkat bantu jalan siap digunakan langsung di pintu masuk tanpa syarat jaminan apapun.
+                        </p>
+                      </div>
+
+                      {/* Card 7: Papan Braille & Audio */}
+                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 shadow-2xs hover:border-purple-500/40 transition-colors">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+                            <Eye className="w-4 h-4 text-purple-500 shrink-0" />
+                            Papan Braille & Audio Guidance
+                          </div>
+                          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+                            Sensorik Netra
+                          </span>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                          Denah lokasi raba (Braille floor plan), buku panduan huruf Braille, dan pengeras suara panggilan antrean jernih di setiap sudut gedung.
+                        </p>
+                      </div>
+
+                      {/* Card 8: Hearing Loop System */}
+                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 shadow-2xs hover:border-cyan-500/40 transition-colors">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+                            <Ear className="w-4 h-4 text-cyan-500 shrink-0" />
+                            Hearing Loop / Penguat Suara
+                          </div>
+                          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
+                            Sensorik Rungu
+                          </span>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                          Perangkat bantu dengar induksi magnetik (*induction loop*) di meja informasi utama untuk kejernihan komunikasi warga pengguna alat bantu dengar (ABD).
+                        </p>
+                      </div>
+
+                    </div>
+
+                    {/* Banner Info Jalur Prioritas */}
+                    <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-950 dark:text-emerald-200 flex items-start gap-3">
+                      <CheckSquare className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+                      <div className="text-xs leading-relaxed">
+                        <strong className="block text-emerald-800 dark:text-emerald-300 mb-0.5">Jalur Antrean Prioritas Langsung (Fast Track):</strong>
+                        Penyandang disabilitas fisik, sensorik netra/rungu, lansia usia 60+ tahun, serta ibu hamil berhak mendapatkan tiket antrean prioritas jalur cepat tanpa menunggu antrean reguler. Silakan langsung menuju loket Front Office.
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 2: Kelompok Rentan, Laktasi & Anak */}
+                {assistanceTab === 'kelompok_rentan' && (
+                  <div className="space-y-4 text-xs sm:text-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      
+                      {/* Ruang Laktasi (ASI) */}
+                      <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 space-y-2">
+                        <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
+                          <div className="p-2 rounded-xl bg-pink-500/15 text-pink-500 border border-pink-500/30">
+                            <Baby className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-black">Ruang Laktasi & Ibu Menyusui (ASI)</div>
+                            <div className="text-[11px] text-pink-600 dark:text-pink-400 font-mono">Privat, Nyaman & Higienis</div>
+                          </div>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                          Ruang khusus berpendingin udara (AC) dengan pintu privasi terkunci dari dalam. Dilengkapi sofa menyusui ergonomis, meja ganti popok bayi (*diaper changing table*), wastafel cuci tangan, dispenser air hangat steril, dan lemari pendingin (kulkas) penyimpan ASI perah.
+                        </p>
+                        <div className="flex items-center gap-2 pt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                          <MapPin className="w-3.5 h-3.5 text-emerald-500" />
+                          <span>Lokasi: Sayap Kiri Lantai 1 (Dekat Toilet Disabilitas)</span>
+                        </div>
+                      </div>
+
+                      {/* Pojok Bermain Anak (Kids Corner) */}
+                      <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 space-y-2">
+                        <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
+                          <div className="p-2 rounded-xl bg-amber-500/15 text-amber-500 border border-amber-500/30">
+                            <Sparkles className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-black">Pojok Bermain Anak (Kids Corner)</div>
+                            <div className="text-[11px] text-amber-600 dark:text-amber-400 font-mono">Edukasi & Ramah Anak</div>
+                          </div>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                          Area bermain ceria berlantai matras busa empuk bebas benturan untuk keselamatan balita saat orang tua mengurus perizinan. Dilengkapi buku cerita bergambar, meja mewarnai, balok susun motorik, dan alat permainan edukatif berstandar SNI bebas toksik.
+                        </p>
+                        <div className="flex items-center gap-2 pt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                          <MapPin className="w-3.5 h-3.5 text-emerald-500" />
+                          <span>Lokasi: Samping Ruang Tunggu Utama Lobi MPP</span>
+                        </div>
+                      </div>
+
+                      {/* Layanan Prioritas Lansia & Ibu Hamil */}
+                      <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 space-y-2">
+                        <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
+                          <div className="p-2 rounded-xl bg-emerald-500/15 text-emerald-500 border border-emerald-500/30">
+                            <Users className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-black">Layanan Prioritas Lansia (&gt;60 Thn)</div>
+                            <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-mono">Pelayanan Cepat Tanpa Antre</div>
+                          </div>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                          Warga lanjut usia dan ibu hamil trimester akhir didampingi secara khusus oleh petugas duta pelayanan mulai dari pengisian formulir, pemindaian berkas, hingga proses cetak dokumen selesai di meja prioritas.
+                        </p>
+                      </div>
+
+                      {/* Kursi Tunggu Prioritas & Fasilitas Air Minum */}
+                      <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 space-y-2">
+                        <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
+                          <div className="p-2 rounded-xl bg-blue-500/15 text-blue-500 border border-blue-500/30">
+                            <Heart className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-black">Kursi Prioritas & Air Minum Gratis</div>
+                            <div className="text-[11px] text-blue-600 dark:text-blue-400 font-mono">Kenyamanan Maksimal</div>
+                          </div>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                          Tersedia kursi duduk bertanda khusus (*priority seating*) dengan bantalan empuk dan sandaran lengan di baris terdepan, serta stasiun air minum mineral isi ulang higienis gratis bagi seluruh pengunjung.
+                        </p>
+                      </div>
+
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 3: Juru Bahasa Isyarat (BISINDO) & Hotline Komunikasi */}
+                {assistanceTab === 'jbi' && (
+                  <div className="space-y-4 text-xs sm:text-sm">
+                    <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 space-y-3.5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-11 h-11 rounded-xl bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 flex items-center justify-center shrink-0">
+                          <Ear className="w-6 h-6" />
+                        </div>
                         <div>
-                          <label className="block text-xs font-semibold mb-1">Kebutuhan Fasilitas</label>
-                          <select
-                            value={requestForm.jenisKebutuhan}
-                            onChange={(e) => setRequestForm({ ...requestForm, jenisKebutuhan: e.target.value })}
-                            className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none"
+                          <h3 className="font-black text-sm sm:text-base text-slate-900 dark:text-white">
+                            Layanan Juru Bahasa Isyarat (BISINDO) & Komunikasi Visual
+                          </h3>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                            Kemitraan Resmi Pemkab Luwu bersama GERKATIN & Dinas Sosial Kab. Luwu
+                          </p>
+                        </div>
+                      </div>
+
+                      <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-xs">
+                        MPP Simpurusiang menjamin kesetaraan akses komunikasi bagi pemohon disabilitas rungu wicara. Petugas Front Office kami dilatih dasar Bahasa Isyarat Indonesia (BISINDO) dan didukung layanan Juru Bahasa Isyarat (JBI) berlisensi secara daring maupun pendampingan langsung di loket perizinan.
+                      </p>
+
+                      {/* Direct Action Video Call BISINDO */}
+                      <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-cyan-500/15 border border-emerald-500/30 space-y-2.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+                            <PhoneCall className="w-4 h-4 text-emerald-500" />
+                            Hotline Video Call WhatsApp JBI Luwu
+                          </span>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500 text-slate-950 font-black">
+                            ONLINE (08.00 - 15.30 WITA)
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-600 dark:text-slate-300">
+                          Hubungi petugas penerjemah isyarat kami melalui panggilan video WhatsApp untuk konsultasi persyaratan izin atau pendampingan saat berada di gedung MPP:
+                        </p>
+                        <div className="flex flex-wrap items-center gap-2 pt-1">
+                          <a
+                            href="https://wa.me/6281242682024?text=Halo%20MPP%20Simpurusiang%20Luwu,%20saya%20memerlukan%20layanan%20Juru%20Bahasa%20Isyarat%20(BISINDO)%20untuk%20pelayanan%20izin."
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs shadow-md transition-all cursor-pointer"
                           >
-                            <option value="Kursi Roda & Petugas Pendamping">Kursi Roda & Petugas Pendamping</option>
-                            <option value="Juru Bahasa Isyarat (Tunarungu)">Juru Bahasa Isyarat (Tunarungu)</option>
-                            <option value="Pendamping Netra (Guiding Assistance)">Pendamping Netra (Guiding Assistance)</option>
-                            <option value="Layanan Prioritas Lansia">Layanan Prioritas Lansia (&gt;60 Tahun)</option>
-                          </select>
+                            <MessageCircle className="w-4 h-4" />
+                            <span>Hubungi Video Call: 0812-4268-2024</span>
+                            <ExternalLink className="w-3.5 h-3.5 ml-1" />
+                          </a>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                          <label className="block text-xs font-semibold mb-1">Tanggal Kedatangan</label>
-                          <input
-                            type="date"
-                            value={requestForm.tanggal}
-                            onChange={(e) => setRequestForm({ ...requestForm, tanggal: e.target.value })}
-                            className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none"
-                          />
+                      {/* Display Teks Dua Arah */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                          <div className="font-bold text-xs text-slate-900 dark:text-white mb-1 flex items-center gap-1.5">
+                            <MessageSquareText className="w-4 h-4 text-amber-500" />
+                            Tablet Teks Interaktif
+                          </div>
+                          <p className="text-[11.5px] text-slate-500 dark:text-slate-400">
+                            Tersedia perangkat tablet sentuh di meja Front Office untuk komunikasi dua arah berbasis teks langsung antara pemohon dan petugas loket.
+                          </p>
                         </div>
 
-                        <div>
-                          <label className="block text-xs font-semibold mb-1">Estimasi Jam Tiba</label>
-                          <input
-                            type="time"
-                            value={requestForm.jamKedatangan}
-                            onChange={(e) => setRequestForm({ ...requestForm, jamKedatangan: e.target.value })}
-                            className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none"
-                          />
+                        <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                          <div className="font-bold text-xs text-slate-900 dark:text-white mb-1 flex items-center gap-1.5">
+                            <FileText className="w-4 h-4 text-blue-500" />
+                            Formulir Panduan Visual
+                          </div>
+                          <p className="text-[11.5px] text-slate-500 dark:text-slate-400">
+                            Buku panduan bergambar (*visual flowchart*) mengenai tahapan setiap loket layanan dan dokumen persyaratan yang diperlukan.
+                          </p>
                         </div>
                       </div>
 
-                      <div>
-                        <label className="block text-xs font-semibold mb-1">Catatan Tambahan (Opsional)</label>
-                        <textarea
-                          rows={2}
-                          placeholder="Contoh: Mengurus KTP di loket Disdukcapil..."
-                          value={requestForm.catatan}
-                          onChange={(e) => setRequestForm({ ...requestForm, catatan: e.target.value })}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none"
-                        />
-                      </div>
-
-                      <button
-                        type="submit"
-                        className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all cursor-pointer mt-2"
-                      >
-                        <HeartHandshake className="w-4 h-4" />
-                        <span>Kirim Permohonan Asistensi Bebas Retribusi</span>
-                      </button>
-                    </form>
-                  )}
-                </div>
-              )}
-
-              {/* TAB 3: Juru Bahasa Isyarat */}
-              {assistanceTab === 'jbi' && (
-                <div className="space-y-4 text-xs sm:text-sm">
-                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
-                    <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
-                      <PhoneCall className="w-4 h-4 text-emerald-500" />
-                      Layanan Juru Bahasa Isyarat (BISINDO)
-                    </div>
-                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-xs">
-                      MPP Simpurusiang bekerja sama dengan Gerakan untuk Kesejahteraan Tunarungu Indonesia (GERKATIN) dan Dinsos Luwu menyediakan pendampingan komunikasi bahasa isyarat di lobi dan loket perizinan.
-                    </p>
-                    <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs">
-                      <strong>Hotline Video Call Bahasa Isyarat:</strong><br />
-                      WhatsApp Front Office MPP: <strong>0812-4268-2024</strong> (Senin - Jumat 08.00 - 15.30 WITA)
                     </div>
                   </div>
+                )}
+
+                {/* TAB 4: Form Booking Kursi Roda & Pendampingan */}
+                {assistanceTab === 'request' && (
+                  <div className="space-y-4 text-xs sm:text-sm">
+                    {isRequestSubmitted ? (
+                      <div className="p-6 sm:p-8 rounded-3xl bg-emerald-500/15 border border-emerald-500/40 text-center space-y-3">
+                        <CheckCircle2 className="w-14 h-14 text-emerald-500 mx-auto animate-bounce" />
+                        <h3 className="font-black text-lg text-emerald-700 dark:text-emerald-400">
+                          Permohonan Asistensi Disabilitas Terjadwal!
+                        </h3>
+                        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-lg mx-auto leading-relaxed">
+                          Terima kasih atas konfirmasi Anda. Petugas Duta Layanan Front Office MPP Simpurusiang siap menyambut Anda di gerbang lobi utama dengan fasilitas kursi roda/pendampingan pada tanggal yang telah dipilih. Bebas biaya (100% Gratis).
+                        </p>
+                        <div className="pt-2">
+                          <span className="inline-block px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-mono font-bold">
+                            Salama'Ki' Tapada Salama' • Tana Luwu
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <form onSubmit={handleRequestSubmit} className="space-y-3.5">
+                        <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-xs flex items-center gap-2">
+                          <Info className="w-4 h-4 shrink-0 text-emerald-500" />
+                          <span>Isi form di bawah ini agar petugas kami menyiapkan fasilitas dan menyambut Anda tepat saat tiba di MPP.</span>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-bold mb-1 text-slate-700 dark:text-slate-300">
+                            Nama Pemohon / Pendamping <span className="text-rose-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="Contoh: Andi Muhammad / Pendamping..."
+                            value={requestForm.nama}
+                            onChange={(e) => setRequestForm({ ...requestForm, nama: e.target.value })}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold mb-1 text-slate-700 dark:text-slate-300">
+                              Nomor WhatsApp Aktif <span className="text-rose-500">*</span>
+                            </label>
+                            <input
+                              type="tel"
+                              required
+                              placeholder="Contoh: 081234567890"
+                              value={requestForm.phone}
+                              onChange={(e) => setRequestForm({ ...requestForm, phone: e.target.value })}
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-bold mb-1 text-slate-700 dark:text-slate-300">
+                              Jenis Kebutuhan Fasilitas
+                            </label>
+                            <select
+                              value={requestForm.jenisKebutuhan}
+                              onChange={(e) => setRequestForm({ ...requestForm, jenisKebutuhan: e.target.value })}
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm cursor-pointer"
+                            >
+                              <option value="Kursi Roda & Petugas Pendamping">♿ Kursi Roda & Petugas Pendamping</option>
+                              <option value="Juru Bahasa Isyarat (Tunarungu)">🧏 Juru Bahasa Isyarat (BISINDO)</option>
+                              <option value="Pendamping Netra (Guiding Assistance)">🦯 Pendamping Netra (Guiding Assistance)</option>
+                              <option value="Layanan Prioritas Lansia">🧓 Prioritas Lansia (&gt;60 Tahun)</option>
+                              <option value="Layanan Prioritas Ibu Hamil">🤰 Prioritas Ibu Hamil / Bawa Balita</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold mb-1 text-slate-700 dark:text-slate-300">
+                              Tanggal Rencana Kunjungan
+                            </label>
+                            <input
+                              type="date"
+                              value={requestForm.tanggal}
+                              onChange={(e) => setRequestForm({ ...requestForm, tanggal: e.target.value })}
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-bold mb-1 text-slate-700 dark:text-slate-300">
+                              Estimasi Jam Kedatangan
+                            </label>
+                            <input
+                              type="time"
+                              value={requestForm.jamKedatangan}
+                              onChange={(e) => setRequestForm({ ...requestForm, jamKedatangan: e.target.value })}
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-bold mb-1 text-slate-700 dark:text-slate-300">
+                            Loket Tujuan / Catatan Tambahan (Opsional)
+                          </label>
+                          <textarea
+                            rows={2}
+                            placeholder="Contoh: Mengurus KTP di loket Disdukcapil atau izin usaha NIB di DPMPTSP..."
+                            value={requestForm.catatan}
+                            onChange={(e) => setRequestForm({ ...requestForm, catatan: e.target.value })}
+                            className="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm"
+                          />
+                        </div>
+
+                        <button
+                          type="submit"
+                          className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 active:scale-[0.99] text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 transition-all cursor-pointer mt-1"
+                        >
+                          <HeartHandshake className="w-5 h-5" />
+                          <span>Kirim Permohonan Asistensi (100% Bebas Retribusi)</span>
+                        </button>
+                      </form>
+                    )}
+                  </div>
+                )}
+
+                {/* TAB 5: Standar SOP & Maklumat Pelayanan Inklusi */}
+                {assistanceTab === 'standar' && (
+                  <div className="space-y-4 text-xs sm:text-sm">
+                    <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 space-y-4">
+                      
+                      {/* Maklumat Pelayanan */}
+                      <div className="border-b border-slate-200 dark:border-slate-700 pb-3.5">
+                        <div className="flex items-center gap-2 font-black text-slate-900 dark:text-white text-sm mb-1.5">
+                          <Award className="w-4 h-4 text-amber-500 shrink-0" />
+                          Maklumat Pelayanan Publik Ramah Kelompok Rentan & Inklusi
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-xs">
+                          "Pemerintah Kabupaten Luwu berkomitmen menyelenggarakan pelayanan publik yang adil, setara, non-diskriminatif, dan mudah diakses oleh seluruh lapisan masyarakat termasuk penyandang disabilitas fisik, sensorik, intelektual, lansia, wanita hamil, dan anak-anak."
+                        </p>
+                      </div>
+
+                      {/* 4 Pilar Standar Inklusi */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                          <div className="font-bold text-xs text-emerald-600 dark:text-emerald-400 mb-1 flex items-center gap-1.5">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            1. Kesetaraan Hak Layanan
+                          </div>
+                          <p className="text-[11.5px] text-slate-500 dark:text-slate-400">
+                            Tidak ada perbedaan standar kualitas pelayanan antara pemohon disabilitas dengan pemohon umum.
+                          </p>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                          <div className="font-bold text-xs text-emerald-600 dark:text-emerald-400 mb-1 flex items-center gap-1.5">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            2. Nol Retribusi (100% Gratis)
+                          </div>
+                          <p className="text-[11.5px] text-slate-500 dark:text-slate-400">
+                            Seluruh fasilitas bantuan, kursi roda, dan juru bahasa isyarat bebas dari segala bentuk biaya atau pungli.
+                          </p>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                          <div className="font-bold text-xs text-emerald-600 dark:text-emerald-400 mb-1 flex items-center gap-1.5">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            3. Jalur Bebas Hambatan
+                          </div>
+                          <p className="text-[11.5px] text-slate-500 dark:text-slate-400">
+                            Aksesibilitas fisik tanpa undakan terjal, dilengkapi ramp landai, pintu lebar, dan lift/akses lantai setara.
+                          </p>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                          <div className="font-bold text-xs text-emerald-600 dark:text-emerald-400 mb-1 flex items-center gap-1.5">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            4. Duta Layanan Responsif
+                          </div>
+                          <p className="text-[11.5px] text-slate-500 dark:text-slate-400">
+                            Petugas dilatih secara khusus untuk menyambut ramah, membantu mobilitas, dan memandu proses administrasi.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Kanal Pengaduan Inklusi */}
+                      <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-950 dark:text-amber-200 text-xs flex items-start gap-2.5">
+                        <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                        <div>
+                          <strong>Kanal Khusus Pengaduan Layanan Inklusif:</strong><br />
+                          Jika Anda menemui hambatan sarana prasarana atau perlakuan yang kurang memuaskan, laporkan langsung via SP4N-LAPOR atau WhatsApp Inspektorat/MPP Luwu di <strong>0812-4268-2024</strong>.
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                )}
+
+              </div>
+
+              {/* Modal Footer */}
+              <div className="pt-3.5 mt-2 border-t border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 shrink-0 text-xs text-slate-500 dark:text-slate-400">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                  <span className="font-medium">MPP Simpurusiang Kab. Luwu • Ramah HAM & Bebas Diskriminasi</span>
                 </div>
-              )}
+                <button
+                  onClick={() => setIsAssistanceModalOpen(false)}
+                  className="px-4 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold transition-colors cursor-pointer"
+                >
+                  Tutup
+                </button>
+              </div>
+
             </motion.div>
           </div>
         )}
