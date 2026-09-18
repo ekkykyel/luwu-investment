@@ -30,7 +30,7 @@ if (typeof window !== 'undefined') {
 /**
  * Phonetically transforms raw technical text into crystal clear, human-like speech string.
  * Optimizes intonation, expands acronyms, converts currency & numbers into natural words,
- * and inserts semantic punctuation pauses for Indonesian, English, and Mandarin.
+ * eliminates stutter-inducing punctuation, and normalizes Tana Luwu dialect and government terms.
  */
 export function formatTextForCrystalClearTts(text: string, lang: 'id' | 'en' | 'zh' = 'id'): string {
   if (!text) return '';
@@ -42,10 +42,13 @@ export function formatTextForCrystalClearTts(text: string, lang: 'id' | 'en' | '
   cleaned = cleaned.replace(/^\s*[\-\•\*\+]\s+/gm, ''); // Bullet markers
   cleaned = cleaned.replace(/^\s*\d+\.\s+/gm, ''); // Numbered markers
 
-  // 2. Remove URLs, HTML tags, and bracket noise
+  // 2. Remove URLs, HTML tags, and clean brackets without creating pause stutter
   cleaned = cleaned.replace(/https?:\/\/\S+/gi, '');
   cleaned = cleaned.replace(/<[^>]*>/g, '');
-  cleaned = cleaned.replace(/[\(\)\[\]\{\}]/g, ', ');
+
+  // Convert parenthesized acronyms cleanly (e.g. "Persetujuan Bangunan Gedung (PBG)" -> "Persetujuan Bangunan Gedung atau P B G")
+  cleaned = cleaned.replace(/\s*\(([A-Za-z0-9\-\s]{2,15})\)\s*/g, ' atau $1 ');
+  cleaned = cleaned.replace(/[\(\)\[\]\{\}]/g, ' ');
 
   // ==========================================
   // --- 1. BAHASA INDONESIA & TANA LUWU DIALECT ---
@@ -108,7 +111,7 @@ export function formatTextForCrystalClearTts(text: string, lang: 'id' | 'en' | '
     cleaned = cleaned.replace(/\bBUMN\b/g, 'B U M N');
     cleaned = cleaned.replace(/\bNPWP\b/g, 'N P W P');
     cleaned = cleaned.replace(/\bDPUPR\b/g, 'D P U P R');
-    cleaned = cleaned.replace(/\bDinas PUPR\b/g, 'Dinas P U P R');
+    cleaned = cleaned.replace(/\bDinas PUPR\b/gi, 'Dinas P U P R');
     cleaned = cleaned.replace(/\bDPMPTSP\b/g, 'D P M P T S P');
     cleaned = cleaned.replace(/\bDISDUKCAPIL\b/gi, 'Disdukcapil');
     cleaned = cleaned.replace(/\bKPP\b/g, 'K P P');
@@ -181,7 +184,7 @@ export function formatTextForCrystalClearTts(text: string, lang: 'id' | 'en' | '
     cleaned = cleaned.replace(/08:00\s*(至|-)\s*15:30\s*(WITA)?/gi, '周一至周五上午 8 点至下午 3 点半');
     cleaned = cleaned.replace(/\bWITA\b/g, '印尼中部时间');
 
-    // C. 混合英文缩写优化为标准的中文政务用语（让中文语音合成发音标准清晰，不生硬）
+    // C. 混合英文缩写优化为标准的中文政务用语
     cleaned = cleaned.replace(/MPP Simpurusiang/gi, '鲁武县欣普鲁香公共服务大楼');
     cleaned = cleaned.replace(/MPP/g, '公共服务大楼');
     cleaned = cleaned.replace(/PBG/g, 'PBG 建筑施工许可');
@@ -205,9 +208,17 @@ export function formatTextForCrystalClearTts(text: string, lang: 'id' | 'en' | '
     cleaned = cleaned.replace(/SAMSAT/g, '机动车税务窗口');
   }
 
-  // 4. Slashes & Punctuation Cleanup
+  // 4. Slashes & Punctuation Cleanup (Pembersihan Tanda Baca Anti-Stutter)
   cleaned = cleaned.replace(/\s*\/\s*/g, lang === 'en' ? ' or ' : lang === 'zh' ? '或' : ' atau ');
-  cleaned = cleaned.replace(/[\:\;]/g, ', ');
+  
+  // Colons and semicolons separating clauses should become periods for crisp cadence
+  cleaned = cleaned.replace(/[\:\;]/g, '. ');
+
+  // Sanitize duplicate or colliding punctuations that cause dead silence in TTS engines
+  cleaned = cleaned.replace(/[,，]{2,}/g, ', ');
+  cleaned = cleaned.replace(/[.!?。！？]{2,}/g, '. ');
+  cleaned = cleaned.replace(/([.!?。！？])\s*[,，]/g, '$1 ');
+  cleaned = cleaned.replace(/^\s*[,，.\s]+/gm, '');
   cleaned = cleaned.replace(/\s+/g, ' ').trim();
 
   return cleaned;
@@ -253,8 +264,8 @@ export interface SpeakOptions {
 
 /**
  * Language-aware semantic clause chunking (Latin vs CJK characters).
- * Splits text into natural breathing clauses so the synthesizer does not rush,
- * clip, or run out of memory.
+ * Splits text into full natural sentences (up to 260 chars) so the synthesizer
+ * speaks continuously without awkward mid-sentence hardware pause gaps.
  */
 function splitTextIntoSafeChunks(text: string, lang: 'id' | 'en' | 'zh' = 'id'): string[] {
   if (!text || !text.trim()) return [];
@@ -262,20 +273,20 @@ function splitTextIntoSafeChunks(text: string, lang: 'id' | 'en' | 'zh' = 'id'):
   const safeChunks: string[] = [];
 
   if (lang === 'zh') {
-    // Mandarin CJK: split by Chinese and standard punctuation
-    const cjkParts = text.split(/(?<=[。！？；\n!?;])\s*/);
-    for (const part of cjkParts) {
-      const trimmed = part.trim();
+    // Mandarin CJK: split primarily by Chinese sentence punctuation
+    const cjkSentences = text.split(/(?<=[。！？\n!?])\s*/);
+    for (const sentence of cjkSentences) {
+      const trimmed = sentence.trim();
       if (!trimmed) continue;
 
-      if (trimmed.length <= 35) {
+      if (trimmed.length <= 75) {
         safeChunks.push(trimmed);
       } else {
-        // Subdivide by commas or pauses
-        const subParts = trimmed.split(/(?<=[，、,])\s*/);
+        // Subdivide unusually long sentence by commas or semicolons
+        const subParts = trimmed.split(/(?<=[，、；;])\s*/);
         let acc = '';
         for (const sub of subParts) {
-          if ((acc + sub).length <= 35) {
+          if ((acc + sub).length <= 75) {
             acc += sub;
           } else {
             if (acc) safeChunks.push(acc);
@@ -287,38 +298,29 @@ function splitTextIntoSafeChunks(text: string, lang: 'id' | 'en' | 'zh' = 'id'):
     }
   } else {
     // Latin languages (Indonesian & English)
-    const majorParts = text.split(/(?<=[.?!;。\n！？])\s+/);
+    // Primary split strictly by Sentence Boundaries (Periods, Question marks, Exclamations, Newlines)
+    const sentences = text.split(/(?<=[.?!。\n！？])\s+/);
 
-    for (const part of majorParts) {
-      const trimmed = part.trim();
+    for (const sentence of sentences) {
+      const trimmed = sentence.trim();
       if (!trimmed) continue;
 
-      if (trimmed.length <= 80) {
+      // Allow full natural sentences up to 260 characters without splitting!
+      // This guarantees phrases like "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak atau Ibu."
+      // are spoken as ONE single continuous, fluid utterance with ZERO audio hardware latency.
+      if (trimmed.length <= 260) {
         safeChunks.push(trimmed);
       } else {
-        const subClauses = trimmed.split(/(?<=[,，])\s+/);
+        // If an individual run-on sentence exceeds 260 characters, split cleanly at word boundaries
+        const words = trimmed.split(/\s+/);
         let accumulator = '';
 
-        for (const clause of subClauses) {
-          if ((accumulator + ' ' + clause).trim().length <= 80) {
-            accumulator = (accumulator + ' ' + clause).trim();
+        for (const word of words) {
+          if ((accumulator + ' ' + word).trim().length <= 220) {
+            accumulator = (accumulator + ' ' + word).trim();
           } else {
             if (accumulator) safeChunks.push(accumulator);
-            if (clause.length > 80) {
-              const words = clause.split(/\s+/);
-              let wordAcc = '';
-              for (const word of words) {
-                if ((wordAcc + ' ' + word).trim().length <= 70) {
-                  wordAcc = (wordAcc + ' ' + word).trim();
-                } else {
-                  if (wordAcc) safeChunks.push(wordAcc);
-                  wordAcc = word;
-                }
-              }
-              if (wordAcc) accumulator = wordAcc;
-            } else {
-              accumulator = clause;
-            }
+            accumulator = word;
           }
         }
         if (accumulator) safeChunks.push(accumulator);
@@ -394,7 +396,7 @@ export function speakCrystalClearText(text: string, options: SpeakOptions = {}):
   const normalizedText = formatTextForCrystalClearTts(text, lang);
   if (!normalizedText.trim()) return 0;
 
-  // 2. Intelligent Sentence & Clause Chunking
+  // 2. Intelligent Sentence & Clause Chunking (Zero-Lag sentences)
   const sentenceChunks = splitTextIntoSafeChunks(normalizedText, lang);
   if (sentenceChunks.length === 0) return 0;
 
@@ -405,8 +407,8 @@ export function speakCrystalClearText(text: string, options: SpeakOptions = {}):
   const targetVoice = findOptimalVoice(voiceList, lang);
 
   // 4. Default Prosody Tuning per Language (Natural human pitch & speed calibration)
-  const finalRate = rate !== undefined ? rate : (lang === 'zh' ? 0.88 : lang === 'en' ? 0.90 : 0.92);
-  const finalPitch = pitch !== undefined ? pitch : (lang === 'id' ? 1.02 : 1.0);
+  const finalRate = rate !== undefined ? rate : (lang === 'zh' ? 0.90 : lang === 'en' ? 0.94 : 0.96);
+  const finalPitch = pitch !== undefined ? pitch : (lang === 'id' ? 1.01 : 1.0);
 
   // 5. Chromium Keep-Alive Heartbeat
   window.__speechKeepAliveInterval = setInterval(() => {
@@ -472,10 +474,8 @@ export function speakCrystalClearText(text: string, options: SpeakOptions = {}):
       if (window.__speechSessionId !== currentSessionId) return;
 
       currentIdx++;
-      // Natural 35ms micro-pause between clauses
-      setTimeout(() => {
-        playNextChunk();
-      }, 35);
+      // Immediate seamless zero-delay transition to next sentence
+      playNextChunk();
     };
 
     utterance.onend = () => {
@@ -491,8 +491,8 @@ export function speakCrystalClearText(text: string, options: SpeakOptions = {}):
       handleChunkCompleted();
     };
 
-    // 6. Intelligent Utterance Watchdog
-    const estimatedDurationMs = Math.max(chunkText.length * 85, 1800) + 2500;
+    // 6. Intelligent Utterance Watchdog (generous timeout to avoid premature truncation)
+    const estimatedDurationMs = Math.max(chunkText.length * 100, 2500) + 3000;
     if (window.__speechWatchdogTimer) clearTimeout(window.__speechWatchdogTimer);
     window.__speechWatchdogTimer = setTimeout(() => {
       if (!hasHandledChunk && window.__speechSessionId === currentSessionId) {
