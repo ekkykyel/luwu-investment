@@ -9,7 +9,7 @@ import {
   HeartHandshake, CheckCircle2, Play, Apple,
   Clock, CalendarDays, Calendar, TrendingUp, BarChart3,
   MessageSquare, ShieldCheck, Headphones, ArrowRight,
-  HardHat, MapPin, User, Mail, Phone, X, Check,
+  HardHat, MapPin, User, Mail, Phone, X, Check, Briefcase,
   Instagram, Youtube, Facebook, Music2, Heart, MessageCircle, Share2, ExternalLink,
   Send, FileText, QrCode, Printer, Copy, RotateCcw, Download, FileCheck, Clock3, AlertCircle, Loader2
 , Globe, Map, Package, BadgeCheck, Lock, Unlock, Plus, Trash2, Volume2, VolumeX, Radio } from 'lucide-react';
@@ -42,6 +42,8 @@ import { MppNewsItem, getStoredMppNews, syncMppNewsWithServer } from '../data/mp
 import TenantDashboard from './mpp/TenantDashboard';
 import { PetugasGeraiLoginModal } from './mpp/PetugasGeraiLoginModal';
 import { MppAirportKioskModal } from './MppAirportKioskModal';
+import { MppCommandPalette } from './mpp/MppCommandPalette';
+import { MppQuickJumpDock } from './mpp/MppQuickJumpDock';
 import { LUWU_LOGO_BASE64 } from '../lib/logoBase64';
 import { supabase } from '../lib/supabaseClient';
 import { 
@@ -404,13 +406,29 @@ export default function PortalMPP() {
   const [activeSectionId, setActiveSectionId] = useState<string>('layanan');
   const [isTicketBarDismissed, setIsTicketBarDismissed] = useState(false);
   const [isBottomTicketDismissed, setIsBottomTicketDismissed] = useState(false);
-  const [activePersona, setActivePersona] = useState(() => {
-    return sessionStorage.getItem("portal_persona") || "warga";
+  const [activePersona, setActivePersona] = useState<'warga' | 'investor' | 'semua'>(() => {
+    const saved = sessionStorage.getItem("portal_persona");
+    return (saved === "warga" || saved === "investor" || saved === "semua") ? (saved as 'warga' | 'investor' | 'semua') : "warga";
   });
 
   useEffect(() => {
     sessionStorage.setItem("portal_persona", activePersona);
   }, [activePersona]);
+
+  // State & Listener Universal Command Palette (Ctrl + K / Cmd + K)
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      // Pastikan tidak terpukul saat mengetik dalam input form/textarea kecuali kombinasi khusus
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, []);
 
   const [activeTicket, setActiveTicket] = useState<{
     number: string;
@@ -1376,20 +1394,57 @@ export default function PortalMPP() {
               <div className="pointer-events-none absolute top-0 left-0 bottom-0 w-6 sm:w-12 bg-gradient-to-r from-white dark:from-[#001424] to-transparent z-10" />
 
               <div className="flex items-center overflow-x-auto snap-x snap-mandatory no-scrollbar py-2 px-4 gap-2 touch-pan-x">
-                {[
-                  { id: 'operasional-heatmap', label: t("mppPortal.quickNav.operational", "Jam Kunjungan & SLA"), icon: Clock },
-                  { id: 'smart-live-queue', label: t("mppPortal.quickNav.liveQueue", "Radar Antrean Live"), icon: Ticket },
-                  { id: 'syarat-dokumen', label: t("mppPortal.quickNav.requirements", "Cek Syarat & AI"), icon: CheckSquare },
-                  { id: 'denah-interaktif', label: t("mppPortal.quickNav.floorPlan", "Denah 3D Interaktif"), icon: Layers },
-                  { id: 'tracking-berkas', label: t("mppPortal.quickNav.tracking", "Lacak Berkas/Resi"), icon: SearchCheck },
-                  { id: 'survey', label: t("mppPortal.quickNav.survey", "Survei SKM 9 Unsur"), icon: Star },
-                  { id: 'investor-vip', label: t("mppPortal.quickNav.vipInvestor", "VIP Investor Desk"), icon: Sparkles },
-                  { id: 'layanan', label: t("mppPortal.nav.layanan"), icon: LayoutGrid },
-                  { id: 'instansi', label: t("mppPortal.nav.instansi"), icon: Building2 },
-                  { id: 'fasilitas', label: t("mppPortal.nav.fasilitas"), icon: Armchair },
-                  { id: 'umkm', label: t("mppPortal.nav.umkm", "Katalog UMKM"), icon: Store },
-                  { id: 'statistik', label: t("mppPortal.nav.statistik"), icon: BarChart3 },
-                ].map((item) => {
+                {/* Tombol Universal Command Palette (Ctrl + K) */}
+                <button
+                  type="button"
+                  onClick={() => setIsCommandPaletteOpen(true)}
+                  className="min-h-[44px] px-3.5 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-bold font-sans flex items-center gap-2 whitespace-nowrap snap-start transition-all cursor-pointer select-none bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500 hover:text-white shrink-0 group shadow-xs active:scale-95"
+                  title="Buka Pencarian Cepat Instansi, Izin, atau Fitur (Ctrl + K)"
+                >
+                  <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 dark:text-emerald-400 group-hover:text-white transition-colors" />
+                  <span>Cari (Ctrl+K)</span>
+                </button>
+
+                {(
+                  activePersona === 'warga'
+                    ? [
+                        { id: 'smart-live-queue', label: t("mppPortal.quickNav.liveQueue", "Radar Antrean Live"), icon: Ticket },
+                        { id: 'antrean-online', label: t("mppPortal.antrean.badge", "Ambil Antrean"), icon: Ticket },
+                        { id: 'syarat-dokumen', label: t("mppPortal.quickNav.requirements", "Cek Syarat & AI"), icon: CheckSquare },
+                        { id: 'tracking-berkas', label: t("mppPortal.quickNav.tracking", "Lacak Berkas/Resi"), icon: SearchCheck },
+                        { id: 'denah-interaktif', label: t("mppPortal.quickNav.floorPlan", "Denah 3D Interaktif"), icon: Layers },
+                        { id: 'operasional-heatmap', label: t("mppPortal.quickNav.operational", "Jam Kunjungan & SLA"), icon: Clock },
+                        { id: 'layanan', label: t("mppPortal.nav.layanan"), icon: LayoutGrid },
+                        { id: 'instansi', label: t("mppPortal.nav.instansi"), icon: Building2 },
+                        { id: 'fasilitas', label: t("mppPortal.nav.fasilitas"), icon: Armchair },
+                        { id: 'survey', label: t("mppPortal.quickNav.survey", "Survei SKM 9 Unsur"), icon: Star },
+                      ]
+                    : activePersona === 'investor'
+                    ? [
+                        { id: 'investor-vip', label: t("mppPortal.quickNav.vipInvestor", "VIP Investor Desk"), icon: Sparkles },
+                        { id: 'peta-spasial', label: "Peta Spasial & Potensi", icon: MapPin },
+                        { id: 'layanan', label: "Izin Usaha OSS-RBA", icon: LayoutGrid },
+                        { id: 'syarat-dokumen', label: "Syarat Izin & AMDAL", icon: CheckSquare },
+                        { id: 'tracking-berkas', label: "Lacak Izin Usaha", icon: SearchCheck },
+                        { id: 'operasional-heatmap', label: "Jam Konsultasi & SLA", icon: Clock },
+                        { id: 'denah-interaktif', label: "VIP Lounge & Gerai", icon: Layers },
+                        { id: 'statistik', label: "Statistik Realisasi", icon: BarChart3 },
+                      ]
+                    : [
+                        { id: 'operasional-heatmap', label: t("mppPortal.quickNav.operational", "Jam Kunjungan & SLA"), icon: Clock },
+                        { id: 'smart-live-queue', label: t("mppPortal.quickNav.liveQueue", "Radar Antrean Live"), icon: Ticket },
+                        { id: 'syarat-dokumen', label: t("mppPortal.quickNav.requirements", "Cek Syarat & AI"), icon: CheckSquare },
+                        { id: 'denah-interaktif', label: t("mppPortal.quickNav.floorPlan", "Denah 3D Interaktif"), icon: Layers },
+                        { id: 'tracking-berkas', label: t("mppPortal.quickNav.tracking", "Lacak Berkas/Resi"), icon: SearchCheck },
+                        { id: 'survey', label: t("mppPortal.quickNav.survey", "Survei SKM 9 Unsur"), icon: Star },
+                        { id: 'investor-vip', label: t("mppPortal.quickNav.vipInvestor", "VIP Investor Desk"), icon: Sparkles },
+                        { id: 'layanan', label: t("mppPortal.nav.layanan"), icon: LayoutGrid },
+                        { id: 'instansi', label: t("mppPortal.nav.instansi"), icon: Building2 },
+                        { id: 'fasilitas', label: t("mppPortal.nav.fasilitas"), icon: Armchair },
+                        { id: 'umkm', label: t("mppPortal.nav.umkm", "Katalog UMKM"), icon: Store },
+                        { id: 'statistik', label: t("mppPortal.nav.statistik"), icon: BarChart3 },
+                      ]
+                ).map((item) => {
                   const isActive = activeSectionId === item.id;
                   const Icon = item.icon;
                   return (
@@ -1469,37 +1524,67 @@ export default function PortalMPP() {
                 {t("mppPortal.hero.subtitle")}
               </motion.p>
 
-              {/* Persona Switcher (Segmented Control) - Tampilan Premium Elegan */}
+              {/* Persona Switcher (Segmented Control) - Tampilan Premium Elegan (Inovasi GovTech 1) */}
               <motion.div
                 variants={{
                   hidden: { opacity: 0, y: 35, scale: 0.96, filter: "blur(8px)" },
                   visible: { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", transition: { type: "spring", stiffness: 80, damping: 18 } },
                 }}
-                className="mb-10 sm:mb-12 w-full flex flex-col items-center gap-4"
+                className="mb-8 sm:mb-10 w-full flex flex-col items-center gap-3.5"
               >
-                <div className="rounded-full bg-slate-200/50 dark:bg-slate-900/60 p-1 flex w-fit mx-auto backdrop-blur-xl border border-slate-300/30 dark:border-white/5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]">
-                  {(["warga", "investor"] as const).map((persona) => {
-                    const isActive = activePersona === persona;
+                <div className="rounded-full bg-slate-200/60 dark:bg-slate-900/70 p-1 sm:p-1.5 flex flex-wrap items-center justify-center gap-1 w-fit mx-auto backdrop-blur-xl border border-slate-300/50 dark:border-white/10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]">
+                  {[
+                    { id: "warga", label: "Masyarakat", icon: User },
+                    { id: "investor", label: "Investor & Bisnis", icon: Briefcase },
+                    { id: "semua", label: "Semua Layanan", icon: Globe },
+                  ].map((p) => {
+                    const isActive = activePersona === p.id;
+                    const Icon = p.icon;
                     return (
                       <motion.button
-                        key={persona}
+                        key={p.id}
                         type="button"
-                        whileHover={{ scale: 1.04 }}
-                        whileTap={{ scale: 0.96 }}
-                        onClick={() => setActivePersona(persona)}
-                        className={`relative px-7 py-2.5 rounded-full text-xs sm:text-sm font-bold capitalize transition-colors duration-300 z-10 cursor-pointer ${isActive ? "text-white" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"}`}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        onClick={() => setActivePersona(p.id as 'warga' | 'investor' | 'semua')}
+                        className={`relative px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 z-10 cursor-pointer flex items-center gap-1.5 ${
+                          isActive 
+                            ? "text-white shadow-md shadow-emerald-500/25" 
+                            : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+                        }`}
                       >
                         {isActive && (
                           <motion.div
                             layoutId="persona-active"
-                            className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600 shadow-[0_4px_16px_rgba(16,185,129,0.35)] rounded-full -z-10"
+                            className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 shadow-[0_4px_16px_rgba(16,185,129,0.35)] rounded-full -z-10"
                             transition={{ type: "spring", stiffness: 450, damping: 32 }}
                           />
                         )}
-                        {persona === "warga" ? "Masyarakat" : "Investor"}
+                        <Icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`} />
+                        <span>{p.label}</span>
                       </motion.button>
                     );
                   })}
+                </div>
+
+                {/* Indikator Konteks Persona Aktif */}
+                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100/90 dark:bg-slate-900/80 border border-slate-200 dark:border-emerald-500/20 text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 max-w-xl text-center shadow-xs">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                  {activePersona === 'warga' && (
+                    <span>
+                      <strong className="text-emerald-700 dark:text-emerald-400 font-bold">Mode Warga Aktif:</strong> Memprioritaskan Antrean Langsung, Cek Persyaratan Berkas, Gerai Instansi, dan Lacak Dokumen.
+                    </span>
+                  )}
+                  {activePersona === 'investor' && (
+                    <span>
+                      <strong className="text-emerald-700 dark:text-emerald-400 font-bold">Mode Investor Aktif:</strong> Memprioritaskan VIP Investor Desk, Peta Spasial RDTR, Fasilitasi OSS-RBA, & Liaison Officer.
+                    </span>
+                  )}
+                  {activePersona === 'semua' && (
+                    <span>
+                      <strong className="text-emerald-700 dark:text-emerald-400 font-bold">Mode Semua Layanan:</strong> Menampilkan seluruh modul pelayanan publik, investasi, regulasi, dan galeri interaktif.
+                    </span>
+                  )}
                 </div>
                 
                 <button
@@ -1525,7 +1610,7 @@ export default function PortalMPP() {
               </motion.div>
 
               
-              {/* Quick Action Bento Grid - Android First 3-Columns dengan Fast & Responsive Physics */}
+              {/* Quick Action Bento Grid - Android First 3-Columns dengan Fast & Responsive Physics (Adaptive Persona) */}
               <motion.div 
                 variants={{
                   hidden: { opacity: 0, y: 15 },
@@ -1533,71 +1618,137 @@ export default function PortalMPP() {
                 }}
                 className="grid grid-cols-3 gap-2.5 sm:gap-6 lg:gap-8 w-full max-w-4xl"
               >
-                <motion.button 
-                  type="button"
-                  onClick={() => setIsQueueBookingOpen(true)}
-                  whileHover={{ scale: 1.035, y: -4 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                  className="w-full min-h-[48px] bg-white/75 dark:bg-[#0f172a]/50 backdrop-blur-2xl border border-slate-200/70 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.25)] rounded-2xl sm:rounded-3xl p-3 sm:p-7 md:p-8 flex flex-col items-center justify-center gap-2 sm:gap-4 group hover:border-emerald-500/90 hover:shadow-[0_20px_40px_rgba(16,185,129,0.18)] dark:hover:shadow-[0_0_35px_rgba(0,255,153,0.3)] transition-all duration-300 cursor-pointer relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-emerald-500/0 to-emerald-500/5 group-hover:to-emerald-500/10 transition-colors pointer-events-none" />
-                  <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/20 dark:border-emerald-400/20 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform duration-300 shadow-inner">
-                    <Ticket className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 stroke-[2.2]" />
-                  </div>
-                  <div className="flex flex-col items-center text-center">
-                    <span className="font-sans text-[11px] sm:text-base md:text-lg font-bold text-slate-800 dark:text-white tracking-tight leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                      {t("mppPortal.quickActions.antrean")}
-                    </span>
-                    <span className="hidden sm:inline-block text-xs text-slate-500 dark:text-slate-400 leading-normal mt-1 max-w-[180px]">{t("mppPortal.quickActions.antreanDesc")}</span>
-                  </div>
-                </motion.button>
+                {activePersona === 'investor' ? (
+                  <>
+                    <motion.button 
+                      type="button"
+                      onClick={() => document.getElementById('investor-vip')?.scrollIntoView({ behavior: 'smooth' })}
+                      whileHover={{ scale: 1.035, y: -4 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                      className="w-full min-h-[48px] bg-white/75 dark:bg-[#0f172a]/50 backdrop-blur-2xl border border-amber-500/30 dark:border-amber-400/20 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.25)] rounded-2xl sm:rounded-3xl p-3 sm:p-7 md:p-8 flex flex-col items-center justify-center gap-2 sm:gap-4 group hover:border-amber-500/90 hover:shadow-[0_20px_40px_rgba(245,158,11,0.2)] dark:hover:shadow-[0_0_35px_rgba(245,158,11,0.3)] transition-all duration-300 cursor-pointer relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 via-amber-500/0 to-amber-500/5 group-hover:to-amber-500/10 transition-colors pointer-events-none" />
+                      <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/20 dark:border-amber-400/20 flex items-center justify-center text-amber-700 dark:text-amber-400 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform duration-300 shadow-inner">
+                        <Sparkles className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 stroke-[2.2]" />
+                      </div>
+                      <div className="flex flex-col items-center text-center">
+                        <span className="font-sans text-[11px] sm:text-base md:text-lg font-bold text-slate-800 dark:text-white tracking-tight leading-tight group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                          VIP Investor Desk
+                        </span>
+                        <span className="hidden sm:inline-block text-xs text-slate-500 dark:text-slate-400 leading-normal mt-1 max-w-[180px]">Liaison Officer & Fasilitasi Investasi</span>
+                      </div>
+                    </motion.button>
 
-                <motion.button 
-                  type="button"
-                  onClick={() => document.getElementById('tracking-berkas')?.scrollIntoView({ behavior: 'smooth' })}
-                  whileHover={{ scale: 1.035, y: -4 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                  className="w-full min-h-[48px] bg-white/75 dark:bg-[#0f172a]/50 backdrop-blur-2xl border border-slate-200/70 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.25)] rounded-2xl sm:rounded-3xl p-3 sm:p-7 md:p-8 flex flex-col items-center justify-center gap-2 sm:gap-4 group hover:border-blue-500/90 hover:shadow-[0_20px_40px_rgba(59,130,246,0.18)] dark:hover:shadow-[0_0_35px_rgba(96,165,250,0.3)] transition-all duration-300 cursor-pointer relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-blue-500/0 to-blue-500/5 group-hover:to-blue-500/10 transition-colors pointer-events-none" />
-                  <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-blue-500/10 dark:bg-blue-500/15 border border-blue-500/20 dark:border-blue-500/20 flex items-center justify-center text-blue-700 dark:text-blue-400 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform duration-300 shadow-inner">
-                    <SearchCheck className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 stroke-[2.2]" />
-                  </div>
-                  <div className="flex flex-col items-center text-center">
-                    <span className="font-sans text-[11px] sm:text-base md:text-lg font-bold text-slate-800 dark:text-white tracking-tight leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                      {t("mppPortal.quickActions.cekStatus")}
-                    </span>
-                    <span className="hidden sm:inline-block text-xs text-slate-500 dark:text-slate-400 leading-normal mt-1 max-w-[180px]">{t("mppPortal.quickActions.cekStatusDesc")}</span>
-                  </div>
-                </motion.button>
+                    <motion.button 
+                      type="button"
+                      onClick={() => document.getElementById('peta-spasial')?.scrollIntoView({ behavior: 'smooth' })}
+                      whileHover={{ scale: 1.035, y: -4 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                      className="w-full min-h-[48px] bg-white/75 dark:bg-[#0f172a]/50 backdrop-blur-2xl border border-slate-200/70 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.25)] rounded-2xl sm:rounded-3xl p-3 sm:p-7 md:p-8 flex flex-col items-center justify-center gap-2 sm:gap-4 group hover:border-blue-500/90 hover:shadow-[0_20px_40px_rgba(59,130,246,0.18)] dark:hover:shadow-[0_0_35px_rgba(96,165,250,0.3)] transition-all duration-300 cursor-pointer relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-blue-500/0 to-blue-500/5 group-hover:to-blue-500/10 transition-colors pointer-events-none" />
+                      <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-blue-500/10 dark:bg-blue-500/15 border border-blue-500/20 dark:border-blue-500/20 flex items-center justify-center text-blue-700 dark:text-blue-400 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform duration-300 shadow-inner">
+                        <MapPin className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 stroke-[2.2]" />
+                      </div>
+                      <div className="flex flex-col items-center text-center">
+                        <span className="font-sans text-[11px] sm:text-base md:text-lg font-bold text-slate-800 dark:text-white tracking-tight leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                          Peta Spasial & RDTR
+                        </span>
+                        <span className="hidden sm:inline-block text-xs text-slate-500 dark:text-slate-400 leading-normal mt-1 max-w-[180px]">WebGIS Zonasi & Potensi Daerah</span>
+                      </div>
+                    </motion.button>
 
-                <motion.button 
-                  type="button"
-                  onClick={() => {
-                    setAirportKioskInitialMode('citizen');
-                    setIsAirportKioskOpen(true);
-                  }}
-                  whileHover={{ scale: 1.035, y: -4 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                  className="w-full min-h-[48px] bg-white/75 dark:bg-[#0f172a]/50 backdrop-blur-2xl border border-slate-200/70 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.25)] rounded-2xl sm:rounded-3xl p-3 sm:p-7 md:p-8 flex flex-col items-center justify-center gap-2 sm:gap-4 group hover:border-amber-500/90 hover:shadow-[0_20px_40px_rgba(245,158,11,0.18)] dark:hover:shadow-[0_0_35px_rgba(255,215,0,0.3)] transition-all duration-300 cursor-pointer relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 via-amber-500/0 to-amber-500/5 group-hover:to-amber-500/10 transition-colors pointer-events-none" />
-                  <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/20 dark:border-amber-500/20 flex items-center justify-center text-amber-700 dark:text-amber-400 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform duration-300 shadow-inner">
-                    <Pointer className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 stroke-[2.2]" />
-                  </div>
-                  <div className="flex flex-col items-center text-center">
-                    <span className="font-sans text-[11px] sm:text-base md:text-lg font-bold text-slate-800 dark:text-white tracking-tight leading-tight group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                      {t("mppPortal.quickActions.mandiri")}
-                    </span>
-                    <span className="hidden sm:inline-block text-xs text-slate-500 dark:text-slate-400 leading-normal mt-1 max-w-[180px]">{t("mppPortal.quickActions.mandiriDesc")}</span>
-                  </div>
-                </motion.button>
+                    <motion.button 
+                      type="button"
+                      onClick={() => document.getElementById('syarat-dokumen')?.scrollIntoView({ behavior: 'smooth' })}
+                      whileHover={{ scale: 1.035, y: -4 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                      className="w-full min-h-[48px] bg-white/75 dark:bg-[#0f172a]/50 backdrop-blur-2xl border border-slate-200/70 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.25)] rounded-2xl sm:rounded-3xl p-3 sm:p-7 md:p-8 flex flex-col items-center justify-center gap-2 sm:gap-4 group hover:border-emerald-500/90 hover:shadow-[0_20px_40px_rgba(16,185,129,0.18)] dark:hover:shadow-[0_0_35px_rgba(0,255,153,0.3)] transition-all duration-300 cursor-pointer relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-emerald-500/0 to-emerald-500/5 group-hover:to-emerald-500/10 transition-colors pointer-events-none" />
+                      <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/20 dark:border-emerald-400/20 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform duration-300 shadow-inner">
+                        <Briefcase className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 stroke-[2.2]" />
+                      </div>
+                      <div className="flex flex-col items-center text-center">
+                        <span className="font-sans text-[11px] sm:text-base md:text-lg font-bold text-slate-800 dark:text-white tracking-tight leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                          Izin Berusaha OSS
+                        </span>
+                        <span className="hidden sm:inline-block text-xs text-slate-500 dark:text-slate-400 leading-normal mt-1 max-w-[180px]">Syarat NIB, PBG & Konsultasi</span>
+                      </div>
+                    </motion.button>
+                  </>
+                ) : (
+                  <>
+                    <motion.button 
+                      type="button"
+                      onClick={() => setIsQueueBookingOpen(true)}
+                      whileHover={{ scale: 1.035, y: -4 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                      className="w-full min-h-[48px] bg-white/75 dark:bg-[#0f172a]/50 backdrop-blur-2xl border border-slate-200/70 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.25)] rounded-2xl sm:rounded-3xl p-3 sm:p-7 md:p-8 flex flex-col items-center justify-center gap-2 sm:gap-4 group hover:border-emerald-500/90 hover:shadow-[0_20px_40px_rgba(16,185,129,0.18)] dark:hover:shadow-[0_0_35px_rgba(0,255,153,0.3)] transition-all duration-300 cursor-pointer relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-emerald-500/0 to-emerald-500/5 group-hover:to-emerald-500/10 transition-colors pointer-events-none" />
+                      <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/20 dark:border-emerald-400/20 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform duration-300 shadow-inner">
+                        <Ticket className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 stroke-[2.2]" />
+                      </div>
+                      <div className="flex flex-col items-center text-center">
+                        <span className="font-sans text-[11px] sm:text-base md:text-lg font-bold text-slate-800 dark:text-white tracking-tight leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                          {t("mppPortal.quickActions.antrean")}
+                        </span>
+                        <span className="hidden sm:inline-block text-xs text-slate-500 dark:text-slate-400 leading-normal mt-1 max-w-[180px]">{t("mppPortal.quickActions.antreanDesc")}</span>
+                      </div>
+                    </motion.button>
+
+                    <motion.button 
+                      type="button"
+                      onClick={() => document.getElementById('tracking-berkas')?.scrollIntoView({ behavior: 'smooth' })}
+                      whileHover={{ scale: 1.035, y: -4 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                      className="w-full min-h-[48px] bg-white/75 dark:bg-[#0f172a]/50 backdrop-blur-2xl border border-slate-200/70 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.25)] rounded-2xl sm:rounded-3xl p-3 sm:p-7 md:p-8 flex flex-col items-center justify-center gap-2 sm:gap-4 group hover:border-blue-500/90 hover:shadow-[0_20px_40px_rgba(59,130,246,0.18)] dark:hover:shadow-[0_0_35px_rgba(96,165,250,0.3)] transition-all duration-300 cursor-pointer relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-blue-500/0 to-blue-500/5 group-hover:to-blue-500/10 transition-colors pointer-events-none" />
+                      <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-blue-500/10 dark:bg-blue-500/15 border border-blue-500/20 dark:border-blue-500/20 flex items-center justify-center text-blue-700 dark:text-blue-400 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform duration-300 shadow-inner">
+                        <SearchCheck className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 stroke-[2.2]" />
+                      </div>
+                      <div className="flex flex-col items-center text-center">
+                        <span className="font-sans text-[11px] sm:text-base md:text-lg font-bold text-slate-800 dark:text-white tracking-tight leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                          {t("mppPortal.quickActions.cekStatus")}
+                        </span>
+                        <span className="hidden sm:inline-block text-xs text-slate-500 dark:text-slate-400 leading-normal mt-1 max-w-[180px]">{t("mppPortal.quickActions.cekStatusDesc")}</span>
+                      </div>
+                    </motion.button>
+
+                    <motion.button 
+                      type="button"
+                      onClick={() => {
+                        setAirportKioskInitialMode('citizen');
+                        setIsAirportKioskOpen(true);
+                      }}
+                      whileHover={{ scale: 1.035, y: -4 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                      className="w-full min-h-[48px] bg-white/75 dark:bg-[#0f172a]/50 backdrop-blur-2xl border border-slate-200/70 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.25)] rounded-2xl sm:rounded-3xl p-3 sm:p-7 md:p-8 flex flex-col items-center justify-center gap-2 sm:gap-4 group hover:border-amber-500/90 hover:shadow-[0_20px_40px_rgba(245,158,11,0.18)] dark:hover:shadow-[0_0_35px_rgba(255,215,0,0.3)] transition-all duration-300 cursor-pointer relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 via-amber-500/0 to-amber-500/5 group-hover:to-amber-500/10 transition-colors pointer-events-none" />
+                      <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/20 dark:border-amber-500/20 flex items-center justify-center text-amber-700 dark:text-amber-400 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform duration-300 shadow-inner">
+                        <Pointer className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 stroke-[2.2]" />
+                      </div>
+                      <div className="flex flex-col items-center text-center">
+                        <span className="font-sans text-[11px] sm:text-base md:text-lg font-bold text-slate-800 dark:text-white tracking-tight leading-tight group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                          {t("mppPortal.quickActions.mandiri")}
+                        </span>
+                        <span className="hidden sm:inline-block text-xs text-slate-500 dark:text-slate-400 leading-normal mt-1 max-w-[180px]">{t("mppPortal.quickActions.mandiriDesc")}</span>
+                      </div>
+                    </motion.button>
+                  </>
+                )}
               </motion.div>
 
-              {/* Smart Search Bar "Tabe'" - Android 48px+ Touch Target */}
+              {/* Smart Search Bar "Tabe'" - Android 48px+ Touch Target & Command Palette Shortcut (Inovasi 3) */}
               <motion.div 
                 variants={{
                   hidden: { opacity: 0, y: 15 },
@@ -1605,20 +1756,30 @@ export default function PortalMPP() {
                 }}
                 className="w-full max-w-3xl mt-5 sm:mt-8 px-1 sm:px-4"
               >
-                <div className="relative min-h-[48px] h-12 sm:h-14 flex items-center bg-white/70 dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200/60 dark:border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)] rounded-3xl p-1.5 sm:p-2 focus-within:border-emerald-500/50 focus-within:shadow-[0_0_35px_rgba(16,185,129,0.18)] transition-all">
+                <div 
+                  onClick={() => setIsCommandPaletteOpen(true)}
+                  className="relative min-h-[48px] h-12 sm:h-14 flex items-center bg-white/70 dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200/60 dark:border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)] rounded-3xl p-1.5 sm:p-2 hover:border-emerald-500/50 hover:shadow-[0_0_35px_rgba(16,185,129,0.18)] transition-all cursor-pointer group"
+                >
                   <div className="pl-2 sm:pl-3 pr-1.5 sm:pr-2 text-emerald-600 dark:text-emerald-400 flex items-center gap-2 shrink-0">
-                    <Search className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400" />
+                    <Search className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform" />
                     <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-[#F3C01E] bg-amber-500/10 px-3 py-1 sm:px-4 sm:py-1 rounded-xl border border-amber-500/20 font-sans shadow-sm">
                       Tabe'
                     </span>
                   </div>
-                  <input 
-                    type="text" 
-                    placeholder={t("mppPortal.search.placeholderShort") || (t("mppPortal.search.placeholder") as string)} 
-                    className="w-full h-full bg-transparent border-none outline-none text-slate-800 dark:text-white text-xs sm:text-sm md:text-base placeholder-slate-400 dark:placeholder-slate-500 px-4 py-1 min-w-0 flex-1 truncate font-sans"
-                  />
+                  <div className="w-full h-full flex items-center text-slate-400 dark:text-slate-500 text-xs sm:text-sm md:text-base px-4 py-1 truncate font-sans select-none">
+                    <span>{t("mppPortal.search.placeholderShort") || "Cari instansi, izin, antrean, atau denah..."}</span>
+                  </div>
+                  <div className="hidden sm:flex items-center gap-1.5 mr-2">
+                    <kbd className="px-2 py-1 text-[10.5px] font-mono font-bold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 shadow-xs">
+                      Ctrl + K
+                    </kbd>
+                  </div>
                   <button 
                     type="button" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsCommandPaletteOpen(true);
+                    }}
                     className="h-9 sm:h-11 min-h-[38px] sm:min-h-[44px] bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs sm:text-sm font-semibold tracking-wide px-4.5 sm:px-7 rounded-2xl hover:brightness-105 active:scale-95 transition-all shrink-0 shadow-[0_4px_15px_rgba(16,185,129,0.25)] font-sans cursor-pointer flex items-center justify-center"
                   >
                     <span className="hidden sm:inline">{t("mppPortal.search.button")}</span>
@@ -5839,6 +6000,31 @@ export default function PortalMPP() {
             if (el) el.scrollIntoView({ behavior: 'smooth' });
           }}
           isDark={isDark}
+        />
+
+        {/* Universal GovTech Command Palette (Ctrl + K) - Inovasi GovTech 3 */}
+        <MppCommandPalette
+          isOpen={isCommandPaletteOpen}
+          onClose={() => setIsCommandPaletteOpen(false)}
+          isDark={isDark}
+          activePersona={activePersona}
+          onSelectPersona={(persona) => setActivePersona(persona)}
+          onOpenQueueBooking={() => setIsQueueBookingOpen(true)}
+          onOpenRequirements={() => {
+            const el = document.getElementById('syarat-dokumen');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+          onOpenVoiceAssistant={() => {
+            window.dispatchEvent(new CustomEvent('open-mpp-voice-assistant'));
+          }}
+          onOpenAgenciesCatalog={() => setIsAgenciesCatalogOpen(true)}
+          onOpenServicesCatalog={() => setIsServicesMatrixOpen(true)}
+        />
+
+        {/* Sticky Quick-Navigation Floating Dock Bar - Inovasi GovTech 3 */}
+        <MppQuickJumpDock
+          onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+          activePersona={activePersona}
         />
       </div>
     </div>
