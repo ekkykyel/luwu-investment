@@ -18,21 +18,6 @@ export default defineConfig(() => {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
-              if (
-                id.includes('/react/') ||
-                id.includes('/react-dom/') ||
-                id.includes('/react-router/') ||
-                id.includes('/react-router-dom/') ||
-                id.includes('/@remix-run/') ||
-                id.includes('/use-sync-external-store/') ||
-                id.includes('/scheduler/') ||
-                id.endsWith('/react') ||
-                id.endsWith('/react-dom') ||
-                id.endsWith('/react-router') ||
-                id.endsWith('/react-router-dom')
-              ) {
-                return 'vendor-react';
-              }
               if (id.includes('maplibre-gl') || id.includes('mapbox-gl')) {
                 return 'vendor-maplibre';
               }
@@ -64,7 +49,7 @@ export default defineConfig(() => {
           clientsClaim: true,
           skipWaiting: true,
           maximumFileSizeToCacheInBytes: 5242880, // 5 MiB to accommodate the large index chunk
-          navigateFallbackDenylist: [/^\/api/, /^\/assets\//, /\.(js|mjs|css|json|png|jpg|jpeg|svg|ico|woff|woff2|ttf|eot)$/],
+          navigateFallbackDenylist: [/^\/api/],
         },
         manifest: {
           name: 'Portal Investasi Luwu',
@@ -87,20 +72,19 @@ export default defineConfig(() => {
       })
     ],
     resolve: {
+      dedupe: ['react', 'react-dom', 'react-router', 'react-router-dom', 'react-i18next', 'motion', 'framer-motion'],
       alias: {
+        'react': path.resolve(__dirname, './node_modules/react'),
+        'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
         '@': path.resolve(__dirname, './src'),
         '@turf/turf': path.resolve(__dirname, './src/utils/turf-shim.ts'),
       },
     },
     optimizeDeps: {
       include: [
-        'react/jsx-dev-runtime',
-        'react-dom/client',
-        'react-router',
+        'react',
+        'react-dom',
         'react-router-dom',
-        '@remix-run/router',
-        'use-sync-external-store',
-        'use-sync-external-store/shim',
         '@supabase/supabase-js',
         'lucide-react',
         'maplibre-gl',

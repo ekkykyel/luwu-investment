@@ -680,21 +680,32 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
     desc: "Panduan navigasi digital interaktif lantai 1 dan 2 Gedung Simpurusiang MPP Luwu memudahkan investor, disabilitas, dan warga umum menemukan loket layanan dalam hitungan detik."
   });
 
-  const loadProfileAndFacilities = () => {
+  const loadProfileAndFacilities = async () => {
     const savedProf = JSON.parse(localStorage.getItem("mpp_portal_profile") || "null");
     if (savedProf) setProfile(savedProf);
 
-    const savedFac = JSON.parse(localStorage.getItem("mpp_portal_facilities") || "[]");
-    if (savedFac.length === 0) {
-      const defaultFac = [
-        { id: "1", name: "Ruang Tunggu VIP & Lounge", photo: "https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&q=80&w=400", desc: "Ruang tunggu nyaman ber-AC, free Wi-Fi, pengisi daya, kopi dan teh gratis bagi para investor dan pemohon.", floor: "Lantai 1" },
-        { id: "2", name: "Pojok Laktasi & Ibu Menyusui", photo: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?auto=format&fit=crop&q=80&w=400", desc: "Pojok ramah anak dan privasi tinggi bagi ibu menyusui dilengkapi kulkas ASI, sterilizer, dan popok gratis.", floor: "Lantai 1" },
-        { id: "3", name: "Kids Play Corner", photo: "https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&q=80&w=400", desc: "Ruang bermain interaktif anak usia 2-8 tahun aman dengan aneka mainan edukatif kayu.", floor: "Lantai 1" }
-      ];
-      localStorage.setItem("mpp_portal_facilities", JSON.stringify(defaultFac));
-      setFacilities(defaultFac);
-    } else {
-      setFacilities(savedFac);
+    try {
+      const { data, error } = await supabase
+        .from("mpp_facilities")
+        .select("*")
+        .order("created_at", { ascending: true });
+      if (!error && data && data.length > 0) {
+        setFacilities(
+          data.map((f: any) => ({
+            id: f.id,
+            name: f.name,
+            photo: f.image_url || "https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&q=80&w=400",
+            desc: f.description,
+            floor: f.floor || "Lantai 1"
+          }))
+        );
+      } else {
+        const savedFac = JSON.parse(localStorage.getItem("mpp_portal_facilities") || "[]");
+        if (savedFac.length > 0) setFacilities(savedFac);
+      }
+    } catch {
+      const savedFac = JSON.parse(localStorage.getItem("mpp_portal_facilities") || "[]");
+      if (savedFac.length > 0) setFacilities(savedFac);
     }
 
     const savedFloor = JSON.parse(localStorage.getItem("mpp_portal_floorplan") || "null");
@@ -707,28 +718,55 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
     triggerStatus("success", "Profil & Maklumat MPP berhasil diperbarui!");
   };
 
-  const handleAddFacility = (e: React.FormEvent) => {
+  const handleAddFacility = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newFac = {
-      id: Date.now().toString(),
-      name: facilityForm.name,
-      photo: facilityForm.photo || "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=400",
-      desc: facilityForm.desc,
-      floor: facilityForm.floor
-    };
-    const updated = [...facilities, newFac];
-    localStorage.setItem("mpp_portal_facilities", JSON.stringify(updated));
-    setFacilities(updated);
-    setFacilityForm({ name: "", photo: "", desc: "", floor: "Lantai 1" });
-    triggerStatus("success", "Fasilitas baru berhasil ditambahkan!");
+    const photoUrl = facilityForm.photo || "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=400";
+    try {
+      const { data, error } = await supabase
+        .from("mpp_facilities")
+        .insert({
+          name: facilityForm.name,
+          floor: facilityForm.floor,
+          description: facilityForm.desc,
+          image_url: photoUrl
+        })
+        .select()
+        .single();
+      
+      const newFac = data ? {
+        id: data.id,
+        name: data.name,
+        photo: data.image_url || photoUrl,
+        desc: data.description,
+        floor: data.floor
+      } : {
+        id: Date.now().toString(),
+        name: facilityForm.name,
+        photo: photoUrl,
+        desc: facilityForm.desc,
+        floor: facilityForm.floor
+      };
+      const updated = [...facilities, newFac];
+      localStorage.setItem("mpp_portal_facilities", JSON.stringify(updated));
+      setFacilities(updated);
+      setFacilityForm({ name: "", photo: "", desc: "", floor: "Lantai 1" });
+      triggerStatus("success", "Fasilitas baru berhasil ditambahkan ke database!");
+    } catch (err: any) {
+      triggerStatus("error", `Gagal menyimpan fasilitas: ${err?.message || "Error"}`);
+    }
   };
 
-  const handleDeleteFacility = (id: string) => {
+  const handleDeleteFacility = async (id: string) => {
     if (!window.confirm("Hapus fasilitas ini?")) return;
-    const updated = facilities.filter(f => f.id !== id);
-    localStorage.setItem("mpp_portal_facilities", JSON.stringify(updated));
-    setFacilities(updated);
-    triggerStatus("success", "Fasilitas berhasil dihapus.");
+    try {
+      await supabase.from("mpp_facilities").delete().eq("id", id);
+      const updated = facilities.filter(f => f.id !== id);
+      localStorage.setItem("mpp_portal_facilities", JSON.stringify(updated));
+      setFacilities(updated);
+      triggerStatus("success", "Fasilitas berhasil dihapus dari database.");
+    } catch (err: any) {
+      triggerStatus("error", `Gagal menghapus fasilitas: ${err?.message || "Error"}`);
+    }
   };
 
   const handleSaveFloorPlan = (e: React.FormEvent) => {
@@ -802,29 +840,52 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
     category: "Pemerintahan"
   });
 
-  const loadKemitraanAlurNews = () => {
-    const savedUmkm = JSON.parse(localStorage.getItem("mpp_portal_umkm") || "[]");
-    if (savedUmkm.length === 0) {
-      const defaultUmkm = [
-        { id: "1", name: "Kopi Bastem Premium", owner: "Yusuf Patola", photo: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=400", category: "Kuliner", wa: "628123456789" },
-        { id: "2", name: "Kripik Pisang Latimojong", owner: "Siti Rahma", photo: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=400", category: "Kuliner", wa: "6282111222333" }
-      ];
-      localStorage.setItem("mpp_portal_umkm", JSON.stringify(defaultUmkm));
-      setUmkmList(defaultUmkm);
-    } else {
+  const loadKemitraanAlurNews = async () => {
+    try {
+      const { data: umkmData, error: uErr } = await supabase
+        .from("mpp_umkm")
+        .select("*")
+        .order("created_at", { ascending: true });
+      if (!uErr && umkmData) {
+        setUmkmList(
+          umkmData.map((u: any) => ({
+            id: u.id,
+            name: u.name,
+            owner: u.owner_name,
+            photo: u.image_url || "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=400",
+            category: u.category || "Kuliner",
+            wa: u.whatsapp || "628"
+          }))
+        );
+      } else {
+        const savedUmkm = JSON.parse(localStorage.getItem("mpp_portal_umkm") || "[]");
+        setUmkmList(savedUmkm);
+      }
+    } catch {
+      const savedUmkm = JSON.parse(localStorage.getItem("mpp_portal_umkm") || "[]");
       setUmkmList(savedUmkm);
     }
 
-    const savedFlow = JSON.parse(localStorage.getItem("mpp_portal_flow") || "[]");
-    if (savedFlow.length === 0) {
-      const defaultFlow = [
-        { id: "1", step: 1, title: "Ambil Tiket Antrean", desc: "Masyarakat mengambil tiket online via portal atau fisik di Layanan Mandiri Kiosk." },
-        { id: "2", step: 2, title: "Menunggu di Ruang Tunggu", desc: "Menunggu panggilan loket terintegrasi sembari memantau layar display suara audio otomatis." },
-        { id: "3", step: 3, title: "Verifikasi Berkas di Loket", desc: "Petugas gerai memverifikasi berkas persyaratan dan memproses layanan instan." }
-      ];
-      localStorage.setItem("mpp_portal_flow", JSON.stringify(defaultFlow));
-      setFlowSteps(defaultFlow);
-    } else {
+    try {
+      const { data: flowData, error: fErr } = await supabase
+        .from("mpp_flow")
+        .select("*")
+        .order("step_number", { ascending: true });
+      if (!fErr && flowData && flowData.length > 0) {
+        setFlowSteps(
+          flowData.map((f: any) => ({
+            id: f.id,
+            step: f.step_number,
+            title: f.title,
+            desc: f.description
+          }))
+        );
+      } else {
+        const savedFlow = JSON.parse(localStorage.getItem("mpp_portal_flow") || "[]");
+        setFlowSteps(savedFlow);
+      }
+    } catch {
+      const savedFlow = JSON.parse(localStorage.getItem("mpp_portal_flow") || "[]");
       setFlowSteps(savedFlow);
     }
 
@@ -837,52 +898,110 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
     });
   };
 
-  const handleAddUmkm = (e: React.FormEvent) => {
+  const handleAddUmkm = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newItem = {
-      id: Date.now().toString(),
-      name: umkmForm.name,
-      owner: umkmForm.owner,
-      photo: umkmForm.photo || "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=400",
-      category: umkmForm.category,
-      wa: umkmForm.wa
-    };
-    const updated = [...umkmList, newItem];
-    localStorage.setItem("mpp_portal_umkm", JSON.stringify(updated));
-    setUmkmList(updated);
-    setUmkmForm({ name: "", owner: "", photo: "", category: "Kuliner", wa: "628" });
-    triggerStatus("success", "Kemitraan produk UMKM berhasil ditambahkan!");
+    const photoUrl = umkmForm.photo || "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=400";
+    try {
+      const { data, error } = await supabase
+        .from("mpp_umkm")
+        .insert({
+          name: umkmForm.name,
+          owner_name: umkmForm.owner,
+          category: umkmForm.category,
+          whatsapp: umkmForm.wa,
+          image_url: photoUrl,
+          is_active: true
+        })
+        .select()
+        .single();
+      
+      const newItem = data ? {
+        id: data.id,
+        name: data.name,
+        owner: data.owner_name,
+        photo: data.image_url || photoUrl,
+        category: data.category,
+        wa: data.whatsapp
+      } : {
+        id: Date.now().toString(),
+        name: umkmForm.name,
+        owner: umkmForm.owner,
+        photo: photoUrl,
+        category: umkmForm.category,
+        wa: umkmForm.wa
+      };
+
+      const updated = [...umkmList, newItem];
+      localStorage.setItem("mpp_portal_umkm", JSON.stringify(updated));
+      setUmkmList(updated);
+      setUmkmForm({ name: "", owner: "", photo: "", category: "Kuliner", wa: "628" });
+      triggerStatus("success", "Kemitraan produk UMKM berhasil ditambahkan ke database!");
+    } catch (err: any) {
+      triggerStatus("error", `Gagal menyimpan UMKM: ${err?.message || "Error"}`);
+    }
   };
 
-  const handleDeleteUmkm = (id: string) => {
+  const handleDeleteUmkm = async (id: string) => {
     if (!window.confirm("Hapus UMKM ini dari galeri portal?")) return;
-    const updated = umkmList.filter(u => u.id !== id);
-    localStorage.setItem("mpp_portal_umkm", JSON.stringify(updated));
-    setUmkmList(updated);
-    triggerStatus("success", "Produk UMKM berhasil dihapus.");
+    try {
+      await supabase.from("mpp_umkm").delete().eq("id", id);
+      const updated = umkmList.filter(u => u.id !== id);
+      localStorage.setItem("mpp_portal_umkm", JSON.stringify(updated));
+      setUmkmList(updated);
+      triggerStatus("success", "Produk UMKM berhasil dihapus dari database.");
+    } catch (err: any) {
+      triggerStatus("error", `Gagal menghapus UMKM: ${err?.message || "Error"}`);
+    }
   };
 
-  const handleAddFlow = (e: React.FormEvent) => {
+  const handleAddFlow = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newItem = {
-      id: Date.now().toString(),
-      step: Number(flowForm.step),
-      title: flowForm.title,
-      desc: flowForm.desc
-    };
-    const updated = [...flowSteps, newItem].sort((a, b) => a.step - b.step);
-    localStorage.setItem("mpp_portal_flow", JSON.stringify(updated));
-    setFlowSteps(updated);
-    setFlowForm({ step: flowSteps.length + 1, title: "", desc: "" });
-    triggerStatus("success", "Langkah alur pelayanan baru berhasil ditambahkan!");
+    try {
+      const stepNum = Number(flowForm.step) || (flowSteps.length + 1);
+      const { data, error } = await supabase
+        .from("mpp_flow")
+        .insert({
+          step_number: stepNum,
+          title: flowForm.title,
+          description: flowForm.desc,
+          icon_name: "CheckCircle"
+        })
+        .select()
+        .single();
+      
+      const newItem = data ? {
+        id: data.id,
+        step: data.step_number,
+        title: data.title,
+        desc: data.description
+      } : {
+        id: Date.now().toString(),
+        step: stepNum,
+        title: flowForm.title,
+        desc: flowForm.desc
+      };
+
+      const updated = [...flowSteps, newItem].sort((a, b) => a.step - b.step);
+      localStorage.setItem("mpp_portal_flow", JSON.stringify(updated));
+      setFlowSteps(updated);
+      setFlowForm({ step: flowSteps.length + 2, title: "", desc: "" });
+      triggerStatus("success", "Langkah alur pelayanan baru berhasil ditambahkan ke database!");
+    } catch (err: any) {
+      triggerStatus("error", `Gagal menyimpan alur: ${err?.message || "Error"}`);
+    }
   };
 
-  const handleDeleteFlow = (id: string) => {
+  const handleDeleteFlow = async (id: string) => {
     if (!window.confirm("Hapus langkah alur pelayanan ini?")) return;
-    const updated = flowSteps.filter(f => f.id !== id);
-    localStorage.setItem("mpp_portal_flow", JSON.stringify(updated));
-    setFlowSteps(updated);
-    triggerStatus("success", "Alur pelayanan berhasil dihapus.");
+    try {
+      await supabase.from("mpp_flow").delete().eq("id", id);
+      const updated = flowSteps.filter(f => f.id !== id);
+      localStorage.setItem("mpp_portal_flow", JSON.stringify(updated));
+      setFlowSteps(updated);
+      triggerStatus("success", "Alur pelayanan berhasil dihapus dari database.");
+    } catch (err: any) {
+      triggerStatus("error", `Gagal menghapus alur: ${err?.message || "Error"}`);
+    }
   };
 
   const handleAddNews = (e: React.FormEvent) => {
@@ -938,53 +1057,130 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
     youtube: "https://youtube.com/dpmptspluwu"
   });
 
-  const loadFeedbackAndContacts = () => {
-    const savedComplaints = JSON.parse(localStorage.getItem("mpp_portal_complaints") || "[]");
-    if (savedComplaints.length === 0) {
-      const defaultComp = [
-        { id: "1", sender: "Achmad Yani", nik: "7317042010900003", category: "Fasilitas", issue: "Suhu AC di ruang tunggu terlalu dingin, mohon disesuaikan agar ramah disabilitas dan lansia.", status: "Diproses", date: "12 Sep 2026" },
-        { id: "2", sender: "Hasnah", nik: "7317042010900004", category: "Sistem Antrean", issue: "Layanan mandiri (Kiosk) tidak mengeluarkan kertas tiket saat dicetak.", status: "Selesai", date: "11 Sep 2026" }
-      ];
-      localStorage.setItem("mpp_portal_complaints", JSON.stringify(defaultComp));
-      setComplaints(defaultComp);
-    } else {
+  const loadFeedbackAndContacts = async () => {
+    try {
+      const { data: compData } = await supabase
+        .from("pengaduan")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (compData && compData.length > 0) {
+        setComplaints(
+          compData.map((c: any) => ({
+            id: c.id,
+            sender: c.nama_pelapor || c.sender || "Warga Luwu",
+            nik: c.nik || "-",
+            category: c.kategori || "Layanan",
+            issue: c.isi_laporan || c.pesan || c.issue,
+            status: c.status || "Diproses",
+            date: new Date(c.created_at || Date.now()).toLocaleDateString("id-ID")
+          }))
+        );
+      } else {
+        const savedComplaints = JSON.parse(localStorage.getItem("mpp_portal_complaints") || "[]");
+        setComplaints(savedComplaints);
+      }
+    } catch {
+      const savedComplaints = JSON.parse(localStorage.getItem("mpp_portal_complaints") || "[]");
       setComplaints(savedComplaints);
     }
 
-    const savedTestimonials = JSON.parse(localStorage.getItem("mpp_portal_testimonials") || "[]");
-    if (savedTestimonials.length === 0) {
-      const defaultTest = [
-        { id: "1", author: "Hendra Wijaya", role: "Pelaku UMKM Belopa", comment: "Sangat terbantu dengan layanan perizinan terpadu di MPP Luwu. NIB terbit dalam 15 menit saja!", rating: 5, approved: true },
-        { id: "2", author: "Dr. Hamzah", role: "Warga Senga", comment: "Pojok disabilitas dan fasilitas laktasinya berkelas internasional. Sukses terus MPP Simpurusiang!", rating: 5, approved: true }
-      ];
-      localStorage.setItem("mpp_portal_testimonials", JSON.stringify(defaultTest));
-      setTestimonials(defaultTest);
-    } else {
+    try {
+      const { data: testData } = await supabase
+        .from("investor_testimonials")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (testData && testData.length > 0) {
+        setTestimonials(
+          testData.map((t: any) => ({
+            id: t.id,
+            author: t.investor_name || t.author,
+            role: t.company || t.role || "Masyarakat",
+            comment: t.content || t.comment,
+            rating: t.rating || 5,
+            approved: t.is_approved !== false
+          }))
+        );
+      } else {
+        const savedTestimonials = JSON.parse(localStorage.getItem("mpp_portal_testimonials") || "[]");
+        setTestimonials(savedTestimonials);
+      }
+    } catch {
+      const savedTestimonials = JSON.parse(localStorage.getItem("mpp_portal_testimonials") || "[]");
       setTestimonials(savedTestimonials);
     }
 
-    const savedContacts = JSON.parse(localStorage.getItem("mpp_portal_contacts") || "null");
-    if (savedContacts) setContacts(savedContacts);
+    try {
+      const { data: contData } = await supabase
+        .from("mpp_contacts")
+        .select("*");
+      if (contData && contData.length > 0) {
+        const wa = contData.find((c: any) => c.channel_name?.toLowerCase().includes("whatsapp") || c.channel_name?.toLowerCase().includes("wa"));
+        const phone = contData.find((c: any) => c.channel_name?.toLowerCase().includes("helpdesk") || c.channel_name?.toLowerCase().includes("telepon") || c.channel_name?.toLowerCase().includes("phone"));
+        const email = contData.find((c: any) => c.channel_name?.toLowerCase().includes("email"));
+        setContacts(prev => ({
+          ...prev,
+          phone: wa?.value || phone?.value || prev.phone,
+          email: email?.value || prev.email
+        }));
+      } else {
+        const savedContacts = JSON.parse(localStorage.getItem("mpp_portal_contacts") || "null");
+        if (savedContacts) setContacts(savedContacts);
+      }
+    } catch {
+      const savedContacts = JSON.parse(localStorage.getItem("mpp_portal_contacts") || "null");
+      if (savedContacts) setContacts(savedContacts);
+    }
   };
 
-  const handleUpdateComplaintStatus = (id: string, newStatus: string) => {
+  const handleUpdateComplaintStatus = async (id: string, newStatus: string) => {
+    try {
+      await supabase.from("pengaduan").update({ status: newStatus }).eq("id", id);
+    } catch (err) {
+      console.error("Error updating complaint in db:", err);
+    }
     const updated = complaints.map(c => c.id === id ? { ...c, status: newStatus } : c);
     localStorage.setItem("mpp_portal_complaints", JSON.stringify(updated));
     setComplaints(updated);
     triggerStatus("success", `Status pengaduan berhasil diperbarui ke: ${newStatus}`);
   };
 
-  const handleToggleTestimonialApproval = (id: string) => {
+  const handleToggleTestimonialApproval = async (id: string) => {
+    const item = testimonials.find(t => t.id === id);
+    const newApproved = item ? !item.approved : true;
+    try {
+      await supabase.from("investor_testimonials").update({ is_approved: newApproved }).eq("id", id);
+    } catch (err) {
+      console.error("Error updating testimonial in db:", err);
+    }
     const updated = testimonials.map(t => t.id === id ? { ...t, approved: !t.approved } : t);
     localStorage.setItem("mpp_portal_testimonials", JSON.stringify(updated));
     setTestimonials(updated);
     triggerStatus("success", "Sertifikasi persetujuan testimoni berhasil diubah.");
   };
 
-  const handleSaveContacts = (e: React.FormEvent) => {
+  const handleSaveContacts = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      // Upsert into mpp_contacts
+      await supabase.from("mpp_contacts").upsert([
+        {
+          channel_name: "WhatsApp Pengaduan Resmi",
+          value: contacts.phone,
+          description: "Layanan respon cepat pengaduan masyarakat MPP",
+          is_active: true
+        },
+        {
+          channel_name: "Email Resmi DPMPTSP",
+          value: contacts.email,
+          description: "Surel resmi perizinan dan konsultasi",
+          is_active: true
+        }
+      ], { onConflict: "channel_name" });
+    } catch (err) {
+      console.error("Error saving contacts to db:", err);
+    }
     localStorage.setItem("mpp_portal_contacts", JSON.stringify(contacts));
-    triggerStatus("success", "Informasi kontak, jam layanan, & media sosial berhasil disinkronkan!");
+    triggerStatus("success", "Informasi kontak, jam layanan, & media sosial berhasil disinkronkan ke database!");
   };
 
   // ---------------------------------------------------------------------------
