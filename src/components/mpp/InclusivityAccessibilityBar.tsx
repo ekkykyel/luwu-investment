@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { resolveMppVoiceQuery, VoiceAssistantResponse, appendVoiceClosing } from '../../utils/mppVoiceKnowledge';
+import { resolveMppVoiceQuery, VoiceAssistantResponse, appendVoiceClosing, prependVoiceGreeting } from '../../utils/mppVoiceKnowledge';
 import { speakCrystalClearText, stopAllSpeech, formatTextForCrystalClearTts } from '../../utils/mppAudioEngine';
 
 /**
@@ -406,7 +406,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
         if (speechSessionRef.current !== currentSessionId) return;
         const aiData = await res.json();
         if (aiData && aiData.speechText) {
-          const finalSpeech = appendVoiceClosing(aiData.speechText, targetLang);
+          const finalSpeech = appendVoiceClosing(prependVoiceGreeting(aiData.speechText, targetLang), targetLang);
           const aiResponse: VoiceAssistantResponse = {
             matched: true,
             serviceTitle: aiData.serviceTitle || (targetLang === 'zh' ? `政务咨询: ${clean}` : targetLang === 'en' ? `Inquiry: ${clean}` : `Layanan: ${clean}`),

@@ -5061,7 +5061,7 @@ Output JSON format (strictly required):
 }`;
     } else {
       systemPrompt = `Anda adalah Asisten Suara Resmi Mal Pelayanan Publik (MPP) Simpurusiang Kabupaten Luwu.
-Tugas Anda adalah memberikan jawaban yang ramah, sopan (diawali sapaan santun khas Tana Luwu 'Tabe''), sangat akurat, dan lengkap mengenai pelayanan publik, perizinan, dan dokumen kependudukan di MPP Luwu.
+Tugas Anda adalah memberikan jawaban yang ramah, sopan (WAJIB diawali kalimat pembuka persis seperti ini: "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu"), sangat akurat, dan lengkap mengenai pelayanan publik, perizinan, dan dokumen kependudukan di MPP Luwu.
 
 Ketika pengguna menanyakan persyaratan suatu izin atau layanan (misal PBG, KTP, SIM, SKCK, NIB, Sertifikat Tanah BPN, dll.), Anda WAJIB menyajikan:
 1. Nama Resmi Layanan & Instansi Penyelenggara di MPP Simpurusiang.
@@ -5070,13 +5070,13 @@ Ketika pengguna menanyakan persyaratan suatu izin atau layanan (misal PBG, KTP, 
 4. Estimasi Waktu Penyelesaian (SLA) & Biaya/Retribusi (apakah Gratis atau ada PNBP/Perda resmi).
 5. Lokasi Loket di Gedung MPP Simpurusiang Belopa.
 
-Juga buat 'speechText' yang ringkas, runtut, bertempo santun, dan sangat mudah didengar ketika dibacakan oleh mesin Text-to-Speech (TTS). Anda WAJIB menyematkan kalimat penutup kearifan lokal Tana Luwu di akhir 'speechText': "Terima Kasih, Salama' Ki' ta Pada Salama'."
+Juga buat 'speechText' yang ringkas, runtut, bertempo santun, dan sangat mudah didengar ketika dibacakan oleh mesin Text-to-Speech (TTS). Kalimat 'speechText' WAJIB diawali dengan: "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu" selanjutnya isi jawaban Anda, dan di akhir 'speechText' Anda WAJIB menyematkan kalimat penutup kearifan lokal Tana Luwu: "Terima Kasih, Salama' Ki' ta Pada Salama'."
 
 Format keluaran JSON yang WAJIB dipatuhi:
 {
   "serviceTitle": "Nama Layanan",
   "instansi": "Nama Instansi di MPP Luwu",
-  "speechText": "Teks lengkap dalam bahasa Indonesia yang ramah, jelas dan terstruktur untuk diucapkan via TTS audio... Terima Kasih, Salama' Ki' ta Pada Salama'.",
+  "speechText": "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu. Untuk pengurusan ... Terima Kasih, Salama' Ki' ta Pada Salama'.",
   "persyaratan": ["Syarat 1", "Syarat 2", "..."],
   "alurProses": ["Tahap 1", "Tahap 2", "..."],
   "biaya": "Penjelasan biaya / Gratis",
@@ -5134,6 +5134,20 @@ Format keluaran JSON yang WAJIB dipatuhi:
       return `${trimmed} ${closing}`;
     };
 
+    const ensureOpening = (txt: string) => {
+      let trimmed = (txt || '').trim();
+      if (lang === 'id') {
+        const idOpening = "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu.";
+        if (trimmed.startsWith("Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak/Ibu")) {
+          return trimmed;
+        }
+        trimmed = trimmed.replace(/^(Tabe['’`]?[\,\.]?\s*)+/gi, '');
+        trimmed = trimmed.replace(/^(Selamat\s+datang[^\.\!\?]*[\.\!\?]\s*)/gi, '');
+        return `${idOpening} ${trimmed}`;
+      }
+      return trimmed;
+    };
+
     let parsedData = null;
     if (result.text) {
       try {
@@ -5145,7 +5159,7 @@ Format keluaran JSON yang WAJIB dipatuhi:
 
     if (parsedData) {
       if (parsedData.speechText) {
-        parsedData.speechText = ensureClosing(parsedData.speechText);
+        parsedData.speechText = ensureOpening(ensureClosing(parsedData.speechText));
       }
       return res.json({ success: true, ...parsedData });
     }
@@ -5181,7 +5195,7 @@ Format keluaran JSON yang WAJIB dipatuhi:
       success: true,
       serviceTitle: "Informasi Pelayanan MPP",
       instansi: "MPP Simpurusiang Kab. Luwu",
-      speechText: ensureClosing(result.text || `Tabe', informasi terkait ${query} dapat dikonsultasikan di Loket Terpadu MPP Simpurusiang Belopa.`),
+      speechText: ensureOpening(ensureClosing(result.text || `Informasi terkait ${query} dapat dikonsultasikan di Loket Terpadu MPP Simpurusiang Belopa.`)),
       persyaratan: ["KTP-el pemohon yang masih berlaku", "Dokumen pendukung permohonan"],
       alurProses: ["Ambil tiket antrean di Kiosk Lobi Utama", "Menuju ke loket instansi terkait di Lantai 1"],
       biaya: "Sebagian besar layanan gratis (kecuali PNBP)",

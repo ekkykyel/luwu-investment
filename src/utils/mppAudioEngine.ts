@@ -74,7 +74,10 @@ export function formatTextForCrystalClearTts(text: string, lang: 'id' | 'en' | '
     cleaned = cleaned.replace(/08:00\s*(s\.?d\.?|-|sampai)\s*15:30/gi, 'pukul delapan pagi sampai pukul lima belas tiga puluh');
     cleaned = cleaned.replace(/\bWITA\b/g, 'Waktu Indonesia Tengah');
 
-    // D. Common Public Service Abbreviations
+    // D. Common Public Service Abbreviations & Honorifics
+    cleaned = cleaned.replace(/\bBapak\/Ibu\b/gi, 'Bapak atau Ibu');
+    cleaned = cleaned.replace(/\bBpk\/Ibu\b/gi, 'Bapak atau Ibu');
+    cleaned = cleaned.replace(/\bBpk\.?\b/gi, 'Bapak');
     cleaned = cleaned.replace(/\bs\.d\.\b/gi, 'sampai dengan');
     cleaned = cleaned.replace(/\bdll\.\b/gi, 'dan lain-lain');
     cleaned = cleaned.replace(/\bdsb\.\b/gi, 'dan sebagainya');
