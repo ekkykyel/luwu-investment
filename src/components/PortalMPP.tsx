@@ -4145,6 +4145,10 @@ export default function PortalMPP() {
           </motion.section>
 
           {/* Seksi Sosial Media MPP Kabupaten Luwu */}
+          {((socialMediaData.instagram?.isActive !== false) || 
+            (socialMediaData.youtube?.isActive !== false) || 
+            (socialMediaData.facebook?.isActive !== false) || 
+            (socialMediaData.tiktok?.isActive !== false)) && (
           <motion.section 
             id="sosial-media"
             initial={{ opacity: 0, y: 40, scale: 0.96, filter: "blur(8px)" }}
@@ -4170,6 +4174,7 @@ export default function PortalMPP() {
             {/* Tata Letak Grid (1 kolom HP, 2 kolom MD) */}
             <div className="w-full flex flex-col md:grid md:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
               {/* Kartu 1: Instagram */}
+              {socialMediaData.instagram?.isActive !== false && (
               <motion.div 
                 initial={{ opacity: 0, y: 30, scale: 0.96, filter: "blur(6px)" }}
                 whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
@@ -4259,8 +4264,10 @@ export default function PortalMPP() {
                   </a>
                 </div>
               </motion.div>
+              )}
 
               {/* Kartu 2: YouTube */}
+              {socialMediaData.youtube?.isActive !== false && (
               <motion.div 
                 initial={{ opacity: 0, y: 30, scale: 0.96, filter: "blur(6px)" }}
                 whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
@@ -4294,9 +4301,9 @@ export default function PortalMPP() {
 
                 {/* Konten Video Simulasi */}
                 <a 
-                  href={socialMediaData.youtube.videoUrl || socialMediaData.youtube.channelUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={socialMediaData.youtube.videoUrl || socialMediaData.youtube.channelUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
                   className="relative h-44 w-full overflow-hidden bg-slate-900 shrink-0 flex items-center justify-center cursor-pointer block"
                 >
                   <img 
@@ -4341,8 +4348,10 @@ export default function PortalMPP() {
                   </a>
                 </div>
               </motion.div>
+              )}
 
               {/* Kartu 3: Facebook */}
+              {socialMediaData.facebook?.isActive !== false && (
               <motion.div 
                 initial={{ opacity: 0, y: 30, scale: 0.96, filter: "blur(6px)" }}
                 whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
@@ -4416,8 +4425,10 @@ export default function PortalMPP() {
                   </a>
                 </div>
               </motion.div>
+              )}
 
               {/* Kartu 4: TikTok */}
+              {socialMediaData.tiktok?.isActive !== false && (
               <motion.div 
                 initial={{ opacity: 0, y: 30, scale: 0.96, filter: "blur(6px)" }}
                 whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
@@ -4451,9 +4462,9 @@ export default function PortalMPP() {
 
                 {/* Konten Video Feed Simulasi */}
                 <a 
-                  href={socialMediaData.tiktok.profileUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={socialMediaData.tiktok.profileUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
                   className="relative h-44 w-full overflow-hidden bg-slate-900 shrink-0 block"
                 >
                   <img 
@@ -4500,9 +4511,10 @@ export default function PortalMPP() {
                   </a>
                 </div>
               </motion.div>
+              )}
             </div>
           </motion.section>
-
+          )}
           {/* FASE 8: Peta Spasial / WebGIS Integrasi */}
           <motion.section
             id="peta-spasial"

@@ -2,6 +2,7 @@ import { supabase } from "../lib/supabaseClient";
 
 export interface MppSocialMediaSettings {
   instagram: {
+    isActive: boolean;
     handle: string;
     profileUrl: string;
     postImage: string;
@@ -10,6 +11,7 @@ export interface MppSocialMediaSettings {
     stats: string;
   };
   youtube: {
+    isActive: boolean;
     channelName: string;
     channelUrl: string;
     videoTitle: string;
@@ -19,6 +21,7 @@ export interface MppSocialMediaSettings {
     stats: string;
   };
   facebook: {
+    isActive: boolean;
     pageName: string;
     pageUrl: string;
     postImage: string;
@@ -27,6 +30,7 @@ export interface MppSocialMediaSettings {
     stats: string;
   };
   tiktok: {
+    isActive: boolean;
     handle: string;
     profileUrl: string;
     videoThumbnail: string;
@@ -40,6 +44,7 @@ export interface MppSocialMediaSettings {
 
 export const DEFAULT_MPP_SOCIAL_MEDIA: MppSocialMediaSettings = {
   instagram: {
+    isActive: true,
     handle: "dpmptspkabluwu",
     profileUrl: "https://instagram.com/dpmptspluwu",
     postImage: "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&q=80&w=800",
@@ -48,6 +53,7 @@ export const DEFAULT_MPP_SOCIAL_MEDIA: MppSocialMediaSettings = {
     stats: "1.2K Likes • 84 Komentar"
   },
   youtube: {
+    isActive: true,
     channelName: "MPP Simpurusiang Official",
     channelUrl: "https://youtube.com",
     videoTitle: "Video Profil & Alur Pelayanan Terpadu Satu Pintu MPP Simpurusiang",
@@ -57,6 +63,7 @@ export const DEFAULT_MPP_SOCIAL_MEDIA: MppSocialMediaSettings = {
     stats: "12.5K Ditonton • Profil Resmi"
   },
   facebook: {
+    isActive: true,
     pageName: "DPMPTSP & MPP Kabupaten Luwu",
     pageUrl: "https://facebook.com/dpmptspluwu",
     postImage: "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&q=80&w=800",
@@ -65,6 +72,7 @@ export const DEFAULT_MPP_SOCIAL_MEDIA: MppSocialMediaSettings = {
     stats: "2.4K Suka • 156 Dibagikan"
   },
   tiktok: {
+    isActive: true,
     handle: "@mpp.luwu",
     profileUrl: "https://tiktok.com",
     videoThumbnail: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800",
@@ -85,10 +93,26 @@ export function getStoredMppSocialMedia(): MppSocialMediaSettings {
     if (!raw) return DEFAULT_MPP_SOCIAL_MEDIA;
     const parsed = JSON.parse(raw);
     return {
-      instagram: { ...DEFAULT_MPP_SOCIAL_MEDIA.instagram, ...(parsed.instagram || {}) },
-      youtube: { ...DEFAULT_MPP_SOCIAL_MEDIA.youtube, ...(parsed.youtube || {}) },
-      facebook: { ...DEFAULT_MPP_SOCIAL_MEDIA.facebook, ...(parsed.facebook || {}) },
-      tiktok: { ...DEFAULT_MPP_SOCIAL_MEDIA.tiktok, ...(parsed.tiktok || {}) },
+      instagram: { 
+        ...DEFAULT_MPP_SOCIAL_MEDIA.instagram, 
+        ...(parsed.instagram || {}),
+        isActive: parsed.instagram?.isActive !== false
+      },
+      youtube: { 
+        ...DEFAULT_MPP_SOCIAL_MEDIA.youtube, 
+        ...(parsed.youtube || {}),
+        isActive: parsed.youtube?.isActive !== false
+      },
+      facebook: { 
+        ...DEFAULT_MPP_SOCIAL_MEDIA.facebook, 
+        ...(parsed.facebook || {}),
+        isActive: parsed.facebook?.isActive !== false
+      },
+      tiktok: { 
+        ...DEFAULT_MPP_SOCIAL_MEDIA.tiktok, 
+        ...(parsed.tiktok || {}),
+        isActive: parsed.tiktok?.isActive !== false
+      },
       twitter: parsed.twitter || DEFAULT_MPP_SOCIAL_MEDIA.twitter,
       whatsappChannel: parsed.whatsappChannel || DEFAULT_MPP_SOCIAL_MEDIA.whatsappChannel
     };
@@ -116,25 +140,25 @@ export async function syncMppSocialMediaWithServer(settings: MppSocialMediaSetti
         channel_name: "Instagram Resmi MPP",
         value: settings.instagram.profileUrl,
         description: `@${settings.instagram.handle} - ${settings.instagram.caption}`,
-        is_active: true
+        is_active: settings.instagram.isActive !== false
       },
       {
         channel_name: "YouTube Resmi MPP",
         value: settings.youtube.channelUrl,
         description: `${settings.youtube.channelName} - ${settings.youtube.videoTitle}`,
-        is_active: true
+        is_active: settings.youtube.isActive !== false
       },
       {
         channel_name: "Facebook Resmi MPP",
         value: settings.facebook.pageUrl,
         description: `${settings.facebook.pageName} - ${settings.facebook.caption}`,
-        is_active: true
+        is_active: settings.facebook.isActive !== false
       },
       {
         channel_name: "TikTok Resmi MPP",
         value: settings.tiktok.profileUrl,
         description: `${settings.tiktok.handle} - ${settings.tiktok.caption}`,
-        is_active: true
+        is_active: settings.tiktok.isActive !== false
       }
     ], { onConflict: "channel_name" });
   } catch (err) {

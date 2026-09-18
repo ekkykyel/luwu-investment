@@ -12,6 +12,7 @@ import {
   Sparkles,
   CheckCircle2,
   Eye,
+  EyeOff,
   ExternalLink,
   MessageCircle,
   Heart,
@@ -20,7 +21,11 @@ import {
   Send,
   Upload,
   Link2,
-  Info
+  Info,
+  Check,
+  X,
+  ToggleLeft,
+  ToggleRight
 } from 'lucide-react';
 import {
   MppSocialMediaSettings,
@@ -59,7 +64,7 @@ export const MppSocialMediaAdminManager: React.FC<{ isDark?: boolean }> = ({ isD
     setIsSaving(true);
     try {
       await syncMppSocialMediaWithServer(settings);
-      triggerToast('success', 'Konten & link media sosial resmi MPP berhasil disinkronkan ke Portal Publik!');
+      triggerToast('success', 'Konten & status visibilitas media sosial MPP berhasil disinkronkan ke Portal Publik!');
     } catch (err) {
       console.error(err);
       triggerToast('error', 'Gagal menyimpan media sosial.');
@@ -74,6 +79,24 @@ export const MppSocialMediaAdminManager: React.FC<{ isDark?: boolean }> = ({ isD
       syncMppSocialMediaWithServer(DEFAULT_MPP_SOCIAL_MEDIA);
       triggerToast('success', 'Pengaturan media sosial dikembalikan ke default.');
     }
+  };
+
+  const togglePlatformVisibility = (platform: 'instagram' | 'youtube' | 'facebook' | 'tiktok') => {
+    const current = settings[platform].isActive !== false;
+    const updated = {
+      ...settings,
+      [platform]: {
+        ...settings[platform],
+        isActive: !current
+      }
+    };
+    setSettings(updated);
+    triggerToast(
+      'success',
+      !current
+        ? `${platform.toUpperCase()} kini DITAMPILKAN di Portal Publik.`
+        : `${platform.toUpperCase()} kini DISEMBUNYIKAN dari Portal Publik (Data tersimpan).`
+    );
   };
 
   return (
@@ -113,7 +136,7 @@ export const MppSocialMediaAdminManager: React.FC<{ isDark?: boolean }> = ({ isD
             <span>Kelola Sosial Media Resmi MPP Kabupaten Luwu</span>
           </h3>
           <p className="text-xs text-slate-400 mt-1 max-w-2xl">
-            Atur postingan unggulan, tautan profil, gambar feed, video profil, dan statistik interaksi untuk Instagram, YouTube, Facebook, dan TikTok yang tampil pada seksi Sosial Media di Portal MPP Simpurusiang.
+            Atur postingan unggulan, tautan profil, gambar feed, video profil, dan <strong>kontrol visibilitas (tampilkan/sembunyikan)</strong> untuk Instagram, YouTube, Facebook, dan TikTok tanpa menghapus data.
           </p>
         </div>
 
@@ -123,12 +146,12 @@ export const MppSocialMediaAdminManager: React.FC<{ isDark?: boolean }> = ({ isD
             onClick={() => setPreviewMode(!previewMode)}
             className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer border ${
               previewMode
-                ? 'bg-blue-600 text-white border-blue-500'
+                ? 'bg-blue-600 text-white border-blue-500 shadow-md shadow-blue-900/30'
                 : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
             }`}
           >
             <Eye className="w-3.5 h-3.5" />
-            <span>{previewMode ? 'Sembunyikan Preview' : 'Lihat Live Preview'}</span>
+            <span>{previewMode ? 'Tutup Preview' : 'Live Preview & Status'}</span>
           </button>
           <button
             type="button"
@@ -142,8 +165,9 @@ export const MppSocialMediaAdminManager: React.FC<{ isDark?: boolean }> = ({ isD
         </div>
       </div>
 
-      {/* Platform Tabs Selector */}
+      {/* Platform Tabs Selector with Visibility Indicators */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+        {/* Instagram Tab */}
         <button
           type="button"
           onClick={() => setActivePlatform('instagram')}
@@ -155,7 +179,19 @@ export const MppSocialMediaAdminManager: React.FC<{ isDark?: boolean }> = ({ isD
         >
           <Instagram className="w-4 h-4" />
           <span>Instagram Feed</span>
+          <span
+            className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold flex items-center gap-1 ${
+              settings.instagram.isActive !== false
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                : 'bg-slate-800 text-slate-400 border border-slate-700'
+            }`}
+          >
+            {settings.instagram.isActive !== false ? <Eye className="w-2.5 h-2.5" /> : <EyeOff className="w-2.5 h-2.5" />}
+            <span>{settings.instagram.isActive !== false ? 'Aktif' : 'Hidden'}</span>
+          </span>
         </button>
+
+        {/* YouTube Tab */}
         <button
           type="button"
           onClick={() => setActivePlatform('youtube')}
@@ -167,7 +203,19 @@ export const MppSocialMediaAdminManager: React.FC<{ isDark?: boolean }> = ({ isD
         >
           <Youtube className="w-4 h-4" />
           <span>YouTube Official</span>
+          <span
+            className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold flex items-center gap-1 ${
+              settings.youtube.isActive !== false
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                : 'bg-slate-800 text-slate-400 border border-slate-700'
+            }`}
+          >
+            {settings.youtube.isActive !== false ? <Eye className="w-2.5 h-2.5" /> : <EyeOff className="w-2.5 h-2.5" />}
+            <span>{settings.youtube.isActive !== false ? 'Aktif' : 'Hidden'}</span>
+          </span>
         </button>
+
+        {/* Facebook Tab */}
         <button
           type="button"
           onClick={() => setActivePlatform('facebook')}
@@ -179,7 +227,19 @@ export const MppSocialMediaAdminManager: React.FC<{ isDark?: boolean }> = ({ isD
         >
           <Facebook className="w-4 h-4" />
           <span>Facebook Page</span>
+          <span
+            className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold flex items-center gap-1 ${
+              settings.facebook.isActive !== false
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                : 'bg-slate-800 text-slate-400 border border-slate-700'
+            }`}
+          >
+            {settings.facebook.isActive !== false ? <Eye className="w-2.5 h-2.5" /> : <EyeOff className="w-2.5 h-2.5" />}
+            <span>{settings.facebook.isActive !== false ? 'Aktif' : 'Hidden'}</span>
+          </span>
         </button>
+
+        {/* TikTok Tab */}
         <button
           type="button"
           onClick={() => setActivePlatform('tiktok')}
@@ -191,6 +251,16 @@ export const MppSocialMediaAdminManager: React.FC<{ isDark?: boolean }> = ({ isD
         >
           <Music2 className="w-4 h-4" />
           <span>TikTok Official</span>
+          <span
+            className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold flex items-center gap-1 ${
+              settings.tiktok.isActive !== false
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                : 'bg-slate-800 text-slate-400 border border-slate-700'
+            }`}
+          >
+            {settings.tiktok.isActive !== false ? <Eye className="w-2.5 h-2.5" /> : <EyeOff className="w-2.5 h-2.5" />}
+            <span>{settings.tiktok.isActive !== false ? 'Aktif' : 'Hidden'}</span>
+          </span>
         </button>
       </div>
 
@@ -199,6 +269,63 @@ export const MppSocialMediaAdminManager: React.FC<{ isDark?: boolean }> = ({ isD
         {/* PLATFORM 1: INSTAGRAM */}
         {activePlatform === 'instagram' && (
           <div className="space-y-4 animate-in fade-in-50 duration-200">
+            {/* Visibility Toggle Card */}
+            <div className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+              settings.instagram.isActive !== false
+                ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-300'
+                : 'bg-slate-950/80 border-slate-800 text-slate-400'
+            }`}>
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                  settings.instagram.isActive !== false
+                    ? 'bg-emerald-500/20 text-emerald-400'
+                    : 'bg-slate-800 text-slate-500'
+                }`}>
+                  {settings.instagram.isActive !== false ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white flex items-center gap-2">
+                    <span>Status Visibilitas Instagram di Portal Publik</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                      settings.instagram.isActive !== false
+                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-slate-800 text-slate-400 border border-slate-700'
+                    }`}>
+                      {settings.instagram.isActive !== false ? 'Aktif (Ditampilkan)' : 'Disembunyikan (Nonaktif)'}
+                    </span>
+                  </h4>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    {settings.instagram.isActive !== false
+                      ? 'Kartu feed Instagram akan tampil bagi publik di portal MPP Simpurusiang.'
+                      : 'Kartu feed Instagram disembunyikan dari portal publik, tetapi seluruh data formulir di bawah tetap tersimpan.'}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => togglePlatformVisibility('instagram')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer whitespace-nowrap border ${
+                  settings.instagram.isActive !== false
+                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500 shadow-sm'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                }`}
+              >
+                {settings.instagram.isActive !== false ? (
+                  <>
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Sembunyikan</span>
+                  </>
+                ) : (
+                  <>
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Tampilkan ke Publik</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Inputs */}
             <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
@@ -338,6 +465,63 @@ export const MppSocialMediaAdminManager: React.FC<{ isDark?: boolean }> = ({ isD
         {/* PLATFORM 2: YOUTUBE */}
         {activePlatform === 'youtube' && (
           <div className="space-y-4 animate-in fade-in-50 duration-200">
+            {/* Visibility Toggle Card */}
+            <div className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+              settings.youtube.isActive !== false
+                ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-300'
+                : 'bg-slate-950/80 border-slate-800 text-slate-400'
+            }`}>
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                  settings.youtube.isActive !== false
+                    ? 'bg-emerald-500/20 text-emerald-400'
+                    : 'bg-slate-800 text-slate-500'
+                }`}>
+                  {settings.youtube.isActive !== false ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white flex items-center gap-2">
+                    <span>Status Visibilitas YouTube di Portal Publik</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                      settings.youtube.isActive !== false
+                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-slate-800 text-slate-400 border border-slate-700'
+                    }`}>
+                      {settings.youtube.isActive !== false ? 'Aktif (Ditampilkan)' : 'Disembunyikan (Nonaktif)'}
+                    </span>
+                  </h4>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    {settings.youtube.isActive !== false
+                      ? 'Kartu video resmi YouTube akan tampil bagi publik di portal MPP Simpurusiang.'
+                      : 'Kartu video YouTube disembunyikan dari portal publik, tetapi seluruh data formulir di bawah tetap tersimpan.'}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => togglePlatformVisibility('youtube')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer whitespace-nowrap border ${
+                  settings.youtube.isActive !== false
+                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500 shadow-sm'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                }`}
+              >
+                {settings.youtube.isActive !== false ? (
+                  <>
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Sembunyikan</span>
+                  </>
+                ) : (
+                  <>
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Tampilkan ke Publik</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Inputs */}
             <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
@@ -448,6 +632,25 @@ export const MppSocialMediaAdminManager: React.FC<{ isDark?: boolean }> = ({ isD
                   placeholder="https://images.unsplash.com/..."
                   className="w-full p-2 rounded-xl border border-slate-800 bg-slate-900 text-xs text-white outline-none focus:border-emerald-500 font-mono"
                 />
+                {/* Quick Presets */}
+                <div className="flex items-center gap-1.5 pt-1 overflow-x-auto no-scrollbar">
+                  <span className="text-[10px] text-slate-500 whitespace-nowrap">Pilihan Thumbnail:</span>
+                  {PRESET_SOCIAL_IMAGES.map((preset, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() =>
+                        setSettings({
+                          ...settings,
+                          youtube: { ...settings.youtube, videoThumbnail: preset.url }
+                        })
+                      }
+                      className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[10px] text-slate-300 whitespace-nowrap transition-colors"
+                    >
+                      {preset.name}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -456,6 +659,63 @@ export const MppSocialMediaAdminManager: React.FC<{ isDark?: boolean }> = ({ isD
         {/* PLATFORM 3: FACEBOOK */}
         {activePlatform === 'facebook' && (
           <div className="space-y-4 animate-in fade-in-50 duration-200">
+            {/* Visibility Toggle Card */}
+            <div className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+              settings.facebook.isActive !== false
+                ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-300'
+                : 'bg-slate-950/80 border-slate-800 text-slate-400'
+            }`}>
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                  settings.facebook.isActive !== false
+                    ? 'bg-emerald-500/20 text-emerald-400'
+                    : 'bg-slate-800 text-slate-500'
+                }`}>
+                  {settings.facebook.isActive !== false ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white flex items-center gap-2">
+                    <span>Status Visibilitas Facebook di Portal Publik</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                      settings.facebook.isActive !== false
+                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-slate-800 text-slate-400 border border-slate-700'
+                    }`}>
+                      {settings.facebook.isActive !== false ? 'Aktif (Ditampilkan)' : 'Disembunyikan (Nonaktif)'}
+                    </span>
+                  </h4>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    {settings.facebook.isActive !== false
+                      ? 'Kartu postingan Facebook akan tampil bagi publik di portal MPP Simpurusiang.'
+                      : 'Kartu Facebook disembunyikan dari portal publik, tetapi seluruh data formulir di bawah tetap tersimpan.'}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => togglePlatformVisibility('facebook')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer whitespace-nowrap border ${
+                  settings.facebook.isActive !== false
+                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500 shadow-sm'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                }`}
+              >
+                {settings.facebook.isActive !== false ? (
+                  <>
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Sembunyikan</span>
+                  </>
+                ) : (
+                  <>
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Tampilkan ke Publik</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Inputs */}
             <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
@@ -547,6 +807,25 @@ export const MppSocialMediaAdminManager: React.FC<{ isDark?: boolean }> = ({ isD
                   placeholder="https://images.unsplash.com/..."
                   className="w-full p-2 rounded-xl border border-slate-800 bg-slate-900 text-xs text-white outline-none focus:border-emerald-500 font-mono"
                 />
+                {/* Quick Presets */}
+                <div className="flex items-center gap-1.5 pt-1 overflow-x-auto no-scrollbar">
+                  <span className="text-[10px] text-slate-500 whitespace-nowrap">Pilihan Gambar:</span>
+                  {PRESET_SOCIAL_IMAGES.map((preset, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() =>
+                        setSettings({
+                          ...settings,
+                          facebook: { ...settings.facebook, postImage: preset.url }
+                        })
+                      }
+                      className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[10px] text-slate-300 whitespace-nowrap transition-colors"
+                    >
+                      {preset.name}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="space-y-1 md:col-span-2">
@@ -573,6 +852,63 @@ export const MppSocialMediaAdminManager: React.FC<{ isDark?: boolean }> = ({ isD
         {/* PLATFORM 4: TIKTOK */}
         {activePlatform === 'tiktok' && (
           <div className="space-y-4 animate-in fade-in-50 duration-200">
+            {/* Visibility Toggle Card */}
+            <div className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+              settings.tiktok.isActive !== false
+                ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-300'
+                : 'bg-slate-950/80 border-slate-800 text-slate-400'
+            }`}>
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                  settings.tiktok.isActive !== false
+                    ? 'bg-emerald-500/20 text-emerald-400'
+                    : 'bg-slate-800 text-slate-500'
+                }`}>
+                  {settings.tiktok.isActive !== false ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white flex items-center gap-2">
+                    <span>Status Visibilitas TikTok di Portal Publik</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                      settings.tiktok.isActive !== false
+                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-slate-800 text-slate-400 border border-slate-700'
+                    }`}>
+                      {settings.tiktok.isActive !== false ? 'Aktif (Ditampilkan)' : 'Disembunyikan (Nonaktif)'}
+                    </span>
+                  </h4>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    {settings.tiktok.isActive !== false
+                      ? 'Kartu video edukasi TikTok akan tampil bagi publik di portal MPP Simpurusiang.'
+                      : 'Kartu TikTok disembunyikan dari portal publik, tetapi seluruh data formulir di bawah tetap tersimpan.'}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => togglePlatformVisibility('tiktok')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer whitespace-nowrap border ${
+                  settings.tiktok.isActive !== false
+                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500 shadow-sm'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                }`}
+              >
+                {settings.tiktok.isActive !== false ? (
+                  <>
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Sembunyikan</span>
+                  </>
+                ) : (
+                  <>
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Tampilkan ke Publik</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Inputs */}
             <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
@@ -664,6 +1000,25 @@ export const MppSocialMediaAdminManager: React.FC<{ isDark?: boolean }> = ({ isD
                   placeholder="https://images.unsplash.com/..."
                   className="w-full p-2 rounded-xl border border-slate-800 bg-slate-900 text-xs text-white outline-none focus:border-emerald-500 font-mono"
                 />
+                {/* Quick Presets */}
+                <div className="flex items-center gap-1.5 pt-1 overflow-x-auto no-scrollbar">
+                  <span className="text-[10px] text-slate-500 whitespace-nowrap">Pilihan Thumbnail:</span>
+                  {PRESET_SOCIAL_IMAGES.map((preset, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() =>
+                        setSettings({
+                          ...settings,
+                          tiktok: { ...settings.tiktok, videoThumbnail: preset.url }
+                        })
+                      }
+                      className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[10px] text-slate-300 whitespace-nowrap transition-colors"
+                    >
+                      {preset.name}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="space-y-1 md:col-span-2">
@@ -740,78 +1095,182 @@ export const MppSocialMediaAdminManager: React.FC<{ isDark?: boolean }> = ({ isD
           <div className="flex items-center justify-between">
             <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
               <Eye className="w-3.5 h-3.5" />
-              <span>Simulasi Tampilan di Portal Publik:</span>
+              <span>Simulasi Tampilan di Portal Publik (4 Kanal):</span>
             </h4>
             <span className="text-[10px] text-slate-500">Live Preview Mode</span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950 p-4 rounded-2xl border border-slate-800">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-slate-950 p-4 rounded-2xl border border-slate-800">
             {/* Instagram Preview Card */}
-            <div className="bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 text-xs">
-              <div className="p-3 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-500 to-rose-600 p-[1.5px]">
-                    <div className="w-full h-full bg-slate-950 rounded-full flex items-center justify-center">
-                      <Instagram className="w-3.5 h-3.5 text-rose-400" />
-                    </div>
-                  </div>
-                  <span className="font-bold text-white text-xs truncate">@{settings.instagram.handle}</span>
+            <div className={`bg-slate-900 rounded-2xl overflow-hidden border text-xs relative flex flex-col justify-between ${
+              settings.instagram.isActive !== false ? 'border-slate-800' : 'border-slate-800/40 opacity-60'
+            }`}>
+              {settings.instagram.isActive === false && (
+                <div className="absolute top-2 left-2 z-20 px-2 py-0.5 rounded-full bg-slate-950/90 border border-slate-700 text-amber-400 font-bold text-[9px] flex items-center gap-1">
+                  <EyeOff className="w-2.5 h-2.5" />
+                  <span>Hidden di Portal</span>
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  Follow
-                </span>
-              </div>
-              <div className="h-28 w-full bg-slate-800 overflow-hidden relative">
-                <img
-                  src={settings.instagram.postImage}
-                  alt="Post"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = DEFAULT_MPP_SOCIAL_MEDIA.instagram.postImage;
-                  }}
-                />
-                <span className="absolute top-2 right-2 px-2 py-0.5 rounded bg-black/70 text-white text-[9px] font-semibold">
-                  {settings.instagram.tag}
-                </span>
-              </div>
-              <div className="p-3 space-y-1">
-                <span className="text-[10px] text-slate-400 font-bold block">{settings.instagram.stats}</span>
-                <p className="text-[11px] text-slate-300 line-clamp-2">{settings.instagram.caption}</p>
+              )}
+              <div>
+                <div className="p-3 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
+                  <div className="flex items-center gap-2 truncate">
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-500 to-rose-600 p-[1.5px] shrink-0">
+                      <div className="w-full h-full bg-slate-950 rounded-full flex items-center justify-center">
+                        <Instagram className="w-3.5 h-3.5 text-rose-400" />
+                      </div>
+                    </div>
+                    <span className="font-bold text-white text-xs truncate">@{settings.instagram.handle}</span>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+                    Follow
+                  </span>
+                </div>
+                <div className="h-28 w-full bg-slate-800 overflow-hidden relative">
+                  <img
+                    src={settings.instagram.postImage}
+                    alt="Post"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = DEFAULT_MPP_SOCIAL_MEDIA.instagram.postImage;
+                    }}
+                  />
+                  <span className="absolute top-2 right-2 px-2 py-0.5 rounded bg-black/70 text-white text-[9px] font-semibold">
+                    {settings.instagram.tag}
+                  </span>
+                </div>
+                <div className="p-3 space-y-1">
+                  <span className="text-[10px] text-slate-400 font-bold block">{settings.instagram.stats}</span>
+                  <p className="text-[11px] text-slate-300 line-clamp-2">{settings.instagram.caption}</p>
+                </div>
               </div>
             </div>
 
             {/* YouTube Preview Card */}
-            <div className="bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 text-xs">
-              <div className="p-3 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center">
-                    <Youtube className="w-4 h-4" />
+            <div className={`bg-slate-900 rounded-2xl overflow-hidden border text-xs relative flex flex-col justify-between ${
+              settings.youtube.isActive !== false ? 'border-slate-800' : 'border-slate-800/40 opacity-60'
+            }`}>
+              {settings.youtube.isActive === false && (
+                <div className="absolute top-2 left-2 z-20 px-2 py-0.5 rounded-full bg-slate-950/90 border border-slate-700 text-amber-400 font-bold text-[9px] flex items-center gap-1">
+                  <EyeOff className="w-2.5 h-2.5" />
+                  <span>Hidden di Portal</span>
+                </div>
+              )}
+              <div>
+                <div className="p-3 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
+                  <div className="flex items-center gap-2 truncate">
+                    <div className="w-7 h-7 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center shrink-0">
+                      <Youtube className="w-4 h-4" />
+                    </div>
+                    <span className="font-bold text-white text-xs truncate">{settings.youtube.channelName}</span>
                   </div>
-                  <span className="font-bold text-white text-xs truncate">{settings.youtube.channelName}</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-600 text-white shrink-0">
+                    Subscribe
+                  </span>
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-600 text-white">
-                  Subscribe
-                </span>
-              </div>
-              <div className="h-28 w-full bg-slate-800 overflow-hidden relative flex items-center justify-center">
-                <img
-                  src={settings.youtube.videoThumbnail}
-                  alt="Thumbnail"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = DEFAULT_MPP_SOCIAL_MEDIA.youtube.videoThumbnail;
-                  }}
-                />
-                <div className="absolute w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg">
-                  <Play className="w-4 h-4 ml-0.5 fill-current" />
+                <div className="h-28 w-full bg-slate-800 overflow-hidden relative flex items-center justify-center">
+                  <img
+                    src={settings.youtube.videoThumbnail}
+                    alt="Thumbnail"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = DEFAULT_MPP_SOCIAL_MEDIA.youtube.videoThumbnail;
+                    }}
+                  />
+                  <div className="absolute w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg">
+                    <Play className="w-4 h-4 ml-0.5 fill-current" />
+                  </div>
+                  <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/80 text-white text-[9px] font-mono">
+                    {settings.youtube.duration}
+                  </span>
                 </div>
-                <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/80 text-white text-[9px] font-mono">
-                  {settings.youtube.duration}
-                </span>
+                <div className="p-3 space-y-1">
+                  <span className="text-[10px] text-slate-400 font-bold block">{settings.youtube.stats}</span>
+                  <h5 className="text-[11px] font-bold text-white line-clamp-1">{settings.youtube.videoTitle}</h5>
+                </div>
               </div>
-              <div className="p-3 space-y-1">
-                <span className="text-[10px] text-slate-400 font-bold block">{settings.youtube.stats}</span>
-                <h5 className="text-[11px] font-bold text-white line-clamp-1">{settings.youtube.videoTitle}</h5>
+            </div>
+
+            {/* Facebook Preview Card */}
+            <div className={`bg-slate-900 rounded-2xl overflow-hidden border text-xs relative flex flex-col justify-between ${
+              settings.facebook.isActive !== false ? 'border-slate-800' : 'border-slate-800/40 opacity-60'
+            }`}>
+              {settings.facebook.isActive === false && (
+                <div className="absolute top-2 left-2 z-20 px-2 py-0.5 rounded-full bg-slate-950/90 border border-slate-700 text-amber-400 font-bold text-[9px] flex items-center gap-1">
+                  <EyeOff className="w-2.5 h-2.5" />
+                  <span>Hidden di Portal</span>
+                </div>
+              )}
+              <div>
+                <div className="p-3 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
+                  <div className="flex items-center gap-2 truncate">
+                    <div className="w-7 h-7 rounded-full bg-[#1877F2]/20 text-[#1877F2] flex items-center justify-center shrink-0">
+                      <Facebook className="w-4 h-4" />
+                    </div>
+                    <span className="font-bold text-white text-xs truncate">{settings.facebook.pageName}</span>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#1877F2] text-white shrink-0">
+                    Ikuti
+                  </span>
+                </div>
+                <div className="h-28 w-full bg-slate-800 overflow-hidden relative">
+                  <img
+                    src={settings.facebook.postImage}
+                    alt="Post"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = DEFAULT_MPP_SOCIAL_MEDIA.facebook.postImage;
+                    }}
+                  />
+                  <span className="absolute top-2 right-2 px-2 py-0.5 rounded bg-black/70 text-white text-[9px] font-semibold">
+                    {settings.facebook.tag}
+                  </span>
+                </div>
+                <div className="p-3 space-y-1">
+                  <span className="text-[10px] text-slate-400 font-bold block">{settings.facebook.stats}</span>
+                  <p className="text-[11px] text-slate-300 line-clamp-2">{settings.facebook.caption}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* TikTok Preview Card */}
+            <div className={`bg-slate-900 rounded-2xl overflow-hidden border text-xs relative flex flex-col justify-between ${
+              settings.tiktok.isActive !== false ? 'border-slate-800' : 'border-slate-800/40 opacity-60'
+            }`}>
+              {settings.tiktok.isActive === false && (
+                <div className="absolute top-2 left-2 z-20 px-2 py-0.5 rounded-full bg-slate-950/90 border border-slate-700 text-amber-400 font-bold text-[9px] flex items-center gap-1">
+                  <EyeOff className="w-2.5 h-2.5" />
+                  <span>Hidden di Portal</span>
+                </div>
+              )}
+              <div>
+                <div className="p-3 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
+                  <div className="flex items-center gap-2 truncate">
+                    <div className="w-7 h-7 rounded-full bg-slate-800 text-white flex items-center justify-center shrink-0">
+                      <Music2 className="w-4 h-4" />
+                    </div>
+                    <span className="font-bold text-white text-xs truncate">{settings.tiktok.handle}</span>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-white shrink-0">
+                    Follow
+                  </span>
+                </div>
+                <div className="h-28 w-full bg-slate-800 overflow-hidden relative">
+                  <img
+                    src={settings.tiktok.videoThumbnail}
+                    alt="Thumbnail"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = DEFAULT_MPP_SOCIAL_MEDIA.tiktok.videoThumbnail;
+                    }}
+                  />
+                  <span className="absolute top-2 right-2 px-2 py-0.5 rounded bg-black/70 text-white text-[9px] font-semibold">
+                    {settings.tiktok.tag}
+                  </span>
+                </div>
+                <div className="p-3 space-y-1">
+                  <span className="text-[10px] text-slate-400 font-bold block">{settings.tiktok.stats}</span>
+                  <p className="text-[11px] text-slate-300 line-clamp-2">{settings.tiktok.caption}</p>
+                </div>
               </div>
             </div>
           </div>
