@@ -13,14 +13,17 @@ interface FastTrackConsultationModalProps {
   onClose: () => void;
   selectedInvestment?: Investment | null;
   isDark?: boolean;
+  isDarkMode?: boolean;
 }
 
 export function FastTrackConsultationModal({
   isOpen,
   onClose,
   selectedInvestment,
-  isDark = true,
+  isDark: propIsDark,
+  isDarkMode: propIsDarkMode,
 }: FastTrackConsultationModalProps) {
+  const isDark = propIsDark ?? propIsDarkMode ?? true;
   const [formData, setFormData] = useState({
     investorName: '',
     companyName: '',

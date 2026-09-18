@@ -73,6 +73,7 @@ import {
   MessageCircle,
   BadgeCheck,
   Package,
+  FileText,
   Map,
   HardDrive,
   BarChart2,
