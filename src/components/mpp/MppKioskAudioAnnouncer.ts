@@ -1,6 +1,8 @@
 // Airport Kiosk Audio Announcer & Chime Synthesizer
 // Uses Web Audio API for authentic 3-tone polyphonic airport chimes & Web Speech API for multilingual voice announcements
 
+import { speakCrystalClearText } from '../../utils/mppAudioEngine';
+
 export type KioskLanguage = 'id' | 'en' | 'zh';
 
 export class KioskAudioEngine {
@@ -168,36 +170,22 @@ export class KioskAudioEngine {
     // First play chime, then voice
     this.playAirportChime().then(() => {
       try {
-        window.speechSynthesis.cancel(); // Stop any pending speech
-
         let message = '';
-        let voiceLang = 'id-ID';
 
         if (lang === 'en') {
-          voiceLang = 'en-US';
           message = `Attention please. Boarding pass ticket ${ticketNumber} for ${agencyName} has been successfully issued. Please proceed to the service counter when your number is called.`;
         } else if (lang === 'zh') {
-          voiceLang = 'zh-CN';
           message = `请注意。${agencyName} 的服务号票 ${ticketNumber} 已成功出票。请在窗口呼叫时前往办理。`;
         } else {
-          voiceLang = 'id-ID';
           message = `Perhatian. Tiket antrean ${ticketNumber} untuk ${agencyName} telah berhasil diterbitkan. Silakan menuju loket saat nomor Anda dipanggil.`;
         }
 
-        const utterance = new SpeechSynthesisUtterance(message);
-        utterance.lang = voiceLang;
-        utterance.rate = 0.95; // Clear airport pace
-        utterance.pitch = 1.0;
-        utterance.volume = 1.0;
-
-        // Try to find a natural native voice
-        const voices = window.speechSynthesis.getVoices();
-        const matchedVoice = voices.find(v => v.lang.startsWith(voiceLang.split('-')[0]));
-        if (matchedVoice) {
-          utterance.voice = matchedVoice;
-        }
-
-        window.speechSynthesis.speak(utterance);
+        speakCrystalClearText(message, {
+          lang,
+          rate: 0.93,
+          pitch: 1.0,
+          volume: 1.0
+        });
       } catch {
         // Fallback gracefully
       }
