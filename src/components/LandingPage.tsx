@@ -2817,7 +2817,7 @@ export default function LandingPage({
             </p>
           </div>
 
-          {useMemo(() => {
+          {(() => {
                         const baseFacilities = [
               {
                 name: t("infrastructure.buaAirportTitle"),
@@ -2929,7 +2929,7 @@ export default function LandingPage({
                 ))}
               </div>
             );
-          }, [t, selectedInvestmentId, investments, isDark, textMuted, facilityCoords])}
+          })()}
         </div>
 
         {/* INTERACTIVE ROADMAP & LICENSING GUIDE */}

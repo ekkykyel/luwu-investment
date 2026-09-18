@@ -87,21 +87,14 @@ export default defineConfig(() => {
       })
     ],
     resolve: {
-      dedupe: ['react', 'react-dom', 'react-router', 'react-router-dom', '@remix-run/router', 'use-sync-external-store', 'react-i18next', 'motion', 'framer-motion'],
       alias: {
-        'react': path.resolve(__dirname, './node_modules/react'),
-        'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
-        'react/jsx-runtime': path.resolve(__dirname, './node_modules/react/jsx-runtime.js'),
         '@': path.resolve(__dirname, './src'),
         '@turf/turf': path.resolve(__dirname, './src/utils/turf-shim.ts'),
       },
     },
     optimizeDeps: {
       include: [
-        'react',
-        'react/jsx-runtime',
         'react/jsx-dev-runtime',
-        'react-dom',
         'react-dom/client',
         'react-router',
         'react-router-dom',
