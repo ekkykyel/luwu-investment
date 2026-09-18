@@ -13,6 +13,7 @@ import {
   HeartHandshake,
   Calendar,
   ChevronRight,
+  ChevronLeft,
   FileText,
   Sparkles,
   Building2,
@@ -287,7 +288,11 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
           <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 p-5 sm:p-7 space-y-6">
             {/* Hero Showcase: Dokumentasi Foto HD & Keterangan Lokasi */}
             <div className="relative rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 shadow-lg bg-slate-950 group">
-              <div className="relative h-56 sm:h-72 md:h-80 w-full overflow-hidden">
+              <div 
+                className="relative h-56 sm:h-72 md:h-80 w-full overflow-hidden cursor-pointer"
+                onClick={() => setIsPhotoPreviewOpen(true)}
+                title="Klik untuk memperbesar dokumentasi foto"
+              >
                 <img
                   src={gallery[selectedPhotoIndex] || service.image}
                   alt={`${service.title} - Foto ${selectedPhotoIndex + 1}`}
@@ -299,21 +304,61 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent pointer-events-none" />
 
-                {/* Badge Verifikasi Dokumentasi */}
-                <div className="absolute top-3.5 left-3.5 flex items-center gap-2 bg-slate-900/80 backdrop-blur-md border border-white/20 px-3 py-1.5 rounded-full text-white text-[11px] font-semibold">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  <span>MPP Simpurusiang Certified</span>
-                </div>
-
-                {/* Badge Kategori Layanan */}
-                <div className="absolute top-3.5 right-3.5">
+                {/* Badges di Kiri Atas */}
+                <div className="absolute top-3.5 left-3.5 flex flex-wrap items-center gap-2 z-10">
+                  <div className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-md border border-white/20 px-3 py-1.5 rounded-full text-white text-[11px] font-semibold shadow-sm">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                    <span>MPP Simpurusiang Certified</span>
+                  </div>
                   <span className={`text-[11px] font-bold tracking-wide uppercase px-3 py-1.5 rounded-full border shadow-sm ${service.badgeClass || 'bg-white/90 text-slate-900 border-white/30'}`}>
                     {service.badge}
                   </span>
                 </div>
 
+                {/* Tombol Perbesar Foto di Kanan Atas */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsPhotoPreviewOpen(true);
+                  }}
+                  className="absolute top-3.5 right-3.5 z-20 flex items-center gap-1.5 bg-slate-900/80 hover:bg-slate-900 backdrop-blur-md border border-white/20 text-white text-[11px] font-semibold px-3 py-1.5 rounded-full shadow-md transition-all cursor-pointer hover:scale-105"
+                  title="Lihat foto resolusi tinggi"
+                >
+                  <Maximize2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Perbesar HD</span>
+                </button>
+
+                {/* Tombol Navigasi Kiri & Kanan di atas Foto */}
+                {gallery.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedPhotoIndex(prev => (prev > 0 ? prev - 1 : gallery.length - 1));
+                      }}
+                      className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white border border-white/20 flex items-center justify-center transition-all cursor-pointer opacity-80 hover:opacity-100 shadow-md"
+                      aria-label="Foto sebelumnya"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedPhotoIndex(prev => (prev < gallery.length - 1 ? prev + 1 : 0));
+                      }}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white border border-white/20 flex items-center justify-center transition-all cursor-pointer opacity-80 hover:opacity-100 shadow-md"
+                      aria-label="Foto berikutnya"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </>
+                )}
+
                 {/* Overlay Keterangan di Atas Foto */}
-                <div className="absolute bottom-3.5 left-3.5 right-3.5 flex flex-col sm:flex-row sm:items-end justify-between gap-3 text-white">
+                <div className="absolute bottom-3.5 left-3.5 right-3.5 flex flex-col sm:flex-row sm:items-end justify-between gap-3 text-white pointer-events-none">
                   <div className="space-y-1">
                     <p className="text-xs text-emerald-400 font-semibold flex items-center gap-1.5">
                       <MapPin className="w-3.5 h-3.5" />
@@ -326,7 +371,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
 
                   {/* Indikator Jumlah Foto */}
                   {gallery.length > 1 && (
-                    <div className="text-[11px] text-slate-300 bg-black/40 backdrop-blur-sm px-2.5 py-1 rounded-md border border-white/10 self-start sm:self-auto">
+                    <div className="text-[11px] text-slate-300 bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-md border border-white/10 self-start sm:self-auto">
                       Foto {selectedPhotoIndex + 1} dari {gallery.length}
                     </div>
                   )}
@@ -587,6 +632,100 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
             </div>
           </div>
         </motion.div>
+
+        {/* Fullscreen HD Photo Lightbox */}
+        <AnimatePresence>
+          {isPhotoPreviewOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[120] bg-black/95 backdrop-blur-xl flex flex-col justify-between p-4 sm:p-6"
+              onClick={() => setIsPhotoPreviewOpen(false)}
+            >
+              {/* Top Bar Lightbox */}
+              <div className="flex items-center justify-between z-10" onClick={(e) => e.stopPropagation()}>
+                <div className="text-white">
+                  <h4 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                    <span>{service.title}</span>
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                      Foto {selectedPhotoIndex + 1} dari {gallery.length}
+                    </span>
+                  </h4>
+                  <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-1">
+                    <MapPin className="w-3 h-3 text-emerald-400" />
+                    {location}
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsPhotoPreviewOpen(false)}
+                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+                  aria-label="Tutup preview foto"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Main Image in Lightbox */}
+              <div className="relative flex-1 flex items-center justify-center p-2 sm:p-4" onClick={(e) => e.stopPropagation()}>
+                {gallery.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedPhotoIndex(prev => (prev > 0 ? prev - 1 : gallery.length - 1))}
+                    className="absolute left-2 sm:left-4 z-20 w-11 h-11 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 flex items-center justify-center transition-all cursor-pointer shadow-lg"
+                    aria-label="Foto sebelumnya"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                )}
+
+                <motion.img
+                  key={selectedPhotoIndex}
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{ duration: 0.2 }}
+                  src={gallery[selectedPhotoIndex] || service.image}
+                  alt={`${service.title} - Foto ${selectedPhotoIndex + 1}`}
+                  className="max-h-[75vh] max-w-[90vw] object-contain rounded-2xl shadow-2xl border border-white/10"
+                />
+
+                {gallery.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedPhotoIndex(prev => (prev < gallery.length - 1 ? prev + 1 : 0))}
+                    className="absolute right-2 sm:right-4 z-20 w-11 h-11 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 flex items-center justify-center transition-all cursor-pointer shadow-lg"
+                    aria-label="Foto berikutnya"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
+                )}
+              </div>
+
+              {/* Bottom Thumbnails Strip in Lightbox */}
+              {gallery.length > 1 && (
+                <div className="flex items-center justify-center gap-2 overflow-x-auto py-2 z-10" onClick={(e) => e.stopPropagation()}>
+                  {gallery.map((imgUrl, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setSelectedPhotoIndex(idx)}
+                      className={`relative w-16 h-12 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
+                        selectedPhotoIndex === idx
+                          ? 'border-emerald-500 scale-105 shadow-md shadow-emerald-500/50'
+                          : 'border-transparent opacity-50 hover:opacity-100'
+                      }`}
+                    >
+                      <img src={imgUrl} alt={`Thumb ${idx + 1}`} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </AnimatePresence>
   );

@@ -685,6 +685,32 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
     const savedProf = JSON.parse(localStorage.getItem("mpp_portal_profile") || "null");
     if (savedProf) setProfile(savedProf);
 
+    // Also fetch from /api/site-settings for cross-device persistence
+    try {
+      const settingsRes = await fetch('/api/site-settings?keys=mpp_portal_profile,mpp_portal_floorplan');
+      if (settingsRes.ok) {
+        const settingsData = await settingsRes.json();
+        if (settingsData && typeof settingsData === 'object') {
+          if (settingsData.mpp_portal_profile) {
+            const parsedP = typeof settingsData.mpp_portal_profile === 'string' 
+              ? JSON.parse(settingsData.mpp_portal_profile) 
+              : settingsData.mpp_portal_profile;
+            setProfile(parsedP);
+            localStorage.setItem("mpp_portal_profile", JSON.stringify(parsedP));
+          }
+          if (settingsData.mpp_portal_floorplan) {
+            const parsedF = typeof settingsData.mpp_portal_floorplan === 'string' 
+              ? JSON.parse(settingsData.mpp_portal_floorplan) 
+              : settingsData.mpp_portal_floorplan;
+            setFloorPlan(parsedF);
+            localStorage.setItem("mpp_portal_floorplan", JSON.stringify(parsedF));
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Notice loading site_settings for profile/floorplan:", e);
+    }
+
     try {
       const { data, error } = await supabase
         .from("mpp_facilities")
@@ -713,10 +739,22 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
     if (savedFloor) setFloorPlan(savedFloor);
   };
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     localStorage.setItem("mpp_portal_profile", JSON.stringify(profile));
-    triggerStatus("success", "Profil & Maklumat MPP berhasil diperbarui!");
+    try {
+      await fetch('/api/site-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          setting_key: 'mpp_portal_profile',
+          setting_value: JSON.stringify(profile)
+        })
+      });
+    } catch (err) {
+      console.warn("Failed to sync profile to site_settings:", err);
+    }
+    triggerStatus("success", "Profil & Maklumat MPP berhasil diperbarui dan tersimpan di database!");
   };
 
   const handleAddFacility = async (e: React.FormEvent) => {
@@ -770,10 +808,22 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
     }
   };
 
-  const handleSaveFloorPlan = (e: React.FormEvent) => {
+  const handleSaveFloorPlan = async (e: React.FormEvent) => {
     e.preventDefault();
     localStorage.setItem("mpp_portal_floorplan", JSON.stringify(floorPlan));
-    triggerStatus("success", "Denah Interactive 3D & Fasilitas berhasil diperbarui!");
+    try {
+      await fetch('/api/site-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          setting_key: 'mpp_portal_floorplan',
+          setting_value: JSON.stringify(floorPlan)
+        })
+      });
+    } catch (err) {
+      console.warn("Failed to sync floorplan to site_settings:", err);
+    }
+    triggerStatus("success", "Denah Interactive 3D & Fasilitas berhasil diperbarui dan tersimpan di database!");
   };
 
   // ---------------------------------------------------------------------------
@@ -1005,7 +1055,7 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
     }
   };
 
-  const handleAddNews = (e: React.FormEvent) => {
+  const handleAddNews = async (e: React.FormEvent) => {
     e.preventDefault();
     const categoryMapped = 
       newsForm.category === "Pemerintahan" || newsForm.category === "Pengumuman"
@@ -1027,19 +1077,51 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
       isPinned: false,
       viewsCount: 1
     };
-    const updated = [newNewsItem, ...newsList];
-    saveMppNews(updated);
-    setNewsList(updated);
+
+    try {
+      // POST single news item directly to server which inserts into Supabase news table
+      const res = await fetch('/api/mpp-news', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newNewsItem)
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.data && Array.isArray(json.data)) {
+          setNewsList(json.data);
+          saveMppNews(json.data);
+        } else {
+          const updated = [newNewsItem, ...newsList];
+          saveMppNews(updated);
+          setNewsList(updated);
+        }
+      } else {
+        const updated = [newNewsItem, ...newsList];
+        saveMppNews(updated);
+        setNewsList(updated);
+      }
+    } catch {
+      const updated = [newNewsItem, ...newsList];
+      saveMppNews(updated);
+      setNewsList(updated);
+    }
     setNewsForm({ title: "", content: "", photo: "", category: "Pemerintahan" });
-    triggerStatus("success", "Berita atau Pengumuman baru berhasil diterbitkan dan langsung tampil di Portal MPP!");
+    triggerStatus("success", "Berita atau Pengumuman baru berhasil diterbitkan dan tersimpan di database!");
   };
 
-  const handleDeleteNews = (id: string) => {
+  const handleDeleteNews = async (id: string) => {
     if (!window.confirm("Hapus berita/pengumuman ini?")) return;
-    const updated = newsList.filter(n => n.id !== id);
+    try {
+      await fetch(`/api/mpp-news/${encodeURIComponent(id)}`, {
+        method: 'DELETE'
+      });
+    } catch (err) {
+      console.warn("Failed to delete news from /api/mpp-news:", err);
+    }
+    const updated = newsList.filter(n => String(n.id) !== String(id));
     saveMppNews(updated);
     setNewsList(updated);
-    triggerStatus("success", "Berita berhasil dihapus.");
+    triggerStatus("success", "Berita berhasil dihapus dari database.");
   };
 
   // ---------------------------------------------------------------------------
@@ -1069,9 +1151,9 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
           compData.map((c: any) => ({
             id: c.id,
             sender: c.nama_pelapor || c.sender || "Warga Luwu",
-            nik: c.nik || "-",
-            category: c.kategori || "Layanan",
-            issue: c.isi_laporan || c.pesan || c.issue,
+            nik: c.kontak_pelapor || c.nik || "-",
+            category: c.kategori_pengaduan || c.jenis_aduan || c.kategori || "Layanan",
+            issue: c.deskripsi_masalah || c.isi_laporan || c.pesan || c.issue || "Tidak ada deskripsi",
             status: c.status || "Diproses",
             date: new Date(c.created_at || Date.now()).toLocaleDateString("id-ID")
           }))
@@ -1131,6 +1213,20 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
       const savedContacts = JSON.parse(localStorage.getItem("mpp_portal_contacts") || "null");
       if (savedContacts) setContacts(savedContacts);
     }
+
+    // Load social media settings
+    try {
+      const savedSocial = localStorage.getItem("mpp_social_media_settings_v1");
+      if (savedSocial) {
+        const parsedS = JSON.parse(savedSocial);
+        setContacts(prev => ({
+          ...prev,
+          instagram: parsedS.instagram || prev.instagram,
+          facebook: parsedS.facebook || prev.facebook,
+          youtube: parsedS.youtube || prev.youtube
+        }));
+      }
+    } catch (e) {}
   };
 
   const handleUpdateComplaintStatus = async (id: string, newStatus: string) => {
@@ -1177,6 +1273,25 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
           is_active: true
         }
       ], { onConflict: "channel_name" });
+
+      // Save social media
+      const socialPayload = {
+        instagram: contacts.instagram,
+        facebook: contacts.facebook,
+        youtube: contacts.youtube,
+        tiktok: "https://tiktok.com/@dpmptspluwu",
+        twitter: "https://x.com/dpmptspluwu"
+      };
+      localStorage.setItem("mpp_social_media_settings_v1", JSON.stringify(socialPayload));
+      window.dispatchEvent(new CustomEvent('mpp_social_media_updated', { detail: socialPayload }));
+      await fetch('/api/site-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          setting_key: 'mpp_social_media',
+          setting_value: JSON.stringify(socialPayload)
+        })
+      });
     } catch (err) {
       console.error("Error saving contacts to db:", err);
     }

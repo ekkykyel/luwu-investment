@@ -282,6 +282,18 @@ export default function PortalMPP() {
   const [activeUmkmFilter, setActiveUmkmFilter] = useState<string>("Semua");
   const [umkmProducts, setUmkmProducts] = useState<any[]>(INITIAL_UMKM_PRODUCTS);
 
+  // --- Database Sync State: Fasilitas, UMKM, Alur, Kontak & Profil dari Supabase & API ---
+  const [dbFacilities, setDbFacilities] = useState<any[]>([]);
+  const [mppFlowSteps, setMppFlowSteps] = useState<any[]>([]);
+  const [liveContacts, setLiveContacts] = useState({
+    phone: "+62 811-420-1234",
+    email: "dpmptspkabluwu@gmail.com",
+    address: "Jl. Simpurusiang No. 45, Belopa, Kab. Luwu",
+    hours: "Senin - Jumat: 08:00 - 15:30 WITA",
+    maps_embed_url: "https://maps.google.com/maps?q=DPMPTSP%20Kabupaten%20Luwu%20Belopa&t=&z=16&ie=UTF8&iwloc=&output=embed"
+  });
+  const [portalProfile, setPortalProfile] = useState<any>(null);
+
   // --- State News & Pengumuman Portal MPP ---
   const [isNewsModalOpen, setIsNewsModalOpen] = useState(false);
   const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
@@ -851,12 +863,98 @@ export default function PortalMPP() {
     }
   }, []);
 
+  const fetchLiveFacilities = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('mpp_facilities')
+        .select('*')
+        .order('created_at', { ascending: true });
+      if (!error && data && data.length > 0) {
+        setDbFacilities(data);
+      }
+    } catch (err) {
+      console.warn("Notice loading mpp_facilities:", err);
+    }
+  }, []);
+
+  const fetchLiveUmkm = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('mpp_umkm')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (!error && data && data.length > 0) {
+        const mapped = data.map((u: any) => ({
+          id: String(u.id),
+          nama_produk: u.name,
+          nama_pemilik: u.owner_name || "Pelaku UMKM Luwu",
+          kategori: u.category || "Kuliner",
+          harga: "Produk Kemitraan MPP",
+          no_wa: (u.whatsapp || "628").replace(/\D/g, "").replace(/^0/, "62"),
+          status_izin: "Terdaftar NIB",
+          image: u.image_url || "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=400",
+          deskripsi: `Kemitraan UMKM binaan MPP Simpurusiang oleh ${u.owner_name || 'Pelaku Usaha'}.`
+        }));
+        setUmkmProducts(mapped);
+      }
+    } catch (err) {
+      console.warn("Notice loading mpp_umkm:", err);
+    }
+  }, []);
+
+  const fetchLiveFlow = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('mpp_flow')
+        .select('*')
+        .order('step_number', { ascending: true });
+      if (!error && data && data.length > 0) {
+        setMppFlowSteps(data);
+      }
+    } catch (err) {
+      console.warn("Notice loading mpp_flow:", err);
+    }
+  }, []);
+
+  const fetchLiveContacts = useCallback(async () => {
+    try {
+      const { data } = await supabase.from('mpp_contacts').select('*');
+      if (data && data.length > 0) {
+        const wa = data.find((c: any) => c.channel_name?.toLowerCase().includes("whatsapp") || c.channel_name?.toLowerCase().includes("wa") || c.channel_name?.toLowerCase().includes("helpdesk"));
+        const phone = data.find((c: any) => c.channel_name?.toLowerCase().includes("telepon") || c.channel_name?.toLowerCase().includes("phone"));
+        const email = data.find((c: any) => c.channel_name?.toLowerCase().includes("email"));
+        setLiveContacts(prev => ({
+          ...prev,
+          phone: wa?.value || phone?.value || prev.phone,
+          email: email?.value || prev.email
+        }));
+      }
+    } catch (err) {
+      console.warn("Notice loading mpp_contacts:", err);
+    }
+
+    try {
+      const res = await fetch('/api/site-settings?keys=mpp_portal_profile');
+      if (res.ok) {
+        const json = await res.json();
+        if (json?.mpp_portal_profile) {
+          const prof = typeof json.mpp_portal_profile === 'string' ? JSON.parse(json.mpp_portal_profile) : json.mpp_portal_profile;
+          setPortalProfile(prof);
+        }
+      }
+    } catch (e) {}
+  }, []);
+
   useEffect(() => {
     fetchLiveAgencies();
     fetchSkmData();
     fetchQueueStats();
+    fetchLiveFacilities();
+    fetchLiveUmkm();
+    fetchLiveFlow();
+    fetchLiveContacts();
 
-    // Listen to real-time additions/modifications/deletions from Admin MPP & Public Submissions
+    // Listen to real-time additions/modifications/deletions from Admin MPP & Public Submissions across all tables
     const syncChannel = supabase
       .channel('portal_mpp_full_live_sync')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'mpp_tenants' }, () => {
@@ -864,6 +962,18 @@ export default function PortalMPP() {
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'mpp_services' }, () => {
         fetchLiveAgencies();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mpp_facilities' }, () => {
+        fetchLiveFacilities();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mpp_umkm' }, () => {
+        fetchLiveUmkm();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mpp_flow' }, () => {
+        fetchLiveFlow();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mpp_contacts' }, () => {
+        fetchLiveContacts();
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'mpp_skm' }, () => {
         fetchSkmData();
@@ -876,7 +986,7 @@ export default function PortalMPP() {
     return () => {
       supabase.removeChannel(syncChannel);
     };
-  }, [fetchLiveAgencies, fetchSkmData, fetchQueueStats]);
+  }, [fetchLiveAgencies, fetchSkmData, fetchQueueStats, fetchLiveFacilities, fetchLiveUmkm, fetchLiveFlow, fetchLiveContacts]);
 
   // Helper untuk melakukan submit Survei SKM
   const handleSurveySubmit = async (e: React.FormEvent) => {
@@ -1390,19 +1500,58 @@ export default function PortalMPP() {
     return () => clearInterval(interval);
   }, [isUlasanPaused]);
 
-  const facilitiesData = (FACILITIES_CONFIG || [])?.map(fac => {
-    const rawFeatures = t(`mppPortal.facilitiesData.${fac.key}.features`, { returnObjects: true });
-    const features = Array.isArray(rawFeatures) ? (rawFeatures as string[]) : [];
-    return {
-      ...fac,
-      name: t(`mppPortal.facilitiesData.${fac.key}.name`),
-      shortName: t(`mppPortal.facilitiesData.${fac.key}.shortName`),
-      subtitle: t(`mppPortal.facilitiesData.${fac.key}.subtitle`),
-      tag: t(`mppPortal.facilitiesData.${fac.key}.tag`),
-      description: t(`mppPortal.facilitiesData.${fac.key}.desc`),
-      features,
-    };
-  }) || [];
+  const facilitiesData = useMemo(() => {
+    if (dbFacilities && dbFacilities.length > 0) {
+      return dbFacilities.map((df: any) => {
+        const getIcon = (name: string) => {
+          const n = (name || '').toLowerCase();
+          if (n.includes('anak') || n.includes('kid') || n.includes('bermain')) return Gamepad2;
+          if (n.includes('baca') || n.includes('pustaka') || n.includes('buku')) return BookOpen;
+          if (n.includes('laktasi') || n.includes('bayi') || n.includes('ibu')) return Baby;
+          if (n.includes('disabilitas') || n.includes('prioritas')) return Accessibility;
+          if (n.includes('ibadah') || n.includes('musholla') || n.includes('shalat')) return Moon;
+          if (n.includes('kiosk') || n.includes('digital') || n.includes('mandiri')) return Laptop;
+          if (n.includes('pengaduan') || n.includes('aduan')) return HeartHandshake;
+          if (n.includes('umkm') || n.includes('kemitraan')) return Store;
+          return Armchair;
+        };
+        const configMatch = (FACILITIES_CONFIG || []).find(c => 
+          (c.key && (df.name || '').toLowerCase().includes(c.key.toLowerCase())) || 
+          (c.id && (df.name || '').toLowerCase().includes(c.id.toLowerCase()))
+        );
+        return {
+          id: String(df.id),
+          key: `db_${df.id}`,
+          name: df.name,
+          shortName: df.name.length > 20 ? df.name.slice(0, 20) + '...' : df.name,
+          subtitle: df.floor || 'Lantai 1',
+          tag: df.floor || 'Fasilitas Utama',
+          description: df.description || 'Fasilitas penunjang kenyamanan terpadu di Gedung Mal Pelayanan Publik Simpurusiang Luwu.',
+          icon: configMatch ? configMatch.icon : getIcon(df.name),
+          image: df.image_url || configMatch?.image || 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1000&q=80',
+          features: [
+            'Aksesibilitas Prima & Ramah Semua Kalangan',
+            'Kebersihan dan Kenyamanan Berstandar Nasional',
+            'Terhubung Sistem Operasional MPP Simpurusiang'
+          ]
+        };
+      });
+    }
+
+    return (FACILITIES_CONFIG || [])?.map(fac => {
+      const rawFeatures = t(`mppPortal.facilitiesData.${fac.key}.features`, { returnObjects: true });
+      const features = Array.isArray(rawFeatures) ? (rawFeatures as string[]) : [];
+      return {
+        ...fac,
+        name: t(`mppPortal.facilitiesData.${fac.key}.name`),
+        shortName: t(`mppPortal.facilitiesData.${fac.key}.shortName`),
+        subtitle: t(`mppPortal.facilitiesData.${fac.key}.subtitle`),
+        tag: t(`mppPortal.facilitiesData.${fac.key}.tag`),
+        description: t(`mppPortal.facilitiesData.${fac.key}.desc`),
+        features,
+      };
+    }) || [];
+  }, [dbFacilities, t]);
 
   const activeFacility = (facilitiesData || []).find(f => f.id === activeFacilityId) || facilitiesData?.[0];
 
@@ -2527,7 +2676,13 @@ export default function PortalMPP() {
                       <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.04] via-transparent to-teal-500/[0.03] dark:from-emerald-400/[0.06] dark:to-transparent pointer-events-none" />
 
                       {/* Bagian Atas: Gambar Representatif + Ikon Overlap */}
-                      <div className="relative h-48 sm:h-52 overflow-hidden bg-slate-900">
+                      <div 
+                        className="relative h-48 sm:h-52 overflow-hidden bg-slate-900 cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedServiceDetail(service as any);
+                        }}
+                      >
                         <img 
                           src={service.image} 
                           alt={service.title} 
@@ -2539,6 +2694,14 @@ export default function PortalMPP() {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent"></div>
                         
+                        {/* Hover Overlay Hint: "Spesifikasi & Galeri" */}
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-slate-950/40 backdrop-blur-[2px] z-10 pointer-events-none">
+                          <span className="px-3.5 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 text-slate-900 dark:text-white text-xs font-bold shadow-lg flex items-center gap-1.5 border border-white/20 transform scale-95 group-hover:scale-100 transition-transform">
+                            <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+                            <span>Spesifikasi & Galeri</span>
+                          </span>
+                        </div>
+
                         {/* Ikon Overlap dengan Rotasi Dinamis & Glassmorphism */}
                         <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl absolute -bottom-3 sm:-bottom-4 left-5 sm:left-6 ${service.iconContainerClass || 'bg-white/95 dark:bg-slate-800/95'} backdrop-blur-md shadow-xl flex items-center justify-center border-2 border-white/80 dark:border-white/20 z-20 group-hover:scale-115 group-hover:rotate-[-4deg] transition-transform duration-300`}>
                           <Icon className={`w-7 h-7 sm:w-8 sm:h-8 ${service.iconColor} stroke-[2.2]`} />

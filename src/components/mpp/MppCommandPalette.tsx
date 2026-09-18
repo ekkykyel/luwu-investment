@@ -446,7 +446,7 @@ export const MppCommandPalette: React.FC<MppCommandPaletteProps> = ({
     {
       id: 'nav-umkm',
       title: 'Galeri & Pojok UMKM Binaan Luwu',
-      description: 'Kopi Latimojong, olahan sagu, kerajinan lokal, dan produk khas Kabupaten Luwu',
+      description: 'Kopi Latimojong, olahan sagu, kerajinan lokal, dan produk khas Luwu',
       category: 'navigasi',
       categoryLabel: 'Navigasi Seksi',
       icon: Building2,

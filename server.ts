@@ -3289,24 +3289,31 @@ const MPP_NEWS_FILE = path.join(process.cwd(), "data", "mpp_news.json");
 
 async function loadServerMppNews(): Promise<any[]> {
   try {
-    // 1. Direct query from Supabase mpp_articles table
-    const { data: articles, error } = await supabase
-      .from('mpp_articles')
+    // 1. Direct query from Supabase news table (Single Source of Truth)
+    const { data: newsItems, error } = await supabase
+      .from('news')
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (!error && Array.isArray(articles) && articles.length > 0) {
-      const mapped = articles.map((art: any) => ({
-        id: String(art.id),
-        judul: art.title || "Berita MPP Simpurusiang",
-        kategori: art.category || "Giat Kegiatan MPP",
-        penulis: art.author || "Humas Pemkab Luwu",
-        tanggal: art.created_at ? new Date(art.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }) : "Terbaru",
-        image: art.image_url || "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80",
-        ringkasan: art.content || "Informasi resmi seputar pelayanan terpadu MPP Simpurusiang.",
-        isiLengkap: art.content || "Informasi resmi seputar pelayanan terpadu MPP Simpurusiang.",
-        status: art.is_published ? "published" : "draft",
-        isPinned: false
+    if (!error && Array.isArray(newsItems) && newsItems.length > 0) {
+      const mapped = newsItems.map((n: any) => ({
+        id: String(n.id),
+        judul: n.title || "Berita MPP Simpurusiang",
+        judul_en: n.title_en || n.title,
+        judul_zh: n.title_zh || n.title,
+        kategori: n.category || "Giat Kegiatan MPP",
+        penulis: n.author || "Admin MPP Luwu",
+        tanggal: n.date || (n.created_at ? new Date(n.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }) : "Terbaru"),
+        image: n.image_url || "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80",
+        ringkasan: n.summary || (n.content ? (n.content.length > 180 ? n.content.slice(0, 180) + "..." : n.content) : "Informasi resmi seputar pelayanan terpadu MPP Simpurusiang."),
+        ringkasan_en: n.summary_en,
+        ringkasan_zh: n.summary_zh,
+        isiLengkap: n.content || n.summary || "Informasi resmi seputar pelayanan terpadu MPP Simpurusiang.",
+        isiLengkap_en: n.content_en,
+        isiLengkap_zh: n.content_zh,
+        status: n.status || "published",
+        isPinned: Boolean(n.is_pinned),
+        viewsCount: n.views_count || 0
       }));
       return mapped;
     }
@@ -3386,11 +3393,52 @@ app.post("/api/mpp-news", async (req, res) => {
     const payload = req.body;
     let current = await loadServerMppNews();
 
+    // Helper to persist single news item into Supabase news table
+    const syncItemToSupabaseNews = async (item: any) => {
+      try {
+        const itemToDb: any = {
+          title: item.judul || item.title || "Berita MPP Simpurusiang",
+          title_en: item.judul_en,
+          title_zh: item.judul_zh,
+          summary: item.ringkasan || item.summary || (item.content || item.isiLengkap ? (item.content || item.isiLengkap).slice(0, 180) + '...' : ''),
+          summary_en: item.ringkasan_en,
+          summary_zh: item.ringkasan_zh,
+          content: item.isiLengkap || item.content || item.ringkasan || "Informasi pelayanan publik.",
+          content_en: item.isiLengkap_en,
+          content_zh: item.isiLengkap_zh,
+          category: item.kategori || item.category || 'Giat Kegiatan MPP',
+          author: item.penulis || item.author || 'Admin MPP Luwu',
+          date: item.tanggal || item.date || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+          image_url: item.image || item.photo || item.image_url || "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80",
+          status: item.status || 'published',
+          is_pinned: Boolean(item.isPinned ?? item.is_pinned),
+          views_count: item.viewsCount || 10,
+          updated_at: new Date().toISOString()
+        };
+        if (item.id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(item.id)) {
+          itemToDb.id = item.id;
+        }
+        const { data, error } = await supabase.from('news').upsert(itemToDb).select().single();
+        if (error) {
+          console.warn("[syncItemToSupabaseNews] error:", error);
+        } else if (data) {
+          item.id = String(data.id);
+        }
+      } catch (err) {
+        console.warn("[syncItemToSupabaseNews] catch:", err);
+      }
+    };
+
     if (Array.isArray(payload)) {
       // Full list replacement / sync
       current = payload;
+      // Sync the newest item to Supabase news table if available
+      if (payload.length > 0) {
+        await syncItemToSupabaseNews(payload[0]);
+      }
     } else if (payload && typeof payload === 'object') {
       // Single news item addition or update
+      await syncItemToSupabaseNews(payload);
       const existingIdx = current.findIndex((item: any) => item.id === payload.id);
       if (existingIdx >= 0) {
         current[existingIdx] = { ...current[existingIdx], ...payload };
@@ -3402,7 +3450,9 @@ app.post("/api/mpp-news", async (req, res) => {
     }
 
     await saveServerMppNews(current);
-    return res.json({ success: true, data: current });
+    // Reload freshly from database to return the official database records
+    const fresh = await loadServerMppNews();
+    return res.json({ success: true, data: fresh.length > 0 ? fresh : current });
   } catch (err) {
     console.error("[POST /api/mpp-news] Error:", err);
     return res.status(500).json({ success: false, error: "Failed to persist news." });
@@ -3413,8 +3463,15 @@ app.post("/api/mpp-news", async (req, res) => {
 app.delete("/api/mpp-news/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    // Attempt delete from Supabase news table
+    try {
+      await supabase.from('news').delete().eq('id', id);
+    } catch (dbErr) {
+      console.warn("[DELETE /api/mpp-news] Supabase delete notice:", dbErr);
+    }
+
     let current = await loadServerMppNews();
-    current = current.filter((item: any) => item.id !== id);
+    current = current.filter((item: any) => String(item.id) !== String(id));
     await saveServerMppNews(current);
     return res.json({ success: true, data: current });
   } catch (err) {
