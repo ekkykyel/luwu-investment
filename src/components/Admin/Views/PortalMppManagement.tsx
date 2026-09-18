@@ -44,6 +44,7 @@ import {
 import { supabase } from "../../../lib/supabaseClient";
 import { MPPTenant, MPPService } from "../../../types/mpp";
 import { MppNewsItem, getStoredMppNews, saveMppNews, syncMppNewsWithServer } from "../../../data/mppNewsData";
+import { MppSocialMediaAdminManager } from "../../mpp/MppSocialMediaAdminManager";
 
 interface ImageUploadFieldProps {
   id: string;
@@ -2604,14 +2605,17 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
               </div>
             </div>
 
-            {/* Kontak Kami, Peta & Sosial Media */}
+            {/* Pengaturan & Kurasi Media Sosial Resmi MPP */}
+            <MppSocialMediaAdminManager isDark={isDark} />
+
+            {/* Kontak Kami, Peta & Jam Operasional */}
             <form onSubmit={handleSaveContacts} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
               <h3 className="text-base font-bold text-white flex items-center gap-2 font-sans">
                 <Globe className="w-4 h-4 text-emerald-400" />
-                <span>Pengaturan Kontak Resmi & Sosial Media</span>
+                <span>Pengaturan Jam Pelayanan, Helpdesk & Peta Lokasi</span>
               </h3>
               <p className="text-xs text-slate-400">
-                Ganti jam pelayanan operasional, nomor helpdesk resmi, link Google Maps embed, serta media sosial instansi MPP Luwu.
+                Ganti jam pelayanan operasional, nomor helpdesk resmi, dan link Google Maps embed resmi MPP Simpurusiang Kab. Luwu.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

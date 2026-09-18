@@ -39,6 +39,13 @@ import { MppServicesWorkflowCarousel } from './mpp/MppServicesWorkflowCarousel';
 import { MppNewsCatalogModal } from './mpp/MppNewsCatalogModal';
 import { MppMagattiGallerySlideshow } from './mpp/MppMagattiGallerySlideshow';
 import { MppNewsItem, getStoredMppNews, syncMppNewsWithServer } from '../data/mppNewsData';
+import { 
+  MppSocialMediaSettings, 
+  getStoredMppSocialMedia, 
+  DEFAULT_MPP_SOCIAL_MEDIA, 
+  SOCIAL_MEDIA_UPDATE_EVENT, 
+  SOCIAL_MEDIA_STORAGE_KEY 
+} from '../data/mppSocialMediaData';
 import TenantDashboard from './mpp/TenantDashboard';
 import { PetugasGeraiLoginModal } from './mpp/PetugasGeraiLoginModal';
 import { MppAirportKioskModal } from './MppAirportKioskModal';
@@ -277,6 +284,29 @@ export default function PortalMPP() {
   const [isNewsModalOpen, setIsNewsModalOpen] = useState(false);
   const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
   const [portalNews, setPortalNews] = useState<MppNewsItem[]>(() => getStoredMppNews());
+
+  // --- State Sosial Media Resmi MPP ---
+  const [socialMediaData, setSocialMediaData] = useState<MppSocialMediaSettings>(() => getStoredMppSocialMedia());
+
+  useEffect(() => {
+    const handleSocialMediaUpdate = () => {
+      setSocialMediaData(getStoredMppSocialMedia());
+    };
+    handleSocialMediaUpdate();
+
+    const handleSocialStorage = (e: StorageEvent) => {
+      if (e.key === SOCIAL_MEDIA_STORAGE_KEY) {
+        handleSocialMediaUpdate();
+      }
+    };
+
+    window.addEventListener(SOCIAL_MEDIA_UPDATE_EVENT, handleSocialMediaUpdate);
+    window.addEventListener('storage', handleSocialStorage);
+    return () => {
+      window.removeEventListener(SOCIAL_MEDIA_UPDATE_EVENT, handleSocialMediaUpdate);
+      window.removeEventListener('storage', handleSocialStorage);
+    };
+  }, []);
 
   useEffect(() => {
     const handleNewsUpdate = () => {
@@ -4142,7 +4172,7 @@ export default function PortalMPP() {
               {/* Kartu 1: Instagram */}
               <motion.div 
                 initial={{ opacity: 0, y: 30, scale: 0.96, filter: "blur(6px)" }}
-            whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.3, delay: 0, ease: "easeOut" }}
                 className="bg-white/80 dark:bg-slate-800/40 backdrop-blur-xl rounded-3xl shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-100 dark:border-white/5 h-[420px] flex flex-col group hover:shadow-2xl transition-all duration-300"
@@ -4164,7 +4194,7 @@ export default function PortalMPP() {
                   </div>
                   <div className="flex flex-col min-w-0">
                     <span className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm font-sans truncate flex items-center gap-1.5">
-                      dpmptspkabluwu
+                      {socialMediaData.instagram.handle.replace(/^@/, '')}
                       <CheckCircle2 className="w-3.5 h-3.5 text-blue-500 shrink-0 inline" />
                     </span>
                     <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
@@ -4172,7 +4202,7 @@ export default function PortalMPP() {
                     </span>
                   </div>
                   <a 
-                    href="https://instagram.com" 
+                    href={socialMediaData.instagram.profileUrl} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="ml-auto min-h-[48px] text-xs sm:text-sm font-semibold tracking-wide px-4 py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white transition-all flex items-center gap-1.5 font-sans shrink-0 shadow-md shadow-emerald-500/20"
@@ -4185,7 +4215,7 @@ export default function PortalMPP() {
                 {/* Konten Feed Post */}
                 <div className="relative h-44 w-full overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0">
                   <img 
-                    src="https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&q=80&w=800" 
+                    src={socialMediaData.instagram.postImage || "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&q=80&w=800"} 
                     alt="Aktivitas Pelayanan Publik MPP Luwu" 
                     referrerPolicy="no-referrer" 
                     onError={(e) => {
@@ -4196,7 +4226,7 @@ export default function PortalMPP() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                   />
                   <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md px-4.5 py-1 rounded-lg text-[10px] font-medium text-white flex items-center gap-1">
-                    <Instagram className="w-3 h-3 text-pink-400" /> {t("mppPortal.sosialMedia.igTag")}
+                    <Instagram className="w-3 h-3 text-pink-400" /> {socialMediaData.instagram.tag || t("mppPortal.sosialMedia.igTag")}
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
                 </div>
@@ -4209,17 +4239,17 @@ export default function PortalMPP() {
                       <MessageCircle className="w-4 h-4" />
                       <Share2 className="w-4 h-4" />
                       <span className="text-[11px] font-bold ml-auto text-slate-500 dark:text-slate-400">
-                        {t("mppPortal.sosialMedia.igLikes")}
+                        {socialMediaData.instagram.stats || t("mppPortal.sosialMedia.igLikes")}
                       </span>
                     </div>
                     <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-300 leading-normal line-clamp-2">
-                      {t("mppPortal.sosialMedia.igDesc")}
+                      {socialMediaData.instagram.caption || t("mppPortal.sosialMedia.igDesc")}
                     </p>
                   </div>
 
                   {/* Tombol CTA */}
                   <a 
-                    href="https://instagram.com" 
+                    href={socialMediaData.instagram.profileUrl} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="min-h-[48px] mt-2 pt-2 border-t border-gray-100 dark:border-white/5 text-xs sm:text-sm font-semibold tracking-wide text-emerald-600 dark:text-emerald-400 flex items-center justify-between hover:text-emerald-500 transition-colors"
@@ -4233,7 +4263,7 @@ export default function PortalMPP() {
               {/* Kartu 2: YouTube */}
               <motion.div 
                 initial={{ opacity: 0, y: 30, scale: 0.96, filter: "blur(6px)" }}
-            whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.3, delay: 0.08, ease: "easeOut" }}
                 className="bg-white/80 dark:bg-slate-800/40 backdrop-blur-xl rounded-3xl shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-100 dark:border-white/5 h-[420px] flex flex-col group hover:shadow-2xl transition-all duration-300"
@@ -4245,14 +4275,14 @@ export default function PortalMPP() {
                   </div>
                   <div className="flex flex-col min-w-0">
                     <span className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm font-sans truncate">
-                      {t("mppPortal.sosialMedia.ytTitle")}
+                      {socialMediaData.youtube.channelName || t("mppPortal.sosialMedia.ytTitle")}
                     </span>
                     <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
                       {t("mppPortal.sosialMedia.ytSubtitle")}
                     </span>
                   </div>
                   <a 
-                    href="https://youtube.com" 
+                    href={socialMediaData.youtube.channelUrl} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="ml-auto min-h-[48px] text-xs sm:text-sm font-semibold tracking-wide px-4 py-2.5 rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white transition-all flex items-center gap-1.5 font-sans shrink-0 shadow-md shadow-red-600/20"
@@ -4263,10 +4293,15 @@ export default function PortalMPP() {
                 </div>
 
                 {/* Konten Video Simulasi */}
-                <div className="relative h-44 w-full overflow-hidden bg-slate-900 shrink-0 flex items-center justify-center cursor-pointer">
+                <a 
+                  href={socialMediaData.youtube.videoUrl || socialMediaData.youtube.channelUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative h-44 w-full overflow-hidden bg-slate-900 shrink-0 flex items-center justify-center cursor-pointer block"
+                >
                   <img 
-                    src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800" 
-                    alt="Video Profil Pelayanan MPP Simpurusiang" 
+                    src={socialMediaData.youtube.videoThumbnail || "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800"} 
+                    alt={socialMediaData.youtube.videoTitle || "Video Profil Pelayanan MPP Simpurusiang"} 
                     referrerPolicy="no-referrer" 
                     onError={(e) => {
                       e.currentTarget.onerror = null;
@@ -4279,24 +4314,24 @@ export default function PortalMPP() {
                     <Play className="w-5 h-5 ml-0.5 fill-current" />
                   </div>
                   <span className="absolute bottom-2.5 right-2.5 bg-black/80 backdrop-blur-sm px-4 py-0.5 rounded text-[10px] font-bold text-white">
-                    04:15
+                    {socialMediaData.youtube.duration || "04:15"}
                   </span>
-                </div>
+                </a>
 
                 {/* Info Judul Video & Statistik */}
                 <div className="p-4 flex flex-col flex-1 justify-between bg-white dark:bg-slate-900/60">
                   <div>
                     <h4 className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm font-sans line-clamp-1 leading-snug group-hover:text-emerald-500 transition-colors">
-                      {t("mppPortal.sosialMedia.ytVideoTitle")}
+                      {socialMediaData.youtube.videoTitle || t("mppPortal.sosialMedia.ytVideoTitle")}
                     </h4>
                     <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-                      {t("mppPortal.sosialMedia.ytVideoStats")}
+                      {socialMediaData.youtube.stats || t("mppPortal.sosialMedia.ytVideoStats")}
                     </p>
                   </div>
 
                   {/* Tombol CTA */}
                   <a 
-                    href="https://youtube.com" 
+                    href={socialMediaData.youtube.videoUrl || socialMediaData.youtube.channelUrl} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="min-h-[48px] mt-2 pt-2 border-t border-gray-100 dark:border-white/5 text-xs sm:text-sm font-semibold tracking-wide text-emerald-600 dark:text-emerald-400 flex items-center justify-between hover:text-emerald-500 transition-colors"
@@ -4310,7 +4345,7 @@ export default function PortalMPP() {
               {/* Kartu 3: Facebook */}
               <motion.div 
                 initial={{ opacity: 0, y: 30, scale: 0.96, filter: "blur(6px)" }}
-            whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.3, delay: 0.16, ease: "easeOut" }}
                 className="bg-white/80 dark:bg-slate-800/40 backdrop-blur-xl rounded-3xl shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-100 dark:border-white/5 h-[420px] flex flex-col group hover:shadow-2xl transition-all duration-300"
@@ -4322,14 +4357,14 @@ export default function PortalMPP() {
                   </div>
                   <div className="flex flex-col min-w-0">
                     <span className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm font-sans truncate">
-                      {t("mppPortal.sosialMedia.fbTitle")}
+                      {socialMediaData.facebook.pageName || t("mppPortal.sosialMedia.fbTitle")}
                     </span>
                     <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
                       {t("mppPortal.sosialMedia.fbSubtitle")}
                     </span>
                   </div>
                   <a 
-                    href="https://facebook.com" 
+                    href={socialMediaData.facebook.pageUrl} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="ml-auto min-h-[48px] text-xs sm:text-sm font-semibold tracking-wide px-4 py-2.5 rounded-2xl bg-[#1877F2] hover:bg-[#166fe5] active:scale-95 text-white transition-all flex items-center gap-1.5 font-sans shrink-0 shadow-md shadow-blue-500/20"
@@ -4342,7 +4377,7 @@ export default function PortalMPP() {
                 {/* Konten Feed Post */}
                 <div className="relative h-44 w-full overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0">
                   <img 
-                    src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&q=80&w=800" 
+                    src={socialMediaData.facebook.postImage || "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&q=80&w=800"} 
                     alt="Sosialisasi Perizinan dan Pelayanan Terpadu Luwu" 
                     referrerPolicy="no-referrer" 
                     onError={(e) => {
@@ -4353,7 +4388,7 @@ export default function PortalMPP() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                   />
                   <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md px-4.5 py-1 rounded-lg text-[10px] font-medium text-white flex items-center gap-1">
-                    <Facebook className="w-3 h-3 text-blue-400" /> {t("mppPortal.sosialMedia.fbTag")}
+                    <Facebook className="w-3 h-3 text-blue-400" /> {socialMediaData.facebook.tag || t("mppPortal.sosialMedia.fbTag")}
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
                 </div>
@@ -4362,16 +4397,16 @@ export default function PortalMPP() {
                 <div className="p-4 flex flex-col flex-1 justify-between bg-white dark:bg-slate-900/60">
                   <div>
                     <div className="flex items-center gap-2 text-[11px] font-medium text-slate-600 dark:text-slate-300 mb-1.5">
-                      <span>{t("mppPortal.sosialMedia.fbStats")}</span>
+                      <span>{socialMediaData.facebook.stats || t("mppPortal.sosialMedia.fbStats")}</span>
                     </div>
                     <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-300 leading-normal line-clamp-2">
-                      {t("mppPortal.sosialMedia.fbDesc")}
+                      {socialMediaData.facebook.caption || t("mppPortal.sosialMedia.fbDesc")}
                     </p>
                   </div>
 
                   {/* Tombol CTA */}
                   <a 
-                    href="https://facebook.com" 
+                    href={socialMediaData.facebook.pageUrl} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="min-h-[48px] mt-2 pt-2 border-t border-gray-100 dark:border-white/5 text-xs sm:text-sm font-semibold tracking-wide text-emerald-600 dark:text-emerald-400 flex items-center justify-between hover:text-emerald-500 transition-colors"
@@ -4385,7 +4420,7 @@ export default function PortalMPP() {
               {/* Kartu 4: TikTok */}
               <motion.div 
                 initial={{ opacity: 0, y: 30, scale: 0.96, filter: "blur(6px)" }}
-            whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.3, delay: 0.24, ease: "easeOut" }}
                 className="bg-white/80 dark:bg-slate-800/40 backdrop-blur-xl rounded-3xl shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-100 dark:border-white/5 h-[420px] flex flex-col group hover:shadow-2xl transition-all duration-300"
@@ -4397,14 +4432,14 @@ export default function PortalMPP() {
                   </div>
                   <div className="flex flex-col min-w-0">
                     <span className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm font-sans truncate">
-                      @mpp.luwu
+                      {socialMediaData.tiktok.handle}
                     </span>
                     <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
                       {t("mppPortal.sosialMedia.ttSubtitle")}
                     </span>
                   </div>
                   <a 
-                    href="https://tiktok.com" 
+                    href={socialMediaData.tiktok.profileUrl} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="ml-auto min-h-[48px] text-xs sm:text-sm font-semibold tracking-wide px-4 py-2.5 rounded-2xl bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 active:scale-95 text-white transition-all flex items-center gap-1.5 font-sans shrink-0 shadow-md"
@@ -4415,9 +4450,14 @@ export default function PortalMPP() {
                 </div>
 
                 {/* Konten Video Feed Simulasi */}
-                <div className="relative h-44 w-full overflow-hidden bg-slate-900 shrink-0">
+                <a 
+                  href={socialMediaData.tiktok.profileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative h-44 w-full overflow-hidden bg-slate-900 shrink-0 block"
+                >
                   <img 
-                    src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800" 
+                    src={socialMediaData.tiktok.videoThumbnail || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800"} 
                     alt="Edukasi Pelayanan Publik MPP Simpurusiang" 
                     referrerPolicy="no-referrer" 
                     onError={(e) => {
@@ -4428,29 +4468,29 @@ export default function PortalMPP() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90" 
                   />
                   <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md px-4.5 py-1 rounded-lg text-[10px] font-medium text-white flex items-center gap-1">
-                    <Music2 className="w-3 h-3 text-cyan-400" /> {t("mppPortal.sosialMedia.ttTag")}
+                    <Music2 className="w-3 h-3 text-cyan-400" /> {socialMediaData.tiktok.tag || t("mppPortal.sosialMedia.ttTag")}
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-3.5">
-                    <span className="text-white text-xs font-bold font-sans drop-shadow-sm">
-                      {t("mppPortal.sosialMedia.ttTitle")}
+                    <span className="text-white text-xs font-bold font-sans drop-shadow-sm line-clamp-1">
+                      {socialMediaData.tiktok.caption || t("mppPortal.sosialMedia.ttTitle")}
                     </span>
                     <span className="text-[10px] text-slate-300 mt-0.5 flex items-center gap-1">
                       <Music2 className="w-2.5 h-2.5" /> {t("mppPortal.sosialMedia.ttSound")}
                     </span>
                   </div>
-                </div>
+                </a>
 
                 {/* Info Interaksi */}
                 <div className="p-4 flex flex-col flex-1 justify-between bg-white dark:bg-slate-900/60">
                   <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-                    <span>{t("mppPortal.sosialMedia.ttLikes")}</span>
+                    <span>{socialMediaData.tiktok.stats || t("mppPortal.sosialMedia.ttLikes")}</span>
                     <span>{t("mppPortal.sosialMedia.ttComments")}</span>
                     <span>{t("mppPortal.sosialMedia.ttShares")}</span>
                   </div>
 
                   {/* Tombol CTA */}
                   <a 
-                    href="https://tiktok.com" 
+                    href={socialMediaData.tiktok.profileUrl} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="min-h-[48px] mt-2 pt-2 border-t border-gray-100 dark:border-white/5 text-xs sm:text-sm font-semibold tracking-wide text-emerald-600 dark:text-emerald-400 flex items-center justify-between hover:text-emerald-500 transition-colors"
