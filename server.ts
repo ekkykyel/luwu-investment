@@ -61,12 +61,17 @@ export function getPostgisPool(): Pool | null {
       postgisPool = new Pool({
         connectionString: process.env.DATABASE_URL,
         ssl: { rejectUnauthorized: false },
-        max: 15,
-        idleTimeoutMillis: 30000,
-        connectionTimeoutMillis: 8000,
+        max: 20,
+        idleTimeoutMillis: 15000,
+        connectionTimeoutMillis: 4000,
       });
       postgisPool.on("error", (err: any) => {
-        console.warn("[PostGIS Pool] Client warning:", err?.message || err);
+        const msg = err?.message || String(err);
+        if (msg.includes("timeout") || msg.includes("terminated") || msg.includes("Connection terminated")) {
+          // Graceful transient connection recycling
+          return;
+        }
+        console.warn("[PostGIS Pool] Client notice:", msg);
       });
     } catch (e: any) {
       console.warn("[PostGIS Pool] Init failed:", e?.message);
@@ -727,6 +732,9 @@ async function safeGetLayerDataRpc(tableName: string, timeoutMs?: number): Promi
   return { data: [], error: null };
 }
 
+// Persistent in-memory cache for child tables to prevent cascading UI blanking on transient timeouts
+const childTableCaches = new Map<string, any[]>();
+
 async function fetchAndJoinInvestments(bypassCache = false) {
   if (SUPABASE_URL.includes("placeholder.supabase.co")) {
     return { data: [], error: null };
@@ -746,28 +754,48 @@ async function fetchAndJoinInvestments(bypassCache = false) {
     return activeJoinPromise;
   }
 
-  const safeQuery = async (queryFn: () => Promise<any>, tableName: string, maxAttempts = 3) => {
-    let delay = 1500;
+  const safeQuery = async (queryFn: () => Promise<any>, tableName: string, maxAttempts = 2) => {
+    let delay = 400;
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
-        const res = await queryFn();
-        if (res.error) {
+        const queryWithTimeout = Promise.race([
+          queryFn(),
+          new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`Timeout querying ${tableName}`)), 4500))
+        ]);
+        const res = await queryWithTimeout;
+        if (res?.error) {
           throw res.error;
+        }
+        if (res?.data && Array.isArray(res.data)) {
+          childTableCaches.set(tableName, res.data);
         }
         return res;
       } catch (err: any) {
-        const isTransient = err?.message && (err.message.includes("504") || err.message.includes("502") || err.message.includes("520") || err.message.includes("timeout") || err.message.includes("FetchError") || err.message.includes("fetch"));
-        if (isTransient && attempt < maxAttempts) {
-          console.warn(`[SAFE QUERY] Transient query error for table ${tableName} (attempt ${attempt}/${maxAttempts}). Retrying in ${delay}ms...`, err?.message || err);
+        const errMsg = err?.message || String(err);
+        const isStatementTimeout = errMsg.includes("canceling statement") || errMsg.includes("statement timeout");
+        
+        // If DB statement is cancelled due to statement timeout, do NOT retry multiple times with backoff
+        // Fall back immediately to cached child table data or honest fallback empty array
+        if (isStatementTimeout) {
+          const cachedFallback = childTableCaches.get(tableName) || [];
+          console.warn(`[SAFE QUERY] Handled statement timeout on ${tableName}. Using ${cachedFallback.length ? 'cached snapshot' : 'honest fallback []'}.`);
+          return { data: cachedFallback, error: null };
+        }
+
+        const isTransientNetwork = errMsg.includes("504") || errMsg.includes("502") || errMsg.includes("520") || errMsg.includes("FetchError") || errMsg.includes("fetch failed") || errMsg.includes("ECONNRESET");
+        if (isTransientNetwork && attempt < maxAttempts) {
+          console.warn(`[SAFE QUERY] Transient network error for table ${tableName} (attempt ${attempt}/${maxAttempts}). Retrying in ${delay}ms...`, errMsg);
           await new Promise(resolve => setTimeout(resolve, delay));
-          delay *= 2; // Exponential backoff
+          delay *= 2;
           continue;
         }
-        console.warn(`[SAFE QUERY] Handled warning querying ${tableName} after ${attempt} attempts:`, err?.message || err);
-        return { data: [], error: err };
+        
+        const cachedFallback = childTableCaches.get(tableName) || [];
+        console.warn(`[SAFE QUERY] Handled warning querying ${tableName} after ${attempt} attempts:`, errMsg);
+        return { data: cachedFallback, error: null };
       }
     }
-    return { data: [], error: new Error(`Failed to query ${tableName} after ${maxAttempts} attempts`) };
+    return { data: childTableCaches.get(tableName) || [], error: null };
   };
 
   const fetchPromise = (async () => {
@@ -782,13 +810,13 @@ async function fetchAndJoinInvestments(bypassCache = false) {
         { data: legList, error: legErr }
       ] = await withTimeout(
         Promise.all([
-          safeQuery(() => supabase.from('investments').select('*'), 'investments'),
+          safeQuery(() => supabase.from('investments').select('*').limit(500), 'investments'),
           safeGetLayerDataRpc('gis_potensi_investasi'),
-          safeQuery(() => supabase.from('financials').select('*'), 'financials'),
-          safeQuery(() => supabase.from('locations').select('*'), 'locations'),
-          safeQuery(() => supabase.from('media_assets').select('*'), 'media_assets'),
-          safeQuery(() => supabase.from('investment_scores').select('*'), 'investment_scores'),
-          safeQuery(() => supabase.from('legalities').select('*'), 'legalities')
+          safeQuery(() => supabase.from('financials').select('id, project_id, capex, opex, irr, npv, bep, roi, currency').limit(500), 'financials'),
+          safeQuery(() => supabase.from('locations').select('id, project_id, address, district, latitude, longitude').limit(500), 'locations'),
+          safeQuery(() => supabase.from('media_assets').select('id, project_id, photos, videos, documents').limit(500), 'media_assets'),
+          safeQuery(() => supabase.from('investment_scores').select('id, project_id, score, category').limit(500), 'investment_scores'),
+          safeQuery(() => supabase.from('legalities').select('id, project_id, status, permit_number, rtrw_compliance, amdal_status').limit(500), 'legalities')
         ]),
         12000,
         "Database fetch timed out inside fetchAndJoinInvestments"
@@ -7152,7 +7180,8 @@ app.get("/api/gis_jalan", async (req, res) => {
 // =========================================================
 
 const tileMemoryCache = new Map<string, { buffer: Buffer; expires: number }>();
-const MAX_TILE_CACHE = 1000;
+const inFlightTiles = new Map<string, Promise<Buffer | null>>();
+const MAX_TILE_CACHE = 2000;
 
 async function fetchMvtTile(layer: string, z: number, x: number, y: number): Promise<Buffer | null> {
   const cacheKey = `${layer}:${z}:${x}:${y}`;
@@ -7162,72 +7191,103 @@ async function fetchMvtTile(layer: string, z: number, x: number, y: number): Pro
     return cached.buffer;
   }
 
-  let tileBuffer: Buffer | null = null;
-
-  // 1. Primary: Direct PostGIS Query via Pool
-  const pool = getPostgisPool();
-  if (pool) {
-    try {
-      let querySql = "";
-      let params: any[] = [];
-      if (layer === "rtrw" || layer === "zonasi" || layer === "gis_zonasi" || layer === "layer_zonasi") {
-        querySql = "SELECT public.get_rtrw_mvt($1, $2, $3) AS mvt;";
-        params = [z, x, y];
-      } else if (layer === "rbi" || layer === "gis_rbi" || layer === "layer_rbi") {
-        querySql = "SELECT public.get_rbi_mvt($1, $2, $3) AS mvt;";
-        params = [z, x, y];
-      } else {
-        querySql = "SELECT public.get_spatial_layer_mvt($1, $2, $3, $4) AS mvt;";
-        const sanitizedTable = layer.startsWith("gis_") ? layer : `gis_${layer}`;
-        params = [sanitizedTable, z, x, y];
-      }
-
-      const res = await pool.query(querySql, params);
-      if (res.rows && res.rows[0]?.mvt) {
-        const raw = res.rows[0].mvt;
-        tileBuffer = Buffer.isBuffer(raw) ? raw : Buffer.from(raw);
-      }
-    } catch (dbErr: any) {
-      console.warn(`[MVT] Pool query failed for ${layer}/${z}/${x}/${y}:`, dbErr.message);
-    }
+  // Deduplicate concurrent requests for the exact same tile
+  if (inFlightTiles.has(cacheKey)) {
+    return inFlightTiles.get(cacheKey)!;
   }
 
-  // 2. Secondary fallback: Supabase RPC
-  if (!tileBuffer && supabase) {
-    try {
-      let rpcName = "get_spatial_layer_mvt";
-      let rpcParams: any = { p_table: layer.startsWith("gis_") ? layer : `gis_${layer}`, z, x, y };
-      if (layer === "rtrw" || layer === "zonasi" || layer === "gis_zonasi" || layer === "layer_zonasi") {
-        rpcName = "get_rtrw_mvt";
-        rpcParams = { z, x, y };
-      } else if (layer === "rbi" || layer === "gis_rbi" || layer === "layer_rbi") {
-        rpcName = "get_rbi_mvt";
-        rpcParams = { z, x, y };
-      }
+  const queryTask = (async (): Promise<Buffer | null> => {
+    let tileBuffer: Buffer | null = null;
 
-      const { data, error } = await supabase.rpc(rpcName, rpcParams);
-      if (!error && data) {
-        if (typeof data === "string") {
-          const hex = data.startsWith("\\x") ? data.slice(2) : data;
-          tileBuffer = Buffer.from(hex, "hex");
-        } else if (Buffer.isBuffer(data)) {
-          tileBuffer = data;
+    // 1. Primary: Direct PostGIS Query via Pool
+    const pool = getPostgisPool();
+    if (pool) {
+      try {
+        let querySql = "";
+        let params: any[] = [];
+        if (layer === "rtrw" || layer === "zonasi" || layer === "gis_zonasi" || layer === "layer_zonasi") {
+          querySql = "SELECT public.get_rtrw_mvt($1, $2, $3) AS mvt;";
+          params = [z, x, y];
+        } else if (layer === "rbi" || layer === "gis_rbi" || layer === "layer_rbi") {
+          querySql = "SELECT public.get_rbi_mvt($1, $2, $3) AS mvt;";
+          params = [z, x, y];
+        } else {
+          querySql = "SELECT public.get_spatial_layer_mvt($1, $2, $3, $4) AS mvt;";
+          const sanitizedTable = layer.startsWith("gis_") ? layer : `gis_${layer}`;
+          params = [sanitizedTable, z, x, y];
+        }
+
+        // Enforce 3500ms timeout on direct pool query to prevent worker backlog
+        const poolQuery = pool.query(querySql, params);
+        const res: any = await Promise.race([
+          poolQuery,
+          new Promise<never>((_, reject) => setTimeout(() => reject(new Error("MVT query timeout")), 3500))
+        ]);
+
+        if (res.rows && res.rows[0]?.mvt) {
+          const raw = res.rows[0].mvt;
+          tileBuffer = Buffer.isBuffer(raw) ? raw : Buffer.from(raw);
+        }
+      } catch (dbErr: any) {
+        const msg = dbErr?.message || String(dbErr);
+        const isConnTimeout = msg.includes("timeout") || msg.includes("terminated") || msg.includes("Connection terminated");
+        if (!isConnTimeout) {
+          console.warn(`[MVT] Notice for ${layer}/${z}/${x}/${y}:`, msg);
         }
       }
-    } catch (rpcErr: any) {
-      console.warn(`[MVT] Supabase RPC failed for ${layer}/${z}/${x}/${y}:`, rpcErr.message);
     }
-  }
 
-  if (tileBuffer && tileBuffer.length > 0) {
+    // 2. Secondary fallback: Supabase RPC
+    if ((!tileBuffer || tileBuffer.length === 0) && supabase) {
+      try {
+        let rpcName = "get_spatial_layer_mvt";
+        let rpcParams: any = { p_table: layer.startsWith("gis_") ? layer : `gis_${layer}`, z, x, y };
+        if (layer === "rtrw" || layer === "zonasi" || layer === "gis_zonasi" || layer === "layer_zonasi") {
+          rpcName = "get_rtrw_mvt";
+          rpcParams = { z, x, y };
+        } else if (layer === "rbi" || layer === "gis_rbi" || layer === "layer_rbi") {
+          rpcName = "get_rbi_mvt";
+          rpcParams = { z, x, y };
+        }
+
+        const rpcPromise = supabase.rpc(rpcName, rpcParams);
+        const { data, error }: any = await Promise.race([
+          rpcPromise,
+          new Promise<{ data: null; error: any }>((resolve) => setTimeout(() => resolve({ data: null, error: new Error("RPC timeout") }), 3000))
+        ]);
+
+        if (!error && data) {
+          if (typeof data === "string") {
+            const hex = data.startsWith("\\x") ? data.slice(2) : data;
+            tileBuffer = Buffer.from(hex, "hex");
+          } else if (Buffer.isBuffer(data)) {
+            tileBuffer = data;
+          }
+        }
+      } catch (rpcErr: any) {
+        // Fallback handled cleanly
+      }
+    }
+
+    // Always cache the tile (including empty Buffer.alloc(0)) to prevent repeat hits to the DB
+    const finalBuffer = (tileBuffer && tileBuffer.length > 0) ? tileBuffer : Buffer.alloc(0);
     if (tileMemoryCache.size >= MAX_TILE_CACHE) {
       const firstKey = tileMemoryCache.keys().next().value;
       if (firstKey) tileMemoryCache.delete(firstKey);
     }
-    tileMemoryCache.set(cacheKey, { buffer: tileBuffer, expires: now + 300000 }); // 5 minutes cache
-  }
+    // Valid tiles: 5 mins, Empty tiles: 10 mins cache
+    const ttl = finalBuffer.length > 0 ? 300000 : 600000;
+    tileMemoryCache.set(cacheKey, { buffer: finalBuffer, expires: Date.now() + ttl });
 
-  return tileBuffer;
+    return finalBuffer;
+  })();
+
+  inFlightTiles.set(cacheKey, queryTask);
+  try {
+    return await queryTask;
+  } finally {
+    inFlightTiles.delete(cacheKey);
+  }
 }
 
 const handleMvtTileRequest = async (req: express.Request, res: express.Response) => {
