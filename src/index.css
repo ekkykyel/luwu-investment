@@ -609,3 +609,185 @@ p, .text-base {
   letter-spacing: -0.011em !important;
 }
 
+/* ==========================================================================
+   AKSESIBILITAS INKLUSIF & DISABILITAS (STANDAR WCAG 2.1 AA/AAA & UU No. 8/2016)
+   ========================================================================== */
+
+/* 1. Font Size Scaling Scale (WCAG 1.4.4 Resize Text) */
+html.text-size-small {
+  font-size: 14px !important;
+}
+html.text-size-normal {
+  font-size: 16px !important;
+}
+html.text-size-large {
+  font-size: 19.2px !important; /* 120% magnification */
+}
+html.text-size-xlarge {
+  font-size: 22.4px !important; /* 140% high magnification */
+}
+
+/* 2. High Contrast Yellow on Black Mode (Hitam-Kuning - WCAG AAA 7:1+ Contrast) */
+html.high-contrast-mode,
+html.contrast-yellow-black {
+  background-color: #000000 !important;
+  color: #ffff00 !important;
+}
+
+html.high-contrast-mode body,
+html.contrast-yellow-black body {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Background overrides in Yellow-Black Mode */
+html.high-contrast-mode div:not(.keep-original-color),
+html.high-contrast-mode section,
+html.high-contrast-mode header,
+html.high-contrast-mode footer,
+html.high-contrast-mode main,
+html.high-contrast-mode aside,
+html.high-contrast-mode nav,
+html.high-contrast-mode article,
+html.contrast-yellow-black div:not(.keep-original-color),
+html.contrast-yellow-black section,
+html.contrast-yellow-black header,
+html.contrast-yellow-black footer,
+html.contrast-yellow-black main,
+html.contrast-yellow-black aside,
+html.contrast-yellow-black nav,
+html.contrast-yellow-black article {
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+/* Disable blur and translucent overlays in High Contrast Mode for razor-sharp legibility */
+html.high-contrast-mode .backdrop-blur-md,
+html.high-contrast-mode .backdrop-blur-lg,
+html.high-contrast-mode .backdrop-blur-xl,
+html.high-contrast-mode .backdrop-blur-sm,
+html.contrast-yellow-black .backdrop-blur-md,
+html.contrast-yellow-black .backdrop-blur-lg,
+html.contrast-yellow-black .backdrop-blur-xl,
+html.contrast-yellow-black .backdrop-blur-sm {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-color: #000000 !important;
+}
+
+/* Solid high-visibility borders in High Contrast Mode */
+html.high-contrast-mode *,
+html.contrast-yellow-black * {
+  border-color: #ffff00 !important;
+}
+
+/* Headings and Accent Labels in High Contrast */
+html.high-contrast-mode h1,
+html.high-contrast-mode h2,
+html.high-contrast-mode h3,
+html.high-contrast-mode h4,
+html.high-contrast-mode h5,
+html.high-contrast-mode h6,
+html.high-contrast-mode strong,
+html.high-contrast-mode b,
+html.contrast-yellow-black h1,
+html.contrast-yellow-black h2,
+html.contrast-yellow-black h3,
+html.contrast-yellow-black h4,
+html.contrast-yellow-black h5,
+html.contrast-yellow-black h6,
+html.contrast-yellow-black strong,
+html.contrast-yellow-black b {
+  color: #ffff00 !important;
+  text-shadow: none !important;
+}
+
+/* Body text, spans, and table cells */
+html.high-contrast-mode p,
+html.high-contrast-mode span,
+html.high-contrast-mode label,
+html.high-contrast-mode li,
+html.high-contrast-mode td,
+html.high-contrast-mode th,
+html.contrast-yellow-black p,
+html.contrast-yellow-black span,
+html.contrast-yellow-black label,
+html.contrast-yellow-black li,
+html.contrast-yellow-black td,
+html.contrast-yellow-black th {
+  color: #ffffff !important;
+}
+
+/* Interactive elements: Buttons, links, badges */
+html.high-contrast-mode button,
+html.high-contrast-mode a,
+html.contrast-yellow-black button,
+html.contrast-yellow-black a {
+  border: 2px solid #ffff00 !important;
+  color: #ffff00 !important;
+  background-color: #000000 !important;
+}
+
+html.high-contrast-mode button:hover,
+html.high-contrast-mode a:hover,
+html.high-contrast-mode .bg-emerald-500,
+html.high-contrast-mode .bg-emerald-600,
+html.contrast-yellow-black button:hover,
+html.contrast-yellow-black a:hover,
+html.contrast-yellow-black .bg-emerald-500,
+html.contrast-yellow-black .bg-emerald-600 {
+  background-color: #ffff00 !important;
+  color: #000000 !important;
+}
+
+html.high-contrast-mode button:hover *,
+html.high-contrast-mode a:hover *,
+html.contrast-yellow-black button:hover *,
+html.contrast-yellow-black a:hover * {
+  color: #000000 !important;
+}
+
+html.high-contrast-mode input,
+html.high-contrast-mode textarea,
+html.high-contrast-mode select,
+html.contrast-yellow-black input,
+html.contrast-yellow-black textarea,
+html.contrast-yellow-black select {
+  background-color: #000000 !important;
+  color: #ffff00 !important;
+  border: 2px solid #ffff00 !important;
+}
+
+html.high-contrast-mode input::placeholder,
+html.contrast-yellow-black input::placeholder {
+  color: #a3e635 !important;
+}
+
+/* Icons */
+html.high-contrast-mode svg,
+html.contrast-yellow-black svg {
+  color: #ffff00 !important;
+  stroke: #ffff00 !important;
+}
+
+/* Cards & Modals */
+html.high-contrast-mode .rounded-2xl,
+html.high-contrast-mode .rounded-3xl,
+html.high-contrast-mode .rounded-xl,
+html.contrast-yellow-black .rounded-2xl,
+html.contrast-yellow-black .rounded-3xl,
+html.contrast-yellow-black .rounded-xl {
+  border: 2px solid #ffff00 !important;
+  box-shadow: none !important;
+}
+
+/* 3. Monochrome Mode (Hitam-Putih Grayscale) */
+html.contrast-monochrome {
+  filter: grayscale(100%) contrast(125%) !important;
+}
+html.contrast-monochrome img,
+html.contrast-monochrome video {
+  filter: grayscale(100%) !important;
+}
+
+

@@ -50,9 +50,12 @@ function normalizeSpokenVoiceQuery(query: string): string {
 interface InclusivityAccessibilityBarProps {
   isDark?: boolean;
   onHighContrastToggle?: (enabled: boolean) => void;
-  onFontSizeChange?: (size: 'normal' | 'large' | 'xlarge') => void;
+  onFontSizeChange?: (size: 'small' | 'normal' | 'large' | 'xlarge') => void;
   onVoiceSearchQuery?: (query: string) => void;
 }
+
+export type ContrastModeType = 'standard' | 'high-contrast-yellow' | 'monochrome';
+export type FontSizeType = 'small' | 'normal' | 'large' | 'xlarge';
 
 export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarProps> = ({
   isDark = false,
@@ -61,8 +64,34 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
   onVoiceSearchQuery,
 }) => {
   const { i18n, t } = useTranslation();
-  const [highContrast, setHighContrast] = useState(false);
-  const [fontSize, setFontSize] = useState<'normal' | 'large' | 'xlarge'>('normal');
+  
+  // Persistent accessibility states
+  const [contrastMode, setContrastMode] = useState<ContrastModeType>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('luwu_accessibility_contrast');
+      if (saved === 'high-contrast-yellow' || saved === 'monochrome' || saved === 'standard') {
+        return saved;
+      }
+      if (localStorage.getItem('luwu_high_contrast') === 'true') {
+        return 'high-contrast-yellow';
+      }
+    }
+    return 'standard';
+  });
+
+  const [fontSize, setFontSize] = useState<FontSizeType>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('luwu_accessibility_font_size');
+      if (saved === 'small' || saved === 'normal' || saved === 'large' || saved === 'xlarge') {
+        return saved;
+      }
+    }
+    return 'normal';
+  });
+
+  const [isContrastMenuOpen, setIsContrastMenuOpen] = useState(false);
+  const contrastMenuRef = useRef<HTMLDivElement>(null);
+
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [showNotification, setShowNotification] = useState<string | null>(null);
   
@@ -487,31 +516,82 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
     notify(voiceLanguage === 'zh' ? '已停止语音朗读。' : voiceLanguage === 'en' ? 'Voice guide stopped.' : 'Suara panduan dihentikan.');
   };
 
-  const toggleHighContrast = () => {
-    const next = !highContrast;
-    setHighContrast(next);
-    if (onHighContrastToggle) onHighContrastToggle(next);
-    
-    if (next) {
-      document.documentElement.classList.add('high-contrast-mode');
-      notify(voiceLanguage === 'zh' ? '高对比度模式已启用' : voiceLanguage === 'en' ? 'High Contrast Mode Enabled' : 'Mode Kontras Tinggi Aktif (Standar Ramah Netra & Lansia)');
+  // Sync contrast mode and font size to DOM on mount and changes
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      // Apply contrast
+      document.documentElement.classList.remove('high-contrast-mode', 'contrast-yellow-black', 'contrast-monochrome');
+      if (contrastMode === 'high-contrast-yellow') {
+        document.documentElement.classList.add('high-contrast-mode', 'contrast-yellow-black');
+      } else if (contrastMode === 'monochrome') {
+        document.documentElement.classList.add('contrast-monochrome');
+      }
+
+      // Apply font size
+      document.documentElement.classList.remove('text-size-small', 'text-size-normal', 'text-size-large', 'text-size-xlarge');
+      document.documentElement.classList.add(`text-size-${fontSize}`);
+    }
+  }, [contrastMode, fontSize]);
+
+  // Outside click listener for Contrast dropdown menu
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (contrastMenuRef.current && !contrastMenuRef.current.contains(event.target as Node)) {
+        setIsContrastMenuOpen(false);
+      }
+    };
+    if (isContrastMenuOpen) {
+      document.addEventListener('mousedown', handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [isContrastMenuOpen]);
+
+  const setAndSaveContrastMode = (mode: ContrastModeType) => {
+    setContrastMode(mode);
+    setIsContrastMenuOpen(false);
+    try {
+      localStorage.setItem('luwu_accessibility_contrast', mode);
+      localStorage.setItem('luwu_high_contrast', mode === 'high-contrast-yellow' ? 'true' : 'false');
+    } catch (e) {}
+
+    if (onHighContrastToggle) {
+      onHighContrastToggle(mode !== 'standard');
+    }
+
+    if (mode === 'high-contrast-yellow') {
+      notify(voiceLanguage === 'zh' ? '🟡 已启用黑黄高对比度模式 (WCAG AAA)' : voiceLanguage === 'en' ? '🟡 High Contrast Yellow-Black Mode Enabled (WCAG AAA)' : '🟡 Mode Kontras Tinggi Hitam-Kuning Aktif (Standar Ramah Netra & Lansia - WCAG AAA)');
+    } else if (mode === 'monochrome') {
+      notify(voiceLanguage === 'zh' ? '⚪ 已启用黑白单色模式 (无障碍色盲友好)' : voiceLanguage === 'en' ? '⚪ Monochrome Grayscale Mode Enabled (CVD Friendly)' : '⚪ Mode Monokrom Hitam-Putih Aktif (Bebas Distraksi & Ramah Buta Warna)');
     } else {
-      document.documentElement.classList.remove('high-contrast-mode');
-      notify(voiceLanguage === 'zh' ? '标准显示模式' : voiceLanguage === 'en' ? 'Standard Display Mode' : 'Mode Tampilan Standar Aktif');
+      notify(voiceLanguage === 'zh' ? '🔘 已恢复标准色彩显示模式' : voiceLanguage === 'en' ? '🔘 Standard Display Mode Restored' : '🔘 Mode Tampilan Standar (Normal) Aktif');
     }
   };
 
-  const changeFontSize = (size: 'normal' | 'large' | 'xlarge') => {
+  const cycleContrastMode = () => {
+    if (contrastMode === 'standard') {
+      setAndSaveContrastMode('high-contrast-yellow');
+    } else if (contrastMode === 'high-contrast-yellow') {
+      setAndSaveContrastMode('monochrome');
+    } else {
+      setAndSaveContrastMode('standard');
+    }
+  };
+
+  const changeFontSize = (size: FontSizeType) => {
     setFontSize(size);
+    try {
+      localStorage.setItem('luwu_accessibility_font_size', size);
+    } catch (e) {}
+
     if (onFontSizeChange) onFontSizeChange(size);
 
-    document.documentElement.classList.remove('text-size-normal', 'text-size-large', 'text-size-xlarge');
-    document.documentElement.classList.add(`text-size-${size}`);
-    
     const labelMap = { 
-      normal: voiceLanguage === 'zh' ? '标准字号 (100%)' : voiceLanguage === 'en' ? 'Normal Font (100%)' : 'Ukuran Normal (100%)', 
-      large: voiceLanguage === 'zh' ? '大字号 (120%)' : voiceLanguage === 'en' ? 'Large Font (120%)' : 'Ukuran Besar (120%)', 
-      xlarge: voiceLanguage === 'zh' ? '超大字号 (140%)' : voiceLanguage === 'en' ? 'Extra Large Font (140%)' : 'Ukuran Sangat Besar (140%)' 
+      small: voiceLanguage === 'zh' ? '较小字号 (90%)' : voiceLanguage === 'en' ? 'Small Font (90%)' : 'Ukuran Kompak A- (90%)',
+      normal: voiceLanguage === 'zh' ? '标准字号 (100%)' : voiceLanguage === 'en' ? 'Normal Font (100%)' : 'Ukuran Standar A (100%)', 
+      large: voiceLanguage === 'zh' ? '大字号 (120%)' : voiceLanguage === 'en' ? 'Large Font (120%)' : 'Ukuran Besar A+ (120%)', 
+      xlarge: voiceLanguage === 'zh' ? '超大字号 (140%)' : voiceLanguage === 'en' ? 'Extra Large Font (140%)' : 'Ukuran Sangat Besar A++ (140%)' 
     };
     notify(voiceLanguage === 'zh' ? `字体已调整为 ${labelMap[size]}` : voiceLanguage === 'en' ? `Text set to ${labelMap[size]}` : `Teks diubah ke ${labelMap[size]}`);
   };
@@ -703,51 +783,131 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               </span>
             </button>
 
-            {/* High Contrast */}
-            <button
-              onClick={toggleHighContrast}
-              className={`flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-lg text-[10.5px] sm:text-[11px] font-medium transition-all cursor-pointer ${
-                highContrast
-                  ? 'bg-emerald-500 text-slate-950 font-bold shadow-lg'
-                  : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
-              }`}
-              title="Mode Kontras Tinggi Disabilitas Netra"
-            >
-              <Eye className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="hidden lg:inline">
-                {voiceLanguage === 'zh' ? '高对比度' : voiceLanguage === 'en' ? 'Contrast' : 'Kontras'}
-              </span>
-            </button>
+            {/* High Contrast Dropdown & Cycler */}
+            <div className="relative" ref={contrastMenuRef}>
+              <button
+                onClick={() => setIsContrastMenuOpen(prev => !prev)}
+                className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-[10.5px] sm:text-[11px] font-medium transition-all cursor-pointer ${
+                  contrastMode === 'high-contrast-yellow'
+                    ? 'bg-yellow-400 text-slate-950 font-extrabold shadow-lg ring-2 ring-yellow-400/50'
+                    : contrastMode === 'monochrome'
+                    ? 'bg-slate-200 text-slate-950 font-bold shadow-md ring-2 ring-white/50'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                }`}
+                title="Pilihan Mode Kontras Tinggi & Aksesibilitas Netra"
+                aria-label="Pilihan Mode Kontras Tinggi"
+              >
+                <Eye className={`w-3.5 h-3.5 ${contrastMode === 'high-contrast-yellow' ? 'text-slate-950' : contrastMode === 'monochrome' ? 'text-slate-950' : 'text-emerald-400'}`} />
+                <span className="hidden lg:inline">
+                  {contrastMode === 'high-contrast-yellow' 
+                    ? (voiceLanguage === 'zh' ? '黑黄高对比' : voiceLanguage === 'en' ? 'Contrast: Yellow' : 'Kontras: Kuning')
+                    : contrastMode === 'monochrome'
+                    ? (voiceLanguage === 'zh' ? '单色黑白' : voiceLanguage === 'en' ? 'Contrast: Mono' : 'Kontras: Mono')
+                    : (voiceLanguage === 'zh' ? '高对比度' : voiceLanguage === 'en' ? 'Contrast' : 'Kontras')}
+                </span>
+                {contrastMode !== 'standard' && (
+                  <span className="text-[10px] font-black uppercase tracking-tighter">
+                    {contrastMode === 'high-contrast-yellow' ? 'AAA' : 'BW'}
+                  </span>
+                )}
+              </button>
 
-            {/* Font Size Adjuster (Desktop/Tablet) */}
-            <div className="hidden sm:flex items-center bg-slate-800 border border-slate-700 rounded-lg p-0.5">
-              <span className="px-1 text-[10px] text-slate-400 flex items-center gap-0.5">
+              {/* Contrast Mode Selector Popover */}
+              {isContrastMenuOpen && (
+                <div className="absolute right-0 top-full mt-1.5 w-60 sm:w-64 bg-slate-900 border-2 border-emerald-500/40 rounded-2xl p-2 shadow-2xl z-50 text-white animate-fade-in">
+                  <div className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1 mb-1 border-b border-slate-800 flex items-center justify-between">
+                    <span>{voiceLanguage === 'zh' ? '对比度模式选择' : voiceLanguage === 'en' ? 'Contrast Modes' : 'Mode Kontras Ramah Netra'}</span>
+                    <span className="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-mono">WCAG 2.1</span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <button
+                      onClick={() => setAndSaveContrastMode('high-contrast-yellow')}
+                      className={`w-full text-left px-2.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
+                        contrastMode === 'high-contrast-yellow'
+                          ? 'bg-yellow-400 text-slate-950 shadow-md'
+                          : 'bg-slate-800/80 hover:bg-slate-800 text-yellow-300 hover:text-yellow-200 border border-yellow-400/30'
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full bg-yellow-400 border border-slate-950 shrink-0"></span>
+                        <span>{voiceLanguage === 'zh' ? '黑黄高对比 (WCAG AAA)' : voiceLanguage === 'en' ? 'Yellow-Black (WCAG AAA)' : 'Hitam-Kuning (WCAG AAA)'}</span>
+                      </span>
+                      {contrastMode === 'high-contrast-yellow' && <Check className="w-3.5 h-3.5 text-slate-950" />}
+                    </button>
+
+                    <button
+                      onClick={() => setAndSaveContrastMode('monochrome')}
+                      className={`w-full text-left px-2.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
+                        contrastMode === 'monochrome'
+                          ? 'bg-slate-200 text-slate-950 shadow-md'
+                          : 'bg-slate-800/80 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700'
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full bg-slate-300 border border-slate-950 shrink-0"></span>
+                        <span>{voiceLanguage === 'zh' ? '黑白单色 (色盲友好)' : voiceLanguage === 'en' ? 'Monochrome (CVD Friendly)' : 'Monokrom (Hitam-Putih)'}</span>
+                      </span>
+                      {contrastMode === 'monochrome' && <Check className="w-3.5 h-3.5 text-slate-950" />}
+                    </button>
+
+                    <button
+                      onClick={() => setAndSaveContrastMode('standard')}
+                      className={`w-full text-left px-2.5 py-2 rounded-xl text-xs font-medium flex items-center justify-between transition-all cursor-pointer ${
+                        contrastMode === 'standard'
+                          ? 'bg-emerald-500 text-slate-950 font-bold shadow-md'
+                          : 'bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700'
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full bg-emerald-500 border border-slate-950 shrink-0"></span>
+                        <span>{voiceLanguage === 'zh' ? '标准彩色模式 (默认)' : voiceLanguage === 'en' ? 'Standard Display Mode' : 'Mode Normal (Standar)'}</span>
+                      </span>
+                      {contrastMode === 'standard' && <Check className="w-3.5 h-3.5 text-slate-950" />}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Font Size Adjuster (A- / A / A+ / A++) */}
+            <div className="flex items-center bg-slate-800 border border-slate-700 rounded-lg p-0.5">
+              <span className="px-1 text-[10px] text-slate-400 flex items-center gap-0.5" title="Skala Ukuran Teks">
                 <Type className="w-3 h-3" />
               </span>
               <button
-                onClick={() => changeFontSize('normal')}
-                className={`px-1.5 py-0.5 rounded text-[10px] font-semibold cursor-pointer ${
-                  fontSize === 'normal' ? 'bg-emerald-500 text-slate-950' : 'text-slate-300 hover:text-white'
+                onClick={() => changeFontSize('small')}
+                className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition-all cursor-pointer ${
+                  fontSize === 'small' ? 'bg-emerald-500 text-slate-950 shadow-xs' : 'text-slate-300 hover:text-white'
                 }`}
-                title="Ukuran Font Standar"
+                title="Ukuran Font Kompak A- (90%)"
+              >
+                A-
+              </button>
+              <button
+                onClick={() => changeFontSize('normal')}
+                className={`px-1.5 py-0.5 rounded text-[10.5px] font-semibold transition-all cursor-pointer ${
+                  fontSize === 'normal' ? 'bg-emerald-500 text-slate-950 shadow-xs' : 'text-slate-300 hover:text-white'
+                }`}
+                title="Ukuran Font Standar A (100%)"
               >
                 A
               </button>
               <button
                 onClick={() => changeFontSize('large')}
-                className={`px-1.5 py-0.5 rounded text-[11px] font-semibold cursor-pointer ${
-                  fontSize === 'large' ? 'bg-emerald-500 text-slate-950' : 'text-slate-300 hover:text-white'
+                className={`px-1.5 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
+                  fontSize === 'large' ? 'bg-emerald-500 text-slate-950 shadow-xs' : 'text-slate-300 hover:text-white'
                 }`}
-                title="Ukuran Font Besar (120%)"
+                title="Ukuran Font Besar A+ (120%)"
               >
                 A+
               </button>
               <button
                 onClick={() => changeFontSize('xlarge')}
-                className={`px-1.5 py-0.5 rounded text-[12px] font-bold cursor-pointer ${
-                  fontSize === 'xlarge' ? 'bg-emerald-500 text-slate-950' : 'text-slate-300 hover:text-white'
+                className={`px-1.5 py-0.5 rounded text-[12px] font-extrabold transition-all cursor-pointer ${
+                  fontSize === 'xlarge' ? 'bg-emerald-500 text-slate-950 shadow-xs' : 'text-slate-300 hover:text-white'
                 }`}
-                title="Ukuran Font Sangat Besar (140%)"
+                title="Ukuran Font Sangat Besar A++ (140%)"
               >
                 A++
               </button>
