@@ -103,3 +103,4 @@ export const midpoint = (pt1: any, pt2: any) => (turfProxy as any).midpoint(pt1,
 export const explode = (feature: any) => (turfProxy as any).explode(feature);
 export const nearestPoint = (targetPoint: any, points: any) => (turfProxy as any).nearestPoint(targetPoint, points);
 export const booleanClockwise = (line: any) => (turfProxy as any).booleanClockwise(line);
+export const pointOnFeature = (feat: any) => (turfProxy as any).pointOnFeature(feat);
