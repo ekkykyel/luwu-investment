@@ -3,12 +3,14 @@ import {
   Building2, Users, CheckCircle2, Clock, Volume2, 
   RefreshCw, LogOut, FileText, Search, ArrowRight, Settings,
   Plus, Trash2, Edit, X, ShieldCheck, BarChart3, Layers, 
-  AlertCircle, Check, ChevronRight, Phone, Eye, Smartphone, Sparkles, Filter, Lock, BellRing
+  AlertCircle, Check, ChevronRight, Phone, Eye, Smartphone, Sparkles, Filter, Lock, BellRing, Newspaper
 } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 import { MPPTenant, MPPQueue, MPPService } from '../../types/mpp';
 import { playAirportChime, speakCallingAnnouncement } from '../../utils/airportAudioAlert';
 import { MppAdminReport } from './MppAdminReport';
+import { MppNewsAdminManager } from './MppNewsAdminManager';
+import { MppMagattiAdminManager } from './MppMagattiAdminManager';
 
 interface Props {
   isDarkMode: boolean;
@@ -53,7 +55,7 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
   const [services, setServices] = useState<MPPService[]>([]);
   const [trackingDocs, setTrackingDocs] = useState<TrackingDocItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'antrean' | 'riwayat' | 'layanan' | 'tracking' | 'instansi' | 'laporan'>('antrean');
+  const [activeTab, setActiveTab] = useState<'antrean' | 'riwayat' | 'layanan' | 'tracking' | 'instansi' | 'laporan' | 'berita' | 'magatti'>('antrean');
 
   const [isProfileSheetOpen, setIsProfileSheetOpen] = useState(false);
   const [tenantSearch, setTenantSearch] = useState('');
@@ -1096,6 +1098,36 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
           >
             <BarChart3 className="w-4 h-4" /> Laporan & SKM
           </button>
+
+          {/* TAB 7: KELOLA BERITA & PUBLIKASI */}
+          <button 
+            onClick={() => setActiveTab('berita')} 
+            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all ${
+              activeTab === 'berita' 
+                ? 'bg-emerald-600 text-white shadow-sm font-bold' 
+                : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400'
+            }`}
+          >
+            <Newspaper className="w-4 h-4" /> Berita & Publikasi
+            <span className="ml-auto bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold px-2 py-0.5 rounded-full text-[10px]">
+              Portal
+            </span>
+          </button>
+
+          {/* TAB 8: GALERI FOTO MAGATTI */}
+          <button 
+            onClick={() => setActiveTab('magatti')} 
+            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all ${
+              activeTab === 'magatti' 
+                ? 'bg-teal-600 text-white shadow-sm font-bold' 
+                : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400'
+            }`}
+          >
+            <Sparkles className="w-4 h-4" /> Foto Pelayanan Magatti
+            <span className="ml-auto bg-teal-500/20 text-teal-600 dark:text-teal-400 font-bold px-2 py-0.5 rounded-full text-[10px]">
+              Slide
+            </span>
+          </button>
         </div>
 
         <div className="p-4 border-t border-inherit space-y-2">
@@ -1126,6 +1158,8 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
               {activeTab === 'tracking' && 'Manajemen Disposisi & E-Lacak Dokumen'}
               {activeTab === 'instansi' && 'Pengaturan Instansi & Gerai Terdaftar'}
               {activeTab === 'laporan' && 'Laporan Eksekutif & Hasil Survei Kepuasan (SKM)'}
+              {activeTab === 'berita' && 'Manajemen Berita & Publikasi Portal MPP'}
+              {activeTab === 'magatti' && 'Manajemen Galeri Foto Pelayanan Magatti'}
             </h2>
             <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> Terhubung Supabase
@@ -1948,6 +1982,24 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
             </div>
           )}
 
+          {/* ========================================================================= */}
+          {/* TAB 7: KELOLA BERITA & PUBLIKASI PORTAL */}
+          {/* ========================================================================= */}
+          {activeTab === 'berita' && (
+            <div className="space-y-6">
+              <MppNewsAdminManager />
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 8: GALERI FOTO PELAYANAN MAGATTI */}
+          {/* ========================================================================= */}
+          {activeTab === 'magatti' && (
+            <div className="space-y-6">
+              <MppMagattiAdminManager />
+            </div>
+          )}
+
         </div>
 
         {/* Mobile Bottom Navigation Bar */}
@@ -2070,6 +2122,24 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
                 >
                   <BarChart3 className="w-5 h-5 opacity-80" />
                   <span>Laporan & Survei Kepuasan (SKM)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { setActiveTab('berita'); setIsProfileSheetOpen(false); }}
+                  className={`w-full flex items-center gap-3.5 p-3 rounded-xl text-sm font-semibold transition-all ${activeTab === 'berita' ? 'bg-emerald-600 text-white font-bold' : 'hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'}`}
+                >
+                  <Newspaper className="w-5 h-5 opacity-80" />
+                  <span>Kelola Berita & Publikasi Portal</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { setActiveTab('magatti'); setIsProfileSheetOpen(false); }}
+                  className={`w-full flex items-center gap-3.5 p-3 rounded-xl text-sm font-semibold transition-all ${activeTab === 'magatti' ? 'bg-teal-600 text-white font-bold' : 'hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'}`}
+                >
+                  <Sparkles className="w-5 h-5 opacity-80" />
+                  <span>Galeri Foto Pelayanan Magatti</span>
                 </button>
               </div>
 

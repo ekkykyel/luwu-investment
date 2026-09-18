@@ -2019,9 +2019,9 @@ export default function LandingPage({
 
       </motion.nav>
 
-      <div className="relative z-10 pt-4 sm:pt-6">
+      <div className="relative z-10 pt-0">
         {/* 1. HERO SECTION WITH IMMERSIVE BACKGROUND */}
-        <div id="hero-section" className={`relative min-h-[92vh] flex items-center justify-center pt-36 sm:pt-40 pb-16 overflow-hidden ${isDark ? "bg-[#0b0f19] text-white" : "bg-gradient-to-b from-slate-50 via-white to-slate-50 text-slate-900"}`}>
+        <div id="hero-section" className={`relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center pt-20 sm:pt-24 md:pt-28 pb-12 sm:pb-16 overflow-hidden ${isDark ? "bg-[#0b0f19] text-white" : "bg-gradient-to-b from-slate-50 via-white to-slate-50 text-slate-900"}`}>
           <style>{`
             @keyframes aurora1 {
               0%, 100% { transform: translate(0, 0) scale(1); }
@@ -2058,7 +2058,7 @@ export default function LandingPage({
           </div>
 
           {/* Floating Info Chips */}
-          <div className="absolute top-28 right-6 lg:right-12 z-20 hidden lg:flex flex-col gap-2"
+          <div className="absolute top-20 lg:top-24 right-6 lg:right-12 z-20 hidden lg:flex flex-col gap-2"
                style={{ animation: 'floatUp 6s ease-in-out infinite' }}>
             {[
               { label: '24/7 AI Spatial Engine', color: 'bg-emerald-500' },
@@ -2193,87 +2193,171 @@ export default function LandingPage({
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="mt-12 sm:mt-20 lg:mt-32 max-w-6xl mx-auto"
+              className="mt-10 sm:mt-16 lg:mt-24 max-w-6xl mx-auto px-2 sm:px-4"
             >
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-4 md:gap-5 rounded-2xl sm:rounded-3xl p-2 sm:p-6 md:p-8 bg-white dark:bg-slate-800 shadow-lg dark:shadow-none border border-slate-100 dark:border-slate-700">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3.5 md:gap-4.5 rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 md:p-5 bg-slate-100/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800/80 shadow-[0_10px_35px_-10px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.45)]">
                 {[
                   {
+                    id: 'stat-investment',
                     label: t("stats.totalInvestment"),
                     value: totalInvestmentValue > 0 ? formatRupiah(totalInvestmentValue) : "Data Menyusul",
+                    isCurrency: true,
                     icon: TrendingUp,
-                    borderColor: 'border-t-emerald-500/80 shadow-[0_-2px_15px_rgba(16,185,129,0.1)]',
-                    iconColor: 'text-emerald-400',
-                    iconBg: 'bg-emerald-500/10',
+                    accentTop: 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500',
+                    borderHover: 'hover:border-emerald-400/80 dark:hover:border-emerald-500/80',
+                    glowHover: 'from-emerald-500/10 via-emerald-500/5 to-transparent',
+                    iconColor: 'text-emerald-600 dark:text-emerald-400',
+                    iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
+                    iconBorder: 'border border-emerald-200/80 dark:border-emerald-500/30',
+                    sparkId: 'spark-emerald',
                     sparkColor: '#10b981',
                     sparkPoints: '0,22 13,18 26,20 39,12 52,14 65,7 80,4',
+                    lastPoint: { x: 80, y: 4 },
                   },
                   {
+                    id: 'stat-loi',
                     label: "Investor LOI",
                     value: loiCount || 0,
+                    isCurrency: false,
                     icon: Briefcase,
-                    borderColor: 'border-t-teal-500/80 shadow-[0_-2px_15px_rgba(20,184,166,0.1)]',
-                    iconColor: 'text-teal-400',
-                    iconBg: 'bg-teal-500/10',
+                    accentTop: 'bg-gradient-to-r from-teal-500 via-cyan-400 to-teal-500',
+                    borderHover: 'hover:border-teal-400/80 dark:hover:border-teal-500/80',
+                    glowHover: 'from-teal-500/10 via-teal-500/5 to-transparent',
+                    iconColor: 'text-teal-600 dark:text-teal-400',
+                    iconBg: 'bg-teal-50 dark:bg-teal-950/50',
+                    iconBorder: 'border border-teal-200/80 dark:border-teal-500/30',
+                    sparkId: 'spark-teal',
                     sparkColor: '#14b8a6',
                     sparkPoints: '0,26 15,22 30,24 45,16 60,18 70,10 80,6',
+                    lastPoint: { x: 80, y: 6 },
                   },
                   {
+                    id: 'stat-opportunities',
                     label: t("stats.activeOpportunities"),
                     value: activeOpportunities || 0,
+                    isCurrency: false,
                     icon: Layers,
-                    borderColor: 'border-t-indigo-500/80 shadow-[0_-2px_15px_rgba(99,102,241,0.1)]',
-                    iconColor: 'text-indigo-400',
-                    iconBg: 'bg-indigo-500/10',
-                    sparkColor: '#818cf8',
+                    accentTop: 'bg-gradient-to-r from-indigo-500 via-blue-400 to-indigo-500',
+                    borderHover: 'hover:border-indigo-400/80 dark:hover:border-indigo-500/80',
+                    glowHover: 'from-indigo-500/10 via-indigo-500/5 to-transparent',
+                    iconColor: 'text-indigo-600 dark:text-indigo-400',
+                    iconBg: 'bg-indigo-50 dark:bg-indigo-950/50',
+                    iconBorder: 'border border-indigo-200/80 dark:border-indigo-500/30',
+                    sparkId: 'spark-indigo',
+                    sparkColor: '#6366f1',
                     sparkPoints: '0,24 13,20 26,22 39,15 52,17 65,10 80,6',
+                    lastPoint: { x: 80, y: 6 },
                   },
                   {
+                    id: 'stat-pkkpr',
                     label: "PKKPR Terbit",
                     value: pkkprIssuedCount || 0,
+                    isCurrency: false,
                     icon: ShieldCheck,
-                    borderColor: 'border-t-purple-500/80 shadow-[0_-2px_15px_rgba(168,85,247,0.1)]',
-                    iconColor: 'text-purple-400',
-                    iconBg: 'bg-purple-500/10',
+                    accentTop: 'bg-gradient-to-r from-purple-500 via-fuchsia-400 to-purple-500',
+                    borderHover: 'hover:border-purple-400/80 dark:hover:border-purple-500/80',
+                    glowHover: 'from-purple-500/10 via-purple-500/5 to-transparent',
+                    iconColor: 'text-purple-600 dark:text-purple-400',
+                    iconBg: 'bg-purple-50 dark:bg-purple-950/50',
+                    iconBorder: 'border border-purple-200/80 dark:border-purple-500/30',
+                    sparkId: 'spark-purple',
                     sparkColor: '#a855f7',
                     sparkPoints: '0,25 15,21 30,23 45,14 60,16 75,8 80,4',
+                    lastPoint: { x: 80, y: 4 },
                   },
                   {
+                    id: 'stat-districts',
                     label: t("stats.subDistricts"),
                     value: districts?.length || 0,
+                    isCurrency: false,
                     icon: MapPin,
-                    borderColor: 'border-t-cyan-400/60',
-                    iconColor: 'text-cyan-400',
-                    iconBg: 'bg-cyan-500/10',
-                    sparkColor: '#22d3ee',
+                    accentTop: 'bg-gradient-to-r from-cyan-500 via-sky-400 to-cyan-500',
+                    borderHover: 'hover:border-cyan-400/80 dark:hover:border-cyan-500/80',
+                    glowHover: 'from-cyan-500/10 via-cyan-500/5 to-transparent',
+                    iconColor: 'text-cyan-600 dark:text-cyan-400',
+                    iconBg: 'bg-cyan-50 dark:bg-cyan-950/50',
+                    iconBorder: 'border border-cyan-200/80 dark:border-cyan-500/30',
+                    sparkId: 'spark-cyan',
+                    sparkColor: '#06b6d4',
                     sparkPoints: '0,26 20,26 40,20 60,16 80,10',
+                    lastPoint: { x: 80, y: 10 },
                   },
                   {
+                    id: 'stat-villages',
                     label: t("stats.villages"),
                     value: villages?.length || 0,
+                    isCurrency: false,
                     icon: Globe,
-                    borderColor: 'border-t-amber-500/80 shadow-[0_-2px_15px_rgba(245,158,11,0.1)]',
-                    iconColor: 'text-amber-400',
-                    iconBg: 'bg-amber-500/10',
-                    sparkColor: '#fbbf24',
+                    accentTop: 'bg-gradient-to-r from-amber-500 via-orange-400 to-amber-500',
+                    borderHover: 'hover:border-amber-400/80 dark:hover:border-amber-500/80',
+                    glowHover: 'from-amber-500/10 via-amber-500/5 to-transparent',
+                    iconColor: 'text-amber-600 dark:text-amber-400',
+                    iconBg: 'bg-amber-50 dark:bg-amber-950/50',
+                    iconBorder: 'border border-amber-200/80 dark:border-amber-500/30',
+                    sparkId: 'spark-amber',
+                    sparkColor: '#f59e0b',
                     sparkPoints: '0,28 16,24 32,22 48,18 64,12 80,8',
+                    lastPoint: { x: 80, y: 8 },
                   },
-                ].map((stat, idx) => (
-                  <div key={idx}
-                       className={`flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl sm:rounded-2xl border-t-2 ${stat.borderColor}
-                                   ${isDark ? 'bg-slate-900/40 hover:bg-slate-800/60' : 'bg-white/50 hover:bg-white'}
-                                   transition-all duration-300 group`}>
-                    <div className={`p-1.5 sm:p-2 rounded-lg sm:rounded-xl ${stat.iconBg} mb-1.5 sm:mb-2`}>
-                      <stat.icon size={18} className={`${stat.iconColor} sm:w-5 sm:h-5`} />
+                ].map((stat) => (
+                  <div
+                    key={stat.id}
+                    id={stat.id}
+                    className={`relative flex flex-col items-center justify-between p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl border transition-all duration-300 group overflow-hidden ${stat.borderHover} ${
+                      isDark
+                        ? 'bg-gradient-to-b from-slate-800/80 to-slate-900/90 border-slate-700/70 shadow-[0_4px_20px_rgba(0,0,0,0.3)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]'
+                        : 'bg-white/95 hover:bg-white border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_10px_25px_rgba(15,23,42,0.08)]'
+                    } hover:-translate-y-1.5 active:scale-[0.98]`}
+                  >
+                    {/* Top Edge Glowing Line */}
+                    <div className={`absolute top-0 left-0 right-0 h-[2.5px] ${stat.accentTop}`} />
+
+                    {/* Ambient Glow Aura on Card Hover */}
+                    <div className={`absolute inset-0 bg-gradient-to-b ${stat.glowHover} opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
+
+                    {/* Elevated Icon Capsule */}
+                    <div className={`relative p-2 sm:p-2.5 rounded-xl sm:rounded-2xl ${stat.iconBg} ${stat.iconBorder} mb-2 sm:mb-2.5 shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+                      <stat.icon size={20} className={`${stat.iconColor} sm:w-5 sm:h-5`} />
                     </div>
-                    <div className="text-sm sm:text-xl md:text-2xl font-black tracking-tight mb-0.5 sm:mb-1 text-center whitespace-nowrap overflow-hidden text-ellipsis max-w-full px-1 text-slate-900 dark:text-white" title={String(stat.value)}>{stat.value}</div>
-                    <div className={`text-[11px] sm:text-xs uppercase tracking-wider sm:tracking-widest font-bold mb-1.5 sm:mb-2 text-center ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
+
+                    {/* Prominent Value Typography (Plus Jakarta Sans) */}
+                    <div
+                      className={`font-['Plus_Jakarta_Sans',sans-serif] font-extrabold tracking-tight mb-1 text-center whitespace-nowrap overflow-hidden text-ellipsis max-w-full px-0.5 text-slate-900 dark:text-white group-hover:text-slate-950 dark:group-hover:text-white transition-colors ${
+                        stat.isCurrency
+                          ? 'text-base sm:text-xl md:text-2xl font-black'
+                          : 'text-2xl sm:text-3xl md:text-4xl font-extrabold'
+                      }`}
+                      title={String(stat.value)}
+                    >
+                      {stat.value}
+                    </div>
+
+                    {/* Crisp Sub-Label */}
+                    <div
+                      className={`font-['Plus_Jakarta_Sans',sans-serif] text-[10px] sm:text-[11px] md:text-xs uppercase tracking-wider font-bold mb-2 text-center leading-snug ${
+                        isDark ? 'text-slate-300 group-hover:text-white' : 'text-slate-600 group-hover:text-slate-900'
+                      } transition-colors`}
+                    >
                       {stat.label}
                     </div>
-                    {/* Sparkline mini */}
-                    <svg viewBox="0 0 80 28" className="w-full h-4 sm:h-6 opacity-60" preserveAspectRatio="none">
-                      <polyline points={stat.sparkPoints} fill="none" stroke={stat.sparkColor} strokeWidth="1.5" strokeLinecap="round"/>
-                      <polygon points={`${stat.sparkPoints} 80,28 0,28`} fill={stat.sparkColor} fillOpacity="0.08" stroke="none"/>
-                    </svg>
+
+                    {/* Refined Sparkline Visualizer with Gradient & Live Dot */}
+                    <div className="w-full relative mt-auto pt-1">
+                      <svg viewBox="0 0 80 28" className="w-full h-4 sm:h-5.5 overflow-visible" preserveAspectRatio="none">
+                        <defs>
+                          <linearGradient id={stat.sparkId} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor={stat.sparkColor} stopOpacity={isDark ? "0.35" : "0.22"} />
+                            <stop offset="100%" stopColor={stat.sparkColor} stopOpacity="0.0" />
+                          </linearGradient>
+                        </defs>
+                        {/* Area Gradient Fill */}
+                        <polygon points={`${stat.sparkPoints} 80,28 0,28`} fill={`url(#${stat.sparkId})`} stroke="none" />
+                        {/* Crisp Line */}
+                        <polyline points={stat.sparkPoints} fill="none" stroke={stat.sparkColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        {/* Live Pulsing Dot */}
+                        <circle cx={stat.lastPoint.x} cy={stat.lastPoint.y} r="2.5" fill={stat.sparkColor} className="animate-pulse" />
+                      </svg>
+                    </div>
                   </div>
                 ))}
               </div>

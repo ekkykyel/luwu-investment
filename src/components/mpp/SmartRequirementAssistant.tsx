@@ -206,42 +206,45 @@ export function SmartRequirementAssistant({ isDark = false }: { isDark?: boolean
             isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xl shadow-slate-200/50'
           }`}>
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-sans">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25 font-['Plus_Jakarta_Sans',sans-serif]">
                 {selectedReq.category}
               </span>
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 font-['Plus_Jakarta_Sans',sans-serif]">
                 {selectedReq.loket}
               </span>
             </div>
 
-            <h3 className="text-lg font-medium font-sans text-slate-900 dark:text-white leading-snug">
+            <h3 className="text-lg sm:text-xl font-bold font-['Plus_Jakarta_Sans',sans-serif] text-slate-900 dark:text-white leading-snug">
               {selectedReq.title}
             </h3>
 
-            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-3">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                  <DollarSign className="w-4 h-4 text-emerald-500" /> {t("mppPortal.smartRequirement.officialCost", "Estimasi Biaya Resmi:")}
+            <div className="mt-4 pt-3 border-t border-slate-200/70 dark:border-slate-800 space-y-2.5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 text-xs">
+                <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium font-['Plus_Jakarta_Sans',sans-serif]">
+                  <DollarSign className="w-4 h-4 text-emerald-500 shrink-0" />
+                  {t("mppPortal.smartRequirement.officialCost", "Estimasi Biaya Resmi:")}
                 </span>
-                <span className="font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
+                <span className="font-extrabold text-emerald-600 dark:text-emerald-400 font-['Plus_Jakarta_Sans',sans-serif] text-sm">
                   {selectedReq.officialCost}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-blue-500" /> {t("mppPortal.smartRequirement.processingSla", "Estimasi Waktu (SLA):")}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 text-xs">
+                <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium font-['Plus_Jakarta_Sans',sans-serif]">
+                  <Clock className="w-4 h-4 text-blue-500 shrink-0" />
+                  {t("mppPortal.smartRequirement.processingSla", "Estimasi Waktu (SLA):")}
                 </span>
-                <span className="font-bold text-slate-800 dark:text-slate-200 font-mono">
+                <span className="font-bold text-slate-800 dark:text-slate-200 font-['Plus_Jakarta_Sans',sans-serif] text-xs sm:text-sm">
                   {selectedReq.processingTime}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between text-xs pt-1">
-                <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                  <Building2 className="w-4 h-4 text-teal-500" /> {t("mppPortal.smartRequirement.responsibleAgency", "Instansi Penanggung Jawab:")}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 text-xs">
+                <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium font-['Plus_Jakarta_Sans',sans-serif]">
+                  <Building2 className="w-4 h-4 text-teal-500 shrink-0" />
+                  {t("mppPortal.smartRequirement.responsibleAgency", "Instansi Penanggung Jawab:")}
                 </span>
-                <span className="font-bold text-slate-900 dark:text-white">
+                <span className="font-bold text-slate-900 dark:text-white font-['Plus_Jakarta_Sans',sans-serif] text-xs sm:text-sm">
                   {selectedReq.agency}
                 </span>
               </div>

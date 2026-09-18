@@ -942,6 +942,260 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
     };
   }
 
+  // 15. AKTA KELAHIRAN & AKTA KEMATIAN (DISDUKCAPIL)
+  if (
+    clean.includes('akta') || 
+    clean.includes('kelahiran') || 
+    clean.includes('kematian') || 
+    clean.includes('lahir') || 
+    clean.includes('meninggal')
+  ) {
+    const persyaratan = [
+      "Surat Keterangan Kelahiran / Kematian asli dari Rumah Sakit / Puskesmas / Kepala Desa / Kelurahan.",
+      "Kartu Keluarga (KK) asli dan KTP-el orang tua / pelapor.",
+      "Buku Nikah / Kutipan Akta Perkawinan orang tua yang dilegalisir (untuk Akta Lahir).",
+      "KTP-el 2 (dua) orang saksi (fotokopi)."
+    ];
+
+    const alurProses = [
+      "1. Ambil nomor antrean Loket Pencatatan Sipil di Kiosk Lobi Utama MPP.",
+      "2. Petugas memverifikasi kelengkapan berkas surat keterangan dan dokumen keluarga.",
+      "3. Perekaman data ke sistem database SIAK Terpusat.",
+      "4. Penerbitan Akta Kelahiran / Akta Kematian bertanda tangan elektronik (TTE) BSrE serta pembaruan Kartu Keluarga baru."
+    ];
+
+    const speechText = 
+      "Tabe', untuk penerbitan Akta Kelahiran atau Akta Kematian di Loket Disdukcapil MPP Simpurusiang: " +
+      "Persyaratannya adalah membawa surat keterangan lahir atau kematian dari puskesmas atau desa, Kartu Keluarga asli, KTP orang tua atau pelapor, buku nikah orang tua, dan KTP dua orang saksi. " +
+      "Alur prosesnya: Ambil nomor antrean, verifikasi berkas di loket, dan akta resmi langsung diterbitkan beserta pembaharuan Kartu Keluarga secara otomatis. " +
+      "Layanan ini seratus persen gratis tanpa dipungut biaya retribusi, dengan estimasi waktu sekitar lima belas menit selesai.";
+
+    return {
+      matched: true,
+      serviceTitle: "Penerbitan Akta Kelahiran & Akta Kematian",
+      instansi: "Dinas Kependudukan dan Pencatatan Sipil (Disdukcapil) Kab. Luwu",
+      speechText,
+      query,
+      persyaratan,
+      alurProses,
+      biaya: "GRATIS 100% (Bebas Biaya)",
+      sla: "10 s.d. 15 Menit",
+      lokasiLoket: "Loket 02 (Pencatatan Sipil) Lantai 1 MPP",
+      targetSectionId: "layanan",
+      category: "Kependudukan & Catatan Sipil"
+    };
+  }
+
+  // 16. IDENTITAS KEPENDUDUKAN DIGITAL (IKD) & KARTU IDENTITAS ANAK (KIA)
+  if (
+    clean.includes('ikd') || 
+    clean.includes('digital') || 
+    clean.includes('ktp digital') || 
+    clean.includes('kia') || 
+    clean.includes('kartu anak')
+  ) {
+    const persyaratan = [
+      "Untuk IKD (KTP Digital): Membawa smartphone Android/iOS dengan internet aktif, KTP-el fisik, nomor HP aktif, dan email pribadi.",
+      "Untuk KIA (Kartu Identitas Anak): Fotokopi Akta Kelahiran, Fotokopi Kartu Keluarga, dan pasfoto anak 2x3 (2 lembar untuk anak usia di atas 5 tahun)."
+    ];
+
+    const alurProses = [
+      "1. Unduh aplikasi Identitas Kependudukan Digital (IKD) resmi Kemendagri di PlayStore / AppStore.",
+      "2. Mengisi NIK, email, dan nomor ponsel pada aplikasi.",
+      "3. Melakukan scan QR Code aktivasi yang dipandu langsung oleh petugas Helpdesk Disdukcapil di MPP.",
+      "4. KTP digital langsung aktif dan dapat digunakan di semua instansi pemerintah."
+    ];
+
+    const speechText = 
+      "Tabe', untuk aktivasi Identitas Kependudukan Digital atau IKD dan pembuatan Kartu Identitas Anak di MPP Luwu: " +
+      "Persyaratannya sangat mudah: Cukup membawa smartphone Anda, nomor HP dan email aktif, serta KTP fisik. " +
+      "Alur prosesnya: Unduh aplikasi IKD Kemendagri, isi NIK dan email, lalu scan barcode aktivasi bersama petugas Helpdesk Dukcapil di lobi MPP. KTP digital Anda langsung aktif seketika. " +
+      "Layanan aktivasi IKD ini gratis seratus persen dan hanya membutuhkan waktu sekitar lima menit.";
+
+    return {
+      matched: true,
+      serviceTitle: "Aktivasi IKD (KTP Digital) & Penerbitan KIA",
+      instansi: "Dinas Kependudukan dan Pencatatan Sipil (Disdukcapil) Kab. Luwu",
+      speechText,
+      query,
+      persyaratan,
+      alurProses,
+      biaya: "GRATIS 100%",
+      sla: "5 s.d. 10 Menit",
+      lokasiLoket: "Helpdesk IKD & Loket 03 Lantai 1 MPP",
+      targetSectionId: "layanan",
+      category: "Kependudukan & Catatan Sipil"
+    };
+  }
+
+  // 17. NPWP PRIBADI & BADAN (KPP PRATAMA / POS PELAYANAN PAJAK)
+  if (
+    clean.includes('npwp') || 
+    clean.includes('pajak pusat') || 
+    clean.includes('kpp') || 
+    clean.includes('pajak penghasilan') || 
+    clean.includes('ebilling')
+  ) {
+    const persyaratan = [
+      "NPWP Orang Pribadi: KTP-el pemohon dan Kartu Keluarga (KK), nomor ponsel dan email aktif.",
+      "NPWP Badan Usaha: Akta Notaris & SK Kemenkumham, KTP & NPWP Direktur/Penanggung Jawab, NIB dari OSS.",
+      "NPWP Cabang: Surat penunjukan kepala cabang dan NPWP kantor pusat."
+    ];
+
+    const alurProses = [
+      "1. Ambil nomor antrean Gerai Pajak di Kiosk Lobi Utama MPP.",
+      "2. Pendaftaran akun CoreTax DJP / ereg pajak didampingi staf Helpdesk Pajak.",
+      "3. Validasi NIK menjadi NPWP 16 digit secara realtime.",
+      "4. Penerbitan Surat Keterangan Terdaftar (SKT) dan kartu NPWP digital/fisik."
+    ];
+
+    const speechText = 
+      "Tabe', untuk pembuatan NPWP pribadi atau badan usaha di Gerai Pajak KPP Pratama MPP Simpurusiang: " +
+      "Persyaratannya adalah membawa KTP elektronik, Kartu Keluarga, nomor HP, dan email aktif. " +
+      "Alur prosesnya: Petugas gerai pajak kami akan mendampingi validasi NIK Anda menjadi NPWP enam belas digit melalui sistem CoreTax, dan kartu NPWP beserta Surat Keterangan Terdaftar langsung terbit di tempat. " +
+      "Layanan ini gratis seratus persen dan selesai dalam waktu sekitar sepuluh menit.";
+
+    return {
+      matched: true,
+      serviceTitle: "Pendaftaran NPWP & Konsultasi Perpajakan (KPP)",
+      instansi: "KPP Pratama Palopo (Pos Pelayanan Pajak MPP Simpurusiang Luwu)",
+      speechText,
+      query,
+      persyaratan,
+      alurProses,
+      biaya: "GRATIS 100% (Bebas Biaya)",
+      sla: "5 s.d. 10 Menit",
+      lokasiLoket: "Loket 20 (Pos Pelayanan Pajak KPP) Lantai 1 MPP",
+      targetSectionId: "layanan",
+      category: "Perpajakan Nasional"
+    };
+  }
+
+  // 18. JAM BUKA, OPERASIONAL & JADWAL PELAYANAN MPP
+  if (
+    clean.includes('jam buka') || 
+    clean.includes('jam operasional') || 
+    clean.includes('jadwal') || 
+    clean.includes('hari kerja') || 
+    clean.includes('buka hari apa') || 
+    clean.includes('tutup')
+  ) {
+    const persyaratan = [
+      "Tidak ada syarat khusus. Warga dapat datang langsung pada hari kerja dengan membawa kartu identitas."
+    ];
+
+    const alurProses = [
+      "1. Hari Pelayanan: Senin sampai dengan Jumat.",
+      "2. Jam Operasional: Pukul 07.30 WITA sampai 16.00 WITA (Istirahat Sholat 12.00 - 13.00 WITA, loket tetap melayani secara bergantian).",
+      "3. Hari Sabtu, Minggu, dan Hari Libur Nasional: Pelayanan tatap muka tutup, layanan portal online tetap aktif 24 jam."
+    ];
+
+    const speechText = 
+      "Tabe', jam operasional pelayanan Mal Pelayanan Publik Simpurusiang Kabupaten Luwu adalah: " +
+      "Buka setiap hari Senin hingga Jumat, mulai pukul tujuh tiga puluh pagi sampai dengan pukul enam belas nol nol Waktu Indonesia Tengah. " +
+      "Untuk hari Sabtu, Minggu, dan hari libur nasional, loket fisik tutup namun Anda tetap dapat mengajukan perizinan secara daring melalui portal ini dua puluh empat jam. " +
+      "Kami siap melayani Anda dengan ramah, nyaman, dan bebas calo.";
+
+    return {
+      matched: true,
+      serviceTitle: "Jadwal & Jam Operasional Pelayanan MPP Simpurusiang",
+      instansi: "Sekretariat Pengelola Mal Pelayanan Publik (MPP) Kab. Luwu",
+      speechText,
+      query,
+      persyaratan,
+      alurProses,
+      biaya: "GRATIS",
+      sla: "Senin - Jumat: 07.30 - 16.00 WITA",
+      lokasiLoket: "Gedung MPP Simpurusiang, Jl. Jend. Sudirman No. 1, Belopa",
+      targetSectionId: "instansi",
+      category: "Informasi Operasional"
+    };
+  }
+
+  // 19. ANTREAN ONLINE & KIOSK LAYAR SENTUH
+  if (
+    clean.includes('antrean') || 
+    clean.includes('antri') || 
+    clean.includes('nomor antrean') || 
+    clean.includes('kiosk') || 
+    clean.includes('ambil nomor')
+  ) {
+    const persyaratan = [
+      "Membawa KTP-el / Nomor Induk Kependudukan (NIK).",
+      "Mengetahui instansi atau loket layanan yang dituju."
+    ];
+
+    const alurProses = [
+      "1. Setibanya di Lobi Utama Lantai 1 MPP, dekati Mesin Kiosk Antrean Layar Sentuh.",
+      "2. Sentuh layar dan pilih instansi atau scan barcode KTP jika diminta.",
+      "3. Mesin Kiosk akan mencetak struk nomor antrean secara otomatis.",
+      "4. Duduk santai di ruang tunggu ber-AC sembari memantau layar display panggilan dan pengeras suara otomatis."
+    ];
+
+    const speechText = 
+      "Tabe', sistem antrean di MPP Simpurusiang menggunakan Kiosk Digital Cerdas di lobi utama. " +
+      "Caranya sangat mudah: Setibanya di gedung MPP, pilih instansi yang dituju pada layar sentuh mesin antrean. Struk nomor antrean akan otomatis tercetak dan panggilan loket disiarkan melalui layar LED serta audio cerdas. " +
+      "Bagi lansia dan penyandang disabilitas tersedia Jalur Antrean Prioritas Khusus di meja Front Office tanpa perlu mengantre umum.";
+
+    return {
+      matched: true,
+      serviceTitle: "Sistem Antrean Digital & Prioritas Khusus",
+      instansi: "Pusat Pengendali Sistem Antrean Terintegrasi MPP Luwu",
+      speechText,
+      query,
+      persyaratan,
+      alurProses,
+      biaya: "GRATIS",
+      sla: "Pencetakan Tiket Seketika (<10 Detik)",
+      lokasiLoket: "Mesin Kiosk Lobi Utama Lantai 1 MPP",
+      targetSectionId: "layanan",
+      category: "Sistem & Teknologi"
+    };
+  }
+
+  // 20. INVESTASI & INSENTIF MODAL LUWU (DPMPTSP)
+  if (
+    clean.includes('investasi') || 
+    clean.includes('insentif') || 
+    clean.includes('lkpm') || 
+    clean.includes('peluang investasi') || 
+    clean.includes('pma') || 
+    clean.includes('pmdn')
+  ) {
+    const persyaratan = [
+      "Profil Perusahaan / Investor (PMA/PMDN).",
+      "Dokumen NIB dan rencana nilai investasi modal usaha.",
+      "Proposal lokasi dan kebutuhan luasan lahan (Kecamatan Bua, Belopa, Latimojong, Walenrang, dll)."
+    ];
+
+    const alurProses = [
+      "1. Konsultasi di Loket Investasi & Promosi DPMPTSP Lantai 1 MPP Simpurusiang.",
+      "2. Pengecekan Peta Potensi Investasi Spasial GIS Kabupaten Luwu (Smelter, Kakao, Kopi, Perikanan, Logistik Pelabuhan Tadokkong).",
+      "3. Fasilitasi insentif penanaman modal daerah dan kemudahan perizinan satu pintu terintegrasi.",
+      "4. Pendampingan pelaporan LKPM secara periodik."
+    ];
+
+    const speechText = 
+      "Tabe', Pemerintah Kabupaten Luwu melalui DPMPTSP memberikan karpet merah dan kemudahan insentif bagi para investor dalam dan luar negeri. " +
+      "Kami memiliki potensi unggulan pada sektor hilirisasi nikel dan smelter, komoditas kakao dan kopi arabika Latimojong, budidaya udang vaname dan rumput laut, serta kawasan industri terpadu dekat Bandara Bua dan Pelabuhan Tadokkong. " +
+      "Petugas Promosi Investasi di Loket 06 MPP siap mendampingi Anda dari konsultasi tata ruang hingga izin terbit.";
+
+    return {
+      matched: true,
+      serviceTitle: "Layanan Fasilitasi Penanaman Modal & Investasi Daerah",
+      instansi: "Bidang Penanaman Modal & Promosi DPMPTSP Kab. Luwu",
+      speechText,
+      query,
+      persyaratan,
+      alurProses,
+      biaya: "GRATIS (Pendampingan Investasi Terpadu)",
+      sla: "Konsultasi Langsung & Helpdesk LKPM",
+      lokasiLoket: "Loket 06 (Klinik Investasi & LKPM) Lantai 1 MPP",
+      targetSectionId: "layanan",
+      category: "Investasi & Penanaman Modal"
+    };
+  }
+
   // 15. DEFAULT SMART KNOWLEDGE FALLBACK
   const genericSpeechText = 
     `Tabe', terima kasih atas pertanyaan Anda mengenai "${query}". ` +

@@ -4,12 +4,47 @@ import {
   Accessibility, HeartHandshake, PhoneCall, HelpCircle, X, CheckCircle2, 
   ShieldCheck, MapPin, Compass, ArrowRight, UserCheck, AlertCircle,
   FileText, Clock, DollarSign, Building2, Copy, Play, Square, Share2,
-  Globe, Radio, RotateCcw, Send, Gauge
+  Globe, Radio, RotateCcw, Send, Gauge, Search, ChevronRight, MessageSquareText
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { resolveMppVoiceQuery, VoiceAssistantResponse, appendVoiceClosing } from '../../utils/mppVoiceKnowledge';
 import { speakCrystalClearText, stopAllSpeech, formatTextForCrystalClearTts } from '../../utils/mppAudioEngine';
+
+/**
+ * Phonetically normalizes spoken abbreviations and Indonesian conversational queries
+ * into precise administrative search terms.
+ */
+function normalizeSpokenVoiceQuery(query: string): string {
+  if (!query) return '';
+  let clean = query.trim();
+
+  // Strip conversational fillers
+  clean = clean.replace(/^(halo|hai|tolong|mohon|asisten|tanya|mau tanya|saya mau tanya|bagaimana cara|apa saja syarat|apa syarat|syarat|info|minta info|info tentang)\s+/gi, '');
+
+  // Expand spoken acronyms
+  clean = clean.replace(/\bpe\s*be\s*ge\b/gi, 'PBG');
+  clean = clean.replace(/\bte\s*be\s*ge\b/gi, 'PBG');
+  clean = clean.replace(/\bka\s*te\s*pe\b/gi, 'KTP');
+  clean = clean.replace(/\bes\s*i\s*em\b/gi, 'SIM');
+  clean = clean.replace(/\bes\s*ka\s*ce\s*ka\b/gi, 'SKCK');
+  clean = clean.replace(/\bo\s*es\s*es\b/gi, 'OSS');
+  clean = clean.replace(/\ben\s*i\s*be\b/gi, 'NIB');
+  clean = clean.replace(/\bbe\s*pe\s*je\s*es\b/gi, 'BPJS');
+  clean = clean.replace(/\bbe\s*pe\s*en\b/gi, 'BPN');
+  clean = clean.replace(/\bpe\s*ka\s*ka\s*pe\s*er\b/gi, 'PKKPR');
+  clean = clean.replace(/\bes\s*el\s*ef\b/gi, 'SLF');
+  clean = clean.replace(/\ben\s*pe\s*we\s*pe\b/gi, 'NPWP');
+  clean = clean.replace(/\bde\s*pe\s*u\s*pe\s*er\b/gi, 'DPUPR');
+  clean = clean.replace(/\bde\s*pe\s*em\s*pe\s*te\s*es\s*pe\b/gi, 'DPMPTSP');
+  clean = clean.replace(/\bdok\s*capil\b/gi, 'Disdukcapil');
+  clean = clean.replace(/\bduk\s*capil\b/gi, 'Disdukcapil');
+  clean = clean.replace(/\bke\s*ka\b/gi, 'Kartu Keluarga');
+  clean = clean.replace(/\bka\s*i\s*a\b/gi, 'KIA');
+  clean = clean.replace(/\bi\s*ka\s*de\b/gi, 'IKD');
+
+  return clean.trim() || query.trim();
+}
 
 interface InclusivityAccessibilityBarProps {
   isDark?: boolean;
@@ -48,6 +83,8 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
   const [isVoiceResponseModalOpen, setIsVoiceResponseModalOpen] = useState(false);
   const [isProcessingVoiceAi, setIsProcessingVoiceAi] = useState(false);
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [quickQuestionCategory, setQuickQuestionCategory] = useState<string>('populer');
+  const [quickQuestionSearch, setQuickQuestionSearch] = useState<string>('');
   
   const recognitionRef = useRef<any>(null);
   const timerIntervalRef = useRef<any>(null);
@@ -149,7 +186,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
         recognition.onresult = (event: any) => {
           let interimTranscript = '';
           let finalTranscript = '';
-          for (let i = event.resultIndex; i < event.results.length; ++i) {
+          for (let i = 0; i < event.results.length; ++i) {
             const transcript = event.results[i][0].transcript;
             if (event.results[i].isFinal) {
               finalTranscript += transcript + ' ';
@@ -157,18 +194,20 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               interimTranscript += transcript;
             }
           }
-          const combined = (finalTranscript + interimTranscript).trim();
-          if (combined) {
-            setRecognizedVoiceText(combined);
-            currentTranscriptRef.current = combined;
+          const rawCombined = (finalTranscript + interimTranscript).trim();
+          const normalized = normalizeSpokenVoiceQuery(rawCombined);
+
+          if (normalized) {
+            setRecognizedVoiceText(normalized);
+            currentTranscriptRef.current = normalized;
             
-            // Reset silence auto-submit window (2.5s timeout for better responsiveness)
+            // Reset silence auto-submit window (2.6s timeout for smooth sentence completion)
             if (silenceTimeoutRef.current) clearTimeout(silenceTimeoutRef.current);
             silenceTimeoutRef.current = setTimeout(() => {
               if (currentTranscriptRef.current.trim().length > 2) {
                 finalizeVoiceRecording();
               }
-            }, 2500);
+            }, 2600);
           }
         };
 
@@ -511,28 +550,92 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
     setTimeout(() => setShowNotification(null), 3800);
   };
 
-  // Sample query tags for voice assistance
-  const sampleVoiceQueries = {
-    id: [
-      "Syarat izin PBG",
-      "Bikin KTP baru",
-      "Perpanjang SIM",
-      "Izin Usaha NIB",
-      "Urus Paspor",
-      "Biaya PBG & Retribusi"
+  // Comprehensive categorized collection of quick questions
+  const quickQuestionCategories = [
+    { id: 'populer', label: '🌟 Populer', labelEn: '🌟 Popular', labelZh: '🌟 热门' },
+    { id: 'dukcapil', label: '🪪 Disdukcapil (KTP/KK)', labelEn: '🪪 Civil Registry', labelZh: '🪪 户政身份' },
+    { id: 'pbg', label: '🏗️ PBG & Tata Ruang', labelEn: '🏗️ Building & Spatial', labelZh: '🏗️ 建筑与规划' },
+    { id: 'usaha', label: '💼 Usaha NIB & Investasi', labelEn: '💼 Business & Investment', labelZh: '💼 投资与执照' },
+    { id: 'polres', label: '🚗 SIM, SKCK & SAMSAT', labelEn: '🚗 Police & Vehicle', labelZh: '🚗 驾照与警务' },
+    { id: 'bpjs', label: '🏥 BPJS & Pajak Daerah', labelEn: '🏥 BPJS & Tax', labelZh: '🏥 医保与税务' },
+    { id: 'paspor', label: '🛂 Paspor, Nikah & BBM', labelEn: '🛂 Passport & Marriage', labelZh: '🛂 护照与婚姻' },
+    { id: 'fasilitas', label: '♿ Jam Buka & Inklusif', labelEn: '♿ Hours & Accessibility', labelZh: '♿ 时间与设施' },
+  ];
+
+  const quickQuestionsData: Record<string, { id: string; en: string; zh: string }[]> = {
+    populer: [
+      { id: "Syarat izin PBG bangunan gedung", en: "Building Approval PBG Requirements", zh: "办理PBG建筑许可要求" },
+      { id: "Cara membuat KTP baru & ganti KTP rusak", en: "New E-KTP and Card Replacement", zh: "申领新身份证及补换领" },
+      { id: "Perpanjang SIM A dan SIM C", en: "Driver License SIM Renewal", zh: "换领机动车驾驶执照SIM" },
+      { id: "Pembuatan NIB izin usaha OSS", en: "Business License NIB via OSS", zh: "办理企业营业执照NIB" },
+      { id: "Biaya dan syarat pengurusan Paspor", en: "Passport Application & Fees", zh: "护照申请办理与法定规费" },
+      { id: "Jam operasional pelayanan MPP", en: "MPP Opening Hours & Schedule", zh: "MPP公共服务大楼开放时间" }
     ],
-    en: [
-      "Requirements for PBG",
-      "Business License NIB",
-      "Passport & Immigration",
-      "Building Approval Process"
+    dukcapil: [
+      { id: "Syarat buat KTP baru pemula usia 17 tahun", en: "Requirements for 17yo first-time KTP", zh: "年满17周岁首次申办身份证" },
+      { id: "Cara urus KTP hilang atau rusak", en: "Lost or damaged KTP replacement", zh: "身份证遗失或破损补办" },
+      { id: "Penerbitan dan perubahan Kartu Keluarga (KK)", en: "Family Card KK update and issuance", zh: "户口本Kartu Keluarga变更申领" },
+      { id: "Aktivasi KTP Digital IKD di HP", en: "Digital ID IKD Mobile Activation", zh: "手机端激活数字身份证IKD" },
+      { id: "Syarat pembuatan Kartu Identitas Anak (KIA)", en: "Child Identity Card KIA requirements", zh: "申领少儿身份证KIA要求" },
+      { id: "Cara mengurus Akta Kelahiran baru", en: "Birth Certificate Registration", zh: "申办新生儿出生证明Akta" },
+      { id: "Syarat penerbitan Akta Kematian", en: "Death Certificate Issuance", zh: "申办死亡证明Akta" }
     ],
-    zh: [
-      "办理PBG建筑许可要求",
-      "办理企业执照NIB",
-      "护照出入境签证",
-      "投资优惠政策"
+    pbg: [
+      { id: "Syarat izin PBG bangunan gedung", en: "Building Approval PBG Requirements", zh: "办理PBG建筑工程许可要求" },
+      { id: "Berapa biaya retribusi PBG gedung?", en: "Building Retribution Fee calculation", zh: "建筑许可规费计算标准" },
+      { id: "Cara mengurus izin tata ruang PKKPR", en: "PKKPR Spatial Confirmation", zh: "办理空间规划合规证明PKKPR" },
+      { id: "Syarat Sertifikat Laik Fungsi (SLF)", en: "Certificate of Building Fitness SLF", zh: "申办建筑物适航许可SLF" },
+      { id: "Cara konsultasi teknis PBG SIMBG", en: "SIMBG Technical Consultation", zh: "SIMBG国家建筑系统技术咨询" }
+    ],
+    usaha: [
+      { id: "Pembuatan NIB izin usaha OSS", en: "Business License NIB via OSS", zh: "通过OSS系统申领NIB营业执照" },
+      { id: "Syarat izin usaha PT dan CV di OSS", en: "Company PT and CV OSS License", zh: "企业法人PT/CV营业许可注册" },
+      { id: "Peluang investasi hilirisasi di Luwu", en: "Investment & Downstreaming in Luwu", zh: "鲁武县下游产业与投资优惠政策" },
+      { id: "Panduan pelaporan LKPM investasi", en: "LKPM Investment Report guide", zh: "企业投资进度LKPM申报指引" }
+    ],
+    polres: [
+      { id: "Perpanjang SIM A dan SIM C", en: "Driver License SIM Renewal", zh: "换领机动车驾驶执照SIM" },
+      { id: "Berapa biaya resmi pembuatan SKCK?", en: "Police Certificate SKCK fee and terms", zh: "办理无犯罪记录证明SKCK规费" },
+      { id: "Syarat bayar pajak motor dan mobil SAMSAT", en: "SAMSAT Vehicle Tax Payment", zh: "缴纳机动车年检税费SAMSAT" },
+      { id: "Syarat tes kesehatan dan psikologi SIM", en: "Medical & Psychological SIM test", zh: "驾驶证体检与心理测试" }
+    ],
+    bpjs: [
+      { id: "Cara daftar BPJS Kesehatan mandiri", en: "BPJS Health Insurance Registration", zh: "办理印尼国家医保BPJS" },
+      { id: "Syarat pindah faskes tingkat 1 BPJS", en: "Change BPJS Primary Clinic Faskes", zh: "医保指定定点门诊变更" },
+      { id: "Cara membuat NPWP pribadi online", en: "Individual Tax Number NPWP online", zh: "线上申领个人税号NPWP" },
+      { id: "Cara bayar PBB-P2 dan validasi BPHTB", en: "PBB Property Tax & BPHTB validation", zh: "缴纳土地房产税PBB及契税验证" }
+    ],
+    paspor: [
+      { id: "Biaya dan syarat pengurusan Paspor", en: "Passport Application & Fees", zh: "护照申请办理与法定规费" },
+      { id: "Cara nikah gratis di Balai Nikah MPP", en: "Free Wedding at MPP Marriage Hall", zh: "在MPP公共礼堂免费登记结婚" },
+      { id: "Syarat rekomendasi BBM subsidi nelayan", en: "Subsidized Fuel permit for fishermen", zh: "申请渔民及养殖柴油补贴许可" }
+    ],
+    fasilitas: [
+      { id: "Jam operasional pelayanan MPP", en: "MPP Opening Hours & Schedule", zh: "MPP公共服务大楼开放时间" },
+      { id: "Fasilitas kursi roda & pendampingan disabilitas", en: "Wheelchair and Disability support", zh: "轮椅及无障碍助残绿色通道" },
+      { id: "Cara ambil nomor antrean di mesin Kiosk", en: "Taking Queue Ticket from Touchscreen", zh: "大堂触屏取号机使用方法" }
     ]
+  };
+
+  // Filtered quick questions
+  const currentCategoryQuestions = quickQuestionsData[quickQuestionCategory] || quickQuestionsData.populer;
+  const filteredQuestions = quickQuestionSearch.trim()
+    ? Object.values(quickQuestionsData).flat().filter(q => {
+        const queryTerm = quickQuestionSearch.toLowerCase();
+        return q.id.toLowerCase().includes(queryTerm) || 
+               q.en.toLowerCase().includes(queryTerm) || 
+               q.zh.includes(queryTerm);
+      })
+    : currentCategoryQuestions;
+
+  const handleQuickQuestionClick = (qText: string) => {
+    setRecognizedVoiceText(qText);
+    currentTranscriptRef.current = qText;
+    finalizeVoiceRecording();
+  };
+
+  const handleDirectAskInResponse = (qText: string) => {
+    handleVoiceCommand(qText);
   };
 
   return (
@@ -563,28 +666,6 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
 
           {/* Action Controls (Clean, Compact & Adaptive on Android) */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-            
-            {/* Interactive Voice Search & Smart Response (With Audio Wave indicator) */}
-            <button
-              onClick={startVoiceListening}
-              className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 rounded-lg text-[10.5px] sm:text-[11px] font-bold transition-all cursor-pointer ${
-                isListening
-                  ? 'bg-rose-500 text-white shadow-lg animate-pulse ring-2 ring-rose-300'
-                  : 'bg-emerald-600/90 hover:bg-emerald-500 text-white border border-emerald-400/40 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
-              }`}
-              title="Tanya Suara Asisten Cerdas MPP (Bahasa Indonesia, English, 中文)"
-            >
-              <Mic className="w-3.5 h-3.5 text-white animate-pulse shrink-0" />
-              <span className="sm:hidden">
-                {voiceLanguage === 'zh' ? '智能问答' : voiceLanguage === 'en' ? 'Voice AI' : 'Tanya Suara'}
-              </span>
-              <span className="hidden sm:inline">
-                {voiceLanguage === 'zh' ? '智能语音助手 MPP' : voiceLanguage === 'en' ? 'Ask Voice Assistant' : 'Tanya Suara Asisten MPP'}
-              </span>
-              <span className="text-[9px] px-1 py-0.2 rounded bg-black/25 font-mono uppercase text-emerald-200">
-                {voiceLanguage.toUpperCase()}
-              </span>
-            </button>
 
             {/* Audio Reader / TTS */}
             <button
@@ -657,26 +738,68 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
         </div>
       </div>
 
-      {/* --- MODAL DIALOG PEREKAM SUARA INTERAKTIF (DURASI DITINGKATKAN HINGGA 45 DETIK & HIGH PRECISION) --- */}
+      {/* --- FLOATING ELEGAN & TRANSLUSEN: TANYA SUARA ASISTEN MPP --- */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.85, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
+        className="fixed bottom-5 right-3.5 sm:bottom-7 sm:right-7 z-40 select-none group"
+      >
+        <button
+          type="button"
+          onClick={startVoiceListening}
+          aria-label="Tanya Suara Asisten MPP"
+          title="Tanya Suara Asisten Cerdas MPP (Klik untuk mulai bicara atau lihat katalog pertanyaan cepat)"
+          className={`relative flex items-center gap-2 sm:gap-2.5 px-3 py-2 sm:px-4 sm:py-2.5 rounded-full backdrop-blur-xl border transition-all duration-300 cursor-pointer shadow-[0_8px_32px_rgba(0,0,0,0.3)] ${
+            isListening
+              ? 'bg-rose-950/70 border-rose-500/80 text-white shadow-rose-500/30 ring-2 ring-rose-400/50 animate-pulse'
+              : 'bg-slate-900/55 hover:bg-slate-900/85 dark:bg-[#0B1120]/55 dark:hover:bg-[#0B1120]/85 border-emerald-500/30 hover:border-emerald-400/70 text-emerald-300 hover:text-emerald-200 shadow-emerald-950/20 hover:shadow-[0_8px_30px_rgba(16,185,129,0.25)] hover:scale-105 active:scale-95'
+          }`}
+        >
+          {/* Ambient Glow Aura */}
+          <span className="absolute inset-0 rounded-full bg-emerald-500/10 dark:bg-emerald-400/10 pointer-events-none group-hover:bg-emerald-500/20 transition-colors"></span>
+
+          {/* Glowing Animated Mic Orb */}
+          <div className="relative flex items-center justify-center">
+            <span className="absolute -inset-1 rounded-full bg-emerald-500/20 animate-ping opacity-60 pointer-events-none"></span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-emerald-600/80 to-teal-500/80 flex items-center justify-center shadow-inner border border-emerald-300/40">
+              <Mic className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white animate-pulse" />
+            </div>
+          </div>
+
+          {/* Text Label (Elegan & Ringkas) */}
+          <div className="flex flex-col text-left leading-none">
+            <span className="text-[11px] sm:text-xs font-extrabold tracking-tight font-sans text-white/95 group-hover:text-white flex items-center gap-1">
+              <span>{voiceLanguage === 'zh' ? '智能语音助手' : voiceLanguage === 'en' ? 'Voice Assistant' : 'Tanya Suara'}</span>
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            </span>
+            <span className="text-[9px] text-emerald-300/80 font-mono mt-0.5">
+              MPP Luwu • {voiceLanguage.toUpperCase()}
+            </span>
+          </div>
+        </button>
+      </motion.div>
+
+      {/* --- MODAL DIALOG PEREKAM SUARA & KATALOG PERTANYAAN CEPAT INTERAKTIF --- */}
       <AnimatePresence>
         {isVoiceListeningModalOpen && (
           <div 
-            className="fixed inset-0 z-[120] flex items-center justify-center p-3.5 sm:p-5 bg-black/80 backdrop-blur-md"
+            className="fixed inset-0 z-[120] flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-md overflow-y-auto"
             onClick={stopVoiceListening}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 30 }}
+              initial={{ opacity: 0, scale: 0.92, y: 25 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 30 }}
-              className="w-full max-w-lg bg-slate-900 border-2 border-emerald-500/50 rounded-3xl p-5 sm:p-7 shadow-2xl text-white my-auto flex flex-col relative overflow-hidden"
+              exit={{ opacity: 0, scale: 0.92, y: 25 }}
+              className="w-full max-w-2xl bg-slate-900 border-2 border-emerald-500/50 rounded-3xl p-4 sm:p-6 shadow-2xl text-white my-auto flex flex-col relative overflow-hidden max-h-[92vh]"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Top Language Badge & Close */}
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-800 shrink-0">
                 <div className="flex items-center gap-2">
                   <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></div>
                   <span className="text-xs font-bold font-mono uppercase text-emerald-400 tracking-wider">
-                    {voiceLanguage === 'en' ? 'Trilingual Voice Assistant (English)' : voiceLanguage === 'zh' ? '多语种智能语音助手 (普通话)' : 'Asisten Suara MPP (Bahasa Indonesia)'}
+                    {voiceLanguage === 'en' ? 'Trilingual Voice Assistant (English)' : voiceLanguage === 'zh' ? '多语种智能语音助手 (普通话)' : 'Tanya Suara Asisten Cerdas MPP'}
                   </span>
                 </div>
                 <button
@@ -688,17 +811,17 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               </div>
 
               {/* Central Voice Equalizer & Timer */}
-              <div className="py-6 flex flex-col items-center justify-center text-center">
-                <div className="relative mb-4">
+              <div className="py-3 flex flex-col items-center justify-center text-center shrink-0">
+                <div className="relative mb-2">
                   {/* Pulsing Aura */}
                   <div className="absolute inset-0 rounded-full bg-emerald-500/20 animate-ping scale-125 pointer-events-none"></div>
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.5)] border-4 border-emerald-300">
-                    <Mic className="w-10 h-10 sm:w-12 sm:h-12 text-white animate-bounce" />
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-[0_0_25px_rgba(16,185,129,0.5)] border-3 border-emerald-300">
+                    <Mic className="w-8 h-8 sm:w-10 sm:h-10 text-white animate-bounce" />
                   </div>
                 </div>
 
                 {/* Animated Equalizer Bars */}
-                <div className="flex items-center justify-center gap-1.5 h-8 my-2">
+                <div className="flex items-center justify-center gap-1.5 h-6 my-1">
                   {[40, 75, 100, 60, 90, 50, 80, 45, 95, 65].map((height, idx) => (
                     <motion.div
                       key={idx}
@@ -709,66 +832,130 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                   ))}
                 </div>
 
-                <div className="mt-2 text-xs text-slate-400 flex items-center gap-1.5 font-mono">
+                <div className="mt-1 text-xs text-slate-400 flex items-center gap-1.5 font-mono">
                   <Clock className="w-3.5 h-3.5 text-emerald-400" />
                   <span>Durasi Perekaman: <strong className="text-white">00:{recordingSeconds < 10 ? `0${recordingSeconds}` : recordingSeconds} / 00:45</strong></span>
-                  <span className="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded text-[10px]">Santai & Tenang</span>
+                  <span className="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded text-[10px]">Anti Terputus</span>
                 </div>
-
-                <p className="text-sm font-semibold text-slate-200 mt-2 max-w-sm">
-                  {voiceLanguage === 'en' 
-                    ? "Speak comfortably and clearly. The AI Voice Assistant is capturing every word..." 
-                    : voiceLanguage === 'zh'
-                    ? "请从容、清晰地表达您的问题，AI 助手正在精确识别您的声音..."
-                    : "Berbicaralah dengan santai dan tenang. Asisten AI mendengarkan suara Anda dengan presisi..."}
-                </p>
               </div>
 
-              {/* Real-Time Live Transcript Preview Box */}
-              <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-700/80 min-h-[70px] max-h-[110px] overflow-y-auto mb-4 custom-scrollbar">
-                <div className="text-[10.5px] uppercase font-mono text-emerald-400/80 mb-1 flex items-center gap-1">
-                  <Radio className="w-3 h-3 animate-pulse text-rose-400" />
-                  <span>Transkrip Suara Langsung (Real-Time):</span>
-                </div>
-                {recognizedVoiceText ? (
-                  <p className="text-sm text-white font-medium italic leading-relaxed">
-                    "{recognizedVoiceText}"
-                  </p>
-                ) : (
-                  <p className="text-xs text-slate-500 italic">
-                    (Menunggu suara pemohon... Contoh: "Apa syarat izin PBG bangunan gedung?")
-                  </p>
-                )}
-              </div>
-
-              {/* Quick Sample Questions Chips */}
-              <div className="mb-4">
-                <div className="text-[11px] text-slate-400 mb-1.5 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-amber-400" />
-                  <span>Contoh Pertanyaan Cepat (Bisa langsung diklik):</span>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {sampleVoiceQueries[voiceLanguage].map((sample, sIdx) => (
-                    <button
-                      key={sIdx}
-                      onClick={() => {
-                        setRecognizedVoiceText(sample);
-                        currentTranscriptRef.current = sample;
-                        finalizeVoiceRecording();
-                      }}
-                      className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-300 border border-slate-700 text-[11px] transition-all cursor-pointer"
+              {/* Real-Time Live Transcript Preview & Manual Input */}
+              <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-700/80 mb-3 shrink-0">
+                <div className="text-[10.5px] uppercase font-mono text-emerald-400/80 mb-1 flex items-center justify-between">
+                  <span className="flex items-center gap-1">
+                    <Radio className="w-3 h-3 animate-pulse text-rose-400" />
+                    Transkrip Suara / Ketik Pertanyaan:
+                  </span>
+                  {recognizedVoiceText && (
+                    <button 
+                      onClick={() => { setRecognizedVoiceText(''); currentTranscriptRef.current = ''; }}
+                      className="text-slate-400 hover:text-white text-[10px] underline"
                     >
-                      {sample}
+                      Hapus
                     </button>
-                  ))}
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={recognizedVoiceText}
+                    onChange={(e) => {
+                      setRecognizedVoiceText(e.target.value);
+                      currentTranscriptRef.current = e.target.value;
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') finalizeVoiceRecording();
+                    }}
+                    placeholder={
+                      voiceLanguage === 'en'
+                        ? "Listening... (or type your question here and press Enter)"
+                        : voiceLanguage === 'zh'
+                        ? "正在聆听语音... (或在此输入问题并回车)"
+                        : "Sedang mendengarkan... (atau ketik langsung pertanyaan di sini)"
+                    }
+                    className="w-full bg-transparent text-white text-xs sm:text-sm font-medium outline-none placeholder:text-slate-500"
+                  />
+                  {recognizedVoiceText && (
+                    <button
+                      onClick={finalizeVoiceRecording}
+                      className="p-1.5 rounded-lg bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-colors shrink-0"
+                      title="Kirim Pertanyaan"
+                    >
+                      <Send className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Interactive Quick Questions Catalog Hub (Banyak Pilihan Pertanyaan Singkat) */}
+              <div className="flex-1 overflow-hidden flex flex-col min-h-[160px] max-h-[220px] mb-3">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-[11px] text-slate-300 font-bold flex items-center gap-1">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Klik Pertanyaan Cepat (Jawaban Suara Otomatis):</span>
+                  </div>
+                  
+                  {/* Mini search input */}
+                  <div className="relative w-36 sm:w-44">
+                    <Search className="w-3 h-3 text-slate-400 absolute left-2 top-2" />
+                    <input
+                      type="text"
+                      placeholder="Cari topik..."
+                      value={quickQuestionSearch}
+                      onChange={(e) => setQuickQuestionSearch(e.target.value)}
+                      className="w-full pl-6 pr-2 py-1 rounded-lg bg-slate-800 border border-slate-700 text-[10px] text-slate-200 outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Category Pills */}
+                {!quickQuestionSearch && (
+                  <div className="flex items-center gap-1 overflow-x-auto pb-1.5 custom-scrollbar shrink-0 mb-1.5">
+                    {quickQuestionCategories.map((cat) => {
+                      const isActive = quickQuestionCategory === cat.id;
+                      const label = voiceLanguage === 'zh' ? cat.labelZh : voiceLanguage === 'en' ? cat.labelEn : cat.label;
+                      return (
+                        <button
+                          key={cat.id}
+                          onClick={() => setQuickQuestionCategory(cat.id)}
+                          className={`px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                            isActive
+                              ? 'bg-emerald-500 text-slate-950 font-bold shadow-sm'
+                              : 'bg-slate-800 text-slate-400 hover:text-white border border-slate-700/80'
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Questions Grid/Chips */}
+                <div className="flex-1 overflow-y-auto pr-1 space-y-1.5 custom-scrollbar">
+                  <div className="flex flex-wrap gap-1.5">
+                    {filteredQuestions.map((qObj, qIdx) => {
+                      const questionText = voiceLanguage === 'zh' ? qObj.zh : voiceLanguage === 'en' ? qObj.en : qObj.id;
+                      return (
+                        <button
+                          key={qIdx}
+                          onClick={() => handleQuickQuestionClick(questionText)}
+                          className="px-2.5 py-1.5 rounded-xl bg-slate-800/90 hover:bg-emerald-500/25 text-slate-200 hover:text-emerald-300 border border-slate-700 hover:border-emerald-500/40 text-[11px] font-medium transition-all text-left flex items-center gap-1.5 group cursor-pointer"
+                        >
+                          <MessageSquareText className="w-3 h-3 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
+                          <span>{questionText}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
               {/* Language Switcher Inside Modal */}
-              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-800/60 border border-slate-700/60 mb-4 text-xs">
-                <span className="text-slate-400 flex items-center gap-1">
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-800/60 border border-slate-700/60 mb-3 text-xs shrink-0">
+                <span className="text-slate-400 flex items-center gap-1 text-[11px]">
                   <Globe className="w-3.5 h-3.5 text-emerald-400" />
-                  {voiceLanguage === 'zh' ? '当前语音语言：' : voiceLanguage === 'en' ? 'Voice Language:' : 'Bahasa Suara:'}
+                  {voiceLanguage === 'zh' ? '语音语言：' : voiceLanguage === 'en' ? 'Voice Language:' : 'Bahasa Asisten:'}
                 </span>
                 <div className="flex items-center gap-1 font-bold">
                   <button
@@ -776,7 +963,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       handleSwitchLanguage('id');
                       resetVoiceRecording();
                     }}
-                    className={`px-2 py-1 rounded-lg text-xs transition-all cursor-pointer ${voiceLanguage === 'id' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-300 hover:text-white'}`}
+                    className={`px-2 py-0.5 rounded-lg text-xs transition-all cursor-pointer ${voiceLanguage === 'id' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-300 hover:text-white'}`}
                   >
                     🇮🇩 Indonesia
                   </button>
@@ -785,7 +972,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       handleSwitchLanguage('en');
                       resetVoiceRecording();
                     }}
-                    className={`px-2 py-1 rounded-lg text-xs transition-all cursor-pointer ${voiceLanguage === 'en' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-300 hover:text-white'}`}
+                    className={`px-2 py-0.5 rounded-lg text-xs transition-all cursor-pointer ${voiceLanguage === 'en' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-300 hover:text-white'}`}
                   >
                     🇬🇧 English
                   </button>
@@ -794,7 +981,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       handleSwitchLanguage('zh');
                       resetVoiceRecording();
                     }}
-                    className={`px-2 py-1 rounded-lg text-xs transition-all cursor-pointer ${voiceLanguage === 'zh' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-300 hover:text-white'}`}
+                    className={`px-2 py-0.5 rounded-lg text-xs transition-all cursor-pointer ${voiceLanguage === 'zh' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-300 hover:text-white'}`}
                   >
                     🇨🇳 中文
                   </button>
@@ -802,14 +989,14 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               </div>
 
               {/* Action Buttons: Finish & Send, Retry, Cancel */}
-              <div className="flex items-center gap-2 pt-2 border-t border-slate-800">
+              <div className="flex items-center gap-2 pt-2 border-t border-slate-800 shrink-0">
                 <button
                   onClick={resetVoiceRecording}
                   className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
                   title="Hapus rekaman dan ulangi bicara"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Ulangi</span>
+                  <span>Ulangi Bicara</span>
                 </button>
 
                 <button
@@ -817,7 +1004,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                   className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 transition-all cursor-pointer"
                 >
                   <CheckCircle2 className="w-4 h-4 text-slate-950" />
-                  <span>Selesai Bicara & Proses Jawaban</span>
+                  <span>Selesai Bicara & Jawab Sekarang</span>
                 </button>
               </div>
             </motion.div>
@@ -1017,13 +1204,35 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                   </div>
                 </div>
 
+                {/* 4. Rekomendasi Pertanyaan Lainnya (Quick Clickable Chips) */}
+                <div className="p-3 rounded-2xl bg-slate-100 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 space-y-2">
+                  <div className="text-[11px] font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                    <span>{voiceLanguage === 'en' ? 'Ask Other Quick Questions:' : voiceLanguage === 'zh' ? '点击咨询其他热门政务问题：' : 'Ingin Mengetahui Hal Lain? Klik Pertanyaan Cepat:'}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {quickQuestionsData.populer.slice(0, 5).map((qObj, idx) => {
+                      const qText = voiceLanguage === 'zh' ? qObj.zh : voiceLanguage === 'en' ? qObj.en : qObj.id;
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => handleDirectAskInResponse(qText)}
+                          className="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 text-slate-700 dark:text-slate-200 text-[11px] font-medium border border-slate-200 dark:border-slate-700 transition-all cursor-pointer shadow-xs"
+                        >
+                          {qText}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
               </div>
 
               {/* Modal Footer Actions */}
               <div className="pt-4 mt-3 border-t border-slate-100 dark:border-white/10 flex flex-wrap items-center justify-between gap-2.5 shrink-0">
                 <button
                   onClick={handleCopyVoiceDetails}
-                  className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+                  className="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
                 >
                   <Copy className="w-3.5 h-3.5" />
                   <span>{voiceLanguage === 'en' ? 'Copy Requirements' : voiceLanguage === 'zh' ? '复制申请要求' : 'Salin Persyaratan'}</span>
@@ -1034,12 +1243,24 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                     onClick={() => {
                       stopSpeaking();
                       setIsVoiceResponseModalOpen(false);
+                      startVoiceListening();
+                    }}
+                    className="px-3.5 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                  >
+                    <Mic className="w-3.5 h-3.5" />
+                    <span>{voiceLanguage === 'en' ? 'Ask Another Question' : voiceLanguage === 'zh' ? '继续语音提问' : 'Tanya Suara Lagi'}</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      stopSpeaking();
+                      setIsVoiceResponseModalOpen(false);
                       const el = document.getElementById('layanan') || document.getElementById('instansi');
                       el?.scrollIntoView({ behavior: 'smooth' });
                     }}
                     className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 transition-all cursor-pointer"
                   >
-                    <span>{voiceLanguage === 'en' ? 'Visit Service Counter' : voiceLanguage === 'zh' ? '前往政务服务窗口' : 'Kunjungi Loket Layanan'}</span>
+                    <span>{voiceLanguage === 'en' ? 'Visit Service Counter' : voiceLanguage === 'zh' ? '前往政务服务窗口' : 'Kunjungi Loket'}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -1060,41 +1281,44 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               initial={{ opacity: 0, scale: 0.94, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.94, y: 20 }}
-              className="w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-emerald-500/30 rounded-3xl p-5 sm:p-7 shadow-2xl overflow-y-auto max-h-[90vh] text-slate-900 dark:text-white"
+              className="w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-emerald-500/30 rounded-3xl p-5 sm:p-7 shadow-2xl overflow-y-auto max-h-[90vh] text-slate-900 dark:text-white font-['Plus_Jakarta_Sans',sans-serif]"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Header */}
-              <div className="flex items-start justify-between pb-4 border-b border-slate-100 dark:border-white/10">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-                    <Accessibility className="w-6 h-6" />
+              <div className="flex items-start justify-between pb-4 border-b border-slate-100 dark:border-white/10 gap-3">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow-inner">
+                    <Accessibility className="w-6 h-6 sm:w-7 sm:h-7" />
                   </div>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-lg sm:text-xl font-bold font-sans">Layanan Ramah Inklusif & Disabilitas</h2>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <h2 className="text-base sm:text-lg md:text-xl font-extrabold text-slate-900 dark:text-white font-['Plus_Jakarta_Sans',sans-serif]">
+                        Layanan Ramah Inklusif & Disabilitas
+                      </h2>
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-['Plus_Jakarta_Sans',sans-serif]">
                         UU No. 8/2016
                       </span>
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-['Plus_Jakarta_Sans',sans-serif]">
                       Standar Fasilitas Khusus, Asistensi Petugas, dan Pendampingan Bebas Retribusi MPP Kab. Luwu
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setIsAssistanceModalOpen(false)}
-                  className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shrink-0 cursor-pointer"
+                  aria-label="Tutup"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              {/* Tabs */}
-              <div className="flex items-center gap-2 my-4 border-b border-slate-100 dark:border-white/10 pb-2">
+              {/* Tabs Segmented Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 my-4 p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/80">
                 {[
-                  { id: 'fasilitas', label: 'Panduan Fasilitas Fisik', icon: ShieldCheck },
-                  { id: 'request', label: 'Booking Petugas & Kursi Roda', icon: HeartHandshake },
-                  { id: 'jbi', label: 'Juru Bahasa Isyarat (JBI)', icon: PhoneCall },
+                  { id: 'fasilitas', label: 'Panduan Fasilitas', icon: ShieldCheck },
+                  { id: 'request', label: 'Booking Kursi Roda', icon: HeartHandshake },
+                  { id: 'jbi', label: 'Juru Bahasa Isyarat', icon: PhoneCall },
                 ].map((tab) => {
                   const Icon = tab.icon;
                   const isActive = assistanceTab === tab.id;
@@ -1102,14 +1326,14 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                     <button
                       key={tab.id}
                       onClick={() => setAssistanceTab(tab.id as any)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                      className={`min-h-[42px] px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer font-['Plus_Jakarta_Sans',sans-serif] ${
                         isActive
-                          ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                          ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/25'
+                          : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700/60'
                       }`}
                     >
-                      <Icon className="w-3.5 h-3.5" />
-                      <span>{tab.label}</span>
+                      <Icon className="w-4 h-4 shrink-0" />
+                      <span className="truncate">{tab.label}</span>
                     </button>
                   );
                 })}
@@ -1117,52 +1341,52 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
 
               {/* TAB 1: Panduan Fasilitas Fisik */}
               {assistanceTab === 'fasilitas' && (
-                <div className="space-y-4 text-xs sm:text-sm">
+                <div className="space-y-4 text-xs sm:text-sm font-['Plus_Jakarta_Sans',sans-serif]">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-emerald-500" />
+                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 shadow-sm">
+                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+                        <MapPin className="w-4 h-4 text-emerald-500 shrink-0" />
                         Jalur Ramp Landai Kursi Roda
                       </div>
-                      <p className="text-slate-500 dark:text-slate-400 mt-1 text-xs">
-                        Kemiringan landai $\le 6^\circ$ dari area parkir khusus disabilitas langsung menuju lobi utama lantai 1.
+                      <p className="text-slate-600 dark:text-slate-400 mt-1.5 text-xs leading-relaxed">
+                        Kemiringan landai ≤ 6° (maksimal 6 derajat) dari area parkir khusus disabilitas langsung menuju lobi utama lantai 1.
                       </p>
                     </div>
 
-                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <Compass className="w-4 h-4 text-amber-500" />
+                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 shadow-sm">
+                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+                        <Compass className="w-4 h-4 text-amber-500 shrink-0" />
                         Guiding Block Tunanetra
                       </div>
-                      <p className="text-slate-500 dark:text-slate-400 mt-1 text-xs">
-                        Ubin pemandu kuning taktil bertekstur garis dan titik mengarahkan langkah dari pintu masuk ke semua loket.
+                      <p className="text-slate-600 dark:text-slate-400 mt-1.5 text-xs leading-relaxed">
+                        Ubin pemandu kuning taktil bertekstur garis dan titik mengarahkan langkah dari pintu masuk ke semua loket layanan.
                       </p>
                     </div>
 
-                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <Accessibility className="w-4 h-4 text-blue-500" />
-                        Loket Meja Rendah (&le; 80 cm)
+                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 shadow-sm">
+                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+                        <Accessibility className="w-4 h-4 text-blue-500 shrink-0" />
+                        Loket Meja Rendah (≤ 80 cm)
                       </div>
-                      <p className="text-slate-500 dark:text-slate-400 mt-1 text-xs">
-                        Meja layanan didesain setinggi pengguna kursi roda agar komunikasi tatap muka nyaman dan sejajar.
+                      <p className="text-slate-600 dark:text-slate-400 mt-1.5 text-xs leading-relaxed">
+                        Meja layanan didesain setinggi pengguna kursi roda agar komunikasi tatap muka nyaman, ramah, dan sejajar.
                       </p>
                     </div>
 
-                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <ShieldCheck className="w-4 h-4 text-rose-500" />
+                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 shadow-sm">
+                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+                        <ShieldCheck className="w-4 h-4 text-rose-500 shrink-0" />
                         Toilet Khusus Difabel + Handrail
                       </div>
-                      <p className="text-slate-500 dark:text-slate-400 mt-1 text-xs">
+                      <p className="text-slate-600 dark:text-slate-400 mt-1.5 text-xs leading-relaxed">
                         Pintu geser lebar, pegangan besi pengaman (handrail), tombol darurat, dan kloset duduk standar aksesibilitas.
                       </p>
                     </div>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 flex items-start gap-2.5">
+                  <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-900 dark:text-emerald-300 flex items-start gap-2.5">
                     <Info className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <div className="text-xs">
+                    <div className="text-xs leading-relaxed">
                       <strong>Jalur Antrean Prioritas Khusus:</strong> Bagi penyandang disabilitas, lansia di atas 60 tahun, dan ibu hamil, silakan langsung menuju meja Front Office untuk mendapatkan nomor tiket jalur prioritas tanpa antre umum.
                     </div>
                   </div>

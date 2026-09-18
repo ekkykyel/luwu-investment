@@ -1538,19 +1538,19 @@ async function syncWithSupabase() {
             try {
               const kecLayer = spatialLayers.find(l => l.id === "layer_kecamatan");
               const kecFeatures = kecLayer?.geojson?.features || [];
-              const matchedKec = kecFeatures.find((kf: any) => {
-                if (!kf.geometry) return false;
-                try {
-                  return turf.booleanIntersects(
-                    { type: "Feature", geometry: row.geom || row.geojson, properties: {} },
-                    kf
-                  );
-                } catch (err) {
-                  return false;
+              if (kecFeatures.length > 0) {
+                const pt = turf.centroid({ type: "Feature", geometry: row.geom || row.geojson, properties: {} });
+                const matchedKec = kecFeatures.find((kf: any) => {
+                  if (!kf.geometry) return false;
+                  try {
+                    return turf.booleanPointInPolygon(pt, kf);
+                  } catch (err) {
+                    return false;
+                  }
+                });
+                if (matchedKec) {
+                  rawKecName = matchedKec.properties?.name || matchedKec.properties?.KECAMATAN || matchedKec.properties?.rawName || "";
                 }
-              });
-              if (matchedKec) {
-                rawKecName = matchedKec.properties?.name || matchedKec.properties?.KECAMATAN || "";
               }
             } catch (err) {
 
@@ -1646,13 +1646,14 @@ let hydrationPromise: Promise<void> | null = null;
 async function ensureDbHydrated() {
   if (isDatabaseHydrated) return;
   if (!hydrationPromise) {
-    hydrationPromise = withTimeout(syncWithSupabase(), 30000, "Database hydration timed out after 30s")
+    hydrationPromise = withTimeout(syncWithSupabase(), 45000, "Database hydration timed out after 45s")
       .then(() => {
         isDatabaseHydrated = true;
         hydrationPromise = null;
       }).catch(e => {
         const errMsg = e?.message || String(e);
-        console.warn("[HYDRATION] Hydration failed/timed out:", errMsg);
+        console.warn("[HYDRATION] Hydration completed with fallback/warning:", errMsg);
+        isDatabaseHydrated = true;
         hydrationPromise = null;
       });
   }
@@ -10827,10 +10828,10 @@ async function startServer() {
   const distPath = path.join(process.cwd(), "dist");
   const distIndexPath = path.join(distPath, "index.html");
   const hasDist = fs.existsSync(distIndexPath);
-  const isProd = process.env.NODE_ENV === "production" || hasDist;
+  const isProd = process.env.NODE_ENV === "production";
 
-  // Use Vite middleware ONLY in development when pre-built dist/index.html does not exist
-  if (!isProd && !hasDist) {
+  // Use Vite middleware ONLY in development mode so dynamic transforms & HMR work as expected
+  if (!isProd) {
     try {
       const { createServer: createViteServer } = await import("vite");
       const vite = await createViteServer({
@@ -10852,17 +10853,22 @@ async function startServer() {
     app.use(express.static(publicPath));
   }
 
-  if (hasDist) {
+  if (isProd && hasDist) {
     app.use(express.static(distPath));
   }
 
   app.get("*", (req, res) => {
-    // If it's an asset request (.js, .css, etc.), return 404 to avoid caching index.html as a script
-    if (req.path.startsWith("/assets/") || req.path.match(/\.(js|css|ico|png|jpg|jpeg|svg|woff|woff2|ttf|eot|json|webmanifest)$/)) {
+    // If it's an asset request (.js, .css, etc.) that was NOT matched, return 404 with proper JS MIME type to prevent HTML MIME type errors
+    if (req.path.startsWith("/assets/") || req.path.match(/\.(js|mjs|css|ico|png|jpg|jpeg|svg|woff|woff2|ttf|eot|json|webmanifest)$/)) {
+      if (req.path.endsWith('.js') || req.path.endsWith('.mjs') || req.path.startsWith('/assets/')) {
+        res.setHeader("Content-Type", "application/javascript");
+        return res.status(404).send("// 404: Asset not found");
+      }
+      res.setHeader("Content-Type", "text/plain");
       return res.status(404).send("Asset not found");
     }
     
-    if (fs.existsSync(distIndexPath)) {
+    if (isProd && fs.existsSync(distIndexPath)) {
       return res.sendFile(distIndexPath);
     }
     

@@ -32,6 +32,13 @@ import { OperationalHeatmap } from './mpp/OperationalHeatmap';
 import { SkmBentoGrid } from './mpp/SkmBentoGrid';
 import { MppMaklumatSlaRadar } from './mpp/MppMaklumatSlaRadar';
 import { MppCitizenSurveyMenu } from './mpp/MppCitizenSurveyMenu';
+import { MppVisitorAnalyticsModal } from './mpp/MppVisitorAnalyticsModal';
+import { MppAgenciesCatalogModal } from './mpp/MppAgenciesCatalogModal';
+import { MppServicesMatrixModal } from './mpp/MppServicesMatrixModal';
+import { MppServicesWorkflowCarousel } from './mpp/MppServicesWorkflowCarousel';
+import { MppNewsCatalogModal } from './mpp/MppNewsCatalogModal';
+import { MppMagattiGallerySlideshow } from './mpp/MppMagattiGallerySlideshow';
+import { MppNewsItem, getStoredMppNews } from '../data/mppNewsData';
 import TenantDashboard from './mpp/TenantDashboard';
 import { PetugasGeraiLoginModal } from './mpp/PetugasGeraiLoginModal';
 import { MppAirportKioskModal } from './MppAirportKioskModal';
@@ -264,6 +271,20 @@ export default function PortalMPP() {
   const [activeUmkmFilter, setActiveUmkmFilter] = useState<string>("Semua");
   const [umkmProducts, setUmkmProducts] = useState<any[]>(INITIAL_UMKM_PRODUCTS);
 
+  // --- State News & Pengumuman Portal MPP ---
+  const [isNewsModalOpen, setIsNewsModalOpen] = useState(false);
+  const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
+  const [portalNews, setPortalNews] = useState<MppNewsItem[]>(() => getStoredMppNews());
+
+  useEffect(() => {
+    const handleNewsUpdate = () => {
+      setPortalNews(getStoredMppNews());
+    };
+    handleNewsUpdate();
+    window.addEventListener('mpp_news_updated', handleNewsUpdate);
+    return () => window.removeEventListener('mpp_news_updated', handleNewsUpdate);
+  }, []);
+
   const handleShareUMKM = async (umkm: any) => {
     if (navigator.share) {
       try {
@@ -390,6 +411,9 @@ export default function PortalMPP() {
   const [serviceSearchQuery, setServiceSearchQuery] = useState('');
   const [selectedServiceCategory, setSelectedServiceCategory] = useState<'all' | 'priority' | 'self' | 'disability'>('all');
   const [isFacilityModalOpen, setIsFacilityModalOpen] = useState(false);
+  const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false);
+  const [isAgenciesCatalogOpen, setIsAgenciesCatalogOpen] = useState(false);
+  const [isServicesMatrixOpen, setIsServicesMatrixOpen] = useState(false);
 
   // --- State Fase 3 (Fitur 6: Modal Survey SKM & Fitur 7: Modal Alur Pelayanan) ---
   const [isSurveyModalOpen, setIsSurveyModalOpen] = useState(false);
@@ -1638,38 +1662,10 @@ export default function PortalMPP() {
               {/* Elemen Latar (Aksen Bayangan) */}
               <div className="absolute inset-0 bg-emerald-500/15 dark:bg-emerald-500/20 rounded-3xl translate-x-2.5 translate-y-2.5 md:translate-x-3.5 md:translate-y-3.5"></div>
 
-              {/* Elemen Gambar Utama */}
-              {!mottoImgError ? (
-                <div className="relative z-10 w-full h-full rounded-3xl overflow-hidden shadow-xl border border-white/40 dark:border-white/10">
-                  <img 
-                    src="/images/motto-magatti.jpg" 
-                    alt="Pelayanan Magatti" 
-                    referrerPolicy="no-referrer"
-                    onError={() => setMottoImgError(true)}
-                    className="w-full h-full object-cover" 
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
-                </div>
-              ) : (
-                <div className="relative z-10 w-full h-full rounded-3xl shadow-xl dark:shadow-2xl border border-emerald-500/20 dark:border-emerald-500/30 bg-gradient-to-br from-white via-emerald-50/40 to-teal-50/30 dark:from-slate-900 dark:via-emerald-950/70 dark:to-slate-950 flex flex-col items-center justify-center p-6 sm:p-10 text-center overflow-hidden transition-colors">
-                  <div className="absolute -top-24 -left-24 w-72 h-72 bg-emerald-400/15 dark:bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
-                  <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-cyan-400/15 dark:bg-cyan-500/20 rounded-full blur-3xl pointer-events-none" />
-                  <div className="relative z-10 flex flex-col items-center gap-2.5 sm:gap-3">
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-emerald-500/15 dark:bg-emerald-500/20 border border-emerald-500/30 dark:border-emerald-500/40 flex items-center justify-center mb-1 shadow-sm dark:shadow-[0_0_25px_rgba(16,185,129,0.3)] text-emerald-600 dark:text-emerald-400">
-                      <Sparkles className="w-6 h-6 sm:w-8 sm:h-8" />
-                    </div>
-                    <span className="text-[11px] sm:text-xs md:text-sm font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-0.5 block">
-                      {t("mppPortal.motto.portalName")}
-                    </span>
-                    <h3 className="text-base sm:text-xl md:text-2xl font-bold text-slate-900 dark:text-white font-sans">
-                      {t("mppPortal.motto.title")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-cyan-400">{t("mppPortal.motto.magatti")}</span>
-                    </h3>
-                    <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
-                      Pelayanan Publik Terpadu, Cepat, dan Transparan untuk Seluruh Masyarakat Kabupaten Luwu
-                    </p>
-                  </div>
-                </div>
-              )}
+              {/* Elemen Gambar & Slideshow Utama */}
+              <div className="relative z-10 w-full h-full">
+                <MppMagattiGallerySlideshow isDark={isDark} />
+              </div>
             </motion.div>
           </motion.section>
 
@@ -1940,12 +1936,10 @@ export default function PortalMPP() {
             <div className="flex justify-center mt-8">
               <button 
                 type="button"
-                onClick={() => {
-                  const el = document.getElementById('layanan');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="min-h-[48px] h-12 px-8 rounded-full border-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all text-xs sm:text-sm font-semibold tracking-wide inline-flex items-center gap-2 shadow-sm cursor-pointer active:scale-95 font-sans"
+                onClick={() => setIsAgenciesCatalogOpen(true)}
+                className="min-h-[48px] h-12 px-8 rounded-full border-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all text-xs sm:text-sm font-bold tracking-wide inline-flex items-center gap-2 shadow-md hover:shadow-emerald-500/25 cursor-pointer active:scale-95 font-['Plus_Jakarta_Sans',sans-serif]"
               >
+                <Building2 className="w-4 h-4" />
                 <span>{t("mppPortal.instansi.viewAllBtn")}</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -2176,10 +2170,12 @@ export default function PortalMPP() {
             <div className="flex justify-center mt-8 sm:mt-10 md:mt-12">
               <button 
                 type="button"
-                className="w-full sm:w-auto min-h-[48px] h-12 px-8 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-xs sm:text-sm font-semibold tracking-wide shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:brightness-105 active:scale-95 transition-all flex items-center justify-center gap-3 cursor-pointer group font-sans"
+                onClick={() => setIsServicesMatrixOpen(true)}
+                className="w-full sm:w-auto min-h-[48px] h-12 px-8 rounded-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs sm:text-sm tracking-wide shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:brightness-105 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer group font-['Plus_Jakarta_Sans',sans-serif]"
               >
+                <Sparkles className="w-4 h-4 text-slate-950" />
                 <span>{t("mppPortal.layanan.viewAllBtn")}</span>
-                <ChevronRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
+                <ChevronRight className="w-4 h-4 text-slate-950 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           </motion.section>
@@ -2337,16 +2333,16 @@ export default function PortalMPP() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-transparent pointer-events-none"></div>
                     
-                    <div className="absolute top-3 sm:top-4 left-3 sm:left-4 z-10 flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 text-[11px] sm:text-xs font-semibold text-emerald-300 shadow-md font-sans">
-                      <activeFacility.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-300 dark:text-emerald-400" />
+                    <div className="absolute top-3 sm:top-4 left-3 sm:left-4 z-10 flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 text-[11px] sm:text-xs font-bold text-emerald-300 shadow-md font-['Plus_Jakarta_Sans',sans-serif]">
+                      <activeFacility.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-300 shrink-0" />
                       <span>{activeFacility.tag}</span>
                     </div>
 
-                    <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 z-10">
-                      <span className="text-[10px] sm:text-xs uppercase tracking-widest text-emerald-300 dark:text-emerald-400 font-bold mb-0.5 sm:mb-1 block font-sans drop-shadow-md">
+                    <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 z-10 p-3.5 rounded-2xl bg-slate-950/80 backdrop-blur-md border border-white/10 shadow-lg">
+                      <span className="text-[10px] sm:text-xs uppercase tracking-widest text-emerald-400 font-extrabold mb-1 block font-['Plus_Jakarta_Sans',sans-serif]">
                         {activeFacility.subtitle}
                       </span>
-                      <h3 className="text-lg sm:text-xl md:text-2xl font-medium text-white tracking-tight drop-shadow-md font-sans break-words">
+                      <h3 className="text-base sm:text-lg md:text-xl font-bold text-white tracking-tight font-['Plus_Jakarta_Sans',sans-serif] leading-snug">
                         {activeFacility.name}
                       </h3>
                     </div>
@@ -2434,12 +2430,12 @@ export default function PortalMPP() {
                       className="w-full h-full object-cover object-center rounded-2xl"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-transparent pointer-events-none"></div>
-                    <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/20 text-[10px] font-bold text-emerald-300 shadow-md">
+                    <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 text-[10px] font-bold text-emerald-300 shadow-md font-['Plus_Jakarta_Sans',sans-serif]">
                       <activeFacility.icon className="w-3.5 h-3.5 text-emerald-300 shrink-0" />
                       <span>{activeFacility.tag}</span>
                     </div>
-                    <div className="absolute bottom-2.5 left-2.5 right-2.5 z-10">
-                      <span className="text-[11px] font-bold text-white uppercase tracking-wider block drop-shadow-md truncate">
+                    <div className="absolute bottom-2.5 left-2.5 right-2.5 z-10 p-2.5 rounded-xl bg-slate-950/80 backdrop-blur-md border border-white/10 shadow-md">
+                      <span className="text-[10px] font-extrabold text-emerald-400 uppercase tracking-wider block font-['Plus_Jakarta_Sans',sans-serif] truncate">
                         {activeFacility.subtitle}
                       </span>
                     </div>
@@ -2870,13 +2866,11 @@ export default function PortalMPP() {
             <div className="flex justify-center mt-8 md:mt-10">
               <button
                 type="button"
-                onClick={() => {
-                  const el = document.getElementById('layanan');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="min-h-[48px] h-12 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full px-8 text-xs sm:text-sm font-semibold tracking-wide transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 cursor-pointer font-sans inline-flex items-center justify-center active:scale-95"
+                onClick={() => setIsAnalyticsModalOpen(true)}
+                className="min-h-[48px] h-12 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white rounded-full px-8 text-xs sm:text-sm font-bold tracking-wide transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 cursor-pointer font-['Plus_Jakarta_Sans',sans-serif] inline-flex items-center justify-center gap-2 active:scale-95"
               >
-                {t("mppPortal.statistik.fullReportBtn")}
+                <BarChart3 className="w-4 h-4 text-emerald-100" />
+                <span>{t("mppPortal.statistik.fullReportBtn")}</span>
               </button>
             </div>
           </motion.section>
@@ -3167,121 +3161,34 @@ export default function PortalMPP() {
             </div>
           </motion.section>
 
-          {/* Seksi Alur Pelayanan */}
+          {/* Seksi Alur Pelayanan (Interactive Slide & Search Component) */}
           <motion.section
             id="alur-pelayanan"
             initial={{ opacity: 0, y: 40, scale: 0.96, filter: "blur(8px)" }}
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto  py-12 sm:py-16 md:py-24 px-2 sm:px-5 md:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto py-12 sm:py-16 md:py-24 px-2 sm:px-5 md:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Terpusat */}
-            <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
+            <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-8 break-words">
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                 {t("mppPortal.alur.badge")}
               </span>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
                 {t("mppPortal.alur.title")}
               </h2>
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-6 text-center">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-4 text-center">
                 {t("mppPortal.alur.subtitle")}
               </p>
-              <div className="w-12 sm:w-16 h-1 bg-emerald-500 rounded-full mx-auto mt-4"></div>
+              <div className="w-12 sm:w-16 h-1 bg-emerald-500 rounded-full mx-auto mt-2"></div>
             </div>
 
-            {/* Tata Letak 3 Kartu (Grid Sentral 1 Kolom di HP, 3 Kolom di MD) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto w-full">
-              {/* Kartu 1 (PBG) */}
-              <motion.div 
-                tabIndex={0}
-                role="button"
-                initial={{ opacity: 0, y: 30, scale: 0.96, filter: "blur(6px)" }}
-                whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{ type: "spring", stiffness: 350, damping: 25, delay: 0 }}
-                whileHover={{ y: -8, scale: 1.025 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => setActiveAlurModal('pbg')}
-                className="w-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-3xl shadow-xl shadow-slate-950/5 dark:shadow-emerald-950/20 p-6 sm:p-8 flex flex-col items-center text-center cursor-pointer hover:border-emerald-500/80 hover:shadow-2xl hover:shadow-emerald-500/15 transition-all duration-300 group relative overflow-hidden"
-              >
-                <div className="w-20 h-20 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-6 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform shadow-inner">
-                  <HardHat size={44} className="stroke-[1.8]" />
-                </div>
-                <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-1 leading-normal">
-                  {t("mppPortal.alur.stepLabel")}
-                </span>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white font-sans group-hover:text-emerald-500 transition-colors text-center">
-                  {t("mppPortal.alur.pbgTitle")}
-                </h3>
-                <span className="mt-5 inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 group-hover:text-emerald-500 font-sans">
-                  <span>{t("mppPortal.alur.viewStepsBtn")}</span>
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-all shadow-sm">
-                    <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </span>
-              </motion.div>
-
-              {/* Kartu 2 (MPP - Pusat) */}
-              <motion.div 
-                tabIndex={0}
-                role="button"
-                initial={{ opacity: 0, y: 30, scale: 0.96, filter: "blur(6px)" }}
-                whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{ type: "spring", stiffness: 350, damping: 25, delay: 0.08 }}
-                whileHover={{ y: -8, scale: 1.025 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => setActiveAlurModal('mpp')}
-                className="w-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-3xl shadow-xl shadow-slate-950/5 dark:shadow-emerald-950/20 p-6 sm:p-8 flex flex-col items-center text-center cursor-pointer hover:border-emerald-500/80 hover:shadow-2xl hover:shadow-emerald-500/15 transition-all duration-300 group relative overflow-hidden ring-1 ring-emerald-500/20"
-              >
-                <div className="w-20 h-20 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-6 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform shadow-inner">
-                  <Building2 size={44} className="stroke-[1.8] drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
-                </div>
-                <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-1 leading-normal">
-                  {t("mppPortal.alur.stepLabel")}
-                </span>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white font-sans group-hover:text-emerald-500 transition-colors text-center">
-                  {t("mppPortal.alur.mppTitle")}
-                </h3>
-                <span className="mt-5 inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 group-hover:text-emerald-500 font-sans">
-                  <span>{t("mppPortal.alur.viewStepsBtn")}</span>
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-all shadow-sm">
-                    <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </span>
-              </motion.div>
-
-              {/* Kartu 3 (PKKPR) */}
-              <motion.div 
-                tabIndex={0}
-                role="button"
-                initial={{ opacity: 0, y: 30, scale: 0.96, filter: "blur(6px)" }}
-                whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{ type: "spring", stiffness: 350, damping: 25, delay: 0.16 }}
-                whileHover={{ y: -8, scale: 1.025 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => setActiveAlurModal('pkkpr')}
-                className="w-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-3xl shadow-xl shadow-slate-950/5 dark:shadow-emerald-950/20 p-6 sm:p-8 flex flex-col items-center text-center cursor-pointer hover:border-emerald-500/80 hover:shadow-2xl hover:shadow-emerald-500/15 transition-all duration-300 group relative overflow-hidden"
-              >
-                <div className="w-20 h-20 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-6 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform shadow-inner">
-                  <MapPin size={44} className="stroke-[1.8]" />
-                </div>
-                <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-1 leading-normal">
-                  {t("mppPortal.alur.stepLabel")}
-                </span>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white font-sans group-hover:text-emerald-500 transition-colors text-center">
-                  {t("mppPortal.alur.pkkprTitle")}
-                </h3>
-                <span className="mt-5 inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 group-hover:text-emerald-500 font-sans">
-                  <span>{t("mppPortal.alur.viewStepsBtn")}</span>
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-all shadow-sm">
-                    <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </span>
-              </motion.div>
-            </div>
+            {/* Inovasi Slide Carousel & Pencarian Form Alur Pelayanan 12 Tenant MPP */}
+            <MppServicesWorkflowCarousel 
+              currentLang={i18n.language} 
+              isDark={isDark} 
+            />
 
             {/* Fitur 7: Modal Detail Panduan & Prosedur Alur Pelayanan */}
             {activeAlurModal && (
@@ -3451,58 +3358,93 @@ export default function PortalMPP() {
               </div>
               <button
                 type="button"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors font-sans group"
+                onClick={() => {
+                  setSelectedNewsId(null);
+                  setIsNewsModalOpen(true);
+                }}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors font-sans group cursor-pointer"
               >
-                <span>{t("mppPortal.news.viewAll")}</span>
+                <span>{t("mppPortal.news.viewAll", "Lihat Semua Berita")}</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </button>
             </div>
 
             {/* Grid Berita */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 ">
-              {dummyDataBerita.length === 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+              {portalNews.filter(n => n.status !== 'draft').length === 0 ? (
                 <div className="col-span-full py-10 text-center text-xs text-slate-500 font-sans italic bg-slate-50/50 dark:bg-slate-900/40 rounded-3xl border border-slate-200 dark:border-slate-800">
                   {t("portal.noNewsData", "Belum ada pengumuman atau publikasi berita terbaru di portal MPP.")}
                 </div>
               ) : (
-                dummyDataBerita.map((item, idx) => (
-                  <motion.div
-                    key={idx}
-                    whileHover={{ y: -5 }}
-                    className="bg-white/80 dark:bg-slate-800/40 backdrop-blur-xl border border-slate-100 dark:border-white/5 rounded-3xl overflow-hidden shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 group cursor-pointer"
-                  >
-                    <div className="h-48 bg-slate-200 dark:bg-slate-700 relative overflow-hidden">
-                      <img 
-                        src={item.image} 
-                        alt={item.judul}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = 'https://images.unsplash.com/photo-1577495508048-b635879837f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
-                          e.currentTarget.style.backgroundColor = '#10b981';
-                        }}
-                      />
-                      <div className="absolute top-4 left-4">
-                        <span className="px-3 py-1 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-sans shadow-sm">
-                          {item.kategori}
-                        </span>
+                portalNews
+                  .filter(n => n.status !== 'draft')
+                  .slice(0, 3)
+                  .map((item) => (
+                    <motion.div
+                      key={item.id}
+                      whileHover={{ y: -6 }}
+                      onClick={() => {
+                        setSelectedNewsId(item.id);
+                        setIsNewsModalOpen(true);
+                      }}
+                      className="bg-white/90 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 rounded-3xl overflow-hidden shadow-lg shadow-emerald-950/5 dark:shadow-emerald-950/20 group cursor-pointer hover:border-emerald-500/60 transition-all duration-300 flex flex-col justify-between"
+                    >
+                      <div>
+                        <div className="h-48 bg-slate-200 dark:bg-slate-700 relative overflow-hidden">
+                          <img 
+                            src={item.image} 
+                            alt={item.judul}
+                            className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = 'https://images.unsplash.com/photo-1577495508048-b635879837f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+                            }}
+                          />
+                          <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                            <span className="px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-[10px] font-bold uppercase tracking-wider text-emerald-400 border border-emerald-500/30 font-sans shadow-sm">
+                              {item.kategori}
+                            </span>
+                            {item.isPinned && (
+                              <span className="px-2.5 py-1 rounded-full bg-amber-500 text-slate-950 text-[10px] font-bold font-sans">
+                                Pinned
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="p-6 space-y-2">
+                          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+                            <span>{item.tanggal}</span>
+                            <span>{item.penulis}</span>
+                          </div>
+                          <h3 className="text-base font-bold text-slate-900 dark:text-white font-sans leading-snug group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors line-clamp-2">
+                            {isEn && item.judul_en ? item.judul_en : isZh && item.judul_zh ? item.judul_zh : item.judul}
+                          </h3>
+                          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-3">
+                            {isEn && item.ringkasan_en ? item.ringkasan_en : isZh && item.ringkasan_zh ? item.ringkasan_zh : item.ringkasan}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="p-6">
-                      <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block mb-2">
-                        {item.tanggal}
-                      </span>
-                      <h3 className="text-sm sm:text-base font-medium text-slate-900 dark:text-white font-sans leading-snug mb-3 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors line-clamp-2">
-                        {item.judul}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-3">
-                        {item.deskripsi}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))
+
+                      <div className="px-6 pb-5 pt-0 flex items-center justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                        <span>Baca Selengkapnya</span>
+                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                      </div>
+                    </motion.div>
+                  ))
               )}
             </div>
+
+            {/* Modal Catalogue / Detail Reader Berita */}
+            <MppNewsCatalogModal
+              isOpen={isNewsModalOpen}
+              onClose={() => {
+                setIsNewsModalOpen(false);
+                setSelectedNewsId(null);
+              }}
+              currentLang={i18n.language}
+              isDark={isDark}
+              selectedNewsId={selectedNewsId}
+            />
           </motion.section>
 
           {/* Seksi Ulasan Masyarakat (Auto-Slider) */}
@@ -4782,40 +4724,39 @@ export default function PortalMPP() {
             onClick={() => setSelectedAgencyDetail(null)}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.92, y: 25, filter: "blur(6px)" }}
-              animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, scale: 0.94, y: 20, filter: "blur(4px)" }}
+              initial={{ opacity: 0, scale: 0.92, y: 25 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.94, y: 20 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-4 sm:p-8 shadow-2xl overflow-y-auto max-h-[90vh]"
+              className="w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-5 sm:p-7 shadow-2xl overflow-y-auto max-h-[90vh] text-slate-900 dark:text-white font-['Plus_Jakarta_Sans',sans-serif]"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header Modal Detail Instansi */}
-              <div className="flex items-start justify-between pb-5 border-b border-slate-100 dark:border-white/10 gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 overflow-hidden shadow-inner">
+              <div className="flex items-start justify-between pb-4 sm:pb-5 border-b border-slate-100 dark:border-white/10 gap-3 sm:gap-4">
+                <div className="flex items-center gap-3.5 sm:gap-4 flex-1 min-w-0">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 overflow-hidden shadow-inner p-1.5">
                     <img 
-                      src={activeAgency.logo} 
+                      src={activeAgency.logo || '/logo-luwu-clean.svg'} 
                       alt={activeAgency.nama}
                       referrerPolicy="no-referrer"
-                      className="w-12 h-12 object-contain"
+                      className="w-full h-full object-contain"
                       onError={(e) => {
                         e.currentTarget.onerror = null;
-                        e.currentTarget.src = FALLBACK_IMAGE_URL;
-                        e.currentTarget.style.backgroundColor = '#10b981';
+                        e.currentTarget.src = '/logo-luwu-clean.svg';
                       }}
                     />
                   </div>
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <span className="px-4.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-sans">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                      <span className="px-3 py-0.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 font-['Plus_Jakarta_Sans',sans-serif]">
                         {activeAgency.kategori || "Instansi Terintegrasi"}
                       </span>
-                      <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-emerald-500" />
+                      <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1 font-['Plus_Jakarta_Sans',sans-serif]">
+                        <MapPin className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                         {activeAgency.loket || "Gerai MPP Simpurusiang"}
                       </span>
                     </div>
-                    <h3 className="text-base sm:text-xl font-medium text-slate-900 dark:text-white font-sans">
+                    <h3 className="text-base sm:text-lg md:text-xl font-extrabold text-slate-900 dark:text-white font-['Plus_Jakarta_Sans',sans-serif] leading-snug">
                       {activeAgency.fullName || activeAgency.nama}
                     </h3>
                   </div>
@@ -4824,7 +4765,7 @@ export default function PortalMPP() {
                 <button
                   type="button"
                   onClick={() => setSelectedAgencyDetail(null)}
-                  className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shrink-0"
+                  className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shrink-0 cursor-pointer"
                   aria-label={t("common.close", "Tutup")}
                 >
                   <X className="w-5 h-5" />
@@ -5856,6 +5797,35 @@ export default function PortalMPP() {
             onClose={() => setIsTenantDashboardOpen(false)} 
           />
         )}
+
+        {/* Modal Analitik & Laporan Kinerja Pengunjung MPP */}
+        <MppVisitorAnalyticsModal
+          isOpen={isAnalyticsModalOpen}
+          onClose={() => setIsAnalyticsModalOpen(false)}
+          isDark={isDark}
+        />
+
+        {/* Modal Katalog & Direktori Instansi Tergabung */}
+        <MppAgenciesCatalogModal
+          isOpen={isAgenciesCatalogOpen}
+          onClose={() => setIsAgenciesCatalogOpen(false)}
+          agencies={liveAgencies}
+          onSelectAgency={(agency) => {
+            setSelectedAgencyDetail(agency);
+          }}
+          isDark={isDark}
+        />
+
+        {/* Modal Smart Matrix & Finder Layanan Publik 360° */}
+        <MppServicesMatrixModal
+          isOpen={isServicesMatrixOpen}
+          onClose={() => setIsServicesMatrixOpen(false)}
+          onSelectRequirement={(serviceName) => {
+            const el = document.getElementById('syarat-dokumen');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+          isDark={isDark}
+        />
       </div>
     </div>
   );

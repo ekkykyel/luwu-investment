@@ -44,12 +44,12 @@ const HeroSettings = lazyWithRetry(() => import('./components/HeroSettings'));
 const StaffImageSettings = lazyWithRetry(() => import('./components/StaffImageSettings'));
 import { calculateShortestPathGeoJSON } from "./utils/routeService";
 import { calculateBoundingBox, normalizeGeoJSON, normalizeName, normalizeDistrictName, validateAndCleanFeatureProperties, calculateDistanceMeters, calculateDistanceKm } from "./utils/geoUtils";
-const SpatialEditorStudio = lazyWithRetry(() => import('./components/SpatialEditorStudio'));
-const LoginForm = lazyWithRetry(() => import('./components/LoginForm'));
-const GerbangOperatorLogin = lazyWithRetry(() => import('./components/Auth/GerbangOperatorLogin'));
+import SpatialEditorStudio from "./components/SpatialEditorStudio";
+const LoginForm = lazyWithRetry(() => import("./components/LoginForm"));
+const GerbangOperatorLogin = lazyWithRetry(() => import("./components/Auth/GerbangOperatorLogin"));
 const AdminLayout = lazyWithRetry(() => import('./components/Admin/AdminLayout'));
-const InvestorLogin = lazyWithRetry(() => import('./components/Auth/InvestorLogin'));
-const InvestorRegistrationForm = lazyWithRetry(() => import('./components/Auth/InvestorRegistrationForm'));
+const InvestorLogin = lazyWithRetry(() => import("./components/Auth/InvestorLogin"));
+import InvestorRegistrationForm from "./components/Auth/InvestorRegistrationForm";
 const InvestorPortalDashboard = lazyWithRetry(() => import('./components/Dashboard/InvestorPortalDashboard'));
 const AdminPortalDashboard = lazyWithRetry(() => import('./components/Dashboard/AdminPortalDashboard'));
 const OperatorLaborWidget = lazyWithRetry(() => import('./components/Dashboard/OperatorLaborWidget').then(m => ({ default: m.OperatorLaborWidget })));
@@ -4930,24 +4930,38 @@ export default function App() {
 
   if (currentPath === "/gerbang-operator-luwu") {
     return (
-      <GerbangOperatorLogin
-        onSuccess={() => {
-          setHasEnteredApp(true);
-        }}
-      />
+      <Suspense fallback={<LoadingScreen />}>
+        <GerbangOperatorLogin
+          onSuccess={() => {
+            setHasEnteredApp(true);
+          }}
+        />
+      </Suspense>
     );
   }
 
   if (currentPath === "/mpp") {
-    return <PortalMPP />;
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <PortalMPP />
+      </Suspense>
+    );
   }
 
   if (currentPath === "/login") {
-    return <InvestorLogin />;
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <InvestorLogin />
+      </Suspense>
+    );
   }
 
   if (currentPath === "/register" || currentPath === "/registrasi") {
-    return <InvestorRegistrationForm />;
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <InvestorRegistrationForm />
+      </Suspense>
+    );
   }
 
   if (showInitialLoader || isProfileLoading) {
@@ -4986,19 +5000,23 @@ export default function App() {
     };
 
     return (
-      <MasyarakatDashboard 
-        isDarkMode={isDarkMode} 
-        activeProfile={activeProfile || fallbackCitizenProfile} 
-        districts={districts} 
-        onToggleTheme={() => setIsDarkMode(!isDarkMode)}
-      />
+      <Suspense fallback={<LoadingScreen />}>
+        <MasyarakatDashboard 
+          isDarkMode={isDarkMode} 
+          activeProfile={activeProfile || fallbackCitizenProfile} 
+          districts={districts} 
+          onToggleTheme={() => setIsDarkMode(!isDarkMode)}
+        />
+      </Suspense>
     );
   }
 
   if (currentPath === "/investor-dashboard" || currentPath === "/investor" || currentPath === "/portal-investor") {
     return (
       <DataContext.Provider value={{ investments, setInvestments, districts, setDistricts, villages, setVillages, spatialLayers, setSpatialLayers, rtrwZoning, setRtrwZoning, incentivePolicies, setIncentivePolicies, supplyChainMatrix, setSupplyChainMatrix, executiveMetrics, setExecutiveMetrics, refreshData: fetchAllData, isLoading: isStatsLoading, isSpatialLiveSyncEnabled, setIsSpatialLiveSyncEnabled, liveSyncStatus, loiCount: investorLoiCount }}>
-        <InvestorPortalDashboard />
+        <Suspense fallback={<LoadingScreen />}>
+          <InvestorPortalDashboard />
+        </Suspense>
       </DataContext.Provider>
     );
   }
@@ -5021,7 +5039,9 @@ export default function App() {
     if (effectiveRole === "investor") {
       return (
         <DataContext.Provider value={{ investments, setInvestments, districts, setDistricts, villages, setVillages, spatialLayers, setSpatialLayers, rtrwZoning, setRtrwZoning, incentivePolicies, setIncentivePolicies, supplyChainMatrix, setSupplyChainMatrix, executiveMetrics, setExecutiveMetrics, refreshData: fetchAllData, isLoading: isStatsLoading, isSpatialLiveSyncEnabled, setIsSpatialLiveSyncEnabled, liveSyncStatus, loiCount: investorLoiCount }}>
-          <InvestorPortalDashboard />
+          <Suspense fallback={<LoadingScreen />}>
+            <InvestorPortalDashboard />
+          </Suspense>
         </DataContext.Provider>
       );
     }
@@ -5055,16 +5075,24 @@ export default function App() {
     if (isSuperAdmin) {
       return (
         <DataContext.Provider value={{ investments, setInvestments, districts, setDistricts, villages, setVillages, spatialLayers, setSpatialLayers, rtrwZoning, setRtrwZoning, incentivePolicies, setIncentivePolicies, supplyChainMatrix, setSupplyChainMatrix, executiveMetrics, setExecutiveMetrics, refreshData: fetchAllData, isLoading: isStatsLoading, isSpatialLiveSyncEnabled, setIsSpatialLiveSyncEnabled, liveSyncStatus, loiCount: investorLoiCount }}>
-          <AdminPortalDashboard />
+          <Suspense fallback={<LoadingScreen />}>
+            <AdminPortalDashboard />
+          </Suspense>
         </DataContext.Provider>
       );
     } else if (isAdminMpp) {
-      return <AdminLayout />;
+      return (
+        <Suspense fallback={<LoadingScreen />}>
+          <AdminLayout />
+        </Suspense>
+      );
     }
 
     return (
       <DataContext.Provider value={{ investments, setInvestments, districts, setDistricts, villages, setVillages, spatialLayers, setSpatialLayers, rtrwZoning, setRtrwZoning, incentivePolicies, setIncentivePolicies, supplyChainMatrix, setSupplyChainMatrix, executiveMetrics, setExecutiveMetrics, refreshData: fetchAllData, isLoading: isStatsLoading, isSpatialLiveSyncEnabled, setIsSpatialLiveSyncEnabled, liveSyncStatus, loiCount: investorLoiCount }}>
-        <AdminPortalDashboard />
+        <Suspense fallback={<LoadingScreen />}>
+          <AdminPortalDashboard />
+        </Suspense>
       </DataContext.Provider>
     );
   }

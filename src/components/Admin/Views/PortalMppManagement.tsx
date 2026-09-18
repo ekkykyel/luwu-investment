@@ -43,6 +43,7 @@ import {
 } from "lucide-react";
 import { supabase } from "../../../lib/supabaseClient";
 import { MPPTenant, MPPService } from "../../../types/mpp";
+import { MppNewsItem, getStoredMppNews, saveMppNews } from "../../../data/mppNewsData";
 
 interface ImageUploadFieldProps {
   id: string;
@@ -827,16 +828,8 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
       setFlowSteps(savedFlow);
     }
 
-    const savedNews = JSON.parse(localStorage.getItem("mpp_portal_news") || "[]");
-    if (savedNews.length === 0) {
-      const defaultNews = [
-        { id: "1", title: "Kunjungan Studi Tiru Kemenpan-RB di MPP Simpurusiang Luwu", content: "Luwu - Kementerian Pendayagunaan Aparatur Negara dan Reformasi Birokrasi mengapresiasi sistem SPBE terintegrasi di Kabupaten Luwu.", photo: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400", category: "Pemerintahan", date: "12 Sep 2026" }
-      ];
-      localStorage.setItem("mpp_portal_news", JSON.stringify(defaultNews));
-      setNewsList(defaultNews);
-    } else {
-      setNewsList(savedNews);
-    }
+    const savedNews = getStoredMppNews();
+    setNewsList(savedNews);
   };
 
   const handleAddUmkm = (e: React.FormEvent) => {
@@ -889,25 +882,37 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
 
   const handleAddNews = (e: React.FormEvent) => {
     e.preventDefault();
-    const newItem = {
-      id: Date.now().toString(),
-      title: newsForm.title,
-      content: newsForm.content,
-      photo: newsForm.photo || "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=400",
-      category: newsForm.category,
-      date: new Date().toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })
+    const categoryMapped = 
+      newsForm.category === "Pemerintahan" || newsForm.category === "Pengumuman"
+        ? "Berita Daerah"
+        : newsForm.category === "Kegiatan"
+        ? "Giat Kegiatan MPP"
+        : (newsForm.category as any) || "Giat Kegiatan MPP";
+
+    const newNewsItem: MppNewsItem = {
+      id: `news-${Date.now()}`,
+      judul: newsForm.title,
+      ringkasan: newsForm.content.length > 180 ? newsForm.content.slice(0, 180) + "..." : newsForm.content,
+      isiLengkap: newsForm.content,
+      image: newsForm.photo || "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+      kategori: categoryMapped,
+      penulis: "Admin MPP Luwu",
+      tanggal: new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }),
+      status: "published",
+      isPinned: false,
+      viewsCount: 1
     };
-    const updated = [newItem, ...newsList];
-    localStorage.setItem("mpp_portal_news", JSON.stringify(updated));
+    const updated = [newNewsItem, ...newsList];
+    saveMppNews(updated);
     setNewsList(updated);
     setNewsForm({ title: "", content: "", photo: "", category: "Pemerintahan" });
-    triggerStatus("success", "Berita atau Pengumuman baru berhasil diterbitkan!");
+    triggerStatus("success", "Berita atau Pengumuman baru berhasil diterbitkan dan langsung tampil di Portal MPP!");
   };
 
   const handleDeleteNews = (id: string) => {
     if (!window.confirm("Hapus berita/pengumuman ini?")) return;
     const updated = newsList.filter(n => n.id !== id);
-    localStorage.setItem("mpp_portal_news", JSON.stringify(updated));
+    saveMppNews(updated);
     setNewsList(updated);
     triggerStatus("success", "Berita berhasil dihapus.");
   };
@@ -2249,20 +2254,20 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
                 {newsList.map(n => (
                   <div key={n.id} className="p-4 rounded-xl border border-slate-800 bg-slate-950/40 flex items-start gap-4 hover:border-slate-700 transition-all group">
                     <img
-                      src={n.photo}
-                      alt={n.title}
+                      src={n.photo || n.image}
+                      alt={n.title || n.judul}
                       referrerPolicy="no-referrer"
                       className="w-20 h-20 rounded-xl object-cover border border-slate-800 shrink-0"
                     />
                     <div className="flex-1 min-w-0 space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold text-[9px] uppercase border border-emerald-500/20">
-                          {n.category}
+                          {n.category || n.kategori}
                         </span>
-                        <span className="text-[10px] text-slate-500">{n.date}</span>
+                        <span className="text-[10px] text-slate-500">{n.date || n.tanggal}</span>
                       </div>
-                      <h4 className="font-bold text-xs sm:text-sm text-white truncate">{n.title}</h4>
-                      <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">{n.content}</p>
+                      <h4 className="font-bold text-xs sm:text-sm text-white truncate">{n.title || n.judul}</h4>
+                      <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">{n.content || n.ringkasan || n.isiLengkap}</p>
                     </div>
                     <button
                       onClick={() => handleDeleteNews(n.id)}
