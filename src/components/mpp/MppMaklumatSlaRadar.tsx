@@ -6,6 +6,7 @@ import {
   Building2, Scale, HeartHandshake, Eye, Info
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { AntiCorruptionBanner } from './AntiCorruptionBanner';
 
 interface SlaItem {
   id: string;
@@ -226,6 +227,11 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
             </AnimatePresence>
           </div>
         </div>
+      </div>
+
+      {/* Spanduk & Komitmen Zona Integritas Anti-Korupsi, Stop Gratifikasi, Stop Pungli */}
+      <div className="mb-10">
+        <AntiCorruptionBanner isDark={isDark} />
       </div>
 
       {/* 2. SLA Radar (Standar Waktu Nyata Matrix) */}

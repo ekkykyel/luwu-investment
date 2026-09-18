@@ -38,6 +38,7 @@ import { MppServicesMatrixModal } from './mpp/MppServicesMatrixModal';
 import { MppServicesWorkflowCarousel } from './mpp/MppServicesWorkflowCarousel';
 import { MppNewsCatalogModal } from './mpp/MppNewsCatalogModal';
 import { MppMagattiGallerySlideshow } from './mpp/MppMagattiGallerySlideshow';
+import { AntiCorruptionBanner } from './mpp/AntiCorruptionBanner';
 import { MppNewsItem, getStoredMppNews, syncMppNewsWithServer } from '../data/mppNewsData';
 import { 
   MppSocialMediaSettings, 
@@ -4840,8 +4841,8 @@ export default function PortalMPP() {
                 </div>
               </div>
 
-              {/* Navigation Columns: Symmetrical 2-Column Grid on Mobile & Tablet (7 cols on lg) */}
-              <div className="lg:col-span-7 grid grid-cols-2 gap-4 sm:gap-8 pt-2 sm:pt-0">
+              {/* Navigation Columns: 3-Column Grid on Tablet/Desktop (7 cols on lg) */}
+              <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 pt-2 sm:pt-0">
                 {/* Kolom 1: Tautan Pintas */}
                 <div className="bg-slate-50/70 dark:bg-white/[0.02] sm:bg-transparent sm:dark:bg-transparent rounded-2xl p-3.5 sm:p-0 border border-slate-200/60 dark:border-white/5 sm:border-0">
                   <div className="flex items-center gap-2 mb-3.5 pb-2 border-b border-slate-200/60 dark:border-white/10 sm:border-0 sm:pb-0">
@@ -4881,6 +4882,15 @@ export default function PortalMPP() {
                     <li>
                       <a 
                         className="group flex items-center justify-between px-2.5 py-2 rounded-xl text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 transition-all duration-200" 
+                        href="#maklumat-pelayanan-sla"
+                      >
+                        <span className="truncate">Maklumat &amp; SLA</span>
+                        <ChevronRight className="w-3.5 h-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
+                      </a>
+                    </li>
+                    <li>
+                      <a 
+                        className="group flex items-center justify-between px-2.5 py-2 rounded-xl text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 transition-all duration-200" 
                         href="#statistik"
                       >
                         <span className="truncate">{t("mppPortal.statistik.title")}</span>
@@ -4890,7 +4900,94 @@ export default function PortalMPP() {
                   </ul>
                 </div>
 
-                {/* Kolom 2: Dukungan & Bantuan */}
+                {/* Kolom 2: Sistem Terkait */}
+                <div className="bg-slate-50/70 dark:bg-white/[0.02] sm:bg-transparent sm:dark:bg-transparent rounded-2xl p-3.5 sm:p-0 border border-slate-200/60 dark:border-white/5 sm:border-0">
+                  <div className="flex items-center gap-2 mb-3.5 pb-2 border-b border-slate-200/60 dark:border-white/10 sm:border-0 sm:pb-0">
+                    <div className="w-1.5 h-4 rounded-full bg-blue-500 shrink-0" />
+                    <h4 className="font-sans text-xs sm:text-sm font-bold tracking-wider text-slate-900 dark:text-white uppercase truncate">
+                      Sistem Terkait
+                    </h4>
+                  </div>
+                  <ul className="flex flex-col gap-1.5 sm:gap-2">
+                    <li>
+                      <a 
+                        className="group flex items-center justify-between px-2.5 py-2 rounded-xl text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-500/10 transition-all duration-200" 
+                        href="https://luwukab.go.id/"
+                        target="_blank"
+                        rel="noreferrer"
+                        title="Website Resmi Pemerintah Kabupaten Luwu"
+                      >
+                        <span className="flex items-center gap-1.5 truncate">
+                          <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
+                          <span className="truncate">Website Pemkab Luwu</span>
+                        </span>
+                        <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
+                      </a>
+                    </li>
+                    <li>
+                      <a 
+                        className="group flex items-center justify-between px-2.5 py-2 rounded-xl text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-500/10 transition-all duration-200" 
+                        href="https://oss.go.id"
+                        target="_blank"
+                        rel="noreferrer"
+                        title="Online Single Submission (OSS RBA) BKPM RI"
+                      >
+                        <span className="flex items-center gap-1.5 truncate">
+                          <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
+                          <span className="truncate">OSS RBA</span>
+                        </span>
+                        <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
+                      </a>
+                    </li>
+                    <li>
+                      <a 
+                        className="group flex items-center justify-between px-2.5 py-2 rounded-xl text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-500/10 transition-all duration-200" 
+                        href="https://simbg.pu.go.id"
+                        target="_blank"
+                        rel="noreferrer"
+                        title="Sistem Informasi Manajemen Bangunan Gedung (SIMBG)"
+                      >
+                        <span className="flex items-center gap-1.5 truncate">
+                          <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
+                          <span className="truncate">SIMBG</span>
+                        </span>
+                        <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
+                      </a>
+                    </li>
+                    <li>
+                      <a 
+                        className="group flex items-center justify-between px-2.5 py-2 rounded-xl text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-500/10 transition-all duration-200" 
+                        href="https://sicantik.layanan.go.id"
+                        target="_blank"
+                        rel="noreferrer"
+                        title="SiCantik Cloud - Aplikasi Cerdas Layanan Perizinan Terpadu"
+                      >
+                        <span className="flex items-center gap-1.5 truncate">
+                          <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
+                          <span className="truncate">Sicantikcloud</span>
+                        </span>
+                        <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
+                      </a>
+                    </li>
+                    <li>
+                      <a 
+                        className="group flex items-center justify-between px-2.5 py-2 rounded-xl text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-500/10 transition-all duration-200" 
+                        href="https://www.lapor.go.id"
+                        target="_blank"
+                        rel="noreferrer"
+                        title="SP4N-LAPOR! - Sistem Pengelolaan Pengaduan Pelayanan Publik Nasional"
+                      >
+                        <span className="flex items-center gap-1.5 truncate">
+                          <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
+                          <span className="truncate">SP4N-LAPOR</span>
+                        </span>
+                        <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Kolom 3: Dukungan & Bantuan */}
                 <div className="bg-slate-50/70 dark:bg-white/[0.02] sm:bg-transparent sm:dark:bg-transparent rounded-2xl p-3.5 sm:p-0 border border-slate-200/60 dark:border-white/5 sm:border-0">
                   <div className="flex items-center gap-2 mb-3.5 pb-2 border-b border-slate-200/60 dark:border-white/10 sm:border-0 sm:pb-0">
                     <div className="w-1.5 h-4 rounded-full bg-teal-500 shrink-0" />
@@ -4948,8 +5045,13 @@ export default function PortalMPP() {
               </div>
             </div>
 
+            {/* Banner Komitmen Zona Integritas Anti-Korupsi di Footer */}
+            <div className="mt-10 sm:mt-12">
+              <AntiCorruptionBanner isDark={isDark} />
+            </div>
+
             {/* Bottom Symmetrical Copyright Bar */}
-            <div className="mt-10 sm:mt-12 pt-6 border-t border-slate-200/80 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            <div className="mt-8 pt-6 border-t border-slate-200/80 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
               <div className="flex items-center gap-2 text-center md:text-left">
                 <span>© {new Date().getFullYear()} MPP Simpurusiang Kabupaten Luwu.</span>
                 <span className="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
