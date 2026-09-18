@@ -13,9 +13,18 @@ interface SkmIndicator {
   score: number;
 }
 
+interface SkmHighlights {
+  biaya: number;
+  perilaku: number;
+  produk: number;
+}
+
 interface SkmBentoGridProps {
   skmIndicators: SkmIndicator[];
   averageSkm: string;
+  totalRespondents?: number;
+  highlights?: SkmHighlights;
+  predikat?: string;
   onOpenSurveyModal: () => void;
   isDark?: boolean;
 }
@@ -23,10 +32,25 @@ interface SkmBentoGridProps {
 export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
   skmIndicators,
   averageSkm,
+  totalRespondents = 0,
+  highlights = { biaya: 0, perilaku: 0, produk: 0 },
+  predikat,
   onOpenSurveyModal,
   isDark = false,
 }) => {
   const { t } = useTranslation();
+
+  const activePredikat = predikat || (
+    totalRespondents === 0 
+      ? t("mppPortal.skmBento.noSurveyData", "Belum Ada Responden") 
+      : Number(averageSkm) >= 88.31 
+        ? t("mppPortal.skmBento.predikatA", "Predikat A • Sangat Baik")
+        : Number(averageSkm) >= 76.61
+          ? t("mppPortal.skmBento.predikatB", "Predikat B • Baik")
+          : Number(averageSkm) >= 65
+            ? t("mppPortal.skmBento.predikatC", "Predikat C • Kurang Baik")
+            : t("mppPortal.skmBento.predikatD", "Predikat D • Tidak Baik")
+  );
 
   // Icon mapping for 9 Unsur SKM
   const getIndicatorIcon = (key: string) => {
@@ -80,12 +104,12 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
               </div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold">
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>{t("mppPortal.skmBento.predikat", "Predikat A • Sangat Baik")}</span>
+                <span>{activePredikat}</span>
               </div>
             </div>
 
             <p className="text-xs text-slate-300 leading-relaxed pt-1">
-              {t("mppPortal.skmBento.measuredFrom", "Diukur dari penilaian langsung masyarakat pemohon layanan di 21 instansi Mal Pelayanan Publik Simpurusiang Kab. Luwu.")}
+              {t("mppPortal.skmBento.measuredFrom", "Diukur dari penilaian langsung masyarakat pemohon layanan di instansi Mal Pelayanan Publik Simpurusiang Kab. Luwu.")}
             </p>
           </div>
 
@@ -94,15 +118,17 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
               <span className="flex items-center gap-1.5">
                 <Users className="w-4 h-4 text-emerald-400" /> {t("mppPortal.skmBento.totalRespondents", "Total Responden:")}
               </span>
-              <strong className="text-white font-mono text-sm">{t("mppPortal.skmBento.respondentsCount", "12.076 Warga")}</strong>
+              <strong className="text-white font-mono text-sm">
+                {totalRespondents > 0 ? `${totalRespondents.toLocaleString('id-ID')} Warga` : "0 Warga (Belum Ada Data)"}
+              </strong>
             </div>
 
             <button
               type="button"
-              disabled
-              className="w-full bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold text-xs sm:text-sm py-3.5 px-6 rounded-2xl transition-all flex items-center justify-between cursor-not-allowed font-sans"
+              onClick={onOpenSurveyModal}
+              className="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white font-bold text-xs sm:text-sm py-3.5 px-6 rounded-2xl transition-all flex items-center justify-between cursor-pointer font-sans shadow-lg shadow-emerald-500/25"
             >
-              <span>{t("mppPortal.skmBento.fillSurveyBtn", "Isi Survei (Khusus Pemegang Tiket)")}</span>
+              <span>{t("mppPortal.skmBento.fillSurveyBtn", "Isi Survei SKM Pelayanan")}</span>
               <ShieldCheck className="w-4 h-4" />
             </button>
           </div>
@@ -123,7 +149,7 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
               <div className="w-9 h-9 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500">
                 <DollarSign className="w-5 h-5" />
               </div>
-              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono">95.6%</span>
+              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono">{highlights.biaya}%</span>
             </div>
             <div>
               <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans">{t("mppPortal.skmBento.highlight1Title", "Biaya & Tarif")}</h4>
@@ -132,7 +158,7 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
               </p>
             </div>
             <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
-              <div className="bg-emerald-500 h-full rounded-full" style={{ width: '95.6%' }} />
+              <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(Math.max(highlights.biaya, 0), 100)}%` }} />
             </div>
           </motion.div>
 
@@ -148,7 +174,7 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
               <div className="w-9 h-9 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-500">
                 <Smile className="w-5 h-5" />
               </div>
-              <span className="text-xs font-bold text-teal-600 dark:text-teal-400 font-mono">93.4%</span>
+              <span className="text-xs font-bold text-teal-600 dark:text-teal-400 font-mono">{highlights.perilaku}%</span>
             </div>
             <div>
               <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans">{t("mppPortal.skmBento.highlight2Title", "Perilaku Petugas")}</h4>
@@ -157,7 +183,7 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
               </p>
             </div>
             <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
-              <div className="bg-teal-500 h-full rounded-full" style={{ width: '93.4%' }} />
+              <div className="bg-teal-500 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(Math.max(highlights.perilaku, 0), 100)}%` }} />
             </div>
           </motion.div>
 
@@ -173,7 +199,7 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
               <div className="w-9 h-9 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500">
                 <Award className="w-5 h-5" />
               </div>
-              <span className="text-xs font-bold text-blue-600 dark:text-blue-400 font-mono">92.1%</span>
+              <span className="text-xs font-bold text-blue-600 dark:text-blue-400 font-mono">{highlights.produk}%</span>
             </div>
             <div>
               <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans">{t("mppPortal.skmBento.highlight3Title", "Produk Layanan")}</h4>
@@ -182,7 +208,7 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
               </p>
             </div>
             <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
-              <div className="bg-blue-500 h-full rounded-full" style={{ width: '92.1%' }} />
+              <div className="bg-blue-500 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(Math.max(highlights.produk, 0), 100)}%` }} />
             </div>
           </motion.div>
 

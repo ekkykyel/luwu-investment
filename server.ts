@@ -3243,6 +3243,28 @@ const MPP_NEWS_FILE = path.join(process.cwd(), "data", "mpp_news.json");
 
 async function loadServerMppNews(): Promise<any[]> {
   try {
+    // 1. Direct query from Supabase mpp_articles table
+    const { data: articles, error } = await supabase
+      .from('mpp_articles')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!error && Array.isArray(articles) && articles.length > 0) {
+      const mapped = articles.map((art: any) => ({
+        id: String(art.id),
+        judul: art.title || "Berita MPP Simpurusiang",
+        kategori: art.category || "Giat Kegiatan MPP",
+        penulis: art.author || "Humas Pemkab Luwu",
+        tanggal: art.created_at ? new Date(art.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }) : "Terbaru",
+        image: art.image_url || "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80",
+        ringkasan: art.content || "Informasi resmi seputar pelayanan terpadu MPP Simpurusiang.",
+        isiLengkap: art.content || "Informasi resmi seputar pelayanan terpadu MPP Simpurusiang.",
+        status: art.is_published ? "published" : "draft",
+        isPinned: false
+      }));
+      return mapped;
+    }
+
     if (fs.existsSync(MPP_NEWS_FILE)) {
       const raw = fs.readFileSync(MPP_NEWS_FILE, "utf-8");
       const parsed = JSON.parse(raw);

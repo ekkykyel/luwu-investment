@@ -1400,98 +1400,7 @@ export interface ReviewItem {
   tanggal_zh?: string;
 }
 
-export const LOCALIZED_REVIEWS: ReviewItem[] = [
-  {
-    nama: "Andi Muhammad Rifai",
-    layanan: "Persetujuan Bangunan Gedung (PBG)",
-    layanan_en: "Building Approval (PBG)",
-    layanan_zh: "建筑工程审批许可 (PBG)",
-    status: "Sangat Puas",
-    status_en: "Very Satisfied",
-    status_zh: "非常满意",
-    teks: "Pengurusan izin PBG berjalan sangat transparan dan cepat. Fasilitas MPP Simpurusiang sangat nyaman dan petugas memberikan asistensi teknis yang jelas.",
-    teks_en: "The PBG permit process was remarkably transparent and swift. The facilities at MPP Simpurusiang are comfortable, and the staff provided clear technical guidance.",
-    teks_zh: "办理建筑审批 (PBG) 流程极为透明高效。MPP Simpurusiang 大厅环境优美舒适，窗口专员提供了非常细致清晰的工程技术指导。",
-    tanggal: "18 Agustus 2024",
-    tanggal_en: "August 18, 2024",
-    tanggal_zh: "2024年8月18日"
-  },
-  {
-    nama: "Nurul Fadilah",
-    layanan: "Perekaman & Cetak KTP-el",
-    layanan_en: "e-KTP Biometric Recording & Printing",
-    layanan_zh: "电子身份证 (KTP-el) 采集与立等出件",
-    status: "Sangat Puas",
-    status_en: "Very Satisfied",
-    status_zh: "非常满意",
-    teks: "Sistem antrean digital sangat rapi, tidak perlu menunggu berlama-lama. Petugas loket Disdukcapil di MPP melayani dengan ramah dan profesional.",
-    teks_en: "The digital queuing system is well-organized without long waits. Disdukcapil counter personnel at MPP served warmly and professionally.",
-    teks_zh: "线上数字化排号系统非常规范顺畅，几乎无需漫长等待。MPP 民政户籍窗口的工作人员态度亲切热忱、业务十分专业。",
-    tanggal: "24 Agustus 2024",
-    tanggal_en: "August 24, 2024",
-    tanggal_zh: "2024年8月24日"
-  },
-  {
-    nama: "Baharuddin S.E.",
-    layanan: "Penerbitan NIB & Izin OSS",
-    layanan_en: "NIB Issuance & OSS Business Permit",
-    layanan_zh: "企业统一代码 (NIB) 与国家 OSS 准入",
-    status: "Sangat Puas",
-    status_en: "Very Satisfied",
-    status_zh: "非常满意",
-    teks: "Bantuan pendampingan OSS di gerai DPMPTSP sangat memudahkan kami selaku pelaku UMKM di Kabupaten Luwu. Izin terbit tanpa kendala.",
-    teks_en: "OSS registration mentoring at the DPMPTSP counter greatly empowered our MSME business in Luwu Regency. The permit was issued seamlessly.",
-    teks_zh: "DPMPTSP 投资许可窗口的一对一现场辅导极大地便利了我们鲁乌县本土中小微企业，企业执照当天顺利审批出件。",
-    tanggal: "29 Agustus 2024",
-    tanggal_en: "August 29, 2024",
-    tanggal_zh: "2024年8月29日"
-  },
-  {
-    nama: "Siti Rahmawati",
-    layanan: "Pelayanan BPJS Kesehatan",
-    layanan_en: "BPJS Health Membership Service",
-    layanan_zh: "国家医疗保障 (BPJS Kesehatan) 专窗",
-    status: "Sangat Puas",
-    status_en: "Very Satisfied",
-    status_zh: "非常满意",
-    teks: "Sangat bersyukur dengan adanya MPP Simpurusiang karena semua instansi berkumpul dalam satu gedung yang sejuk, bersih, dan ramah disabilitas.",
-    teks_en: "Very grateful for MPP Simpurusiang having all agencies under one roof in a cool, clean, and accessibility-friendly building.",
-    teks_zh: "非常赞赏 MPP Simpurusiang 将所有政务公共部门汇聚在同一栋清凉整洁、无障碍设施完善的大楼内，办事省时省力。",
-    tanggal: "01 September 2024",
-    tanggal_en: "September 01, 2024",
-    tanggal_zh: "2024年9月1日"
-  },
-  {
-    nama: "H. Mustamin",
-    layanan: "Konsultasi Kesesuaian Tata Ruang (PKKPR)",
-    layanan_en: "Spatial Conformity Consultation (PKKPR)",
-    layanan_zh: "空间规划开发符合性咨询 (PKKPR)",
-    status: "Sangat Puas",
-    status_en: "Very Satisfied",
-    status_zh: "非常满意",
-    teks: "Informasi yang diberikan sangat komprehensif didukung peta tata ruang yang jelas. Pelayanan prima yang membanggakan Kabupaten Luwu.",
-    teks_en: "The information provided was comprehensive and supported by clear zoning maps. Excellent service that brings pride to Luwu Regency.",
-    teks_zh: "窗口提供的规划咨询非常详尽，并辅以清晰的高清空间规划地图，展现了鲁乌县令人自豪的一流卓越政务服务水平。",
-    tanggal: "03 September 2024",
-    tanggal_en: "September 03, 2024",
-    tanggal_zh: "2024年9月3日"
-  },
-  {
-    nama: "Dewi Sartika",
-    layanan: "Pelayanan Pajak Daerah & Samsat",
-    layanan_en: "Regional Tax & Vehicle SAMSAT Service",
-    layanan_zh: "地方税收与机动车车管 (SAMSAT) 联办",
-    status: "Sangat Puas",
-    status_en: "Very Satisfied",
-    status_zh: "非常满意",
-    teks: "Pembayaran pajak kendaraan dan konsultasi retribusi selesai dalam hitungan menit. Tempat tunggu sangat representatif dan nyaman.",
-    teks_en: "Vehicle tax payment and retribution consultation were completed in minutes. The waiting area is truly comfortable and modern.",
-    teks_zh: "机动车车船税缴纳与非税规费咨询几分钟内即办理完毕，大厅等候休息区非常舒适现代化。",
-    tanggal: "04 September 2024",
-    tanggal_en: "September 04, 2024",
-    tanggal_zh: "2024年9月4日"
-  }
-];
+export const LOCALIZED_REVIEWS: ReviewItem[] = [];
 
 export function getLocalizedReview(item: ReviewItem, lang?: string): ReviewItem {
   if (!item) return item;
@@ -1521,32 +1430,37 @@ export function getLocalizedReview(item: ReviewItem, lang?: string): ReviewItem 
   return item;
 }
 
-export function getLocalizedStats(lang?: string) {
+export function getLocalizedStats(lang?: string, dynamicValues?: { daily?: string | number, weekly?: string | number, monthly?: string | number, yearly?: string | number }) {
   const isZh = lang?.startsWith("zh");
   const isEn = lang?.startsWith("en");
 
+  const daily = String(dynamicValues?.daily ?? "0");
+  const weekly = String(dynamicValues?.weekly ?? "0");
+  const monthly = String(dynamicValues?.monthly ?? "0");
+  const yearly = String(dynamicValues?.yearly ?? "0");
+
   if (isZh) {
     return [
-      { label: "日均服务群众人次", value: "125", icon: Clock },
-      { label: "周均服务群众人次", value: "850", icon: CalendarDays },
-      { label: "月均服务群众人次", value: "3.5K", icon: Calendar },
-      { label: "群众综合满意度", value: "98.4%", icon: TrendingUp },
+      { label: "日均服务群众人次", value: daily, icon: Clock },
+      { label: "周均服务群众人次", value: weekly, icon: CalendarDays },
+      { label: "月均服务群众人次", value: monthly, icon: Calendar },
+      { label: "年度服务总量", value: yearly, icon: TrendingUp },
     ];
   }
 
   if (isEn) {
     return [
-      { label: "Average Visitors Per Day", value: "125", icon: Clock },
-      { label: "Average Visitors Per Week", value: "850", icon: CalendarDays },
-      { label: "Average Visitors Per Month", value: "3.5K", icon: Calendar },
-      { label: "Public Satisfaction Rate", value: "98.4%", icon: TrendingUp },
+      { label: "Average Visitors Per Day", value: daily, icon: Clock },
+      { label: "Average Visitors Per Week", value: weekly, icon: CalendarDays },
+      { label: "Average Visitors Per Month", value: monthly, icon: Calendar },
+      { label: "Annual Total Visitors", value: yearly, icon: TrendingUp },
     ];
   }
 
   return [
-    { label: "Rata - rata Pengunjung Per Hari", value: "125", icon: Clock },
-    { label: "Rata - rata Pengunjung Per Minggu", value: "850", icon: CalendarDays },
-    { label: "Rata - rata Pengunjung Per Bulan", value: "3.5K", icon: Calendar },
-    { label: "Tingkat Kepuasan Publik", value: "98.4%", icon: TrendingUp },
+    { label: "Rata-rata Pengunjung Per Hari", value: daily, icon: Clock },
+    { label: "Rata-rata Pengunjung Per Minggu", value: weekly, icon: CalendarDays },
+    { label: "Rata-rata Pengunjung Per Bulan", value: monthly, icon: Calendar },
+    { label: "Total Pengunjung Tahunan", value: yearly, icon: TrendingUp },
   ];
 }

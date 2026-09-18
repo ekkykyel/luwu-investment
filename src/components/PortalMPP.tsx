@@ -189,9 +189,9 @@ export interface InstansiItem {
 export const dummyDataInstansi: InstansiItem[] = LOCALIZED_AGENCIES;
 export const instansiTergabung = dummyDataInstansi;
 
-// --- Data Ulasan Masyarakat (MPP Simpurusiang Kab. Luwu - Multi-Bahasa) ---
-export const dummyDataUlasan = LOCALIZED_REVIEWS;
-export const dataUlasan = dummyDataUlasan;
+// --- Data Ulasan Masyarakat (Single Source of Truth: Supabase mpp_skm & investor_testimonials) ---
+export const dummyDataUlasan: any[] = [];
+export const dataUlasan: any[] = [];
 
 // --- Data Berita & Pengumuman (Kosong jika belum ada data dari DB) ---
 export const dummyDataBerita: any[] = [];
@@ -550,6 +550,212 @@ export default function PortalMPP() {
   const [airportKioskInitialMode, setAirportKioskInitialMode] = useState<'citizen' | 'investor'>('citizen');
   const [liveAgencies, setLiveAgencies] = useState<InstansiItem[]>(LOCALIZED_AGENCIES);
 
+  // --- State Dinamis Supabase untuk SKM, Antrean & Ulasan (Doktrin Zero Dummy) ---
+  const [skmTotalRespondents, setSkmTotalRespondents] = useState<number>(0);
+  const [skmScoreAverage, setSkmScoreAverage] = useState<string>("0.00");
+  const [skmScores, setSkmScores] = useState({
+    persyaratan: 0,
+    prosedur: 0,
+    kecepatan: 0,
+    biaya: 0,
+    produk: 0,
+    kompetensi: 0,
+    perilaku: 0,
+    sarana: 0,
+    pengaduan: 0,
+  });
+  const [skmHighlights, setSkmHighlights] = useState({
+    biaya: 0,
+    perilaku: 0,
+    produk: 0,
+  });
+
+  const [communityReviews, setCommunityReviews] = useState<any[]>([]);
+  const [isReviewsLoading, setIsReviewsLoading] = useState<boolean>(true);
+
+  const [queueMetrics, setQueueMetrics] = useState({
+    totalVisitors: 0,
+    dailyAvg: 0,
+    weeklyAvg: 0,
+    monthlyAvg: 0,
+    yearlyTotal: 0,
+    hourlyDistribution: [0, 0, 0, 0, 0],
+    dailyDistribution: [0, 0, 0, 0, 0],
+    monthlyDistribution: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  });
+
+  // Sinkronisasi Data SKM & Ulasan Masyarakat dari Supabase
+  const fetchSkmData = useCallback(async () => {
+    try {
+      const { data: skmList, error } = await supabase
+        .from('mpp_skm')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && Array.isArray(skmList)) {
+        const count = skmList.length;
+        setSkmTotalRespondents(count);
+
+        if (count > 0) {
+          const sumQ1 = skmList.reduce((acc, c) => acc + (Number(c.q1_persyaratan) || 0), 0);
+          const sumQ2 = skmList.reduce((acc, c) => acc + (Number(c.q2_prosedur) || 0), 0);
+          const sumQ3 = skmList.reduce((acc, c) => acc + (Number(c.q3_waktu) || 0), 0);
+          const sumQ4 = skmList.reduce((acc, c) => acc + (Number(c.q4_biaya) || 0), 0);
+          const sumQ5 = skmList.reduce((acc, c) => acc + (Number(c.q5_produk) || 0), 0);
+          const sumQ6 = skmList.reduce((acc, c) => acc + (Number(c.q6_kompetensi) || 0), 0);
+          const sumQ7 = skmList.reduce((acc, c) => acc + (Number(c.q7_perilaku) || 0), 0);
+          const sumQ8 = skmList.reduce((acc, c) => acc + (Number(c.q8_sarpras) || 0), 0);
+          const sumQ9 = skmList.reduce((acc, c) => acc + (Number(c.q9_pengaduan) || 0), 0);
+
+          const calcScore = (sum: number) => Number(((sum / count) * 25).toFixed(1));
+
+          const scores = {
+            persyaratan: calcScore(sumQ1),
+            prosedur: calcScore(sumQ2),
+            kecepatan: calcScore(sumQ3),
+            biaya: calcScore(sumQ4),
+            produk: calcScore(sumQ5),
+            kompetensi: calcScore(sumQ6),
+            perilaku: calcScore(sumQ7),
+            sarana: calcScore(sumQ8),
+            pengaduan: calcScore(sumQ9),
+          };
+          setSkmScores(scores);
+
+          const avgTotal = (
+            (scores.persyaratan + scores.prosedur + scores.kecepatan +
+             scores.biaya + scores.produk + scores.kompetensi +
+             scores.perilaku + scores.sarana + scores.pengaduan) / 9
+          ).toFixed(2);
+          setSkmScoreAverage(avgTotal);
+
+          setSkmHighlights({
+            biaya: scores.biaya,
+            perilaku: scores.perilaku,
+            produk: scores.produk,
+          });
+        } else {
+          setSkmScoreAverage("0.00");
+          setSkmScores({
+            persyaratan: 0, prosedur: 0, kecepatan: 0, biaya: 0,
+            produk: 0, kompetensi: 0, perilaku: 0, sarana: 0, pengaduan: 0
+          });
+          setSkmHighlights({ biaya: 0, perilaku: 0, produk: 0 });
+        }
+
+        // Reviews dari feedback SKM & investor_testimonials
+        const feedbackReviews = skmList
+          .filter(item => item.feedback && String(item.feedback).trim().length > 0)
+          .map((item, idx) => ({
+            id: item.id || `skm-${idx}`,
+            nama: item.citizen_nik ? `Warga Pemohon (${String(item.citizen_nik).slice(0, 4)}...${String(item.citizen_nik).slice(-4)})` : 'Masyarakat Pemohon',
+            layanan: 'Pelayanan MPP Simpurusiang',
+            rating: item.rating || 5,
+            status: (item.rating || 5) >= 4 ? 'Sangat Puas' : 'Puas',
+            teks: item.feedback,
+            tanggal: item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Terbaru'
+          }));
+
+        // Coba juga ambil dari investor_testimonials jika ada
+        const { data: testimonials } = await supabase
+          .from('investor_testimonials')
+          .select('*')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false });
+
+        const mappedTestimonials = (testimonials || []).map((t: any) => ({
+          id: t.id,
+          nama: t.name || t.investor_name || 'Investor / Pemohon',
+          layanan: t.company || t.sector || 'Layanan Penanaman Modal & Perizinan',
+          rating: t.rating || 5,
+          status: (t.rating || 5) >= 4 ? 'Sangat Puas' : 'Puas',
+          teks: t.content || t.testimonial || '',
+          tanggal: t.created_at ? new Date(t.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Terbaru'
+        }));
+
+        setCommunityReviews([...feedbackReviews, ...mappedTestimonials]);
+        setIsReviewsLoading(false);
+      }
+    } catch (err) {
+      console.warn('Error fetching SKM and reviews from Supabase:', err);
+      setIsReviewsLoading(false);
+    }
+  }, []);
+
+  // Sinkronisasi Metrik & Distribusi Antrean Pengunjung dari Supabase mpp_queues
+  const fetchQueueStats = useCallback(async () => {
+    try {
+      const { data: queues, error } = await supabase
+        .from('mpp_queues')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && Array.isArray(queues)) {
+        const total = queues.length;
+        
+        // Grouping by unique days for daily average
+        const uniqueDays = new Set(queues.map(q => q.queue_date || (q.created_at ? q.created_at.split('T')[0] : ''))).size || 1;
+        const dailyAvg = Math.max(Math.round(total / Math.max(uniqueDays, 1)), total > 0 ? 1 : 0);
+        const weeklyAvg = Math.max(Math.round(dailyAvg * 5), total > 0 ? 1 : 0);
+        const monthlyAvg = Math.max(Math.round(dailyAvg * 22), total > 0 ? 1 : 0);
+        const yearlyTotal = total;
+
+        // Distribusi Jam (08:00, 10:00, 12:00, 14:00, 15:30)
+        const hourly = [0, 0, 0, 0, 0];
+        // Distribusi Hari (Sen, Sel, Rab, Kam, Jum)
+        const daily = [0, 0, 0, 0, 0];
+        // Distribusi Bulan (Jan - Des)
+        const monthly = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+        queues.forEach(q => {
+          const dateStr = q.queue_date || (q.created_at ? q.created_at.split('T')[0] : '');
+          if (dateStr) {
+            const d = new Date(dateStr + 'T00:00:00');
+            const dayIdx = d.getDay(); // 0: Sun, 1: Mon, ... 5: Fri, 6: Sat
+            if (dayIdx >= 1 && dayIdx <= 5) {
+              daily[dayIdx - 1] += 1;
+            }
+            const mIdx = d.getMonth(); // 0: Jan
+            if (mIdx >= 0 && mIdx < 12) {
+              monthly[mIdx] += 1;
+            }
+          }
+
+          // Hourly distribution dari session atau created_at
+          if (q.session === 'pagi') {
+            hourly[0] += 1;
+            hourly[1] += 1;
+          } else if (q.session === 'siang') {
+            hourly[3] += 1;
+            hourly[4] += 1;
+          } else if (q.created_at) {
+            const h = new Date(q.created_at).getHours();
+            if (h < 10) hourly[0] += 1;
+            else if (h < 12) hourly[1] += 1;
+            else if (h < 13) hourly[2] += 1;
+            else if (h < 15) hourly[3] += 1;
+            else hourly[4] += 1;
+          } else {
+            hourly[0] += 1;
+          }
+        });
+
+        setQueueMetrics({
+          totalVisitors: total,
+          dailyAvg,
+          weeklyAvg,
+          monthlyAvg,
+          yearlyTotal,
+          hourlyDistribution: hourly,
+          dailyDistribution: daily,
+          monthlyDistribution: monthly,
+        });
+      }
+    } catch (err) {
+      console.warn('Error fetching queue stats from Supabase:', err);
+    }
+  }, []);
+
   // Sinkronisasi Presisi Tiga Arah: Admin MPP <-> Supabase DB <-> Portal MPP Warga
   const fetchLiveAgencies = useCallback(async () => {
     try {
@@ -614,22 +820,30 @@ export default function PortalMPP() {
 
   useEffect(() => {
     fetchLiveAgencies();
+    fetchSkmData();
+    fetchQueueStats();
 
-    // Listen to real-time additions/modifications/deletions from Admin MPP Dashboard
+    // Listen to real-time additions/modifications/deletions from Admin MPP & Public Submissions
     const syncChannel = supabase
-      .channel('portal_mpp_tenants_services_sync')
+      .channel('portal_mpp_full_live_sync')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'mpp_tenants' }, () => {
         fetchLiveAgencies();
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'mpp_services' }, () => {
         fetchLiveAgencies();
       })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mpp_skm' }, () => {
+        fetchSkmData();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mpp_queues' }, () => {
+        fetchQueueStats();
+      })
       .subscribe();
 
     return () => {
       supabase.removeChannel(syncChannel);
     };
-  }, [fetchLiveAgencies]);
+  }, [fetchLiveAgencies, fetchSkmData, fetchQueueStats]);
 
   // Helper untuk melakukan submit Survei SKM
   const handleSurveySubmit = async (e: React.FormEvent) => {
@@ -1179,27 +1393,33 @@ export default function PortalMPP() {
     return matchesCategory && matchesQuery;
   });
 
+  const formatMetricVal = (num: number) => {
+    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
+    return num.toLocaleString('id-ID');
+  };
+
   const statistikCards = [
-    { label: t("mppPortal.statistik.dailyAvg"), value: "125", icon: Clock },
-    { label: t("mppPortal.statistik.weeklyAvg"), value: "850", icon: CalendarDays },
-    { label: t("mppPortal.statistik.monthlyAvg"), value: "3.5K", icon: Calendar },
-    { label: t("mppPortal.statistik.yearlyAvg"), value: "42K", icon: TrendingUp },
+    { label: t("mppPortal.statistik.dailyAvg"), value: formatMetricVal(queueMetrics.dailyAvg), icon: Clock },
+    { label: t("mppPortal.statistik.weeklyAvg"), value: formatMetricVal(queueMetrics.weeklyAvg), icon: CalendarDays },
+    { label: t("mppPortal.statistik.monthlyAvg"), value: formatMetricVal(queueMetrics.monthlyAvg), icon: Calendar },
+    { label: t("mppPortal.statistik.yearlyAvg"), value: formatMetricVal(queueMetrics.yearlyTotal), icon: TrendingUp },
   ];
 
-  // 9 Unsur SKM (PermenPANRB No. 14/2017) dengan Skor Dinamis Aktual
+  // 9 Unsur SKM (PermenPANRB No. 14/2017) Terkoneksi Database Supabase mpp_skm
   const skmIndicators = [
-    { key: 'persyaratan', label: t("mppPortal.survey.indicators.persyaratan"), score: 91.8 },
-    { key: 'prosedur', label: t("mppPortal.survey.indicators.prosedur"), score: 89.4 },
-    { key: 'kecepatan', label: t("mppPortal.survey.indicators.kecepatan"), score: 88.2 },
-    { key: 'biaya', label: t("mppPortal.survey.indicators.biaya"), score: 95.6 },
-    { key: 'produk', label: t("mppPortal.survey.indicators.produk"), score: 92.1 },
-    { key: 'kompetensi', label: t("mppPortal.survey.indicators.kompetensi"), score: 90.5 },
-    { key: 'perilaku', label: t("mppPortal.survey.indicators.perilaku"), score: 93.4 },
-    { key: 'sarana', label: t("mppPortal.survey.indicators.sarana"), score: 88.9 },
-    { key: 'pengaduan', label: t("mppPortal.survey.indicators.pengaduan"), score: 87.2 },
+    { key: 'persyaratan', label: t("mppPortal.survey.indicators.persyaratan"), score: skmScores.persyaratan },
+    { key: 'prosedur', label: t("mppPortal.survey.indicators.prosedur"), score: skmScores.prosedur },
+    { key: 'kecepatan', label: t("mppPortal.survey.indicators.kecepatan"), score: skmScores.kecepatan },
+    { key: 'biaya', label: t("mppPortal.survey.indicators.biaya"), score: skmScores.biaya },
+    { key: 'produk', label: t("mppPortal.survey.indicators.produk"), score: skmScores.produk },
+    { key: 'kompetensi', label: t("mppPortal.survey.indicators.kompetensi"), score: skmScores.kompetensi },
+    { key: 'perilaku', label: t("mppPortal.survey.indicators.perilaku"), score: skmScores.perilaku },
+    { key: 'sarana', label: t("mppPortal.survey.indicators.sarana"), score: skmScores.sarana },
+    { key: 'pengaduan', label: t("mppPortal.survey.indicators.pengaduan"), score: skmScores.pengaduan },
   ];
 
-  const averageSkm = (skmIndicators.reduce((acc, curr) => acc + curr.score, 0) / skmIndicators.length).toFixed(2);
+  const averageSkm = skmScoreAverage;
 
   return (
     <div id="portal-top" className="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans w-full overflow-x-clip relative min-h-screen">
@@ -2135,7 +2355,7 @@ export default function PortalMPP() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8  relative z-10 text-center">
                 <div className="flex flex-col gap-2 sm:gap-3 py-2">
                   <span className="text-3xl sm:text-4xl md:text-5xl font-black text-emerald-500 tracking-tight dark:drop-shadow-[0_0_25px_rgba(0,255,153,0.6)]">
-                    <StatCounter target={92.45} isDecimal={true} />
+                    <StatCounter target={Number(skmScoreAverage) || 0} isDecimal={true} />
                   </span>
                   <span className="font-sans text-xs sm:text-sm text-slate-500 dark:text-slate-300 leading-normal uppercase tracking-wider font-semibold">
                     {t("mppPortal.stats.ikm")}
@@ -2144,7 +2364,7 @@ export default function PortalMPP() {
 
                 <div className="flex flex-col gap-2 sm:gap-3 border-y md:border-y-0 md:border-x border-gray-200/80 dark:border-white/10 py-6 md:py-2">
                   <span className="text-3xl sm:text-4xl md:text-5xl font-black text-amber-500 dark:text-[#FFD700] tracking-tight dark:drop-shadow-[0_0_25px_rgba(255,215,0,0.4)]">
-                    <StatCounter target={19} />
+                    <StatCounter target={liveAgencies.length} />
                   </span>
                   <span className="font-sans text-xs sm:text-sm text-slate-500 dark:text-slate-300 leading-normal uppercase tracking-wider font-semibold">
                     {t("mppPortal.stats.agencies")}
@@ -2153,7 +2373,7 @@ export default function PortalMPP() {
 
                 <div className="flex flex-col gap-2 sm:gap-3 py-2">
                   <span className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-800 dark:text-white tracking-tight dark:drop-shadow-[0_0_25px_rgba(255,255,255,0.4)]">
-                    <StatCounter target={150} />k
+                    <StatCounter target={queueMetrics.totalVisitors} />
                   </span>
                   <span className="font-sans text-xs sm:text-sm text-slate-500 dark:text-slate-300 leading-normal uppercase tracking-wider font-semibold">
                     {t("mppPortal.stats.visitors")}
@@ -2978,30 +3198,41 @@ export default function PortalMPP() {
                     <div className="border-b border-slate-400 dark:border-slate-500 w-full" />
                   </div>
 
-                  {/* Batang-batang Vertikal bg-emerald-500 */}
+                  {/* Batang-batang Vertikal Terkoneksi Real-Time mpp_queues */}
                   <div className="flex-1 flex items-end justify-between gap-2 sm:gap-3 md:gap-4 z-10">
-                    {Array.from({ length: 12 }).map((_, i) => {
-                      const multiplier = activeStatTab === 'harian' ? 0.9 : activeStatTab === 'mingguan' ? 1.4 : 1.8;
-                      const baseSin = Math.sin((i + 1) * 0.9) * 25 + 45;
-                      const barPercent = Math.min(Math.max(baseSin * (0.6 + (i % 4) * 0.15) * (multiplier / 1.2), 22), 95);
-                      const displayCount = Math.floor(barPercent * (activeStatTab === 'harian' ? 1.5 : activeStatTab === 'mingguan' ? 9 : 35));
+                    {(() => {
+                      const currentData = activeStatTab === 'harian'
+                        ? queueMetrics.hourlyDistribution
+                        : activeStatTab === 'mingguan'
+                        ? queueMetrics.dailyDistribution
+                        : queueMetrics.monthlyDistribution;
+                      
+                      const maxVal = Math.max(...currentData, 1);
 
-                      return (
-                        <div key={i} className="w-full relative group h-full flex flex-col justify-end items-center">
-                          <motion.div
-                            layout
-                            transition={{ duration: 0.3, ease: "easeOut" }}
-                            className="w-full bg-emerald-500 hover:bg-emerald-400 rounded-t-lg transition-colors cursor-pointer shadow-sm relative"
-                            style={{ height: `${barPercent}%` }}
-                          >
-                            {/* Tooltip on Hover */}
-                            <div className="absolute -top-9 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-slate-800 border border-emerald-500/40 text-emerald-400 text-[11px] font-bold px-4 py-0.5 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-20">
-                              {displayCount.toLocaleString('id-ID')}
-                            </div>
-                          </motion.div>
-                        </div>
-                      );
-                    })}
+                      return currentData.map((count, i) => {
+                        const barPercent = count > 0 ? Math.min(Math.max((count / maxVal) * 88, 14), 95) : 4;
+
+                        return (
+                          <div key={i} className="w-full relative group h-full flex flex-col justify-end items-center">
+                            <motion.div
+                              layout
+                              transition={{ duration: 0.3, ease: "easeOut" }}
+                              className={`w-full rounded-t-lg transition-colors cursor-pointer shadow-sm relative ${
+                                count > 0
+                                  ? 'bg-emerald-500 hover:bg-emerald-400'
+                                  : 'bg-slate-200 dark:bg-slate-700/50 hover:bg-slate-300 dark:hover:bg-slate-600'
+                              }`}
+                              style={{ height: `${barPercent}%` }}
+                            >
+                              {/* Tooltip on Hover */}
+                              <div className="absolute -top-9 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-slate-800 border border-emerald-500/40 text-emerald-400 text-[11px] font-bold px-3 py-0.5 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-20">
+                                {count.toLocaleString('id-ID')} {t("mppPortal.stats.queueUnit", "Antrean")}
+                              </div>
+                            </motion.div>
+                          </div>
+                        );
+                      });
+                    })()}
                   </div>
 
                   {/* Label Sumbu Bawah */}
@@ -3077,6 +3308,9 @@ export default function PortalMPP() {
             <SkmBentoGrid
               skmIndicators={skmIndicators}
               averageSkm={averageSkm}
+              totalRespondents={skmTotalRespondents}
+              highlights={skmHighlights}
+              predikat={skmTotalRespondents > 0 ? (Number(averageSkm) >= 88.31 ? 'Sangat Baik (A)' : Number(averageSkm) >= 76.61 ? 'Baik (B)' : Number(averageSkm) >= 65 ? 'Kurang Baik (C)' : 'Tidak Baik (D)') : 'Belum Ada Responden'}
               onOpenSurveyModal={() => {
                 setIsSurveySubmitted(false);
                 setIsSurveyModalOpen(true);
@@ -3674,19 +3908,35 @@ export default function PortalMPP() {
               <div className="pointer-events-none absolute top-0 left-0 bottom-0 w-8 sm:w-20 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent z-20" />
               <div className="pointer-events-none absolute top-0 right-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-slate-900 via-slate-900/80 to-transparent z-20" />
 
-              <div 
-                ref={ulasanSliderRef}
-                onMouseEnter={() => setIsUlasanPaused(true)}
-                onMouseLeave={() => setIsUlasanPaused(false)}
-                onTouchStart={() => setIsUlasanPaused(true)}
-                onTouchEnd={() => setIsUlasanPaused(false)}
-                className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-x gap-4 sm:gap-6  pb-8 cursor-grab active:cursor-grabbing"
-              >
-                {(dummyDataUlasan || dataUlasan || [])?.map((rawItem, idx) => {
-                  const item = getLocalizedReview(rawItem, i18n.language);
-                  return (
+              {isReviewsLoading ? (
+                <div className="w-full py-12 flex flex-col items-center justify-center text-center">
+                  <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mb-3" />
+                  <span className="text-xs text-slate-400 font-sans">{t("mppPortal.ulasan.loading", "Memuat ulasan masyarakat terverifikasi...")}</span>
+                </div>
+              ) : communityReviews.length === 0 ? (
+                <div className="w-full max-w-xl mx-auto py-12 px-6 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 text-center flex flex-col items-center">
+                  <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-3">
+                    <MessageSquare className="w-6 h-6" />
+                  </div>
+                  <h4 className="text-sm sm:text-base font-bold text-white font-sans mb-1">
+                    {t("mppPortal.ulasan.emptyTitle", "Belum Ada Ulasan Masuk")}
+                  </h4>
+                  <p className="text-xs text-slate-400 font-sans max-w-md leading-relaxed">
+                    {t("mppPortal.ulasan.emptyDesc", "Ulasan dan aspirasi masyarakat akan ditampilkan secara otomatis setelah warga mengisi survei kepuasan layanan di loket MPP Simpurusiang.")}
+                  </p>
+                </div>
+              ) : (
+                <div 
+                  ref={ulasanSliderRef}
+                  onMouseEnter={() => setIsUlasanPaused(true)}
+                  onMouseLeave={() => setIsUlasanPaused(false)}
+                  onTouchStart={() => setIsUlasanPaused(true)}
+                  onTouchEnd={() => setIsUlasanPaused(false)}
+                  className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-x gap-4 sm:gap-6 pb-8 cursor-grab active:cursor-grabbing"
+                >
+                  {communityReviews.map((item, idx) => (
                     <div 
-                      key={idx}
+                      key={item.id || idx}
                       className="w-[85vw] sm:w-[320px] shrink-0 snap-center bg-white/90 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl p-4 md:p-8 shadow-xl shadow-black/20 flex flex-col items-center text-center border border-white/20 dark:border-white/10"
                     >
                       {/* Ikon Profil */}
@@ -3709,7 +3959,14 @@ export default function PortalMPP() {
                         {item.status}
                         <div className="flex items-center gap-0.5 mt-1">
                           {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                            <Star 
+                              key={i} 
+                              className={`w-4 h-4 ${
+                                i < (item.rating || 5)
+                                  ? 'fill-amber-400 text-amber-400'
+                                  : 'text-slate-300 dark:text-slate-600'
+                              }`} 
+                            />
                           ))}
                         </div>
                       </div>
@@ -3724,9 +3981,9 @@ export default function PortalMPP() {
                         {item.tanggal}
                       </span>
                     </div>
-                  );
-                })}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </motion.section>
 
