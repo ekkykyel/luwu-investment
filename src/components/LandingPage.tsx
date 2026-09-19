@@ -81,7 +81,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Role, Investment, District, SektorInvestasi } from "../types";
-import { formatRupiahSingkat } from "../lib/formatters";
+import { formatRupiahSingkat, formatRupiahKompak } from "../lib/formatters";
 import { OssRoiSimulatorInputs } from "./OssRoiSimulatorInputs";
 import GisTransitionLoader from "./GisTransitionLoader";
 import { supabase, safeFetchLayerData } from "../lib/supabaseClient";
@@ -4060,18 +4060,26 @@ export default function LandingPage({
                       </div>
                     </div>
                   </div>
-                  {roiResult && (<div className={`mt-2 md:mt-0 w-full md:w-auto flex justify-center md:ml-auto items-center gap-2 px-3.5 py-1.5 min-h-[38px] rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider backdrop-blur-md border shadow-sm
-                      ${roiResult.status === 'FEASIBLE'
-                        ? isDark ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40' : 'bg-emerald-50 text-emerald-700 border-emerald-300'
-                        : roiResult.status === 'NOT_FEASIBLE'
-                          ? isDark ? 'bg-rose-500/20 text-rose-300 border-rose-400/40' : 'bg-rose-50 text-rose-700 border-rose-300'
-                          : isDark ? 'bg-amber-500/20 text-amber-300 border-amber-400/40' : 'bg-amber-50 text-amber-700 border-amber-300'}`}>
-                      <span className={`w-2 h-2 rounded-full animate-pulse shadow-sm
-                        ${roiResult.status === 'FEASIBLE' ? 'bg-emerald-400 shadow-emerald-400/50'
-                          : roiResult.status === 'NOT_FEASIBLE' ? 'bg-rose-400 shadow-rose-400/50' : 'bg-amber-400 shadow-amber-400/50'}`} />
-                      {roiResult.status === 'FEASIBLE' ? t('feasible', 'Sangat Layak')
-                        : roiResult.status === 'NOT_FEASIBLE' ? t('not_feasible', 'Tidak Layak')
-                        : t('moderate_zone', 'Zona Moderat')}
+                  {roiResult && (
+                    <div className={`mt-2 md:mt-0 w-full md:w-auto flex justify-center md:ml-auto items-center gap-2 px-3.5 py-1.5 min-h-[38px] rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider backdrop-blur-md border shadow-sm transition-all
+                      ${!selectedInvestmentId
+                        ? isDark ? 'bg-indigo-500/15 text-indigo-300 border-indigo-400/30' : 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                        : roiResult.status === 'FEASIBLE'
+                          ? isDark ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40 shadow-emerald-500/10' : 'bg-emerald-50 text-emerald-700 border-emerald-300 shadow-sm'
+                          : roiResult.status === 'NOT_FEASIBLE'
+                            ? isDark ? 'bg-amber-500/15 text-amber-300 border-amber-400/30' : 'bg-amber-50/90 text-amber-800 border-amber-300 shadow-sm'
+                            : isDark ? 'bg-blue-500/20 text-blue-300 border-blue-400/40' : 'bg-blue-50 text-blue-700 border-blue-300 shadow-sm'}`}>
+                      <span className={`w-2 h-2 rounded-full shadow-sm
+                        ${!selectedInvestmentId ? 'bg-indigo-400 animate-pulse'
+                          : roiResult.status === 'FEASIBLE' ? 'bg-emerald-400 shadow-emerald-400/50 animate-pulse'
+                          : roiResult.status === 'NOT_FEASIBLE' ? 'bg-amber-400 shadow-amber-400/50' : 'bg-blue-400 shadow-blue-400/50 animate-pulse'}`} />
+                      {!selectedInvestmentId
+                        ? t('roiSimulator.readyStatus', '⚡ Siap Simulasi • Pilih Potensi')
+                        : roiResult.status === 'FEASIBLE'
+                          ? t('feasible', 'Sangat Layak (Feasible)')
+                          : roiResult.status === 'NOT_FEASIBLE'
+                            ? t('financial.needsAdjustment', 'Perlu Penyesuaian Asumsi')
+                            : t('moderate_zone', 'Zona Moderat / Cukup Layak')}
                     </div>
                   )}
                 </div>
@@ -4546,66 +4554,173 @@ export default function LandingPage({
 
                   {/* PARAMETER EKONOMI INVESTASI */}
                   <div className="md:col-span-2 border-t pt-6 border-slate-500/10 mt-2">
-                    <h4 className="text-sm font-medium mb-4 flex items-center gap-2 text-indigo-500">
-                      <TrendingUp size={16} />{t('financial.parameterTitle')}</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div>
-                        <label className={`block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider mb-2 ${isDark ? "text-slate-400" : "text-slate-600"}`}>{t('financial.inputWacc')}</label>
-                        <div className="relative">
-                          <input
-                            type="number"
-                            inputMode="decimal"
-                            min="1"
-                            max="50"
-                            value={discountRate}
-                            onFocus={(e) => {
-                              e.target.select();
-                              setDiscountRate("" as any);
-                            }}
-                            onChange={(e) => setDiscountRate(Math.max(1, parseInt(e.target.value) || 0))}
-                            className={`w-full px-5 py-4 min-h-[44px] rounded-xl border font-bold text-sm sm:text-base outline-none transition-all ${inputBg}`}
-                          />
+                    <div className="flex items-center justify-between gap-2 mb-4">
+                      <h4 className="text-sm font-bold flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+                        <TrendingUp size={16} />{t('financial.parameterTitle', 'Parameter Ekonomi & Asumsi Pasar')}
+                      </h4>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 hidden sm:inline">
+                        Sentuh preset untuk penyesuaian cepat
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                      {/* WACC */}
+                      <div className="p-3 sm:p-4 rounded-xl border bg-slate-50/50 dark:bg-slate-800/30 border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <label className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-slate-300" : "text-slate-700"}`}>
+                              {t('financial.inputWacc', 'Suku Bunga / WACC')}
+                            </label>
+                            <span className="text-xs font-black text-indigo-600 dark:text-indigo-400 font-mono">{discountRate}%</span>
+                          </div>
+                          <div className="relative mb-2">
+                            <input
+                              type="number"
+                              inputMode="decimal"
+                              min="1"
+                              max="50"
+                              value={discountRate}
+                              onFocus={(e) => {
+                                e.target.select();
+                                setDiscountRate("" as any);
+                              }}
+                              onChange={(e) => setDiscountRate(Math.max(1, parseInt(e.target.value) || 0))}
+                              className={`w-full px-3.5 py-2.5 min-h-[42px] rounded-lg border font-bold text-sm outline-none transition-all ${inputBg}`}
+                            />
+                            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 pointer-events-none">%</span>
+                          </div>
+                          {/* Tactile Preset Chips */}
+                          <div className="flex flex-wrap gap-1.5">
+                            {[
+                              { label: "8%", val: 8 },
+                              { label: "10% BI", val: 10 },
+                              { label: "12%", val: 12 },
+                              { label: "14%", val: 14 }
+                            ].map((chip) => (
+                              <button
+                                key={chip.val}
+                                type="button"
+                                onClick={() => setDiscountRate(chip.val)}
+                                className={`px-2 py-1 rounded-md text-[10px] font-semibold transition-all border ${
+                                  discountRate === chip.val
+                                    ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
+                                    : isDark
+                                      ? "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"
+                                      : "bg-white text-slate-600 border-slate-200 hover:bg-slate-100"
+                                }`}
+                              >
+                                {chip.label}
+                              </button>
+                            ))}
+                          </div>
                         </div>
-                        <span className="text-[10px] font-medium text-slate-700 dark:text-slate-300 mt-1 block">{t('financial.descWacc')}</span>
+                        <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 mt-2 block">{t('financial.descWacc')}</span>
                       </div>
-                      <div>
-                        <label className={`block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider mb-2 ${isDark ? "text-slate-400" : "text-slate-600"}`}>{t('financial.inputTenor')}</label>
-                        <div className="relative">
-                          <input
-                            type="number"
-                            inputMode="numeric"
-                            min="1"
-                            max="30"
-                            value={projectionTenor}
-                            onFocus={(e) => {
-                              e.target.select();
-                              setProjectionTenor("" as any);
-                            }}
-                            onChange={(e) => setProjectionTenor(Math.max(1, parseInt(e.target.value) || 0))}
-                            className={`w-full px-5 py-4 min-h-[44px] rounded-xl border font-bold text-sm sm:text-base outline-none transition-all ${inputBg}`}
-                          />
+
+                      {/* Tenor */}
+                      <div className="p-3 sm:p-4 rounded-xl border bg-slate-50/50 dark:bg-slate-800/30 border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <label className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-slate-300" : "text-slate-700"}`}>
+                              {t('financial.inputTenor', 'Tenor Proyeksi')}
+                            </label>
+                            <span className="text-xs font-black text-indigo-600 dark:text-indigo-400 font-mono">{projectionTenor} Thn</span>
+                          </div>
+                          <div className="relative mb-2">
+                            <input
+                              type="number"
+                              inputMode="numeric"
+                              min="1"
+                              max="30"
+                              value={projectionTenor}
+                              onFocus={(e) => {
+                                e.target.select();
+                                setProjectionTenor("" as any);
+                              }}
+                              onChange={(e) => setProjectionTenor(Math.max(1, parseInt(e.target.value) || 0))}
+                              className={`w-full px-3.5 py-2.5 min-h-[42px] rounded-lg border font-bold text-sm outline-none transition-all ${inputBg}`}
+                            />
+                            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 pointer-events-none">Thn</span>
+                          </div>
+                          {/* Tactile Preset Chips */}
+                          <div className="flex flex-wrap gap-1.5">
+                            {[
+                              { label: "3 Thn", val: 3 },
+                              { label: "5 Thn", val: 5 },
+                              { label: "8 Thn", val: 8 },
+                              { label: "10 Thn", val: 10 },
+                            ].map((chip) => (
+                              <button
+                                key={chip.val}
+                                type="button"
+                                onClick={() => setProjectionTenor(chip.val)}
+                                className={`px-2 py-1 rounded-md text-[10px] font-semibold transition-all border ${
+                                  projectionTenor === chip.val
+                                    ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
+                                    : isDark
+                                      ? "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"
+                                      : "bg-white text-slate-600 border-slate-200 hover:bg-slate-100"
+                                }`}
+                              >
+                                {chip.label}
+                              </button>
+                            ))}
+                          </div>
                         </div>
-                        <span className="text-[10px] font-medium text-slate-700 dark:text-slate-300 mt-1 block">{t('financial.descTenor')}</span>
+                        <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 mt-2 block">{t('financial.descTenor')}</span>
                       </div>
-                      <div>
-                        <label className={`block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider mb-2 ${isDark ? "text-slate-400" : "text-slate-600"}`}>{t('financial.inputInflation')}</label>
-                        <div className="relative">
-                          <input
-                            type="number"
-                            inputMode="decimal"
-                            step="0.1"
-                            min="0"
-                            max="30"
-                            value={inflationRate}
-                            onFocus={(e) => {
-                              e.target.select();
-                              setInflationRate("" as any);
-                            }}
-                            onChange={(e) => setInflationRate(Math.max(0, parseFloat(e.target.value) || 0))}
-                            className={`w-full px-5 py-4 min-h-[44px] rounded-xl border font-bold text-sm sm:text-base outline-none transition-all ${inputBg}`}
-                          />
+
+                      {/* Inflasi */}
+                      <div className="p-3 sm:p-4 rounded-xl border bg-slate-50/50 dark:bg-slate-800/30 border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <label className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-slate-300" : "text-slate-700"}`}>
+                              {t('financial.inputInflation', 'Laju Inflasi')}
+                            </label>
+                            <span className="text-xs font-black text-indigo-600 dark:text-indigo-400 font-mono">{inflationRate}%</span>
+                          </div>
+                          <div className="relative mb-2">
+                            <input
+                              type="number"
+                              inputMode="decimal"
+                              step="0.1"
+                              min="0"
+                              max="30"
+                              value={inflationRate}
+                              onFocus={(e) => {
+                                e.target.select();
+                                setInflationRate("" as any);
+                              }}
+                              onChange={(e) => setInflationRate(Math.max(0, parseFloat(e.target.value) || 0))}
+                              className={`w-full px-3.5 py-2.5 min-h-[42px] rounded-lg border font-bold text-sm outline-none transition-all ${inputBg}`}
+                            />
+                            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 pointer-events-none">%</span>
+                          </div>
+                          {/* Tactile Preset Chips */}
+                          <div className="flex flex-wrap gap-1.5">
+                            {[
+                              { label: "2.5%", val: 2.5 },
+                              { label: "4.5% Luwu", val: 4.5 },
+                              { label: "6.0%", val: 6.0 },
+                            ].map((chip) => (
+                              <button
+                                key={chip.val}
+                                type="button"
+                                onClick={() => setInflationRate(chip.val)}
+                                className={`px-2 py-1 rounded-md text-[10px] font-semibold transition-all border ${
+                                  inflationRate === chip.val
+                                    ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
+                                    : isDark
+                                      ? "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"
+                                      : "bg-white text-slate-600 border-slate-200 hover:bg-slate-100"
+                                }`}
+                              >
+                                {chip.label}
+                              </button>
+                            ))}
+                          </div>
                         </div>
-                        <span className="text-[10px] font-medium text-slate-700 dark:text-slate-300 mt-1 block">{t('financial.descInflation')}</span>
+                        <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 mt-2 block">{t('financial.descInflation')}</span>
                       </div>
                     </div>
                   </div>
@@ -4700,26 +4815,26 @@ export default function LandingPage({
 
                               {/* KPI ringkas di sebelah gauge */}
                               <div className="grid grid-cols-2 gap-2 sm:gap-3 w-full flex-1">
-                                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-500/5 dark:bg-slate-800/40 border border-slate-500/10">
+                                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-500/5 dark:bg-slate-800/40 border border-slate-500/10 flex flex-col justify-between">
                                   <div className="text-[10px] sm:text-xs uppercase tracking-wider mb-0.5 font-bold text-slate-500 dark:text-slate-400 truncate">{t("landing.annualRoi", "ROI Tahunan")}</div>
-                                  <div className="text-base sm:text-lg md:text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono">{roiResult.roi.toFixed(1)}%</div>
+                                  <div className="text-sm xs:text-base sm:text-lg md:text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight">{roiResult.roi.toFixed(1)}%</div>
                                   <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400 truncate">{projectionTenor}th: {roiResult.cumulativeRoi.toFixed(0)}%</div>
                                 </div>
-                                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-500/5 dark:bg-slate-800/40 border border-slate-500/10">
+                                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-500/5 dark:bg-slate-800/40 border border-slate-500/10 flex flex-col justify-between">
                                   <div className="text-[10px] sm:text-xs uppercase tracking-wider mb-0.5 font-bold text-slate-500 dark:text-slate-400 truncate">{t("landing.netProfit", "Net Profit")}</div>
-                                  <div className="text-base sm:text-lg md:text-xl font-black text-indigo-600 dark:text-indigo-400 font-mono truncate">{formatRupiah(roiResult.netProfit)}</div>
+                                  <div className="text-sm xs:text-base sm:text-lg md:text-xl font-black text-indigo-600 dark:text-indigo-400 font-mono tracking-tight whitespace-nowrap">{formatRupiahKompak(roiResult.netProfit)}</div>
                                   <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400 truncate">{t("landing.perYearNet", "Per tahun bersih")}</div>
                                 </div>
-                                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-500/5 dark:bg-slate-800/40 border border-slate-500/10">
+                                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-500/5 dark:bg-slate-800/40 border border-slate-500/10 flex flex-col justify-between">
                                   <div className="text-[10px] sm:text-xs uppercase tracking-wider mb-0.5 font-bold text-slate-500 dark:text-slate-400 truncate">NPV ({discountRate}%)</div>
-                                  <div className={`text-base sm:text-lg md:text-xl font-black font-mono truncate ${roiResult.npv >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
-                                    {roiResult.npv >= 0 ? '+' : ''}{formatRupiah(roiResult.npv)}
+                                  <div className={`text-sm xs:text-base sm:text-lg md:text-xl font-black font-mono tracking-tight whitespace-nowrap ${roiResult.npv >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                                    {roiResult.npv >= 0 ? '+' : ''}{formatRupiahKompak(roiResult.npv)}
                                   </div>
                                   <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400 truncate">Net Present Value</div>
                                 </div>
-                                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-500/5 dark:bg-slate-800/40 border border-slate-500/10">
+                                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-500/5 dark:bg-slate-800/40 border border-slate-500/10 flex flex-col justify-between">
                                   <div className="text-[10px] sm:text-xs uppercase tracking-wider mb-0.5 font-bold text-slate-500 dark:text-slate-400 truncate">IRR</div>
-                                  <div className={`text-base sm:text-lg md:text-xl font-black font-mono ${roiResult.irr >= discountRate ? 'text-emerald-600 dark:text-emerald-400' : roiResult.irr >= 0 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                                  <div className={`text-sm xs:text-base sm:text-lg md:text-xl font-black font-mono tracking-tight ${roiResult.irr >= discountRate ? 'text-emerald-600 dark:text-emerald-400' : roiResult.irr >= 0 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}`}>
                                     {roiResult.irr.toFixed(2)}%
                                   </div>
                                   <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400 truncate">Target WACC: {discountRate}%</div>
@@ -4820,7 +4935,7 @@ export default function LandingPage({
                                       ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
                                       : !(roiResult.npv > 0 && roiResult.irr >= discountRate) && !(roiResult.netProfit <= 0 || roiResult.npv < 0 || roiResult.irr < 0)
                                         ? "bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/30"
-                                        : "bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30"
+                                        : "bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30"
                                   }`}
                                 >
                                   <span className="w-2 h-2 rounded-full bg-current animate-pulse"></span>
@@ -4828,12 +4943,12 @@ export default function LandingPage({
                                     {roiResult.status === "FEASIBLE"
                                       ? t("financial.statusFeasible", "Sangat Layak & Feasible")
                                       : roiResult.status === "NOT_FEASIBLE"
-                                        ? t("financial.statusNotFeasible", "Tidak Layak (Risiko Tinggi)")
+                                        ? t("financial.statusNeedsAdjustment", "Perlu Penyesuaian Asumsi")
                                         : t("financial.statusModerate", "Zona Moderat / Cukup Layak")}
                                   </span>
                                 </div>
                                 <div className="text-[11px] text-slate-500 dark:text-slate-400 text-center font-medium">
-                                  Berdasarkan tolok ukur suku bunga & inflasi regional
+                                  Berdasarkan tolok ukur suku bunga {discountRate}% & inflasi {inflationRate}%
                                 </div>
                               </div>
                             </div>
@@ -4856,13 +4971,13 @@ export default function LandingPage({
                               <div className="space-y-2 mt-3">
                                 <div className="flex items-center justify-between border-b border-dashed border-indigo-500/20 pb-2">
                                   <span className="text-xs font-medium text-slate-600 dark:text-slate-300">NPV ({discountRate}%)</span>
-                                  <span className={`font-black font-mono text-sm sm:text-base truncate ${roiResult.npv >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
-                                    {roiResult.npv >= 0 ? "+" : ""}{formatRupiah(roiResult.npv)}
+                                  <span className={`font-black font-mono text-sm sm:text-base tracking-tight whitespace-nowrap ${roiResult.npv >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                                    {roiResult.npv >= 0 ? "+" : ""}{formatRupiahKompak(roiResult.npv)}
                                   </span>
                                 </div>
                                 <div className="flex items-center justify-between pt-0.5">
                                   <span className="text-xs font-medium text-slate-600 dark:text-slate-300">Internal Rate (IRR)</span>
-                                  <span className={`font-black font-mono text-sm sm:text-base ${roiResult.irr >= 10 ? "text-emerald-600 dark:text-emerald-400" : roiResult.irr >= 0 ? "text-amber-600 dark:text-amber-400" : "text-rose-600 dark:text-rose-400"}`}>
+                                  <span className={`font-black font-mono text-sm sm:text-base tracking-tight ${roiResult.irr >= 10 ? "text-emerald-600 dark:text-emerald-400" : roiResult.irr >= 0 ? "text-amber-600 dark:text-amber-400" : "text-rose-600 dark:text-rose-400"}`}>
                                     {roiResult.irr.toFixed(2)}%
                                   </span>
                                 </div>
@@ -4888,7 +5003,7 @@ export default function LandingPage({
                                   <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t('financial.sensitivitySubtitle', 'Ketahanan terhadap variasi inflasi dan biaya')}</p>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                                     Real-time ⚡
                                   </span>
                                   <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">{t("financial.unitMillionRp", "Satuan: Juta Rp")}</span>
@@ -4902,9 +5017,27 @@ export default function LandingPage({
                                 const maxAbs = Math.max(Math.abs(baseline), Math.abs(highInfl), Math.abs(noInfl), 1);
 
                                 const rows = [
-                                  { label: `${t("financial.baseline", "Baseline")} (${inflationRate}%)`, value: baseline, color: '#059669' },
-                                  { label: t("financial.highInflation", "Inflasi tinggi (+5%)"),          value: highInfl, color: '#e11d48' },
-                                  { label: t("financial.noInflation", "Tanpa inflasi (0%)"),            value: noInfl,   color: '#10b981' },
+                                  { 
+                                    label: `${t("financial.baseline", "Baseline")} (${inflationRate}%)`, 
+                                    value: baseline, 
+                                    color: '#059669',
+                                    badge: 'Tolok Ukur',
+                                    badgeColor: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                                  },
+                                  { 
+                                    label: t("financial.highInflation", "Inflasi tinggi (+5%)"), 
+                                    value: highInfl, 
+                                    color: '#e11d48',
+                                    badge: `${highInfl >= baseline ? '+' : ''}${(highInfl - baseline).toFixed(0)} Jt`,
+                                    badgeColor: highInfl >= baseline ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-600'
+                                  },
+                                  { 
+                                    label: t("financial.noInflation", "Tanpa inflasi (0%)"), 
+                                    value: noInfl, 
+                                    color: '#10b981',
+                                    badge: `${noInfl >= baseline ? '+' : ''}${(noInfl - baseline).toFixed(0)} Jt`,
+                                    badgeColor: noInfl >= baseline ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-600'
+                                  },
                                 ];
                                 return (
                                   <div className="flex flex-col gap-2.5">
@@ -4913,13 +5046,16 @@ export default function LandingPage({
                                       const pct = typeof rawPct === 'number' && !isNaN(rawPct) ? rawPct : 0;
                                       return (
                                         <div key={i} className="flex items-center gap-2 sm:gap-3">
-                                          <span className="text-[11px] font-medium w-28 sm:w-36 shrink-0 text-slate-700 dark:text-slate-300 truncate">{row.label}</span>
-                                          <div className="flex-1 h-2 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-800">
+                                          <div className="w-32 sm:w-40 shrink-0 flex items-center gap-1.5 min-w-0">
+                                            <span className="text-[11px] font-medium text-slate-700 dark:text-slate-300 truncate">{row.label}</span>
+                                            <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold shrink-0 hidden xs:inline-block ${row.badgeColor}`}>{row.badge}</span>
+                                          </div>
+                                          <div className="flex-1 h-2.5 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-800">
                                             <div className="h-full rounded-full transition-all duration-700"
                                                  style={{ width: `${pct}%`, background: row.color, transitionDelay: `${i * 100}ms` }} />
                                           </div>
                                           <span className={`text-[11px] font-bold font-mono w-20 text-right shrink-0 ${row.value >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
-                                            {row.value >= 0 ? '+' : ''}{row.value.toLocaleString('id-ID')}Jt
+                                            {row.value >= 0 ? '+' : ''}{row.value.toLocaleString('id-ID')} Jt
                                           </span>
                                         </div>
                                       );
@@ -4928,15 +5064,24 @@ export default function LandingPage({
                                 );
                               })()}
 
-                              {/* Keterangan Analisis */}
-                              <div className="mt-3.5 p-3 rounded-xl bg-indigo-500/5 border border-indigo-500/10 text-[11px] text-slate-600 dark:text-slate-300 space-y-1.5 leading-relaxed">
-                                <p className="font-bold text-indigo-600 dark:text-indigo-400">
-                                  💡 {t('financial.interpretationTitle', 'Interpretasi Sensitivitas Finansial')}
-                                </p>
-                                <ul className="list-disc pl-4 space-y-1 text-[10.5px]">
-                                  <li><span>{t('financial.interpretationInterest')}</span></li>
-                                  <li><span>{t('financial.interpretationInflation')}</span></li>
-                                </ul>
+                              {/* Executive Summary Briefing */}
+                              <div className="mt-3.5 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <div className="p-3 rounded-xl bg-indigo-500/5 border border-indigo-500/10 text-[11px] space-y-1">
+                                  <div className="font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
+                                    <span>🛡️ Resiliensi Biaya Modal (WACC)</span>
+                                  </div>
+                                  <p className="text-slate-600 dark:text-slate-300 text-[10.5px] leading-relaxed">
+                                    Batas imbal hasil internal (IRR) proyek mencapai <span className="font-bold font-mono">{roiResult.irr.toFixed(1)}%</span> vs suku bunga acuan <span className="font-bold font-mono">{discountRate}%</span>.
+                                  </p>
+                                </div>
+                                <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10 text-[11px] space-y-1">
+                                  <div className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                                    <span>📈 Ketahanan Inflasi Komoditas</span>
+                                  </div>
+                                  <p className="text-slate-600 dark:text-slate-300 text-[10.5px] leading-relaxed">
+                                    Simulasi menguji volatilitas harga hingga <span className="font-bold font-mono">{(inflationRate + 5).toFixed(1)}%</span> guna memastikan kesinambungan operasional di Kab. Luwu.
+                                  </p>
+                                </div>
                               </div>
                             </div>
                           </div>

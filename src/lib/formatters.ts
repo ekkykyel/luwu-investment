@@ -68,6 +68,58 @@ export function formatRupiahSingkat(value: number | string | undefined | null): 
   return 'Rp ' + new Intl.NumberFormat(locale).format(Math.round(num));
 }
 
+/**
+ * Ultra-compact Rupiah format for tight mobile cards & dashboards
+ * Prevents text clipping (e.g. "Rp 1,1 Mili..." -> "Rp 1,1 M", "Rp -749,2 J..." -> "Rp -749 Jt")
+ */
+export function formatRupiahKompak(value: number | string | undefined | null): string {
+  if (value === undefined || value === null) return 'Rp 0';
+  let num: number;
+  if (typeof value === 'number') {
+    num = value;
+  } else {
+    const cleaned = String(value).replace(/[^\d.-]/g, '');
+    num = parseFloat(cleaned) || 0;
+  }
+  if (isNaN(num) || num === 0) return 'Rp 0';
+
+  const abs = Math.abs(num);
+  const sign = num < 0 ? '-' : '';
+  const lang = (typeof window !== "undefined" && localStorage.getItem("i18nextLng")) || "id";
+  const isZh = lang.startsWith("zh");
+  const isEn = lang.startsWith("en");
+
+  if (abs >= 1_000_000_000_000) {
+    const t = abs / 1_000_000_000_000;
+    const numStr = (t >= 10 ? t.toFixed(0) : t.toFixed(1)).toString();
+    const finalNum = isEn || isZh ? numStr : numStr.replace('.', ',');
+    const suffix = isZh ? '万亿' : isEn ? 'T' : ' T';
+    return `Rp ${sign}${finalNum}${suffix}`;
+  }
+  if (abs >= 1_000_000_000) {
+    const m = abs / 1_000_000_000;
+    const numStr = (m >= 10 ? m.toFixed(0) : m.toFixed(1)).toString();
+    const finalNum = isEn || isZh ? numStr : numStr.replace('.', ',');
+    const suffix = isZh ? '十亿' : isEn ? 'B' : ' M';
+    return `Rp ${sign}${finalNum}${suffix}`;
+  }
+  if (abs >= 1_000_000) {
+    const j = abs / 1_000_000;
+    const numStr = (j >= 100 ? j.toFixed(0) : j.toFixed(1)).toString();
+    const finalNum = isEn || isZh ? numStr : numStr.replace('.', ',');
+    const suffix = isZh ? '百万' : isEn ? 'M' : ' Jt';
+    return `Rp ${sign}${finalNum}${suffix}`;
+  }
+  if (abs >= 1_000) {
+    const rb = abs / 1_000;
+    const numStr = (rb >= 100 ? rb.toFixed(0) : rb.toFixed(1)).toString();
+    const finalNum = isEn || isZh ? numStr : numStr.replace('.', ',');
+    const suffix = isZh ? '千' : isEn ? 'K' : ' Rb';
+    return `Rp ${sign}${finalNum}${suffix}`;
+  }
+  return `Rp ${sign}${Math.round(abs)}`;
+}
+
 export function formatInputRupiah(rawValue: string): string {
   const digits = rawValue.replace(/\D/g, '');
   if (!digits) return '';
