@@ -2201,17 +2201,17 @@ export default function LandingPage({
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className={`inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2 rounded-full border mb-4 text-[10px] sm:text-xs font-mono font-bold tracking-widest uppercase backdrop-blur-2xl ${
+                className={`inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-5 sm:py-2 rounded-full border mb-4 text-[10px] sm:text-xs font-mono font-bold tracking-wider sm:tracking-widest uppercase whitespace-nowrap backdrop-blur-2xl max-w-full overflow-hidden ${
                   isDark 
                     ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.25)]" 
                     : "border-emerald-300 bg-white/95 text-emerald-700 shadow-md shadow-emerald-500/10"
                 }`}
               >
-                <span className="relative flex h-2.5 w-2.5">
+                <span className="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5 shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-emerald-500"></span>
                 </span>
-                <span>LIVE SPATIAL ENGINE • POSTGIS SUPABASE SYNC</span>
+                <span className="truncate">LIVE SPATIAL ENGINE SYNC</span>
               </motion.div>
 
               <motion.h1
