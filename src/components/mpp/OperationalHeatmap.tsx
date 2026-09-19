@@ -21,14 +21,14 @@ export const OperationalHeatmap: React.FC<OperationalHeatmapProps> = ({ isDark =
 
   // Data Heatmap Kepadatan Jam
   const hourlyDensity = [
-    { time: '08:00', density: 'rendah', percentage: 25, status: t("mppPortal.operationalHeatmap.quietStatus", "Sepi (Sangat Direkomendasikan)") },
+    { time: '08:00', density: 'rendah', percentage: 25, status: t("mppPortal.operationalHeatmap.quietStatus", "Sepi (Lancar)") },
     { time: '09:00', density: 'sedang', percentage: 55, status: t("mppPortal.operationalHeatmap.mediumStatus", "Sedang") },
-    { time: '10:00', density: 'tinggi', percentage: 90, status: t("mppPortal.operationalHeatmap.peakStatus", "Jam Puncak Ramai") },
+    { time: '10:00', density: 'tinggi', percentage: 90, status: t("mppPortal.operationalHeatmap.peakStatus", "Puncak Ramai") },
     { time: '11:00', density: 'tinggi', percentage: 85, status: t("mppPortal.operationalHeatmap.busyStatus", "Ramai") },
-    { time: '12:00', density: 'istirahat', percentage: 10, status: t("mppPortal.operationalHeatmap.breakStatus", "Jam Istirahat / Pelayanan Terbatas") },
+    { time: '12:00', density: 'istirahat', percentage: 10, status: t("mppPortal.operationalHeatmap.breakStatus", "Jam Istirahat") },
     { time: '13:00', density: 'sedang', percentage: 60, status: t("mppPortal.operationalHeatmap.mediumStatus", "Sedang") },
     { time: '14:00', density: 'sedang', percentage: 45, status: t("mppPortal.operationalHeatmap.mediumStatus", "Sedang") },
-    { time: '15:00', density: 'rendah', percentage: 20, status: t("mppPortal.operationalHeatmap.quietStatus", "Sepi (Sangat Direkomendasikan)") },
+    { time: '15:00', density: 'rendah', percentage: 20, status: t("mppPortal.operationalHeatmap.quietStatus", "Sepi (Lancar)") },
   ];
 
   // Data Katalog SLA & Retribusi
@@ -90,8 +90,8 @@ export const OperationalHeatmap: React.FC<OperationalHeatmapProps> = ({ isDark =
               {t("mppPortal.operationalHeatmap.statusHeader", "Real-Time Status MPP Simpurusiang")}
             </div>
             
-            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight text-white leading-snug break-words font-sans">
-              {t("mppPortal.operationalHeatmap.statusTitle", "Layanan Pelayanan Publik Luwu Terbuka & Bebas Pungli")}
+            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-tight text-white leading-snug break-words font-sans">
+              {t("mppPortal.operationalHeatmap.statusTitle", "Pelayanan Publik Luwu Terbuka & Bebas Pungli")}
             </h2>
             
             <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
