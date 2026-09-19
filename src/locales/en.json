@@ -1939,10 +1939,10 @@
   "opex_kemasan": "Packaging Costs",
   "mppPortal": {
     "hero": {
-      "titlePrefix": "Digital Transformation towards",
-      "titleHighlight": "Superior Luwu",
-      "subtitle": "Integrated public service center of Luwu Regency. Connecting 19 government agencies, SOEs, and private sectors in a fast, transparent, and convenient one-stop door.",
-      "award": "Integrated Public Service Excellence"
+      "titlePrefix": "Welcome to the Public Service",
+      "titleHighlight": "Mall of Luwu Regency",
+      "subtitle": "Integrated, Fast, and Transparent Public Services in One Place",
+      "award": "Government of Luwu"
     },
     "nav": {
       "beranda": "Home",
@@ -1959,8 +1959,8 @@
     },
     "search": {
       "placeholder": "Search for permits, counters, or agency services...",
-      "placeholderShort": "Search public services...",
-      "button": "Search Services",
+      "placeholderShort": "Search services, agencies, or information...",
+      "button": "Search",
       "buttonMobile": "Search"
     },
     "quickActions": {

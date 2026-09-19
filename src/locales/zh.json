@@ -1939,10 +1939,10 @@
   "opex_kemasan": "包装费用",
   "mppPortal": {
     "hero": {
-      "titlePrefix": "迈向数字转型",
-      "titleHighlight": "卓越鲁乌",
-      "subtitle": "鲁乌县综合公共服务中心。一站式连接 12 个以上政府机构、国有企业和私营部门，提供快速、透明、便捷的服务。",
-      "award": "公共服务卓越创新"
+      "titlePrefix": "欢迎来到公共服务",
+      "titleHighlight": "鲁乌县商场",
+      "subtitle": "一站式综合、快速、透明的公共服务",
+      "award": "鲁乌县政府"
     },
     "nav": {
       "beranda": "首页",
@@ -1959,8 +1959,8 @@
     },
     "search": {
       "placeholder": "搜索许可证、柜台或机构服务...",
-      "placeholderShort": "搜索政务服务...",
-      "button": "搜索服务",
+      "placeholderShort": "搜索服务、机构或信息...",
+      "button": "搜索",
       "buttonMobile": "搜索"
     },
     "quickActions": {

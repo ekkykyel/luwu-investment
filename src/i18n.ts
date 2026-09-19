@@ -23,7 +23,9 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: "id",
+    fallbackLng: 'id',
+    returnNull: false,
+    returnEmptyString: false,
     detection: {
       order: ['localStorage', 'navigator'],
       caches: ['localStorage'],
