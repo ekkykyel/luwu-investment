@@ -2765,7 +2765,7 @@ export default function PortalMPP() {
                               {service.badge}
                             </span>
                           </div>
-                          <h3 className="text-base sm:text-lg font-medium text-slate-900 dark:text-white mb-2 tracking-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors font-sans text-left">
+                          <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-2 tracking-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors font-sans text-left">
                             {service.title}
                           </h3>
                           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-300 leading-relaxed text-left line-clamp-3">
@@ -2774,7 +2774,7 @@ export default function PortalMPP() {
                         </div>
 
                         {/* Interactive Touch Target Strip for Android */}
-                        <div className="w-full pt-4 mt-5 border-t border-slate-100 dark:border-white/10 flex items-center justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400 group-hover:text-emerald-500 font-sans">
+                        <div className="w-full pt-4 mt-5 border-t border-slate-100 dark:border-white/10 flex items-center justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400 group-hover:text-emerald-500 font-sans min-h-[44px]">
                           <span className="flex items-center gap-1.5">
                             <Info className="w-3.5 h-3.5" />
                             {t("mppPortal.layanan.detailLayanan", "Lihat Spesifikasi & Dokumentasi")}

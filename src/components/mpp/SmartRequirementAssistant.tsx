@@ -304,12 +304,12 @@ export function SmartRequirementAssistant({ isDark = false }: { isDark?: boolean
             isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-xl shadow-slate-200/50'
           }`}>
             {/* Progress Bar Header */}
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-3">
               <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 font-sans flex items-center gap-2">
-                <FileText className="w-4 h-4 text-emerald-500" />
+                <FileText className="w-4 h-4 text-emerald-500 shrink-0" />
                 <span>{t("mppPortal.smartRequirement.requiredDocsTitle", "DAFTAR DOKUMEN YANG WAJIB DISIAPKAN:")}</span>
               </h4>
-              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono shrink-0">
                 {t("mppPortal.smartRequirement.docsReadiness", { ready: readyDocs, total: totalDocs, defaultValue: `Kesiapan Dokumen Anda (${readyDocs}/${totalDocs})` })}
               </span>
             </div>
@@ -322,7 +322,7 @@ export function SmartRequirementAssistant({ isDark = false }: { isDark?: boolean
                   <div
                     key={doc.id}
                     onClick={() => toggleDocCheck(doc.id)}
-                    className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                    className={`min-h-[48px] p-3 sm:p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 active:scale-[0.98] ${
                       isChecked 
                         ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-950 dark:text-emerald-200' 
                         : isDark 
@@ -342,13 +342,13 @@ export function SmartRequirementAssistant({ isDark = false }: { isDark?: boolean
                         </span>
                         {doc.templateName && (
                           <span className="inline-flex items-center gap-1 text-[10px] text-blue-600 dark:text-blue-400 font-medium mt-0.5">
-                            <Download className="w-3 h-3" /> {t("mppPortal.smartRequirement.downloadTemplate", "Unduh Draf Formulir / Template")} ({doc.templateName})
+                            <Download className="w-3 h-3 shrink-0" /> {t("mppPortal.smartRequirement.downloadTemplate", "Unduh Draf Formulir / Template")} ({doc.templateName})
                           </span>
                         )}
                       </div>
                     </div>
 
-                    <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md uppercase tracking-wider shrink-0 ${
+                    <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md uppercase tracking-wider shrink-0 font-sans ${
                       doc.required 
                         ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20' 
                         : 'bg-slate-500/10 text-slate-500 border border-slate-500/20'
