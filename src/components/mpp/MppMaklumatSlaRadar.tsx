@@ -280,20 +280,20 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
           </div>
 
           {/* Category Filter Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar touch-pan-x snap-x snap-mandatory">
             {[
-              { id: 'semua', label: isEn ? 'All Services' : isZh ? '全部事项' : 'Semua Layanan' },
-              { id: 'perizinan', label: isEn ? 'Business Permits' : isZh ? '企业与投资许可' : 'Perizinan Usaha' },
-              { id: 'kependudukan', label: isEn ? 'Civil Registration' : isZh ? '户籍与民政' : 'Kependudukan' },
-              { id: 'perpajakan', label: isEn ? 'Taxation' : isZh ? '财税服务' : 'Perpajakan' },
-              { id: 'agraria', label: isEn ? 'Agrarian / BPN' : isZh ? '不动产与土地' : 'Agraria / BPN' },
-              { id: 'kesehatan', label: isEn ? 'Healthcare' : isZh ? '医疗医保' : 'Kesehatan' },
+              { id: 'semua', label: isEn ? 'All' : isZh ? '全部' : 'Semua Layanan' },
+              { id: 'perizinan', label: isEn ? 'Business' : isZh ? '企业许可' : 'Perizinan Usaha' },
+              { id: 'kependudukan', label: isEn ? 'Civil Reg' : isZh ? '户籍民政' : 'Kependudukan' },
+              { id: 'perpajakan', label: isEn ? 'Tax' : isZh ? '财税' : 'Perpajakan' },
+              { id: 'agraria', label: isEn ? 'Agrarian' : isZh ? '土地' : 'Agraria / BPN' },
+              { id: 'kesehatan', label: isEn ? 'Health' : isZh ? '医疗' : 'Kesehatan' },
             ].map(cat => (
               <button
                 key={cat.id}
                 type="button"
                 onClick={() => setActiveCategory(cat.id)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                className={`px-3.5 py-2 min-h-[38px] rounded-xl text-xs font-bold transition-all whitespace-nowrap snap-start cursor-pointer active:scale-95 ${
                   activeCategory === cat.id
                     ? 'bg-emerald-600 text-white shadow-md'
                     : isDark
@@ -373,8 +373,8 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
               </div>
 
               {/* Cost & Action Footer */}
-              <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800/80 text-[11px]">
-                <span className="font-bold text-emerald-700 dark:text-emerald-300">
+              <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/80 text-[11px] gap-2">
+                <span className="font-bold text-emerald-700 dark:text-emerald-300 truncate">
                   {item.cost}
                 </span>
 
@@ -384,10 +384,10 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
                     const el = document.getElementById('layanan') || document.getElementById('instansi');
                     el?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="font-bold text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1 cursor-pointer transition-colors"
+                  className="font-bold text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1 cursor-pointer transition-colors shrink-0 min-h-[34px] px-1 active:scale-95"
                 >
-                  <span>{isEn ? 'View Requirements' : isZh ? '查看前置条件' : 'Cek Syarat'}</span>
-                  <ArrowRight className="w-3 h-3" />
+                  <span className="whitespace-nowrap">{isEn ? 'View Requirements' : isZh ? '查看前置条件' : 'Cek Syarat'}</span>
+                  <ArrowRight className="w-3.5 h-3.5 shrink-0" />
                 </button>
               </div>
             </div>

@@ -350,13 +350,13 @@ export function SmartLiveQueue({ isDark = false, onRegisterQueue }: { isDark?: b
               value={ticketSearchInput}
               onChange={(e) => setTicketSearchInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleTrackTicket()}
-              placeholder="Ketik Nomor Tiket Anda (Contoh: A-012, B-005, atau No. HP)..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-2xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-mono uppercase placeholder:normal-case placeholder:font-sans"
+              placeholder="Ketik Nomor Tiket (Contoh: A-012, B-006)..."
+              className="w-full pl-10 pr-4 py-2.5 min-h-[44px] rounded-2xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-mono uppercase placeholder:normal-case placeholder:font-sans"
             />
             {ticketSearchInput && (
               <button 
                 onClick={() => setTicketSearchInput('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-white"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-white"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -367,7 +367,7 @@ export function SmartLiveQueue({ isDark = false, onRegisterQueue }: { isDark?: b
             type="button"
             onClick={() => handleTrackTicket()}
             disabled={isTrackingSearching}
-            className="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 transition-all cursor-pointer shrink-0"
+            className="min-h-[44px] px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all cursor-pointer shrink-0"
           >
             {isTrackingSearching ? (
               <RefreshCw className="w-4 h-4 animate-spin" />
@@ -397,7 +397,7 @@ export function SmartLiveQueue({ isDark = false, onRegisterQueue }: { isDark?: b
                 setTicketSearchInput(sample.code);
                 handleTrackTicket(sample.code);
               }}
-              className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-500/20 text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700/60 font-mono transition-all cursor-pointer"
+              className="px-2.5 py-1.5 min-h-[34px] rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-500/20 text-slate-600 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700/60 font-mono active:scale-95 transition-all cursor-pointer"
             >
               {sample.label}
             </button>
