@@ -12,7 +12,7 @@ import {
   HardHat, MapPin, User, Mail, Phone, X, Check, Briefcase,
   Instagram, Youtube, Facebook, Music2, Heart, MessageCircle, Share2, ExternalLink,
   Send, FileText, QrCode, Printer, Copy, RotateCcw, Download, FileCheck, Clock3, AlertCircle, Loader2
-, Globe, Map, Package, BadgeCheck, Lock, Unlock, Plus, Trash2, Volume2, VolumeX, Radio, Info, Mic } from 'lucide-react';
+, Globe, Map, Package, BadgeCheck, Lock, Unlock, Plus, Trash2, Volume2, VolumeX, Radio, Info, Mic, Maximize2, ZoomIn, Eye } from 'lucide-react';
 import { WeatherWidget } from './WeatherWidget';
 import ThemeToggle from './ThemeToggle';
 import LanguageToggle from './LanguageToggle';
@@ -496,6 +496,7 @@ export default function PortalMPP() {
   const [serviceSearchQuery, setServiceSearchQuery] = useState('');
   const [selectedServiceCategory, setSelectedServiceCategory] = useState<'all' | 'priority' | 'self' | 'disability'>('all');
   const [isFacilityModalOpen, setIsFacilityModalOpen] = useState(false);
+  const [isFacilityLightboxOpen, setIsFacilityLightboxOpen] = useState(false);
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false);
   const [isAgenciesCatalogOpen, setIsAgenciesCatalogOpen] = useState(false);
   const [isServicesMatrixOpen, setIsServicesMatrixOpen] = useState(false);
@@ -2958,10 +2959,14 @@ export default function PortalMPP() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, ease: "easeOut" }}
-                  className="w-full max-w-full bg-white/85 dark:bg-slate-800/50 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-3xl p-5 sm:p-8 flex flex-col justify-between shadow-xl shadow-emerald-950/5 dark:shadow-emerald-950/20 relative overflow-hidden group hover:border-emerald-500/50 transition-all duration-300"
+                  className="w-full max-w-full bg-white/90 dark:bg-slate-800/60 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-3xl p-4 sm:p-7 flex flex-col justify-between shadow-xl shadow-emerald-950/5 dark:shadow-emerald-950/20 relative overflow-hidden group hover:border-emerald-500/50 transition-all duration-300"
                 >
-                  {/* Gambar Fasilitas */}
-                  <div className="relative aspect-[16/10] sm:aspect-video md:h-72 lg:h-80 w-full overflow-hidden rounded-2xl mb-5 sm:mb-6 border border-slate-200/80 dark:border-white/10 shadow-lg bg-slate-950">
+                  {/* Foto Fasilitas (Tinggi, Luas, & Jelas - Bebas dari Penumpukan Teks) */}
+                  <div 
+                    onClick={() => setIsFacilityLightboxOpen(true)}
+                    className="relative h-64 sm:h-80 md:h-80 lg:h-96 w-full overflow-hidden rounded-2xl mb-4 sm:mb-6 border border-slate-200/80 dark:border-white/10 shadow-lg bg-slate-950 cursor-pointer group/img"
+                    title="Klik untuk melihat foto fasilitas dalam ukuran penuh"
+                  >
                     <img
                       src={activeFacility.image}
                       alt={activeFacility.name}
@@ -2971,48 +2976,72 @@ export default function PortalMPP() {
                         e.currentTarget.src = FALLBACK_IMAGE_URL;
                         e.currentTarget.style.backgroundColor = '#10b981';
                       }}
-                      className="w-full h-full object-cover object-center rounded-2xl group-hover:scale-105 transition-transform duration-700 ease-out"
+                      className="w-full h-full object-cover object-center rounded-2xl group-hover/img:scale-105 transition-transform duration-700 ease-out"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-transparent pointer-events-none"></div>
+                    {/* Gradient Halus Transparan */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-slate-950/30 pointer-events-none"></div>
                     
-                    <div className="absolute top-3 sm:top-4 left-3 sm:left-4 z-10 flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 text-[11px] sm:text-xs font-bold text-emerald-300 shadow-md font-sans">
-                      <activeFacility.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-300 shrink-0" />
+                    {/* Badge Tag Kiri Atas */}
+                    <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 text-xs font-bold text-emerald-300 shadow-md font-sans">
+                      <activeFacility.icon className="w-3.5 h-3.5 text-emerald-300 shrink-0" />
                       <span>{activeFacility.tag}</span>
                     </div>
 
-                    <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 z-10 p-3.5 rounded-2xl bg-slate-950/85 backdrop-blur-md border border-white/10 shadow-lg">
-                      <span className="text-[10px] sm:text-xs uppercase tracking-widest text-emerald-400 font-bold mb-1 block font-mono">
-                        {activeFacility.subtitle}
-                      </span>
-                      <h3 className="text-base sm:text-lg md:text-xl font-bold text-white tracking-tight font-sans leading-snug">
-                        {activeFacility.name}
-                      </h3>
+                    {/* Tombol Perbesar Foto Kanan Atas */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsFacilityLightboxOpen(true);
+                      }}
+                      className="absolute top-3 right-3 z-10 min-h-[44px] px-3 py-1.5 rounded-full bg-slate-900/85 hover:bg-emerald-600 backdrop-blur-md border border-white/20 text-xs font-semibold text-white shadow-md flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+                      aria-label="Lihat foto fasilitas ukuran penuh"
+                    >
+                      <Maximize2 className="w-3.5 h-3.5 text-emerald-300" />
+                      <span className="text-[11px] font-sans font-medium">Foto Penuh</span>
+                    </button>
+
+                    {/* Tag Lokasi Kiri Bawah (Minimalis & Elegan, Tidak Menutupi Foto) */}
+                    <div className="absolute bottom-3 left-3 z-10 flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-950/80 backdrop-blur-md border border-white/15 text-[11px] font-mono text-emerald-300 shadow-md">
+                      <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
+                      <span>{activeFacility.subtitle}</span>
                     </div>
                   </div>
 
-                  {/* Judul & Teks Deskripsi */}
+                  {/* Konten Keterangan Fasilitas (Diletakkan di Bawah Foto dengan Hierarki Bersih) */}
                   <div className="flex-1 flex flex-col justify-between">
-                    <div className="mb-5 sm:mb-6">
-                      <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                        <span className="text-[10px] sm:text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 font-mono">
-                          MPP Simpurusiang Kabupaten Luwu
+                    <div className="mb-4 sm:mb-6 text-left">
+                      {/* Sub-label & Lokasi */}
+                      <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-3">
+                        <span className="text-[10px] sm:text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 font-mono">
+                          MPP Simpurusiang Kab. Luwu
+                        </span>
+                        <span className="text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400 font-sans">
+                          • {activeFacility.subtitle}
                         </span>
                       </div>
-                      <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 leading-relaxed text-left break-words font-normal">
+
+                      {/* Judul Fasilitas */}
+                      <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight font-sans leading-snug mb-2 sm:mb-3">
+                        {activeFacility.name}
+                      </h3>
+
+                      {/* Deskripsi Lengkap */}
+                      <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 leading-relaxed break-words font-normal">
                         {activeFacility.description}
                       </p>
                     </div>
 
-                    {/* Spesifikasi Fasilitas */}
-                    <div className="pt-4 sm:pt-5 border-t border-gray-100 dark:border-white/10">
+                    {/* Spesifikasi & Fasilitas Pendukung */}
+                    <div className="pt-4 sm:pt-5 border-t border-slate-200/70 dark:border-white/10">
                       <h4 className="text-[11px] sm:text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400 font-bold mb-3 flex items-center gap-1.5 font-sans">
                         <Sparkles className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
                         {t("mppPortal.fasilitas.specsTitle")}
                       </h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-6 lg:gap-8">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4">
                         {(activeFacility?.features || [])?.map((feature, idx) => (
-                          <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300 text-left font-medium">
-                            <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-500 shrink-0" />
+                          <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm text-slate-700 dark:text-slate-200 text-left font-normal">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                             <span className="break-words">{feature}</span>
                           </div>
                         ))}
@@ -3034,32 +3063,35 @@ export default function PortalMPP() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 100 }}
                   transition={{ duration: 0.25, ease: "easeOut" }}
-                  className="w-full max-h-[85vh] overflow-y-auto bg-white dark:bg-slate-900 border-t sm:border border-slate-200 dark:border-white/10 rounded-t-3xl sm:rounded-3xl p-5 shadow-2xl flex flex-col gap-4 text-left"
+                  className="w-full max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900 border-t sm:border border-slate-200 dark:border-white/10 rounded-t-3xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl flex flex-col gap-3.5 text-left"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Header Drawer dengan Handle & Tombol Tutup */}
-                  <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-white/10">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                        <activeFacility.icon className="w-4 h-4" />
+                  <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 dark:border-white/10">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                        <activeFacility.icon className="w-5 h-5" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-sm text-slate-900 dark:text-white font-sans">{activeFacility.name}</h3>
-                        <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold uppercase tracking-wider">{activeFacility.tag}</p>
+                        <h3 className="font-bold text-sm text-slate-900 dark:text-white font-sans leading-tight">{activeFacility.name}</h3>
+                        <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold uppercase tracking-wider mt-0.5">{activeFacility.tag}</p>
                       </div>
                     </div>
                     <button
                       type="button"
                       onClick={() => setIsFacilityModalOpen(false)}
-                      className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
+                      className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer active:scale-95"
                       aria-label={t("common.close", "Tutup detail fasilitas")}
                     >
                       <X className="w-5 h-5" />
                     </button>
                   </div>
 
-                  {/* Foto Fasilitas */}
-                  <div className="relative aspect-[16/10] sm:aspect-video w-full overflow-hidden rounded-2xl border border-slate-200 dark:border-white/10 shadow-lg bg-slate-950">
+                  {/* Foto Fasilitas (Tinggi & Bersih) */}
+                  <div 
+                    onClick={() => setIsFacilityLightboxOpen(true)}
+                    className="relative h-60 w-full overflow-hidden rounded-2xl border border-slate-200 dark:border-white/10 shadow-lg bg-slate-950 cursor-pointer"
+                  >
                     <img
                       src={activeFacility.image}
                       alt={activeFacility.name}
@@ -3071,21 +3103,31 @@ export default function PortalMPP() {
                       }}
                       className="w-full h-full object-cover object-center rounded-2xl"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-transparent pointer-events-none"></div>
-                    <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 text-[10px] font-bold text-emerald-300 shadow-md font-['Plus_Jakarta_Sans',sans-serif]">
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none"></div>
+                    <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 text-[10px] font-bold text-emerald-300 shadow-md font-sans">
                       <activeFacility.icon className="w-3.5 h-3.5 text-emerald-300 shrink-0" />
                       <span>{activeFacility.tag}</span>
                     </div>
-                    <div className="absolute bottom-2.5 left-2.5 right-2.5 z-10 p-2.5 rounded-xl bg-slate-950/80 backdrop-blur-md border border-white/10 shadow-md">
-                      <span className="text-[10px] font-extrabold text-emerald-400 uppercase tracking-wider block font-['Plus_Jakarta_Sans',sans-serif] truncate">
-                        {activeFacility.subtitle}
-                      </span>
+                    <div className="absolute bottom-2.5 left-2.5 z-10 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-md border border-white/10 text-[10px] font-mono text-emerald-300">
+                      <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
+                      <span>{activeFacility.subtitle}</span>
                     </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsFacilityLightboxOpen(true);
+                      }}
+                      className="absolute top-2.5 right-2.5 z-10 min-h-[44px] px-3 py-1 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 text-[11px] font-medium text-white shadow-md flex items-center gap-1"
+                    >
+                      <Maximize2 className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Foto Penuh</span>
+                    </button>
                   </div>
 
                   {/* Deskripsi Lengkap */}
                   <div>
-                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-sans">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
                       {activeFacility.description}
                     </p>
                   </div>
@@ -3096,9 +3138,9 @@ export default function PortalMPP() {
                       <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                       {t("mppPortal.fasilitas.specsTitle")}
                     </h4>
-                    <div className="grid grid-cols-1 gap-6 lg:gap-8">
+                    <div className="grid grid-cols-1 gap-2">
                       {(activeFacility?.features || [])?.map((feat, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300">
+                        <div key={idx} className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-200">
                           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                           <span>{feat}</span>
                         </div>
@@ -3111,9 +3153,75 @@ export default function PortalMPP() {
                     <button
                       type="button"
                       onClick={() => setIsFacilityModalOpen(false)}
-                      className="w-full min-h-[44px] py-2.5 rounded-2xl bg-emerald-500 text-white text-xs font-semibold font-sans shadow-md shadow-emerald-500/25 hover:bg-emerald-600 cursor-pointer"
+                      className="w-full min-h-[44px] py-2.5 rounded-2xl bg-emerald-500 text-white text-xs font-semibold font-sans shadow-md shadow-emerald-500/25 hover:bg-emerald-600 cursor-pointer active:scale-98"
                     >
                       {t("common.close") || "Tutup"}
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
+            )}
+
+            {/* Modal Lightbox Foto Ukuran Penuh (Full-Screen Photo Inspector) */}
+            {isFacilityLightboxOpen && (
+              <div 
+                className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-md"
+                onClick={() => setIsFacilityLightboxOpen(false)}
+              >
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.92 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.92 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className="relative max-w-4xl w-full max-h-[92vh] flex flex-col bg-slate-900 rounded-3xl overflow-hidden border border-white/15 shadow-2xl"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Top Bar Lightbox */}
+                  <div className="px-4 py-3 bg-slate-950/80 border-b border-white/10 flex items-center justify-between gap-3 z-10">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <activeFacility.icon className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <div className="min-w-0">
+                        <h4 className="text-sm font-bold text-white truncate font-sans">{activeFacility.name}</h4>
+                        <p className="text-[10px] text-slate-400 font-mono truncate">{activeFacility.subtitle}</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsFacilityLightboxOpen(false)}
+                      className="min-h-[44px] min-w-[44px] px-3 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center gap-1 text-xs font-medium cursor-pointer active:scale-95 transition-all"
+                      aria-label="Tutup foto penuh"
+                    >
+                      <X className="w-5 h-5" />
+                      <span className="hidden sm:inline">Tutup</span>
+                    </button>
+                  </div>
+
+                  {/* Foto Utama Penuh */}
+                  <div className="relative flex-1 min-h-[280px] sm:min-h-[420px] max-h-[70vh] bg-black flex items-center justify-center p-1 sm:p-2 overflow-hidden">
+                    <img
+                      src={activeFacility.image}
+                      alt={activeFacility.name}
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = FALLBACK_IMAGE_URL;
+                        e.currentTarget.style.backgroundColor = '#10b981';
+                      }}
+                      className="w-full h-full max-h-[68vh] object-contain rounded-xl"
+                    />
+                  </div>
+
+                  {/* Bottom Caption Bar */}
+                  <div className="px-4 py-3 bg-slate-950/90 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-300">
+                    <span className="text-[11px] font-mono text-emerald-400">
+                      {activeFacility.tag} • MPP Simpurusiang Kab. Luwu
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setIsFacilityLightboxOpen(false)}
+                      className="text-xs text-emerald-400 hover:underline font-semibold"
+                    >
+                      Kembali ke Detail Fasilitas
                     </button>
                   </div>
                 </motion.div>
