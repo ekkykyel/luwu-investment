@@ -1835,10 +1835,11 @@ export default function PortalMPP() {
                   type="button"
                   onClick={() => setIsCommandPaletteOpen(true)}
                   className="min-h-[44px] px-3.5 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-bold font-sans flex items-center gap-2 whitespace-nowrap snap-start transition-all cursor-pointer select-none bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500 hover:text-white shrink-0 group shadow-xs active:scale-95"
-                  title="Buka Pencarian Cepat Instansi, Izin, atau Fitur (Ctrl + K)"
+                  title="Buka Pencarian Cepat Instansi, Izin, atau Fitur"
                 >
                   <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 dark:text-emerald-400 group-hover:text-white transition-colors" />
-                  <span>Cari (Ctrl+K)</span>
+                  <span className="hidden sm:inline">Cari (Ctrl+K)</span>
+                  <span className="sm:hidden">Cari Layanan</span>
                 </button>
 
                 {(
@@ -2257,7 +2258,7 @@ export default function PortalMPP() {
                   {t("mppPortal.motto.badge")}
                 </span>
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans mt-1">
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans mt-1">
                 {t("mppPortal.motto.title")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-500 dark:from-emerald-400 dark:via-teal-300 dark:to-emerald-400">{t("mppPortal.motto.magatti")}</span>
               </h2>
               
