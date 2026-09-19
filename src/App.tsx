@@ -68,6 +68,7 @@ import { LiveMarketTicker } from './components/LiveMarketTicker';
 import LoadingScreen from "./components/LoadingScreen";
 import { useProfile } from "./hooks/useProfile";
 import { useTranslation } from "react-i18next";
+import i18n from "./i18n";
 import Swal from "sweetalert2";
 import { safeHtml2Canvas, pdfRenderQueue, waitForDomAndIdle } from "./lib/html2canvasShim";
 import jsPDF from "jspdf";
@@ -440,7 +441,22 @@ function useDebounceCallback<T extends (...args: any[]) => any>(callback: T, del
 }
 
 export default function App() {
-  const { t } = useTranslation();
+  const { t: rawT } = useTranslation();
+  const t = useCallback((key: string, defaultValue?: string | any): string => {
+    try {
+      if (typeof rawT === "function") {
+        const val = rawT(key, defaultValue);
+        if (typeof val === "string") return val;
+      }
+      const res = i18n.t(key, defaultValue);
+      if (typeof res === "string") return res;
+      return typeof defaultValue === "string" ? defaultValue : key;
+    } catch {
+      const res = i18n.t(key, defaultValue);
+      if (typeof res === "string") return res;
+      return typeof defaultValue === "string" ? defaultValue : key;
+    }
+  }, [rawT]);
   
   const translateSector = (sec: string) => {
     switch (sec) {
