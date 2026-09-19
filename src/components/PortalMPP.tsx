@@ -3348,47 +3348,47 @@ export default function PortalMPP() {
             className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-28 py-10 sm:py-16 md:py-24 px-0.5 sm:px-5 md:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Terpusat */}
-            <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
-              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
+            <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 break-words">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2 inline-block text-center font-mono bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
                 {t("mppPortal.statistik.badge")}
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight leading-snug text-slate-900 dark:text-white font-sans">
                 {t("mppPortal.statistik.title")}
               </h2>
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-6 text-center">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-1.5 mb-3 text-center font-normal">
                 {t("mppPortal.statistik.subtitle")}
               </p>
-              <div className="w-12 sm:w-16 h-1 bg-emerald-500 rounded-full mx-auto mt-4"></div>
+              <div className="w-10 sm:w-14 h-1 bg-emerald-500 rounded-full mx-auto mt-2"></div>
             </div>
 
-            {/* Tata Letak 4 Kartu Statistik (Overlapping Floating Icon Design dengan Premium Glass & Spring Physics) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-8 md:gap-6 lg:gap-8 max-w-6xl mx-auto mt-14 sm:mt-16 w-full">
+            {/* Tata Letak 4 Kartu Statistik (Grid 2 Kolom di Mobile, 4 di Desktop) */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 max-w-6xl mx-auto mt-8 sm:mt-12 w-full">
               {(statistikCards || [])?.map((stat, idx) => {
                 const IconComp = stat.icon;
                 return (
                   <motion.div
                     key={stat.label}
-                    initial={{ opacity: 0, y: 30, scale: 0.96, filter: "blur(6px)" }}
-                    whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                    initial={{ opacity: 0, y: 20, scale: 0.96 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
                     viewport={{ once: true, amount: 0.1 }}
-                    transition={{ type: "spring", stiffness: 350, damping: 25, delay: idx * 0.08 }}
-                    whileHover={{ y: -6, scale: 1.025 }}
-                    className="w-full min-h-[185px] sm:min-h-[200px] bg-white/85 dark:bg-slate-800/50 backdrop-blur-2xl rounded-3xl shadow-xl shadow-emerald-950/5 dark:shadow-emerald-950/20 relative pt-12 pb-7 px-5 sm:px-6 text-center border border-slate-200/80 dark:border-white/10 hover:border-emerald-500/80 hover:shadow-2xl hover:shadow-emerald-500/15 transition-all duration-300 group flex flex-col justify-between items-center"
+                    transition={{ type: "spring", stiffness: 350, damping: 25, delay: idx * 0.05 }}
+                    whileHover={{ y: -4, scale: 1.02 }}
+                    className="w-full min-h-[115px] sm:min-h-[160px] bg-white/85 dark:bg-slate-800/60 backdrop-blur-2xl rounded-2xl sm:rounded-3xl shadow-lg shadow-emerald-950/5 dark:shadow-emerald-950/20 relative pt-7 sm:pt-10 pb-3 sm:pb-5 px-2.5 sm:px-4 text-center border border-slate-200/80 dark:border-white/10 hover:border-emerald-500/80 transition-all duration-300 group flex flex-col justify-between items-center"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-3xl" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl sm:rounded-3xl" />
                     
-                    {/* Ikon Melayang (Floating Absolute Center dengan Glow Effect) */}
-                    <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-emerald-50 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-lg shadow-emerald-500/20 border-4 border-white dark:border-slate-900 rounded-2xl p-3 sm:p-3.5 flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300 z-10">
-                      <IconComp className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2]" />
+                    {/* Ikon Melayang (Ukuran Proporsional di Mobile) */}
+                    <div className="absolute -top-4 sm:-top-6 left-1/2 -translate-x-1/2 bg-emerald-50 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md shadow-emerald-500/20 border-2 sm:border-4 border-white dark:border-slate-900 rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 z-10">
+                      <IconComp className="w-4 h-4 sm:w-6 sm:h-6 stroke-[2.2]" />
                     </div>
 
                     {/* Isi Teks */}
-                    <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-normal font-semibold min-h-[40px] flex items-center justify-center font-sans mt-1">
+                    <div className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-tight font-medium min-h-[28px] sm:min-h-[34px] flex items-center justify-center font-sans mt-0.5 line-clamp-2">
                       {stat.label}
                     </div>
 
-                    {/* Angka Warna Emerald & Gradien Mewah */}
-                    <div className="text-3xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-500 dark:from-emerald-400 dark:to-teal-300 tracking-tight mt-2 font-sans">
+                    {/* Angka Warna Emerald & Font Monospace Tegas */}
+                    <div className="text-2xl sm:text-3xl md:text-4xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight mt-1">
                       {stat.value}
                     </div>
                   </motion.div>
@@ -3397,46 +3397,44 @@ export default function PortalMPP() {
             </div>
 
             {/* Wadah Grafik (Chart Area) */}
-            <div className="max-w-6xl mx-auto mt-8 sm:mt-12 w-full">
-              <div className="w-full bg-white/85 dark:bg-slate-800/50 backdrop-blur-2xl rounded-3xl shadow-xl shadow-emerald-950/5 dark:shadow-emerald-950/20 p-5 sm:p-8 md:p-10 border border-slate-200/80 dark:border-white/10 flex flex-col">
+            <div className="max-w-6xl mx-auto mt-6 sm:mt-10 w-full">
+              <div className="w-full bg-white/85 dark:bg-slate-800/60 backdrop-blur-2xl rounded-2xl sm:rounded-3xl shadow-lg shadow-emerald-950/5 dark:shadow-emerald-950/20 p-4 sm:p-7 md:p-9 border border-slate-200/80 dark:border-white/10 flex flex-col">
                 {/* Header & Filter Tab */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6">
                   <div>
-                    <h3 className="text-base sm:text-lg md:text-xl font-medium text-slate-900 dark:text-white font-sans text-left">
+                    <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white font-sans text-left">
                       {t("mppPortal.statistik.chartTitle")}
                     </h3>
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-300 mt-1 text-left">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 text-left font-normal">
                       {t("mppPortal.statistik.chartSubtitle")}
                     </p>
                   </div>
 
-                  {/* Filter Tab (min 48px touch target on mobile) */}
-                  <div className="flex items-center gap-1.5 bg-slate-100/90 dark:bg-slate-900/80 p-1.5 rounded-2xl border border-slate-200/80 dark:border-white/10 self-start sm:self-auto shadow-inner">
+                  {/* Filter Tab (min 44px touch target on mobile) */}
+                  <div className="flex items-center gap-1 bg-slate-100/90 dark:bg-slate-900/80 p-1 rounded-xl border border-slate-200/80 dark:border-white/10 self-start sm:self-auto shadow-inner">
                     {(['harian', 'mingguan', 'bulanan'] as const).map((tab) => {
                       const label = tab === 'harian' ? t("mppPortal.statistik.harian") : tab === 'mingguan' ? t("mppPortal.statistik.mingguan") : t("mppPortal.statistik.bulanan");
                       const isActive = activeStatTab === tab;
                       return (
-                        <motion.button
+                        <button
                           key={tab}
                           type="button"
-                          whileHover={{ scale: 1.04 }}
-                          whileTap={{ scale: 0.96 }}
                           onClick={() => setActiveStatTab(tab)}
-                          className={`min-h-[44px] px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold tracking-wide rounded-xl transition-all duration-200 cursor-pointer font-sans ${
+                          className={`min-h-[44px] px-3.5 sm:px-5 py-2 text-xs font-bold tracking-wide rounded-lg transition-all duration-200 cursor-pointer font-sans active:scale-95 ${
                             isActive
-                              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-500/30 font-bold'
+                              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-500/30'
                               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                           }`}
                         >
                           {label}
-                        </motion.button>
+                        </button>
                       );
                     })}
                   </div>
                 </div>
 
-                {/* Area Grafik Batang Vertikal h-80 */}
-                <div className="relative w-full h-80 flex flex-col justify-end pt-4 pb-2">
+                {/* Area Grafik Batang Vertikal h-64 sm:h-80 */}
+                <div className="relative w-full h-64 sm:h-80 flex flex-col justify-end pt-4 pb-2">
                   {/* Garis Grid Horizontal Latar */}
                   <div className="absolute inset-x-0 inset-y-4 flex flex-col justify-between pointer-events-none opacity-20 dark:opacity-10">
                     <div className="border-b border-slate-400 dark:border-slate-500 w-full" />
@@ -3483,7 +3481,7 @@ export default function PortalMPP() {
                   </div>
 
                   {/* Label Sumbu Bawah */}
-                  <div className="flex justify-between items-center mt-3 pt-2 border-t border-slate-200 dark:border-white/10 text-[11px] font-semibold text-slate-500 dark:text-slate-400 tracking-wider">
+                  <div className="flex justify-between items-center mt-3 pt-2 border-t border-slate-200 dark:border-white/10 text-[10px] sm:text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 tracking-wider">
                     {activeStatTab === 'harian' ? (
                       <>
                         <span>08:00</span>
