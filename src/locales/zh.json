@@ -1943,7 +1943,9 @@
       "titlePrefix": "欢迎来到公共服务",
       "titleHighlight": "鲁乌县商场",
       "subtitle": "一站式综合、快速、透明的公共服务",
-      "award": "鲁乌县政府"
+      "award": "鲁乌县政府",
+      "videoTour": "Simpurusiang 政务中心宣传视频",
+      "officerPortal": "窗口工作人员与租户操作员登录入口"
     },
     "nav": {
       "beranda": "首页",
@@ -1962,7 +1964,13 @@
       "placeholder": "搜索许可证、柜台或机构服务...",
       "placeholderShort": "搜索服务、机构或信息...",
       "button": "搜索",
-      "buttonMobile": "搜索"
+      "buttonMobile": "搜索",
+      "popularTitle": "热门服务：",
+      "chipDukcapil": "户籍与身份证",
+      "chipNIB": "NIB 营业执照",
+      "chipAntrean": "在线预约取号",
+      "chipBPJS": "国民医保 (BPJS)",
+      "chipPBB": "房产税 (PBB)"
     },
     "quickActions": {
       "antrean": "在线排队",
@@ -1970,7 +1978,13 @@
       "cekStatus": "状态查询",
       "cekStatusDesc": "跟踪许可证文件",
       "mandiri": "自助服务",
-      "mandiriDesc": "24小时数字自助终端"
+      "mandiriDesc": "24小时数字自助终端",
+      "vipDesk": "VIP 投资者服务台",
+      "vipDeskDesc": "联络官与一站式协助",
+      "petaSpasial": "RDTR 空间规划图",
+      "petaSpasialDesc": "WebGIS 土地分区与潜力",
+      "izinOss": "OSS 商业许可",
+      "izinOssDesc": "NIB、PBG 与 SLF 条件"
     },
     "instansi": {
       "badge": "综合政务服务生态",
@@ -2674,8 +2688,15 @@
       "closeAria": "关闭当前排队票据"
     },
     "persona": {
-      "citizen": "公众市民",
-      "investor": "企业投资者"
+      "warga": "公众 / 市民",
+      "investor": "投资者与企业",
+      "semua": "全部服务",
+      "wargaTag": "市民模式：",
+      "wargaDesc": "实时排号、办事材料清单与部门窗口。",
+      "investorTag": "投资者模式：",
+      "investorDesc": "VIP 投资者专席、RDTR 空间规划与 OSS-RBA。",
+      "semuaTag": "全部服务模式：",
+      "semuaDesc": "全馆公共窗口、投资与法规模块。"
     },
     "quickNav": {
       "operational": "服务时间与SLA",
@@ -2741,37 +2762,6 @@
       "matrixBadge": "9项SKM元素得分明细",
       "matrixTitle": "公共服务质量评估矩阵",
       "scaleLabel": "评分标准 0 - 100%"
-    },
-    "search": {
-      "popularTitle": "热门服务：",
-      "chipDukcapil": "户籍与身份证",
-      "chipNIB": "NIB 营业执照",
-      "chipAntrean": "在线预约取号",
-      "chipBPJS": "国民医保 (BPJS)",
-      "chipPBB": "房产税 (PBB)"
-    },
-    "quickActions": {
-      "vipDesk": "VIP 投资者服务台",
-      "vipDeskDesc": "联络官与一站式协助",
-      "petaSpasial": "RDTR 空间规划图",
-      "petaSpasialDesc": "WebGIS 土地分区与潜力",
-      "izinOss": "OSS 商业许可",
-      "izinOssDesc": "NIB、PBG 与 SLF 条件"
-    },
-    "persona": {
-      "warga": "公众 / 市民",
-      "investor": "投资者与企业",
-      "semua": "全部服务",
-      "wargaTag": "市民模式：",
-      "wargaDesc": "实时排号、办事材料清单与部门窗口。",
-      "investorTag": "投资者模式：",
-      "investorDesc": "VIP 投资者专席、RDTR 空间规划与 OSS-RBA。",
-      "semuaTag": "全部服务模式：",
-      "semuaDesc": "全馆公共窗口、投资与法规模块。"
-    },
-    "hero": {
-      "videoTour": "Simpurusiang 政务中心宣传视频",
-      "officerPortal": "窗口工作人员与租户操作员登录入口"
     },
     "interactiveFloorPlan": {
       "title": "三维互动楼层平面图与设施导航",

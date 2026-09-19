@@ -1977,7 +1977,7 @@ export default function PortalMPP() {
                   <SonarRadarPulse color="emerald" size={8} />
                   <span className="font-bold text-emerald-800 dark:text-emerald-400">PEMKAB LUWU</span>
                   <span className="text-slate-300 dark:text-slate-700">•</span>
-                  <span className="text-slate-600 dark:text-slate-300 truncate max-w-[200px] sm:max-w-none">{t("mppPortal.hero.award")}</span>
+                  <span className="text-slate-600 dark:text-slate-300 truncate max-w-[200px] sm:max-w-none">{t("mppPortal.hero.award", "Inovasi Pelayanan Publik Terintegrasi")}</span>
                 </div>
               </motion.div>
               
@@ -1989,9 +1989,9 @@ export default function PortalMPP() {
                 }}
                 className="text-[28px] xs:text-[32px] sm:text-4xl md:text-5xl lg:text-6xl font-black text-center text-slate-900 dark:text-white mb-2.5 sm:mb-3.5 max-w-4xl leading-[1.15] sm:leading-tight tracking-tight font-sans text-balance"
               >
-                {t("mppPortal.hero.titlePrefix")}{" "}
+                {t("mppPortal.hero.titlePrefix", "Transformasi Digital Menuju")}{" "}
                 <span className="bg-gradient-to-r from-teal-500 to-blue-600 bg-clip-text text-transparent font-black">
-                  {t("mppPortal.hero.titleHighlight")}
+                  {t("mppPortal.hero.titleHighlight", "Luwu Unggul")}
                 </span>
               </motion.h1>
               
@@ -2003,7 +2003,7 @@ export default function PortalMPP() {
                 }}
                 className="text-[13px] xs:text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed text-center font-sans px-2 mb-5 sm:mb-7 text-balance font-normal"
               >
-                {t("mppPortal.hero.subtitle")}
+                {t("mppPortal.hero.subtitle", "Pusat pelayanan publik terintegrasi Kabupaten Luwu. Menghubungkan 19 instansi pemerintah, BUMN, dan swasta dalam satu pintu yang cepat, transparan, dan nyaman.")}
               </motion.p>
 
               {/* Smart Search Bar "Tabe'" - Diposisikan Strategis Di Atas Fold (Android 48px+ Touch Target & Voice Search) */}
@@ -2025,7 +2025,7 @@ export default function PortalMPP() {
                     </span>
                   </div>
                   <div className="w-full h-full flex items-center text-slate-400 dark:text-slate-400 text-xs sm:text-sm md:text-base px-2 py-1 truncate font-sans select-none">
-                    <span>{t("mppPortal.search.placeholderShort") || "Cari layanan, KTP, izin usaha, BPJS, permohonan..."}</span>
+                    <span>{t("mppPortal.search.placeholderShort", "Cari layanan publik...")}</span>
                   </div>
                   
                   {/* Voice Assistant Direct Mic Trigger */}
@@ -2055,8 +2055,8 @@ export default function PortalMPP() {
                     }}
                     className="h-9 sm:h-10 min-h-[38px] sm:min-h-[40px] bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-[11.5px] sm:text-sm font-semibold tracking-wide px-3 sm:px-6 rounded-xl transition-all shrink-0 font-sans cursor-pointer flex items-center justify-center shadow-xs"
                   >
-                    <span className="hidden sm:inline">{t("mppPortal.search.button")}</span>
-                    <span className="sm:hidden">{t("mppPortal.search.buttonMobile")}</span>
+                    <span className="hidden sm:inline">{t("mppPortal.search.button", "Cari Layanan")}</span>
+                    <span className="sm:hidden">{t("mppPortal.search.buttonMobile", "Cari")}</span>
                   </MagneticButton>
                 </div>
 

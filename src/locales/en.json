@@ -1943,7 +1943,9 @@
       "titlePrefix": "Welcome to the Public Service",
       "titleHighlight": "Mall of Luwu Regency",
       "subtitle": "Integrated, Fast, and Transparent Public Services in One Place",
-      "award": "Government of Luwu"
+      "award": "Government of Luwu",
+      "videoTour": "Simpurusiang MPP Service Profile Video",
+      "officerPortal": "Counter Officer & Tenant Operator Login Portal"
     },
     "nav": {
       "beranda": "Home",
@@ -1962,7 +1964,13 @@
       "placeholder": "Search for permits, counters, or agency services...",
       "placeholderShort": "Search services, agencies, or information...",
       "button": "Search",
-      "buttonMobile": "Search"
+      "buttonMobile": "Search",
+      "popularTitle": "Popular Services:",
+      "chipDukcapil": "Civil Registry & KTP",
+      "chipNIB": "NIB Business License",
+      "chipAntrean": "Online Queue Ticket",
+      "chipBPJS": "BPJS Healthcare",
+      "chipPBB": "PBB Property Tax"
     },
     "quickActions": {
       "antrean": "Online Queue",
@@ -1970,7 +1978,13 @@
       "cekStatus": "Check Status",
       "cekStatusDesc": "Track Permit File",
       "mandiri": "Self-Service",
-      "mandiriDesc": "24-Hour Digital Kiosk"
+      "mandiriDesc": "24-Hour Digital Kiosk",
+      "vipDesk": "VIP Investor Desk",
+      "vipDeskDesc": "Liaison Officer & Facilitation",
+      "petaSpasial": "RDTR Spatial Map",
+      "petaSpasialDesc": "WebGIS Zoning & Potential",
+      "izinOss": "OSS Business License",
+      "izinOssDesc": "NIB, PBG & SLF Requirements"
     },
     "instansi": {
       "badge": "Integrated Service Ecosystem",
@@ -2674,8 +2688,15 @@
       "closeAria": "Close active ticket"
     },
     "persona": {
-      "citizen": "Citizens",
-      "investor": "Investors"
+      "warga": "Citizens & Public",
+      "investor": "Investors & Businesses",
+      "semua": "All Services",
+      "wargaTag": "Citizen Mode:",
+      "wargaDesc": "Direct Queue, Document Checklist, & Agency Counters.",
+      "investorTag": "Investor Mode:",
+      "investorDesc": "VIP Investor Desk, RDTR Spatial Map, & OSS-RBA.",
+      "semuaTag": "All Services Mode:",
+      "semuaDesc": "All public counter modules, investment & regulations."
     },
     "quickNav": {
       "operational": "Visiting Hours & SLA",
@@ -2741,37 +2762,6 @@
       "matrixBadge": "Detailed Score of 9 SKM Elements",
       "matrixTitle": "Public Service Quality Assessment Matrix",
       "scaleLabel": "Score Scale 0 - 100%"
-    },
-    "search": {
-      "popularTitle": "Popular Services:",
-      "chipDukcapil": "Civil Registry & KTP",
-      "chipNIB": "NIB Business License",
-      "chipAntrean": "Online Queue Ticket",
-      "chipBPJS": "BPJS Healthcare",
-      "chipPBB": "PBB Property Tax"
-    },
-    "quickActions": {
-      "vipDesk": "VIP Investor Desk",
-      "vipDeskDesc": "Liaison Officer & Facilitation",
-      "petaSpasial": "RDTR Spatial Map",
-      "petaSpasialDesc": "WebGIS Zoning & Potential",
-      "izinOss": "OSS Business License",
-      "izinOssDesc": "NIB, PBG & SLF Requirements"
-    },
-    "persona": {
-      "warga": "Citizens & Public",
-      "investor": "Investors & Businesses",
-      "semua": "All Services",
-      "wargaTag": "Citizen Mode:",
-      "wargaDesc": "Direct Queue, Document Checklist, & Agency Counters.",
-      "investorTag": "Investor Mode:",
-      "investorDesc": "VIP Investor Desk, RDTR Spatial Map, & OSS-RBA.",
-      "semuaTag": "All Services Mode:",
-      "semuaDesc": "All public counter modules, investment & regulations."
-    },
-    "hero": {
-      "videoTour": "Simpurusiang MPP Service Profile Video",
-      "officerPortal": "Counter Officer & Tenant Operator Login Portal"
     },
     "interactiveFloorPlan": {
       "title": "Interactive 3D Floor Plan & Facility Navigator",
