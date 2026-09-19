@@ -800,29 +800,29 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
   };
 
   return (
-    <div className="w-full font-sans">
+    <div className="w-full font-['Plus_Jakarta_Sans',sans-serif]">
       {/* Search Form Bar (Tombol Pencarian Tenant & Gerai) */}
-      <div className="w-full max-w-3xl mx-auto mb-5 px-2">
-        <div className="p-1.5 sm:p-2.5 rounded-2xl sm:rounded-3xl bg-white/90 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 shadow-lg shadow-slate-900/5 dark:shadow-emerald-950/20 backdrop-blur-xl flex flex-col sm:flex-row items-center gap-2">
+      <div className="w-full max-w-3xl mx-auto mb-6 px-2">
+        <div className="p-2 sm:p-2.5 rounded-2xl sm:rounded-3xl bg-white/90 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 shadow-xl shadow-slate-900/5 dark:shadow-emerald-950/20 backdrop-blur-xl flex flex-col sm:flex-row items-center gap-2">
           {/* Search Input Box */}
           <div className="relative w-full flex-1">
-            <Search className="w-4 h-4 text-emerald-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Search className="w-4 h-4 text-emerald-500 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={getLangStr(
-                'Cari gerai, tenant, atau jenis alur layanan...',
-                'Search tenant or workflow (PBG, ID, SIM)...',
-                '搜索各机构窗口及服务流程...'
+                'Cari gerai, tenant, atau jenis alur pelayanan (PBG, KTP, NIB, SIM, BPJS, Pajak, Paspor)...',
+                'Search tenant, office or service workflow (PBG, ID card, SIM, Tax, Passport)...',
+                '搜索各机构窗口及服务流程 (PBG, 身份证, 驾照, 税务, 护照)...'
               )}
-              className="w-full min-h-[44px] sm:min-h-[48px] pl-10 pr-9 py-2.5 rounded-xl sm:rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-xs sm:text-sm font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/80 transition-all shadow-inner"
+              className="w-full pl-11 pr-10 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/80 transition-all shadow-inner"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg min-w-[32px] min-h-[32px] flex items-center justify-center"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -830,16 +830,16 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
           </div>
 
           {/* View Mode Toggle Button */}
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end shrink-0 px-1 sm:px-0">
-            <span className="text-[11px] sm:text-xs font-mono font-bold text-slate-500 dark:text-slate-400">
-              {filteredWorkflows.length} {getLangStr('Alur Layanan', 'Workflows', '项流程')}
+          <div className="flex items-center gap-1.5 w-full sm:w-auto justify-between sm:justify-end shrink-0 px-2 sm:px-0">
+            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
+              {filteredWorkflows.length} {getLangStr('Alur Layanan', 'Workflows', '项服务流程')}
             </span>
 
             <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700/80">
               <button
                 type="button"
                 onClick={() => setViewMode('carousel')}
-                className={`min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg text-xs font-bold transition-all active:scale-95 ${
+                className={`p-1.5 rounded-lg text-xs font-bold transition-all ${
                   viewMode === 'carousel'
                     ? 'bg-emerald-500 text-slate-950 shadow-sm'
                     : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
@@ -851,7 +851,7 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
               <button
                 type="button"
                 onClick={() => setViewMode('grid')}
-                className={`min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg text-xs font-bold transition-all active:scale-95 ${
+                className={`p-1.5 rounded-lg text-xs font-bold transition-all ${
                   viewMode === 'grid'
                     ? 'bg-emerald-500 text-slate-950 shadow-sm'
                     : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
@@ -866,17 +866,17 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
       </div>
 
       {/* Category Pills Filter Horizontal Scroll */}
-      <div className="w-full overflow-x-auto no-scrollbar mb-5 px-2 sm:px-4">
-        <div className="flex items-center justify-start sm:justify-center min-w-max gap-1.5 sm:gap-2 mx-auto py-1">
+      <div className="w-full overflow-x-auto no-scrollbar mb-6 px-2 sm:px-4">
+        <div className="flex items-center justify-center min-w-max gap-2 mx-auto">
           {categories.map((cat) => {
             const isActive = activeCategory === cat.id;
             return (
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`min-h-[44px] px-3.5 sm:px-4 py-2 rounded-xl sm:rounded-2xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap active:scale-95 shrink-0 ${
+                className={`min-h-[38px] px-4 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/25 scale-100'
+                    ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/25 scale-105'
                     : 'bg-white/80 dark:bg-slate-900/80 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
               >
@@ -889,12 +889,12 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
 
       {/* Workflows Container (Carousel Slide or Grid) */}
       {filteredWorkflows.length === 0 ? (
-        <div className="py-10 text-center bg-white/60 dark:bg-slate-900/60 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-slate-800 p-6 sm:p-8 max-w-md mx-auto">
-          <Search className="w-8 h-8 text-slate-400 mx-auto mb-2.5" />
-          <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">
+        <div className="py-12 text-center bg-white/60 dark:bg-slate-900/60 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-8 max-w-md mx-auto">
+          <Search className="w-10 h-10 text-slate-400 mx-auto mb-3" />
+          <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">
             {getLangStr('Gerai atau alur layanan tidak ditemukan', 'No tenant or workflow found', '未找到相关窗口或服务流程')}
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mb-3 font-normal">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
             {getLangStr(`Tidak ada hasil untuk "${searchQuery}"`, `No result for "${searchQuery}"`, `无 "${searchQuery}" 相关的结果`)}
           </p>
           <button
@@ -903,19 +903,19 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
               setSearchQuery('');
               setActiveCategory('all');
             }}
-            className="min-h-[40px] px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 text-xs font-bold shadow-md active:scale-95"
+            className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 text-xs font-bold shadow-md"
           >
             {getLangStr('Reset Pencarian', 'Reset Search', '重置搜索')}
           </button>
         </div>
       ) : viewMode === 'carousel' ? (
         /* CAROUSEL SLIDE MODE (Android Touch-Snap Slider) */
-        <div className="relative group/carousel px-1 sm:px-6">
+        <div className="relative group/carousel px-2 sm:px-6">
           {/* Scroll Buttons for Desktop */}
           <button
             type="button"
             onClick={() => handleScroll('left')}
-            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 shadow-lg items-center justify-center hover:bg-emerald-500 hover:text-slate-950 transition-all cursor-pointer"
+            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 shadow-xl items-center justify-center hover:bg-emerald-500 hover:text-slate-950 transition-all cursor-pointer"
             aria-label="Previous Slide"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -924,7 +924,7 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
           <button
             type="button"
             onClick={() => handleScroll('right')}
-            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 shadow-lg items-center justify-center hover:bg-emerald-500 hover:text-slate-950 transition-all cursor-pointer"
+            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 shadow-xl items-center justify-center hover:bg-emerald-500 hover:text-slate-950 transition-all cursor-pointer"
             aria-label="Next Slide"
           >
             <ChevronRight className="w-5 h-5" />
@@ -933,7 +933,7 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
           {/* Touch Snap Carousel Container */}
           <div
             ref={scrollContainerRef}
-            className="flex items-stretch gap-3 sm:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory py-2 sm:py-4 no-scrollbar px-1"
+            className="flex items-stretch gap-4 sm:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory py-4 no-scrollbar px-1"
           >
             {filteredWorkflows.map((wf) => {
               const IconComp = wf.icon;
@@ -945,53 +945,53 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
               return (
                 <motion.div
                   key={wf.id}
-                  whileHover={{ y: -4 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={{ y: -6, scale: 1.01 }}
+                  whileTap={{ scale: 0.97 }}
                   onClick={() => {
                     setActiveModalItem(wf);
                     if (onOpenDetail) onOpenDetail(wf);
                   }}
-                  className="snap-center shrink-0 w-[82vw] sm:w-[310px] md:w-[350px] bg-gradient-to-b from-white/95 via-white/90 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 rounded-2xl sm:rounded-3xl shadow-md sm:shadow-xl shadow-slate-950/5 dark:shadow-emerald-950/20 p-4 sm:p-6 flex flex-col justify-between cursor-pointer hover:border-emerald-500/80 transition-all duration-300 group relative overflow-hidden active:scale-[0.99]"
+                  className="snap-center shrink-0 w-[85vw] sm:w-[320px] md:w-[360px] bg-gradient-to-b from-white/95 via-white/90 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-3xl shadow-xl shadow-slate-950/5 dark:shadow-emerald-950/20 p-6 flex flex-col justify-between cursor-pointer hover:border-emerald-500/80 hover:shadow-2xl hover:shadow-emerald-500/15 transition-all duration-300 group relative overflow-hidden"
                 >
                   <div>
                     {/* Top Header Card */}
-                    <div className="flex items-center justify-between gap-2 mb-3">
-                      <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-mono">
+                    <div className="flex items-center justify-between gap-2 mb-4">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
                         {badge}
                       </span>
-                      <span className="text-[10px] sm:text-[11px] font-mono font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                        <Building2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                        <Building2 className="w-3.5 h-3.5 text-emerald-500" />
                         {wf.loket}
                       </span>
                     </div>
 
                     {/* Big Aesthetic Icon */}
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-3 sm:mb-4 group-hover:scale-105 transition-transform shadow-inner mx-auto">
-                      <IconComp size={28} className="stroke-[1.8]" />
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-5 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform shadow-inner mx-auto">
+                      <IconComp size={40} className="stroke-[1.8]" />
                     </div>
 
                     {/* Title & Agency */}
-                    <span className="text-[10px] sm:text-xs text-slate-400 block text-center mb-0.5">
-                      {getLangStr('Alur Pelayanan Resmi', 'Official Workflow', '官方服务流程')}
+                    <span className="text-xs text-slate-400 block text-center mb-1">
+                      {getLangStr('Alur Pelayanan ResmI', 'Official Workflow', '官方服务流程')}
                     </span>
-                    <h3 className="text-xs sm:text-sm md:text-base font-bold text-slate-900 dark:text-white font-sans group-hover:text-emerald-500 transition-colors text-center leading-snug mb-1.5 line-clamp-2">
+                    <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white font-sans group-hover:text-emerald-500 transition-colors text-center leading-snug mb-2">
                       {title}
                     </h3>
-                    <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 text-center mb-3">
+                    <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 text-center mb-4">
                       {agency}
                     </p>
                   </div>
 
                   {/* Card Footer Info */}
-                  <div className="pt-3 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between gap-2 min-h-[36px]">
-                    <span className="text-[10px] sm:text-[11px] font-mono font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-blue-500 shrink-0" /> {sla}
+                  <div className="pt-4 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between gap-2">
+                    <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5 text-blue-500" /> {sla}
                     </span>
 
-                    <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 group-hover:text-emerald-500">
-                      <span>{getLangStr('Lihat Alur', 'View Steps', '查看流程')}</span>
-                      <div className="w-5 h-5 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-slate-950 transition-all shadow-sm">
-                        <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 group-hover:text-emerald-500">
+                      <span>{getLangStr('Lihat Alur & Syarat', 'View Workflow', '查看流程与条件')}</span>
+                      <div className="w-6 h-6 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-slate-950 transition-all shadow-sm">
+                        <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                       </div>
                     </span>
                   </div>
@@ -1001,16 +1001,16 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
           </div>
 
           {/* Touch Slide Indication Bar for Android */}
-          <div className="flex items-center justify-center gap-2 mt-3">
-            <span className="text-[10px] font-bold tracking-wider text-slate-400 uppercase flex items-center gap-1 font-mono">
-              <ArrowRight className="w-3 h-3 text-emerald-500 animate-pulse shrink-0" />
-              {getLangStr('Geser horizontal untuk alur lainnya', 'Swipe horizontally for more', '横向滑动查看更多流程')}
+          <div className="flex items-center justify-center gap-2 mt-4">
+            <span className="text-[10px] font-extrabold tracking-wider text-slate-400 uppercase flex items-center gap-1">
+              <ArrowRight className="w-3 h-3 text-emerald-500 animate-pulse" />
+              {getLangStr('Geser ke samping untuk jenis alur lainnya', 'Swipe horizontally to view more workflows', '横向滑动查看更多服务流程')}
             </span>
           </div>
         </div>
       ) : (
         /* GRID MODE */
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 px-2 sm:px-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-2 sm:px-4">
           {filteredWorkflows.map((wf) => {
             const IconComp = wf.icon;
             const title = getLangStr(wf.title, wf.title_en, wf.title_zh);
@@ -1021,44 +1021,44 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
             return (
               <motion.div
                 key={wf.id}
-                whileHover={{ y: -4 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ y: -6 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => {
                   setActiveModalItem(wf);
                   if (onOpenDetail) onOpenDetail(wf);
                 }}
-                className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col justify-between cursor-pointer hover:border-emerald-500/80 shadow-md hover:shadow-xl transition-all group active:scale-[0.99]"
+                className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-3xl p-6 flex flex-col justify-between cursor-pointer hover:border-emerald-500/80 shadow-lg hover:shadow-2xl transition-all group"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-2.5">
-                    <span className="text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
                       {badge}
                     </span>
-                    <span className="text-[10px] sm:text-[11px] font-mono font-bold text-slate-500 dark:text-slate-400">
+                    <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
                       {wf.loket}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-3 mb-2.5">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-                      <IconComp className="w-5 h-5 sm:w-6 sm:h-6" />
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                      <IconComp className="w-6 h-6" />
                     </div>
                     <div>
-                      <h3 className="text-xs sm:text-sm md:text-base font-bold text-slate-900 dark:text-white leading-snug group-hover:text-emerald-500 transition-colors line-clamp-2">
+                      <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white leading-snug group-hover:text-emerald-500 transition-colors">
                         {title}
                       </h3>
-                      <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                      <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
                         {agency}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-2.5 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400 min-h-[36px]">
-                  <span className="text-slate-500 font-mono text-[10px] sm:text-[11px]">SLA: {sla}</span>
+                <div className="pt-3 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                  <span className="text-slate-500 text-[11px]">SLA: {sla}</span>
                   <span className="flex items-center gap-1">
                     {getLangStr('Detail Alur', 'View Steps', '详细步骤')}
-                    <ChevronRight className="w-3.5 h-3.5" />
+                    <ChevronRight className="w-4 h-4" />
                   </span>
                 </div>
               </motion.div>
@@ -1071,7 +1071,7 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
       <AnimatePresence>
         {activeModalItem && (
           <div
-            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-hidden font-sans"
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]"
             onClick={() => setActiveModalItem(null)}
           >
             <motion.div
@@ -1079,7 +1079,7 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 100, scale: 0.95 }}
               transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-              className={`w-full max-w-3xl max-h-[90vh] flex flex-col rounded-t-2xl sm:rounded-3xl border shadow-2xl overflow-hidden ${
+              className={`w-full max-w-3xl max-h-[90vh] flex flex-col rounded-t-3xl sm:rounded-3xl border shadow-2xl overflow-hidden ${
                 isDark
                   ? 'bg-slate-900 border-slate-800 text-white shadow-emerald-950/40'
                   : 'bg-white border-slate-200 text-slate-900 shadow-slate-300/50'
@@ -1087,23 +1087,23 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header Bar dengan Android Drag Bar */}
-              <div className="relative pt-3 pb-3 sm:pb-4 px-4 sm:px-6 border-b border-slate-200/80 dark:border-slate-800 shrink-0 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-md">
+              <div className="relative pt-3 pb-4 px-6 border-b border-slate-200/80 dark:border-slate-800 shrink-0 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-md">
                 {/* Drag Handle Bar */}
-                <div className="w-10 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto mb-2.5 sm:hidden" />
+                <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto mb-3 sm:hidden" />
 
                 <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-2.5 sm:gap-3">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-                      {React.createElement(activeModalItem.icon, { className: 'w-5 h-5 sm:w-6 sm:h-6' })}
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                      {React.createElement(activeModalItem.icon, { className: 'w-6 h-6' })}
                     </div>
                     <div>
-                      <span className="text-[9px] sm:text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                      <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
                         {getLangStr(activeModalItem.badge, activeModalItem.badge_en, activeModalItem.badge_zh)}
                       </span>
-                      <h2 className="text-sm sm:text-base md:text-lg font-bold tracking-tight mt-0.5 leading-snug">
+                      <h2 className="text-base sm:text-lg font-extrabold tracking-tight mt-1">
                         {getLangStr(activeModalItem.title, activeModalItem.title_en, activeModalItem.title_zh)}
                       </h2>
-                      <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                      <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
                         {getLangStr(activeModalItem.agency, activeModalItem.agency_en, activeModalItem.agency_zh)} • {activeModalItem.loket}
                       </p>
                     </div>
@@ -1112,7 +1112,7 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
                   <button
                     type="button"
                     onClick={() => setActiveModalItem(null)}
-                    className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer active:scale-95"
+                    className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -1120,33 +1120,33 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
               </div>
 
               {/* Modal Body */}
-              <div className="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-6">
+              <div className="p-6 overflow-y-auto space-y-6">
                 {/* Description */}
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-800/60 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200/60 dark:border-slate-700/60 font-normal">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
                   {getLangStr(activeModalItem.desc, activeModalItem.desc_en, activeModalItem.desc_zh)}
                 </p>
 
                 {/* Step-by-Step Procedure Timeline */}
                 <div>
-                  <h3 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-1.5 font-mono">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-4 flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                     {getLangStr('Tahapan Prosedur Alur Pelayanan', 'Service Procedure Timeline', '服务流程步骤线')}
                   </h3>
 
-                  <div className="space-y-2.5 sm:space-y-3">
+                  <div className="space-y-3">
                     {activeModalItem.steps.map((st) => (
                       <div
                         key={st.no}
-                        className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 flex items-start gap-3 shadow-sm"
+                        className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 flex items-start gap-3.5 shadow-sm"
                       >
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-emerald-500 text-slate-950 font-mono font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">
+                        <div className="w-8 h-8 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs flex items-center justify-center shrink-0 shadow-md">
                           {st.no}
                         </div>
                         <div>
-                          <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white mb-0.5">
+                          <h4 className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white mb-1">
                             {getLangStr(st.title, st.title_en, st.title_zh)}
                           </h4>
-                          <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+                          <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                             {getLangStr(st.desc, st.desc_en, st.desc_zh)}
                           </p>
                         </div>
@@ -1157,13 +1157,13 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
 
                 {/* Requirements Checklist */}
                 <div>
-                  <h3 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 font-mono">
+                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
                     {getLangStr('Persyaratan Ringkas', 'Required Documents', '所需简要材料')}
                   </h3>
-                  <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 space-y-2">
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 space-y-2">
                     {activeModalItem.requirements.map((req, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-xs font-normal text-slate-700 dark:text-slate-200">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <div key={idx} className="flex items-center gap-2 text-xs font-medium text-slate-700 dark:text-slate-200">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                         <span>{getLangStr(req.id, req.en, req.zh)}</span>
                       </div>
                     ))}
@@ -1172,8 +1172,8 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
               </div>
 
               {/* Modal Footer */}
-              <div className="p-3 sm:p-4 px-4 sm:px-6 bg-slate-50 dark:bg-slate-800/90 border-t border-slate-200/80 dark:border-slate-800 shrink-0 flex items-center justify-between gap-3">
-                <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">
+              <div className="p-4 px-6 bg-slate-50 dark:bg-slate-800/90 border-t border-slate-200/80 dark:border-slate-800 shrink-0 flex items-center justify-between gap-3">
+                <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">
                   SLA: {getLangStr(activeModalItem.sla, activeModalItem.sla_en, activeModalItem.sla_zh)}
                 </span>
 
@@ -1182,7 +1182,7 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
                     href={activeModalItem.portalUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="min-h-[44px] px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-bold flex items-center gap-1.5 transition-all shadow-md cursor-pointer active:scale-95"
+                    className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-extrabold flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
                   >
                     <span>{getLangStr('Buka Portal Terkait', 'Open Related Portal', '打开相关门户')}</span>
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -1191,7 +1191,7 @@ export const MppServicesWorkflowCarousel: React.FC<MppServicesWorkflowCarouselPr
                   <button
                     type="button"
                     onClick={() => setActiveModalItem(null)}
-                    className="min-h-[44px] px-5 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold cursor-pointer active:scale-95"
+                    className="px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-extrabold cursor-pointer"
                   >
                     {getLangStr('Tutup Panduan', 'Close Guide', '关闭指南')}
                   </button>

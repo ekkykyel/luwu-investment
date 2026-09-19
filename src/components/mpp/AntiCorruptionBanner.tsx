@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShieldCheck, AlertOctagon, HeartHandshake, CheckCircle2, X, ExternalLink, Scale, Sparkles, Ban, ShieldAlert, HandCoins, Award } from 'lucide-react';
+import { ShieldCheck, AlertOctagon, HeartHandshake, CheckCircle2, X, ExternalLink, Scale, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface AntiCorruptionBannerProps {
@@ -26,116 +26,124 @@ export function AntiCorruptionBanner({ isDark = false, className = '', variant =
         } ${className}`}
       >
         {/* Top Header Badge */}
-        <div className={`px-3.5 sm:px-6 py-2.5 sm:py-3 border-b flex flex-wrap items-center justify-between gap-2 ${
+        <div className={`px-4 sm:px-6 py-2.5 sm:py-3 border-b flex flex-wrap items-center justify-between gap-2 ${
           isDark ? 'bg-rose-950/30 border-rose-500/20' : 'bg-rose-50/70 border-rose-100'
         }`}>
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
-            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400 font-sans">
+            <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-rose-600 dark:text-rose-400 font-sans">
               {isEn ? 'Zero-Corruption Integrity Zone (WBK / WBBM)' : isZh ? '廉洁示范与反腐败诚信专区 (WBK/WBBM)' : 'Zona Integritas Bebas Korupsi (WBK / WBBM)'}
             </span>
           </div>
           <button
             type="button"
             onClick={() => setIsDetailModalOpen(true)}
-            className="min-h-[44px] px-2.5 sm:px-3 text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-200 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95"
+            className="text-[10.5px] sm:text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1 transition-colors cursor-pointer"
           >
             <span>{isEn ? 'Integrity Declaration' : isZh ? '廉洁履职声明' : 'Maklumat Integritas'}</span>
-            <ExternalLink className="w-3.5 h-3.5 text-rose-500" />
+            <ExternalLink className="w-3 h-3 text-rose-500" />
           </button>
         </div>
 
         {/* The 4 Emblem Interactive Grid */}
-        <div className="p-3.5 sm:p-6 lg:p-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-6 items-stretch justify-center">
+        <div className="p-4 sm:p-6 lg:p-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 items-center justify-center">
             {/* 1. NO KORUPSI */}
             <motion.div 
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`p-3.5 sm:p-5 rounded-2xl border flex flex-col items-center justify-center text-center transition-all ${
+              whileHover={{ scale: 1.03 }}
+              className={`p-3 sm:p-4 rounded-2xl border flex flex-col items-center justify-center text-center transition-all ${
                 isDark ? 'bg-slate-800/60 border-slate-700/60 hover:border-rose-500/40' : 'bg-slate-50/80 border-slate-200/80 hover:border-rose-300'
               }`}
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-rose-700 text-white flex items-center justify-center shadow-md shadow-rose-600/25 mb-2 border border-rose-400/40">
-                <ShieldAlert className="w-5 h-5 sm:w-6 sm:h-6" />
+              <div className="relative mb-2 flex items-center justify-center">
+                <span className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tighter">N</span>
+                <div className="relative mx-1">
+                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-rose-600 flex items-center justify-center shadow-md">
+                    <span className="text-white text-lg sm:text-xl">✋</span>
+                  </div>
+                </div>
               </div>
-              <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white tracking-wide font-sans">
-                {isEn ? 'NO CORRUPTION' : isZh ? '坚决杜绝贪腐' : 'NO KORUPSI'}
+              <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white tracking-widest font-sans">
+                {isEn ? 'NO CORRUPTION' : isZh ? '坚决杜绝贪腐' : 'KORUPSI'}
               </span>
-              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-normal leading-tight">
+              <span className="text-[9.5px] sm:text-[10.5px] text-slate-500 dark:text-slate-400 mt-1">
                 {isEn ? 'Zero Tolerance Policy' : isZh ? '严厉打击腐败行为' : 'Tolak Semua Praktik'}
               </span>
             </motion.div>
 
             {/* 2. STOP GRATIFIKASI */}
             <motion.div 
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`p-3.5 sm:p-5 rounded-2xl border flex flex-col items-center justify-center text-center transition-all ${
+              whileHover={{ scale: 1.03 }}
+              className={`p-3 sm:p-4 rounded-2xl border flex flex-col items-center justify-center text-center transition-all ${
                 isDark ? 'bg-slate-800/60 border-slate-700/60 hover:border-rose-500/40' : 'bg-slate-50/80 border-slate-200/80 hover:border-rose-300'
               }`}
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white flex items-center justify-center shadow-md shadow-amber-600/25 mb-2 border border-amber-400/40">
-                <HandCoins className="w-5 h-5 sm:w-6 sm:h-6" />
+              <div className="flex items-center gap-1 mb-1">
+                <span className="text-xl sm:text-2xl font-black text-rose-600 dark:text-rose-400">ST</span>
+                <div className="w-6 h-6 rounded-full bg-rose-600 flex items-center justify-center">
+                  <span className="text-white text-xs">✋</span>
+                </div>
+                <span className="text-xl sm:text-2xl font-black text-rose-600 dark:text-rose-400">P</span>
               </div>
-              <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white tracking-wide font-sans">
-                {isEn ? 'NO GRATUITY' : isZh ? '严禁礼品馈赠' : 'STOP GRATIFIKASI'}
+              <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white tracking-wider font-sans">
+                {isEn ? 'NO GRATUITY' : isZh ? '严禁礼品馈赠' : 'GRATIFIKASI'}
               </span>
-              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-normal leading-tight">
+              <span className="text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 mt-1 leading-tight line-clamp-2">
                 {isEn ? 'No Giving or Receiving' : isZh ? '严禁收取任何礼品红包' : 'Dilarang Memberi & Menerima'}
               </span>
             </motion.div>
 
             {/* 3. STOP PUNGLI */}
             <motion.div 
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`p-3.5 sm:p-5 rounded-2xl border flex flex-col items-center justify-center text-center transition-all ${
+              whileHover={{ scale: 1.03 }}
+              className={`p-3 sm:p-4 rounded-2xl border flex flex-col items-center justify-center text-center transition-all ${
                 isDark ? 'bg-slate-800/60 border-slate-700/60 hover:border-rose-500/40' : 'bg-slate-50/80 border-slate-200/80 hover:border-rose-300'
               }`}
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-rose-600 to-red-800 text-white flex items-center justify-center shadow-md shadow-rose-700/25 mb-2 border border-rose-400/40">
-                <Ban className="w-5 h-5 sm:w-6 sm:h-6" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-rose-600 text-white flex flex-col items-center justify-center shadow-md mb-2 p-1">
+                <span className="text-xs">✋</span>
+                <span className="text-[8px] font-black tracking-tighter leading-none">STOP</span>
               </div>
-              <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white tracking-wide font-sans">
+              <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white tracking-wider font-sans">
                 {isEn ? 'NO EXTORTION' : isZh ? '拒绝违规乱收费' : 'STOP PUNGLI'}
               </span>
-              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-normal leading-tight">
+              <span className="text-[9.5px] sm:text-[10.5px] text-slate-500 dark:text-slate-400 mt-1">
                 {isEn ? 'Official Bank Rates Only' : isZh ? '官方银行透明收费' : 'Biaya Nol / Resmi Bank'}
               </span>
             </motion.div>
 
             {/* 4. BERANI JUJUR HEBAT! */}
             <motion.div 
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`p-3.5 sm:p-5 rounded-2xl border flex flex-col items-center justify-center text-center transition-all ${
-                isDark ? 'bg-slate-800/60 border-slate-700/60 hover:border-emerald-500/40' : 'bg-slate-50/80 border-slate-200/80 hover:border-emerald-300'
+              whileHover={{ scale: 1.03 }}
+              className={`p-3 sm:p-4 rounded-2xl border flex flex-col items-center justify-center text-center transition-all ${
+                isDark ? 'bg-slate-800/60 border-slate-700/60 hover:border-rose-500/40' : 'bg-slate-50/80 border-slate-200/80 hover:border-rose-300'
               }`}
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center shadow-md shadow-emerald-700/25 mb-2 border border-emerald-400/40">
-                <Award className="w-5 h-5 sm:w-6 sm:h-6 text-amber-300" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-red-700 text-white flex flex-col items-center justify-center shadow-md mb-2 p-1 font-serif italic text-center">
+                <span className="text-[7.5px] font-black leading-tight tracking-wider">{isEn ? 'BE' : isZh ? '廉洁' : 'BERANI'}</span>
+                <span className="text-[10px] font-black leading-tight">{isEn ? 'HONEST' : isZh ? '奉公' : 'JUJUR'}</span>
+                <span className="text-[7.5px] font-black leading-tight tracking-wider">{isEn ? 'PROUD' : isZh ? '为民' : 'HEBAT!'}</span>
               </div>
-              <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white tracking-wide font-sans">
+              <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white tracking-wider font-sans">
                 {isEn ? 'INTEGRITY' : isZh ? '诚信执政' : 'INTEGRITAS'}
               </span>
-              <span className="text-[10px] sm:text-[11px] text-emerald-600 dark:text-emerald-400 font-medium mt-1 leading-tight">
+              <span className="text-[9.5px] sm:text-[10.5px] text-slate-500 dark:text-slate-400 mt-1">
                 {isEn ? 'Anti-Corruption Culture' : isZh ? '崇廉拒腐政务生态' : 'Budaya Anti-Korupsi'}
               </span>
             </motion.div>
           </div>
 
           {/* Subtext Banner */}
-          <div className="mt-4 pt-3.5 border-t border-slate-200/60 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left">
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-normal leading-relaxed">
-              <strong className="font-bold text-rose-600 dark:text-rose-400">{isEn ? 'Official Notice:' : isZh ? '官方郑重声明:' : 'Pemberitahuan Resmi:'}</strong>{' '}
+          <div className="mt-4 pt-3 border-t border-slate-200/60 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+            <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300">
+              <strong className="text-rose-600 dark:text-rose-400">{isEn ? 'Official Notice:' : isZh ? '官方郑重声明:' : 'Pemberitahuan Resmi:'}</strong>{' '}
               {isEn 
                 ? 'All services at MPP Simpurusiang are free of charge, except for official regional retribution fees deposited directly into the regional treasury or Bank BPD Sulselbar.'
                 : isZh 
                 ? '鲁乌县辛普鲁西亚公共服务大厅的所有政务与行政审批事项均不收取额外费用，法定行政事业规费一律直接缴入财政专户或南苏拉威西地方银行。'
                 : 'Seluruh pelayanan di Mal Pelayanan Publik (MPP) Simpurusiang tidak dipungut biaya selain tarif retribusi resmi yang disetor langsung melalui kas daerah / Bank BPD Sulselbar.'}
             </p>
-            <span className="shrink-0 text-[10px] sm:text-[11px] font-mono px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 font-bold tracking-wider">
+            <span className="shrink-0 text-[10px] font-mono px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 font-bold">
               PERPRES NO. 87/2016
             </span>
           </div>

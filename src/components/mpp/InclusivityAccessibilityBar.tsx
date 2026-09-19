@@ -90,51 +90,6 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
     return 'normal';
   });
 
-  // Collapsible Accessibility Icon & Panel in Hero Section & Sticky on Scroll
-  const [isAccessibilityOpen, setIsAccessibilityOpen] = useState(false);
-  const panelRef = useRef<HTMLDivElement>(null);
-  const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolledPastHero(window.scrollY > 120);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-      if (panelRef.current && !panelRef.current.contains(event.target as Node)) {
-        setIsAccessibilityOpen(false);
-      }
-    };
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsAccessibilityOpen(false);
-      }
-    };
-    if (isAccessibilityOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('touchstart', handleClickOutside);
-      document.addEventListener('keydown', handleKeyDown);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isAccessibilityOpen]);
-
-  useEffect(() => {
-    const handleOpenAccessibility = () => {
-      setIsAccessibilityOpen(true);
-    };
-    window.addEventListener('open-mpp-accessibility-panel', handleOpenAccessibility);
-    return () => window.removeEventListener('open-mpp-accessibility-panel', handleOpenAccessibility);
-  }, []);
-
   const [isContrastMenuOpen, setIsContrastMenuOpen] = useState(false);
   const contrastMenuRef = useRef<HTMLDivElement>(null);
 
@@ -594,28 +549,6 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
     };
   }, [isContrastMenuOpen]);
 
-  // Listener untuk trigger Voice Assistant dari Smart Search Bar / Command Palette
-  useEffect(() => {
-    const handleOpenVoice = () => {
-      startVoiceListening();
-    };
-    window.addEventListener('open-mpp-voice-assistant', handleOpenVoice);
-    return () => {
-      window.removeEventListener('open-mpp-voice-assistant', handleOpenVoice);
-    };
-  }, []);
-
-  // Listener untuk toggle Accessibility Menu dari Desktop Header Utility Bar
-  useEffect(() => {
-    const handleToggleAccessibility = () => {
-      setIsAccessibilityOpen(prev => !prev);
-    };
-    window.addEventListener('toggle-mpp-accessibility', handleToggleAccessibility);
-    return () => {
-      window.removeEventListener('toggle-mpp-accessibility', handleToggleAccessibility);
-    };
-  }, []);
-
   const setAndSaveContrastMode = (mode: ContrastModeType) => {
     setContrastMode(mode);
     setIsContrastMenuOpen(false);
@@ -806,224 +739,230 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
 
   return (
     <>
-      {/* --- FLOATING COLLAPSIBLE ACCESSIBILITY ICON & PANEL (RAMAH INKLUSIF MPP) --- */}
-      {/* Khusus Desktop & Mobile terintegrasi elegan di Header Utility Bar, Popover panel muncul saat diklik */}
-      <div 
-        ref={panelRef}
-        className="fixed right-3.5 sm:right-6 md:right-8 lg:right-24 top-16 sm:top-20 z-50 transition-all duration-300 pointer-events-auto select-none"
-      >
-        {/* Popover Card Panel with All Inclusivity Features */}
-        <AnimatePresence>
-          {isAccessibilityOpen && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 8 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 8 }}
-              transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-              className={`fixed sm:absolute right-3 sm:right-0 top-16 sm:top-0 mt-2 sm:mt-0 w-[calc(100vw-1.5rem)] sm:w-96 max-w-sm rounded-3xl p-4 sm:p-5 shadow-2xl border backdrop-blur-2xl ${
+      {/* --- INCLUSIVITY BAR UTAMA (RESPONSIF MOBILE / ANDROID, MENYESUAIKAN TEMA TERANG & GELAP) --- */}
+      <div className={`w-full backdrop-blur-md border-b py-1 px-2 sm:px-4 relative z-20 transition-colors duration-300 ${
+        isDark 
+          ? 'bg-slate-900/95 text-white border-emerald-500/20 shadow-md' 
+          : 'bg-slate-50/95 text-slate-900 border-emerald-600/20 shadow-xs'
+      }`}>
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-1.5 sm:gap-3">
+          
+          {/* Disabilitas & Aksesibilitas Indicator & Hub Trigger */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              onClick={() => setIsAssistanceModalOpen(true)}
+              className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-[11px] font-bold tracking-wide transition-all group cursor-pointer ${
                 isDark
-                  ? 'bg-slate-900/95 border-emerald-500/40 text-white shadow-black/90'
-                  : 'bg-white/95 border-emerald-500/30 text-slate-900 shadow-2xl shadow-slate-900/20'
-              } max-h-[calc(100vh-140px)] overflow-y-auto custom-scrollbar`}
+                  ? 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.15)]'
+                  : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 border border-emerald-500/30 shadow-2xs'
+              }`}
+              title="Buka Pusat Bantuan Disabilitas & Fasilitas Inklusif MPP"
             >
-              {/* Panel Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-emerald-500/20 mb-3.5">
-                <div className="flex items-center gap-2">
-                  <div className={`p-2 rounded-xl ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-50 text-emerald-700'}`}>
-                    <Accessibility className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs sm:text-sm font-extrabold tracking-tight">
-                      {voiceLanguage === 'zh' ? '无障碍助残服务' : voiceLanguage === 'en' ? 'Accessibility & Inclusivity' : 'Layanan Ramah Inklusif'}
-                    </h3>
-                    <p className="text-[10px] text-slate-500 dark:text-slate-400">
-                      {voiceLanguage === 'zh' ? '绿色通道与助残辅助' : voiceLanguage === 'en' ? 'Disability hub & accessibility tools' : 'Pusat Bantuan & Alat Bantu MPP'}
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setIsAccessibilityOpen(false)}
-                  className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                  title="Tutup Panel Aksesibilitas"
-                  aria-label="Tutup Panel Aksesibilitas"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
+              <Accessibility className={`w-3.5 h-3.5 group-hover:scale-110 transition-transform shrink-0 ${
+                isDark ? 'text-emerald-400' : 'text-emerald-700'
+              }`} />
+              <span className="sm:hidden text-[10.5px]">
+                {voiceLanguage === 'zh' ? '无障碍助残' : voiceLanguage === 'en' ? 'Accessibility' : 'Ramah Inklusif'}
+              </span>
+              <span className="hidden sm:inline">
+                {voiceLanguage === 'zh' ? '无障碍助残与绿色通道' : voiceLanguage === 'en' ? 'Inclusivity & Accessibility Portal' : 'Portal Ramah Inklusif & Disabilitas'}
+              </span>
+              <span className={`hidden lg:inline-flex text-[9px] px-1.5 py-0.2 rounded font-mono uppercase font-bold ${
+                isDark ? 'bg-emerald-400/20 text-emerald-300' : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+              }`}>
+                {voiceLanguage === 'zh' ? '绿色通道' : voiceLanguage === 'en' ? 'Services' : 'Info Fasilitas'}
+              </span>
+            </button>
+          </div>
 
-              {/* Feature 1: Pusat Bantuan Disabilitas & Fasilitas Inklusif (Direct Modal Trigger) */}
-              <div className="mb-3">
-                <button
-                  onClick={() => {
-                    setIsAssistanceModalOpen(true);
-                    setIsAccessibilityOpen(false);
-                  }}
-                  className={`w-full text-left p-3 rounded-2xl border transition-all cursor-pointer group ${
-                    isDark
-                      ? 'bg-emerald-950/40 hover:bg-emerald-900/50 border-emerald-500/30 text-emerald-200 hover:border-emerald-400'
-                      : 'bg-emerald-50/80 hover:bg-emerald-100/90 border-emerald-500/30 text-emerald-900 hover:border-emerald-500'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-bold flex items-center gap-1.5">
-                      <HeartHandshake className="w-4 h-4 text-emerald-500" />
-                      <span>Pusat Bantuan Disabilitas</span>
-                    </span>
-                    <span className="text-[9px] font-mono font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-500 text-white">
-                      5 Fasilitas
-                    </span>
+          {/* Action Controls (Clean, Compact & Adaptive on Android) */}
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+
+            {/* Audio Reader / TTS */}
+            <button
+              onClick={handleSpeakOverview}
+              className={`flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-lg text-[10.5px] sm:text-[11px] font-medium transition-all cursor-pointer ${
+                isSpeaking
+                  ? 'bg-amber-500 text-slate-950 font-bold shadow-lg animate-pulse'
+                  : isDark
+                  ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                  : 'bg-white hover:bg-slate-100 text-slate-800 border border-slate-300/80 shadow-2xs'
+              }`}
+              title="Dengarkan Suara Ringkasan Layanan MPP"
+            >
+              {isSpeaking ? (
+                <VolumeX className="w-3.5 h-3.5 text-slate-950" />
+              ) : (
+                <Volume2 className={`w-3.5 h-3.5 ${isDark ? 'text-amber-400' : 'text-amber-600'}`} />
+              )}
+              <span className="hidden md:inline">
+                {isSpeaking
+                  ? (voiceLanguage === 'zh' ? '停止播放' : voiceLanguage === 'en' ? 'Stop' : 'Hentikan')
+                  : (voiceLanguage === 'zh' ? '语音朗读' : voiceLanguage === 'en' ? 'Voice TTS' : 'TTS Suara')}
+              </span>
+            </button>
+
+            {/* High Contrast Dropdown & Cycler */}
+            <div className="relative" ref={contrastMenuRef}>
+              <button
+                onClick={() => setIsContrastMenuOpen(prev => !prev)}
+                className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-[10.5px] sm:text-[11px] font-medium transition-all cursor-pointer ${
+                  contrastMode === 'high-contrast-yellow'
+                    ? 'bg-yellow-400 text-slate-950 font-extrabold shadow-lg ring-2 ring-yellow-400/50'
+                    : contrastMode === 'monochrome'
+                    ? (isDark ? 'bg-slate-200 text-slate-950 font-bold shadow-md ring-2 ring-white/50' : 'bg-slate-800 text-white font-bold shadow-md ring-2 ring-slate-800/40')
+                    : isDark
+                    ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                    : 'bg-white hover:bg-slate-100 text-slate-800 border border-slate-300/80 shadow-2xs'
+                }`}
+                title="Pilihan Mode Kontras Tinggi & Aksesibilitas Netra"
+                aria-label="Pilihan Mode Kontras Tinggi"
+              >
+                <Eye className={`w-3.5 h-3.5 ${
+                  contrastMode === 'high-contrast-yellow' 
+                    ? 'text-slate-950' 
+                    : contrastMode === 'monochrome' 
+                    ? (isDark ? 'text-slate-950' : 'text-white')
+                    : (isDark ? 'text-emerald-400' : 'text-emerald-700')
+                }`} />
+                <span className="hidden lg:inline">
+                  {contrastMode === 'high-contrast-yellow' 
+                    ? (voiceLanguage === 'zh' ? '黑黄高对比' : voiceLanguage === 'en' ? 'Contrast: Yellow' : 'Kontras: Kuning')
+                    : contrastMode === 'monochrome'
+                    ? (voiceLanguage === 'zh' ? '单色黑白' : voiceLanguage === 'en' ? 'Contrast: Mono' : 'Kontras: Mono')
+                    : (voiceLanguage === 'zh' ? '高对比度' : voiceLanguage === 'en' ? 'Contrast' : 'Kontras')}
+                </span>
+                {contrastMode !== 'standard' && (
+                  <span className="text-[10px] font-black uppercase tracking-tighter">
+                    {contrastMode === 'high-contrast-yellow' ? 'AAA' : 'BW'}
+                  </span>
+                )}
+              </button>
+
+              {/* Contrast Mode Selector Popover */}
+              {isContrastMenuOpen && (
+                <div className={`absolute right-0 top-full mt-1.5 w-60 sm:w-64 border-2 rounded-2xl p-2 shadow-2xl z-50 animate-fade-in ${
+                  isDark ? 'bg-slate-900 border-emerald-500/40 text-white' : 'bg-white border-emerald-500/30 text-slate-900'
+                }`}>
+                  <div className={`text-[10.5px] font-bold uppercase tracking-wider px-2 py-1 mb-1 border-b flex items-center justify-between ${
+                    isDark ? 'text-slate-400 border-slate-800' : 'text-slate-500 border-slate-100'
+                  }`}>
+                    <span>{voiceLanguage === 'zh' ? '对比度模式选择' : voiceLanguage === 'en' ? 'Contrast Modes' : 'Mode Kontras Ramah Netra'}</span>
+                    <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-bold ${
+                      isDark ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-800'
+                    }`}>WCAG 2.1</span>
                   </div>
-                  <p className="text-[10.5px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                    Ramp Kursi Roda, Jalur Braille, Loket Prioritas D, Juru Bahasa Isyarat JBI & Fast Track.
-                  </p>
-                  <div className="mt-2 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                    <span>Buka Info & Pendampingan Khusus</span>
-                    <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </button>
-              </div>
 
-              {/* Feature 2: Audio Reader (Text-to-Speech) */}
-              <div className="mb-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-bold flex items-center gap-1.5">
-                    <Volume2 className="w-3.5 h-3.5 text-amber-500" />
-                    <span>Pembaca Suara (Audio TTS)</span>
-                  </span>
-                  {isSpeaking && (
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-bold animate-pulse">
-                      Sedang Membaca
-                    </span>
-                  )}
-                </div>
-                <button
-                  onClick={handleSpeakOverview}
-                  className={`w-full py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                    isSpeaking
-                      ? 'bg-amber-500 text-slate-950 shadow-md animate-pulse'
-                      : isDark
-                      ? 'bg-slate-700 hover:bg-slate-600 text-white'
-                      : 'bg-white hover:bg-slate-100 text-slate-800 border border-slate-300/80 shadow-xs'
-                  }`}
-                >
-                  {isSpeaking ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-amber-500" />}
-                  <span>{isSpeaking ? 'Hentikan Pembacaan Suara' : 'Dengarkan Ringkasan Layanan MPP'}</span>
-                </button>
-              </div>
-
-              {/* Feature 3: Mode Kontras Ramah Netra (WCAG AAA) */}
-              <div className="mb-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-bold flex items-center gap-1.5">
-                    <Eye className="w-3.5 h-3.5 text-emerald-500" />
-                    <span>Mode Kontras Ramah Netra</span>
-                  </span>
-                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-bold">
-                    WCAG 2.1
-                  </span>
-                </div>
-                <div className="grid grid-cols-3 gap-1.5">
-                  <button
-                    onClick={() => setAndSaveContrastMode('standard')}
-                    className={`py-1.5 px-2 rounded-xl text-[10.5px] font-bold flex flex-col items-center gap-1 transition-all cursor-pointer border ${
-                      contrastMode === 'standard'
-                        ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
-                        : 'bg-white dark:bg-slate-700/70 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'
-                    }`}
-                  >
-                    <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-                    <span>Normal</span>
-                  </button>
-                  <button
-                    onClick={() => setAndSaveContrastMode('high-contrast-yellow')}
-                    className={`py-1.5 px-2 rounded-xl text-[10.5px] font-bold flex flex-col items-center gap-1 transition-all cursor-pointer border ${
-                      contrastMode === 'high-contrast-yellow'
-                        ? 'bg-yellow-400 text-slate-950 border-yellow-500 shadow-md ring-2 ring-yellow-400/50'
-                        : 'bg-yellow-50 dark:bg-yellow-950/30 text-yellow-900 dark:text-yellow-300 border-yellow-300 dark:border-yellow-700/50'
-                    }`}
-                  >
-                    <div className="w-3 h-3 rounded-full bg-yellow-400 border border-slate-900"></div>
-                    <span>Kuning-Hitam</span>
-                  </button>
-                  <button
-                    onClick={() => setAndSaveContrastMode('monochrome')}
-                    className={`py-1.5 px-2 rounded-xl text-[10.5px] font-bold flex flex-col items-center gap-1 transition-all cursor-pointer border ${
-                      contrastMode === 'monochrome'
-                        ? 'bg-slate-900 text-white border-slate-700 shadow-md ring-2 ring-slate-400'
-                        : 'bg-white dark:bg-slate-700/70 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'
-                    }`}
-                  >
-                    <div className="w-3 h-3 rounded-full bg-slate-400 border border-slate-900"></div>
-                    <span>Monokrom</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Feature 4: Ukuran Huruf / Font Size */}
-              <div className="mb-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-bold flex items-center gap-1.5">
-                    <Type className="w-3.5 h-3.5 text-emerald-500" />
-                    <span>Ukuran Teks / Font</span>
-                  </span>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono font-bold">
-                    {fontSize === 'small' ? '90%' : fontSize === 'normal' ? '100%' : fontSize === 'large' ? '120%' : '140%'}
-                  </span>
-                </div>
-                <div className="grid grid-cols-4 gap-1">
-                  {[
-                    { id: 'small', label: 'A-', desc: 'Kompak' },
-                    { id: 'normal', label: 'A', desc: 'Standar' },
-                    { id: 'large', label: 'A+', desc: 'Besar' },
-                    { id: 'xlarge', label: 'A++', desc: 'Ekstra' },
-                  ].map((f) => (
+                  <div className="space-y-1">
                     <button
-                      key={f.id}
-                      onClick={() => changeFontSize(f.id as FontSizeType)}
-                      className={`py-1.5 rounded-xl text-center font-bold transition-all cursor-pointer border ${
-                        fontSize === f.id
-                          ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
-                          : 'bg-white dark:bg-slate-700/70 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'
+                      onClick={() => setAndSaveContrastMode('high-contrast-yellow')}
+                      className={`w-full text-left px-2.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
+                        contrastMode === 'high-contrast-yellow'
+                          ? 'bg-yellow-400 text-slate-950 shadow-md'
+                          : isDark
+                          ? 'bg-slate-800/80 hover:bg-slate-800 text-yellow-300 hover:text-yellow-200 border border-yellow-400/30'
+                          : 'bg-yellow-50 hover:bg-yellow-100 text-yellow-950 border border-yellow-300'
                       }`}
                     >
-                      <div className="text-xs font-black">{f.label}</div>
-                      <div className="text-[8px] opacity-75">{f.desc}</div>
+                      <span className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full bg-yellow-400 border border-slate-950 shrink-0"></span>
+                        <span>{voiceLanguage === 'zh' ? '黑黄高对比 (WCAG AAA)' : voiceLanguage === 'en' ? 'Yellow-Black (WCAG AAA)' : 'Hitam-Kuning (WCAG AAA)'}</span>
+                      </span>
+                      {contrastMode === 'high-contrast-yellow' && <Check className="w-3.5 h-3.5 text-slate-950" />}
                     </button>
-                  ))}
-                </div>
-              </div>
 
-              {/* Feature 5: Asisten Suara AI MPP & Bahasa */}
-              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 flex items-center justify-between gap-2">
-                <button
-                  onClick={() => {
-                    setIsAccessibilityOpen(false);
-                    startVoiceListening();
-                  }}
-                  className="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer shadow-sm transition-all active:scale-95"
-                >
-                  <Mic className="w-3.5 h-3.5" />
-                  <span>Tanya Suara AI MPP</span>
-                </button>
-                <div className="flex items-center gap-1 shrink-0">
-                  {(['id', 'en', 'zh'] as const).map((lang) => (
                     <button
-                      key={lang}
-                      onClick={() => setVoiceLanguage(lang)}
-                      className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold transition-colors cursor-pointer ${
-                        voiceLanguage === lang
-                          ? 'bg-emerald-500 text-white'
-                          : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                      onClick={() => setAndSaveContrastMode('monochrome')}
+                      className={`w-full text-left px-2.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
+                        contrastMode === 'monochrome'
+                          ? (isDark ? 'bg-slate-200 text-slate-950 shadow-md' : 'bg-slate-800 text-white shadow-md')
+                          : isDark
+                          ? 'bg-slate-800/80 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700'
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200'
                       }`}
                     >
-                      {lang.toUpperCase()}
+                      <span className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full bg-slate-400 border border-slate-950 shrink-0"></span>
+                        <span>{voiceLanguage === 'zh' ? '黑白单色 (色盲友好)' : voiceLanguage === 'en' ? 'Monochrome (CVD Friendly)' : 'Monokrom (Hitam-Putih)'}</span>
+                      </span>
+                      {contrastMode === 'monochrome' && <Check className={`w-3.5 h-3.5 ${isDark ? 'text-slate-950' : 'text-white'}`} />}
                     </button>
-                  ))}
+
+                    <button
+                      onClick={() => setAndSaveContrastMode('standard')}
+                      className={`w-full text-left px-2.5 py-2 rounded-xl text-xs font-medium flex items-center justify-between transition-all cursor-pointer ${
+                        contrastMode === 'standard'
+                          ? (isDark ? 'bg-emerald-500 text-slate-950 font-bold shadow-md' : 'bg-emerald-600 text-white font-bold shadow-md')
+                          : isDark
+                          ? 'bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700'
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-950 border border-slate-200'
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className={`w-3 h-3 rounded-full border border-slate-950 shrink-0 ${isDark ? 'bg-emerald-500' : 'bg-emerald-600'}`}></span>
+                        <span>{voiceLanguage === 'zh' ? '标准彩色模式 (默认)' : voiceLanguage === 'en' ? 'Standard Display Mode' : 'Mode Normal (Standar)'}</span>
+                      </span>
+                      {contrastMode === 'standard' && <Check className={`w-3.5 h-3.5 ${isDark ? 'text-slate-950' : 'text-white'}`} />}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              )}
+            </div>
+
+            {/* Font Size Adjuster (A- / A / A+ / A++) */}
+            <div className={`flex items-center rounded-lg p-0.5 border ${
+              isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-300/80 shadow-2xs'
+            }`}>
+              <span className={`px-1 text-[10px] flex items-center gap-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`} title="Skala Ukuran Teks">
+                <Type className="w-3 h-3" />
+              </span>
+              <button
+                onClick={() => changeFontSize('small')}
+                className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition-all cursor-pointer ${
+                  fontSize === 'small' 
+                    ? (isDark ? 'bg-emerald-500 text-slate-950 shadow-xs' : 'bg-emerald-600 text-white shadow-xs') 
+                    : (isDark ? 'text-slate-300 hover:text-white' : 'text-slate-700 hover:text-slate-950')
+                }`}
+                title="Ukuran Font Kompak A- (90%)"
+              >
+                A-
+              </button>
+              <button
+                onClick={() => changeFontSize('normal')}
+                className={`px-1.5 py-0.5 rounded text-[10.5px] font-semibold transition-all cursor-pointer ${
+                  fontSize === 'normal' 
+                    ? (isDark ? 'bg-emerald-500 text-slate-950 shadow-xs' : 'bg-emerald-600 text-white shadow-xs') 
+                    : (isDark ? 'text-slate-300 hover:text-white' : 'text-slate-700 hover:text-slate-950')
+                }`}
+                title="Ukuran Font Standar A (100%)"
+              >
+                A
+              </button>
+              <button
+                onClick={() => changeFontSize('large')}
+                className={`px-1.5 py-0.5 rounded text-[11px] font-bold transition-all cursor-pointer ${
+                  fontSize === 'large' 
+                    ? (isDark ? 'bg-emerald-500 text-slate-950 shadow-xs' : 'bg-emerald-600 text-white shadow-xs') 
+                    : (isDark ? 'text-slate-300 hover:text-white' : 'text-slate-700 hover:text-slate-950')
+                }`}
+                title="Ukuran Font Besar A+ (120%)"
+              >
+                A+
+              </button>
+              <button
+                onClick={() => changeFontSize('xlarge')}
+                className={`px-1.5 py-0.5 rounded text-[12px] font-extrabold transition-all cursor-pointer ${
+                  fontSize === 'xlarge' 
+                    ? (isDark ? 'bg-emerald-500 text-slate-950 shadow-xs' : 'bg-emerald-600 text-white shadow-xs') 
+                    : (isDark ? 'text-slate-300 hover:text-white' : 'text-slate-700 hover:text-slate-950')
+                }`}
+                title="Ukuran Font Sangat Besar A++ (140%)"
+              >
+                A++
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* --- MODAL DIALOG PEREKAM SUARA & KATALOG PERTANYAAN CEPAT INTERAKTIF --- */}
@@ -2145,13 +2084,13 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
         )}
       </AnimatePresence>
 
-      {/* Floating Action Button (FAB) Asisten MPP - Khusus Desktop/Tablet (Di Mobile telah terintegrasi di Bottom Nav & Search Bar) */}
+      {/* Floating Action Button (FAB) Asisten MPP - Collapsible ("Buka-Tutup") & Ultra Nyaman di Layar Android */}
       <motion.div
         layout
         initial={{ scale: 0, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         transition={{ type: "spring", damping: 22, stiffness: 280, delay: 0.3 }}
-        className="hidden md:flex fixed bottom-8 right-8 z-40 select-none"
+        className="fixed bottom-20 right-3 sm:bottom-24 sm:right-6 z-40 select-none"
       >
         {/* Animated Sonar Rings saat mendengarkan */}
         {isListening && (
@@ -2164,7 +2103,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
         <AnimatePresence mode="wait">
           {isFabCollapsed ? (
             /* ========================================================================= */
-            /* 1. MODE TERTUTUP (COMPACT FLOATING ORB) - ELEGAN & PRESTISIUS GOVTECH     */
+            /* 1. MODE TERTUTUP (COMPACT FLOATING ORB) - NYAMAN & BEBAS HALANGAN ANDROID  */
             /* ========================================================================= */
             <motion.div
               key="collapsed-fab"
@@ -2187,37 +2126,37 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
 
               <motion.button
                 id="mpp-floating-voice-assistant-button"
-                whileHover={{ scale: 1.06 }}
-                whileTap={{ scale: 0.94 }}
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.92 }}
                 onClick={startVoiceListening}
-                className={`relative w-12 h-12 rounded-full flex items-center justify-center shadow-xl transition-all cursor-pointer backdrop-blur-xl border ${
+                className={`relative w-12 h-12 sm:w-13 sm:h-13 rounded-full flex items-center justify-center shadow-2xl transition-all cursor-pointer backdrop-blur-xl border-2 ${
                   isListening
-                    ? 'bg-rose-600 text-white border-rose-300 shadow-[0_0_20px_rgba(244,63,94,0.6)] animate-pulse'
-                    : 'bg-slate-900/95 text-white border-emerald-500/40 shadow-lg shadow-emerald-950/40 hover:border-emerald-400'
+                    ? 'bg-rose-600 text-white border-rose-300 shadow-[0_0_25px_rgba(244,63,94,0.8)] ring-4 ring-rose-500/40 animate-pulse'
+                    : 'bg-gradient-to-tr from-slate-950 via-slate-900 to-emerald-950/80 text-white border-emerald-400/80 shadow-[0_8px_25px_rgba(16,185,129,0.4)] hover:border-emerald-300 hover:shadow-[0_0_25px_rgba(16,185,129,0.7)]'
                 }`}
-                title="Asisten MPP (Klik untuk Bicara)"
+                title="Asisten MPP (Klik untuk Bicara atau Buka Pertanyaan Cepat)"
                 aria-label="Asisten MPP"
               >
-                <div className="w-8 h-8 rounded-full bg-emerald-600 hover:bg-emerald-500 flex items-center justify-center text-white shadow-sm transition-colors">
-                  <Mic className="w-4 h-4 text-white" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 via-teal-400 to-[#00FF99] flex items-center justify-center text-slate-950 shadow-md">
+                  <Mic className="w-4.5 h-4.5 text-slate-950" />
                 </div>
                 {/* Rotating Sparkle Badge */}
                 <motion.div
                   animate={{ rotate: 360 }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
                   className="absolute -top-1 -right-1"
                 >
-                  <Sparkles className="w-3 h-3 text-amber-400" />
+                  <Sparkles className="w-3.5 h-3.5 text-amber-300 drop-shadow-[0_0_6px_rgba(252,211,77,0.95)]" />
                 </motion.div>
                 {/* Language Tag Indicator */}
-                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.2 rounded-full bg-slate-900 text-[8px] font-mono font-bold text-emerald-300 border border-emerald-500/30">
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1 py-0.2 rounded-full bg-slate-900/90 text-[7.5px] font-mono font-bold text-emerald-400 border border-emerald-500/40 shadow-xs">
                   {voiceLanguage.toUpperCase()}
                 </span>
               </motion.button>
             </motion.div>
           ) : (
             /* ========================================================================= */
-            /* 2. MODE TERBUKA (STREAMLINED CAPSULE PILL) - EXECUTIVE GOVTECH           */
+            /* 2. MODE TERBUKA (STREAMLINED CAPSULE PILL) - SINGKAT & JELAS              */
             /* ========================================================================= */
             <motion.div
               key="expanded-fab"
@@ -2225,39 +2164,52 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               animate={{ scale: 1, opacity: 1, x: 0 }}
               exit={{ scale: 0.85, opacity: 0, x: 20 }}
               transition={{ type: "spring", stiffness: 350, damping: 26 }}
-              className="relative flex items-center gap-1 bg-slate-900/95 text-white backdrop-blur-2xl border border-emerald-500/40 hover:border-emerald-400 p-1.5 pl-2 pr-1.5 rounded-full shadow-xl shadow-slate-950/50 transition-all group"
+              className="relative flex items-center gap-1 bg-slate-950/90 dark:bg-slate-900/95 backdrop-blur-2xl border-2 border-emerald-400/80 hover:border-emerald-300 p-1.5 pl-2 pr-1.5 rounded-full shadow-[0_10px_35px_rgba(16,185,129,0.35)] transition-all group"
             >
               {/* Main Button (Voice Trigger) */}
               <button
                 type="button"
                 id="mpp-floating-voice-assistant-button"
                 onClick={startVoiceListening}
-                className="flex items-center gap-2.5 cursor-pointer select-none text-left"
+                className="flex items-center gap-2 sm:gap-2.5 cursor-pointer select-none text-left"
                 title="Asisten MPP (Klik untuk Bicara)"
                 aria-label="Asisten MPP"
               >
                 {/* Icon Mic with Pulsing Aura */}
-                <div className={`relative flex items-center justify-center w-9 h-9 rounded-full shadow-md shrink-0 transition-transform group-hover:scale-105 ${
+                <div className={`relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full shadow-md shrink-0 transition-transform group-hover:scale-105 ${
                   isListening
                     ? 'bg-rose-600 text-white animate-pulse'
-                    : 'bg-emerald-600 text-white shadow-sm'
+                    : 'bg-gradient-to-tr from-emerald-500 via-teal-400 to-[#00FF99] text-slate-950 shadow-[0_0_14px_rgba(0,255,153,0.6)]'
                 }`}>
-                  <Mic className="w-4.5 h-4.5 text-white" />
+                  {isListening ? (
+                    <Mic className="w-4.5 h-4.5 text-white animate-pulse" />
+                  ) : (
+                    <>
+                      <Mic className="w-4.5 h-4.5 text-slate-950" />
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
+                        className="absolute -top-1 -right-1"
+                      >
+                        <Sparkles className="w-3 h-3 text-amber-300 drop-shadow-[0_0_5px_rgba(252,211,77,0.95)]" />
+                      </motion.div>
+                    </>
+                  )}
                 </div>
 
                 {/* Short Clean Label (Asisten MPP) */}
                 <div className="flex flex-col items-start leading-tight pr-1">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[12px] font-bold tracking-tight font-sans text-white group-hover:text-emerald-300 transition-colors">
+                    <span className="text-[12px] sm:text-[13px] font-black tracking-tight font-sans text-white group-hover:text-emerald-300 transition-colors">
                       {isListening
                         ? (voiceLanguage === 'zh' ? '正在倾听...' : voiceLanguage === 'en' ? 'Listening...' : 'Mendengarkan...')
                         : (voiceLanguage === 'zh' ? 'MPP 助手' : voiceLanguage === 'en' ? 'MPP Assistant' : 'Asisten MPP')}
                     </span>
-                    <span className="text-[8px] font-mono font-bold px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">
+                    <span className="text-[8px] font-mono font-black px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">
                       {voiceLanguage.toUpperCase()}
                     </span>
                   </div>
-                  <span className="text-[9px] font-medium text-emerald-400 font-sans tracking-tight">
+                  <span className="text-[9px] font-semibold text-emerald-400/90 font-sans tracking-tight">
                     {isListening
                       ? 'Bicara sekarang...'
                       : (voiceLanguage === 'zh' ? '智能问答' : voiceLanguage === 'en' ? 'Voice AI' : 'Tanya Suara')}

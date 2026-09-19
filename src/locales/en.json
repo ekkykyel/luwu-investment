@@ -1334,9 +1334,8 @@
   "dept_dalak": "Control & Ops Dept.",
   "dept_licensing": "Licensing Dept.",
   "dept_data": "Data & Reporting Dept.",
-  "umkm_catalog": "Luwu MSME Partnership Catalog",
-  "umkm_catalog_title": "Featured MPP MSME Gallery & Partnership",
-  "umkm_catalog_desc": "Promotion center and partnership for Luwu Regency MSME products with verified NIB, Halal, and P-IRT legalities.",
+  "umkm_catalog": "UMKM Partnership Catalog",
+  "umkm_catalog_desc": "Authentic Luwu Craftsmanship: Connecting Local Premium Products with Investors and the National Market.",
   "contact_owner": "Contact Owner (WhatsApp)",
   "pwa": {
     "title": "🚨 FULL SCREEN MAIN PORTAL (PWA)",
@@ -1940,12 +1939,10 @@
   "opex_kemasan": "Packaging Costs",
   "mppPortal": {
     "hero": {
-      "titlePrefix": "Welcome to the Public Service",
-      "titleHighlight": "Mall of Luwu Regency",
-      "subtitle": "Integrated, Fast, and Transparent Public Services in One Place",
-      "award": "Government of Luwu",
-      "videoTour": "Simpurusiang MPP Service Profile Video",
-      "officerPortal": "Counter Officer & Tenant Operator Login Portal"
+      "titlePrefix": "Digital Transformation towards",
+      "titleHighlight": "Superior Luwu",
+      "subtitle": "Integrated public service center of Luwu Regency. Connecting 19 government agencies, SOEs, and private sectors in a fast, transparent, and convenient one-stop door.",
+      "award": "Integrated Public Service Excellence"
     },
     "nav": {
       "beranda": "Home",
@@ -1953,7 +1950,7 @@
       "instansi": "Agencies",
       "fasilitas": "Facilities",
       "statistik": "Statistics",
-      "asistenAi": "MPP Assistant",
+      "asistenAi": "AI Assistant",
       "tabe": "Tabe'",
       "umkm": "MSME Catalog",
       "govName": "Luwu Regency Government",
@@ -1962,15 +1959,9 @@
     },
     "search": {
       "placeholder": "Search for permits, counters, or agency services...",
-      "placeholderShort": "Search services, agencies, or information...",
-      "button": "Search",
-      "buttonMobile": "Search",
-      "popularTitle": "Popular Services:",
-      "chipDukcapil": "Civil Registry & KTP",
-      "chipNIB": "NIB Business License",
-      "chipAntrean": "Online Queue Ticket",
-      "chipBPJS": "BPJS Healthcare",
-      "chipPBB": "PBB Property Tax"
+      "placeholderShort": "Search public services...",
+      "button": "Search Services",
+      "buttonMobile": "Search"
     },
     "quickActions": {
       "antrean": "Online Queue",
@@ -1978,13 +1969,7 @@
       "cekStatus": "Check Status",
       "cekStatusDesc": "Track Permit File",
       "mandiri": "Self-Service",
-      "mandiriDesc": "24-Hour Digital Kiosk",
-      "vipDesk": "VIP Investor Desk",
-      "vipDeskDesc": "Liaison Officer & Facilitation",
-      "petaSpasial": "RDTR Spatial Map",
-      "petaSpasialDesc": "WebGIS Zoning & Potential",
-      "izinOss": "OSS Business License",
-      "izinOssDesc": "NIB, PBG & SLF Requirements"
+      "mandiriDesc": "24-Hour Digital Kiosk"
     },
     "instansi": {
       "badge": "Integrated Service Ecosystem",
@@ -2688,15 +2673,8 @@
       "closeAria": "Close active ticket"
     },
     "persona": {
-      "warga": "Citizens & Public",
-      "investor": "Investors & Businesses",
-      "semua": "All Services",
-      "wargaTag": "Citizen Mode:",
-      "wargaDesc": "Direct Queue, Document Checklist, & Agency Counters.",
-      "investorTag": "Investor Mode:",
-      "investorDesc": "VIP Investor Desk, RDTR Spatial Map, & OSS-RBA.",
-      "semuaTag": "All Services Mode:",
-      "semuaDesc": "All public counter modules, investment & regulations."
+      "citizen": "Citizens",
+      "investor": "Investors"
     },
     "quickNav": {
       "operational": "Visiting Hours & SLA",
@@ -2778,40 +2756,6 @@
       "hoursLabel": "Operating Hours:",
       "takeQueueBtn": "Get Ticket"
     },
-    "matrixModal": {
-      "badge": "SERVICE MATURITY MATRIX",
-      "title": "MPP Service Catalog & Tenant Integration Matrix",
-      "subtitle": "Comprehensive directory of all permits, civil registry, taxation, and public services at MPP Simpurusiang",
-      "searchPlaceholder": "Search service, agency, or sector code...",
-      "catAll": "All",
-      "typeOnline": "Online / Hybrid",
-      "typeOnsite": "On-Site",
-      "typePriority": "Priority / Fast Track",
-      "costFree": "FREE (Rp 0)",
-      "statAgencies": "Integrated Agencies",
-      "statTypes": "Public Service Types",
-      "statDigital": "Digital / Online Services",
-      "statFastTrack": "VIP Priority Counters",
-      "activeCount": "Showing {{count}} of {{total}} MPP Public Services",
-      "thName": "SERVICE TYPE & DESCRIPTION",
-      "thAgency": "AGENCY & COUNTER",
-      "thCategory": "CATEGORY",
-      "thSla": "ESTIMATED SLA",
-      "thCost": "RETRIBUTION FEE",
-      "thAction": "ACTIONS & SERVICES",
-      "badgeOnline": "Online / Digital",
-      "badgeOnsite": "On-Site",
-      "counterPrefix": "Counter",
-      "btnBook": "Get Ticket",
-      "btnRequirement": "Requirements",
-      "noResults": "No Services Found",
-      "noResultsDesc": "Please adjust your category filter or search keywords.",
-      "consultationTitle": "Need Direct Consultation on Integrated Services?",
-      "consultationDesc": "MPP Simpurusiang Front Office team is ready to assist with document verification, queue registration, or official fee clarification.",
-      "btnHelpdesk": "Open Virtual Helpdesk",
-      "btnInvestor": "VIP Investor Concierge",
-      "btnClose": "Close Matrix Catalog"
-    },
     "smartRequirement": {
       "title": "Smart Requirement Assistant & Checklist",
       "badge": "REQUIREMENTS ASSISTANT",
@@ -2859,28 +2803,7 @@
       "takeQueueOnline": "Get Online Ticket",
       "statusClosed": "Closed",
       "statusBusy": "Busy",
-      "statusActive": "Normal",
-      "trackerTitle": "Applicant Queue Ticket Position Tracker",
-      "trackerSubtitle": "Know the currently active queue number, remaining turn ahead of you, and estimated call time",
-      "trackerPlaceholder": "Type Ticket Number (e.g., A-012, B-006)...",
-      "trackerBtn": "Track Ticket Position",
-      "trackerQuickTest": "Quick Test:",
-      "serviceLabel": "Service:",
-      "statusCalling": "Now Called at Counter",
-      "statusFinished": "Service Completed",
-      "statusWaiting": "In Waiting Queue",
-      "metricCurrentNumber": "CURRENTLY SERVED NUMBER",
-      "metricAtLoket": "at",
-      "metricWaitingAhead": "TURNS REMAINING AHEAD OF YOU",
-      "metricYourTurn": "Your Turn!",
-      "metricApproachDesk": "Please Approach the Counter Desk",
-      "metricStandbyWaiting": "Please Stand By in Waiting Room",
-      "metricEstimatedTime": "ESTIMATED WAITING TIME",
-      "metricAvgService": "Based on Average Service Speed",
-      "btnTestChime": "Test Counter Call Voice Notification",
-      "btnCalling": "Calling Now...",
-      "btnCloseTrack": "Close Tracking Results",
-      "peopleSuffix": "People"
+      "statusActive": "Normal"
     },
     "operationalHeatmap": {
       "statusHeader": "Simpurusiang MPP Real-Time Status",

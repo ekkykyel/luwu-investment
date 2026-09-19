@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useTranslation } from 'react-i18next';
 import {
   X,
   Star,
@@ -197,11 +196,6 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
   onBookQueue,
   isDark = false,
 }) => {
-  const { t, i18n } = useTranslation();
-  const currentLang = i18n?.language || 'id';
-  const isEn = currentLang.startsWith('en');
-  const isZh = currentLang.startsWith('zh');
-
   const [activeTab, setActiveTab] = useState<'specs' | 'gallery' | 'workflow'>('specs');
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number>(0);
   const [isPhotoPreviewOpen, setIsPhotoPreviewOpen] = useState(false);
@@ -211,94 +205,33 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
   // Gabungkan data dasar dan data spesifikasi lengkap
   const specData = DETAILED_SERVICE_SPECS[service.id] || {};
   const gallery = specData.gallery && specData.gallery.length > 0 ? specData.gallery : [service.image];
-  
-  const defaultLocation = isEn
-    ? 'Luwu Regency Simpurusiang MPP, Jl. Jend. Sudirman, Belopa'
-    : isZh
-      ? '鲁乌县 Simpurusiang 政务大厅，Belopa 市 Jend. Sudirman 路'
-      : 'MPP Simpurusiang Kabupaten Luwu, Jl. Jend. Sudirman, Belopa';
-
-  const defaultSla = isEn ? '15 - 30 Mins' : isZh ? '15 - 30 分钟' : '15 - 30 Menit';
-  const defaultCost = isEn ? 'IDR 0 (Free Official Service)' : isZh ? '0 印尼盾（官方法定免费）' : 'Rp 0,- (Gratis Resmi)';
-  const defaultRegulations = isEn
-    ? 'Simpurusiang MPP Public Service Standard Luwu Regency'
-    : isZh
-      ? '鲁乌县 Simpurusiang 政务中心公共服务标准'
-      : 'Standar Pelayanan Publik MPP Simpurusiang Kab. Luwu';
-
-  const defaultTargetCriteria = isEn ? [
-    'General public of Luwu Regency holding official ID/Family Card',
-    'Business actors & investors applying for official licensing'
-  ] : isZh ? [
-    '持有法定身份证件/户口簿的鲁乌县辖区居民',
-    '申请官方经营许可的企业主与投资者'
-  ] : [
+  const location = specData.location || 'MPP Simpurusiang Kabupaten Luwu, Jl. Jend. Sudirman, Belopa';
+  const sla = specData.sla || '15 - 30 Menit';
+  const cost = specData.cost || 'Rp 0,- (Gratis Resmi)';
+  const regulations = specData.regulations || 'Standar Pelayanan Publik MPP Simpurusiang Kab. Luwu';
+  const targetCriteria = specData.targetCriteria || [
     'Masyarakat umum Kabupaten Luwu pemegang KTP/KK resmi',
     'Pelaku usaha & investor yang mengajukan permohonan berizin'
   ];
-
-  const defaultFacilities = isEn ? [
-    'Clean air-conditioned waiting room with ergonomic seating',
-    'Integrated digital queueing system with information displays',
-    'Free Wi-Fi access and charging stations'
-  ] : isZh ? [
-    '整洁舒适的空调候诊等候区与人体工学座椅',
-    '集成大屏信息显示屏的数字排号系统',
-    '免费 Wi-Fi 无线网络与手机充电站'
-  ] : [
+  const facilities = specData.facilities || [
     'Ruang tunggu bersih ber-AC dengan tempat duduk ergonomis',
     'Sistem antrean digital terintegrasi dengan layar monitor informasi',
     'Akses Wi-Fi gratis dan charging station'
   ];
-
-  const defaultRequirements = isEn ? [
-    'Original e-KTP / Valid Personal Identity Card',
-    'Application documents corresponding to target counter'
-  ] : isZh ? [
-    '申请人原版电子身份证 (e-KTP) / 有效身份证明',
-    '符合对应办理窗口要求的申请材料'
-  ] : [
+  const requirements = specData.requirements || [
     'KTP-el Asli Pemohon / Identitas Diri yang berlaku',
     'Dokumen permohonan sesuai gerai OPD yang dituju'
   ];
-
-  const defaultWorkflow = isEn ? [
-    { step: 1, title: 'Lobby Registration', desc: 'Get ticket number or register online.' },
-    { step: 2, title: 'Proceed to Integrated Counter', desc: 'Called according to ticket number for document verification.' },
-    { step: 3, title: 'Document Completion', desc: 'Issuance of official service documents.' }
-  ] : isZh ? [
-    { step: 1, title: '大厅登记取号', desc: '在自助终端或在线获取排号票。' },
-    { step: 2, title: '前往综合窗口', desc: '按叫号顺序前往窗口核验材料。' },
-    { step: 3, title: '办理完成出证', desc: '核发官方法定政务服务文书。' }
-  ] : [
+  const workflow = specData.workflow || [
     { step: 1, title: 'Registrasi di Lobi', desc: 'Ambil nomor antrean atau registrasi online.' },
     { step: 2, title: 'Menuju Loket Terpadu', desc: 'Dipanggil sesuai nomor antrean untuk verifikasi.' },
     { step: 3, title: 'Penyelesaian Dokumen', desc: 'Penerbitan dokumen resmi pelayanan.' }
   ];
-
-  const defaultContactOfficer = isEn ? {
-    name: 'Simpurusiang MPP Service Helpdesk',
-    role: 'Information & Grievance Center',
-    phone: '0811-4200-9999'
-  } : isZh ? {
-    name: 'Simpurusiang 政务服务咨询台',
-    role: '信息咨询与诉求回应中心',
-    phone: '0811-4200-9999'
-  } : {
+  const contactOfficer = specData.contactOfficer || {
     name: 'Helpdesk Layanan MPP Simpurusiang',
     role: 'Pusat Informasi & Pengaduan',
     phone: '0811-4200-9999'
   };
-
-  const location = specData.location || defaultLocation;
-  const sla = specData.sla || defaultSla;
-  const cost = specData.cost || defaultCost;
-  const regulations = specData.regulations || defaultRegulations;
-  const targetCriteria = specData.targetCriteria || defaultTargetCriteria;
-  const facilities = specData.facilities || defaultFacilities;
-  const requirements = specData.requirements || defaultRequirements;
-  const workflow = specData.workflow || defaultWorkflow;
-  const contactOfficer = specData.contactOfficer || defaultContactOfficer;
 
   const IconComponent = service.icon || Star;
 
@@ -332,7 +265,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
               </div>
               <div>
                 <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                  {t("mppPortal.serviceDetail.headerBadge", "Dokumentasi & Spesifikasi Resmi")}
+                  Dokumentasi & Spesifikasi Resmi
                 </span>
                 <h2 id="service-detail-title" className="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white leading-tight">
                   {service.title}
@@ -345,7 +278,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
               type="button"
               onClick={onClose}
               className="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center transition-colors cursor-pointer"
-              aria-label={t("mppPortal.serviceDetail.closeBtn", "Tutup")}
+              aria-label="Tutup jendela spesifikasi"
             >
               <X className="w-5 h-5" />
             </button>
@@ -358,7 +291,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
               <div 
                 className="relative h-56 sm:h-72 md:h-80 w-full overflow-hidden cursor-pointer"
                 onClick={() => setIsPhotoPreviewOpen(true)}
-                title={t("mppPortal.serviceDetail.clickToEnlarge", "Klik untuk memperbesar foto")}
+                title="Klik untuk memperbesar dokumentasi foto"
               >
                 <img
                   src={gallery[selectedPhotoIndex] || service.image}
@@ -390,9 +323,10 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                     setIsPhotoPreviewOpen(true);
                   }}
                   className="absolute top-3.5 right-3.5 z-20 flex items-center gap-1.5 bg-slate-900/80 hover:bg-slate-900 backdrop-blur-md border border-white/20 text-white text-[11px] font-semibold px-3 py-1.5 rounded-full shadow-md transition-all cursor-pointer hover:scale-105"
+                  title="Lihat foto resolusi tinggi"
                 >
                   <Maximize2 className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>{t("mppPortal.serviceDetail.enlargeHd", "Perbesar HD")}</span>
+                  <span>Perbesar HD</span>
                 </button>
 
                 {/* Tombol Navigasi Kiri & Kanan di atas Foto */}
@@ -438,7 +372,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                   {/* Indikator Jumlah Foto */}
                   {gallery.length > 1 && (
                     <div className="text-[11px] text-slate-300 bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-md border border-white/10 self-start sm:self-auto">
-                      {selectedPhotoIndex + 1} / {gallery.length}
+                      Foto {selectedPhotoIndex + 1} dari {gallery.length}
                     </div>
                   )}
                 </div>
@@ -477,7 +411,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                 </div>
                 <div>
                   <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">
-                    {t("mppPortal.serviceDetail.slaLabel", "Standar SLA")}
+                    Standar SLA
                   </div>
                   <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
                     {sla}
@@ -491,7 +425,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                 </div>
                 <div>
                   <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">
-                    {t("mppPortal.serviceDetail.costLabel", "Biaya / Tarif")}
+                    Biaya / Tarif
                   </div>
                   <div className="text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400">
                     {cost}
@@ -505,7 +439,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                 </div>
                 <div>
                   <div className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">
-                    {t("mppPortal.serviceDetail.zoneLabel", "Zona Layanan")}
+                    Zona Layanan
                   </div>
                   <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate max-w-[170px]">
                     MPP Simpurusiang
@@ -517,9 +451,9 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
             {/* Navigation Tabs Interaktif */}
             <div className="flex border-b border-slate-200 dark:border-white/10 gap-2">
               {[
-                { id: 'specs', label: t("mppPortal.serviceDetail.tabSpecs", "Spesifikasi & Kriteria"), icon: Info },
-                { id: 'workflow', label: t("mppPortal.serviceDetail.tabWorkflow", "Alur & SOP Pelayanan"), icon: Layers },
-                { id: 'gallery', label: t("mppPortal.serviceDetail.tabSarpras", "Kelengkapan Sarpras"), icon: Sparkles }
+                { id: 'specs', label: 'Spesifikasi & Kriteria', icon: Info },
+                { id: 'workflow', label: 'Alur & SOP Pelayanan', icon: Layers },
+                { id: 'gallery', label: 'Kelengkapan Sarpras', icon: Sparkles }
               ].map((tab) => {
                 const TabIcon = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -549,7 +483,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                   <div className="p-5 rounded-2xl bg-white dark:bg-slate-800/40 border border-slate-200/80 dark:border-white/10 shadow-sm space-y-3">
                     <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs sm:text-sm">
                       <Users className="w-4 h-4" />
-                      <h4>{t("mppPortal.serviceDetail.targetCriteriaTitle", "Kriteria Sasaran Pemohon")}</h4>
+                      <h4>Kriteria Sasaran Pemohon</h4>
                     </div>
                     <ul className="space-y-2.5">
                       {targetCriteria.map((item, idx) => (
@@ -565,7 +499,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                   <div className="p-5 rounded-2xl bg-white dark:bg-slate-800/40 border border-slate-200/80 dark:border-white/10 shadow-sm space-y-3">
                     <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-xs sm:text-sm">
                       <FileText className="w-4 h-4" />
-                      <h4>{t("mppPortal.serviceDetail.requirementsTitle", "Persyaratan Dokumen")}</h4>
+                      <h4>Persyaratan Dokumen</h4>
                     </div>
                     <ul className="space-y-2.5">
                       {requirements.map((req, idx) => (
@@ -576,7 +510,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                       ))}
                     </ul>
                     <div className="pt-2 text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-white/10">
-                      {t("mppPortal.serviceDetail.legalBase", "Dasar Hukum:")} <span className="font-medium text-slate-700 dark:text-slate-300">{regulations}</span>
+                      Dasar Hukum: <span className="font-medium text-slate-700 dark:text-slate-300">{regulations}</span>
                     </div>
                   </div>
                 </div>
@@ -587,7 +521,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                   <div className="flex items-center justify-between">
                     <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                       <Layers className="w-4 h-4 text-emerald-500" />
-                      {t("mppPortal.serviceDetail.workflowTitle", "Alur Tahapan Pelayanan Terpadu")}
+                      Alur Tahapan Pelayanan Terpadu
                     </h4>
                     <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full">
                       SLA: {sla}
@@ -621,7 +555,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                 <div className="p-5 rounded-2xl bg-white dark:bg-slate-800/40 border border-slate-200/80 dark:border-white/10 shadow-sm space-y-4">
                   <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-amber-500" />
-                    {t("mppPortal.serviceDetail.facilitiesTitle", "Spesifikasi Fasilitas & Sarana Prasarana")}
+                    Spesifikasi Fasilitas & Sarana Prasarana
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {facilities.map((fac, idx) => (
@@ -646,7 +580,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                 </div>
                 <div>
                   <div className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
-                    {t("mppPortal.serviceDetail.loTitle", "Bantuan Langsung / Liaison Officer (LO)")}
+                    Bantuan Langsung / Liaison Officer (LO)
                   </div>
                   <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
                     {contactOfficer.name} ({contactOfficer.role})
@@ -660,7 +594,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                 rel="noopener noreferrer"
                 className="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-200 dark:border-white/10 text-xs font-bold transition-colors flex items-center justify-center gap-2 self-start sm:self-auto cursor-pointer"
               >
-                <span>{t("mppPortal.serviceDetail.consultationWa", "Konsultasi WA")}</span>
+                <span>Konsultasi WA</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </a>
             </div>
@@ -669,7 +603,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
           {/* Footer Aksi Presisi: Daftar Antrean atau Kembali */}
           <div className="p-4 sm:p-6 border-t border-slate-100 dark:border-white/10 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-3.5">
             <div className="text-xs text-slate-500 dark:text-slate-400 text-center sm:text-left">
-              {t("mppPortal.serviceDetail.understandNotice", "Sudah memahami spesifikasi? Lanjutkan untuk mengambil nomor antrean resmi.")}
+              Sudah memahami spesifikasi? Lanjutkan untuk mengambil nomor antrean resmi.
             </div>
 
             <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -678,7 +612,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                 onClick={onClose}
                 className="flex-1 sm:flex-none px-5 py-2.5 rounded-full bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs sm:text-sm transition-colors cursor-pointer"
               >
-                {t("mppPortal.serviceDetail.closeBtn", "Tutup")}
+                Tutup
               </button>
 
               <button
@@ -692,7 +626,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                 className="flex-1 sm:flex-none px-6 py-2.5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:brightness-105 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer group font-['Plus_Jakarta_Sans',sans-serif]"
               >
                 <Calendar className="w-4 h-4 text-slate-950" />
-                <span>{t("mppPortal.serviceDetail.bookQueueBtn", "Daftar Antrean Layanan Ini")}</span>
+                <span>Daftar Antrean Layanan Ini</span>
                 <ChevronRight className="w-4 h-4 text-slate-950 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>

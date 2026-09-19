@@ -644,7 +644,6 @@ export default function App() {
   const [activeCategories, setActiveCategories] = useState<string[]>(["Pertanian", "Kelautan", "Pertambangan", "Pariwisata", "Perdagangan"]);
   const [showLegend, setShowLegend] = useState(false);
   const [isLayerPanelOpen, setIsLayerPanelOpen] = useState(false);
-  const [isLeftSidebarCollapsed, setIsLeftSidebarCollapsed] = useState(false);
   const [isTourHudVisible, setIsTourHudVisible] = useState<boolean>(false);
   const [isTemporalGisControlActive, setIsTemporalGisControlActive] = useState<boolean>(true);
   const [temporalYear, setTemporalYear] = useState<number>(new Date().getFullYear());
@@ -5326,7 +5325,6 @@ export default function App() {
             showLegend={showLegend}
             isLayerPanelOpen={isLayerPanelOpen}
             setIsLayerPanelOpen={setIsLayerPanelOpen}
-            isLeftSidebarOpen={!isMobile ? !isLeftSidebarCollapsed : false}
             showRightDashboard={showRightDashboard}
             onOpenSuitabilityModal={() => setIsSuitabilityModalOpen(true)}
             onToggleCategory={(cat) => {
@@ -5509,14 +5507,7 @@ export default function App() {
             </motion.button>
             <motion.button whileTap={{ scale: 0.95 }}
               type="button"
-              onClick={() => {
-                const nextState = !isLayerPanelOpen;
-                setIsLayerPanelOpen(nextState);
-                if (nextState && !isMobile) {
-                  // Collapse Kontrol Peta on desktop so it doesn't obstruct the thematic layer panel
-                  setIsLeftSidebarCollapsed(true);
-                }
-              }}
+              onClick={() => setIsLayerPanelOpen(!isLayerPanelOpen)}
               className={`px-2.5 py-1.5 rounded-xl transition-all duration-300 cursor-pointer flex items-center gap-1.5 text-xs font-bold active:scale-95 hover:shadow-[0_0_15px_rgba(99,102,241,0.4)] ${
                 isLayerPanelOpen
                   ? "bg-indigo-500/20 text-indigo-700 dark:text-indigo-400 border border-indigo-500/40 shadow-sm"
@@ -5743,7 +5734,7 @@ export default function App() {
 
             {/* LEFT SIDEBAR */}
             <AnimatePresence>
-              {(!isMobile ? !isLeftSidebarCollapsed : isSidebarOpen) && (
+              {(!isMobile || isSidebarOpen) && (
                 <motion.aside
                   key="left-sidebar"
                   initial={isMobile ? { y: "100%", opacity: 0 } : { x: "-100%", opacity: 0.5, filter: "blur(4px)" }}
@@ -5753,13 +5744,13 @@ export default function App() {
                   className={`fixed inset-x-0 top-3 sm:top-4 bottom-0 md:top-auto md:bottom-auto h-auto md:h-full md:relative md:inset-auto shrink-0 w-full md:max-w-sm md:w-64 lg:w-80 overflow-hidden pointer-events-auto flex flex-col gap-3 z-[70] md:z-[50] rounded-t-[28px] md:rounded-none shadow-[0_-12px_40px_rgba(0,0,0,0.5)] md:shadow-none ${isDarkMode ? "bg-slate-50 dark:bg-slate-950 md:bg-transparent text-slate-900 dark:text-white" : "bg-white md:bg-transparent text-slate-900"} border-t md:border-t-0 md:border-r border-white/10 md:border-transparent`}
                 >
                   <div className="flex-1 w-full h-full overflow-y-auto pb-24 md:pb-12 px-4 md:px-0 pt-3 md:pt-4 flex flex-col gap-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-700/50 hover:[&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb]:rounded-full">
-                  {/* Header & close/collapse button (Mobile & Desktop) */}
-                  <div className={`flex flex-col items-center justify-between -mt-1 mb-3 px-1 sticky top-0 z-20 pt-1 pb-2 backdrop-blur-md border-b transition-colors ${
+                  {/* Mobile grab indicator & thumb-friendly close button */}
+                  <div className={`flex flex-col items-center justify-between md:hidden -mt-1 mb-3 px-1 sticky top-0 z-20 pt-1 pb-2 backdrop-blur-md border-b transition-colors ${
                     isDarkMode 
                       ? "bg-slate-50 dark:bg-slate-950/95 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white" 
                       : "bg-white/98 border-slate-250 text-slate-950 shadow-xs"
                   }`}>
-                    <div className={`md:hidden w-12 h-1.5 ${isDarkMode ? "bg-slate-700" : "bg-slate-300"} rounded-full mb-2 pointer-events-none`} />
+                    <div className={`w-12 h-1.5 ${isDarkMode ? "bg-slate-700" : "bg-slate-300"} rounded-full mb-2 pointer-events-none`} />
                     <div className="flex justify-between items-center w-full">
                       <span className={`font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-base ml-2 tracking-tight ${
                         isDarkMode ? "text-white" : "text-slate-950"
@@ -5768,21 +5759,14 @@ export default function App() {
                       </span>
                       <motion.button whileTap={{ scale: 0.95 }}
                         type="button"
-                        onClick={() => {
-                          if (isMobile) {
-                            setIsSidebarOpen(false);
-                          } else {
-                            setIsLeftSidebarCollapsed(true);
-                          }
-                        }}
-                        className={`p-2 min-w-[36px] min-h-[36px] rounded-full border flex items-center justify-center shadow-md transition-all cursor-pointer ${
+                        onClick={() => setIsSidebarOpen(false)}
+                        className={`p-2.5 min-w-[40px] min-h-[40px] rounded-full border flex items-center justify-center shadow-md transition-all ${
                           isDarkMode 
                             ? "bg-slate-800/80 hover:bg-slate-700 text-slate-200 border-slate-700" 
                             : "bg-slate-100 hover:bg-slate-200 text-slate-900 border-slate-300"
                         }`}
-                        title={isMobile ? "Tutup" : "Sembunyikan Kontrol Peta"}
                       >
-                        <X size={16} />
+                        <X size={18} />
                       </motion.button>
                     </div>
                   </div>
@@ -6517,32 +6501,6 @@ export default function App() {
                 </motion.aside>
           )}
         </AnimatePresence>
-
-            {/* DESKTOP FLOATING TOGGLE FOR KONTROL PETA */}
-            <AnimatePresence>
-              {!isMobile && isLeftSidebarCollapsed && !isLayerPanelOpen && (
-                <motion.button
-                  key="reopen-left-sidebar"
-                  initial={{ opacity: 0, x: -20, scale: 0.95 }}
-                  animate={{ opacity: 1, x: 0, scale: 1 }}
-                  exit={{ opacity: 0, x: -20, scale: 0.95 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    setIsLeftSidebarCollapsed(false);
-                    setIsLayerPanelOpen(false);
-                  }}
-                  className={`fixed left-4 top-24 z-[50] pointer-events-auto flex items-center gap-2 px-3.5 py-2.5 rounded-2xl shadow-xl border backdrop-blur-xl cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 ${
-                    isDarkMode
-                      ? "bg-slate-900/95 border-slate-700/90 text-white shadow-black/80 hover:bg-slate-800"
-                      : "bg-white/95 border-slate-300 text-slate-900 shadow-xl shadow-slate-900/10 hover:bg-slate-50"
-                  }`}
-                  title="Buka Menu Kontrol Peta"
-                >
-                  <Filter className="w-4 h-4 text-emerald-500" />
-                  <span className="text-xs font-bold font-sans">Kontrol Peta</span>
-                </motion.button>
-              )}
-            </AnimatePresence>
 
             {/* MOBILE BOTTOM ACTION BAR */}
             <div className={`md:hidden fixed bottom-0 left-0 right-0 z-[9999] pointer-events-auto pb-safe flex justify-around items-center border-t backdrop-blur-2xl shadow-2xl transition-colors ${

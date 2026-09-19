@@ -169,8 +169,6 @@
   
   --animate-fade-in-up: fade-in-up 0.8s ease-out forwards;
   --animate-fade-in-basic: fade-in-basic 1s ease-out forwards;
-  --animate-float: float 6s ease-in-out infinite;
-  --animate-pulse-border: pulse-border 2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
 @keyframes fade-in-up {
@@ -181,60 +179,6 @@
 @keyframes fade-in-basic {
   0% { opacity: 0; }
   100% { opacity: 1; }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes pulse-border {
-  0% { transform: scale(1); opacity: 0.8; }
-  70% { transform: scale(1.6); opacity: 0; }
-  100% { transform: scale(1.6); opacity: 0; }
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-pulse-border {
-  animation: pulse-border 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Swiper Custom Pagination Dots (MPP Badung Style) */
-.swiper-pagination {
-  position: relative !important;
-  margin-top: 1.5rem !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  gap: 0.5rem !important;
-}
-
-.swiper-pagination-bullet {
-  width: 9px !important;
-  height: 9px !important;
-  background: #0d9488 !important;
-  opacity: 0.3 !important;
-  border-radius: 9999px !important;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  cursor: pointer !important;
-}
-
-.swiper-pagination-bullet-active {
-  width: 28px !important;
-  opacity: 1 !important;
-  background: linear-gradient(135deg, #14b8a6, #2563eb) !important;
-  box-shadow: 0 0 10px rgba(20, 184, 166, 0.4) !important;
 }
 
 /* Base resets & custom scrollbar */

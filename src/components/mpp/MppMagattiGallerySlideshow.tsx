@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
 import { 
   ChevronLeft, ChevronRight, Play, Pause, Maximize2, X, 
   Sparkles, Building2, Eye, Layers, Image as ImageIcon, MapPin, Check,
@@ -23,11 +22,6 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
   className = '',
   isDark = true
 }) => {
-  const { t, i18n } = useTranslation();
-  const currentLang = i18n.language || 'id';
-  const isEn = currentLang.startsWith('en');
-  const isZh = currentLang.startsWith('zh');
-
   const [photos, setPhotos] = useState<MagattiPhotoItem[]>([]);
   const [settings, setSettings] = useState<MagattiSlideshowSettings>(getStoredMagattiSettings());
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -36,83 +30,6 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
   const [showRoomDetails, setShowRoomDetails] = useState(false);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [progress, setProgress] = useState(0);
-
-  // Localize photos dynamically based on language
-  const displayPhotos = useMemo(() => {
-    return photos.map(photo => {
-      if (photo.id === 'magatti-1') {
-        return {
-          ...photo,
-          title: isEn ? 'Front Entrance View of Simpurusiang MPP Building' : isZh ? '辛普鲁西亚公共服务中心大楼正门外观' : photo.title,
-          caption: isEn ? 'Main facade of the Simpurusiang Public Service Mall in Pahlawan Street, Belopa, combining modern architecture with local heritage.' : isZh ? '位于贝洛帕 Pahlawan 路的鲁乌县辛普鲁西亚公共服务中心大楼主立面，展现现代建筑特色与地方智慧的融合。' : photo.caption,
-          category: isEn ? 'Front Exterior' : isZh ? '大楼外观' : photo.category,
-          location: isEn ? 'Pahlawan St. No. 1, Belopa' : isZh ? '贝洛帕 Pahlawan 路1号' : photo.location,
-          features: isEn ? ['Spacious Parking', 'Green Park', 'Barrier-Free Entrance', '24/7 Security Post'] : isZh ? ['宽敞停车位', '绿化公园', '无障碍入口', '24小时安保哨所'] : photo.features
-        };
-      }
-      if (photo.id === 'magatti-2') {
-        return {
-          ...photo,
-          title: isEn ? 'One-Stop Integrated Service Counter Hall' : isZh ? '一站式综合服务窗口大厅' : photo.title,
-          caption: isEn ? 'Integrated counter hall housing 26 institutional booths with ergonomic spatial design and multi-language automated queue callers.' : isZh ? '整合 26 个部门服务窗口的大厅，配备人体工程学空间布局与多语言自动叫号系统。' : photo.caption,
-          category: isEn ? 'Counter Hall' : isZh ? '服务窗口' : photo.category,
-          location: isEn ? 'Floor 1 • Main Hall' : isZh ? '1 楼 • 主大厅' : photo.location,
-          features: isEn ? ['26 Department Booths', 'Digital Display Monitors', 'Ergonomic Waiting Seats', 'Central Air Conditioning'] : isZh ? ['26 个部门服务窗口', '数字显示监控屏', '人体工程学等候座椅', '全空调环境'] : photo.features
-        };
-      }
-      if (photo.id === 'magatti-3') {
-        return {
-          ...photo,
-          title: isEn ? 'Main Lobby & Digital Concierge Assistant' : isZh ? '主大厅与数字助理礼宾台' : photo.title,
-          caption: isEn ? 'Citizen reception lobby featuring friendly front-desk staff, AI voice assistant Ta\', and real-time interactive service analytics displays.' : isZh ? '市民接待大厅配备亲和的前台工作人员、AI 语音助手 Ta\' 以及实时服务统计互动大屏。' : photo.caption,
-          category: isEn ? 'Lobby & Concierge' : isZh ? '大厅与礼宾' : photo.category,
-          location: isEn ? 'Floor 1 • Entrance Foyer' : isZh ? '1 楼 • 入口门厅' : photo.location,
-          features: isEn ? ['Concierge Desk', 'Satisfaction Index Touch Screen', 'Free High-Speed Wi-Fi', 'Transparent Fee Schedule'] : isZh ? ['礼宾咨询台', '满意度指数触控屏', '免费高速 Wi-Fi', '透明服务收费标准'] : photo.features
-        };
-      }
-      if (photo.id === 'magatti-4') {
-        return {
-          ...photo,
-          title: isEn ? 'Self-Service Kiosk & Document Printing Station' : isZh ? '自助服务终端与文件打印机' : photo.title,
-          caption: isEn ? 'Self-service station allowing citizens to print e-KTPs, MSME NIBs, verify files, and renew documents independently without queuing.' : isZh ? '市民自助设施，可自主打印电子身份证、微型企业 NIB、验证文件及办理延期，无需排队。' : photo.caption,
-          category: isEn ? 'Digital Facilities' : isZh ? '数字设施' : photo.category,
-          location: isEn ? 'Floor 1 • Left Wing' : isZh ? '1 楼 • 左翼' : photo.location,
-          features: isEn ? ['e-KTP Printer Machine', 'OSS NIB Kiosk', 'QR Code Document Scanner', 'Audio Guidance Instructions'] : isZh ? ['电子身份证 (KTP-el) 打印机', 'OSS NIB 自助终端', '二维码文件扫描', '语音引导指引'] : photo.features
-        };
-      }
-      if (photo.id === 'magatti-5') {
-        return {
-          ...photo,
-          title: isEn ? 'VIP Fast-Track Investor Lounge' : isZh ? 'VIP 投资者绿色通道服务休息室' : photo.title,
-          caption: isEn ? 'Exclusive consultation room for investors, business owners, and capital providers with direct guidance from Luwu DPMPTSP Account Officers.' : isZh ? '专为投资者、企业家和招商引资人员提供的独家咨询室，由鲁乌 DPMPTSP 客户经理全程陪同。' : photo.caption,
-          category: isEn ? 'VIP Lounge' : isZh ? 'VIP 贵宾室' : photo.category,
-          location: isEn ? 'Floor 2 • East Wing' : isZh ? '2 楼 • 东翼' : photo.location,
-          features: isEn ? ['Private Business Consultation', 'Conference & Presentation Setup', 'Luwu Specialty Coffee Corner', 'Gigabit Connectivity'] : isZh ? ['私密商业咨询', '会议与演示设施', '鲁乌特色咖啡角', '千兆网络连接'] : photo.features
-        };
-      }
-      if (photo.id === 'magatti-6') {
-        return {
-          ...photo,
-          title: isEn ? 'Kids Play Zone & Nursing Room' : isZh ? '儿童乐园与母婴室设施' : photo.title,
-          caption: isEn ? 'Safe and hygienic interactive play area for kids, plus a private nursing room offering comfort for breastfeeding mothers.' : isZh ? '安全卫生的儿童互动游乐区，以及为哺乳期母亲准备的舒适私密母婴室。' : photo.caption,
-          category: isEn ? 'Kids Room' : isZh ? '儿童乐园' : photo.category,
-          location: isEn ? 'Floor 1 • West Wing' : isZh ? '1 楼 • 西翼' : photo.location,
-          features: isEn ? ['Educational Toys', 'Private Lactation Sofa', 'Sterilizer & Sink', 'Soft Foam Flooring'] : isZh ? ['儿童益智玩具', '私密哺乳沙发', '消毒器与洗手池', '软泡沫安全地板'] : photo.features
-        };
-      }
-      if (photo.id === 'magatti-7') {
-        return {
-          ...photo,
-          title: isEn ? 'Tactile Guiding Blocks & Disability Accessibility Facilities' : isZh ? '盲道触觉地砖与无障碍设施' : photo.title,
-          caption: isEn ? 'Full accessibility standards for visitors with disabilities and elderly guests, including tactile paths, complimentary wheelchairs, and low counters.' : isZh ? '为残障人士与老年人提供的无障碍标准，包含盲道地砖、免费轮椅及无障碍低矮窗口。' : photo.caption,
-          category: isEn ? 'Inclusion Facilities' : isZh ? '无障碍设施' : photo.category,
-          location: isEn ? 'All Corridors & Access Doors' : isZh ? '全楼层走廊与通道' : photo.location,
-          features: isEn ? ['Medical Grade Wheelchairs', 'Tactile Guiding Path for Visually Impaired', 'PU Standard Access Ramp', 'Accessible Restroom'] : isZh ? ['医用标准轮椅', '盲人导向盲道', '标准坡度无障碍坡道', '无障碍专用卫生间'] : photo.features
-        };
-      }
-      return photo;
-    });
-  }, [photos, isEn, isZh]);
 
   // Touch handlers for Android and mobile swipe
   const touchStartX = useRef<number | null>(null);
@@ -212,37 +129,23 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
 
   if (activePhotosCount === 0) return null;
 
-  const currentPhoto = displayPhotos[currentIndex] || displayPhotos[0];
+  const currentPhoto = photos[currentIndex] || photos[0];
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'Tampak Depan':
-      case 'Front Exterior':
-      case '大楼外观':
         return <Building2 size={13} className="text-emerald-400" />;
       case 'Ruang Loket':
-      case 'Counter Hall':
-      case '服务窗口':
         return <Layers size={13} className="text-sky-400" />;
       case 'Lobby & Konsierge':
-      case 'Lobby & Concierge':
-      case '大厅与礼宾':
         return <Sparkles size={13} className="text-amber-400" />;
       case 'Fasilitas Digital':
-      case 'Digital Facilities':
-      case '数字设施':
         return <Monitor size={13} className="text-purple-400" />;
       case 'Lounge VIP':
-      case 'VIP Lounge':
-      case 'VIP 贵宾室':
         return <ShieldCheck size={13} className="text-yellow-400" />;
       case 'Ruang Ramah Anak':
-      case 'Kids Room':
-      case '儿童乐园':
         return <Heart size={13} className="text-rose-400" />;
       case 'Fasilitas Inklusi':
-      case 'Inclusion Facilities':
-      case '无障碍设施':
         return <Accessibility size={13} className="text-teal-400" />;
       default:
         return <ImageIcon size={13} className="text-emerald-400" />;
@@ -302,7 +205,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
       {/* MAIN GRAND CINEMATIC SLIDESHOW SHOWCASE (CLEAN, IMMERSIVE & ELEGANT)      */}
       {/* ========================================================================= */}
       <div 
-        className="relative w-full h-[440px] xs:h-[480px] sm:h-[540px] md:h-[600px] lg:h-[640px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200/50 dark:border-white/10 group"
+        className="relative w-full h-[500px] xs:h-[530px] sm:h-[560px] md:h-[600px] lg:h-[640px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200/50 dark:border-white/10 group"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         onTouchStart={handleTouchStart}
@@ -351,8 +254,8 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
                   ? 'bg-emerald-500 text-white shadow-[0_0_12px_rgba(16,185,129,0.8)]'
                   : 'text-slate-300 hover:text-white hover:bg-white/15'
               }`}
-              title={isEn ? "Room Specification Info" : isZh ? "房间设施规格与标准" : "Informasi Spesifikasi Ruangan"}
-              aria-label={isEn ? "Room Specification Info" : isZh ? "房间设施规格与标准" : "Informasi Spesifikasi Ruangan"}
+              title="Informasi Spesifikasi Ruangan"
+              aria-label="Informasi Spesifikasi Ruangan"
             >
               <Info size={14} />
             </button>
@@ -362,12 +265,8 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
               type="button"
               onClick={() => setIsPaused(!isPaused)}
               className="p-2 rounded-full text-slate-300 hover:text-white hover:bg-white/15 transition-all shadow-xs active:scale-90 cursor-pointer"
-              title={isPaused 
-                ? (isEn ? "Resume Slideshow" : isZh ? "播放幻灯片" : "Lanjutkan Slideshow") 
-                : (isEn ? "Pause Slideshow" : isZh ? "暂停幻灯片" : "Jeda Slideshow")}
-              aria-label={isPaused 
-                ? (isEn ? "Resume Slideshow" : isZh ? "播放幻灯片" : "Lanjutkan Slideshow") 
-                : (isEn ? "Pause Slideshow" : isZh ? "暂停幻灯片" : "Jeda Slideshow")}
+              title={isPaused ? "Lanjutkan Slideshow" : "Jeda Slideshow"}
+              aria-label={isPaused ? "Lanjutkan Slideshow" : "Jeda Slideshow"}
             >
               {isPaused ? <Play size={14} className="text-emerald-400" /> : <Pause size={14} />}
             </button>
@@ -377,8 +276,8 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
               type="button"
               onClick={() => setIsFullscreen(true)}
               className="p-2 rounded-full text-slate-300 hover:text-white hover:bg-white/15 transition-all shadow-xs active:scale-90 cursor-pointer"
-              title={isEn ? "Full Screen HD View" : isZh ? "全屏高清照片查看" : "Lihat Foto Layar Penuh HD"}
-              aria-label={isEn ? "Full Screen HD View" : isZh ? "全屏高清照片查看" : "Lihat Foto Layar Penuh HD"}
+              title="Lihat Foto Layar Penuh HD"
+              aria-label="Lihat Foto Layar Penuh HD"
             >
               <Maximize2 size={14} />
             </button>
@@ -397,9 +296,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
               <div className="flex items-center justify-between pb-2 border-b border-white/10 mb-2.5">
                 <div className="flex items-center gap-2">
                   <Sparkles size={14} className="text-emerald-400" />
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-300">
-                    {isEn ? "Room Facility Specifications" : isZh ? "房间设施规格与标准" : "Spesifikasi Fasilitas Ruangan"}
-                  </h4>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-300">Spesifikasi Fasilitas Ruangan</h4>
                 </div>
                 <button 
                   type="button" 
@@ -413,13 +310,13 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
               <div className="space-y-2">
                 <div className="text-xs text-slate-300 flex items-center gap-1.5">
                   <MapPin size={12} className="text-emerald-400 shrink-0" />
-                  <span className="font-semibold text-white">{isEn ? "Location:" : isZh ? "位置:" : "Lokasi:"}</span>
+                  <span className="font-semibold text-white">Lokasi:</span>
                   <span>{currentPhoto.location || 'MPP Simpurusiang Belopa'}</span>
                 </div>
 
                 {currentPhoto.features && currentPhoto.features.length > 0 && (
                   <div>
-                    <div className="text-[11px] font-semibold text-slate-400 mb-1.5">{isEn ? "Available Facilities:" : isZh ? "可用设施:" : "Fasilitas Tersedia:"}</div>
+                    <div className="text-[11px] font-semibold text-slate-400 mb-1.5">Fasilitas Tersedia:</div>
                     <div className="flex flex-wrap gap-1.5">
                       {currentPhoto.features.map((feat, fIdx) => (
                         <span key={fIdx} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-medium">
@@ -442,7 +339,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
               type="button"
               onClick={prevSlide}
               className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-3 rounded-full bg-slate-950/70 backdrop-blur-md text-white hover:bg-emerald-600 hover:text-white border border-white/15 transition-all shadow-xl opacity-85 sm:opacity-0 group-hover:opacity-100 active:scale-90 cursor-pointer"
-              aria-label={isEn ? "Previous Photo" : isZh ? "上一张照片" : "Foto Ruangan Sebelumnya"}
+              aria-label="Foto Ruangan Sebelumnya"
             >
               <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
@@ -451,7 +348,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
               type="button"
               onClick={nextSlide}
               className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-3 rounded-full bg-slate-950/70 backdrop-blur-md text-white hover:bg-emerald-600 hover:text-white border border-white/15 transition-all shadow-xl opacity-85 sm:opacity-0 group-hover:opacity-100 active:scale-90 cursor-pointer"
-              aria-label={isEn ? "Next Photo" : isZh ? "下一张照片" : "Foto Ruangan Selanjutnya"}
+              aria-label="Foto Ruangan Selanjutnya"
             >
               <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
@@ -478,7 +375,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
               {activePhotosCount > 1 && (
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1.5">
-                    {displayPhotos.map((p, idx) => (
+                    {photos.map((p, idx) => (
                       <button
                         key={p.id}
                         type="button"
@@ -492,7 +389,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
                             ? 'w-6 sm:w-8 bg-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.95)]'
                             : 'w-1.5 sm:w-2 bg-white/25 hover:bg-white/50'
                         }`}
-                        aria-label={`Go to photo ${idx + 1}`}
+                        aria-label={`Ke foto ruangan ${idx + 1}`}
                       />
                     ))}
                   </div>
@@ -504,9 +401,9 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
             </div>
 
             {/* Photo Title with Emerald Accent Dot */}
-            <h3 className="text-[13px] sm:text-base md:text-lg font-bold text-white leading-snug font-sans drop-shadow-sm flex items-start gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 mt-1 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
-              <span className="line-clamp-2 sm:line-clamp-1">{currentPhoto.title}</span>
+            <h3 className="text-sm sm:text-base md:text-lg font-bold text-white leading-snug font-sans drop-shadow-sm flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
+              <span className="truncate">{currentPhoto.title}</span>
             </h3>
 
             {/* Short Refined Caption */}
@@ -543,7 +440,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
                   <span>{currentPhoto.category}</span>
                 </span>
                 <span className="text-xs font-mono text-slate-400">
-                  {isEn ? `Photo ${currentIndex + 1} of ${activePhotosCount}` : isZh ? `第 ${currentIndex + 1} 张，共 ${activePhotosCount} 张` : `Foto ${currentIndex + 1} dari ${activePhotosCount}`}
+                  Foto {currentIndex + 1} dari {activePhotosCount}
                 </span>
                 {currentPhoto.location && (
                   <span className="hidden sm:inline-flex items-center gap-1 text-xs text-slate-300">
@@ -557,7 +454,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
                 type="button"
                 onClick={() => setIsFullscreen(false)}
                 className="p-2.5 rounded-full bg-slate-800/80 hover:bg-rose-500 text-white transition-all shadow-lg cursor-pointer"
-                title={isEn ? "Close Full Screen (Esc)" : isZh ? "关闭全屏 (Esc)" : "Tutup Layar Penuh (Esc)"}
+                title="Tutup Layar Penuh (Esc)"
               >
                 <X size={18} />
               </button>
@@ -577,7 +474,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
                     type="button"
                     onClick={prevSlide}
                     className="absolute left-2 sm:left-6 p-3.5 rounded-full bg-slate-900/80 hover:bg-emerald-600 text-white border border-white/20 transition-all shadow-xl cursor-pointer"
-                    aria-label={isEn ? "Previous Photo" : isZh ? "上一张照片" : "Foto Sebelumnya"}
+                    aria-label="Foto Sebelumnya"
                   >
                     <ChevronLeft size={22} />
                   </button>
@@ -585,7 +482,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
                     type="button"
                     onClick={nextSlide}
                     className="absolute right-2 sm:right-6 p-3.5 rounded-full bg-slate-900/80 hover:bg-emerald-600 text-white border border-white/20 transition-all shadow-xl cursor-pointer"
-                    aria-label={isEn ? "Next Photo" : isZh ? "下一张照片" : "Foto Selanjutnya"}
+                    aria-label="Foto Selanjutnya"
                   >
                     <ChevronRight size={22} />
                   </button>
@@ -606,7 +503,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
 
               {/* Room Thumbnails for Quick Hop */}
               <div className="flex items-center justify-center gap-2 overflow-x-auto py-1 scrollbar-none">
-                {displayPhotos.map((p, idx) => (
+                {photos.map((p, idx) => (
                   <button
                     key={p.id}
                     type="button"

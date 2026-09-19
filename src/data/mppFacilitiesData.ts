@@ -286,11 +286,11 @@ export function mergeFacilitiesWithDb(dbFacilities: any[], t: any): MppFacilityI
       result.push({
         ...base,
         id: String(df.id || base.id),
-        name: base.name || df.name,
-        shortName: base.shortName || (df.name && df.name.length > 20 ? df.name.slice(0, 20) + '...' : base.shortName),
+        name: df.name || base.name,
+        shortName: df.name && df.name.length > 20 ? df.name.slice(0, 20) + '...' : base.shortName,
         floor: df.floor || base.floor,
-        subtitle: base.subtitle || (df.floor ? `${df.floor} – MPP Simpurusiang` : base.subtitle),
-        description: base.description || df.description,
+        subtitle: df.floor ? `${df.floor} – MPP Simpurusiang` : base.subtitle,
+        description: df.description || base.description,
         image: df.image_url || base.image,
       });
     } else {

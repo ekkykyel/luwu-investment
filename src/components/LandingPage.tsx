@@ -17,7 +17,6 @@ const HERO_PLACEHOLDER_SVG = `data:image/svg+xml;charset=utf-8,${encodeURICompon
 `)}`;
 import {
   ChevronRight,
-  ChevronLeft,
   ArrowRight,
   Globe,
   Shield,
@@ -126,10 +125,6 @@ import { useTranslation } from "react-i18next";
 import LanguageToggle from '@/components/LanguageToggle';
 import { LiveMarketTicker, CommodityItem } from "./LiveMarketTicker";
 import { MppVisionModal } from "./MppVisionModal";
-import { TiltCard } from "./common/TiltCard";
-import { SpotlightCard } from "./common/SpotlightCard";
-import { MagneticButton } from "./common/MagneticButton";
-import { SonarRadarPulse } from "./common/SonarRadarPulse";
 
 // --- Executive CountUp Animation Helper ---
 function CountUp({
@@ -266,66 +261,6 @@ export default function LandingPage({
   const [staffImageLeft, setStaffImageLeft] = useState<string | null>(null);
   const [staffImageRight, setStaffImageRight] = useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
-
-  // Mobile Executive Live Stats Carousel State & Auto-Slide
-  const statsScrollContainerRef = useRef<HTMLDivElement>(null);
-  const [activeStatIndex, setActiveStatIndex] = useState(0);
-  const [isUserInteractingStats, setIsUserInteractingStats] = useState(false);
-  const statsResumeTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  const scrollToStatCard = (index: number) => {
-    const container = statsScrollContainerRef.current;
-    if (!container) return;
-    const cards = Array.from(container.children).filter(
-      (el) => el.tagName === "DIV"
-    ) as HTMLElement[];
-    if (cards && cards[index]) {
-      const card = cards[index];
-      const targetScrollLeft = card.offsetLeft - (container.clientWidth - card.clientWidth) / 2;
-      container.scrollTo({
-        left: Math.max(0, targetScrollLeft),
-        behavior: "smooth",
-      });
-      setActiveStatIndex(index);
-    }
-  };
-
-  const handleStatsScroll = () => {
-    const container = statsScrollContainerRef.current;
-    if (!container) return;
-    const containerCenter = container.scrollLeft + container.clientWidth / 2;
-    const cards = Array.from(container.children).filter(
-      (el) => el.tagName === "DIV"
-    ) as HTMLElement[];
-    let closestIndex = 0;
-    let minDiff = Infinity;
-    cards.forEach((card, idx) => {
-      const cardCenter = card.offsetLeft + card.clientWidth / 2;
-      const diff = Math.abs(containerCenter - cardCenter);
-      if (diff < minDiff) {
-        minDiff = diff;
-        closestIndex = idx;
-      }
-    });
-    if (closestIndex !== activeStatIndex && closestIndex >= 0 && closestIndex < 4) {
-      setActiveStatIndex(closestIndex);
-    }
-  };
-
-  useEffect(() => {
-    if (isUserInteractingStats) return;
-    const timer = setInterval(() => {
-      if (typeof window !== "undefined" && window.innerWidth < 640) {
-        setActiveStatIndex((prev) => {
-          const next = (prev + 1) % 4;
-          scrollToStatCard(next);
-          return next;
-        });
-      }
-    }, 4000);
-
-    return () => clearInterval(timer);
-  }, [isUserInteractingStats]);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const hasTriggeredInitialFullscreen = useRef(false);
@@ -947,46 +882,36 @@ export default function LandingPage({
 
       const cap = parseFloat(capital) || 0;
       const opx = parseFloat(opex) || 0;
-      const totalInvestment = cap;
 
       let rev = parseFloat(annualRevenue) || 0;
-      if (rev <= 0) {
-        if (sector === SektorInvestasi.PARIWISATA) {
-          const autoVisitorsPerWeek =
-            (parseFloat(visitorsPerDay) || 0) *
-            (parseFloat(activeDaysPerWeek) || 0);
-          rev = (parseFloat(ticketPrice) || 0) * autoVisitorsPerWeek * 52;
-        } else if (
-          sector === SektorInvestasi.PERTANIAN ||
-          sector === SektorInvestasi.KELAUTAN
-        ) {
-          const autoYield =
-            (parseFloat(baseYield) || 0) * (parseFloat(harvestsPerYear) || 0);
-          rev = autoYield * (parseFloat(pricePerUnit) || 0);
-        } else if (
-          sector === SektorInvestasi.PERTAMBANGAN ||
-          sector === SektorInvestasi.PERDAGANGAN
-        ) {
-          const autoVolumePerMonth =
-            (parseFloat(volumePerDay) || 0) *
-            (parseFloat(activeDaysPerMonth) || 0);
-          rev = autoVolumePerMonth * (parseFloat(marginPerUnit) || 0) * 12;
-        }
+      if (sector === SektorInvestasi.PARIWISATA) {
+        const autoVisitorsPerWeek =
+          (parseFloat(visitorsPerDay) || 0) *
+          (parseFloat(activeDaysPerWeek) || 0);
+        rev = (parseFloat(ticketPrice) || 0) * autoVisitorsPerWeek * 52;
+      } else if (
+        sector === SektorInvestasi.PERTANIAN ||
+        sector === SektorInvestasi.KELAUTAN
+      ) {
+        const autoYield =
+          (parseFloat(baseYield) || 0) * (parseFloat(harvestsPerYear) || 0);
+        rev = autoYield * (parseFloat(pricePerUnit) || 0);
+      } else if (
+        sector === SektorInvestasi.PERTAMBANGAN ||
+        sector === SektorInvestasi.PERDAGANGAN
+      ) {
+        const autoVolumePerMonth =
+          (parseFloat(volumePerDay) || 0) *
+          (parseFloat(activeDaysPerMonth) || 0);
+        rev = autoVolumePerMonth * (parseFloat(marginPerUnit) || 0) * 12;
       }
 
-      // Calculate Net Profit (Laba Bersih)
-      const netProfit = (rev || 0) - (opx || 0);
-
-      // Calculate ROI Percentage (prevent division by zero)
-      const roiPercentage = totalInvestment > 0 
-        ? ((netProfit / totalInvestment) * 100) 
-        : 0;
-
-      if (totalInvestment > 0 && rev > 0) {
-        const roi = roiPercentage;
-        const cumulativeRoi = ((netProfit * projectionTenor) / totalInvestment) * 100;
+      if (cap > 0 && rev > 0) {
+        const netProfit = rev - opx;
+        const roi = (netProfit / cap) * 100;
+        const cumulativeRoi = ((netProfit * projectionTenor) / cap) * 100;
         
-        const payback = netProfit > 0 ? totalInvestment / netProfit : 999;
+        const payback = netProfit > 0 ? cap / netProfit : 999;
 
         // Calculate Discounted Payback Period (DPB) using time value of money and inflation
         let discountedPayback = 999;
@@ -2198,7 +2123,7 @@ export default function LandingPage({
 
       <div className="relative z-10 pt-0">
         {/* 1. HERO SECTION WITH IMMERSIVE BACKGROUND */}
-        <div id="hero-section" className={`relative min-h-[80vh] sm:min-h-[85vh] md:min-h-[90vh] flex items-center justify-center pt-20 sm:pt-24 md:pt-28 pb-8 sm:pb-12 md:pb-16 overflow-hidden ${isDark ? "bg-[#0b0f19] text-white" : "bg-gradient-to-b from-slate-50 via-white to-slate-50 text-slate-900"}`}>
+        <div id="hero-section" className={`relative min-h-[80vh] sm:min-h-[85vh] md:min-h-[90vh] flex items-center justify-center pt-16 sm:pt-20 md:pt-28 pb-8 sm:pb-12 md:pb-16 overflow-hidden ${isDark ? "bg-[#0b0f19] text-white" : "bg-gradient-to-b from-slate-50 via-white to-slate-50 text-slate-900"}`}>
           <style>{`
             @keyframes aurora1 {
               0%, 100% { transform: translate(0, 0) scale(1); }
@@ -2276,7 +2201,7 @@ export default function LandingPage({
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className={`animate-float inline-flex items-center gap-2 px-4 py-1.5 sm:px-5 sm:py-2 rounded-full border mb-4 text-[10.5px] sm:text-xs font-mono font-bold tracking-wider sm:tracking-widest uppercase whitespace-nowrap backdrop-blur-2xl max-w-full overflow-hidden ${
+                className={`inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-5 sm:py-2 rounded-full border mb-4 text-[10px] sm:text-xs font-mono font-bold tracking-wider sm:tracking-widest uppercase whitespace-nowrap backdrop-blur-2xl max-w-full overflow-hidden ${
                   isDark 
                     ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.25)]" 
                     : "border-emerald-300 bg-white/95 text-emerald-700 shadow-md shadow-emerald-500/10"
@@ -2293,15 +2218,15 @@ export default function LandingPage({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-                className="text-[32px] xs:text-[38px] sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.12] sm:leading-[1.08] text-slate-900 dark:text-white mt-1 mb-4 px-2 w-full max-w-4xl mx-auto text-center"
+                className="text-3xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.08] text-slate-900 dark:text-white mt-1 mb-5 px-2 w-full max-w-[95%] mx-auto text-center"
               >
-                <span className="text-[11px] xs:text-xs sm:text-sm font-extrabold tracking-[0.25em] sm:tracking-[0.3em] text-emerald-600 dark:text-emerald-400 block mb-2 sm:mb-3 uppercase">
+                <span className="text-xs sm:text-sm font-extrabold tracking-[0.3em] text-emerald-600 dark:text-emerald-400 block mb-2 sm:mb-3 uppercase">
                   {t('hero.heroTitleBrand', 'SMART-INVESTMENT LUWU')}
                 </span>
                 <span className="block font-extrabold text-slate-900 dark:text-white mb-1">
                   Pintu Gerbang
                 </span>
-                <span className="block bg-gradient-to-r from-teal-500 via-emerald-500 to-blue-600 bg-clip-text text-transparent font-black drop-shadow-xs">
+                <span className="block bg-gradient-to-r from-emerald-600 via-teal-500 to-indigo-600 dark:from-emerald-400 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent font-black drop-shadow-sm">
                   Investasi Digital
                 </span>
               </motion.h1>
@@ -2309,7 +2234,7 @@ export default function LandingPage({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="text-[13px] xs:text-sm sm:text-base md:text-lg leading-relaxed text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mt-1 mb-7 sm:mb-8 font-normal text-balance px-2"
+                className="text-xs sm:text-base md:text-lg leading-relaxed text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mt-2 mb-8 font-medium text-balance"
               >
                 {t("hero.subtitle", "Cepat. Transparan. Terintegrasi Spasial. Akses data peluang investasi Kabupaten Luwu secara real-time dengan peta interaktif PostGIS dan simulasi ROI.")}
               </motion.p>
@@ -2319,40 +2244,44 @@ export default function LandingPage({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.3 }}
-                className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-6 z-20 relative w-full max-w-xl mx-auto px-3 sm:px-0"
+                className="flex flex-col sm:flex-row items-center justify-center gap-3.5 mb-6 z-20 relative w-full max-w-2xl mx-auto px-4 sm:px-0"
               >
                 {/* Primary CTA: GIS Analytics */}
-                <MagneticButton
-                  strength={0.25}
+                <motion.button
+                  whileTap={{ scale: 0.96 }}
+                  whileHover={{ scale: 1.03 }}
+                  type="button"
                   id="btn-hero-gis-analytics"
-                  onClick={(e: any) => handleGisClick(e, "default")}
-                  className="group relative flex w-full sm:w-auto items-center justify-center gap-2.5 px-6 sm:px-8 py-3.5 sm:py-4 min-h-[50px] sm:min-h-[54px] rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm sm:text-base shadow-[0_10px_25px_rgba(16,185,129,0.3)] hover:shadow-[0_15px_35px_rgba(16,185,129,0.45)] transition-all duration-300 border border-emerald-300/30 overflow-hidden cursor-pointer active:scale-[0.98]"
+                  onClick={(e) => handleGisClick(e, "default")}
+                  className="group relative flex w-full sm:w-auto items-center justify-center gap-3 px-8 py-4 min-h-[54px] rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm sm:text-base shadow-[0_10px_30px_rgba(16,185,129,0.35)] hover:shadow-[0_15px_40px_rgba(16,185,129,0.5)] transition-all duration-300 border border-emerald-300/40 overflow-hidden cursor-pointer"
                 >
                   <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out pointer-events-none" />
-                  <span className="relative flex items-center gap-2">
-                    <Globe className="w-4.5 h-4.5 text-amber-300 group-hover:rotate-12 transition-transform duration-300" />
+                  <span className="relative flex items-center gap-2.5">
+                    <Globe className="w-5 h-5 text-amber-300 group-hover:rotate-12 transition-transform duration-300" />
                     <span>{t('hero.btnGisAnalytics', 'GIS Analytics')}</span>
-                    <span className="px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider bg-white/20 text-emerald-100 rounded-full border border-white/30 ml-1">
+                    <span className="px-2.5 py-0.5 text-[10px] uppercase font-bold tracking-wider bg-white/20 text-emerald-100 rounded-full border border-white/30 ml-1">
                       Peta Spasial
                     </span>
-                    <ChevronRight className="w-4.5 h-4.5 group-hover:translate-x-1 transition-transform duration-300" />
+                    <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                   </span>
-                </MagneticButton>
+                </motion.button>
 
                 {/* Secondary CTA: Eksplorasi Potensi */}
-                <MagneticButton
-                  strength={0.2}
+                <motion.button
+                  whileTap={{ scale: 0.96 }}
+                  whileHover={{ scale: 1.02 }}
+                  type="button"
                   id="btn-hero-eksplorasi-potensi"
                   onClick={() => scrollToSection("potensi-section")}
-                  className={`flex w-full sm:w-auto justify-center items-center gap-2 px-6 sm:px-7 py-3.5 sm:py-4 min-h-[50px] sm:min-h-[54px] rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 border backdrop-blur-xl cursor-pointer active:scale-[0.98] ${
+                  className={`flex w-full sm:w-auto justify-center items-center gap-2.5 px-7 py-4 min-h-[54px] rounded-2xl font-extrabold text-sm sm:text-base transition-all duration-300 border backdrop-blur-xl cursor-pointer ${
                     isDark
-                      ? "bg-slate-900/70 border-slate-700/80 text-slate-100 hover:bg-slate-800/90 hover:text-white hover:border-emerald-500/50 shadow-md"
-                      : "bg-white border-slate-200/90 text-slate-800 hover:bg-slate-50 hover:text-emerald-700 hover:border-emerald-300 shadow-sm shadow-slate-200/50"
+                      ? "bg-slate-900/70 border-slate-700/80 text-slate-100 hover:bg-slate-800/90 hover:text-white hover:border-emerald-500/50 shadow-lg"
+                      : "bg-white border-slate-200/90 text-slate-800 hover:bg-slate-50 hover:text-emerald-700 hover:border-emerald-300 shadow-md shadow-slate-200/60"
                   }`}
                 >
-                  <Building2 className="w-4.5 h-4.5 text-emerald-500" />
+                  <Building2 className="w-5 h-5 text-emerald-500" />
                   <span>{t('hero.btnExplorePotential', 'Eksplorasi Potensi')}</span>
-                </MagneticButton>
+                </motion.button>
               </motion.div>
             </motion.div>
 
@@ -2588,28 +2517,10 @@ export default function LandingPage({
           className={`pt-12 pb-8 sm:pt-16 sm:pb-12 md:pt-20 md:pb-14 border-b relative z-20 ${isDark ? "bg-slate-950/40 border-slate-800/80" : "bg-slate-50/60 border-slate-200/80"}`}
         >
           <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div
-              ref={statsScrollContainerRef}
-              onScroll={handleStatsScroll}
-              onTouchStart={() => {
-                setIsUserInteractingStats(true);
-                if (statsResumeTimerRef.current) clearTimeout(statsResumeTimerRef.current);
-              }}
-              onTouchEnd={() => {
-                if (statsResumeTimerRef.current) clearTimeout(statsResumeTimerRef.current);
-                statsResumeTimerRef.current = setTimeout(() => {
-                  setIsUserInteractingStats(false);
-                }, 4000);
-              }}
-              className="flex sm:grid overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-y-14 sm:gap-x-6 lg:gap-6 pb-4 sm:pb-0 scrollbar-hide pt-10 sm:pt-0 px-2 sm:px-0 scroll-smooth"
-            >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-12 sm:gap-y-14 sm:gap-x-6 lg:gap-6">
               {/* Card 1: Infrastruktur Pendukung Terpetakan */}
-              <TiltCard
-                wrapperClassName="snap-center shrink-0 w-[84vw] max-w-[340px] sm:max-w-none sm:w-auto"
-                scaleOnHover={1.03}
-                maxTilt={10}
-                glareOpacity={0.18}
-                className="w-full h-full group relative pt-13 sm:pt-15 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 hover:border-blue-500/40 dark:hover:border-blue-500/40 hover:shadow-[0_20px_40px_rgba(59,130,246,0.14)]"
+              <div
+                className="group relative pt-13 sm:pt-15 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 hover:border-blue-500/40 dark:hover:border-blue-500/40 hover:shadow-[0_20px_40px_rgba(59,130,246,0.14)]"
               >
                 {/* Top Subtle Accent Rail */}
                 <div className="absolute top-0 inset-x-8 h-[3px] bg-gradient-to-r from-transparent via-blue-500 to-transparent rounded-full" />
@@ -2642,20 +2553,16 @@ export default function LandingPage({
 
                 {/* Micro Status Chip */}
                 <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 w-full flex justify-center">
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-500/20">
-                    <SonarRadarPulse color="blue" size={8} />
-                    <span>GIS Terpetakan</span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                    GIS Terpetakan
                   </span>
                 </div>
-              </TiltCard>
+              </div>
 
               {/* Card 2: Lahan Potensial & Komoditas Strategis */}
-              <TiltCard
-                wrapperClassName="snap-center shrink-0 w-[84vw] max-w-[340px] sm:max-w-none sm:w-auto"
-                scaleOnHover={1.03}
-                maxTilt={10}
-                glareOpacity={0.18}
-                className="w-full h-full group relative pt-13 sm:pt-15 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 hover:border-emerald-500/40 dark:hover:border-emerald-500/40 hover:shadow-[0_20px_40px_rgba(16,185,129,0.14)]"
+              <div
+                className="group relative pt-13 sm:pt-15 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 hover:border-emerald-500/40 dark:hover:border-emerald-500/40 hover:shadow-[0_20px_40px_rgba(16,185,129,0.14)]"
               >
                 {/* Top Subtle Accent Rail */}
                 <div className="absolute top-0 inset-x-8 h-[3px] bg-gradient-to-r from-transparent via-emerald-500 to-transparent rounded-full" />
@@ -2687,20 +2594,16 @@ export default function LandingPage({
 
                 {/* Micro Status Chip */}
                 <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 w-full flex justify-center">
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-500/20">
-                    <SonarRadarPulse color="emerald" size={8} />
-                    <span>Siap Ditawarkan</span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Siap Ditawarkan
                   </span>
                 </div>
-              </TiltCard>
+              </div>
 
               {/* Card 3: Serapan Tenaga Kerja */}
-              <TiltCard
-                wrapperClassName="snap-center shrink-0 w-[84vw] max-w-[340px] sm:max-w-none sm:w-auto"
-                scaleOnHover={1.03}
-                maxTilt={10}
-                glareOpacity={0.18}
-                className="w-full h-full group relative pt-13 sm:pt-15 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 hover:border-amber-500/40 dark:hover:border-amber-500/40 hover:shadow-[0_20px_40px_rgba(245,158,11,0.14)]"
+              <div
+                className="group relative pt-13 sm:pt-15 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 hover:border-amber-500/40 dark:hover:border-amber-500/40 hover:shadow-[0_20px_40px_rgba(245,158,11,0.14)]"
               >
                 {/* Top Subtle Accent Rail */}
                 <div className="absolute top-0 inset-x-8 h-[3px] bg-gradient-to-r from-transparent via-amber-500 to-transparent rounded-full" />
@@ -2732,20 +2635,16 @@ export default function LandingPage({
 
                 {/* Micro Status Chip */}
                 <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 w-full flex justify-center">
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-500/20">
-                    <SonarRadarPulse color="amber" size={8} />
-                    <span>TKL & TKA Terdata</span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                    TKL & TKA Terdata
                   </span>
                 </div>
-              </TiltCard>
+              </div>
 
               {/* Card 4: Asisten AI DPMPTSP */}
-              <TiltCard
-                wrapperClassName="snap-center shrink-0 w-[84vw] max-w-[340px] sm:max-w-none sm:w-auto"
-                scaleOnHover={1.03}
-                maxTilt={10}
-                glareOpacity={0.18}
-                className="w-full h-full group relative pt-13 sm:pt-15 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 hover:border-purple-500/40 dark:hover:border-purple-500/40 hover:shadow-[0_20px_40px_rgba(168,85,247,0.14)]"
+              <div
+                className="group relative pt-13 sm:pt-15 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 hover:border-purple-500/40 dark:hover:border-purple-500/40 hover:shadow-[0_20px_40px_rgba(168,85,247,0.14)]"
               >
                 {/* Top Subtle Accent Rail */}
                 <div className="absolute top-0 inset-x-8 h-[3px] bg-gradient-to-r from-transparent via-purple-500 to-transparent rounded-full" />
@@ -2777,55 +2676,12 @@ export default function LandingPage({
 
                 {/* Micro Status Chip */}
                 <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 w-full flex justify-center">
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-500/20">
-                    <SonarRadarPulse color="purple" size={8} />
-                    <span>Konsultasi Cerdas</span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
+                    Konsultasi Cerdas
                   </span>
                 </div>
-              </TiltCard>
-            </div>
-
-            {/* Mobile Carousel Pagination & Navigation Controls */}
-            <div className="flex sm:hidden items-center justify-center gap-3 mt-4">
-              <button
-                type="button"
-                onClick={() => {
-                  const prev = (activeStatIndex - 1 + 4) % 4;
-                  scrollToStatCard(prev);
-                }}
-                className="w-8 h-8 rounded-full flex items-center justify-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs text-slate-600 dark:text-slate-300 active:scale-95 transition-transform cursor-pointer"
-                aria-label="Slide sebelumnya"
-              >
-                <ChevronLeft size={16} />
-              </button>
-
-              <div className="flex items-center gap-1.5 px-1">
-                {[0, 1, 2, 3].map((idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => scrollToStatCard(idx)}
-                    className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                      activeStatIndex === idx
-                        ? "w-6 bg-blue-500 dark:bg-blue-400 shadow-xs shadow-blue-500/30"
-                        : "w-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400"
-                    }`}
-                    aria-label={`Pindah ke slide ${idx + 1}`}
-                  />
-                ))}
               </div>
-
-              <button
-                type="button"
-                onClick={() => {
-                  const next = (activeStatIndex + 1) % 4;
-                  scrollToStatCard(next);
-                }}
-                className="w-8 h-8 rounded-full flex items-center justify-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs text-slate-600 dark:text-slate-300 active:scale-95 transition-transform cursor-pointer"
-                aria-label="Slide berikutnya"
-              >
-                <ChevronRight size={16} />
-              </button>
             </div>
           </div>
         </section>
@@ -2837,33 +2693,13 @@ export default function LandingPage({
         >
           <div className="flex flex-col md:flex-row items-end justify-between mb-10 gap-4">
             <div>
-              <motion.h2 
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2 text-balance break-words"
-              >
-                <span className="bg-gradient-to-r from-teal-500 to-blue-600 bg-clip-text text-transparent">
-                  {t("sections.potensi.title")}
-                </span>
-              </motion.h2>
-              <motion.div 
-                initial={{ opacity: 0, scaleX: 0 }}
-                whileInView={{ opacity: 1, scaleX: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="h-1 w-16 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full mb-4 ml-0 origin-left"
-              />
-              <motion.p 
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className={`text-sm sm:text-base ${textMuted}`}
-              >
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2 text-balance break-words animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+                {t("sections.potensi.title")}
+              </h2>
+              <div className="h-1 w-16 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full mb-4 ml-0 animate-fade-in-up" style={{ animationDelay: '200ms' }}></div>
+              <p className={`text-sm sm:text-base ${textMuted} animate-fade-in-up`} style={{ animationDelay: '300ms' }}>
                 {t("sections.potensi.subtitle")}
-              </motion.p>
+              </p>
             </div>
             <motion.button whileTap={{ scale: 0.95 }}
               whileHover={{ scale: 1.04 }}
@@ -2968,11 +2804,8 @@ export default function LandingPage({
                 })
                 .slice(0, 6)
                 .map((inv, idx) => (
-                  <TiltCard
+                  <div
                     key={inv.id}
-                    maxTilt={6}
-                    scaleOnHover={1.015}
-                    glareOpacity={0.12}
                     style={{ animationDelay: `${idx * 150}ms` }}
                     className={`w-full rounded-[26px] sm:rounded-[28px] border overflow-hidden flex flex-col group
                                 opacity-0 animate-fade-in-up
@@ -3213,7 +3046,7 @@ export default function LandingPage({
                         </div>
                       </div>
                     </div>
-                  </TiltCard>
+                  </div>
                 ))}
             </div>
           ) : (
@@ -3379,42 +3212,19 @@ export default function LandingPage({
             <div className="absolute top-[20%] right-[10%] w-[50vw] h-[50vw] rounded-full bg-blue-500/5 blur-[120px] mix-blend-screen" />
           </div>
           <div className="text-center mb-8 sm:mb-12 md:mb-16 relative z-10">
-            <motion.span
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className={`inline-flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-full text-xs font-bold uppercase tracking-wider mb-4 backdrop-blur-xl border ${isDark ? "bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-orange-200 border-orange-400/30 shadow-sm" : "bg-gradient-to-r from-orange-500/10 to-amber-500/10 text-orange-700 border-orange-300 shadow-sm shadow-orange-500/10"}`}
+            <span
+              className={`inline-flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-full text-xs font-bold uppercase tracking-wider mb-4 backdrop-blur-xl border animate-fade-in-up ${isDark ? "bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-orange-200 border-orange-400/30 shadow-sm" : "bg-gradient-to-r from-orange-500/10 to-amber-500/10 text-orange-700 border-orange-300 shadow-sm shadow-orange-500/10"}`}
+              style={{ animationDelay: '50ms' }}
             >
               <Building size={14} /> Infrastruktur & Ekosistem
-            </motion.span>
-            <motion.h2 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-2"
-            >
-              <span className="bg-gradient-to-r from-teal-500 to-blue-600 bg-clip-text text-transparent">
-                {t("sections.infrastruktur.title")}
-              </span>
-            </motion.h2>
-            <motion.div 
-              initial={{ opacity: 0, scaleX: 0 }}
-              whileInView={{ opacity: 1, scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="h-1 w-16 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full mb-4 mx-auto"
-            />
-            <motion.p 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className={`text-sm sm:text-base max-w-2xl mx-auto ${textMuted}`}
-            >
+            </span>
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-2 animate-fade-in-up" style={{ animationDelay: '150ms' }}>
+              {t("sections.infrastruktur.title")}
+            </h2>
+            <div className="h-1 w-16 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full mb-4 mx-auto animate-fade-in-up" style={{ animationDelay: '250ms' }}></div>
+            <p className={`text-sm sm:text-base max-w-2xl mx-auto ${textMuted} animate-fade-in-up`} style={{ animationDelay: '350ms' }}>
               {t("sections.infrastruktur.subtitle")}
-            </motion.p>
+            </p>
           </div>
 
           {(() => {
@@ -3502,7 +3312,7 @@ export default function LandingPage({
             });
 
             return (
-              <div className="flex sm:grid overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-y-14 sm:gap-x-6 lg:gap-6 relative z-10 pb-4 sm:pb-0 scrollbar-hide pt-10 sm:pt-0 px-2 sm:px-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-14 sm:gap-y-14 sm:gap-x-6 lg:gap-6 relative z-10">
                 {mappedFacilities.map((facility, idx) => (
                   <motion.div
                     initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -3511,7 +3321,7 @@ export default function LandingPage({
                     viewport={isMobile ? undefined : { once: true, amount: 0.05 }}
                     transition={{ delay: idx * 0.1 }}
                     key={idx}
-                    className={`group relative pt-14 sm:pt-16 pb-6 px-5 sm:px-6 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 ${facility.cardHover} snap-center shrink-0 w-[82vw] sm:w-auto`}
+                    className={`group relative pt-14 sm:pt-16 pb-6 px-5 sm:px-6 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 ${facility.cardHover}`}
                   >
                     {/* Top Subtle Accent Rail */}
                     <div className={`absolute top-0 inset-x-8 h-[3px] bg-gradient-to-r from-transparent ${facility.rail} to-transparent rounded-full`} />
@@ -5024,8 +4834,8 @@ export default function LandingPage({
                               <div className="grid grid-cols-2 gap-2 sm:gap-3 w-full flex-1">
                                 <div className="p-2.5 sm:p-3 rounded-xl bg-slate-500/5 dark:bg-slate-800/40 border border-slate-500/10 flex flex-col justify-between">
                                   <div className="text-[10px] sm:text-xs uppercase tracking-wider mb-0.5 font-bold text-slate-500 dark:text-slate-400 truncate">{t("landing.annualRoi", "ROI Tahunan")}</div>
-                                  <div className="text-sm xs:text-base sm:text-lg md:text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight">{roiResult.roi.toFixed(2)}%</div>
-                                  <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400 truncate">{projectionTenor}th: {roiResult.cumulativeRoi.toFixed(2)}%</div>
+                                  <div className="text-sm xs:text-base sm:text-lg md:text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight">{roiResult.roi.toFixed(1)}%</div>
+                                  <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400 truncate">{projectionTenor}th: {roiResult.cumulativeRoi.toFixed(0)}%</div>
                                 </div>
                                 <div className="p-2.5 sm:p-3 rounded-xl bg-slate-500/5 dark:bg-slate-800/40 border border-slate-500/10 flex flex-col justify-between">
                                   <div className="text-[10px] sm:text-xs uppercase tracking-wider mb-0.5 font-bold text-slate-500 dark:text-slate-400 truncate">{t("landing.netProfit", "Net Profit")}</div>
@@ -5074,13 +4884,13 @@ export default function LandingPage({
                                 <div className="flex items-center justify-between border-b border-dashed border-slate-500/20 pb-2">
                                   <span className="text-xs font-medium text-slate-600 dark:text-slate-300">{t('financial.roiAnnual', 'ROI Tahunan')}</span>
                                   <span className={`font-black font-mono text-base sm:text-lg ${roiResult.roi >= 10 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}`}>
-                                    {roiResult.roi.toFixed(2)}%
+                                    {roiResult.roi.toFixed(1)}%
                                   </span>
                                 </div>
                                 <div className="flex items-center justify-between pt-0.5">
                                   <span className="text-xs font-medium text-slate-600 dark:text-slate-300">{t('financial.roiCumulativeDynamic', { years: projectionTenor })}</span>
                                   <span className="font-black font-mono text-base sm:text-lg text-emerald-600 dark:text-emerald-400">
-                                    {roiResult.cumulativeRoi.toFixed(2)}%
+                                    {roiResult.cumulativeRoi.toFixed(1)}%
                                   </span>
                                 </div>
                               </div>
@@ -5481,42 +5291,16 @@ export default function LandingPage({
         <section className={`relative py-16 sm:py-24 border-t ${isDark ? "bg-[#03060f] border-slate-800/80" : "bg-white border-slate-200"}`}>
           <div className="container mx-auto px-3 sm:px-4 lg:px-6 relative z-10 max-w-6xl">
             <div className="text-center mb-12 sm:mb-16">
-              <motion.span 
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-3 border ${isDark ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-emerald-50 text-emerald-700 border-emerald-200"}`}
-              >
+              <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-3 border ${isDark ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-emerald-50 text-emerald-700 border-emerald-200"}`}>
                 <Layers className="w-3.5 h-3.5" /> Sinergi Layanan Lintas Sektor
-              </motion.span>
-              <motion.h3 
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className={`text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-3 ${isDark ? "text-white" : "text-slate-900"}`}
-              >
-                <span className="bg-gradient-to-r from-teal-500 to-blue-600 bg-clip-text text-transparent">
-                  {t("ecosystem.title", "Ekosistem DPMPTSP Kabupaten Luwu")}
-                </span>
-              </motion.h3>
-              <motion.div 
-                initial={{ opacity: 0, scaleX: 0 }}
-                whileInView={{ opacity: 1, scaleX: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className="h-1 w-20 bg-gradient-to-r from-emerald-500 via-teal-500 to-indigo-500 rounded-full mb-3 mx-auto" 
-              />
-              <motion.p 
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className={`text-xs sm:text-sm font-semibold max-w-2xl mx-auto uppercase tracking-wider ${isDark ? "text-emerald-400" : "text-emerald-700"}`}
-              >
+              </span>
+              <h3 className={`text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-3 ${isDark ? "text-white" : "text-slate-900"}`}>
+                {t("ecosystem.title", "Ekosistem DPMPTSP Kabupaten Luwu")}
+              </h3>
+              <div className="h-1 w-20 bg-gradient-to-r from-emerald-500 via-teal-500 to-indigo-500 rounded-full mb-3 mx-auto" />
+              <p className={`text-xs sm:text-sm font-semibold max-w-2xl mx-auto uppercase tracking-wider ${isDark ? "text-emerald-400" : "text-emerald-700"}`}>
                 {t("ecosystem.subtitle", "Sinergi Layanan Terpadu 4 Bidang Strategis")}
-              </motion.p>
+              </p>
             </div>
             
             {/* 2x2 Grid on Mobile, 4-Column on Desktop for Symmetric Perfection */}

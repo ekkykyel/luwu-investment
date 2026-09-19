@@ -28,7 +28,6 @@ interface LayerLegendControlProps {
   setMapMode?: (mode: any) => void;
   isLayerPanelOpen?: boolean;
   setIsLayerPanelOpen?: (open: boolean) => void;
-  isLeftSidebarOpen?: boolean;
 }
 
 export default function LayerLegendControl({ 
@@ -46,8 +45,7 @@ export default function LayerLegendControl({
   mapMode = "satellite",
   setMapMode,
   isLayerPanelOpen: parentIsLayerPanelOpen,
-  setIsLayerPanelOpen: parentSetIsLayerPanelOpen,
-  isLeftSidebarOpen = false
+  setIsLayerPanelOpen: parentSetIsLayerPanelOpen
 }: LayerLegendControlProps) {
   const { t } = useTranslation();
   const [controlContainer, setControlContainer] = useState<HTMLDivElement | null>(null);
@@ -58,13 +56,6 @@ export default function LayerLegendControl({
 
   const [activeTab, setActiveTab] = useState<"controls" | "layers" | "symbology">("controls");
   const [isSymbologyModalOpen, setIsSymbologyModalOpen] = useState(false);
-
-  // Auto-switch to "layers" tab when opened via top navbar "Layer Tematik" button
-  React.useEffect(() => {
-    if (parentIsLayerPanelOpen) {
-      setActiveTab("layers");
-    }
-  }, [parentIsLayerPanelOpen]);
 
   useControl<any>(() => {
     class CustomLayerControl implements IControl {
@@ -184,13 +175,7 @@ export default function LayerLegendControl({
   ];
 
   return createPortal(
-    <div className={`m-2 sm:m-3 ${
-      !isLayerPanelOpen 
-        ? "mt-[175px] sm:mt-[165px] md:mt-38" 
-        : "mt-[175px] sm:mt-[165px] md:mt-24"
-    } ${
-      isLeftSidebarOpen ? "md:ml-[288px] lg:ml-[352px]" : "md:ml-2 lg:ml-3"
-    } transition-[margin] duration-300 ease-in-out z-[55] pointer-events-auto`}>
+    <div className="m-2 sm:m-3 mt-20 md:mt-24 z-[55] pointer-events-auto">
       <AnimatePresence mode="wait">
         {!isLayerPanelOpen ? (
           /* Collapsed State: Compact horizontal tab/button collapsing to the left */
@@ -216,7 +201,7 @@ export default function LayerLegendControl({
 
             <div className="flex flex-col items-start text-left">
               <span className={`font-['Plus_Jakarta_Sans',sans-serif] font-bold text-xs uppercase tracking-wider ${isDarkMode ? "text-slate-100" : "text-slate-900"}`}>
-                {isFilterActive ? `Fokus: ${selectedDistrictObj?.name || "Wilayah"}` : "Layer Tematik & Peta"}
+                {isFilterActive ? `Fokus: ${selectedDistrictObj?.name || "Wilayah"}` : "Kontrol Peta & Layer"}
               </span>
               <span className="text-[9px] text-slate-500 dark:text-slate-400 font-mono">
                 {activeCount} Layer Aktif {isFilterActive ? "• Clip Aktif ✂️" : ""}
@@ -235,7 +220,7 @@ export default function LayerLegendControl({
             animate={{ opacity: 1, x: 0, scaleX: 1 }}
             exit={{ opacity: 0, x: -35, scaleX: 0.85 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className={`p-4 rounded-2xl shadow-2xl border origin-left transition-all duration-300 w-84 sm:w-96 max-w-[calc(100vw-2.5rem)] md:max-w-[390px] max-h-[calc(100dvh-210px)] md:max-h-[calc(100vh-130px)] flex flex-col ${
+            className={`p-4 rounded-2xl shadow-2xl border origin-left transition-all duration-300 w-84 sm:w-96 max-w-[calc(100vw-2.5rem)] ${
               isDarkMode 
                 ? "bg-slate-900/95 border-slate-700/90 text-white shadow-black/90 backdrop-blur-xl" 
                 : "bg-white/95 border-slate-300/90 text-slate-900 shadow-2xl shadow-slate-900/15 backdrop-blur-xl"
@@ -359,7 +344,7 @@ export default function LayerLegendControl({
 
             {/* TAB 1: KONTROL PETA (BASE MAP & FOKUS/CLIP WILAYAH) */}
             {activeTab === "controls" && (
-              <div className="space-y-3.5 max-h-[calc(100dvh-320px)] md:max-h-85 overflow-y-auto custom-scrollbar pr-1">
+              <div className="space-y-3.5 max-h-85 overflow-y-auto custom-scrollbar pr-1">
                 {/* Base Map Selection */}
                 {setMapMode && (
                   <div className="space-y-1.5">
@@ -595,7 +580,7 @@ export default function LayerLegendControl({
                 )}
 
                 {/* Layer Items List */}
-                <div className="overflow-y-auto custom-scrollbar pr-1.5 max-h-[calc(100dvh-320px)] md:max-h-80 space-y-2">
+                <div className="overflow-y-auto custom-scrollbar pr-1.5 max-h-80 space-y-2">
                   {targetLayers.map(target => {
                     const layer = spatialLayers.find(l => l.id === target.id);
                     const isActive = layer ? layer.isActive : false;
@@ -744,7 +729,7 @@ export default function LayerLegendControl({
                   </button>
                 </div>
 
-                <div className="overflow-y-auto custom-scrollbar pr-1 max-h-[calc(100dvh-320px)] md:max-h-80 space-y-2">
+                <div className="overflow-y-auto custom-scrollbar pr-1 max-h-80 space-y-2">
                   {activeSymbologyItems.length === 0 ? (
                     <div className="p-4 text-center text-xs text-slate-400">
                       <p className="mb-2">Tidak ada layer tematik yang aktif saat ini.</p>

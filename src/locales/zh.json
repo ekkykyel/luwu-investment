@@ -1334,9 +1334,8 @@
   "dept_dalak": "控制与运营部门",
   "dept_licensing": "许可部门",
   "dept_data": "数据与报告部门",
-  "umkm_catalog": "中小微企业（UMKM）合作目录",
-  "umkm_catalog_title": "MPP 优质中小微企业展厅与合作",
-  "umkm_catalog_desc": "鲁乌县政府孵化的中小微企业产品推广与合作中心，均已通过 NIB、清真和 P-IRT 合法认证。",
+  "umkm_catalog": "中小微企业 (UMKM) 合作目录",
+  "umkm_catalog_desc": "Luwu 的正宗工艺：将当地优质产品与投资者和全国市场连接起来。",
   "contact_owner": "联系店主 (WhatsApp)",
   "pwa": {
     "title": "🚨 全屏主门户 (PWA)",
@@ -1940,12 +1939,10 @@
   "opex_kemasan": "包装费用",
   "mppPortal": {
     "hero": {
-      "titlePrefix": "欢迎来到公共服务",
-      "titleHighlight": "鲁乌县商场",
-      "subtitle": "一站式综合、快速、透明的公共服务",
-      "award": "鲁乌县政府",
-      "videoTour": "Simpurusiang 政务中心宣传视频",
-      "officerPortal": "窗口工作人员与租户操作员登录入口"
+      "titlePrefix": "迈向数字转型",
+      "titleHighlight": "卓越鲁乌",
+      "subtitle": "鲁乌县综合公共服务中心。一站式连接 12 个以上政府机构、国有企业和私营部门，提供快速、透明、便捷的服务。",
+      "award": "公共服务卓越创新"
     },
     "nav": {
       "beranda": "首页",
@@ -1953,7 +1950,7 @@
       "instansi": "机构",
       "fasilitas": "设施",
       "statistik": "统计",
-      "asistenAi": "MPP 助手",
+      "asistenAi": "AI 助手",
       "tabe": "Tabe'",
       "umkm": "微型中小企业目录",
       "govName": "鲁乌县政府",
@@ -1962,15 +1959,9 @@
     },
     "search": {
       "placeholder": "搜索许可证、柜台或机构服务...",
-      "placeholderShort": "搜索服务、机构或信息...",
-      "button": "搜索",
-      "buttonMobile": "搜索",
-      "popularTitle": "热门服务：",
-      "chipDukcapil": "户籍与身份证",
-      "chipNIB": "NIB 营业执照",
-      "chipAntrean": "在线预约取号",
-      "chipBPJS": "国民医保 (BPJS)",
-      "chipPBB": "房产税 (PBB)"
+      "placeholderShort": "搜索政务服务...",
+      "button": "搜索服务",
+      "buttonMobile": "搜索"
     },
     "quickActions": {
       "antrean": "在线排队",
@@ -1978,13 +1969,7 @@
       "cekStatus": "状态查询",
       "cekStatusDesc": "跟踪许可证文件",
       "mandiri": "自助服务",
-      "mandiriDesc": "24小时数字自助终端",
-      "vipDesk": "VIP 投资者服务台",
-      "vipDeskDesc": "联络官与一站式协助",
-      "petaSpasial": "RDTR 空间规划图",
-      "petaSpasialDesc": "WebGIS 土地分区与潜力",
-      "izinOss": "OSS 商业许可",
-      "izinOssDesc": "NIB、PBG 与 SLF 条件"
+      "mandiriDesc": "24小时数字自助终端"
     },
     "instansi": {
       "badge": "综合政务服务生态",
@@ -2688,15 +2673,8 @@
       "closeAria": "关闭当前排队票据"
     },
     "persona": {
-      "warga": "公众 / 市民",
-      "investor": "投资者与企业",
-      "semua": "全部服务",
-      "wargaTag": "市民模式：",
-      "wargaDesc": "实时排号、办事材料清单与部门窗口。",
-      "investorTag": "投资者模式：",
-      "investorDesc": "VIP 投资者专席、RDTR 空间规划与 OSS-RBA。",
-      "semuaTag": "全部服务模式：",
-      "semuaDesc": "全馆公共窗口、投资与法规模块。"
+      "citizen": "公众市民",
+      "investor": "企业投资者"
     },
     "quickNav": {
       "operational": "服务时间与SLA",
@@ -2778,40 +2756,6 @@
       "hoursLabel": "服务时间：",
       "takeQueueBtn": "在线取号"
     },
-    "matrixModal": {
-      "badge": "服务成熟度矩阵",
-      "title": "公共服务中心服务目录与窗口整合矩阵",
-      "subtitle": "Simpurusiang 公共服务中心所有许可、户籍、税务和公共服务的综合目录",
-      "searchPlaceholder": "搜索服务、机构或行业代码...",
-      "catAll": "全部",
-      "typeOnline": "线上 / 混合",
-      "typeOnsite": "现场办理",
-      "typePriority": "优先 / 绿色通道",
-      "costFree": "免费 (Rp 0)",
-      "statAgencies": "整合入驻机构",
-      "statTypes": "公共服务事项",
-      "statDigital": "数字化 / 线上服务",
-      "statFastTrack": "VIP 优先窗口",
-      "activeCount": "显示 {{count}} / {{total}} 项公共服务事项",
-      "thName": "服务事项与说明",
-      "thAgency": "机构与窗口",
-      "thCategory": "分类",
-      "thSla": "预估办理时限 (SLA)",
-      "thCost": "规费标准",
-      "thAction": "操作与办理",
-      "badgeOnline": "线上 / 数字化",
-      "badgeOnsite": "现场办理",
-      "counterPrefix": "窗口",
-      "btnBook": "在线取号",
-      "btnRequirement": "办事材料",
-      "noResults": "未找到相关服务事项",
-      "noResultsDesc": "请调整您的分类筛选条件或搜索关键字。",
-      "consultationTitle": "需要关于综合服务的直接咨询？",
-      "consultationDesc": "Simpurusiang 公共服务中心前台团队随时为您提供文件核验、取号登记或官方规费说明。",
-      "btnHelpdesk": "打开虚拟服务台",
-      "btnInvestor": "VIP 投资者礼宾服务",
-      "btnClose": "关闭矩阵目录"
-    },
     "smartRequirement": {
       "title": "智能办事材料助手与清单 check",
       "badge": "办事材料助手",
@@ -2859,28 +2803,7 @@
       "takeQueueOnline": "在线预约取号",
       "statusClosed": "已暂停",
       "statusBusy": "繁忙",
-      "statusActive": "顺畅",
-      "trackerTitle": "申请人排号票据实时追踪器",
-      "trackerSubtitle": "掌握当前叫号状态、前方等待人数及预估叫号时间",
-      "trackerPlaceholder": "输入排号票号（例如：A-012, B-006）...",
-      "trackerBtn": "追踪排号位置",
-      "trackerQuickTest": "快速测试：",
-      "serviceLabel": "服务事项：",
-      "statusCalling": "正在窗口叫号中",
-      "statusFinished": "办理完成",
-      "statusWaiting": "正在排队等待中",
-      "metricCurrentNumber": "当前正在办理号码",
-      "metricAtLoket": "于",
-      "metricWaitingAhead": "您前面的剩余等待人数",
-      "metricYourTurn": "到您的号码了！",
-      "metricApproachDesk": "请前往对应窗口办理",
-      "metricStandbyWaiting": "请在等候区准备",
-      "metricEstimatedTime": "预估等待时间",
-      "metricAvgService": "基于历史平均办理速度",
-      "btnTestChime": "测试窗口语音叫号通知",
-      "btnCalling": "正在叫号中...",
-      "btnCloseTrack": "关闭追踪结果",
-      "peopleSuffix": "人"
+      "statusActive": "顺畅"
     },
     "operationalHeatmap": {
       "statusHeader": "Simpurusiang 政务中心实时运行状态",
