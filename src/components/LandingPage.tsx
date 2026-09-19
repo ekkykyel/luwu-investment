@@ -3742,71 +3742,115 @@ export default function LandingPage({
           </div>
         </section>
 
-        {}
+        {/* ICONIC SECTION: MAL PELAYANAN PUBLIK (MPP) SIMPURUSIANG - SOVEREIGN GLASS PAVILION */}
         <section
-          className={`py-8 md:py-12 lg:py-16 border-y relative overflow-hidden z-10 ${
+          id="mpp-showcase-section"
+          className={`py-12 md:py-16 lg:py-24 border-y relative overflow-hidden z-10 ${
             isDark
-              ? "border-emerald-500/20 bg-slate-900/90"
-              : "border-slate-200 bg-slate-50"
+              ? "border-emerald-500/20 bg-[#090d16]"
+              : "border-slate-200/80 bg-gradient-to-b from-slate-50/80 via-white to-emerald-50/30"
           }`}
         >
-          {/* Ambient Glowing Background Elements - Enhanced brightness for dark mode */}
-          <div className="absolute top-1/4 left-1/10 w-[450px] h-[450px] bg-emerald-500/15 dark:bg-emerald-400/30 rounded-full blur-[100px] pointer-events-none" />
-          <div className="absolute bottom-1/4 right-1/10 w-[550px] h-[550px] bg-emerald-600/15 dark:bg-emerald-300/25 rounded-full blur-[120px] pointer-events-none" />
+          {/* Ambient Glowing Atmospheric Elements */}
+          <div className="absolute top-1/4 left-1/12 w-[500px] h-[500px] bg-emerald-500/10 dark:bg-emerald-400/20 rounded-full blur-[130px] pointer-events-none" />
+          <div className="absolute bottom-10 right-1/12 w-[600px] h-[600px] bg-sky-500/10 dark:bg-sky-400/15 rounded-full blur-[140px] pointer-events-none" />
 
-          <div className="container mx-auto px-2 sm:px-4 lg:px-6">
+          <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            {/* Top Sovereign Header Badge */}
+            <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+              <span className={`inline-flex items-center gap-2 px-4 py-1.5 min-h-[44px] rounded-full text-xs font-bold uppercase tracking-wider mb-4 border backdrop-blur-md shadow-xs ${
+                isDark
+                  ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30"
+                  : "bg-emerald-50 text-emerald-800 border-emerald-200"
+              }`}>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                {t("mppBanner.tag", "Pelayanan Terpadu Satu Pintu Kabupaten Luwu")}
+              </span>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-3 text-balance">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600 dark:from-emerald-300 dark:via-teal-200 dark:to-sky-300">
+                  {t("mppBanner.title", "Mal Pelayanan Publik (MPP) Simpurusiang")}
+                </span>
+              </h2>
+              <div className="h-1.5 w-24 bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 rounded-full mb-4 mx-auto" />
+              <p className={`text-sm sm:text-base leading-relaxed ${textMuted} max-w-2xl mx-auto`}>
+                Pusat akselerasi perizinan investasi terpadu dan modern. Mengintegrasikan administrasi perizinan, tata ruang, dan pengawasan dalam satu atap fisik dan digital.
+              </p>
+            </div>
+
+            {/* MAIN SOVEREIGN SHOWCASE CARD */}
             <motion.div
               initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               style={{ willChange: "transform, opacity" }}
               whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
               viewport={isMobile ? undefined : { once: true, amount: 0.05 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="pt-24 sm:pt-28 pb-8 px-6 sm:px-12 lg:p-16 rounded-3xl relative overflow-hidden transition-all duration-500 bg-white/80 dark:bg-gradient-to-r dark:from-slate-900/95 dark:via-emerald-900/70 dark:to-slate-900/95 backdrop-blur-2xl border border-white/60 dark:border-emerald-400/40 shadow-2xl dark:shadow-emerald-500/20 hover:dark:border-emerald-400/70 z-10"
+              className="p-6 sm:p-8 lg:p-12 rounded-[32px] relative overflow-hidden transition-all duration-500 bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xl dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10"
             >
               {/* Subtle tech background line grid */}
-              <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05] pointer-events-none bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:32px_32px]" />
+              <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:32px_32px]" />
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center relative z-10">
-                {/* LEFT COLUMN: Modern Typography & Actions */}
-                <div className="lg:col-span-7 text-left flex flex-col justify-center space-y-5">
-                  <motion.div
-                    initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
-                    style={{ willChange: "transform, opacity" }}
-                    whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
-                    viewport={isMobile ? undefined : { once: true, amount: 0.05 }}
-                    transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-                  >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 min-h-[44px] rounded-full text-[11px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-300 bg-emerald-500/10 dark:bg-emerald-400/15 border border-emerald-500/20 dark:border-emerald-400/30 mb-3 animate-pulse">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-                      {t("mppBanner.tag")}
-                    </div>
-                    <h3 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white mb-2 text-balance">
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-indigo-600 to-emerald-600 dark:from-sky-300 dark:via-emerald-300 dark:to-teal-300 font-sans drop-shadow-sm">
-                        {t("mppBanner.title")}
+              {/* Floating Status Accent Bar */}
+              <div className="absolute top-0 inset-x-12 h-[3px] bg-gradient-to-r from-transparent via-emerald-500 to-transparent rounded-full" />
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
+                {/* LEFT COLUMN: Strategic Value Propositions & Actions */}
+                <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
+                  {/* Live Operation Status Pill */}
+                  <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold text-emerald-800 dark:text-emerald-300 w-fit">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                    <span>Layanan Prima Beroperasi • Senin - Jumat (08.00 - 15.30 WITA)</span>
+                  </div>
+
+                  <p className="text-sm sm:text-base leading-relaxed text-slate-700 dark:text-slate-300 font-normal">
+                    {t("mppBanner.desc", "Mempercepat perizinan investasi yang komprehensif dan modern di Kabupaten Luwu. Mengintegrasikan seluruh administrasi perizinan, pengelolaan kesesuaian ruang, dan pengawasan investasi dalam satu lokasi fisik, didukung penuh oleh platform GIS digital interaktif ini.")}
+                  </p>
+
+                  {/* 3 SOVEREIGN KEY PILLARS (Bento Grid Mini) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                    {/* Pilar 1: 21 Instansi */}
+                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 flex flex-col justify-between group hover:border-emerald-400 dark:hover:border-emerald-500/50 transition-all">
+                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center mb-2 shadow-xs group-hover:scale-105 transition-transform">
+                        <Building2 size={18} />
+                      </div>
+                      <span className="text-xs font-bold text-slate-900 dark:text-white leading-snug">
+                        21 Instansi Terpadu
                       </span>
-                    </h3>
-                  </motion.div>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                        DPMPTSP, Pajak, BPN, Imigrasi, Samsat
+                      </span>
+                    </div>
 
-                  <motion.p
-                    initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
-                    style={{ willChange: "transform, opacity" }}
-                    whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
-                    viewport={isMobile ? undefined : { once: true, amount: 0.05 }}
-                    transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                    className="text-sm sm:text-base leading-relaxed text-slate-600 dark:text-slate-300 font-normal"
-                  >
-                    {t("mppBanner.desc")}
-                  </motion.p>
+                    {/* Pilar 2: Fast-Track OSS */}
+                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 flex flex-col justify-between group hover:border-sky-400 dark:hover:border-sky-500/50 transition-all">
+                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 text-white flex items-center justify-center mb-2 shadow-xs group-hover:scale-105 transition-transform">
+                        <Zap size={18} />
+                      </div>
+                      <span className="text-xs font-bold text-slate-900 dark:text-white leading-snug">
+                        Fast-Track OSS & GIS
+                      </span>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                        Penerbitan NIB & Validasi Ruang Instan
+                      </span>
+                    </div>
 
-                  <motion.div
-                    initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
-                    style={{ willChange: "transform, opacity" }}
-                    whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
-                    viewport={isMobile ? undefined : { once: true, amount: 0.05 }}
-                    transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-                    className="pt-2"
-                  >
-                    <motion.button whileTap={{ scale: 0.95 }}
+                    {/* Pilar 3: Klinik Investasi VIP */}
+                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 flex flex-col justify-between group hover:border-amber-400 dark:hover:border-amber-500/50 transition-all">
+                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center mb-2 shadow-xs group-hover:scale-105 transition-transform">
+                        <Award size={18} />
+                      </div>
+                      <span className="text-xs font-bold text-slate-900 dark:text-white leading-snug">
+                        Klinik Investasi VIP
+                      </span>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                        Konsultasi 1-on-1 & Pendampingan Lahan
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* DUAL ACTION BUTTON BAR */}
+                  <div className="pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <motion.button
+                      whileTap={{ scale: 0.97 }}
                       onClick={() => {
                         if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
                           window.history.scrollRestoration = 'manual';
@@ -3817,23 +3861,55 @@ export default function LandingPage({
                         requestSmartFullscreen();
                         navigate("/mpp");
                       }}
-                      className="py-3.5 sm:py-4 w-full sm:w-auto min-h-[48px] inline-flex items-center justify-center gap-2 px-8 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm uppercase tracking-wider rounded-2xl backdrop-blur-xl border border-emerald-500/30 shadow-lg shadow-emerald-600/20 active:scale-[0.98] transition-all duration-300 cursor-pointer"
+                      className="py-3.5 px-7 min-h-[48px] inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-emerald-600 via-emerald-700 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-bold text-sm uppercase tracking-wider rounded-2xl border border-emerald-500/30 shadow-lg shadow-emerald-700/25 active:scale-[0.98] transition-all duration-300 cursor-pointer"
                     >
-                      <span>{t("mppBanner.enterBtn")}</span>
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                      <Building2 size={18} />
+                      <span>Masuk Portal MPP Simpurusiang</span>
+                      <ArrowRight className="w-4 h-4" />
                     </motion.button>
-                  </motion.div>
+
+                    <a
+                      href="https://wa.me/6281142011"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="py-3.5 px-5 min-h-[48px] inline-flex items-center justify-center gap-2 text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold text-xs rounded-2xl border border-slate-200 dark:border-slate-700 transition-colors"
+                    >
+                      <MessageSquare size={16} className="text-emerald-500" />
+                      <span>Konsultasi Front Office</span>
+                    </a>
+                  </div>
                 </div>
 
-                {/* RIGHT COLUMN: Foto Petugas Front Office MPP Simpurusiang (Background Transparan & Tanpa Frame Pembungkus) */}
-                <div className="lg:col-span-5 flex flex-col items-center justify-end relative w-full pt-4 lg:pt-0 self-end">
+                {/* RIGHT COLUMN: SOVEREIGN GLASS ARCH & FRONT OFFICE SHOWCASE */}
+                <div className="lg:col-span-5 flex flex-col items-center justify-end relative w-full pt-6 lg:pt-0 self-end">
                   <div className="relative flex flex-col items-center justify-end w-full max-w-sm sm:max-w-md">
-                    {/* Ambient Glow effect behind cutouts - clean in dark & light theme */}
-                    <div className="absolute bottom-0 w-64 h-64 bg-emerald-500/10 dark:bg-emerald-400/15 rounded-full blur-3xl pointer-events-none -z-10" />
+                    {/* Arch Backdrop Glow & Frame */}
+                    <div className="absolute bottom-0 w-full h-[320px] sm:h-[380px] bg-gradient-to-b from-emerald-500/10 via-teal-500/10 to-transparent dark:from-emerald-400/20 dark:via-teal-400/10 rounded-t-[140px] border-t-2 border-x-2 border-emerald-500/30 dark:border-emerald-400/30 pointer-events-none -z-0" />
+                    <div className="absolute -bottom-6 inset-x-8 h-16 bg-emerald-500/20 dark:bg-emerald-400/30 rounded-full blur-2xl pointer-events-none -z-10" />
 
+                    {/* Floating Badges */}
+                    <div className="w-full flex items-center justify-between px-2 mb-2 relative z-20">
+                      {/* Left Badge */}
+                      <div className="px-3 py-1 min-h-[32px] rounded-full bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-white/10 shadow-md backdrop-blur-md flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[10px] font-bold font-mono tracking-wider text-slate-800 dark:text-slate-200">
+                          21 INSTANSI
+                        </span>
+                      </div>
+
+                      {/* Right Badge */}
+                      <div className="px-3 py-1 min-h-[32px] rounded-full bg-slate-950/90 text-white border border-emerald-500/40 shadow-md backdrop-blur-md flex items-center gap-1.5">
+                        <Sparkles size={11} className="text-amber-400 animate-spin" />
+                        <span className="text-[10px] font-extrabold font-mono tracking-wider text-emerald-400">
+                          OSS INTEGRATED
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Staff Photos Container */}
                     {staffImageLeft && staffImageRight ? (
-                      <div className="flex items-end justify-center gap-3 sm:gap-6 w-full relative">
-                        {/* Petugas Kiri - Transparan & Bebas Frame */}
+                      <div className="flex items-end justify-center gap-2 sm:gap-4 w-full relative z-10">
+                        {/* Petugas Kiri */}
                         <div className="relative flex-1 flex flex-col items-center justify-end group">
                           <img
                             src={staffImageLeft}
@@ -3843,16 +3919,11 @@ export default function LandingPage({
                               e.currentTarget.onerror = null;
                               e.currentTarget.src = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800";
                             }}
-                            className="w-full max-h-72 sm:max-h-80 md:max-h-96 object-contain object-bottom bg-transparent transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_10px_20px_rgba(0,0,0,0.2)] dark:drop-shadow-[0_12px_24px_rgba(0,0,0,0.6)]"
+                            className="w-full max-h-72 sm:max-h-80 md:max-h-92 object-contain object-bottom bg-transparent transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_12px_24px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_14px_28px_rgba(0,0,0,0.7)]"
                           />
-                          <div className="mt-2 text-center">
-                            <span className="inline-block text-[11px] font-semibold text-slate-800 dark:text-slate-100 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-3 py-1 rounded-full border border-slate-200 dark:border-white/10 shadow-sm">
-                              {t("mppBanner.frontOfficeStaff", "Petugas Front Office")}
-                            </span>
-                          </div>
                         </div>
 
-                        {/* Petugas Kanan - Transparan & Bebas Frame */}
+                        {/* Petugas Kanan */}
                         <div className="relative flex-1 flex flex-col items-center justify-end group">
                           <img
                             src={staffImageRight}
@@ -3862,25 +3933,12 @@ export default function LandingPage({
                               e.currentTarget.onerror = null;
                               e.currentTarget.src = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800";
                             }}
-                            className="w-full max-h-72 sm:max-h-80 md:max-h-96 object-contain object-bottom bg-transparent transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_10px_20px_rgba(0,0,0,0.2)] dark:drop-shadow-[0_12px_24px_rgba(0,0,0,0.6)]"
+                            className="w-full max-h-72 sm:max-h-80 md:max-h-92 object-contain object-bottom bg-transparent transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_12px_24px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_14px_28px_rgba(0,0,0,0.7)]"
                           />
-                          <div className="mt-2 text-center">
-                            <span className="inline-block text-[11px] font-semibold text-slate-800 dark:text-slate-100 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-3 py-1 rounded-full border border-slate-200 dark:border-white/10 shadow-sm">
-                              {t("mppBanner.integratedServices", "Layanan Terpadu")}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Floating OSS INTEGRATED Badge */}
-                        <div className="absolute -top-3 right-0 sm:right-2 px-3.5 py-1.5 min-h-[36px] rounded-full bg-slate-900/90 dark:bg-slate-900/95 border border-emerald-500/40 shadow-xl backdrop-blur-md flex items-center gap-1.5 z-30">
-                          <Sparkles size={12} className="text-yellow-400 animate-spin" />
-                          <span className="text-[10px] font-extrabold font-mono tracking-wider text-emerald-400">
-                            OSS INTEGRATED
-                          </span>
                         </div>
                       </div>
                     ) : (
-                      <div className="relative w-full flex flex-col items-center justify-end group">
+                      <div className="relative w-full flex flex-col items-center justify-end group z-10">
                         <img
                           src={staffImageLeft || staffImageRight || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800"}
                           alt="DPMPTSP MPP Simpurusiang - Petugas Front Office"
@@ -3889,24 +3947,63 @@ export default function LandingPage({
                             e.currentTarget.onerror = null;
                             e.currentTarget.src = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800";
                           }}
-                          className="w-full max-h-72 sm:max-h-80 md:max-h-96 object-contain object-bottom bg-transparent transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_12px_24px_rgba(0,0,0,0.2)] dark:drop-shadow-[0_14px_28px_rgba(0,0,0,0.6)]"
+                          className="w-full max-h-72 sm:max-h-80 md:max-h-92 object-contain object-bottom bg-transparent transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_12px_24px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_14px_28px_rgba(0,0,0,0.7)]"
                         />
-
-                        {/* Badges without enclosing frame */}
-                        <div className="flex items-center gap-2 mt-3 flex-wrap justify-center">
-                          <div className="px-3 py-1 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-emerald-500/30 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 shadow-sm flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                            {t("mppBanner.mppFrontOfficeOfficer", "Petugas Front Office MPP Simpurusiang")}
-                          </div>
-                          <div className="px-3.5 py-1 min-h-[32px] rounded-full bg-slate-900/90 text-white border border-emerald-500/40 shadow-sm backdrop-blur-md flex items-center gap-1.5">
-                            <Sparkles size={11} className="text-yellow-400 animate-spin" />
-                            <span className="text-[10px] font-extrabold font-mono tracking-wider text-emerald-400">
-                              OSS INTEGRATED
-                            </span>
-                          </div>
-                        </div>
                       </div>
                     )}
+
+                    {/* Bottom Floating Identity Capsule */}
+                    <div className="w-full text-center mt-2 relative z-20">
+                      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 border border-emerald-500/30 dark:border-emerald-400/30 shadow-lg backdrop-blur-md">
+                        <BadgeCheck size={14} className="text-emerald-500 shrink-0" />
+                        <span className="text-[11px] font-bold text-slate-800 dark:text-slate-100">
+                          Front Office DPMPTSP Kab. Luwu
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* QUICK STATS RIBBON AT CARD BOTTOM */}
+              <div className="mt-8 pt-6 border-t border-slate-200/80 dark:border-slate-800 grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                    <Building2 size={20} />
+                  </div>
+                  <div>
+                    <div className="text-lg font-extrabold text-slate-900 dark:text-white font-mono">21 Instansi</div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400">Pusat, Daerah & BUMN</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-sky-500/10 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
+                    <FileText size={20} />
+                  </div>
+                  <div>
+                    <div className="text-lg font-extrabold text-slate-900 dark:text-white font-mono">100+ Layanan</div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400">Administrasi & Izin Usaha</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                    <Award size={20} />
+                  </div>
+                  <div>
+                    <div className="text-lg font-extrabold text-slate-900 dark:text-white font-mono">4.85 / 5.0</div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400">Indeks Kepuasan (IKM)</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-teal-500/10 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0">
+                    <ShieldCheck size={20} />
+                  </div>
+                  <div>
+                    <div className="text-lg font-extrabold text-slate-900 dark:text-white font-mono">Rp 0 (Nol)</div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400">Transparan Tanpa Pungli</div>
                   </div>
                 </div>
               </div>
