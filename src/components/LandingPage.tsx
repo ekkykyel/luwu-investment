@@ -2610,7 +2610,7 @@ export default function LandingPage({
         {/* 2. DAFTAR POTENSI INVESTASI - BENTO GRID */}
         <div
           id="potensi-section"
-          className="container max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-8 md:py-12 lg:py-16 min-h-[44px]"
+          className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-16 min-h-[44px]"
         >
           <div className="flex flex-col md:flex-row items-end justify-between mb-10 gap-4">
             <div>
@@ -2696,7 +2696,7 @@ export default function LandingPage({
               {[1, 2, 3].map((num) => (
                 <div
                   key={num}
-                  className={`rounded-3xl border overflow-hidden flex flex-col h-[400px] animate-pulse bg-slate-200 dark:bg-slate-700 rounded-lg border-transparent`}
+                  className={`rounded-3xl border overflow-hidden flex flex-col h-[400px] animate-pulse bg-slate-200 dark:bg-slate-700 border-transparent`}
                 >
                   <div className="h-48 bg-slate-300 dark:bg-slate-600" />
                   <div className="p-6 flex flex-col flex-grow gap-4">
@@ -2711,7 +2711,7 @@ export default function LandingPage({
               ))}
             </div>
           ) : filteredInvestmentsList.length > 0 ? (
-            <div className="flex md:grid overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-4 md:gap-6 pb-6 -mx-4 px-4 md:mx-0 md:px-0 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+            <div className={`w-full grid gap-6 sm:gap-8 ${filteredInvestmentsList.length === 1 ? 'grid-cols-1 max-w-xl sm:max-w-2xl lg:max-w-3xl mx-auto' : 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'}`}>
               {[...filteredInvestmentsList]
                 .sort((a, b) => {
                   const aAI = Number(
@@ -2728,14 +2728,15 @@ export default function LandingPage({
                   <div
                     key={inv.id}
                     style={{ animationDelay: `${idx * 150}ms` }}
-                    className={`glass-panel shrink-0 w-[85vw] snap-center md:w-auto rounded-xl border overflow-hidden flex flex-col group
+                    className={`w-full rounded-[26px] sm:rounded-[28px] border overflow-hidden flex flex-col group
                                 opacity-0 animate-fade-in-up
-                                transition-all duration-300 ease-in-out hover:-translate-y-2
+                                transition-all duration-300 ease-out hover:-translate-y-2
                                 hover:shadow-2xl ${getSectorColor(inv.sector).glow}
                                 hover:border-emerald-500/50
-                                ${isDark ? 'bg-slate-900/40' : 'bg-white/70'}`}
+                                ${isDark ? 'bg-slate-900/95 border-slate-800 shadow-[0_12px_36px_rgba(0,0,0,0.35)]' : 'bg-white border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.06)]'}`}
                   >
-                    <div className="h-56 overflow-hidden relative">
+                    {/* Header Image Section */}
+                    <div className="h-60 sm:h-64 overflow-hidden relative w-full">
                       <LazyImage
                         src={
                           inv.photoUrl ||
@@ -2743,127 +2744,161 @@ export default function LandingPage({
                         }
                         alt={inv.name}
                         isDark={isDark}
-                        imgClassName="transform group-hover:scale-110 transition-transform duration-700"
+                        imgClassName="w-full h-full object-cover transform group-hover:scale-108 transition-transform duration-700 ease-out"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19] to-transparent opacity-80 mix-blend-multiply pointer-events-none" />
-                      <div className="absolute top-4 left-4 flex flex-col items-start gap-1.5 z-10">
-                        <div
-                          className={`px-3 py-1 min-h-[28px] rounded-full text-xs font-semibold backdrop-blur-md shadow-lg ${getSectorColor(inv.sector).badgeBg}`}
-                        >
-                          {t(getSectorI18nKey(inv.sector))}
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/35 to-transparent pointer-events-none" />
+
+                      {/* Top Badges */}
+                      <div className="absolute top-3.5 left-3.5 right-3.5 flex items-start justify-between gap-2 z-10">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <div
+                            className={`px-3 py-1 rounded-full text-xs font-bold backdrop-blur-md shadow-md ${getSectorColor(inv.sector).badgeBg}`}
+                          >
+                            {t(getSectorI18nKey(inv.sector))}
+                          </div>
+
+                          {/* BADGE PROJECT READINESS TIER (BKPM RI Standard) */}
+                          {(() => {
+                            const isTier1 = (inv as any).readinessTier === 'Tier 1' || 
+                                            (inv as any).readiness_tier === 'Tier 1' || 
+                                            (inv as any).status_kesiapan?.toLowerCase().includes('ready') ||
+                                            Boolean(inv.investmentValue && inv.investmentValue > 0 && inv.areaHa && inv.areaHa > 0 && inv.landStatus);
+
+                            return isTier1 ? (
+                              <div 
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-950/85 text-emerald-300 border border-emerald-400/50 backdrop-blur-md shadow-md"
+                                title="Ready to Offer (Tier 1): Full FS Siap, Lahan Clean & Clear, Kesesuaian RTRW Terkonfirmasi (Standar BKPM RI)"
+                              >
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                <span>Tier 1: Ready to Offer</span>
+                              </div>
+                            ) : (
+                              <div 
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-950/85 text-amber-300 border border-amber-400/50 backdrop-blur-md shadow-md"
+                                title="Under Development (Tier 2): Pre-FS Tersedia, Kajian Tata Ruang Sedang Difinalisasi (Standar BKPM RI)"
+                              >
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                                <span>Tier 2: Under Development</span>
+                              </div>
+                            );
+                          })()}
                         </div>
 
-                        {/* BADGE PROJECT READINESS TIER (BKPM RI Standard) */}
-                        {(() => {
-                          const isTier1 = (inv as any).readinessTier === 'Tier 1' || 
-                                          (inv as any).readiness_tier === 'Tier 1' || 
-                                          (inv as any).status_kesiapan?.toLowerCase().includes('ready') ||
-                                          Boolean(inv.investmentValue && inv.investmentValue > 0 && inv.areaHa && inv.areaHa > 0 && inv.landStatus);
-
-                          return isTier1 ? (
-                            <div 
-                              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/85 text-emerald-300 border border-emerald-400/40 backdrop-blur-md shadow-md"
-                              title="Ready to Offer (Tier 1): Full FS Siap, Lahan Clean & Clear, Kesesuaian RTRW Terkonfirmasi (Standar BKPM RI)"
-                            >
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                              <span>Tier 1: Ready to Offer</span>
-                            </div>
-                          ) : (
-                            <div 
-                              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-950/85 text-amber-300 border border-amber-400/40 backdrop-blur-md shadow-md"
-                              title="Under Development (Tier 2): Pre-FS Tersedia, Kajian Tata Ruang Sedang Difinalisasi (Standar BKPM RI)"
-                            >
-                              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                              <span>Tier 2: Under Development</span>
-                            </div>
-                          );
-                        })()}
+                        {(inv.smartData?.aiScore || inv.smartData?.ai_score) && (
+                          <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-950/75 backdrop-blur-md border border-white/20 text-white shadow-md shrink-0">
+                            <span className="text-amber-400 text-xs">★</span>
+                            <span className="text-[11px] font-bold tracking-tight">
+                              {inv.smartData?.aiScore || inv.smartData?.ai_score} <span className="text-white/60 font-normal">AI Score</span>
+                            </span>
+                          </div>
+                        )}
                       </div>
-                      {(inv.smartData?.aiScore || inv.smartData?.ai_score) && (
-                        <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 min-h-[44px] rounded-full bg-black/55 backdrop-blur-md border border-white/15">
-                          <span className="text-yellow-700 dark:text-yellow-400 text-[11px]">★</span>
-                          <span className="text-white text-[11px] font-medium">
-                            {inv.smartData?.aiScore || inv.smartData?.ai_score}
+
+                      {/* Bottom Photo Geotag Info */}
+                      <div className="absolute bottom-3 inset-x-3.5 flex items-center justify-between text-xs text-white/95 z-10 pointer-events-none">
+                        <div className="flex items-center gap-1.5 font-medium bg-slate-950/60 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                          <MapPin size={12} className="text-emerald-400 shrink-0" />
+                          <span className="truncate max-w-[180px] sm:max-w-[220px]">
+                            {districts.find((d) => d.id === inv.districtId)?.name || (inv as any).districtName || (inv as any).lokasi || inv.districtId || "Kabupaten Luwu"}
                           </span>
                         </div>
-                      )}
-                      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                        <div className="absolute top-0 bottom-0 w-1/3 bg-gradient-to-r from-transparent via-white/8 to-transparent
-                                        -left-full group-hover:left-[200%] transition-all duration-700 ease-in-out" />
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-950/80 backdrop-blur-md px-2 py-1 rounded-lg border border-emerald-500/30 flex items-center gap-1">
+                          <ShieldCheck size={12} className="text-emerald-400" />
+                          <span>GIS Clean & Clear</span>
+                        </div>
                       </div>
                     </div>
+
+                    {/* Card Content Body */}
                     <div className="p-5 sm:p-6 flex flex-col flex-grow">
-                      <div className="flex items-start justify-between mb-2.5">
-                        <h3 className="text-base sm:text-lg md:text-xl font-sans font-bold line-clamp-2 leading-snug group-hover:text-emerald-500 transition-colors tracking-tight">
+                      <div className="mb-4">
+                        <h3 className="text-lg sm:text-xl font-bold font-sans line-clamp-2 leading-snug group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors tracking-tight text-slate-900 dark:text-white">
                           {inv.name}
                         </h3>
                       </div>
-                      <div
-                        className={`space-y-2.5 mb-5 ${textMuted} text-xs sm:text-sm font-medium`}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <div
-                            className={`p-1.5 rounded-md ${isDark ? "bg-slate-800" : "bg-slate-100"}`}
-                          >
-                            <MapPin size={13} className={textHighlight} />
-                          </div>
-                          <span>{formatAreaHa(inv.areaHa)} {t("ui.hectares", "Hektare")}</span>
-                        </div>
-                        <div className="flex items-center gap-2.5">
-                          <div
-                            className={`p-1.5 rounded-md ${isDark ? "bg-slate-800" : "bg-slate-100"}`}
-                          >
-                            <Building size={13} className={textHighlight} />
-                          </div>
-                          <span>{t("ui.est")} {formatRupiah(inv.investmentValue)}</span>
-                        </div>
-                        {(() => {
-                          const rawLabor = inv.komitmenTenagaLokal ?? inv.komitmen_tenaga_lokal ?? inv.tenagaKerja ?? inv.tenaga_kerja ?? inv.tenagaLokal ?? inv.tenaga_lokal ?? inv.tkl ?? 0;
-                          const laborVal = typeof rawLabor === 'number' ? rawLabor : parseFloat(String(rawLabor).replace(/[^0-9.]/g, '')) || 0;
-                          if (laborVal <= 0) return null;
-                          return (
-                            <div className="flex items-center gap-2.5">
-                              <div
-                                className={`p-1.5 rounded-md ${isDark ? "bg-slate-800" : "bg-slate-100"}`}
-                              >
-                                <Users size={13} className="text-teal-500" />
-                              </div>
-                              <span className="font-semibold text-teal-600 dark:text-teal-400">
-                                {laborVal} Orang {t("stats.localWorkforce", "Tenaga Kerja (TKL)")}
+
+                      {/* Symmetrical 3-Column Bento Metric Matrix */}
+                      {(() => {
+                        const rawLabor = inv.komitmenTenagaLokal ?? inv.komitmen_tenaga_lokal ?? inv.tenagaKerja ?? inv.tenaga_kerja ?? inv.tenagaLokal ?? inv.tenaga_lokal ?? inv.tkl ?? 0;
+                        const laborVal = typeof rawLabor === 'number' ? rawLabor : parseFloat(String(rawLabor).replace(/[^0-9.]/g, '')) || 0;
+
+                        return (
+                          <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-5">
+                            {/* Spec 1: Luas Lahan */}
+                            <div className={`p-2.5 rounded-2xl border text-center flex flex-col items-center justify-center transition-colors ${
+                              isDark ? 'bg-slate-800/60 border-slate-700/60 group-hover:border-slate-700' : 'bg-slate-50 border-slate-200/80 group-hover:border-slate-300'
+                            }`}>
+                              <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                                Luas Lahan
+                              </span>
+                              <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white flex items-center justify-center gap-1">
+                                <MapPin size={12} className="text-blue-500 shrink-0" />
+                                <span>{formatAreaHa(inv.areaHa)} Ha</span>
                               </span>
                             </div>
-                          );
-                        })()}
-                      </div>
 
+                            {/* Spec 2: Estimasi Investasi */}
+                            <div className={`p-2.5 rounded-2xl border text-center flex flex-col items-center justify-center transition-colors ${
+                              isDark ? 'bg-slate-800/60 border-slate-700/60 group-hover:border-slate-700' : 'bg-slate-50 border-slate-200/80 group-hover:border-slate-300'
+                            }`}>
+                              <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                                Est. Investasi
+                              </span>
+                              <span className="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400 flex items-center justify-center gap-1">
+                                <Building size={12} className="shrink-0" />
+                                <span>{formatRupiah(inv.investmentValue)}</span>
+                              </span>
+                            </div>
+
+                            {/* Spec 3: Tenaga Kerja */}
+                            <div className={`p-2.5 rounded-2xl border text-center flex flex-col items-center justify-center transition-colors ${
+                              isDark ? 'bg-slate-800/60 border-slate-700/60 group-hover:border-slate-700' : 'bg-slate-50 border-slate-200/80 group-hover:border-slate-300'
+                            }`}>
+                              <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                                Tenaga Kerja
+                              </span>
+                              <span className="text-xs sm:text-sm font-black text-teal-600 dark:text-teal-400 flex items-center justify-center gap-1">
+                                <Users size={12} className="shrink-0" />
+                                <span>{laborVal > 0 ? `${laborVal} Jiwa` : '-'}</span>
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      {/* Realization Progress Bar */}
                       {(() => {
                         const rawPct = Math.min(100, Math.round(((inv.investmentValue || 0) / 2500000000000) * 100 * Math.max(investments.length, 1)));
                         const pct = typeof rawPct === 'number' && !isNaN(rawPct) ? rawPct : 0;
                         const { progress } = getSectorColor(inv.sector);
                         return (
-                          <div className="mt-1 mb-4">
-                            <div className="flex justify-between items-center mb-1">
-                              <span className={`text-[10px] uppercase tracking-widest font-medium ${textMuted}`}>
-                                {t("investmentProfile.targetRealisasi", "Target realisasi")}
+                          <div className="mb-5">
+                            <div className="flex justify-between items-center mb-1.5">
+                              <span className={`text-[10px] uppercase tracking-widest font-bold ${textMuted}`}>
+                                {t("investmentProfile.targetRealisasi", "Target Realisasi")}
                               </span>
-                              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">{pct}%</span>
+                              <span className="text-xs font-black text-slate-800 dark:text-slate-200">{pct}%</span>
                             </div>
-                            <div className={`h-1 rounded-full overflow-hidden ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`}>
-                              <div className={`h-full rounded-full ${progress} transition-all duration-700`}
-                                   style={{ width: `${pct}%` }} />
+                            <div className={`h-1.5 rounded-full overflow-hidden ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`}>
+                              <div
+                                className={`h-full rounded-full ${progress} transition-all duration-700`}
+                                style={{ width: `${pct}%` }}
+                              />
                             </div>
                           </div>
                         );
                       })()}
-                      <div className={`mt-auto pt-4 flex flex-col gap-2 border-t ${isDark ? 'border-slate-800/60' : 'border-slate-100'}`}>
-                        {/* Baris Tombol Utama */}
-                        <div className="flex gap-2">
-                          <motion.button whileTap={{ scale: 0.95 }}
+
+                      {/* Action Buttons Section */}
+                      <div className={`mt-auto pt-4 flex flex-col gap-2.5 border-t ${isDark ? 'border-slate-800/80' : 'border-slate-100'}`}>
+                        {/* Row 1: Primary Actions */}
+                        <div className="grid grid-cols-2 gap-2.5">
+                          <motion.button
+                            whileTap={{ scale: 0.96 }}
                             type="button"
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              undefined;
                               if (onSelectInvestment) {
                                 onSelectInvestment(inv.id);
                               } else {
@@ -2875,29 +2910,31 @@ export default function LandingPage({
                                 }
                               }
                             }}
-                            className={`group flex-1 py-2.5 px-3 rounded-xl border text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-1.5 hover:scale-[1.02] active:scale-[0.97]
+                            className={`min-h-[44px] py-2.5 px-3 rounded-xl border text-xs sm:text-sm font-bold transition-all duration-300 flex items-center justify-center gap-1.5 hover:scale-[1.02] active:scale-[0.97]
                                         ${isDark
-                                          ? 'border-slate-700/80 bg-slate-800/60 text-slate-200 hover:border-emerald-500/50 hover:bg-gradient-to-r hover:from-slate-800 hover:to-emerald-950/60 hover:text-emerald-700 dark:hover:text-emerald-400 hover:shadow-md hover:shadow-emerald-500/10'
-                                          : 'border-slate-200 bg-slate-50 text-slate-800 dark:text-slate-200 hover:border-emerald-300 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-blue-50 hover:text-emerald-700 hover:shadow-md hover:shadow-emerald-500/10'}`}
+                                          ? 'border-slate-700/80 bg-slate-800/80 text-slate-200 hover:border-emerald-500/50 hover:bg-slate-800 hover:text-emerald-400 shadow-sm'
+                                          : 'border-slate-200 bg-slate-50 text-slate-800 hover:border-emerald-300 hover:bg-white hover:text-emerald-700 shadow-sm'}`}
                           >
-                            <Search size={14} className="group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
+                            <Search size={14} className="text-slate-400 group-hover:text-emerald-500 transition-colors" />
                             <span>{t("common.detail", "Detail")}</span>
                           </motion.button>
-                          <motion.button whileTap={{ scale: 0.95 }}
+
+                          <motion.button
+                            whileTap={{ scale: 0.96 }}
                             type="button"
                             onClick={(e) => {
                               e.preventDefault();
                               navigate("/login?role=investor");
                             }}
-                            className="group flex-1 py-2.5 px-3 rounded-xl text-sm font-semibold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 hover:shadow-lg hover:shadow-emerald-500/25 flex items-center justify-center gap-1.5"
+                            className="min-h-[44px] py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-md shadow-emerald-600/25 flex items-center justify-center gap-1.5"
                           >
-                            <span>{t("landing.ajukanMinat", "Ajukan minat")}</span>
-                            <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform duration-300" />
+                            <span>{t("landing.ajukanMinat", "Ajukan Minat")}</span>
+                            <ChevronRight size={15} />
                           </motion.button>
                         </div>
 
-                        {/* Inovasi Khusus Investor: One-Click Executive IPRO Teaser & Fast-Track Konsultasi VIP */}
-                        <div className="grid grid-cols-2 gap-2 pt-0.5">
+                        {/* Row 2: Inovasi Khusus Investor (IPRO PDF & Konsultasi VIP) */}
+                        <div className="grid grid-cols-2 gap-2.5">
                           <button
                             type="button"
                             onClick={(e) => {
@@ -2906,7 +2943,7 @@ export default function LandingPage({
                               setSelectedIproForModal(inv);
                               setIsIproPitchModalOpen(true);
                             }}
-                            className="min-h-[38px] px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs group/btn"
+                            className="min-h-[40px] px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-500/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs group/btn"
                             title="Unduh Executive Summary Resmi IPRO (PDF Standar BKPM RI)"
                           >
                             <FileText className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 group-hover/btn:scale-110 transition-transform shrink-0" />
@@ -2921,7 +2958,7 @@ export default function LandingPage({
                               setSelectedInvestmentForConsultation(inv);
                               setIsFastTrackConsultationOpen(true);
                             }}
-                            className="min-h-[38px] px-2.5 py-1.5 rounded-xl text-xs font-bold bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs group/btn"
+                            className="min-h-[40px] px-2.5 py-1.5 rounded-xl text-xs font-bold bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-300/80 dark:border-amber-500/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs group/btn"
                             title="Jadwalkan Konsultasi VIP DPMPTSP Kabupaten Luwu (Online/Offline)"
                           >
                             <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 group-hover/btn:scale-110 transition-transform shrink-0" />
