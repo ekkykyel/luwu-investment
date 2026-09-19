@@ -2482,20 +2482,20 @@ export default function PortalMPP() {
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                 {t("mppPortal.instansi.badge")}
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans mt-1 text-balance">
                 {t("mppPortal.instansi.title")}
               </h2>
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-6 text-center text-balance">
+              <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-5 text-center text-balance">
                 {t("mppPortal.instansi.desc")}
               </p>
-              <div className="w-12 sm:w-16 h-1 bg-emerald-500 rounded-full mx-auto mt-3 sm:mt-4 mb-2"></div>
+              <div className="w-12 sm:w-16 h-1 bg-emerald-500 rounded-full mx-auto mt-2 mb-2"></div>
             </div>
 
             {/* Kontainer Slider (Touch-First Native Snap Scroll with Peek Effect & Fade Gradient Masking) */}
             <div className="relative w-full overflow-hidden py-2">
               {/* Fade Gradient Masking on Left & Right */}
-              <div className="pointer-events-none absolute top-0 left-0 bottom-0 w-8 sm:w-20 bg-gradient-to-r from-slate-50 dark:from-[#0B1120] to-transparent z-10" />
-              <div className="pointer-events-none absolute top-0 right-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-slate-50 dark:from-[#0B1120] to-transparent z-10" />
+              <div className="pointer-events-none absolute top-0 left-0 bottom-0 w-6 sm:w-20 bg-gradient-to-r from-slate-50 dark:from-[#0B1120] to-transparent z-10" />
+              <div className="pointer-events-none absolute top-0 right-0 bottom-0 w-8 sm:w-24 bg-gradient-to-l from-slate-50 dark:from-[#0B1120] to-transparent z-10" />
 
               <div 
                 ref={sliderRef}
@@ -2503,7 +2503,7 @@ export default function PortalMPP() {
                 onMouseLeave={() => setIsSliderPaused(false)}
                 onTouchStart={() => setIsSliderPaused(true)}
                 onTouchEnd={() => setIsSliderPaused(false)}
-                className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-x gap-4 md:gap-6 py-4 px-2 sm:px-6 cursor-grab active:cursor-grabbing"
+                className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-x gap-3.5 sm:gap-6 py-4 px-2 sm:px-6 cursor-grab active:cursor-grabbing"
               >
                 {(liveAgencies || [])?.map((rawItem, index) => {
                   const item = getLocalizedAgency(rawItem, i18n.language);
@@ -2516,17 +2516,17 @@ export default function PortalMPP() {
                       whileTap={{ scale: 0.96 }}
                       transition={{ type: "spring", stiffness: 350, damping: 25 }}
                       onClick={() => setSelectedAgencyDetail(rawItem)}
-                      className="w-[85vw] sm:w-[320px] shrink-0 snap-center bg-white/85 dark:bg-slate-800/50 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-lg shadow-emerald-950/5 dark:shadow-emerald-950/20 rounded-3xl p-5 md:p-8 flex flex-col items-center text-center justify-between group cursor-pointer hover:border-emerald-500/80 hover:shadow-xl hover:shadow-emerald-500/15 transition-all relative overflow-hidden"
+                      className="w-[78vw] xs:w-[280px] sm:w-[320px] shrink-0 snap-center bg-white/85 dark:bg-slate-800/50 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-lg shadow-emerald-950/5 dark:shadow-emerald-950/20 rounded-3xl p-4 sm:p-6 md:p-8 flex flex-col items-center text-center justify-between group cursor-pointer hover:border-emerald-500/80 hover:shadow-xl hover:shadow-emerald-500/15 transition-all relative overflow-hidden"
                     >
                       <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-emerald-500/0 to-emerald-500/5 group-hover:to-emerald-500/10 transition-colors pointer-events-none" />
                       <div className="flex flex-col items-center text-center w-full relative z-10">
                         {/* Logo Instansi Terpusat */}
-                        <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:rotate-[-2deg] transition-transform duration-300 overflow-hidden shadow-inner">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-3.5 group-hover:scale-110 group-hover:rotate-[-2deg] transition-transform duration-300 overflow-hidden shadow-inner">
                           <img 
                             src={item.logo} 
                             alt={item.nama}
                             referrerPolicy="no-referrer"
-                            className="w-12 h-12 md:w-14 md:h-14 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-110"
+                            className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-110"
                             onError={(e) => {
                               e.currentTarget.onerror = null;
                               e.currentTarget.src = FALLBACK_IMAGE_URL;
@@ -2536,18 +2536,18 @@ export default function PortalMPP() {
                         </div>
                         
                         {/* Nama Instansi Terpusat */}
-                        <h3 className="text-sm sm:text-base md:text-lg font-medium text-slate-900 dark:text-white mb-1.5 group-hover:text-emerald-500 transition-colors line-clamp-1 w-full font-sans text-center">
+                        <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white mb-1.5 group-hover:text-emerald-500 transition-colors line-clamp-1 w-full font-sans text-center">
                           {item.nama}
                         </h3>
                         
                         {/* Detail Layanan Terpusat */}
-                        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-300 leading-normal line-clamp-2 mb-4 w-full text-center">
+                        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-normal line-clamp-2 mb-3.5 w-full text-center">
                           {item.layanan}
                         </p>
                       </div>
 
                       <div className="w-full pt-3 border-t border-slate-100 dark:border-white/10 flex items-center justify-center relative z-10">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold tracking-wide bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300">
                           <span>{t("mppPortal.instansi.activeStatus")}</span>
                           <ChevronRight className="w-3.5 h-3.5 opacity-70 group-hover:translate-x-1 group-hover:opacity-100 transition-transform" />
                         </span>
@@ -2559,11 +2559,11 @@ export default function PortalMPP() {
             </div>
 
             {/* Tombol Lihat Semua Instansi & Layanan Terpusat */}
-            <div className="flex justify-center mt-8">
+            <div className="flex justify-center mt-6 sm:mt-8">
               <button 
                 type="button"
                 onClick={() => setIsAgenciesCatalogOpen(true)}
-                className="min-h-[48px] h-12 px-8 rounded-full border-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all text-xs sm:text-sm font-bold tracking-wide inline-flex items-center gap-2 shadow-md hover:shadow-emerald-500/25 cursor-pointer active:scale-95 font-['Plus_Jakarta_Sans',sans-serif]"
+                className="min-h-[44px] h-11 sm:h-12 px-6 sm:px-8 rounded-full border-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all text-xs sm:text-sm font-bold tracking-wide inline-flex items-center gap-2 shadow-md hover:shadow-emerald-500/25 cursor-pointer active:scale-95 font-sans"
               >
                 <Building2 className="w-4 h-4" />
                 <span>{t("mppPortal.instansi.viewAllBtn")}</span>
@@ -2578,35 +2578,35 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }} 
             transition={{ duration: 0.35, ease: "easeOut" }} 
             viewport={{ once: true, amount: 0.1 }} 
-            className="w-full max-w-6xl mx-auto py-10 sm:py-16 md:py-24 px-0.5 sm:px-5 md:px-8"
+            className="w-full max-w-6xl mx-auto py-8 sm:py-14 md:py-20 px-0.5 sm:px-5 md:px-8"
           >
-            <div className="w-full bg-white/80 dark:bg-slate-800/40 backdrop-blur-xl shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 border border-slate-100 dark:border-white/5 rounded-3xl p-4 sm:p-8 md:p-10 relative overflow-hidden transition-all duration-300">
+            <div className="w-full bg-white/80 dark:bg-slate-800/40 backdrop-blur-xl shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 border border-slate-100 dark:border-white/5 rounded-3xl p-3 sm:p-6 md:p-10 relative overflow-hidden transition-all duration-300">
               <div className="hidden dark:block absolute inset-0 bg-gradient-to-br from-emerald-950/20 to-transparent pointer-events-none"></div>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8  relative z-10 text-center">
-                <div className="flex flex-col gap-2 sm:gap-3 py-2">
-                  <span className="text-3xl sm:text-4xl md:text-5xl font-black text-emerald-500 tracking-tight dark:drop-shadow-[0_0_25px_rgba(0,255,153,0.6)]">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-6 lg:gap-8 relative z-10 text-center items-center">
+                <div className="flex flex-col items-center justify-center gap-1 sm:gap-2.5 py-1.5 sm:py-2">
+                  <span className="text-xl xs:text-2xl sm:text-4xl md:text-5xl font-extrabold font-mono text-emerald-500 tracking-tight dark:drop-shadow-[0_0_25px_rgba(0,255,153,0.6)]">
                     <StatCounter target={Number(skmScoreAverage) || 0} isDecimal={true} />
                   </span>
-                  <span className="font-sans text-xs sm:text-sm text-slate-500 dark:text-slate-300 leading-normal uppercase tracking-wider font-semibold">
+                  <span className="font-sans text-[9px] xs:text-[10px] sm:text-xs md:text-sm text-slate-500 dark:text-slate-300 leading-tight uppercase tracking-wider font-semibold line-clamp-2">
                     {t("mppPortal.stats.ikm")}
                   </span>
                 </div>
 
-                <div className="flex flex-col gap-2 sm:gap-3 border-y md:border-y-0 md:border-x border-gray-200/80 dark:border-white/10 py-6 md:py-2">
-                  <span className="text-3xl sm:text-4xl md:text-5xl font-black text-amber-500 dark:text-[#FFD700] tracking-tight dark:drop-shadow-[0_0_25px_rgba(255,215,0,0.4)]">
+                <div className="flex flex-col items-center justify-center gap-1 sm:gap-2.5 border-x border-gray-200/80 dark:border-white/10 py-1.5 sm:py-2 px-1">
+                  <span className="text-xl xs:text-2xl sm:text-4xl md:text-5xl font-extrabold font-mono text-amber-500 dark:text-[#FFD700] tracking-tight dark:drop-shadow-[0_0_25px_rgba(255,215,0,0.4)]">
                     <StatCounter target={liveAgencies.length} />
                   </span>
-                  <span className="font-sans text-xs sm:text-sm text-slate-500 dark:text-slate-300 leading-normal uppercase tracking-wider font-semibold">
+                  <span className="font-sans text-[9px] xs:text-[10px] sm:text-xs md:text-sm text-slate-500 dark:text-slate-300 leading-tight uppercase tracking-wider font-semibold line-clamp-2">
                     {t("mppPortal.stats.agencies")}
                   </span>
                 </div>
 
-                <div className="flex flex-col gap-2 sm:gap-3 py-2">
-                  <span className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-800 dark:text-white tracking-tight dark:drop-shadow-[0_0_25px_rgba(255,255,255,0.4)]">
+                <div className="flex flex-col items-center justify-center gap-1 sm:gap-2.5 py-1.5 sm:py-2">
+                  <span className="text-xl xs:text-2xl sm:text-4xl md:text-5xl font-extrabold font-mono text-slate-800 dark:text-white tracking-tight dark:drop-shadow-[0_0_25px_rgba(255,255,255,0.4)]">
                     <StatCounter target={queueMetrics.totalVisitors} />
                   </span>
-                  <span className="font-sans text-xs sm:text-sm text-slate-500 dark:text-slate-300 leading-normal uppercase tracking-wider font-semibold">
+                  <span className="font-sans text-[9px] xs:text-[10px] sm:text-xs md:text-sm text-slate-500 dark:text-slate-300 leading-tight uppercase tracking-wider font-semibold line-clamp-2">
                     {t("mppPortal.stats.visitors")}
                   </span>
                 </div>
