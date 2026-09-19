@@ -186,29 +186,29 @@ export function SmartDocumentTracker({ isDark = false }: { isDark?: boolean }) {
           ? 'bg-slate-900/90 border-emerald-500/20 shadow-xl shadow-black/40' 
           : 'bg-white border-slate-200/90 shadow-xl shadow-slate-200/50'
       }`}>
-        <div className="max-w-3xl mx-auto text-center space-y-3 mb-6">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-bold font-mono">
-            <Search className="w-3.5 h-3.5" />
+        <div className="max-w-3xl mx-auto text-center space-y-2.5 mb-5 sm:mb-6">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-[10px] sm:text-xs font-bold font-mono">
+            <Search className="w-3.5 h-3.5 shrink-0" />
             <span>{isEn ? 'INTEGRATED DOCUMENT & PERMIT TRACKER' : isZh ? '综合政务与行政审批全程追踪' : 'PELACAK DOKUMEN & PERIZINAN TERPADU'}</span>
           </div>
-          <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight font-sans text-slate-900 dark:text-white leading-snug">
+          <h3 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight font-sans text-slate-900 dark:text-white leading-snug">
             {isEn ? 'Smart Document & Permit Waybill Tracker' : isZh ? '智能政务审批进度与单据在线查询' : 'Smart Document & Permit Waybill Tracker'}
           </h3>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed max-w-xl mx-auto font-normal">
             {isEn ? 'Track business licensing, civil registry, land certificates, or building permits transparently in real-time.' : isZh ? '实时透明追踪企业营业许可、户籍户政、土地确权及建筑许可审批进展。' : 'Lacak progres berkas permohonan izin usaha, kependudukan, sertifikat tanah, atau PBG secara transparan secara real-time.'}
           </p>
         </div>
 
-        {/* Search Input */}
-        <form onSubmit={handleSearch} className="max-w-2xl mx-auto flex items-center gap-2">
+        {/* Search Input with 44px+ touch targets and responsive layout */}
+        <form onSubmit={handleSearch} className="max-w-2xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 shrink-0" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={isEn ? "Enter tracking code (e.g., TRK-123456)" : isZh ? "输入追踪单号 (例如: TRK-123456)" : "Masukkan Nomor E-Lacak (Contoh: TRK-123456)"}
-              className={`w-full pl-12 pr-4 py-3.5 rounded-2xl border text-sm font-semibold outline-none transition-all ${
+              placeholder={isEn ? "e.g., TRK-123456" : isZh ? "输入单号 (例: TRK-123456)" : "Masukkan Nomor Resi (Contoh: TRK-123456)"}
+              className={`w-full pl-10 pr-4 py-3 min-h-[48px] rounded-2xl border text-xs sm:text-sm font-semibold outline-none transition-all font-sans ${
                 isDark 
                   ? 'bg-slate-800/80 border-slate-700 focus:border-emerald-500 text-white placeholder:text-slate-500' 
                   : 'bg-slate-50 border-slate-200 focus:border-emerald-500 text-slate-900 placeholder:text-slate-400'
@@ -218,19 +218,19 @@ export function SmartDocumentTracker({ isDark = false }: { isDark?: boolean }) {
           <button
             type="submit"
             disabled={isLoading || !searchQuery.trim()}
-            className="flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 active:scale-98 disabled:opacity-50 text-white font-bold text-sm shadow-md transition-all shrink-0 cursor-pointer"
+            className="flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] rounded-2xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 disabled:opacity-50 text-white font-bold text-xs sm:text-sm shadow-md transition-all shrink-0 cursor-pointer"
           >
             {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><span>{isEn ? 'Track' : isZh ? '查询' : 'Lacak'}</span><ArrowRight className="w-4 h-4" /></>}
           </button>
         </form>
 
         {/* Tracking Format Helper */}
-        <div className="flex items-center justify-center gap-2 flex-wrap mt-4 text-xs text-slate-500">
-          <span>{isEn ? 'Tracking Number Format:' : isZh ? '单号格式示例:' : 'Format Nomor Resi Pelacakan:'}</span>
-          <span className="px-2.5 py-1 rounded-lg border font-mono font-semibold text-[11px] bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 border-emerald-500/30">
+        <div className="flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap mt-3.5 sm:mt-4 text-[11px] sm:text-xs text-slate-500">
+          <span>{isEn ? 'Format:' : isZh ? '格式:' : 'Format Nomor Resi:'}</span>
+          <span className="px-2 py-0.5 rounded-md border font-mono font-bold text-[10px] sm:text-[11px] bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 border-emerald-500/30">
             TRK-XXXXXXXX
           </span>
-          <span className="text-slate-400 text-[11px]">{isEn ? '(Printed on your MPP queue ticket receipt)' : isZh ? '(打印在政务大厅排队叫号小票上)' : '(Tercetak pada struk tiket antrean loket MPP)'}</span>
+          <span className="text-slate-400 text-[10px] sm:text-[11px]">{isEn ? '(On your ticket receipt)' : isZh ? '(见排队小票)' : '(Tercetak pada struk tiket antrean)'}</span>
         </div>
       </div>
 

@@ -220,32 +220,32 @@ export const WeatherWidget = () => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+            <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
               Prakiraan Cuaca Terkini
             </span>
           </div>
 
-          <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+          <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-1.5 font-sans">
             <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
             <span>Kabupaten Luwu</span>
             <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
-              (Pusat Belopa & Sekitarnya)
+              (Pusat Belopa &amp; Sekitarnya)
             </span>
-          </h4>
+          </h3>
         </div>
 
         {/* Action Controls & Condition Badge */}
         <div className="flex items-center gap-2">
-          {/* Refresh Icon Button */}
+          {/* Refresh Icon Button (Standard 44px touch target) */}
           <motion.button
             whileTap={{ scale: 0.92 }}
             onClick={() => fetchWeather(true)}
             disabled={isRefreshing || cooldown > 0}
             title={cooldown > 0 ? `Tunggu ${cooldown}d untuk pembaruan berikutnya` : "Perbarui data cuaca"}
-            className={`p-2 rounded-xl border transition-all flex items-center justify-center gap-1.5 ${
+            className={`min-h-[44px] min-w-[44px] px-2.5 rounded-xl border transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 ${
               cooldown > 0 || isRefreshing
                 ? "bg-slate-100 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/60 text-slate-400 dark:text-slate-500 cursor-not-allowed"
-                : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-slate-700/80 hover:border-emerald-500/40 shadow-sm"
+                : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-slate-700/80 hover:border-emerald-500/40 shadow-xs"
             }`}
             aria-label="Perbarui data cuaca"
           >
@@ -261,7 +261,7 @@ export const WeatherWidget = () => {
 
           {/* Weather Condition Icon Container */}
           <div 
-            className="p-2 sm:p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/70 shadow-sm flex items-center justify-center"
+            className="min-h-[44px] min-w-[44px] px-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/70 shadow-xs flex items-center justify-center"
             title={weather.weather?.[0]?.description || 'Kondisi Cuaca'}
           >
             {getWeatherIcon(weather.weather?.[0]?.main)}
@@ -277,16 +277,16 @@ export const WeatherWidget = () => {
             <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
               <Thermometer className="h-4 w-4 shrink-0" />
             </div>
-            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Suhu</span>
+            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 font-sans">Suhu</span>
           </div>
           <div>
-            <div className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-tight">
+            <div className="text-base sm:text-lg font-mono font-bold text-slate-900 dark:text-white leading-tight">
               {Math.round(weather.main.temp)}°C
             </div>
             {/* Timestamp of last successful fetch underneath temperature */}
             {formattedTimestamp && (
               <div 
-                className="text-[9px] sm:text-[10px] text-slate-600 dark:text-slate-300 font-medium flex items-center gap-1 mt-1 tracking-tight"
+                className="text-[9.5px] sm:text-[10px] font-mono text-slate-600 dark:text-slate-300 font-medium flex items-center gap-1 mt-1 tracking-tight"
                 title="Waktu terakhir data cuaca berhasil disinkronkan dari stasiun BMKG/OpenWeather"
               >
                 <Clock className="w-2.5 h-2.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
@@ -302,31 +302,34 @@ export const WeatherWidget = () => {
             <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
               <Droplets className="h-4 w-4 shrink-0" />
             </div>
-            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Kelembapan</span>
+            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 font-sans">Kelembapan</span>
           </div>
           <div>
-            <div className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-tight">
+            <div className="text-base sm:text-lg font-mono font-bold text-slate-900 dark:text-white leading-tight">
               {weather.main.humidity}%
             </div>
-            <div className="text-[9px] sm:text-[10px] text-slate-600 dark:text-slate-300 font-medium mt-1">
+            <div className="text-[9.5px] sm:text-[10px] font-mono text-slate-600 dark:text-slate-300 font-medium mt-1">
               Tekanan {weather.main.pressure || 1010} hPa
             </div>
           </div>
         </div>
 
-        {/* Metric 3: Kecepatan Angin */}
+        {/* Metric 3: Kecepatan Angin (Anti-truncation fix) */}
         <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/60 hover:border-cyan-500/30 dark:hover:border-cyan-500/30 transition-all flex flex-col justify-between shadow-[0_2px_8px_-2px_rgba(0,0,0,0.02)]">
           <div className="flex items-center gap-2 mb-1.5">
             <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
               <Wind className="h-4 w-4 shrink-0" />
             </div>
-            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 truncate">Kecepatan Angin</span>
+            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 font-sans whitespace-nowrap">
+              <span className="sm:hidden">Kec. Angin</span>
+              <span className="hidden sm:inline">Kecepatan Angin</span>
+            </span>
           </div>
           <div>
-            <div className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-tight">
+            <div className="text-base sm:text-lg font-mono font-bold text-slate-900 dark:text-white leading-tight">
               {weather.wind?.speed ?? 0} m/s
             </div>
-            <div className="text-[9px] sm:text-[10px] text-slate-600 dark:text-slate-300 font-medium mt-1">
+            <div className="text-[9.5px] sm:text-[10px] font-mono text-slate-600 dark:text-slate-300 font-medium mt-1">
               ~{Math.round((weather.wind?.speed || 0) * 3.6)} km/jam
             </div>
           </div>
@@ -338,13 +341,13 @@ export const WeatherWidget = () => {
             <div className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
               <Compass className="h-4 w-4 shrink-0" />
             </div>
-            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Kondisi</span>
+            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 font-sans">Kondisi</span>
           </div>
           <div>
             <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white capitalize leading-tight truncate" title={weather.weather?.[0]?.description}>
               {weather.weather?.[0]?.description || 'Cerah Berawan'}
             </div>
-            <div className="text-[9px] sm:text-[10px] text-slate-600 dark:text-slate-300 font-medium mt-1">
+            <div className="text-[9.5px] sm:text-[10px] font-sans text-slate-600 dark:text-slate-300 font-medium mt-1">
               Langit Luwu
             </div>
           </div>

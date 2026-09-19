@@ -21,14 +21,14 @@ export const OperationalHeatmap: React.FC<OperationalHeatmapProps> = ({ isDark =
 
   // Data Heatmap Kepadatan Jam
   const hourlyDensity = [
-    { time: '08:00', density: 'rendah', percentage: 25, status: t("mppPortal.operationalHeatmap.quietStatus", "Sepi (Sangat Direkomendasikan)") },
+    { time: '08:00', density: 'rendah', percentage: 25, status: t("mppPortal.operationalHeatmap.quietStatus", "Sepi (Lancar)") },
     { time: '09:00', density: 'sedang', percentage: 55, status: t("mppPortal.operationalHeatmap.mediumStatus", "Sedang") },
-    { time: '10:00', density: 'tinggi', percentage: 90, status: t("mppPortal.operationalHeatmap.peakStatus", "Jam Puncak Ramai") },
+    { time: '10:00', density: 'tinggi', percentage: 90, status: t("mppPortal.operationalHeatmap.peakStatus", "Puncak Ramai") },
     { time: '11:00', density: 'tinggi', percentage: 85, status: t("mppPortal.operationalHeatmap.busyStatus", "Ramai") },
-    { time: '12:00', density: 'istirahat', percentage: 10, status: t("mppPortal.operationalHeatmap.breakStatus", "Jam Istirahat / Pelayanan Terbatas") },
+    { time: '12:00', density: 'istirahat', percentage: 10, status: t("mppPortal.operationalHeatmap.breakStatus", "Jam Istirahat") },
     { time: '13:00', density: 'sedang', percentage: 60, status: t("mppPortal.operationalHeatmap.mediumStatus", "Sedang") },
     { time: '14:00', density: 'sedang', percentage: 45, status: t("mppPortal.operationalHeatmap.mediumStatus", "Sedang") },
-    { time: '15:00', density: 'rendah', percentage: 20, status: t("mppPortal.operationalHeatmap.quietStatus", "Sepi (Sangat Direkomendasikan)") },
+    { time: '15:00', density: 'rendah', percentage: 20, status: t("mppPortal.operationalHeatmap.quietStatus", "Sepi (Lancar)") },
   ];
 
   // Data Katalog SLA & Retribusi
@@ -90,8 +90,8 @@ export const OperationalHeatmap: React.FC<OperationalHeatmapProps> = ({ isDark =
               {t("mppPortal.operationalHeatmap.statusHeader", "Real-Time Status MPP Simpurusiang")}
             </div>
             
-            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-tight text-white leading-snug break-words font-sans">
-              {t("mppPortal.operationalHeatmap.statusTitle", "Layanan Pelayanan Publik Luwu Terbuka & Bebas Pungli")}
+            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-tight text-white leading-snug break-words font-sans">
+              {t("mppPortal.operationalHeatmap.statusTitle", "Pelayanan Publik Luwu Terbuka & Bebas Pungli")}
             </h2>
             
             <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
@@ -219,19 +219,19 @@ export const OperationalHeatmap: React.FC<OperationalHeatmapProps> = ({ isDark =
               </h4>
 
               <div className="space-y-2 text-xs">
-                <div className="flex justify-between text-slate-600 dark:text-slate-300">
-                  <span className="text-slate-400">{t("mppPortal.operationalHeatmap.agencyLabel", "Instansi Penanggung Jawab:")}</span>
-                  <span className="font-semibold text-right">{activeSla.agency}</span>
+                <div className="flex flex-col xs:flex-row xs:justify-between xs:items-center gap-0.5 text-slate-600 dark:text-slate-300">
+                  <span className="text-slate-500 dark:text-slate-400 text-[11px] xs:text-xs">{t("mppPortal.operationalHeatmap.agencyLabel", "Instansi Penanggung Jawab:")}</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-100 xs:text-right">{activeSla.agency}</span>
                 </div>
 
-                <div className="flex justify-between text-slate-600 dark:text-slate-300">
-                  <span className="text-slate-400">{t("mppPortal.operationalHeatmap.slaLabel", "Estimasi SLA Pengerjaan:")}</span>
-                  <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono text-right">{activeSla.sla}</span>
+                <div className="flex flex-col xs:flex-row xs:justify-between xs:items-center gap-0.5 text-slate-600 dark:text-slate-300">
+                  <span className="text-slate-500 dark:text-slate-400 text-[11px] xs:text-xs">{t("mppPortal.operationalHeatmap.slaLabel", "Estimasi SLA Pengerjaan:")}</span>
+                  <span className="font-bold text-emerald-700 dark:text-emerald-400 font-mono xs:text-right">{activeSla.sla}</span>
                 </div>
 
-                <div className="flex justify-between text-slate-600 dark:text-slate-300">
-                  <span className="text-slate-400">{t("mppPortal.operationalHeatmap.feeLabel", "Biaya Retribusi Resmi:")}</span>
-                  <span className="font-bold text-blue-600 dark:text-blue-400 font-mono text-right">{activeSla.fee}</span>
+                <div className="flex flex-col xs:flex-row xs:justify-between xs:items-center gap-0.5 text-slate-600 dark:text-slate-300">
+                  <span className="text-slate-500 dark:text-slate-400 text-[11px] xs:text-xs">{t("mppPortal.operationalHeatmap.feeLabel", "Biaya Retribusi Resmi:")}</span>
+                  <span className="font-bold text-blue-700 dark:text-blue-400 font-mono xs:text-right">{activeSla.fee}</span>
                 </div>
               </div>
 

@@ -205,7 +205,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
       {/* MAIN GRAND CINEMATIC SLIDESHOW SHOWCASE (CLEAN, IMMERSIVE & ELEGANT)      */}
       {/* ========================================================================= */}
       <div 
-        className="relative w-full h-[500px] xs:h-[530px] sm:h-[560px] md:h-[600px] lg:h-[640px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200/50 dark:border-white/10 group"
+        className="relative w-full h-[440px] xs:h-[480px] sm:h-[540px] md:h-[600px] lg:h-[640px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200/50 dark:border-white/10 group"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         onTouchStart={handleTouchStart}
@@ -401,9 +401,9 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
             </div>
 
             {/* Photo Title with Emerald Accent Dot */}
-            <h3 className="text-sm sm:text-base md:text-lg font-bold text-white leading-snug font-sans drop-shadow-sm flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
-              <span className="truncate">{currentPhoto.title}</span>
+            <h3 className="text-[13px] sm:text-base md:text-lg font-bold text-white leading-snug font-sans drop-shadow-sm flex items-start gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 mt-1 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
+              <span className="line-clamp-2 sm:line-clamp-1">{currentPhoto.title}</span>
             </h3>
 
             {/* Short Refined Caption */}
