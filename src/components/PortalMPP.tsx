@@ -6,7 +6,7 @@ import {
   Bot, Bell, Menu, Ticket, SearchCheck, Pointer, Search, CheckSquare, 
   ChevronRight, ChevronLeft, Sparkles, Star, Laptop, Accessibility, Home, LayoutGrid, 
   Layers, HelpCircle, Armchair, Baby, Gamepad2, Moon, BookOpen, 
-  HeartHandshake, CheckCircle2, Play, Apple,
+  HeartHandshake, CheckCircle2, Play, Pause, Apple,
   Clock, CalendarDays, Calendar, TrendingUp, BarChart3,
   MessageSquare, ShieldCheck, Headphones, ArrowRight,
   HardHat, MapPin, User, Mail, Phone, X, Check, Briefcase,
@@ -286,6 +286,35 @@ export default function PortalMPP() {
   const [selectedUMKM, setSelectedUMKM] = useState<any>(null);
   const [activeUmkmFilter, setActiveUmkmFilter] = useState<string>("Semua");
   const [umkmProducts, setUmkmProducts] = useState<any[]>(INITIAL_UMKM_PRODUCTS);
+  const [currentUmkmIndex, setCurrentUmkmIndex] = useState(0);
+  const [isUmkmAutoPlay, setIsUmkmAutoPlay] = useState(true);
+  const [isUmkmHovered, setIsUmkmHovered] = useState(false);
+
+  const filteredUmkmProducts = useMemo(() => {
+    return umkmProducts.filter((p) => activeUmkmFilter === "Semua" || p.kategori === activeUmkmFilter);
+  }, [umkmProducts, activeUmkmFilter]);
+
+  // Reset index slider saat filter kategori berubah
+  useEffect(() => {
+    setCurrentUmkmIndex(0);
+  }, [activeUmkmFilter]);
+
+  // Timer rotasi otomatis slider UMKM (durasi 4.5 detik)
+  useEffect(() => {
+    if (!isUmkmAutoPlay || isUmkmHovered || filteredUmkmProducts.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentUmkmIndex((prev) => (prev + 1) % filteredUmkmProducts.length);
+    }, 4500);
+    return () => clearInterval(interval);
+  }, [isUmkmAutoPlay, isUmkmHovered, filteredUmkmProducts.length]);
+
+  const handlePrevUmkm = useCallback(() => {
+    setCurrentUmkmIndex((prev) => (prev === 0 ? Math.max(0, filteredUmkmProducts.length - 1) : prev - 1));
+  }, [filteredUmkmProducts.length]);
+
+  const handleNextUmkm = useCallback(() => {
+    setCurrentUmkmIndex((prev) => (prev + 1) % filteredUmkmProducts.length);
+  }, [filteredUmkmProducts.length]);
 
   // --- Database Sync State: Fasilitas, UMKM, Alur, Kontak & Profil dari Supabase & API ---
   const [dbFacilities, setDbFacilities] = useState<any[]>([]);
@@ -3276,71 +3305,256 @@ export default function PortalMPP() {
               ))}
             </div>
 
-            {/* Grid Produk UMKM */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {umkmProducts.filter((p) => activeUmkmFilter === "Semua" || p.kategori === activeUmkmFilter).length === 0 ? (
-                <div className="col-span-full py-12 text-center text-xs text-slate-500 font-sans italic bg-slate-50/50 dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-slate-800">
+            {/* Slider Controls Bar: Timer Progress, Auto-play Toggle & Navigation */}
+            {filteredUmkmProducts.length > 0 && (
+              <div className="flex items-center justify-between gap-3 mb-3 px-2">
+                {/* Timer Duration Status & Play/Pause */}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsUmkmAutoPlay((prev) => !prev)}
+                    className="min-h-[44px] min-w-[44px] px-3 py-1.5 rounded-xl bg-white/90 dark:bg-slate-800/90 hover:bg-emerald-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-1.5 shadow-sm active:scale-95 cursor-pointer transition-all"
+                    title={isUmkmAutoPlay ? "Jeda Rotasi Otomatis (Durasi 4.5 Detik)" : "Mulai Rotasi Otomatis"}
+                  >
+                    {isUmkmAutoPlay ? (
+                      <>
+                        <Pause className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                        <span className="text-[11px] font-mono">Auto 4.5s</span>
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                        <span className="text-[11px] font-mono">Manual</span>
+                      </>
+                    )}
+                  </button>
+
+                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400 font-sans">
+                    {currentUmkmIndex + 1} / {filteredUmkmProducts.length} Produk
+                  </span>
+                </div>
+
+                {/* Navigasi Prev/Next Buttons (Thumb-Ergonomic Touch Targets) */}
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={handlePrevUmkm}
+                    className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-white/90 dark:bg-slate-800/90 hover:bg-emerald-500 hover:text-white border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 shadow-sm active:scale-95 cursor-pointer transition-all"
+                    aria-label="Produk Sebelumnya"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleNextUmkm}
+                    className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-white/90 dark:bg-slate-800/90 hover:bg-emerald-500 hover:text-white border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 shadow-sm active:scale-95 cursor-pointer transition-all"
+                    aria-label="Produk Selanjutnya"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Indikator Garis Durasi Waktu (Timer Progress Bar) */}
+            {filteredUmkmProducts.length > 1 && isUmkmAutoPlay && (
+              <div className="w-full h-1 bg-slate-200/70 dark:bg-slate-800 rounded-full mb-4 sm:mb-6 overflow-hidden">
+                <motion.div
+                  key={`${currentUmkmIndex}-${activeUmkmFilter}`}
+                  initial={{ width: "0%" }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 4.5, ease: "linear" }}
+                  className="h-full bg-emerald-500 rounded-full"
+                />
+              </div>
+            )}
+
+            {/* Kontainer Slider Interaktif Produk UMKM (Menggantikan Tumpukan Kebawah) */}
+            <div 
+              className="relative w-full overflow-hidden"
+              onMouseEnter={() => setIsUmkmHovered(true)}
+              onMouseLeave={() => setIsUmkmHovered(false)}
+            >
+              {filteredUmkmProducts.length === 0 ? (
+                <div className="w-full py-12 text-center text-xs text-slate-500 font-sans italic bg-slate-50/50 dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-slate-800">
                   {t("portal.noUmkmData", "Belum ada data produk UMKM binaan yang terdaftar di portal. Data akan ditampilkan secara otomatis ketika terhubung dengan database UMKM.")}
                 </div>
               ) : (
-                umkmProducts
-                  .filter((p) => activeUmkmFilter === "Semua" || p.kategori === activeUmkmFilter)
-                  .map((product) => (
-                  <div
-                    key={product.id}
-                    className="flex flex-col group rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/60 backdrop-blur-xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-emerald-500/40 hover:-translate-y-1"
-                  >
-                    <div className="relative h-48 overflow-hidden bg-slate-100 dark:bg-slate-800">
-                      <img
-                        src={product.image}
-                        alt={isZh ? (product.nama_produk_zh || product.nama_produk) : isEn ? (product.nama_produk_en || product.nama_produk) : product.nama_produk}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        referrerPolicy="no-referrer"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
-                      <div className="absolute top-3 left-3">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-emerald-500 text-white rounded-full shadow-sm">
-                          <BadgeCheck className="w-3 h-3" />
-                          {product.status_izin}
-                        </span>
-                      </div>
-                    </div>
+                <>
+                  {/* Mode Slider Mobile (< sm): Tampil 1 Produk Per Rotasi Waktu untuk Menghemat Ruang */}
+                  <div className="sm:hidden">
+                    <AnimatePresence mode="wait">
+                      {filteredUmkmProducts[currentUmkmIndex] && (() => {
+                        const product = filteredUmkmProducts[currentUmkmIndex];
+                        return (
+                          <motion.div
+                            key={product.id || currentUmkmIndex}
+                            initial={{ opacity: 0, x: 25 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -25 }}
+                            transition={{ duration: 0.3, ease: "easeOut" }}
+                            className="flex flex-col rounded-3xl border border-slate-200/90 dark:border-white/10 bg-white/95 dark:bg-slate-900/85 backdrop-blur-xl overflow-hidden shadow-xl shadow-emerald-950/5 dark:shadow-emerald-950/20"
+                          >
+                            <div className="relative h-56 overflow-hidden bg-slate-950">
+                              <img
+                                src={product.image}
+                                alt={isZh ? (product.nama_produk_zh || product.nama_produk) : isEn ? (product.nama_produk_en || product.nama_produk) : product.nama_produk}
+                                className="w-full h-full object-cover"
+                                referrerPolicy="no-referrer"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+                              <div className="absolute top-3 left-3">
+                                <span className="inline-flex items-center gap-1 px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-emerald-500 text-white rounded-full shadow-md font-mono">
+                                  <BadgeCheck className="w-3.5 h-3.5" />
+                                  {product.status_izin}
+                                </span>
+                              </div>
+                              <div className="absolute top-3 right-3">
+                                <span className="inline-flex items-center px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-slate-900/85 backdrop-blur-md text-amber-300 border border-white/20 rounded-full font-mono">
+                                  {product.kategori || "UMKM Luwu"}
+                                </span>
+                              </div>
+                              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+                                <span className="text-xs font-mono font-bold text-amber-400 bg-slate-950/85 px-3 py-1 rounded-lg backdrop-blur-sm border border-white/10">
+                                  {product.harga}
+                                </span>
+                              </div>
+                            </div>
 
-                    <div className="p-4 flex flex-col flex-grow">
-                      <div className="mb-3">
-                        <h4 className="text-sm font-bold font-sans text-slate-900 dark:text-white line-clamp-2 mb-1 group-hover:text-emerald-500 transition-colors">
-                          {isZh ? (product.nama_produk_zh || product.nama_produk) : isEn ? (product.nama_produk_en || product.nama_produk) : product.nama_produk}
-                        </h4>
-                        <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                          {product.nama_pemilik}
-                        </p>
-                        <p className="text-xs font-bold text-amber-600 dark:text-amber-400 font-sans mt-1">
-                          {product.harga}
-                        </p>
-                      </div>
+                            <div className="p-4 flex flex-col flex-grow text-left">
+                              <div className="mb-3">
+                                <h4 className="text-base font-bold font-sans text-slate-900 dark:text-white line-clamp-1 mb-1">
+                                  {isZh ? (product.nama_produk_zh || product.nama_produk) : isEn ? (product.nama_produk_en || product.nama_produk) : product.nama_produk}
+                                </h4>
+                                <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                                  Pelaku Usaha: {product.nama_pemilik}
+                                </p>
+                                <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 mt-1.5 font-normal">
+                                  {product.deskripsi || "Produk kemitraan resmi binaan MPP Simpurusiang Kab. Luwu."}
+                                </p>
+                              </div>
 
-                      <div className="mt-auto grid grid-cols-2 gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedUMKM(product)}
-                          className="flex items-center justify-center gap-1.5 py-2.5 px-3 min-h-[44px] rounded-xl text-xs font-bold font-sans bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 hover:text-emerald-600 transition-all active:scale-95 cursor-pointer"
-                        >
-                          <Search className="w-3.5 h-3.5 shrink-0" />
-                          <span>{t("mppPortal.umkm.detail", "Detail")}</span>
-                        </button>
-                        <a
-                          href={`https://wa.me/${product.no_wa}?text=Halo,%20saya%20tertarik%20dengan%20produk%20UMKM%20${encodeURIComponent(product.nama_produk)}%20di%20Portal%20MPP%20Luwu...`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-1.5 py-2.5 px-3 min-h-[44px] rounded-xl text-xs font-bold font-sans bg-emerald-500 text-white hover:bg-emerald-600 transition-all shadow-md shadow-emerald-500/20 active:scale-95"
-                        >
-                          <MessageCircle className="w-3.5 h-3.5 shrink-0" />
-                          <span>WA</span>
-                        </a>
-                      </div>
+                              <div className="mt-auto grid grid-cols-2 gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedUMKM(product)}
+                                  className="flex items-center justify-center gap-1.5 py-2.5 px-3 min-h-[44px] rounded-xl text-xs font-bold font-sans bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 hover:text-emerald-600 transition-all active:scale-95 cursor-pointer"
+                                >
+                                  <Search className="w-3.5 h-3.5 shrink-0" />
+                                  <span>{t("mppPortal.umkm.detail", "Detail")}</span>
+                                </button>
+                                <a
+                                  href={`https://wa.me/${product.no_wa}?text=Halo,%20saya%20tertarik%20dengan%20produk%20UMKM%20${encodeURIComponent(product.nama_produk)}%20di%20Portal%20MPP%20Luwu...`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center justify-center gap-1.5 py-2.5 px-3 min-h-[44px] rounded-xl text-xs font-bold font-sans bg-emerald-500 text-white hover:bg-emerald-600 transition-all shadow-md shadow-emerald-500/20 active:scale-95"
+                                >
+                                  <MessageCircle className="w-3.5 h-3.5 shrink-0" />
+                                  <span>WA</span>
+                                </a>
+                              </div>
+                            </div>
+                          </motion.div>
+                        );
+                      })()}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Mode Slider Tablet & Desktop (sm ke atas): Grid dengan Highlight Slider Aktif */}
+                  <div className="hidden sm:block">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+                      {filteredUmkmProducts.map((product, idx) => {
+                        const isCurrent = idx === currentUmkmIndex;
+                        return (
+                          <div
+                            key={product.id || idx}
+                            onClick={() => setCurrentUmkmIndex(idx)}
+                            className={`flex flex-col group rounded-2xl border transition-all duration-300 backdrop-blur-xl overflow-hidden cursor-pointer ${
+                              isCurrent 
+                                ? "border-emerald-500 ring-2 ring-emerald-500/30 bg-emerald-500/5 dark:bg-slate-900 shadow-xl shadow-emerald-500/10 scale-[1.02]" 
+                                : "border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/60 hover:border-emerald-500/40 hover:shadow-lg opacity-85 hover:opacity-100"
+                            }`}
+                          >
+                            <div className="relative h-44 overflow-hidden bg-slate-100 dark:bg-slate-800">
+                              <img
+                                src={product.image}
+                                alt={isZh ? (product.nama_produk_zh || product.nama_produk) : isEn ? (product.nama_produk_en || product.nama_produk) : product.nama_produk}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                referrerPolicy="no-referrer"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+                              <div className="absolute top-2.5 left-2.5">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-500 text-white rounded-full shadow-sm font-mono">
+                                  <BadgeCheck className="w-3 h-3" />
+                                  {product.status_izin}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="p-3.5 flex flex-col flex-grow text-left">
+                              <div className="mb-2.5">
+                                <h4 className="text-xs sm:text-sm font-bold font-sans text-slate-900 dark:text-white line-clamp-1 mb-0.5 group-hover:text-emerald-500 transition-colors">
+                                  {isZh ? (product.nama_produk_zh || product.nama_produk) : isEn ? (product.nama_produk_en || product.nama_produk) : product.nama_produk}
+                                </h4>
+                                <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate">
+                                  {product.nama_pemilik}
+                                </p>
+                                <p className="text-xs font-bold text-amber-600 dark:text-amber-400 font-sans mt-0.5">
+                                  {product.harga}
+                                </p>
+                              </div>
+
+                              <div className="mt-auto grid grid-cols-2 gap-1.5 pt-2.5 border-t border-slate-100 dark:border-slate-800">
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedUMKM(product);
+                                  }}
+                                  className="flex items-center justify-center gap-1 py-2 px-2 min-h-[40px] rounded-lg text-[11px] font-bold font-sans bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 hover:text-emerald-600 transition-all active:scale-95 cursor-pointer"
+                                >
+                                  <Search className="w-3 h-3 shrink-0" />
+                                  <span>{t("mppPortal.umkm.detail", "Detail")}</span>
+                                </button>
+                                <a
+                                  href={`https://wa.me/${product.no_wa}?text=Halo,%20saya%20tertarik%20dengan%20produk%20UMKM%20${encodeURIComponent(product.nama_produk)}%20di%20Portal%20MPP%20Luwu...`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="flex items-center justify-center gap-1 py-2 px-2 min-h-[40px] rounded-lg text-[11px] font-bold font-sans bg-emerald-500 text-white hover:bg-emerald-600 transition-all shadow-md shadow-emerald-500/20 active:scale-95"
+                                >
+                                  <MessageCircle className="w-3 h-3 shrink-0" />
+                                  <span>WA</span>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
-                ))
+
+                  {/* Navigasi Titik Indikator (Dots Navigation) */}
+                  {filteredUmkmProducts.length > 1 && (
+                    <div className="flex items-center justify-center gap-1.5 mt-5">
+                      {filteredUmkmProducts.map((_, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setCurrentUmkmIndex(idx)}
+                          className="min-h-[44px] min-w-[32px] flex items-center justify-center transition-all cursor-pointer"
+                          aria-label={`Lihat produk slide ${idx + 1}`}
+                        >
+                          <span className={`h-2 rounded-full transition-all duration-300 ${
+                            idx === currentUmkmIndex
+                              ? "w-8 bg-emerald-500 shadow-sm"
+                              : "w-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400"
+                          }`} />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </motion.section>
