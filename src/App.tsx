@@ -807,13 +807,27 @@ export default function App() {
     }
   }, [activeWorkspace]);
 
-  const loc = useLocation();
+  const [currentPathname, setCurrentPathname] = useState(() => window.location.pathname);
+  const loc = useMemo(() => ({ pathname: currentPathname }), [currentPathname]);
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPathname(window.location.pathname);
+    };
+    window.addEventListener("popstate", handleLocationChange);
+    window.addEventListener("hashchange", handleLocationChange);
+    return () => {
+      window.removeEventListener("popstate", handleLocationChange);
+      window.removeEventListener("hashchange", handleLocationChange);
+    };
+  }, []);
+
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     if (document.documentElement) document.documentElement.scrollTop = 0;
     if (document.body) document.body.scrollTop = 0;
 
-    const path = loc.pathname.toLowerCase();
+    const path = (currentPathname || window.location.pathname).toLowerCase();
     if (path.includes("/investments/add")) {
       setIsAddModalOpen(true);
     }
@@ -826,7 +840,7 @@ export default function App() {
     if (path.includes("/enterprise") || path.includes("/gis_spatial")) {
       setIsManagementPanelOpen(true);
     }
-  }, [loc.pathname]);
+  }, [currentPathname]);
 
   // ─── Spatial query analytics results state ───
   const [spatialQueryResults, setSpatialQueryResults] = useState<any[]>([]);
