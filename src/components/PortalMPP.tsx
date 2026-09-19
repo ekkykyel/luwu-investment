@@ -3746,10 +3746,10 @@ export default function PortalMPP() {
             </div>
 
             {/* Banner Virtual Helpdesk (Lebar Penuh) */}
-            <div className="max-w-6xl mx-auto mt-10 sm:mt-12 w-full">
-              <div className="grid grid-cols-1 md:grid-cols-2 bg-white/80 dark:bg-slate-800/40 backdrop-blur-xl border border-slate-100 dark:border-white/5 rounded-3xl shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden">
+            <div className="max-w-6xl mx-auto mt-8 sm:mt-12 w-full">
+              <div className="grid grid-cols-1 md:grid-cols-2 bg-white/80 dark:bg-slate-800/40 backdrop-blur-xl border border-slate-100 dark:border-white/5 rounded-2xl sm:rounded-3xl shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden">
                 {/* Kolom Kiri (Gambar Petugas MPP) */}
-                <div className="w-full overflow-hidden rounded-t-3xl md:rounded-l-3xl md:rounded-tr-none relative min-h-[300px] md:min-h-[320px] bg-emerald-500/5 dark:bg-emerald-950/20 flex items-end justify-center pt-8 px-4">
+                <div className="w-full overflow-hidden rounded-t-2xl sm:rounded-t-3xl md:rounded-l-3xl md:rounded-tr-none relative min-h-[220px] sm:min-h-[280px] md:min-h-[320px] bg-emerald-500/5 dark:bg-emerald-950/20 flex items-end justify-center pt-4 sm:pt-8 px-4">
                   <img 
                     src={staffImageLeft || staffImageRight || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=1200"} 
                     alt="Petugas Front Office & Asistensi MPP Simpurusiang" 
@@ -3758,55 +3758,55 @@ export default function PortalMPP() {
                       e.currentTarget.onerror = null;
                       e.currentTarget.src = 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=1200';
                     }}
-                    className="max-h-72 md:max-h-80 w-auto object-contain object-bottom drop-shadow-[0_10px_20px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_12px_24px_rgba(0,0,0,0.5)] transition-transform duration-500 hover:scale-105" 
+                    className="max-h-56 sm:max-h-72 md:max-h-80 w-auto object-contain object-bottom drop-shadow-[0_10px_20px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_12px_24px_rgba(0,0,0,0.5)] transition-transform duration-500 hover:scale-105" 
                   />
-                  <div className="absolute bottom-3 left-3 z-10 px-3 py-1 rounded-xl bg-slate-900/80 backdrop-blur-md border border-emerald-500/30 text-[10px] font-bold text-emerald-400 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Petugas Front Office & Asistensi MPP
+                  <div className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 z-10 px-2.5 py-1 rounded-lg sm:rounded-xl bg-slate-900/85 backdrop-blur-md border border-emerald-500/30 text-[9px] sm:text-[10px] font-bold text-emerald-400 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                    <span className="truncate">Petugas Front Office & Asistensi MPP</span>
                   </div>
                 </div>
 
                 {/* Kolom Kanan (Konten) */}
-                <div className="p-4 sm:p-8 lg:p-12 flex flex-col justify-center">
-                  <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-2 block font-sans text-left">
+                <div className="p-4 sm:p-7 lg:p-10 flex flex-col justify-center">
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1.5 block font-mono text-left">
                     {t("mppPortal.pengaduan.helpdeskBadge")}
                   </span>
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-medium text-slate-900 dark:text-white mb-3 font-sans text-left">
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2 font-sans text-left leading-snug">
                     {t("mppPortal.pengaduan.helpdeskTitle")}
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-300 leading-normal mb-4 text-left">
+                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-3 text-left font-normal">
                     {t("mppPortal.pengaduan.helpdeskDesc")}
                   </p>
 
-                  <div className="space-y-1 mb-6">
-                    <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block font-sans text-left">
+                  <div className="space-y-0.5 mb-4 p-2.5 sm:p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800">
+                    <span className="text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white block font-sans text-left">
                       {t("mppPortal.pengaduan.hoursLabel")}
                     </span>
-                    <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-300 leading-normal block text-left">
+                    <span className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 font-mono block text-left">
                       {t("mppPortal.pengaduan.hoursValue")}
                     </span>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
                     <button 
                       type="button"
                       onClick={() => {
                         setIsHelpdeskSubmitted(false);
                         setIsHelpdeskModalOpen(true);
                       }}
-                      className="min-h-[48px] bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white text-xs sm:text-sm font-semibold tracking-wide py-3.5 px-6 rounded-2xl w-fit flex items-center gap-2 cursor-pointer transition-all duration-200 shadow-lg shadow-emerald-500/25 font-sans"
+                      className="min-h-[48px] bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white text-xs sm:text-sm font-bold tracking-wide py-3 px-5 rounded-xl sm:rounded-2xl flex items-center justify-center gap-2 cursor-pointer transition-all duration-200 shadow-md shadow-emerald-500/25 font-sans"
                     >
-                      <Headphones className="w-4 h-4" />
+                      <Headphones className="w-4 h-4 shrink-0" />
                       <span>{t("mppPortal.pengaduan.contactBtn")}</span>
-                      <ArrowRight size={18} />
+                      <ArrowRight size={16} className="shrink-0" />
                     </button>
                     <a
                       href="https://wa.me/628114201234"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="min-h-[48px] bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold py-3.5 px-5 rounded-2xl flex items-center gap-2 transition-colors font-sans"
+                      className="min-h-[48px] bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-bold py-3 px-4 rounded-xl sm:rounded-2xl flex items-center justify-center gap-2 transition-colors font-sans active:scale-95"
                     >
-                      <MessageCircle className="w-4 h-4 text-emerald-500" />
+                      <MessageCircle className="w-4 h-4 text-emerald-500 shrink-0" />
                       <span>{t("mppPortal.contact.direct")}</span>
                     </a>
                   </div>
@@ -3822,20 +3822,20 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto py-12 sm:py-16 md:py-24 px-2 sm:px-5 md:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto py-10 sm:py-16 md:py-24 px-2 sm:px-5 md:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Terpusat */}
-            <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-8 break-words">
-              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
+            <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-5 sm:mb-8 break-words">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2 inline-block text-center font-mono bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
                 {t("mppPortal.alur.badge")}
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight leading-snug text-slate-900 dark:text-white font-sans">
                 {t("mppPortal.alur.title")}
               </h2>
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-4 text-center">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-1.5 mb-3 text-center font-normal">
                 {t("mppPortal.alur.subtitle")}
               </p>
-              <div className="w-12 sm:w-16 h-1 bg-emerald-500 rounded-full mx-auto mt-2"></div>
+              <div className="w-10 sm:w-14 h-1 bg-emerald-500 rounded-full mx-auto mt-2"></div>
             </div>
 
             {/* Inovasi Slide Carousel & Pencarian Form Alur Pelayanan 12 Tenant MPP */}
@@ -3995,18 +3995,18 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-7xl mx-auto py-10 sm:py-16 md:py-24 px-0.5 sm:px-5 md:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-7xl mx-auto py-8 sm:py-16 md:py-24 px-2 sm:px-5 md:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 gap-4">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-10 gap-3">
               <div>
-                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2 inline-block font-mono bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
                   {t("mppPortal.news.badge", "Publikasi Resmi")}
                 </span>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight leading-snug text-slate-900 dark:text-white font-sans">
                   {t("mppPortal.news.title", "Berita & Pengumuman")}
                 </h2>
-                <p className="text-base text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed mt-2">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed mt-1.5 font-normal">
                   {t("mppPortal.news.subtitle", "Informasi terbaru seputar layanan MPP, regulasi perizinan, dan pembaruan sistem.")}
                 </p>
               </div>
@@ -4016,7 +4016,7 @@ export default function PortalMPP() {
                   setSelectedNewsId(null);
                   setIsNewsModalOpen(true);
                 }}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors font-sans group cursor-pointer"
+                className="inline-flex items-center gap-1.5 min-h-[44px] text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors font-sans group cursor-pointer w-fit"
               >
                 <span>{t("mppPortal.news.viewAll", "Lihat Semua Berita")}</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -4024,9 +4024,9 @@ export default function PortalMPP() {
             </div>
 
             {/* Grid Berita */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {portalNews.filter(n => n.status !== 'draft').length === 0 ? (
-                <div className="col-span-full py-10 text-center text-xs text-slate-500 font-sans italic bg-slate-50/50 dark:bg-slate-900/40 rounded-3xl border border-slate-200 dark:border-slate-800">
+                <div className="col-span-full py-8 text-center text-xs text-slate-500 font-sans italic bg-slate-50/50 dark:bg-slate-900/40 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800">
                   {t("portal.noNewsData", "Belum ada pengumuman atau publikasi berita terbaru di portal MPP.")}
                 </div>
               ) : (
@@ -4041,10 +4041,10 @@ export default function PortalMPP() {
                         setSelectedNewsId(item.id);
                         setIsNewsModalOpen(true);
                       }}
-                      className="bg-white/90 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 rounded-3xl overflow-hidden shadow-lg shadow-emerald-950/5 dark:shadow-emerald-950/20 group cursor-pointer hover:border-emerald-500/60 transition-all duration-300 flex flex-col justify-between"
+                      className="bg-white/90 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 rounded-2xl sm:rounded-3xl overflow-hidden shadow-md sm:shadow-lg shadow-emerald-950/5 dark:shadow-emerald-950/20 group cursor-pointer hover:border-emerald-500/60 transition-all duration-300 flex flex-col justify-between active:scale-[0.99]"
                     >
                       <div>
-                        <div className="h-48 bg-slate-200 dark:bg-slate-700 relative overflow-hidden">
+                        <div className="h-40 sm:h-48 bg-slate-200 dark:bg-slate-700 relative overflow-hidden">
                           <img 
                             src={item.image} 
                             alt={item.judul}
@@ -4054,8 +4054,8 @@ export default function PortalMPP() {
                               e.currentTarget.src = 'https://images.unsplash.com/photo-1577495508048-b635879837f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
                             }}
                           />
-                          <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                            <span className="px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-[10px] font-bold uppercase tracking-wider text-emerald-400 border border-emerald-500/30 font-sans shadow-sm">
+                          <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">
+                            <span className="px-2.5 py-0.5 rounded-full bg-slate-950/80 backdrop-blur-md text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-emerald-400 border border-emerald-500/30 font-sans shadow-sm">
                               {item.kategori === 'Giat Kegiatan MPP' ? (isEn ? 'MPP Activities' : isZh ? '政务大厅动态' : item.kategori) :
                                item.kategori === 'Berita Daerah' ? (isEn ? 'Regional News' : isZh ? '地方要闻' : item.kategori) :
                                item.kategori === 'Berita Nasional' ? (isEn ? 'National News' : isZh ? '国家要闻' : item.kategori) :
@@ -4064,27 +4064,27 @@ export default function PortalMPP() {
                                item.kategori}
                             </span>
                             {item.isPinned && (
-                              <span className="px-2.5 py-1 rounded-full bg-amber-500 text-slate-950 text-[10px] font-bold font-sans">
+                              <span className="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 text-[9px] sm:text-[10px] font-bold font-sans">
                                 {isEn ? 'PINNED' : isZh ? '置顶' : 'UTAMA'}
                               </span>
                             )}
                           </div>
                         </div>
-                        <div className="p-6 space-y-2">
-                          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+                        <div className="p-4 sm:p-6 space-y-1.5 sm:space-y-2">
+                          <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-mono">
                             <span>{item.tanggal}</span>
-                            <span>{item.penulis}</span>
+                            <span className="truncate max-w-[120px] text-right">{item.penulis}</span>
                           </div>
-                          <h3 className="text-base font-bold text-slate-900 dark:text-white font-sans leading-snug group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors line-clamp-2">
+                          <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white font-sans leading-snug group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors line-clamp-2">
                             {isEn && item.judul_en ? item.judul_en : isZh && item.judul_zh ? item.judul_zh : item.judul}
                           </h3>
-                          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-3">
+                          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2 sm:line-clamp-3 font-normal">
                             {isEn && item.ringkasan_en ? item.ringkasan_en : isZh && item.ringkasan_zh ? item.ringkasan_zh : item.ringkasan}
                           </p>
                         </div>
                       </div>
 
-                      <div className="px-6 pb-5 pt-0 flex items-center justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                      <div className="px-4 sm:px-6 pb-4 sm:pb-5 pt-0 flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400 min-h-[36px]">
                         <span>{isEn ? 'Read More' : isZh ? '阅读全文' : t('mppPortal.news.readMore', 'Baca Selengkapnya')}</span>
                         <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                       </div>
@@ -4113,7 +4113,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="relative bg-slate-900/90 overflow-hidden rounded-t-[2rem] sm:rounded-t-[2.5rem] md:rounded-t-[4rem] w-full py-10 sm:py-16 md:py-24 px-0.5 sm:px-4"
+            className="relative bg-slate-900/90 overflow-hidden rounded-t-[1.75rem] sm:rounded-t-[2.5rem] md:rounded-t-[4rem] w-full py-8 sm:py-16 md:py-24 px-2 sm:px-4"
           >
             {/* Latar Belakang Absolut dengan Blur & Gradien Emerald Tipis */}
             <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -4135,43 +4135,43 @@ export default function PortalMPP() {
             {/* Header Seksi (Terpusat) */}
             <motion.div 
               initial={{ opacity: 0, y: 30, scale: 0.96, filter: "blur(6px)" }}
-            whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+              whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
               viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="relative z-10 max-w-4xl mx-auto px-4 text-center mb-8 sm:mb-12 flex flex-col items-center"
+              className="relative z-10 max-w-4xl mx-auto px-3 text-center mb-6 sm:mb-10 flex flex-col items-center"
             >
-              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/15 border border-emerald-500/30 px-3.5 py-1 rounded-full">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2 inline-block text-center font-mono bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 rounded-full">
                 {t("mppPortal.ulasan.badge")}
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-white font-sans">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight leading-snug text-white font-sans">
                 {t("mppPortal.ulasan.title")}
               </h2>
-              <p className="text-base text-slate-300 max-w-2xl mx-auto leading-relaxed mt-3 mb-6 text-center">
+              <p className="text-xs sm:text-sm text-slate-300 max-w-2xl mx-auto leading-relaxed mt-2 mb-4 text-center font-normal">
                 {t("mppPortal.ulasan.subtitle")}
               </p>
-              <div className="w-12 sm:w-16 h-1 bg-emerald-500 mx-auto mt-4 rounded-full"></div>
+              <div className="w-10 sm:w-14 h-1 bg-emerald-500 mx-auto mt-2 rounded-full"></div>
             </motion.div>
 
             {/* Kontainer Slider & Kartu (Glassmorphism with Peek Effect & Fade Gradient Masking) */}
-            <div className="relative w-full overflow-hidden max-w-7xl mx-auto z-10 py-2">
+            <div className="relative w-full overflow-hidden max-w-7xl mx-auto z-10 py-1 sm:py-2">
               {/* Fade Gradient Masking - Smooth blend into the dark container background */}
-              <div className="pointer-events-none absolute top-0 left-0 bottom-0 w-8 sm:w-20 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent z-20" />
-              <div className="pointer-events-none absolute top-0 right-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-slate-900 via-slate-900/80 to-transparent z-20" />
+              <div className="pointer-events-none absolute top-0 left-0 bottom-0 w-6 sm:w-20 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent z-20" />
+              <div className="pointer-events-none absolute top-0 right-0 bottom-0 w-8 sm:w-24 bg-gradient-to-l from-slate-900 via-slate-900/80 to-transparent z-20" />
 
               {isReviewsLoading ? (
-                <div className="w-full py-12 flex flex-col items-center justify-center text-center">
-                  <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mb-3" />
+                <div className="w-full py-10 flex flex-col items-center justify-center text-center">
+                  <div className="w-7 h-7 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mb-2.5" />
                   <span className="text-xs text-slate-400 font-sans">{t("mppPortal.ulasan.loading", "Memuat ulasan masyarakat terverifikasi...")}</span>
                 </div>
               ) : communityReviews.length === 0 ? (
-                <div className="w-full max-w-xl mx-auto py-12 px-6 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 text-center flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-3">
-                    <MessageSquare className="w-6 h-6" />
+                <div className="w-full max-w-xl mx-auto py-8 sm:py-12 px-4 sm:px-6 bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-white/10 text-center flex flex-col items-center">
+                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-2.5 sm:mb-3">
+                    <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
                   <h4 className="text-sm sm:text-base font-bold text-white font-sans mb-1">
                     {t("mppPortal.ulasan.emptyTitle", "Belum Ada Ulasan Masuk")}
                   </h4>
-                  <p className="text-xs text-slate-400 font-sans max-w-md leading-relaxed">
+                  <p className="text-xs text-slate-400 font-normal max-w-md leading-relaxed">
                     {t("mppPortal.ulasan.emptyDesc", "Ulasan dan aspirasi masyarakat akan ditampilkan secara otomatis setelah warga mengisi survei kepuasan layanan di loket MPP Simpurusiang.")}
                   </p>
                 </div>
