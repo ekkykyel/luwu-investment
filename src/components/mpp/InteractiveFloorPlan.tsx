@@ -516,18 +516,18 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
                   </div>
 
                   {/* Step-by-Step Wayfinding Guidance */}
-                  <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
-                    <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-1.5 font-mono">
-                      <Navigation className="w-3.5 h-3.5 text-emerald-500" />
+                  <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2.5">
+                    <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-mono">
+                      <Navigation className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                       <span>{isEn ? 'Step-by-Step Route Guidance (Wayfinding):' : isZh ? '分步导航指引 (路线步骤):' : 'Panduan Langkah Rute (Wayfinding):'}</span>
                     </h5>
-                    <div className="space-y-1.5">
+                    <div className="space-y-2">
                       {selectedZone.wayfindingRoute.map((step, idx) => (
-                        <div key={idx} className="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300">
-                          <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                        <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
+                          <span className="w-5 h-5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5 font-mono border border-emerald-500/25">
                             {idx + 1}
                           </span>
-                          <span className="leading-snug">{step}</span>
+                          <span className="leading-relaxed font-normal">{step}</span>
                         </div>
                       ))}
                     </div>
@@ -535,12 +535,12 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
 
                   {/* Facilities / Services */}
                   <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
-                    <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2 font-mono">
+                    <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 font-mono">
                       {isEn ? 'Services & Facilities Available:' : isZh ? '窗口服务与配套设施:' : 'Layanan & Fasilitas:'}
                     </h5>
-                    <div className="space-y-1">
+                    <div className="space-y-1.5">
                       {selectedZone.services.map((srv, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-200">
+                        <div key={idx} className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 font-normal">
                           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                           <span>{srv}</span>
                         </div>
@@ -550,20 +550,20 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
                 </div>
 
                 {/* Footer Action */}
-                <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
-                  <div className="flex-1 text-[11px] text-slate-500 dark:text-slate-400">
-                    <span className="block font-semibold text-slate-700 dark:text-slate-300">{isEn ? 'Operating Hours:' : isZh ? '办理服务时间:' : 'Jam Layanan:'}</span>
-                    {selectedZone.hours}
+                <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                    <span className="block font-bold text-slate-700 dark:text-slate-200">{isEn ? 'Operating Hours:' : isZh ? '办理服务时间:' : 'Jam Layanan:'}</span>
+                    <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">{selectedZone.hours}</span>
                   </div>
                   <button
                     type="button"
                     onClick={() => {
                       document.getElementById('smart-live-queue')?.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
+                    className="flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer whitespace-nowrap"
                   >
                     <span>{isEn ? 'Get Counter Ticket' : isZh ? '在线取号取票' : 'Ambil Antrean Loket'}</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
+                    <ArrowUpRight className="w-4 h-4 shrink-0" />
                   </button>
                 </div>
               </motion.div>

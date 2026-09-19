@@ -3136,30 +3136,30 @@ export default function PortalMPP() {
             className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-28 py-10 sm:py-16 md:py-24 px-0.5 sm:px-5 md:px-8 relative"
           >
             {/* Header Seksi */}
-            <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
-              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 mb-3 font-sans">
-                <Store className="w-3.5 h-3.5" />
+            <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 break-words">
+              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 mb-2.5 font-mono">
+                <Store className="w-3.5 h-3.5 shrink-0" />
                 {t("umkm_catalog", "Katalog Kemitraan UMKM Luwu")}
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight leading-snug text-slate-900 dark:text-white font-sans">
                 {t("umkm_catalog_title", "Galeri & Kemitraan UMKM Unggulan MPP")}
               </h2>
-              <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 max-w-[96%] mx-auto leading-relaxed mt-3 mb-6 text-center">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-[96%] mx-auto leading-relaxed mt-2 text-center font-normal">
                 {t("umkm_catalog_desc", "Pusat promosi dan kemitraan produk UMKM binaan Pemkab Luwu terverifikasi legalitas NIB, Halal, dan P-IRT.")}
               </p>
-              <div className="w-12 sm:w-16 h-1 bg-emerald-500 rounded-full mx-auto mt-2"></div>
+              <div className="w-12 h-1 bg-emerald-500 rounded-full mx-auto mt-3"></div>
             </div>
 
-            {/* Filter Pills */}
-            <div className="flex flex-wrap justify-center gap-2 mb-8">
+            {/* Filter Pills with smooth horizontal scrolling & 44px touch targets */}
+            <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-3 mb-6 sm:mb-8 scrollbar-none snap-x px-2">
               {['Semua', 'Kuliner', 'Kriya/Kerajinan'].map((cat) => (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setActiveUmkmFilter(cat)}
-                  className={`px-4 py-2 min-h-[40px] rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider transition-all duration-300 backdrop-blur-xl border font-sans cursor-pointer ${
+                  className={`px-4 py-2.5 min-h-[44px] rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200 backdrop-blur-xl border font-sans cursor-pointer whitespace-nowrap snap-center active:scale-95 shrink-0 ${
                     activeUmkmFilter === cat
-                      ? "bg-emerald-600 text-white border-emerald-400/40 shadow-lg shadow-emerald-500/25"
+                      ? "bg-emerald-600 text-white border-emerald-400/40 shadow-lg shadow-emerald-500/25 ring-2 ring-emerald-500/20"
                       : "bg-white/80 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-700/80"
                   }`}
                 >
@@ -3215,18 +3215,18 @@ export default function PortalMPP() {
                         <button
                           type="button"
                           onClick={() => setSelectedUMKM(product)}
-                          className="flex items-center justify-center gap-1.5 py-2 px-3 min-h-[40px] rounded-xl text-xs font-bold font-sans bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 hover:text-emerald-600 transition-all cursor-pointer"
+                          className="flex items-center justify-center gap-1.5 py-2.5 px-3 min-h-[44px] rounded-xl text-xs font-bold font-sans bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 hover:text-emerald-600 transition-all active:scale-95 cursor-pointer"
                         >
-                          <Search className="w-3.5 h-3.5" />
+                          <Search className="w-3.5 h-3.5 shrink-0" />
                           <span>{t("mppPortal.umkm.detail", "Detail")}</span>
                         </button>
                         <a
                           href={`https://wa.me/${product.no_wa}?text=Halo,%20saya%20tertarik%20dengan%20produk%20UMKM%20${encodeURIComponent(product.nama_produk)}%20di%20Portal%20MPP%20Luwu...`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-1.5 py-2 px-3 min-h-[40px] rounded-xl text-xs font-bold font-sans bg-emerald-500 text-white hover:bg-emerald-600 transition-all shadow-md shadow-emerald-500/20"
+                          className="flex items-center justify-center gap-1.5 py-2.5 px-3 min-h-[44px] rounded-xl text-xs font-bold font-sans bg-emerald-500 text-white hover:bg-emerald-600 transition-all shadow-md shadow-emerald-500/20 active:scale-95"
                         >
-                          <MessageCircle className="w-3.5 h-3.5" />
+                          <MessageCircle className="w-3.5 h-3.5 shrink-0" />
                           <span>WA</span>
                         </a>
                       </div>
