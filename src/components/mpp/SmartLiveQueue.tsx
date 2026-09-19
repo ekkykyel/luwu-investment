@@ -317,11 +317,14 @@ export function SmartLiveQueue({ isDark = false, onRegisterQueue }: { isDark?: b
       </div>
 
       {/* --- REKOMENDASI 4: STATUS PELACAKAN TIKET ANTREAN PEMOHON (SMART LIVE QUEUE TRACKER) --- */}
-      <div className={`p-4 sm:p-6 rounded-3xl border transition-all ${
+      <div className={`p-4 sm:p-6 rounded-3xl border transition-all relative overflow-hidden ${
         isDark 
-          ? 'bg-gradient-to-br from-slate-900 via-slate-900/90 to-emerald-950/30 border-emerald-500/30 shadow-xl' 
-          : 'bg-gradient-to-br from-white via-emerald-50/20 to-teal-50/30 border-emerald-200 shadow-md shadow-emerald-500/5'
+          ? 'bg-slate-900/90 backdrop-blur-xl border-slate-700/60 shadow-xl' 
+          : 'bg-white/95 backdrop-blur-xl border-slate-200/80 shadow-md shadow-emerald-500/5'
       }`}>
+        {/* Top Accent Glowing Rail */}
+        <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 z-10" />
+
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
@@ -540,12 +543,15 @@ export function SmartLiveQueue({ isDark = false, onRegisterQueue }: { isDark?: b
         {filteredQueues.map((item) => (
           <div
             key={item.id}
-            className={`p-4 rounded-2xl border transition-all flex flex-col justify-between space-y-3 relative overflow-hidden group ${
+            className={`p-4 sm:p-5 rounded-3xl border transition-all flex flex-col justify-between space-y-3 relative overflow-hidden group hover:shadow-xl hover:border-emerald-500/50 ${
               isDark 
-                ? 'bg-slate-900/90 border-slate-800 hover:border-emerald-500/40 shadow-lg' 
-                : 'bg-white border-slate-200 hover:border-emerald-500/40 shadow-md shadow-slate-200/40'
+                ? 'bg-slate-900/90 backdrop-blur-xl border-slate-700/60 shadow-lg' 
+                : 'bg-white/95 backdrop-blur-xl border-slate-200/80 shadow-md shadow-slate-200/40'
             }`}
           >
+            {/* Top Accent Glowing Rail */}
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 z-10" />
+
             {/* Agency Title & Counter Badge */}
             <div className="flex items-start justify-between gap-2">
               <div>

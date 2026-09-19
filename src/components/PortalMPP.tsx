@@ -4114,17 +4114,23 @@ export default function PortalMPP() {
                 transition={{ type: "spring", stiffness: 350, damping: 25, delay: 0 }}
                 whileHover={{ y: -6, scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
-                className="w-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-2xl sm:rounded-3xl shadow-lg shadow-slate-950/5 dark:shadow-emerald-950/20 p-5 sm:p-7 flex flex-col h-full hover:border-emerald-500/80 transition-all duration-300 group relative overflow-hidden"
+                className="w-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-3xl shadow-lg shadow-slate-950/5 dark:shadow-emerald-950/20 p-4 sm:p-6 flex flex-col justify-between h-full hover:border-emerald-500/80 transition-all duration-300 group relative overflow-hidden"
               >
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform bg-rose-50 dark:bg-rose-900/20 text-rose-500 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 shadow-inner">
-                  <MessageSquare className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2]" />
+                {/* Top Accent Glowing Rail */}
+                <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
+                <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-500/10 dark:bg-emerald-400/5 blur-3xl pointer-events-none" />
+
+                <div>
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform bg-rose-50 dark:bg-rose-900/20 text-rose-500 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 shadow-inner">
+                    <MessageSquare className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2]" />
+                  </div>
+                  <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white font-sans mb-1.5 group-hover:text-emerald-500 transition-colors text-left">
+                    {t("mppPortal.pengaduan.laporTitle")}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4 text-left font-normal">
+                    {t("mppPortal.pengaduan.laporDesc")}
+                  </p>
                 </div>
-                <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white font-sans mb-1.5 group-hover:text-emerald-500 transition-colors text-left">
-                  {t("mppPortal.pengaduan.laporTitle")}
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4 text-left font-normal">
-                  {t("mppPortal.pengaduan.laporDesc")}
-                </p>
                 <a 
                   href="https://www.lapor.go.id" 
                   target="_blank" 
@@ -4146,17 +4152,23 @@ export default function PortalMPP() {
                 transition={{ type: "spring", stiffness: 350, damping: 25, delay: 0.08 }}
                 whileHover={{ y: -6, scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
-                className="w-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-2xl sm:rounded-3xl shadow-lg shadow-slate-950/5 dark:shadow-emerald-950/20 p-5 sm:p-7 flex flex-col h-full hover:border-emerald-500/80 transition-all duration-300 group relative overflow-hidden"
+                className="w-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-3xl shadow-lg shadow-slate-950/5 dark:shadow-emerald-950/20 p-4 sm:p-6 flex flex-col justify-between h-full hover:border-emerald-500/80 transition-all duration-300 group relative overflow-hidden"
               >
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform bg-rose-50 dark:bg-rose-900/20 text-rose-500 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 shadow-inner">
-                  <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2]" />
+                {/* Top Accent Glowing Rail */}
+                <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
+                <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-500/10 dark:bg-emerald-400/5 blur-3xl pointer-events-none" />
+
+                <div>
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform bg-rose-50 dark:bg-rose-900/20 text-rose-500 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 shadow-inner">
+                    <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2]" />
+                  </div>
+                  <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white font-sans mb-1.5 group-hover:text-emerald-500 transition-colors text-left">
+                    {t("mppPortal.pengaduan.internalTitle")}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4 text-left font-normal">
+                    {t("mppPortal.pengaduan.internalDesc")}
+                  </p>
                 </div>
-                <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white font-sans mb-1.5 group-hover:text-emerald-500 transition-colors text-left">
-                  {t("mppPortal.pengaduan.internalTitle")}
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4 text-left font-normal">
-                  {t("mppPortal.pengaduan.internalDesc")}
-                </p>
                 <a 
                   href="#pengaduan-internal" 
                   onClick={(e) => {
@@ -4181,17 +4193,23 @@ export default function PortalMPP() {
                 transition={{ type: "spring", stiffness: 350, damping: 25, delay: 0.16 }}
                 whileHover={{ y: -6, scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
-                className="w-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-2xl sm:rounded-3xl shadow-lg shadow-slate-950/5 dark:shadow-emerald-950/20 p-5 sm:p-7 flex flex-col h-full hover:border-emerald-500/80 transition-all duration-300 group relative overflow-hidden"
+                className="w-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-3xl shadow-lg shadow-slate-950/5 dark:shadow-emerald-950/20 p-4 sm:p-6 flex flex-col justify-between h-full hover:border-emerald-500/80 transition-all duration-300 group relative overflow-hidden"
               >
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform bg-blue-50 dark:bg-blue-900/20 text-blue-500 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30 shadow-inner">
-                  <Headphones className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2]" />
+                {/* Top Accent Glowing Rail */}
+                <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
+                <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-500/10 dark:bg-emerald-400/5 blur-3xl pointer-events-none" />
+
+                <div>
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform bg-blue-50 dark:bg-blue-900/20 text-blue-500 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30 shadow-inner">
+                    <Headphones className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2]" />
+                  </div>
+                  <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white font-sans mb-1.5 group-hover:text-emerald-500 transition-colors text-left">
+                    {t("mppPortal.pengaduan.contactCenterTitle")}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4 text-left font-normal">
+                    {t("mppPortal.pengaduan.contactCenterDesc")}
+                  </p>
                 </div>
-                <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white font-sans mb-1.5 group-hover:text-emerald-500 transition-colors text-left">
-                  {t("mppPortal.pengaduan.contactCenterTitle")}
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4 text-left font-normal">
-                  {t("mppPortal.pengaduan.contactCenterDesc")}
-                </p>
                 <button 
                   type="button"
                   onClick={() => {
@@ -4504,8 +4522,11 @@ export default function PortalMPP() {
                         setSelectedNewsId(item.id);
                         setIsNewsModalOpen(true);
                       }}
-                      className="bg-white/90 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 rounded-2xl sm:rounded-3xl overflow-hidden shadow-md sm:shadow-lg shadow-emerald-950/5 dark:shadow-emerald-950/20 group cursor-pointer hover:border-emerald-500/60 transition-all duration-300 flex flex-col justify-between active:scale-[0.99]"
+                      className="bg-white/90 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 rounded-3xl overflow-hidden shadow-md sm:shadow-lg shadow-emerald-950/5 dark:shadow-emerald-950/20 group cursor-pointer hover:border-emerald-500/60 transition-all duration-300 flex flex-col justify-between active:scale-[0.99] relative"
                     >
+                      {/* Top Accent Glowing Rail */}
+                      <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 z-10" />
+
                       <div>
                         <div className="h-40 sm:h-48 bg-slate-200 dark:bg-slate-700 relative overflow-hidden">
                           <img 
@@ -4650,8 +4671,10 @@ export default function PortalMPP() {
                   {communityReviews.map((item, idx) => (
                     <div 
                       key={item.id || idx}
-                      className="w-[85vw] sm:w-[320px] shrink-0 snap-center bg-white/90 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl p-4 md:p-8 shadow-xl shadow-black/20 flex flex-col items-center text-center border border-white/20 dark:border-white/10"
+                      className="w-[85vw] sm:w-[320px] shrink-0 snap-center bg-white/90 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl p-4 sm:p-6 shadow-xl shadow-black/20 flex flex-col justify-between items-center text-center border border-white/20 dark:border-white/10 relative overflow-hidden group"
                     >
+                      {/* Top Accent Glowing Rail */}
+                      <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
                       {/* Ikon Profil */}
                       <div className="w-14 h-14 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20">
                         <User className="w-7 h-7" />
@@ -4745,8 +4768,9 @@ export default function PortalMPP() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.1 }}
                   transition={{ duration: 0.25, delay: 0 }}
-                  className="bg-white/90 dark:bg-slate-800/80 backdrop-blur-xl p-4 sm:p-5 rounded-xl sm:rounded-2xl flex flex-col items-center text-center border border-slate-100 dark:border-white/10 shadow-xs"
+                  className="bg-white/90 dark:bg-slate-800/80 backdrop-blur-xl p-4 sm:p-6 rounded-3xl flex flex-col justify-between items-center text-center border border-slate-200/80 dark:border-white/10 shadow-xs relative overflow-hidden group"
                 >
+                  <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 mb-2.5">
                     <Clock className="w-5 h-5" />
                   </div>
@@ -4764,8 +4788,9 @@ export default function PortalMPP() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.1 }}
                   transition={{ duration: 0.25, delay: 0.05 }}
-                  className="bg-white/90 dark:bg-slate-800/80 backdrop-blur-xl p-4 sm:p-5 rounded-xl sm:rounded-2xl flex flex-col items-center text-center border border-slate-100 dark:border-white/10 shadow-xs"
+                  className="bg-white/90 dark:bg-slate-800/80 backdrop-blur-xl p-4 sm:p-6 rounded-3xl flex flex-col justify-between items-center text-center border border-slate-200/80 dark:border-white/10 shadow-xs relative overflow-hidden group"
                 >
+                  <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 mb-2.5">
                     <MapPin className="w-5 h-5" />
                   </div>
@@ -4783,8 +4808,9 @@ export default function PortalMPP() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.1 }}
                   transition={{ duration: 0.25, delay: 0.1 }}
-                  className="bg-white/90 dark:bg-slate-800/80 backdrop-blur-xl p-4 sm:p-5 rounded-xl sm:rounded-2xl flex flex-col items-center text-center border border-slate-100 dark:border-white/10 shadow-xs"
+                  className="bg-white/90 dark:bg-slate-800/80 backdrop-blur-xl p-4 sm:p-6 rounded-3xl flex flex-col justify-between items-center text-center border border-slate-200/80 dark:border-white/10 shadow-xs relative overflow-hidden group"
                 >
+                  <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 mb-2.5">
                     <Mail className="w-5 h-5" />
                   </div>
@@ -4805,8 +4831,9 @@ export default function PortalMPP() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.1 }}
                   transition={{ duration: 0.25, delay: 0.15 }}
-                  className="bg-white/90 dark:bg-slate-800/80 backdrop-blur-xl p-4 sm:p-5 rounded-xl sm:rounded-2xl flex flex-col items-center text-center border border-slate-100 dark:border-white/10 shadow-xs"
+                  className="bg-white/90 dark:bg-slate-800/80 backdrop-blur-xl p-4 sm:p-6 rounded-3xl flex flex-col justify-between items-center text-center border border-slate-200/80 dark:border-white/10 shadow-xs relative overflow-hidden group"
                 >
+                  <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 mb-2.5">
                     <Phone className="w-5 h-5" />
                   </div>
@@ -4889,8 +4916,11 @@ export default function PortalMPP() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.25, delay: 0, ease: "easeOut" }}
-                className="bg-white/90 dark:bg-slate-800/40 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-md sm:shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-100 dark:border-white/5 h-[390px] sm:h-[420px] flex flex-col group hover:shadow-xl transition-all duration-300"
+                className="bg-white/90 dark:bg-slate-800/40 backdrop-blur-xl rounded-3xl shadow-md sm:shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-200/80 dark:border-white/10 h-[390px] sm:h-[420px] flex flex-col justify-between group hover:shadow-xl hover:border-emerald-500/50 transition-all duration-300 relative"
               >
+                {/* Top Accent Glowing Rail */}
+                <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 z-10" />
+
                 {/* Header Profil */}
                 <div className="px-4 sm:px-5 py-3 border-b border-gray-100 dark:border-white/5 flex items-center gap-2.5 bg-slate-50/70 dark:bg-slate-800/40 shrink-0">
                   <div className="w-9 h-9 rounded-full p-[2px] bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shrink-0 shadow-sm">
@@ -4982,8 +5012,11 @@ export default function PortalMPP() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.25, delay: 0.05, ease: "easeOut" }}
-                className="bg-white/90 dark:bg-slate-800/40 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-md sm:shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-100 dark:border-white/5 h-[390px] sm:h-[420px] flex flex-col group hover:shadow-xl transition-all duration-300"
+                className="bg-white/90 dark:bg-slate-800/40 backdrop-blur-xl rounded-3xl shadow-md sm:shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-200/80 dark:border-white/10 h-[390px] sm:h-[420px] flex flex-col justify-between group hover:shadow-xl hover:border-emerald-500/50 transition-all duration-300 relative"
               >
+                {/* Top Accent Glowing Rail */}
+                <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 z-10" />
+
                 {/* Header Profil */}
                 <div className="px-4 sm:px-5 py-3 border-b border-gray-100 dark:border-white/5 flex items-center gap-2.5 bg-slate-50/70 dark:bg-slate-800/40 shrink-0">
                   <div className="w-9 h-9 rounded-full bg-red-600/10 text-red-600 flex items-center justify-center shrink-0 border border-red-600/20 shadow-sm">
@@ -5069,8 +5102,11 @@ export default function PortalMPP() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.25, delay: 0.1, ease: "easeOut" }}
-                className="bg-white/90 dark:bg-slate-800/40 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-md sm:shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-100 dark:border-white/5 h-[390px] sm:h-[420px] flex flex-col group hover:shadow-xl transition-all duration-300"
+                className="bg-white/90 dark:bg-slate-800/40 backdrop-blur-xl rounded-3xl shadow-md sm:shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-200/80 dark:border-white/10 h-[390px] sm:h-[420px] flex flex-col justify-between group hover:shadow-xl hover:border-emerald-500/50 transition-all duration-300 relative"
               >
+                {/* Top Accent Glowing Rail */}
+                <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 z-10" />
+
                 {/* Header Profil */}
                 <div className="px-4 sm:px-5 py-3 border-b border-gray-100 dark:border-white/5 flex items-center gap-2.5 bg-slate-50/70 dark:bg-slate-800/40 shrink-0">
                   <div className="w-9 h-9 rounded-full bg-[#1877F2]/10 text-[#1877F2] flex items-center justify-center shrink-0 border border-[#1877F2]/20 shadow-sm">
@@ -5146,8 +5182,11 @@ export default function PortalMPP() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.25, delay: 0.15, ease: "easeOut" }}
-                className="bg-white/90 dark:bg-slate-800/40 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-md sm:shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-100 dark:border-white/5 h-[390px] sm:h-[420px] flex flex-col group hover:shadow-xl transition-all duration-300"
+                className="bg-white/90 dark:bg-slate-800/40 backdrop-blur-xl rounded-3xl shadow-md sm:shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-200/80 dark:border-white/10 h-[390px] sm:h-[420px] flex flex-col justify-between group hover:shadow-xl hover:border-emerald-500/50 transition-all duration-300 relative"
               >
+                {/* Top Accent Glowing Rail */}
+                <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 z-10" />
+
                 {/* Header Profil */}
                 <div className="px-4 sm:px-5 py-3 border-b border-gray-100 dark:border-white/5 flex items-center gap-2.5 bg-slate-50/70 dark:bg-slate-800/40 shrink-0">
                   <div className="w-9 h-9 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center shrink-0 shadow-sm border border-slate-700/20">
@@ -5385,23 +5424,23 @@ export default function PortalMPP() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.2, delay: idx * 0.03 }}
-                      className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 rounded-xl sm:rounded-2xl overflow-hidden shadow-xs hover:shadow-sm transition-shadow"
+                      className="bg-white/90 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs hover:shadow-md transition-shadow relative"
                     >
                       <button
                         type="button"
                         onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                        className="w-full text-left min-h-[48px] sm:min-h-[52px] p-3.5 sm:p-4 flex items-center justify-between gap-3 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800/80"
+                        className="w-full text-left min-h-[48px] sm:min-h-[52px] p-4 sm:p-5 flex items-center justify-between gap-3 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800/80"
                         aria-expanded={isOpen}
                       >
                         <div className="flex items-center gap-2.5 sm:gap-3">
-                          <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0 text-xs font-mono font-bold transition-colors ${
+                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-xs font-mono font-bold transition-colors ${
                             isOpen 
                               ? 'bg-emerald-500 text-slate-950 shadow-xs' 
                               : 'bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
                           }`}>
                             Q{idx + 1}
                           </div>
-                          <span className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white leading-snug">
+                          <span className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white leading-snug font-sans">
                             {faq.question}
                           </span>
                         </div>
@@ -5416,10 +5455,10 @@ export default function PortalMPP() {
                           animate={{ opacity: 1, height: 'auto' }}
                           exit={{ opacity: 0, height: 0 }}
                           transition={{ duration: 0.2, ease: "easeOut" }}
-                          className="px-3.5 sm:px-4 pb-4 pt-1 text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed border-t border-slate-100 dark:border-white/5"
+                          className="px-4 sm:px-5 pb-5 pt-1 text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed border-t border-slate-100 dark:border-white/5"
                         >
-                          <div className="pl-9 sm:pl-11 pr-1">
-                            <p className="bg-slate-50 dark:bg-slate-900/60 p-3 sm:p-3.5 rounded-xl border border-slate-100 dark:border-white/5 font-normal leading-relaxed">
+                          <div className="pl-10 sm:pl-11 pr-1">
+                            <p className="bg-slate-50 dark:bg-slate-900/60 p-3.5 sm:p-4 rounded-2xl border border-slate-100 dark:border-white/5 font-normal leading-relaxed">
                               {faq.answer}
                             </p>
                           </div>
