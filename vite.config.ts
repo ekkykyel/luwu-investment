@@ -98,9 +98,9 @@ export default defineConfig(() => {
     server: {
       host: '0.0.0.0',
       port: 3000,
-      hmr: process.env.NODE_ENV === 'development' ? {
+      hmr: process.env.DISABLE_HMR === 'true' ? false : (process.env.NODE_ENV === 'development' ? {
         clientPort: 443
-      } : false,
+      } : false),
     },
   };
 });
