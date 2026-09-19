@@ -219,19 +219,19 @@ export const OperationalHeatmap: React.FC<OperationalHeatmapProps> = ({ isDark =
               </h4>
 
               <div className="space-y-2 text-xs">
-                <div className="flex justify-between text-slate-600 dark:text-slate-300">
-                  <span className="text-slate-400">{t("mppPortal.operationalHeatmap.agencyLabel", "Instansi Penanggung Jawab:")}</span>
-                  <span className="font-semibold text-right">{activeSla.agency}</span>
+                <div className="flex flex-col xs:flex-row xs:justify-between xs:items-center gap-0.5 text-slate-600 dark:text-slate-300">
+                  <span className="text-slate-500 dark:text-slate-400 text-[11px] xs:text-xs">{t("mppPortal.operationalHeatmap.agencyLabel", "Instansi Penanggung Jawab:")}</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-100 xs:text-right">{activeSla.agency}</span>
                 </div>
 
-                <div className="flex justify-between text-slate-600 dark:text-slate-300">
-                  <span className="text-slate-400">{t("mppPortal.operationalHeatmap.slaLabel", "Estimasi SLA Pengerjaan:")}</span>
-                  <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono text-right">{activeSla.sla}</span>
+                <div className="flex flex-col xs:flex-row xs:justify-between xs:items-center gap-0.5 text-slate-600 dark:text-slate-300">
+                  <span className="text-slate-500 dark:text-slate-400 text-[11px] xs:text-xs">{t("mppPortal.operationalHeatmap.slaLabel", "Estimasi SLA Pengerjaan:")}</span>
+                  <span className="font-bold text-emerald-700 dark:text-emerald-400 font-mono xs:text-right">{activeSla.sla}</span>
                 </div>
 
-                <div className="flex justify-between text-slate-600 dark:text-slate-300">
-                  <span className="text-slate-400">{t("mppPortal.operationalHeatmap.feeLabel", "Biaya Retribusi Resmi:")}</span>
-                  <span className="font-bold text-blue-600 dark:text-blue-400 font-mono text-right">{activeSla.fee}</span>
+                <div className="flex flex-col xs:flex-row xs:justify-between xs:items-center gap-0.5 text-slate-600 dark:text-slate-300">
+                  <span className="text-slate-500 dark:text-slate-400 text-[11px] xs:text-xs">{t("mppPortal.operationalHeatmap.feeLabel", "Biaya Retribusi Resmi:")}</span>
+                  <span className="font-bold text-blue-700 dark:text-blue-400 font-mono xs:text-right">{activeSla.fee}</span>
                 </div>
               </div>
 

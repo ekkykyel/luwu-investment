@@ -183,17 +183,17 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold font-mono">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                 {isEn ? `SLA Compliance: ${avgCompliance}% Excellent` : isZh ? `SLA达标率: ${avgCompliance}% 优秀` : `Kepatuhan SLA: ${avgCompliance}% Prima`}
               </span>
               <button
                 type="button"
                 onClick={() => setIsMaklumatExpanded(!isMaklumatExpanded)}
-                className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-emerald-500 hover:text-white dark:hover:text-slate-950 transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
+                className="min-h-[38px] px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-emerald-500 hover:text-white dark:hover:text-slate-950 active:scale-95 transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
               >
-                <Eye className="w-3.5 h-3.5" />
+                <Eye className="w-3.5 h-3.5 shrink-0" />
                 <span>{isMaklumatExpanded ? (isEn ? 'Collapse' : isZh ? '收起' : 'Ringkas') : (isEn ? 'Read Full Pledge' : isZh ? '查看承诺全文' : 'Baca Teks Lengkap')}</span>
               </button>
             </div>
