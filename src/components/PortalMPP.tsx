@@ -1904,10 +1904,10 @@ export default function PortalMPP() {
         )}
 
         {/* Main Content Area */}
-        <main className="w-full max-w-[1440px] mx-auto px-1 sm:px-4 md:px-8 lg:px-16 pt-3 pb-28 sm:pb-32 md:py-12 flex flex-col gap-0 overflow-x-clip">
+        <main className="w-full max-w-[1440px] mx-auto px-3.5 sm:px-4 md:px-8 lg:px-16 pt-2 sm:pt-3 pb-28 sm:pb-32 md:py-12 flex flex-col gap-0 overflow-x-clip">
           
           {/* Hero Section */}
-          <section id="hero" className="flex flex-col items-center text-center relative pt-2 sm:pt-4 md:pt-8 pb-6 md:pb-12 scroll-mt-24">
+          <section id="hero" className="flex flex-col items-center text-center relative pt-1 sm:pt-4 md:pt-8 pb-5 md:pb-12 scroll-mt-24">
             <div id="beranda" className="absolute -top-24 left-0 w-0 h-0 pointer-events-none" />
             {/* Staggered Reveal Container */}
             <motion.div 
@@ -1932,11 +1932,11 @@ export default function PortalMPP() {
                   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
                 }}
               >
-                <div className="inline-flex items-center gap-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md text-slate-700 dark:text-slate-300 font-sans text-[10px] sm:text-xs font-semibold px-3.5 py-1.5 rounded-full mb-3.5 sm:mb-4 border border-slate-200 dark:border-slate-800 shadow-xs">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md text-slate-700 dark:text-slate-300 font-sans text-[10px] sm:text-xs font-semibold px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full mb-3 sm:mb-4 border border-slate-200 dark:border-slate-800 shadow-xs">
+                  <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-emerald-500 shrink-0" />
                   <span className="font-bold text-emerald-800 dark:text-emerald-400">PEMKAB LUWU</span>
                   <span className="text-slate-300 dark:text-slate-700">•</span>
-                  <span className="text-slate-600 dark:text-slate-300">{t("mppPortal.hero.award")}</span>
+                  <span className="text-slate-600 dark:text-slate-300 truncate max-w-[200px] sm:max-w-none">{t("mppPortal.hero.award")}</span>
                 </div>
               </motion.div>
               
@@ -1946,7 +1946,7 @@ export default function PortalMPP() {
                   hidden: { opacity: 0, y: 25 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.35 } },
                 }}
-                className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-center text-slate-900 dark:text-white mb-2 sm:mb-3 max-w-4xl leading-tight tracking-tight font-sans text-balance"
+                className="text-[22px] sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-center text-slate-900 dark:text-white mb-2 sm:mb-3 max-w-4xl leading-tight tracking-tight font-sans text-balance"
               >
                 {t("mppPortal.hero.titlePrefix")}{" "}
                 <span className="text-emerald-700 dark:text-emerald-400 font-extrabold">
@@ -1960,7 +1960,7 @@ export default function PortalMPP() {
                   hidden: { opacity: 0, y: 20 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.35 } },
                 }}
-                className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed text-center font-sans px-2 mb-5 sm:mb-6 text-balance"
+                className="text-[12.5px] sm:text-sm md:text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed text-center font-sans px-1 mb-4 sm:mb-6 text-balance font-normal"
               >
                 {t("mppPortal.hero.subtitle")}
               </motion.p>
@@ -1971,11 +1971,11 @@ export default function PortalMPP() {
                   hidden: { opacity: 0, y: 20 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
                 }}
-                className="w-full max-w-3xl mb-6 sm:mb-8 px-0 sm:px-2"
+                className="w-full max-w-3xl mb-5 sm:mb-8 px-0 sm:px-2"
               >
                 <div 
                   onClick={() => setIsCommandPaletteOpen(true)}
-                  className="relative min-h-[48px] h-12 sm:h-14 flex items-center bg-white dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm rounded-2xl p-1.5 sm:p-2 hover:border-emerald-500/60 dark:hover:border-emerald-500/50 transition-all cursor-pointer group"
+                  className="relative min-h-[48px] h-12 sm:h-14 flex items-center bg-white dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm rounded-2xl p-1 sm:p-2 hover:border-emerald-500/60 dark:hover:border-emerald-500/50 transition-all cursor-pointer group"
                 >
                   <div className="pl-2 sm:pl-3 pr-1 text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5 shrink-0">
                     <Search className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400" />
@@ -1983,7 +1983,7 @@ export default function PortalMPP() {
                       Tabe'
                     </span>
                   </div>
-                  <div className="w-full h-full flex items-center text-slate-400 dark:text-slate-400 text-xs sm:text-sm md:text-base px-2.5 py-1 truncate font-sans select-none">
+                  <div className="w-full h-full flex items-center text-slate-400 dark:text-slate-400 text-xs sm:text-sm md:text-base px-2 py-1 truncate font-sans select-none">
                     <span>{t("mppPortal.search.placeholderShort") || "Cari layanan, KTP, izin usaha, BPJS, permohonan..."}</span>
                   </div>
                   
@@ -1995,7 +1995,8 @@ export default function PortalMPP() {
                       window.dispatchEvent(new CustomEvent('open-mpp-voice-assistant'));
                     }}
                     title="Pencarian Suara & Asisten Suara AI"
-                    className="p-2 sm:p-2.5 rounded-xl text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors mr-1 cursor-pointer shrink-0"
+                    aria-label="Pencarian Suara & Asisten Suara AI"
+                    className="min-h-[44px] min-w-[40px] p-2 sm:p-2.5 rounded-xl text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors mr-0.5 sm:mr-1 cursor-pointer shrink-0 flex items-center justify-center active:scale-95"
                   >
                     <Mic className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                   </button>
@@ -2011,7 +2012,7 @@ export default function PortalMPP() {
                       e.stopPropagation();
                       setIsCommandPaletteOpen(true);
                     }}
-                    className="h-9 sm:h-10 min-h-[38px] sm:min-h-[40px] bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs sm:text-sm font-semibold tracking-wide px-4 sm:px-6 rounded-xl transition-all shrink-0 font-sans cursor-pointer flex items-center justify-center shadow-xs"
+                    className="h-9 sm:h-10 min-h-[38px] sm:min-h-[40px] bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-[11.5px] sm:text-sm font-semibold tracking-wide px-3 sm:px-6 rounded-xl transition-all shrink-0 font-sans cursor-pointer flex items-center justify-center shadow-xs active:scale-95"
                   >
                     <span className="hidden sm:inline">{t("mppPortal.search.button")}</span>
                     <span className="sm:hidden">{t("mppPortal.search.buttonMobile")}</span>
@@ -2038,7 +2039,7 @@ export default function PortalMPP() {
                           setIsCommandPaletteOpen(true);
                         }
                       }}
-                      className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 border border-slate-200 dark:border-slate-700/70 text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 font-medium transition-colors cursor-pointer select-none"
+                      className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 border border-slate-200 dark:border-slate-700/70 text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 font-medium transition-colors cursor-pointer select-none active:scale-95"
                     >
                       {chip.label}
                     </button>
@@ -2052,20 +2053,20 @@ export default function PortalMPP() {
                   hidden: { opacity: 0, y: 15 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
                 }}
-                className="grid grid-cols-3 gap-2 sm:gap-4 lg:gap-6 w-full max-w-4xl px-0 sm:px-2 mb-6 sm:mb-8"
+                className="grid grid-cols-3 gap-2 sm:gap-4 lg:gap-6 w-full max-w-4xl px-0 sm:px-2 mb-5 sm:mb-8"
               >
                 {activePersona === 'investor' ? (
                   <>
                     <button 
                       type="button"
                       onClick={() => document.getElementById('investor-vip')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="w-full min-h-[52px] bg-white dark:bg-slate-900 border border-amber-500/30 dark:border-amber-500/20 shadow-xs hover:border-amber-500/60 rounded-xl sm:rounded-2xl p-3 sm:p-5 flex flex-col items-center justify-center gap-2 group transition-all cursor-pointer active:scale-98"
+                      className="w-full min-h-[58px] sm:min-h-[80px] bg-white dark:bg-slate-900 border border-amber-500/30 dark:border-amber-500/20 shadow-xs hover:border-amber-500/60 rounded-xl sm:rounded-2xl p-2.5 sm:p-5 flex flex-col items-center justify-center gap-1.5 sm:gap-2 group transition-all cursor-pointer active:scale-95"
                     >
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-amber-700 dark:text-amber-400 group-hover:scale-105 transition-transform">
-                        <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-amber-700 dark:text-amber-400 group-hover:scale-105 transition-transform">
+                        <Sparkles className="w-4 h-4 sm:w-6 sm:h-6" />
                       </div>
                       <div className="flex flex-col items-center text-center">
-                        <span className="font-sans text-xs sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                        <span className="font-sans text-[11px] sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                           VIP Investor Desk
                         </span>
                         <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">Liaison Officer & Fasilitasi</span>
@@ -2075,14 +2076,14 @@ export default function PortalMPP() {
                     <button 
                       type="button"
                       onClick={() => document.getElementById('peta-spasial')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="w-full min-h-[52px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-blue-500/60 rounded-xl sm:rounded-2xl p-3 sm:p-5 flex flex-col items-center justify-center gap-2 group transition-all cursor-pointer active:scale-98"
+                      className="w-full min-h-[58px] sm:min-h-[80px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-blue-500/60 rounded-xl sm:rounded-2xl p-2.5 sm:p-5 flex flex-col items-center justify-center gap-1.5 sm:gap-2 group transition-all cursor-pointer active:scale-95"
                     >
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/60 flex items-center justify-center text-blue-700 dark:text-blue-400 group-hover:scale-105 transition-transform">
-                        <MapPin className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/60 flex items-center justify-center text-blue-700 dark:text-blue-400 group-hover:scale-105 transition-transform">
+                        <MapPin className="w-4 h-4 sm:w-6 sm:h-6" />
                       </div>
                       <div className="flex flex-col items-center text-center">
-                        <span className="font-sans text-xs sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                          Peta Spasial & RDTR
+                        <span className="font-sans text-[11px] sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                          Peta Spasial RDTR
                         </span>
                         <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">WebGIS Zonasi & Potensi</span>
                       </div>
@@ -2091,14 +2092,14 @@ export default function PortalMPP() {
                     <button 
                       type="button"
                       onClick={() => document.getElementById('syarat-dokumen')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="w-full min-h-[52px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-emerald-500/60 rounded-xl sm:rounded-2xl p-3 sm:p-5 flex flex-col items-center justify-center gap-2 group transition-all cursor-pointer active:scale-98"
+                      className="w-full min-h-[58px] sm:min-h-[80px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-emerald-500/60 rounded-xl sm:rounded-2xl p-2.5 sm:p-5 flex flex-col items-center justify-center gap-1.5 sm:gap-2 group transition-all cursor-pointer active:scale-95"
                     >
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:scale-105 transition-transform">
-                        <Briefcase className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:scale-105 transition-transform">
+                        <Briefcase className="w-4 h-4 sm:w-6 sm:h-6" />
                       </div>
                       <div className="flex flex-col items-center text-center">
-                        <span className="font-sans text-xs sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                          Izin Berusaha OSS
+                        <span className="font-sans text-[11px] sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                          Izin Usaha OSS
                         </span>
                         <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">Syarat NIB, PBG & SLF</span>
                       </div>
@@ -2109,13 +2110,13 @@ export default function PortalMPP() {
                     <button 
                       type="button"
                       onClick={() => setIsQueueBookingOpen(true)}
-                      className="w-full min-h-[52px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-emerald-500/60 rounded-xl sm:rounded-2xl p-3 sm:p-5 flex flex-col items-center justify-center gap-2 group transition-all cursor-pointer active:scale-98"
+                      className="w-full min-h-[58px] sm:min-h-[80px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-emerald-500/60 rounded-xl sm:rounded-2xl p-2.5 sm:p-5 flex flex-col items-center justify-center gap-1.5 sm:gap-2 group transition-all cursor-pointer active:scale-95"
                     >
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:scale-105 transition-transform">
-                        <Ticket className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:scale-105 transition-transform">
+                        <Ticket className="w-4 h-4 sm:w-6 sm:h-6" />
                       </div>
                       <div className="flex flex-col items-center text-center">
-                        <span className="font-sans text-xs sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                        <span className="font-sans text-[11px] sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                           {t("mppPortal.quickActions.antrean")}
                         </span>
                         <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">{t("mppPortal.quickActions.antreanDesc")}</span>
@@ -2125,13 +2126,13 @@ export default function PortalMPP() {
                     <button 
                       type="button"
                       onClick={() => document.getElementById('tracking-berkas')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="w-full min-h-[52px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-blue-500/60 rounded-xl sm:rounded-2xl p-3 sm:p-5 flex flex-col items-center justify-center gap-2 group transition-all cursor-pointer active:scale-98"
+                      className="w-full min-h-[58px] sm:min-h-[80px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-blue-500/60 rounded-xl sm:rounded-2xl p-2.5 sm:p-5 flex flex-col items-center justify-center gap-1.5 sm:gap-2 group transition-all cursor-pointer active:scale-95"
                     >
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/60 flex items-center justify-center text-blue-700 dark:text-blue-400 group-hover:scale-105 transition-transform">
-                        <SearchCheck className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/60 flex items-center justify-center text-blue-700 dark:text-blue-400 group-hover:scale-105 transition-transform">
+                        <SearchCheck className="w-4 h-4 sm:w-6 sm:h-6" />
                       </div>
                       <div className="flex flex-col items-center text-center">
-                        <span className="font-sans text-xs sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        <span className="font-sans text-[11px] sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                           {t("mppPortal.quickActions.cekStatus")}
                         </span>
                         <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">{t("mppPortal.quickActions.cekStatusDesc")}</span>
@@ -2144,13 +2145,13 @@ export default function PortalMPP() {
                         setAirportKioskInitialMode('citizen');
                         setIsAirportKioskOpen(true);
                       }}
-                      className="w-full min-h-[52px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-amber-500/60 rounded-xl sm:rounded-2xl p-3 sm:p-5 flex flex-col items-center justify-center gap-2 group transition-all cursor-pointer active:scale-98"
+                      className="w-full min-h-[58px] sm:min-h-[80px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-amber-500/60 rounded-xl sm:rounded-2xl p-2.5 sm:p-5 flex flex-col items-center justify-center gap-1.5 sm:gap-2 group transition-all cursor-pointer active:scale-95"
                     >
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-amber-700 dark:text-amber-400 group-hover:scale-105 transition-transform">
-                        <Pointer className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-amber-700 dark:text-amber-400 group-hover:scale-105 transition-transform">
+                        <Pointer className="w-4 h-4 sm:w-6 sm:h-6" />
                       </div>
                       <div className="flex flex-col items-center text-center">
-                        <span className="font-sans text-xs sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                        <span className="font-sans text-[11px] sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                           {t("mppPortal.quickActions.mandiri")}
                         </span>
                         <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">{t("mppPortal.quickActions.mandiriDesc")}</span>
