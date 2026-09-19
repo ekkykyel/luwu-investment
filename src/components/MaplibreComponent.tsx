@@ -151,6 +151,7 @@ export interface MapComponentProps {
   printOrientation?: "portrait" | "landscape";
   isLayerPanelOpen?: boolean;
   setIsLayerPanelOpen?: (open: boolean) => void;
+  isLeftSidebarOpen?: boolean;
   customGeoJson?: any;
 }
 
@@ -5141,6 +5142,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
             setMapMode={setLocalMapMode}
             isLayerPanelOpen={props.isLayerPanelOpen}
             setIsLayerPanelOpen={props.setIsLayerPanelOpen}
+            isLeftSidebarOpen={props.isLeftSidebarOpen}
           />
         )}
       </Map>
