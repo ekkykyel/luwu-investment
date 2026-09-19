@@ -113,29 +113,29 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
             </p>
           </div>
 
-          <div className="relative z-10 pt-6 space-y-3">
-            <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-slate-800">
-              <span className="flex items-center gap-1.5">
-                <Users className="w-4 h-4 text-emerald-400" /> {t("mppPortal.skmBento.totalRespondents", "Total Responden:")}
+          <div className="relative z-10 pt-4 sm:pt-6 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-1 text-xs text-slate-400 pt-2 border-t border-slate-800">
+              <span className="flex items-center gap-1.5 font-medium">
+                <Users className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> {t("mppPortal.skmBento.totalRespondents", "Total Responden:")}
               </span>
-              <strong className="text-white font-mono text-sm">
-                {totalRespondents > 0 ? `${totalRespondents.toLocaleString('id-ID')} Warga` : "0 Warga (Belum Ada Data)"}
+              <strong className="text-white font-mono text-xs sm:text-sm font-bold">
+                {totalRespondents > 0 ? `${totalRespondents.toLocaleString('id-ID')} Responden` : t("mppPortal.skmBento.noDataShort", "0 Data")}
               </strong>
             </div>
 
             <button
               type="button"
               onClick={onOpenSurveyModal}
-              className="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white font-bold text-xs sm:text-sm py-3.5 px-6 rounded-2xl transition-all flex items-center justify-between cursor-pointer font-sans shadow-lg shadow-emerald-500/25"
+              className="w-full min-h-[48px] bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-bold text-xs sm:text-sm py-3 px-5 rounded-2xl transition-all flex items-center justify-between cursor-pointer font-sans shadow-lg shadow-emerald-500/25"
             >
-              <span>{t("mppPortal.skmBento.fillSurveyBtn", "Isi Survei SKM Pelayanan")}</span>
-              <ShieldCheck className="w-4 h-4" />
+              <span>{t("mppPortal.skmBento.fillSurveyBtn", "Isi Survei SKM (Khusus Pemohon)")}</span>
+              <ShieldCheck className="w-4 h-4 shrink-0" />
             </button>
           </div>
         </motion.div>
 
         {/* CARD 2: Top Highlights Bento (MD: 7 cols) */}
-        <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
           
           {/* Highlight 1: Biaya Rp 0 */}
           <motion.div
@@ -143,17 +143,17 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 shadow-lg flex flex-col justify-between space-y-3 group hover:border-emerald-500/50 transition-all"
+            className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-md sm:shadow-lg flex flex-col justify-between space-y-2.5 sm:space-y-3 group hover:border-emerald-500/50 transition-all"
           >
             <div className="flex items-center justify-between">
-              <div className="w-9 h-9 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500">
-                <DollarSign className="w-5 h-5" />
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 shrink-0">
+                <DollarSign className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono">{highlights.biaya}%</span>
             </div>
             <div>
-              <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans">{t("mppPortal.skmBento.highlight1Title", "Biaya & Tarif")}</h4>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-snug">
+              <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white font-sans">{t("mppPortal.skmBento.highlight1Title", "Biaya & Tarif")}</h4>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug font-normal">
                 {t("mppPortal.skmBento.highlight1Desc", "Transparansi 100% Bebas Pungli & Sesuai Tarif Resmi.")}
               </p>
             </div>
@@ -168,17 +168,17 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 shadow-lg flex flex-col justify-between space-y-3 group hover:border-teal-500/50 transition-all"
+            className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-md sm:shadow-lg flex flex-col justify-between space-y-2.5 sm:space-y-3 group hover:border-teal-500/50 transition-all"
           >
             <div className="flex items-center justify-between">
-              <div className="w-9 h-9 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-500">
-                <Smile className="w-5 h-5" />
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-500 shrink-0">
+                <Smile className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <span className="text-xs font-bold text-teal-600 dark:text-teal-400 font-mono">{highlights.perilaku}%</span>
             </div>
             <div>
-              <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans">{t("mppPortal.skmBento.highlight2Title", "Perilaku Petugas")}</h4>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-snug">
+              <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white font-sans">{t("mppPortal.skmBento.highlight2Title", "Perilaku Petugas")}</h4>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug font-normal">
                 {t("mppPortal.skmBento.highlight2Desc", "Pelayanan Ramah 5S, Sopan, Santun & Profesional.")}
               </p>
             </div>
@@ -193,17 +193,17 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 shadow-lg flex flex-col justify-between space-y-3 group hover:border-blue-500/50 transition-all"
+            className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-md sm:shadow-lg flex flex-col justify-between space-y-2.5 sm:space-y-3 group hover:border-blue-500/50 transition-all"
           >
             <div className="flex items-center justify-between">
-              <div className="w-9 h-9 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500">
-                <Award className="w-5 h-5" />
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500 shrink-0">
+                <Award className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <span className="text-xs font-bold text-blue-600 dark:text-blue-400 font-mono">{highlights.produk}%</span>
             </div>
             <div>
-              <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans">{t("mppPortal.skmBento.highlight3Title", "Produk Layanan")}</h4>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-snug">
+              <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white font-sans">{t("mppPortal.skmBento.highlight3Title", "Produk Layanan")}</h4>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug font-normal">
                 {t("mppPortal.skmBento.highlight3Desc", "Kesesuaian Dokumen & Kepastian Hasil Perizinan.")}
               </p>
             </div>
@@ -218,28 +218,28 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="sm:col-span-3 bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 flex flex-wrap items-center justify-between gap-4"
+            className="sm:col-span-3 bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 shrink-0">
-                <ShieldCheck className="w-5 h-5" />
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 shrink-0">
+                <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-slate-900 dark:text-white font-sans">
+                <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white font-sans">
                   {t("mppPortal.skmBento.commitmentTitle", "Komitmen Transparansi Layanan Pemkab Luwu")}
                 </h4>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-normal">
                   {t("mppPortal.skmBento.commitmentDesc", "Seluruh masukan warga diawasi langsung oleh Inspektorat & DPMPTSP Kab. Luwu.")}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-1 rounded-lg border border-emerald-500/20">
-                <CheckCircle2 className="w-3.5 h-3.5" /> {t("mppPortal.skmBento.pungliFree", "100% Bebas Pungli")}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg border border-emerald-500/20">
+                <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> {t("mppPortal.skmBento.pungliFree", "100% Bebas Pungli")}
               </span>
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 px-2.5 py-1 rounded-lg border border-blue-500/20">
-                <HeartHandshake className="w-3.5 h-3.5" /> {t("mppPortal.skmBento.responsiveFriendly", "Responsif & Ramah")}
+              <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg border border-blue-500/20">
+                <HeartHandshake className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> {t("mppPortal.skmBento.responsiveFriendly", "Responsif & Ramah")}
               </span>
             </div>
           </motion.div>
@@ -252,45 +252,45 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="md:col-span-12 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6"
+          className="md:col-span-12 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-lg sm:shadow-xl space-y-4 sm:space-y-6"
         >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 sm:pb-4 border-b border-slate-100 dark:border-slate-800">
             <div>
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-sans">
-                <BarChart3 className="w-4 h-4" /> {t("mppPortal.skmBento.matrixBadge", "Rincian Skor 9 Unsur SKM PermenPAN-RB")}
+              <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-mono">
+                <BarChart3 className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" /> {t("mppPortal.skmBento.matrixBadge", "Rincian Skor 9 Unsur SKM PermenPAN-RB")}
               </div>
-              <h3 className="text-base sm:text-lg font-medium tracking-tight text-slate-900 dark:text-white font-sans mt-1">
+              <h3 className="text-sm sm:text-base md:text-lg font-bold tracking-tight text-slate-900 dark:text-white font-sans mt-0.5">
                 {t("mppPortal.skmBento.matrixTitle", "Matriks Penilaian Mutu Pelayanan Publik")}
               </h3>
             </div>
-            <span className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl font-mono self-start sm:self-center">
+            <span className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg font-mono self-start sm:self-center">
               {t("mppPortal.skmBento.scaleLabel", "Skala Nilai 0 - 100%")}
             </span>
           </div>
 
-          {/* Grid 9 Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Grid 9 Cards (Grid 2 Kolom di Mobile untuk efisiensi ruang scrolling) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3.5">
             {skmIndicators.map((item) => (
               <div
                 key={item.key}
-                className="bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 space-y-3 hover:border-emerald-500/40 transition-all group"
+                className="bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60 rounded-xl sm:rounded-2xl p-3 sm:p-3.5 space-y-2 hover:border-emerald-500/40 transition-all group"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0">
                       {getIndicatorIcon(item.key)}
                     </div>
-                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 font-sans">
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 font-sans truncate">
                       {item.label}
                     </span>
                   </div>
-                  <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
+                  <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono shrink-0">
                     {item.score}%
                   </span>
                 </div>
 
                 {/* Progress bar */}
-                <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-slate-200 dark:bg-slate-700 h-1.5 sm:h-2 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     whileInView={{ width: `${item.score}%` }}

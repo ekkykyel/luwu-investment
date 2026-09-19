@@ -3533,20 +3533,20 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto  flex flex-col py-12 sm:py-16 md:py-24 px-2 sm:px-5 md:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto flex flex-col py-10 sm:py-16 md:py-24 px-2 sm:px-5 md:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Terpusat */}
-            <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
-              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
+            <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 break-words">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2 inline-block text-center font-mono bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
                 {t("mppPortal.survey.badge")}
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight leading-snug text-slate-900 dark:text-white font-sans">
                 {t("mppPortal.survey.title")}
               </h2>
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-6 text-center">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-1.5 mb-3 text-center font-normal">
                 {t("mppPortal.survey.subtitle")}
               </p>
-              <div className="w-12 sm:w-16 h-1 bg-emerald-500 rounded-full mx-auto mt-4"></div>
+              <div className="w-10 sm:w-14 h-1 bg-emerald-500 rounded-full mx-auto mt-2"></div>
             </div>
 
             {/* SkmBentoGrid Component */}
@@ -3574,29 +3574,29 @@ export default function PortalMPP() {
                   animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
                   exit={{ opacity: 0, scale: 0.94, y: 20, filter: "blur(4px)" }}
                   transition={{ duration: 0.25, ease: "easeOut" }}
-                  className="w-full max-w-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-4 sm:p-6 shadow-2xl overflow-y-auto max-h-[92vh]"
+                  className="w-full max-w-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl overflow-y-auto max-h-[92vh]"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Header Modal */}
                   <div className="flex items-start justify-between pb-4 border-b border-slate-100 dark:border-white/10 mb-4">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-sans">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono">
                           SKM Luwu Digital
                         </span>
-                        <span className="text-[11px] text-slate-400 font-medium">PermenPAN-RB No. 14/2017</span>
+                        <span className="text-[10px] sm:text-[11px] text-slate-400 font-medium">PermenPAN-RB No. 14/2017</span>
                       </div>
-                      <h3 className="text-base sm:text-lg font-medium text-slate-900 dark:text-white font-sans mt-1.5">
+                      <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white font-sans mt-1.5">
                         {t("mppPortal.survey.modalTitle")}
                       </h3>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-normal">
                         Survei resmi 9 unsur pelayanan publik MPP Simpurusiang terintegrasi langsung ke database daerah
                       </p>
                     </div>
                     <button
                       type="button"
                       onClick={() => setIsSurveyModalOpen(false)}
-                      className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
                       aria-label="Close"
                     >
                       <X className="w-5 h-5" />
@@ -3625,73 +3625,73 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto  flex flex-col scroll-mt-28 py-12 sm:py-16 md:py-24 px-2 sm:px-5 md:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-28 py-10 sm:py-16 md:py-24 px-2 sm:px-5 md:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Terpusat */}
-            <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
-              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
+            <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 break-words">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2 inline-block text-center font-mono bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
                 {t("mppPortal.pengaduan.badge")}
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight leading-snug text-slate-900 dark:text-white font-sans">
                 {t("mppPortal.pengaduan.title")}
               </h2>
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-6 text-center">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-1.5 mb-3 text-center font-normal">
                 {t("mppPortal.pengaduan.subtitle")}
               </p>
-              <div className="w-12 sm:w-16 h-1 bg-emerald-500 rounded-full mx-auto mt-4"></div>
+              <div className="w-10 sm:w-14 h-1 bg-emerald-500 rounded-full mx-auto mt-2"></div>
             </div>
 
             {/* Tata Letak 3 Kartu Kanal Pengaduan (Grid 3 Kolom) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto w-full">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto w-full">
               {/* Kartu 1 (SP4N-LAPOR!) */}
               <motion.div 
-                initial={{ opacity: 0, y: 30, scale: 0.96, filter: "blur(6px)" }}
-                whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ type: "spring", stiffness: 350, damping: 25, delay: 0 }}
-                whileHover={{ y: -8, scale: 1.02 }}
+                whileHover={{ y: -6, scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
-                className="w-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-3xl shadow-xl shadow-slate-950/5 dark:shadow-emerald-950/20 p-6 sm:p-8 flex flex-col h-full hover:border-emerald-500/80 hover:shadow-2xl hover:shadow-emerald-500/15 transition-all duration-300 group relative overflow-hidden"
+                className="w-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-2xl sm:rounded-3xl shadow-lg shadow-slate-950/5 dark:shadow-emerald-950/20 p-5 sm:p-7 flex flex-col h-full hover:border-emerald-500/80 transition-all duration-300 group relative overflow-hidden"
               >
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform bg-rose-50 dark:bg-rose-900/20 text-rose-500 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 shadow-inner">
-                  <MessageSquare className="w-7 h-7 stroke-[2.2]" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform bg-rose-50 dark:bg-rose-900/20 text-rose-500 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 shadow-inner">
+                  <MessageSquare className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2]" />
                 </div>
-                <h3 className="text-base sm:text-lg font-medium text-slate-900 dark:text-white font-sans mb-2 group-hover:text-emerald-500 transition-colors text-left">
+                <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white font-sans mb-1.5 group-hover:text-emerald-500 transition-colors text-left">
                   {t("mppPortal.pengaduan.laporTitle")}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-300 leading-normal mb-6 text-left">
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4 text-left font-normal">
                   {t("mppPortal.pengaduan.laporDesc")}
                 </p>
                 <a 
                   href="https://www.lapor.go.id" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="min-h-[48px] text-xs sm:text-sm font-semibold tracking-wide text-emerald-600 dark:text-emerald-400 mt-auto pt-4 flex items-center justify-between border-t border-slate-100 dark:border-white/10 hover:text-emerald-500 transition-colors group/link font-sans"
+                  className="min-h-[44px] text-xs sm:text-sm font-bold tracking-wide text-emerald-600 dark:text-emerald-400 mt-auto pt-3 flex items-center justify-between border-t border-slate-100 dark:border-white/10 hover:text-emerald-500 transition-colors group/link font-sans active:scale-95"
                 >
                   <span>{t("mppPortal.pengaduan.moreDetails")}</span>
-                  <div className="w-8 h-8 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover/link:bg-emerald-500 group-hover/link:text-white transition-all shadow-sm">
-                    <ArrowRight size={15} className="transition-transform group-hover/link:translate-x-0.5" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover/link:bg-emerald-500 group-hover/link:text-white transition-all shadow-sm">
+                    <ArrowRight size={14} className="transition-transform group-hover/link:translate-x-0.5" />
                   </div>
                 </a>
               </motion.div>
 
               {/* Kartu 2 (Pengaduan Internal) */}
               <motion.div 
-                initial={{ opacity: 0, y: 30, scale: 0.96, filter: "blur(6px)" }}
-                whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ type: "spring", stiffness: 350, damping: 25, delay: 0.08 }}
-                whileHover={{ y: -8, scale: 1.02 }}
+                whileHover={{ y: -6, scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
-                className="w-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-3xl shadow-xl shadow-slate-950/5 dark:shadow-emerald-950/20 p-6 sm:p-8 flex flex-col h-full hover:border-emerald-500/80 hover:shadow-2xl hover:shadow-emerald-500/15 transition-all duration-300 group relative overflow-hidden"
+                className="w-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-2xl sm:rounded-3xl shadow-lg shadow-slate-950/5 dark:shadow-emerald-950/20 p-5 sm:p-7 flex flex-col h-full hover:border-emerald-500/80 transition-all duration-300 group relative overflow-hidden"
               >
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform bg-rose-50 dark:bg-rose-900/20 text-rose-500 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 shadow-inner">
-                  <ShieldCheck className="w-7 h-7 stroke-[2.2]" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform bg-rose-50 dark:bg-rose-900/20 text-rose-500 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 shadow-inner">
+                  <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2]" />
                 </div>
-                <h3 className="text-base sm:text-lg font-medium text-slate-900 dark:text-white font-sans mb-2 group-hover:text-emerald-500 transition-colors text-left">
+                <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white font-sans mb-1.5 group-hover:text-emerald-500 transition-colors text-left">
                   {t("mppPortal.pengaduan.internalTitle")}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-300 leading-normal mb-6 text-left">
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4 text-left font-normal">
                   {t("mppPortal.pengaduan.internalDesc")}
                 </p>
                 <a 
@@ -3701,32 +3701,32 @@ export default function PortalMPP() {
                     const el = document.getElementById('survey');
                     if (el) el.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="min-h-[48px] text-xs sm:text-sm font-semibold tracking-wide text-emerald-600 dark:text-emerald-400 mt-auto pt-4 flex items-center justify-between border-t border-slate-100 dark:border-white/10 hover:text-emerald-500 transition-colors cursor-pointer group/link font-sans"
+                  className="min-h-[44px] text-xs sm:text-sm font-bold tracking-wide text-emerald-600 dark:text-emerald-400 mt-auto pt-3 flex items-center justify-between border-t border-slate-100 dark:border-white/10 hover:text-emerald-500 transition-colors cursor-pointer group/link font-sans active:scale-95"
                 >
                   <span>{t("mppPortal.pengaduan.moreDetails")}</span>
-                  <div className="w-8 h-8 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover/link:bg-emerald-500 group-hover/link:text-white transition-all shadow-sm">
-                    <ArrowRight size={15} className="transition-transform group-hover/link:translate-x-0.5" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover/link:bg-emerald-500 group-hover/link:text-white transition-all shadow-sm">
+                    <ArrowRight size={14} className="transition-transform group-hover/link:translate-x-0.5" />
                   </div>
                 </a>
               </motion.div>
 
               {/* Kartu 3 (Contact Center) */}
               <motion.div 
-                initial={{ opacity: 0, y: 30, scale: 0.96, filter: "blur(6px)" }}
-                whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ type: "spring", stiffness: 350, damping: 25, delay: 0.16 }}
-                whileHover={{ y: -8, scale: 1.02 }}
+                whileHover={{ y: -6, scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
-                className="w-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-3xl shadow-xl shadow-slate-950/5 dark:shadow-emerald-950/20 p-6 sm:p-8 flex flex-col h-full hover:border-emerald-500/80 hover:shadow-2xl hover:shadow-emerald-500/15 transition-all duration-300 group relative overflow-hidden"
+                className="w-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-2xl sm:rounded-3xl shadow-lg shadow-slate-950/5 dark:shadow-emerald-950/20 p-5 sm:p-7 flex flex-col h-full hover:border-emerald-500/80 transition-all duration-300 group relative overflow-hidden"
               >
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-[-3deg] transition-transform bg-blue-50 dark:bg-blue-900/20 text-blue-500 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30 shadow-inner">
-                  <Headphones className="w-7 h-7 stroke-[2.2]" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform bg-blue-50 dark:bg-blue-900/20 text-blue-500 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30 shadow-inner">
+                  <Headphones className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2]" />
                 </div>
-                <h3 className="text-base sm:text-lg font-medium text-slate-900 dark:text-white font-sans mb-2 group-hover:text-emerald-500 transition-colors text-left">
+                <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white font-sans mb-1.5 group-hover:text-emerald-500 transition-colors text-left">
                   {t("mppPortal.pengaduan.contactCenterTitle")}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-300 leading-normal mb-6 text-left">
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4 text-left font-normal">
                   {t("mppPortal.pengaduan.contactCenterDesc")}
                 </p>
                 <button 
@@ -3735,11 +3735,11 @@ export default function PortalMPP() {
                     setIsHelpdeskSubmitted(false);
                     setIsHelpdeskModalOpen(true);
                   }}
-                  className="w-full min-h-[48px] text-xs sm:text-sm font-semibold tracking-wide text-emerald-600 dark:text-emerald-400 mt-auto pt-4 flex items-center justify-between border-t border-slate-100 dark:border-white/10 hover:text-emerald-500 transition-colors cursor-pointer group/link font-sans"
+                  className="w-full min-h-[44px] text-xs sm:text-sm font-bold tracking-wide text-emerald-600 dark:text-emerald-400 mt-auto pt-3 flex items-center justify-between border-t border-slate-100 dark:border-white/10 hover:text-emerald-500 transition-colors cursor-pointer group/link font-sans active:scale-95"
                 >
                   <span>{t("mppPortal.pengaduan.moreDetails")}</span>
-                  <div className="w-8 h-8 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover/link:bg-emerald-500 group-hover/link:text-white transition-all shadow-sm">
-                    <ArrowRight size={15} className="transition-transform group-hover/link:translate-x-0.5" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover/link:bg-emerald-500 group-hover/link:text-white transition-all shadow-sm">
+                    <ArrowRight size={14} className="transition-transform group-hover/link:translate-x-0.5" />
                   </div>
                 </button>
               </motion.div>
