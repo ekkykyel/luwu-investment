@@ -402,81 +402,90 @@ export default function InvestorLogin() {
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-2 sm:px-0">
-        <div className="flex justify-center mb-4 sm:mb-5">
-          <div className="p-2.5 sm:p-3 bg-white/70 dark:bg-slate-800/70 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-md shadow-slate-500/5 backdrop-blur-sm">
+        <div className="flex justify-center mb-3 sm:mb-4">
+          <div className="p-2 sm:p-2.5 bg-gradient-to-br from-white/90 via-emerald-50/50 to-slate-100/80 dark:from-slate-800/90 dark:via-slate-800/60 dark:to-slate-900/90 rounded-2xl border border-emerald-500/30 shadow-xl shadow-emerald-500/10 backdrop-blur-md flex items-center gap-3">
             <img 
               src={LUWU_LOGO_BASE64} 
               alt="Logo Resmi Kabupaten Luwu" 
-              className="h-12 sm:h-14 w-auto object-contain" 
+              className="h-10 sm:h-12 w-auto object-contain drop-shadow-sm" 
               referrerPolicy="no-referrer"
             />
+            <div className="flex flex-col text-left pr-1 border-l border-slate-200 dark:border-slate-700/80 pl-3">
+              <span className="text-[10px] font-mono font-bold tracking-widest text-emerald-600 dark:text-emerald-400 uppercase">PEMKAB LUWU</span>
+              <span className="text-xs sm:text-sm font-black tracking-tight text-slate-900 dark:text-white">MPP Simpurusiang</span>
+            </div>
           </div>
         </div>
-        <h2 className="text-center text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-1 font-display">
+        <h2 className="text-center text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white mb-1 font-display">
           {t('auth.portalTitle', 'Portal Masuk Terpadu')}
         </h2>
-        <p className="text-center text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium">
+        <p className="text-center text-xs text-slate-600 dark:text-slate-400 font-medium max-w-xs sm:max-w-sm mx-auto">
           {t('appSubtitle', 'Kabupaten Luwu • Satu Pintu Investasi & Layanan Publik')}
         </p>
       </div>
 
-      <div className="mt-5 sm:mt-6 sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-1 sm:px-0">
-        <div className="bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 py-6 px-4 sm:py-8 sm:px-8 shadow-xl rounded-2xl sm:rounded-3xl backdrop-blur-md transition-all">
+      <div className="mt-4 sm:mt-5 sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-1 sm:px-0">
+        <div className="bg-white/95 dark:bg-slate-900/95 border border-slate-200/90 dark:border-slate-800/90 shadow-2xl rounded-3xl backdrop-blur-xl overflow-hidden transition-all">
           
-          {/* SEGMENTED PILL ROLE SELECTOR */}
-          <div className="mb-5 p-1 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 grid grid-cols-3 gap-1">
-            <button
-              type="button"
-              onClick={() => {
-                setMainRoleCategory('masyarakat');
-                setIdentifier('');
-                setError(null);
-                setOtpError(null);
-              }}
-              className={`py-2 px-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer ${
-                mainRoleCategory === 'masyarakat'
-                  ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm ring-1 ring-emerald-500/20'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-              }`}
-            >
-              <Users size={13} className="shrink-0" />
-              <span className="truncate">Warga (OTP)</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setMainRoleCategory('investor');
-                setIdentifier('');
-                setError(null);
-                setOtpError(null);
-              }}
-              className={`py-2 px-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer ${
-                mainRoleCategory === 'investor'
-                  ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm ring-1 ring-emerald-500/20'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-              }`}
-            >
-              <Building2 size={13} className="shrink-0" />
-              <span className="truncate">Investor</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setMainRoleCategory('admin');
-                setIdentifier('');
-                setError(null);
-                setOtpError(null);
-              }}
-              className={`py-2 px-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer ${
-                mainRoleCategory === 'admin'
-                  ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm ring-1 ring-emerald-500/20'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-              }`}
-            >
-              <Shield size={13} className="shrink-0" />
-              <span className="truncate">Admin Dinas</span>
-            </button>
-          </div>
+          {/* Top Gradient Accent Line */}
+          <div className="h-1.5 w-full bg-gradient-to-r from-emerald-500 via-teal-400 to-indigo-500" />
+
+          <div className="p-5 sm:p-7">
+            {/* SEGMENTED PILL ROLE SELECTOR WITH ZERO TRUNCATION */}
+            <div className="mb-5 p-1 rounded-2xl bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 grid grid-cols-3 gap-1 shadow-inner">
+              <button
+                type="button"
+                onClick={() => {
+                  setMainRoleCategory('masyarakat');
+                  setIdentifier('');
+                  setError(null);
+                  setOtpError(null);
+                }}
+                className={`py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs font-black transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap ${
+                  mainRoleCategory === 'masyarakat'
+                    ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-md ring-2 ring-emerald-500/30'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                }`}
+              >
+                <Users size={13} className="shrink-0 text-emerald-500" />
+                <span>Warga</span>
+                <span className="px-1 py-0.2 text-[9px] font-mono bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 rounded font-bold">OTP</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMainRoleCategory('investor');
+                  setIdentifier('');
+                  setError(null);
+                  setOtpError(null);
+                }}
+                className={`py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs font-black transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap ${
+                  mainRoleCategory === 'investor'
+                    ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-md ring-2 ring-emerald-500/30'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                }`}
+              >
+                <Building2 size={13} className="shrink-0 text-emerald-500" />
+                <span>Investor</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMainRoleCategory('admin');
+                  setIdentifier('');
+                  setError(null);
+                  setOtpError(null);
+                }}
+                className={`py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs font-black transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap ${
+                  mainRoleCategory === 'admin'
+                    ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-md ring-2 ring-emerald-500/30'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                }`}
+              >
+                <Shield size={13} className="shrink-0 text-indigo-500" />
+                <span>Admin</span>
+              </button>
+            </div>
 
           {/* ════════════════════════════════════════════════════════════════
               SCHEME A: MASYARAKAT LOGIN (OTP VALIDATION ONLY - NO PASSWORD)
@@ -880,11 +889,12 @@ export default function InvestorLogin() {
                 } catch (e) {}
                 navigate('/?skipSplash=true&fullscreen=true');
               }}
-              className="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center justify-center gap-1.5 mx-auto cursor-pointer py-1"
+              className="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center justify-center gap-1.5 mx-auto cursor-pointer py-1"
             >
               <ArrowLeft size={13} />
               <span>{t('auth.backToHome', 'Kembali ke Beranda')}</span>
             </button>
+          </div>
           </div>
         </div>
       </div>

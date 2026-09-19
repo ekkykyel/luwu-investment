@@ -189,38 +189,46 @@ export default function InvestorRegistrationForm() {
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-2 sm:px-0">
-        <div className="flex justify-center mb-4 sm:mb-5">
+        <div className="flex justify-center mb-3 sm:mb-4">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="p-2.5 sm:p-3 bg-white/70 dark:bg-slate-800/70 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-md shadow-slate-500/5 backdrop-blur-sm"
+            className="p-2 sm:p-2.5 bg-gradient-to-br from-white/90 via-emerald-50/50 to-slate-100/80 dark:from-slate-800/90 dark:via-slate-800/60 dark:to-slate-900/90 rounded-2xl border border-emerald-500/30 shadow-xl shadow-emerald-500/10 backdrop-blur-md flex items-center gap-3"
             id="secure-shield-icon-container"
           >
             <img 
               src={LUWU_LOGO_BASE64} 
               alt="Logo Resmi Kabupaten Luwu" 
-              className="h-12 sm:h-14 w-auto object-contain" 
+              className="h-10 sm:h-12 w-auto object-contain drop-shadow-sm" 
               referrerPolicy="no-referrer"
             />
+            <div className="flex flex-col text-left pr-1 border-l border-slate-200 dark:border-slate-700/80 pl-3">
+              <span className="text-[10px] font-mono font-bold tracking-widest text-emerald-600 dark:text-emerald-400 uppercase">PEMKAB LUWU</span>
+              <span className="text-xs sm:text-sm font-black tracking-tight text-slate-900 dark:text-white">MPP Simpurusiang</span>
+            </div>
           </motion.div>
         </div>
-        <h2 id="registration-title" className="text-center text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-1">
+        <h2 id="registration-title" className="text-center text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white mb-1">
           {t('register.title', 'Registrasi Akun Investor / Pelaku Usaha')}
         </h2>
-        <p id="registration-subtitle" className="text-center text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium max-w-xs sm:max-w-sm mx-auto px-2">
+        <p id="registration-subtitle" className="text-center text-xs text-slate-600 dark:text-slate-400 font-medium max-w-xs sm:max-w-sm mx-auto px-2">
           {t('register.subtitle', 'Akses fasilitas perizinan investasi corporate, data spasial terpadu, dan pendampingan DPMPTSP Kabupaten Luwu.')}
         </p>
       </div>
 
-      <div className="mt-5 sm:mt-6 sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-2 sm:px-0">
+      <div className="mt-4 sm:mt-5 sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-2 sm:px-0">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1, duration: 0.5 }}
-          className="bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 py-6 px-4 sm:py-8 sm:px-8 shadow-xl rounded-2xl sm:rounded-3xl backdrop-blur-md transition-all"
+          className="bg-white/95 dark:bg-slate-900/95 border border-slate-200/90 dark:border-slate-800/90 shadow-2xl rounded-3xl backdrop-blur-xl overflow-hidden transition-all"
           id="registration-card"
         >
+          {/* Top Gradient Accent Line */}
+          <div className="h-1.5 w-full bg-gradient-to-r from-emerald-500 via-teal-400 to-indigo-500" />
+
+          <div className="p-5 sm:p-7">
           {isSuccess ? (
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
@@ -471,6 +479,7 @@ export default function InvestorRegistrationForm() {
               </div>
             </form>
           )}
+          </div>
         </motion.div>
       </div>
     </div>
