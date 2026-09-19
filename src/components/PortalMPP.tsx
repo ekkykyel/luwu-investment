@@ -2340,10 +2340,10 @@ export default function PortalMPP() {
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                 {t("mppPortal.antrean.badge")}
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans mt-1">
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans mt-1 text-balance">
                 {t("mppPortal.antrean.title")}
               </h2>
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-5 text-center text-balance">
+              <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-5 text-center text-balance">
                 {t("mppPortal.antrean.subtitle")}
               </p>
               <div className="flex items-center gap-1.5 mt-2">
@@ -2352,23 +2352,23 @@ export default function PortalMPP() {
               </div>
             </div>
 
-            <div className="flex flex-col-reverse md:grid md:grid-cols-2 gap-8 md:gap-6 lg:gap-8 items-center">
-              {/* Kolom Kiri: Teks & Tombol (Tema Emerald) */}
-              <div className="flex flex-col items-start text-left w-full">
-                <h3 className="text-sm sm:text-base md:text-lg font-medium text-slate-900 dark:text-white mb-2 font-sans">
+            <div className="flex flex-col md:grid md:grid-cols-2 gap-8 md:gap-6 lg:gap-8 items-center">
+              {/* Kolom Teks & Tombol (Tema Emerald) */}
+              <div className="flex flex-col items-start text-left w-full order-1 md:order-1">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-2.5 font-sans">
                   {t("mppPortal.antrean.featureTitle")}
                 </h3>
 
-                <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed mb-6 text-left">
+                <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 leading-relaxed mb-6 text-left">
                   {t("mppPortal.antrean.featureDesc")}
                 </p>
 
-                <div className="mb-8">
+                <div className="mb-6 w-full xs:w-auto">
                   <button
                     onClick={() => {
                       setIsQueueBookingOpen(true);
                     }}
-                    className="min-h-[48px] h-12 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white px-6 rounded-2xl text-xs sm:text-sm font-semibold tracking-wide transition-all inline-flex items-center gap-2 group shadow-lg shadow-emerald-500/25 cursor-pointer font-sans"
+                    className="min-h-[44px] h-11 sm:h-12 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white px-5 sm:px-6 rounded-2xl text-xs sm:text-sm font-bold tracking-wide transition-all inline-flex items-center justify-center gap-2 group shadow-lg shadow-emerald-600/25 cursor-pointer font-sans w-full xs:w-auto"
                   >
                     <span>{t("mppPortal.antrean.viewMore")}</span>
                     <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -2376,46 +2376,46 @@ export default function PortalMPP() {
                 </div>
 
                 {/* Area Unduh */}
-                <div className="flex flex-col gap-3">
-                  <span className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
+                <div className="flex flex-col gap-2.5 w-full">
+                  <span className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400">
                     {t("mppPortal.antrean.downloadLabel")}
                   </span>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="grid grid-cols-2 xs:flex xs:flex-wrap gap-2.5 sm:gap-3 w-full">
                     <a
                       href="#download-playstore"
                       onClick={(e) => e.preventDefault()}
-                      className="min-h-[48px] bg-slate-900 dark:bg-slate-800/80 hover:bg-slate-800 dark:hover:bg-slate-700/80 text-white border border-slate-700/60 dark:border-white/10 rounded-2xl px-5 py-3 flex items-center gap-3 transition-all shadow-md group"
+                      className="min-h-[44px] bg-slate-900 dark:bg-slate-800/90 hover:bg-slate-800 dark:hover:bg-slate-700/90 text-white border border-slate-700/60 dark:border-white/10 rounded-2xl px-3.5 sm:px-5 py-2.5 sm:py-3 flex items-center justify-center xs:justify-start gap-2.5 transition-all shadow-md group active:scale-95"
                     >
-                      <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-current text-emerald-400 shrink-0" />
+                      <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current text-emerald-400 shrink-0" />
                       <div className="text-left flex flex-col">
-                        <span className="text-[10px] uppercase tracking-wider text-slate-400 group-hover:text-slate-300">GET IT ON</span>
-                        <span className="text-xs sm:text-sm font-semibold tracking-wide font-sans text-white">Google Play</span>
+                        <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-slate-400 group-hover:text-slate-300 font-sans">GET IT ON</span>
+                        <span className="text-xs sm:text-sm font-bold tracking-wide font-sans text-white">Google Play</span>
                       </div>
                     </a>
 
                     <a
                       href="#download-appstore"
                       onClick={(e) => e.preventDefault()}
-                      className="min-h-[48px] bg-slate-900 dark:bg-slate-800/80 hover:bg-slate-800 dark:hover:bg-slate-700/80 text-white border border-slate-700/60 dark:border-white/10 rounded-2xl px-5 py-3 flex items-center gap-3 transition-all shadow-md group"
+                      className="min-h-[44px] bg-slate-900 dark:bg-slate-800/90 hover:bg-slate-800 dark:hover:bg-slate-700/90 text-white border border-slate-700/60 dark:border-white/10 rounded-2xl px-3.5 sm:px-5 py-2.5 sm:py-3 flex items-center justify-center xs:justify-start gap-2.5 transition-all shadow-md group active:scale-95"
                     >
-                      <Apple className="w-5 h-5 sm:w-6 sm:h-6 fill-current text-emerald-400 shrink-0" />
+                      <Apple className="w-4 h-4 sm:w-5 sm:h-5 fill-current text-emerald-400 shrink-0" />
                       <div className="text-left flex flex-col">
-                        <span className="text-[10px] uppercase tracking-wider text-slate-400 group-hover:text-slate-300">Download on the</span>
-                        <span className="text-xs sm:text-sm font-semibold tracking-wide font-sans text-white">App Store</span>
+                        <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-slate-400 group-hover:text-slate-300 font-sans">Download on the</span>
+                        <span className="text-xs sm:text-sm font-bold tracking-wide font-sans text-white">App Store</span>
                       </div>
                     </a>
                   </div>
                 </div>
               </div>
 
-              {/* Kolom Kanan: Mockup Smartphone */}
+              {/* Kolom Mockup Smartphone */}
               <motion.div 
                 whileHover={{ y: -6 }} 
                 transition={{ duration: 0.2 }}
-                className="relative flex justify-center w-full"
+                className="relative flex justify-center w-full order-2 md:order-2 mt-4 md:mt-0"
               >
                 {/* Efek Pendaran Cahaya di Belakang Ponsel */}
-                <div className="bg-emerald-500/20 blur-3xl w-64 h-64 rounded-full absolute z-0 pointer-events-none" />
+                <div className="bg-emerald-500/20 blur-3xl w-56 sm:w-64 h-56 sm:h-64 rounded-full absolute z-0 pointer-events-none" />
 
                 {/* Gambar Ponsel */}
                 {!antreanImgError ? (
@@ -2424,44 +2424,44 @@ export default function PortalMPP() {
                     alt="Aplikasi Antrean Luwu"
                     referrerPolicy="no-referrer"
                     onError={() => setAntreanImgError(true)}
-                    className="relative z-10 w-64 md:w-80 drop-shadow-2xl object-contain transition-transform"
+                    className="relative z-10 w-56 sm:w-64 md:w-80 drop-shadow-2xl object-contain transition-transform"
                   />
                 ) : (
                   /* Fallback Mockup Smartphone Proporsional */
-                  <div className="relative z-10 w-64 sm:w-72 h-[480px] sm:h-[520px] rounded-[40px] bg-slate-900 border-4 border-slate-700/80 shadow-2xl overflow-hidden flex flex-col p-4 sm:p-5">
+                  <div className="relative z-10 w-60 sm:w-72 h-[420px] sm:h-[480px] rounded-[36px] bg-slate-900 border-4 border-slate-700/80 shadow-2xl overflow-hidden flex flex-col p-4 sm:p-5">
                     {/* Notch / Speaker */}
-                    <div className="w-24 h-4 bg-slate-800 rounded-full mx-auto mb-4 shrink-0 flex items-center justify-center">
-                      <div className="w-2.5 h-2.5 rounded-full bg-slate-900" />
+                    <div className="w-20 h-3.5 bg-slate-800 rounded-full mx-auto mb-3 shrink-0 flex items-center justify-center">
+                      <div className="w-2 h-2 rounded-full bg-slate-900" />
                     </div>
                     {/* App Header */}
-                    <div className="bg-emerald-600/20 border border-emerald-500/30 rounded-2xl p-3 mb-3 text-center">
-                      <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">{t("mppPortal.antrean.mockup.mppTitle")}</div>
-                      <div className="text-xs font-bold text-white">{t("mppPortal.antrean.mockup.mppRegency")}</div>
+                    <div className="bg-emerald-600/20 border border-emerald-500/30 rounded-2xl p-2.5 mb-2.5 text-center">
+                      <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-emerald-400 font-sans">{t("mppPortal.antrean.mockup.mppTitle")}</div>
+                      <div className="text-xs font-bold text-white font-sans">{t("mppPortal.antrean.mockup.mppRegency")}</div>
                     </div>
                     {/* Queue Ticket Card */}
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4 mb-3 flex flex-col items-center text-center shadow-inner">
-                      <div className="text-[10px] uppercase text-emerald-400 font-semibold mb-1">{t("mppPortal.antrean.mockup.ticketLabel")}</div>
-                      <div className="text-3xl font-extrabold text-emerald-400 font-sans tracking-tight">A-042</div>
-                      <div className="text-xs text-slate-300 mt-1 font-medium">{t("mppPortal.antrean.mockup.counterName")}</div>
-                      <div className="text-[10px] text-slate-400 mt-0.5">{t("mppPortal.antrean.mockup.estimation")}</div>
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-3 sm:p-4 mb-2.5 flex flex-col items-center text-center shadow-inner">
+                      <div className="text-[9px] sm:text-[10px] uppercase text-emerald-400 font-semibold mb-1 font-sans">{t("mppPortal.antrean.mockup.ticketLabel")}</div>
+                      <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono tracking-tight">A-042</div>
+                      <div className="text-xs text-slate-300 mt-1 font-medium font-sans">{t("mppPortal.antrean.mockup.counterName")}</div>
+                      <div className="text-[10px] text-slate-400 mt-0.5 font-mono">{t("mppPortal.antrean.mockup.estimation")}</div>
                     </div>
                     {/* Features List */}
                     <div className="space-y-2 flex-1 flex flex-col justify-center">
-                      <div className="bg-white/5 border border-white/10 rounded-xl p-2.5 flex items-center justify-between text-xs text-slate-200">
-                        <span className="flex items-center gap-2">
-                          <Ticket className="w-4 h-4 text-emerald-400" /> {t("mppPortal.antrean.mockup.takeNumber")}
+                      <div className="bg-white/5 border border-white/10 rounded-xl p-2 sm:p-2.5 flex items-center justify-between text-xs text-slate-200 font-sans">
+                        <span className="flex items-center gap-2 text-[11px] sm:text-xs">
+                          <Ticket className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> {t("mppPortal.antrean.mockup.takeNumber")}
                         </span>
-                        <span className="text-[10px] text-emerald-400 font-bold">{t("mppPortal.antrean.mockup.onlineStatus")}</span>
+                        <span className="text-[9px] sm:text-[10px] text-emerald-400 font-bold font-mono">{t("mppPortal.antrean.mockup.onlineStatus")}</span>
                       </div>
-                      <div className="bg-white/5 border border-white/10 rounded-xl p-2.5 flex items-center justify-between text-xs text-slate-200">
-                        <span className="flex items-center gap-2">
-                          <Building2 className="w-4 h-4 text-emerald-400" /> {t("mppPortal.antrean.mockup.integratedAgencies")}
+                      <div className="bg-white/5 border border-white/10 rounded-xl p-2 sm:p-2.5 flex items-center justify-between text-xs text-slate-200 font-sans">
+                        <span className="flex items-center gap-2 text-[11px] sm:text-xs">
+                          <Building2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> {t("mppPortal.antrean.mockup.integratedAgencies")}
                         </span>
-                        <span className="text-[10px] text-emerald-400 font-bold">{t("mppPortal.antrean.mockup.activeStatus")}</span>
+                        <span className="text-[9px] sm:text-[10px] text-emerald-400 font-bold font-mono">{t("mppPortal.antrean.mockup.activeStatus")}</span>
                       </div>
                     </div>
                     {/* Bottom Indicator */}
-                    <div className="w-20 h-1 bg-white/20 rounded-full mx-auto mt-3 shrink-0" />
+                    <div className="w-16 h-1 bg-white/20 rounded-full mx-auto mt-2.5 shrink-0" />
                   </div>
                 )}
               </motion.div>
