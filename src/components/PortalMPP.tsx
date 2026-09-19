@@ -5298,17 +5298,27 @@ export default function PortalMPP() {
             <span className="text-[10px] font-medium font-sans">{t("mppPortal.nav.layanan")}</span>
           </a>
 
-          {/* Elevated Center Action: Asisten AI */}
+          {/* Elevated Center Action: Asisten MPP (Tanya Suara) */}
           <div className="relative -top-3 flex flex-col items-center">
             <motion.button 
               whileTap={{ scale: 0.92 }}
-              onClick={() => setIsAiModalOpen(true)}
-              className="relative z-10 w-11 h-11 rounded-full bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-950/30 border-2 border-white dark:border-slate-900 transition-transform cursor-pointer"
-              title={t("mppPortal.tooltips.openAi")}
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent('open-mpp-voice-assistant'));
+              }}
+              className="relative z-10 w-12 h-12 rounded-full bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-950/40 border-2 border-white dark:border-slate-900 transition-transform cursor-pointer group"
+              title="Asisten MPP - Tanya Suara Layanan & Persyaratan"
+              aria-label="Asisten MPP Tanya Suara"
             >
-              <Bot className="w-5 h-5" />
+              <Mic className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              {/* Sparkle subtle badge */}
+              <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border border-white dark:border-slate-900"></span>
+              </span>
             </motion.button>
-            <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 font-sans mt-0.5 tracking-tight whitespace-nowrap">Asisten AI</span>
+            <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 font-sans mt-0.5 tracking-tight whitespace-nowrap">
+              {t("mppPortal.nav.asistenAi", "Asisten MPP")}
+            </span>
           </div>
 
           <a href="#instansi" className="flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 active:text-emerald-600 min-h-[48px] min-w-[50px] transition-colors">
