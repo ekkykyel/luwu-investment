@@ -2223,9 +2223,9 @@ export default function LandingPage({
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="mt-10 sm:mt-16 lg:mt-24 max-w-6xl mx-auto px-2 sm:px-4"
+              className="mt-8 sm:mt-16 lg:mt-24 max-w-6xl mx-auto px-0 sm:px-4 w-full"
             >
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3.5 md:gap-4.5 rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 md:p-5 bg-slate-100/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800/80 shadow-[0_10px_35px_-10px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.45)]">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3.5 md:gap-4.5 rounded-2xl sm:rounded-3xl p-1.5 sm:p-4 md:p-5 bg-slate-100/60 sm:bg-slate-100/70 dark:bg-slate-900/40 sm:dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/70 dark:border-slate-800/70 shadow-xs sm:shadow-[0_10px_35px_-10px_rgba(0,0,0,0.06)] sm:dark:shadow-[0_20px_50px_rgba(0,0,0,0.45)]">
                 {[
                   {
                     id: 'stat-investment',
@@ -2333,57 +2333,85 @@ export default function LandingPage({
                   <div
                     key={stat.id}
                     id={stat.id}
-                    className={`relative flex flex-col items-center justify-between p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl border transition-all duration-300 group overflow-hidden ${stat.borderHover} ${
+                    className={`relative flex flex-col items-center justify-between p-2.5 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl border transition-all duration-300 group overflow-hidden ${stat.borderHover} ${
                       isDark
-                        ? 'bg-gradient-to-b from-slate-800/80 to-slate-900/90 border-slate-700/70 shadow-[0_4px_20px_rgba(0,0,0,0.3)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]'
-                        : 'bg-white/95 hover:bg-white border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_10px_25px_rgba(15,23,42,0.08)]'
-                    } hover:-translate-y-1.5 active:scale-[0.98]`}
+                        ? 'bg-slate-900/90 hover:bg-slate-850 border-slate-800/90 shadow-[0_4px_16px_rgba(0,0,0,0.35)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]'
+                        : 'bg-white/95 hover:bg-white border-slate-200/90 shadow-[0_2px_10px_rgba(15,23,42,0.04)] hover:shadow-[0_10px_25px_rgba(15,23,42,0.08)]'
+                    } hover:-translate-y-1 active:scale-[0.98] w-full min-h-[172px] sm:min-h-[192px] md:min-h-[208px]`}
                   >
                     {/* Top Edge Glowing Line */}
-                    <div className={`absolute top-0 left-0 right-0 h-[2.5px] ${stat.accentTop}`} />
+                    <div className={`absolute top-0 left-0 right-0 h-[3px] ${stat.accentTop}`} />
 
                     {/* Ambient Glow Aura on Card Hover */}
                     <div className={`absolute inset-0 bg-gradient-to-b ${stat.glowHover} opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
 
-                    {/* Elevated Icon Capsule */}
-                    <div className={`relative p-2 sm:p-2.5 rounded-xl sm:rounded-2xl ${stat.iconBg} ${stat.iconBorder} mb-2 sm:mb-2.5 shadow-sm group-hover:scale-110 transition-transform duration-300`}>
-                      <stat.icon size={20} className={`${stat.iconColor} sm:w-5 sm:h-5`} />
+                    {/* Elevated Icon Capsule with Live Indicator */}
+                    <div className={`relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl ${stat.iconBg} ${stat.iconBorder} flex items-center justify-center mb-1.5 sm:mb-2 shadow-xs group-hover:scale-105 transition-transform duration-300`}>
+                      <stat.icon size={18} className={`${stat.iconColor} sm:w-5 sm:h-5`} />
+                      <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60 bg-current" style={{ color: stat.sparkColor }} />
+                        <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: stat.sparkColor }} />
+                      </span>
                     </div>
 
-                    {/* Prominent Value Typography (Plus Jakarta Sans) */}
-                    <div
-                      className={`font-['Plus_Jakarta_Sans',sans-serif] font-extrabold tracking-tight mb-1 text-center whitespace-nowrap overflow-hidden text-ellipsis max-w-full px-0.5 text-slate-900 dark:text-white group-hover:text-slate-950 dark:group-hover:text-white transition-colors ${
-                        stat.isCurrency
-                          ? 'text-base sm:text-xl md:text-2xl font-black'
-                          : 'text-2xl sm:text-3xl md:text-4xl font-extrabold'
-                      }`}
-                      title={String(stat.value)}
-                    >
-                      {stat.value}
+                    {/* Prominent Value Typography (Harmonious Height & Optical Centering) */}
+                    <div className="h-9 sm:h-11 flex items-center justify-center w-full px-0.5 mb-0.5">
+                      {stat.isCurrency && typeof stat.value === 'string' && stat.value.startsWith('Rp ') ? (
+                        (() => {
+                          const parts = stat.value.split(' ');
+                          const prefix = parts[0] || 'Rp';
+                          const num = parts[1] || '0';
+                          const unit = parts.slice(2).join(' ') || '';
+                          return (
+                            <div className="flex items-baseline justify-center gap-1 w-full truncate font-['Plus_Jakarta_Sans',sans-serif]">
+                              <span className="text-[11px] sm:text-xs font-black text-emerald-600 dark:text-emerald-400 tracking-tight">
+                                {prefix}
+                              </span>
+                              <span className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight tabular-nums">
+                                {num}
+                              </span>
+                              {unit && (
+                                <span className="text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 tracking-normal">
+                                  {unit}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })()
+                      ) : (
+                        <span
+                          className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-2xl sm:text-3xl md:text-4xl tracking-tight text-slate-900 dark:text-white tabular-nums text-center truncate max-w-full"
+                          title={String(stat.value)}
+                        >
+                          {stat.value}
+                        </span>
+                      )}
                     </div>
 
-                    {/* Crisp Sub-Label */}
-                    <div
-                      className={`font-['Plus_Jakarta_Sans',sans-serif] text-[10px] sm:text-[11px] md:text-xs uppercase tracking-wider font-bold mb-2 text-center leading-snug ${
-                        isDark ? 'text-slate-300 group-hover:text-white' : 'text-slate-600 group-hover:text-slate-900'
-                      } transition-colors`}
-                    >
-                      {stat.label}
+                    {/* Crisp Sub-Label (Strictly Fixed Height for Symmetry) */}
+                    <div className="h-7 sm:h-8 flex items-center justify-center text-center w-full px-0.5 mb-1 sm:mb-1.5">
+                      <span
+                        className={`font-['Plus_Jakarta_Sans',sans-serif] text-[10px] sm:text-[11px] md:text-xs uppercase tracking-wider font-bold leading-tight line-clamp-2 ${
+                          isDark ? 'text-slate-400 group-hover:text-slate-200' : 'text-slate-500 group-hover:text-slate-800'
+                        } transition-colors`}
+                      >
+                        {stat.label}
+                      </span>
                     </div>
 
                     {/* Refined Sparkline Visualizer with Gradient & Live Dot */}
-                    <div className="w-full relative mt-auto pt-1">
-                      <svg viewBox="0 0 80 28" className="w-full h-4 sm:h-5.5 overflow-visible" preserveAspectRatio="none">
+                    <div className="w-full relative mt-auto pt-1 h-6 sm:h-7 flex items-end">
+                      <svg viewBox="0 0 80 28" className="w-full h-full overflow-visible" preserveAspectRatio="none">
                         <defs>
                           <linearGradient id={stat.sparkId} x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor={stat.sparkColor} stopOpacity={isDark ? "0.35" : "0.22"} />
+                            <stop offset="0%" stopColor={stat.sparkColor} stopOpacity={isDark ? "0.4" : "0.22"} />
                             <stop offset="100%" stopColor={stat.sparkColor} stopOpacity="0.0" />
                           </linearGradient>
                         </defs>
                         {/* Area Gradient Fill */}
                         <polygon points={`${stat.sparkPoints} 80,28 0,28`} fill={`url(#${stat.sparkId})`} stroke="none" />
                         {/* Crisp Line */}
-                        <polyline points={stat.sparkPoints} fill="none" stroke={stat.sparkColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <polyline points={stat.sparkPoints} fill="none" stroke={stat.sparkColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                         {/* Live Pulsing Dot */}
                         <circle cx={stat.lastPoint.x} cy={stat.lastPoint.y} r="2.5" fill={stat.sparkColor} className="animate-pulse" />
                       </svg>
