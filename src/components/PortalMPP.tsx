@@ -2884,7 +2884,7 @@ export default function PortalMPP() {
                         setActiveFacilityId(fac.id);
                         setIsFacilityModalOpen(true);
                       }}
-                      className={`w-[60vw] sm:w-[240px] shrink-0 snap-center min-h-[48px] px-3.5 py-2.5 rounded-2xl flex items-center gap-2.5 transition-all duration-300 backdrop-blur-xl cursor-pointer ${
+                      className={`w-auto min-w-[150px] max-w-[220px] shrink-0 snap-center min-h-[48px] px-3.5 py-2.5 rounded-2xl flex items-center gap-2.5 transition-all duration-300 backdrop-blur-xl cursor-pointer active:scale-95 ${
                         isActive
                           ? 'bg-emerald-500/15 border-2 border-emerald-500 text-emerald-700 dark:text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.25)]'
                           : 'bg-white/80 dark:bg-slate-800/40 border border-slate-100 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:text-white hover:border-emerald-500/40'
@@ -2896,8 +2896,8 @@ export default function PortalMPP() {
                         <Icon className="w-4 h-4" />
                       </div>
                       <div className="text-left min-w-0 flex-1">
-                        <div className="font-bold text-xs sm:text-sm leading-tight text-slate-900 dark:text-white whitespace-nowrap font-sans truncate">{fac.shortName}</div>
-                        <div className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap font-medium mt-0.5 truncate">{fac.tag}</div>
+                        <div className="font-bold text-xs sm:text-sm leading-tight text-slate-900 dark:text-white font-sans line-clamp-1">{fac.shortName}</div>
+                        <div className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5 line-clamp-1">{fac.tag}</div>
                       </div>
                     </motion.button>
                   );
@@ -2975,16 +2975,16 @@ export default function PortalMPP() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-transparent pointer-events-none"></div>
                     
-                    <div className="absolute top-3 sm:top-4 left-3 sm:left-4 z-10 flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 text-[11px] sm:text-xs font-bold text-emerald-300 shadow-md font-['Plus_Jakarta_Sans',sans-serif]">
+                    <div className="absolute top-3 sm:top-4 left-3 sm:left-4 z-10 flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-slate-900/85 backdrop-blur-md border border-white/20 text-[11px] sm:text-xs font-bold text-emerald-300 shadow-md font-sans">
                       <activeFacility.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-300 shrink-0" />
                       <span>{activeFacility.tag}</span>
                     </div>
 
-                    <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 z-10 p-3.5 rounded-2xl bg-slate-950/80 backdrop-blur-md border border-white/10 shadow-lg">
-                      <span className="text-[10px] sm:text-xs uppercase tracking-widest text-emerald-400 font-extrabold mb-1 block font-['Plus_Jakarta_Sans',sans-serif]">
+                    <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 z-10 p-3.5 rounded-2xl bg-slate-950/85 backdrop-blur-md border border-white/10 shadow-lg">
+                      <span className="text-[10px] sm:text-xs uppercase tracking-widest text-emerald-400 font-bold mb-1 block font-mono">
                         {activeFacility.subtitle}
                       </span>
-                      <h3 className="text-base sm:text-lg md:text-xl font-bold text-white tracking-tight font-['Plus_Jakarta_Sans',sans-serif] leading-snug">
+                      <h3 className="text-base sm:text-lg md:text-xl font-bold text-white tracking-tight font-sans leading-snug">
                         {activeFacility.name}
                       </h3>
                     </div>
@@ -2994,11 +2994,11 @@ export default function PortalMPP() {
                   <div className="flex-1 flex flex-col justify-between">
                     <div className="mb-5 sm:mb-6">
                       <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                        <span className="text-[10px] sm:text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 font-sans">
+                        <span className="text-[10px] sm:text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 font-mono">
                           MPP Simpurusiang Kabupaten Luwu
                         </span>
                       </div>
-                      <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 leading-relaxed text-left break-words">
+                      <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 leading-relaxed text-left break-words font-normal">
                         {activeFacility.description}
                       </p>
                     </div>
