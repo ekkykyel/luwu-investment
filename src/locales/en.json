@@ -1334,8 +1334,9 @@
   "dept_dalak": "Control & Ops Dept.",
   "dept_licensing": "Licensing Dept.",
   "dept_data": "Data & Reporting Dept.",
-  "umkm_catalog": "UMKM Partnership Catalog",
-  "umkm_catalog_desc": "Authentic Luwu Craftsmanship: Connecting Local Premium Products with Investors and the National Market.",
+  "umkm_catalog": "Luwu MSME Partnership Catalog",
+  "umkm_catalog_title": "Featured MPP MSME Gallery & Partnership",
+  "umkm_catalog_desc": "Promotion center and partnership for Luwu Regency MSME products with verified NIB, Halal, and P-IRT legalities.",
   "contact_owner": "Contact Owner (WhatsApp)",
   "pwa": {
     "title": "🚨 FULL SCREEN MAIN PORTAL (PWA)",

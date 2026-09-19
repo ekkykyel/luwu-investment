@@ -1334,8 +1334,9 @@
   "dept_dalak": "控制与运营部门",
   "dept_licensing": "许可部门",
   "dept_data": "数据与报告部门",
-  "umkm_catalog": "中小微企业 (UMKM) 合作目录",
-  "umkm_catalog_desc": "Luwu 的正宗工艺：将当地优质产品与投资者和全国市场连接起来。",
+  "umkm_catalog": "中小微企业（UMKM）合作目录",
+  "umkm_catalog_title": "MPP 优质中小微企业展厅与合作",
+  "umkm_catalog_desc": "鲁乌县政府孵化的中小微企业产品推广与合作中心，均已通过 NIB、清真和 P-IRT 合法认证。",
   "contact_owner": "联系店主 (WhatsApp)",
   "pwa": {
     "title": "🚨 全屏主门户 (PWA)",

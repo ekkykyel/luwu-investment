@@ -676,18 +676,15 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
 
   // Sync selected zone on mount or language/floor change
   useEffect(() => {
-    if (!selectedZone) {
-      const first = zonesData.find(z => z.floor === activeFloor);
-      if (first) setSelectedZone(first);
-    } else {
-      const updated = zonesData.find(z => z.id === selectedZone.id);
+    if (selectedZone) {
+      const updated = zonesData.find(z => z.id === selectedZone.id && z.floor === activeFloor);
       if (updated) {
         setSelectedZone(updated);
-      } else {
-        const first = zonesData.find(z => z.floor === activeFloor);
-        if (first) setSelectedZone(first);
+        return;
       }
     }
+    const first = zonesData.find(z => z.floor === activeFloor);
+    if (first) setSelectedZone(first);
   }, [zonesData, activeFloor]);
 
   // Filtered zones based on floor, search query, and accessibility mode

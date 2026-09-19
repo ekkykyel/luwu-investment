@@ -3471,7 +3471,7 @@ export default function PortalMPP() {
                   </button>
 
                   <span className="text-xs font-medium text-slate-500 dark:text-slate-400 font-sans">
-                    {currentUmkmIndex + 1} / {filteredUmkmProducts.length} Produk
+                    {currentUmkmIndex + 1} / {filteredUmkmProducts.length} {isZh ? "产品" : isEn ? "Products" : "Produk"}
                   </span>
                 </div>
 
@@ -3481,7 +3481,7 @@ export default function PortalMPP() {
                     type="button"
                     onClick={handlePrevUmkm}
                     className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-white/90 dark:bg-slate-800/90 hover:bg-emerald-500 hover:text-white border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 shadow-sm active:scale-95 cursor-pointer transition-all"
-                    aria-label="Produk Sebelumnya"
+                    aria-label={isEn ? "Previous Product" : isZh ? "上一个产品" : "Produk Sebelumnya"}
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
@@ -3489,7 +3489,7 @@ export default function PortalMPP() {
                     type="button"
                     onClick={handleNextUmkm}
                     className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-white/90 dark:bg-slate-800/90 hover:bg-emerald-500 hover:text-white border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 shadow-sm active:scale-95 cursor-pointer transition-all"
-                    aria-label="Produk Selanjutnya"
+                    aria-label={isEn ? "Next Product" : isZh ? "下一个产品" : "Produk Selanjutnya"}
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
@@ -3547,12 +3547,12 @@ export default function PortalMPP() {
                               <div className="absolute top-3 left-3">
                                 <span className="inline-flex items-center gap-1 px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-emerald-500 text-white rounded-full shadow-md font-mono">
                                   <BadgeCheck className="w-3.5 h-3.5" />
-                                  {product.status_izin}
+                                  {product.status_izin === "Terdaftar NIB" ? (isZh ? "已注册 NIB" : isEn ? "NIB Registered" : "Terdaftar NIB") : product.status_izin}
                                 </span>
                               </div>
                               <div className="absolute top-3 right-3">
                                 <span className="inline-flex items-center px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-slate-900/85 backdrop-blur-md text-amber-300 border border-white/20 rounded-full font-mono">
-                                  {product.kategori || "UMKM Luwu"}
+                                  {product.kategori === "Pertanian" ? (isZh ? "农业" : isEn ? "Agriculture" : "Pertanian") : product.kategori === "Kuliner" ? (isZh ? "烹饪美食" : isEn ? "Culinary" : "Kuliner") : (isZh ? "手工艺品" : isEn ? "Crafts" : product.kategori || "UMKM Luwu")}
                                 </span>
                               </div>
                               <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
@@ -3568,7 +3568,7 @@ export default function PortalMPP() {
                                   {isZh ? (product.nama_produk_zh || product.nama_produk) : isEn ? (product.nama_produk_en || product.nama_produk) : product.nama_produk}
                                 </h4>
                                 <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                                  Pelaku Usaha: {product.nama_pemilik}
+                                  {isZh ? "经营者: " : isEn ? "Owner: " : "Pelaku Usaha: "}{product.nama_pemilik}
                                 </p>
                                 <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 mt-1.5 font-normal">
                                   {product.deskripsi || "Produk kemitraan resmi binaan MPP Simpurusiang Kab. Luwu."}
@@ -3627,7 +3627,7 @@ export default function PortalMPP() {
                               <div className="absolute top-2.5 left-2.5">
                                 <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-500 text-white rounded-full shadow-sm font-mono">
                                   <BadgeCheck className="w-3 h-3" />
-                                  {product.status_izin}
+                                  {product.status_izin === "Terdaftar NIB" ? (isZh ? "已注册 NIB" : isEn ? "NIB Registered" : "Terdaftar NIB") : product.status_izin}
                                 </span>
                               </div>
                             </div>
