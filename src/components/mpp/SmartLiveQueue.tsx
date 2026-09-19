@@ -332,13 +332,13 @@ export function SmartLiveQueue({ isDark = false, onRegisterQueue }: { isDark?: b
             </div>
             <div>
               <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white font-sans flex items-center gap-2">
-                <span>Pelacak Posisi Tiket Antrean Pemohon</span>
+                <span>{t("mppPortal.smartLiveQueue.trackerTitle", "Pelacak Posisi Tiket Antrean Pemohon")}</span>
                 <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono">
                   PREDICTIVE RADAR
                 </span>
               </h4>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Ketahui nomor antrean yang sedang aktif, sisa giliran di depan Anda, dan estimasi waktu panggilan
+                {t("mppPortal.smartLiveQueue.trackerSubtitle", "Ketahui nomor antrean yang sedang aktif, sisa giliran di depan Anda, dan estimasi waktu panggilan")}
               </p>
             </div>
           </div>
@@ -353,7 +353,7 @@ export function SmartLiveQueue({ isDark = false, onRegisterQueue }: { isDark?: b
               value={ticketSearchInput}
               onChange={(e) => setTicketSearchInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleTrackTicket()}
-              placeholder="Ketik Nomor Tiket (Contoh: A-012, B-006)..."
+              placeholder={t("mppPortal.smartLiveQueue.trackerPlaceholder", "Ketik Nomor Tiket (Contoh: A-012, B-006)...")}
               className="w-full pl-10 pr-4 py-2.5 min-h-[44px] rounded-2xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-mono uppercase placeholder:normal-case placeholder:font-sans"
             />
             {ticketSearchInput && (
@@ -377,7 +377,7 @@ export function SmartLiveQueue({ isDark = false, onRegisterQueue }: { isDark?: b
             ) : (
               <Search className="w-4 h-4" />
             )}
-            <span>Lacak Posisi Tiket</span>
+            <span>{t("mppPortal.smartLiveQueue.trackerBtn", "Lacak Posisi Tiket")}</span>
           </button>
         </div>
 
@@ -385,7 +385,7 @@ export function SmartLiveQueue({ isDark = false, onRegisterQueue }: { isDark?: b
         <div className="flex flex-wrap items-center gap-1.5 mt-3 pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px]">
           <span className="text-slate-400 flex items-center gap-1">
             <Sparkles className="w-3 h-3 text-amber-400" />
-            Uji Coba Cepat:
+            {t("mppPortal.smartLiveQueue.trackerQuickTest", "Uji Coba Cepat:")}
           </span>
           {[
             { code: 'A-012', label: 'A-012 (Disdukcapil)' },
@@ -436,7 +436,7 @@ export function SmartLiveQueue({ isDark = false, onRegisterQueue }: { isDark?: b
                       {trackedTicket.agencyName}
                     </h5>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Layanan: {trackedTicket.serviceName}
+                      {t("mppPortal.smartLiveQueue.serviceLabel", "Layanan:")} {trackedTicket.serviceName}
                     </p>
                   </div>
                 </div>
@@ -449,7 +449,7 @@ export function SmartLiveQueue({ isDark = false, onRegisterQueue }: { isDark?: b
                         ? 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                         : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
                   }`}>
-                    {trackedTicket.status === 'dipanggil' ? 'Sedang Dipanggil di Loket' : trackedTicket.status === 'selesai' ? 'Pelayanan Selesai' : 'Dalam Antrean Menunggu'}
+                    {trackedTicket.status === 'dipanggil' ? t("mppPortal.smartLiveQueue.statusCalling", "Sedang Dipanggil di Loket") : trackedTicket.status === 'selesai' ? t("mppPortal.smartLiveQueue.statusFinished", "Pelayanan Selesai") : t("mppPortal.smartLiveQueue.statusWaiting", "Dalam Antrean Menunggu")}
                   </span>
                 </div>
               </div>
@@ -458,37 +458,37 @@ export function SmartLiveQueue({ isDark = false, onRegisterQueue }: { isDark?: b
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-center">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-sans">
-                    NOMOR DILAYANI SAAT INI
+                    {t("mppPortal.smartLiveQueue.metricCurrentNumber", "NOMOR DILAYANI SAAT INI")}
                   </span>
                   <span className="text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400 block mt-0.5">
                     {trackedTicket.currentServing}
                   </span>
                   <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                    di {trackedTicket.loketNo}
+                    {t("mppPortal.smartLiveQueue.metricAtLoket", "di")} {trackedTicket.loketNo}
                   </span>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-center">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-sans">
-                    SISA GILIRAN DI DEPAN ANDA
+                    {t("mppPortal.smartLiveQueue.metricWaitingAhead", "SISA GILIRAN DI DEPAN ANDA")}
                   </span>
                   <span className="text-2xl font-black font-mono text-slate-900 dark:text-white block mt-0.5">
-                    {trackedTicket.waitingAhead === 0 ? 'Giliran Anda!' : `${trackedTicket.waitingAhead} Orang`}
+                    {trackedTicket.waitingAhead === 0 ? t("mppPortal.smartLiveQueue.metricYourTurn", "Giliran Anda!") : `${trackedTicket.waitingAhead} ${t("mppPortal.smartLiveQueue.peopleSuffix", "Orang")}`}
                   </span>
                   <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
-                    {trackedTicket.waitingAhead === 0 ? 'Silakan Dekati Meja Loket' : 'Harap Bersiap di Ruang Tunggu'}
+                    {trackedTicket.waitingAhead === 0 ? t("mppPortal.smartLiveQueue.metricApproachDesk", "Silakan Dekati Meja Loket") : t("mppPortal.smartLiveQueue.metricStandbyWaiting", "Harap Bersiap di Ruang Tunggu")}
                   </span>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-center">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-sans">
-                    ESTIMASI WAKTU TUNGGU
+                    {t("mppPortal.smartLiveQueue.metricEstimatedTime", "ESTIMASI WAKTU TUNGGU")}
                   </span>
                   <span className="text-2xl font-black font-mono text-amber-500 block mt-0.5">
-                    ~{trackedTicket.estimatedWaitMinutes} Menit
+                    ~{trackedTicket.estimatedWaitMinutes} {t("mppPortal.smartLiveQueue.minsLabel", "Menit")}
                   </span>
                   <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                    Berdasarkan Rata-rata Pelayanan
+                    {t("mppPortal.smartLiveQueue.metricAvgService", "Berdasarkan Rata-rata Pelayanan")}
                   </span>
                 </div>
               </div>
@@ -502,7 +502,7 @@ export function SmartLiveQueue({ isDark = false, onRegisterQueue }: { isDark?: b
                   className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-md shadow-amber-500/20 transition-all cursor-pointer"
                 >
                   <Volume2 className={`w-4 h-4 ${isAnnouncing ? 'animate-bounce' : ''}`} />
-                  <span>{isAnnouncing ? 'Sedang Memanggil...' : 'Uji Notifikasi Suara Panggilan Loket'}</span>
+                  <span>{isAnnouncing ? t("mppPortal.smartLiveQueue.btnCalling", "Sedang Memanggil...") : t("mppPortal.smartLiveQueue.btnTestChime", "Uji Notifikasi Suara Panggilan Loket")}</span>
                 </button>
 
                 <button
@@ -510,7 +510,7 @@ export function SmartLiveQueue({ isDark = false, onRegisterQueue }: { isDark?: b
                   onClick={() => setTrackedTicket(null)}
                   className="px-3 py-2 text-xs font-semibold text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer"
                 >
-                  Tutup Hasil Pelacakan
+                  {t("mppPortal.smartLiveQueue.btnCloseTrack", "Tutup Hasil Pelacakan")}
                 </button>
               </div>
             </motion.div>

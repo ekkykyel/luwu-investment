@@ -2741,6 +2741,37 @@
       "matrixTitle": "公共服务质量评估矩阵",
       "scaleLabel": "评分标准 0 - 100%"
     },
+    "search": {
+      "popularTitle": "热门服务：",
+      "chipDukcapil": "户籍与身份证",
+      "chipNIB": "NIB 营业执照",
+      "chipAntrean": "在线预约取号",
+      "chipBPJS": "国民医保 (BPJS)",
+      "chipPBB": "房产税 (PBB)"
+    },
+    "quickActions": {
+      "vipDesk": "VIP 投资者服务台",
+      "vipDeskDesc": "联络官与一站式协助",
+      "petaSpasial": "RDTR 空间规划图",
+      "petaSpasialDesc": "WebGIS 土地分区与潜力",
+      "izinOss": "OSS 商业许可",
+      "izinOssDesc": "NIB、PBG 与 SLF 条件"
+    },
+    "persona": {
+      "warga": "公众 / 市民",
+      "investor": "投资者与企业",
+      "semua": "全部服务",
+      "wargaTag": "市民模式：",
+      "wargaDesc": "实时排号、办事材料清单与部门窗口。",
+      "investorTag": "投资者模式：",
+      "investorDesc": "VIP 投资者专席、RDTR 空间规划与 OSS-RBA。",
+      "semuaTag": "全部服务模式：",
+      "semuaDesc": "全馆公共窗口、投资与法规模块。"
+    },
+    "hero": {
+      "videoTour": "Simpurusiang 政务中心宣传视频",
+      "officerPortal": "窗口工作人员与租户操作员登录入口"
+    },
     "interactiveFloorPlan": {
       "title": "三维互动楼层平面图与设施导航",
       "badge": "互动平面图",
@@ -2803,7 +2834,28 @@
       "takeQueueOnline": "在线预约取号",
       "statusClosed": "已暂停",
       "statusBusy": "繁忙",
-      "statusActive": "顺畅"
+      "statusActive": "顺畅",
+      "trackerTitle": "申请人排号票据实时追踪器",
+      "trackerSubtitle": "掌握当前叫号状态、前方等待人数及预估叫号时间",
+      "trackerPlaceholder": "输入排号票号（例如：A-012, B-006）...",
+      "trackerBtn": "追踪排号位置",
+      "trackerQuickTest": "快速测试：",
+      "serviceLabel": "服务事项：",
+      "statusCalling": "正在窗口叫号中",
+      "statusFinished": "办理完成",
+      "statusWaiting": "正在排队等待中",
+      "metricCurrentNumber": "当前正在办理号码",
+      "metricAtLoket": "于",
+      "metricWaitingAhead": "您前面的剩余等待人数",
+      "metricYourTurn": "到您的号码了！",
+      "metricApproachDesk": "请前往对应窗口办理",
+      "metricStandbyWaiting": "请在等候区准备",
+      "metricEstimatedTime": "预估等待时间",
+      "metricAvgService": "基于历史平均办理速度",
+      "btnTestChime": "测试窗口语音叫号通知",
+      "btnCalling": "正在叫号中...",
+      "btnCloseTrack": "关闭追踪结果",
+      "peopleSuffix": "人"
     },
     "operationalHeatmap": {
       "statusHeader": "Simpurusiang 政务中心实时运行状态",

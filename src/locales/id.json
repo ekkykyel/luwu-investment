@@ -2737,6 +2737,37 @@
       "matrixTitle": "Matriks Penilaian Mutu Pelayanan Publik",
       "scaleLabel": "Skala Nilai 0 - 100%"
     },
+    "search": {
+      "popularTitle": "Layanan Populer:",
+      "chipDukcapil": "Dukcapil & KTP",
+      "chipNIB": "Izin Usaha NIB",
+      "chipAntrean": "Antrean Online",
+      "chipBPJS": "BPJS Kesehatan",
+      "chipPBB": "Pajak PBB"
+    },
+    "quickActions": {
+      "vipDesk": "VIP Investor Desk",
+      "vipDeskDesc": "Liaison Officer & Fasilitasi",
+      "petaSpasial": "Peta Spasial RDTR",
+      "petaSpasialDesc": "WebGIS Zonasi & Potensi",
+      "izinOss": "Izin Usaha OSS",
+      "izinOssDesc": "Syarat NIB, PBG & SLF"
+    },
+    "persona": {
+      "warga": "Masyarakat",
+      "investor": "Investor & Bisnis",
+      "semua": "Semua Layanan",
+      "wargaTag": "Mode Warga:",
+      "wargaDesc": "Antrean Langsung, Persyaratan Berkas, & Gerai Instansi.",
+      "investorTag": "Mode Investor:",
+      "investorDesc": "VIP Investor Desk, Peta Spasial RDTR, & OSS-RBA.",
+      "semuaTag": "Semua Layanan:",
+      "semuaDesc": "Seluruh modul gerai publik, investasi & regulasi."
+    },
+    "hero": {
+      "videoTour": "Video Profil Pelayanan MPP Simpurusiang",
+      "officerPortal": "Portal Masuk Petugas Gerai & Operator Tenant"
+    },
     "interactiveFloorPlan": {
       "title": "Interactive 3D Floor Plan & Facility Navigator",
       "badge": "DENAH INTERAKTIF",
@@ -2799,7 +2830,28 @@
       "takeQueueOnline": "Ambil Antrean Online",
       "statusClosed": "Tutup",
       "statusBusy": "Padat",
-      "statusActive": "Lancar"
+      "statusActive": "Lancar",
+      "trackerTitle": "Pelacak Posisi Tiket Antrean Pemohon",
+      "trackerSubtitle": "Ketahui nomor antrean yang sedang aktif, sisa giliran di depan Anda, dan estimasi waktu panggilan",
+      "trackerPlaceholder": "Ketik Nomor Tiket (Contoh: A-012, B-006)...",
+      "trackerBtn": "Lacak Posisi Tiket",
+      "trackerQuickTest": "Uji Coba Cepat:",
+      "serviceLabel": "Layanan:",
+      "statusCalling": "Sedang Dipanggil di Loket",
+      "statusFinished": "Pelayanan Selesai",
+      "statusWaiting": "Dalam Antrean Menunggu",
+      "metricCurrentNumber": "NOMOR DILAYANI SAAT INI",
+      "metricAtLoket": "di",
+      "metricWaitingAhead": "SISA GILIRAN DI DEPAN ANDA",
+      "metricYourTurn": "Giliran Anda!",
+      "metricApproachDesk": "Silakan Dekati Meja Loket",
+      "metricStandbyWaiting": "Harap Bersiap di Ruang Tunggu",
+      "metricEstimatedTime": "ESTIMASI WAKTU TUNGGU",
+      "metricAvgService": "Berdasarkan Rata-rata Pelayanan",
+      "btnTestChime": "Uji Notifikasi Suara Panggilan Loket",
+      "btnCalling": "Sedang Memanggil...",
+      "btnCloseTrack": "Tutup Hasil Pelacakan",
+      "peopleSuffix": "Orang"
     },
     "operationalHeatmap": {
       "statusHeader": "Real-Time Status MPP Simpurusiang",

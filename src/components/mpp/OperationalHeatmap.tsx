@@ -11,7 +11,11 @@ interface OperationalHeatmapProps {
 }
 
 export const OperationalHeatmap: React.FC<OperationalHeatmapProps> = ({ isDark = false }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n?.language || 'id';
+  const isEn = currentLang.startsWith('en');
+  const isZh = currentLang.startsWith('zh');
+
   const [selectedDay, setSelectedDay] = useState<'senin' | 'selasa' | 'rabu' | 'kamis' | 'jumat'>('senin');
   const [selectedServiceSla, setSelectedServiceSla] = useState<string>('nib');
   const [passDownloaded, setPassDownloaded] = useState<boolean>(false);
@@ -34,44 +38,44 @@ export const OperationalHeatmap: React.FC<OperationalHeatmapProps> = ({ isDark =
   // Data Katalog SLA & Retribusi
   const slaCatalog: Record<string, { title: string; agency: string; sla: string; fee: string; docs: string; req: string[] }> = {
     nib: {
-      title: 'NIB / Perizinan Berusaha OSS RBA',
-      agency: 'DPMPTSP Kab. Luwu',
-      sla: '15 - 30 Menit (Langsung Terbit)',
-      fee: 'Rp 0 (Bebas Retribusi)',
-      docs: 'KTP & NPWP Pemohon',
-      req: ['e-KTP Pemilik Usaha', 'NPWP Aktif', 'Nomor HP & Email Aktif', 'Detail Alamat Kegiatan Usaha']
+      title: isEn ? 'NIB / Business Licensing OSS RBA' : isZh ? 'NIB / 商业许可 OSS RBA' : 'NIB / Perizinan Berusaha OSS RBA',
+      agency: isEn ? 'Investment Board (DPMPTSP) Luwu' : isZh ? '鲁乌县投资局 (DPMPTSP)' : 'DPMPTSP Kab. Luwu',
+      sla: isEn ? '15 - 30 Mins (Directly Issued)' : isZh ? '15 - 30 分钟（即时核发）' : '15 - 30 Menit (Langsung Terbit)',
+      fee: isEn ? 'IDR 0 (Free of Charge)' : isZh ? '0 印尼盾（免收规费）' : 'Rp 0 (Bebas Retribusi)',
+      docs: isEn ? 'Applicant ID (KTP) & Tax ID (NPWP)' : isZh ? '申请人身份证与税号' : 'KTP & NPWP Pemohon',
+      req: isEn ? ['Business Owner e-KTP', 'Active NPWP', 'Active Phone & Email', 'Business Address Details'] : isZh ? ['企业主电子身份证', '有效税号 NPWP', '有效电话与电子邮箱', '经营场所详细地址'] : ['e-KTP Pemilik Usaha', 'NPWP Aktif', 'Nomor HP & Email Aktif', 'Detail Alamat Kegiatan Usaha']
     },
     pbg: {
-      title: 'Persetujuan Bangunan Gedung (PBG)',
-      agency: 'Dinas PUPR & DPMPTSP Kab. Luwu',
-      sla: '3 - 5 Hari Kerja (Pasca Verifikasi Teknis)',
-      fee: 'Berdasarkan Perda Retribusi Bangunan (Transparan)',
-      docs: 'Gambar Arsitektur & Sertifikat Tanah',
-      req: ['Sertifikat Hak Milik / Tanah', 'KTP Pemohon', 'Gambar Rencana Bangunan', 'Rekomendasi Tim Ahli Bangunan Gedung (TABG)']
+      title: isEn ? 'Building Approval (PBG)' : isZh ? '建筑物批准 (PBG)' : 'Persetujuan Bangunan Gedung (PBG)',
+      agency: isEn ? 'Public Works & Investment Board Luwu' : isZh ? '鲁乌县公共工程局与投资局' : 'Dinas PUPR & DPMPTSP Kab. Luwu',
+      sla: isEn ? '3 - 5 Work Days (Post Technical Verification)' : isZh ? '3 - 5 个工作日（技术核验后）' : '3 - 5 Hari Kerja (Pasca Verifikasi Teknis)',
+      fee: isEn ? 'Based on Building Retribution Bylaw' : isZh ? '依据建筑规费地方条例（透明）' : 'Berdasarkan Perda Retribusi Bangunan (Transparan)',
+      docs: isEn ? 'Architectural Drawing & Land Certificate' : isZh ? '建筑图纸与土地产权证书' : 'Gambar Arsitektur & Sertifikat Tanah',
+      req: isEn ? ['Land Title Certificate', 'Applicant KTP', 'Building Plan Drawing', 'Building Expert Team (TABG) Recommendation'] : isZh ? ['土地所有权证书', '申请人身份证', '建筑规划图纸', '建筑专家组 (TABG) 推荐信'] : ['Sertifikat Hak Milik / Tanah', 'KTP Pemohon', 'Gambar Rencana Bangunan', 'Rekomendasi Tim Ahli Bangunan Gedung (TABG)']
     },
     ktp: {
-      title: 'Pencetakan e-KTP / Kartu Keluarga',
-      agency: 'Dinas Dukcapil Kab. Luwu',
-      sla: '10 - 20 Menit',
-      fee: 'Rp 0 (Gratis Sesuai UU)',
-      docs: 'Resi Pengurusan / KK Lama',
-      req: ['Kartu Keluarga (KK) Asli', 'Surat Keterangan Hilang (jika cetak ulang)', 'e-KTP Lama (jika rusak)']
+      title: isEn ? 'e-KTP Printing / Family Card' : isZh ? '电子身份证 (e-KTP) / 户口簿打印' : 'Pencetakan e-KTP / Kartu Keluarga',
+      agency: isEn ? 'Civil Registration Office Luwu' : isZh ? '鲁乌县民政局 (Disdukcapil)' : 'Dinas Dukcapil Kab. Luwu',
+      sla: isEn ? '10 - 20 Mins' : isZh ? '10 - 20 分钟' : '10 - 20 Menit',
+      fee: isEn ? 'IDR 0 (Free by Law)' : isZh ? '0 印尼盾（法定免费）' : 'Rp 0 (Gratis Sesuai UU)',
+      docs: isEn ? 'Processing Receipt / Old Family Card' : isZh ? '办理回执 / 旧户口簿' : 'Resi Pengurusan / KK Lama',
+      req: isEn ? ['Original Family Card (KK)', 'Lost Report Certificate (if reprinting)', 'Old e-KTP (if damaged)'] : isZh ? ['原版户口簿 (KK)', '报失证明（如补办）', '旧电子身份证（如损坏）'] : ['Kartu Keluarga (KK) Asli', 'Surat Keterangan Hilang (jika cetak ulang)', 'e-KTP Lama (jika rusak)']
     },
     paspor: {
-      title: 'Pembuatan / Perpanjangan Paspor RI',
-      agency: 'Kantor Imigrasi (Loket Vertikal)',
-      sla: '3 Hari Kerja (Setelah Wawancara & Foto)',
-      fee: 'Sesuai PNBP Resmi Keimigrasian',
-      docs: 'KTP, KK, Akta Kelahiran / Ijazah',
-      req: ['e-KTP Asli', 'Kartu Keluarga Asli', 'Akta Kelahiran / Buku Nikah / Ijazah', 'Paspor Lama (jika perpanjangan)']
+      title: isEn ? 'Indonesian Passport Issuance / Renewal' : isZh ? '印尼护照新办 / 换发' : 'Pembuatan / Perpanjangan Paspor RI',
+      agency: isEn ? 'Immigration Office (Vertical Desk)' : isZh ? '移民局（垂直专窗口）' : 'Kantor Imigrasi (Loket Vertikal)',
+      sla: isEn ? '3 Work Days (After Interview & Photo)' : isZh ? '3 个工作日（面谈与采照后）' : '3 Hari Kerja (Setelah Wawancara & Foto)',
+      fee: isEn ? 'Official Immigration PNBP Tariff' : isZh ? '依据移民局法定 PNBP 标准' : 'Sesuai PNBP Resmi Keimigrasian',
+      docs: isEn ? 'KTP, KK, Birth Cert / Diploma' : isZh ? '身份证、户口簿、出生证明/毕业证' : 'KTP, KK, Akta Kelahiran / Ijazah',
+      req: isEn ? ['Original e-KTP', 'Original Family Card', 'Birth Cert / Marriage Book / Diploma', 'Old Passport (if renewing)'] : isZh ? ['原版电子身份证', '原版户口簿', '出生证明 / 结婚证 / 毕业证', '旧护照（如换发）'] : ['e-KTP Asli', 'Kartu Keluarga Asli', 'Akta Kelahiran / Buku Nikah / Ijazah', 'Paspor Lama (jika perpanjangan)']
     },
     sawi: {
-      title: 'Surat Izin Praktik Tenaga Kesehatan (SIP)',
-      agency: 'Dinas Kesehatan & DPMPTSP',
-      sla: '1 - 2 Hari Kerja',
-      fee: 'Rp 0 (Bebas Biaya)',
-      docs: 'STR Aktif & Rekomendasi Organisasi Profesi',
-      req: ['Surat Tanda Registrasi (STR) Legalisir', 'Rekomendasi Organisasi Profesi (IDI/PPNI/IBI)', 'Surat Pernyataan Tempat Praktik', 'Pasfoto Berwarna 4x6']
+      title: isEn ? 'Medical Practitioner License (SIP)' : isZh ? '医疗人员执业许可证 (SIP)' : 'Surat Izin Praktik Tenaga Kesehatan (SIP)',
+      agency: isEn ? 'Health Office & DPMPTSP Luwu' : isZh ? '鲁乌县卫生局与投资局' : 'Dinas Kesehatan & DPMPTSP',
+      sla: isEn ? '1 - 2 Work Days' : isZh ? '1 - 2 个工作日' : '1 - 2 Hari Kerja',
+      fee: isEn ? 'IDR 0 (Free)' : isZh ? '0 印尼盾（免费）' : 'Rp 0 (Bebas Biaya)',
+      docs: isEn ? 'Active STR & Professional Org Recommendation' : isZh ? '有效注册证 (STR) 与行业协会推荐信' : 'STR Aktif & Rekomendasi Organisasi Profesi',
+      req: isEn ? ['Legalized Registration Certificate (STR)', 'Professional Org Recommendation (IDI/PPNI/IBI)', 'Practice Place Declaration', '4x6 Color Photo'] : isZh ? ['公证版注册证书 (STR)', '专业协会推荐信 (IDI/PPNI/IBI)', '执业场所声明书', '4x6 彩色近照'] : ['Surat Tanda Registrasi (STR) Legalisir', 'Rekomendasi Organisasi Profesi (IDI/PPNI/IBI)', 'Surat Pernyataan Tempat Praktik', 'Pasfoto Berwarna 4x6']
     }
   };
 

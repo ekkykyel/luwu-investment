@@ -2062,13 +2062,13 @@ export default function PortalMPP() {
 
                 {/* Quick Service Recommendation Chips */}
                 <div className="flex items-center justify-center flex-wrap gap-1.5 sm:gap-2 mt-2.5 sm:mt-3 text-[11px] sm:text-xs">
-                  <span className="text-slate-600 dark:text-slate-300 font-medium">Layanan Populer:</span>
+                  <span className="text-slate-600 dark:text-slate-300 font-medium">{t("mppPortal.search.popularTitle", "Layanan Populer:")}</span>
                   {[
-                    { label: "Dukcapil & KTP", query: "KTP", id: "dukcapil" },
-                    { label: "Izin Usaha NIB", query: "NIB", id: "oss" },
-                    { label: "Antrean Online", query: "Antrean", id: "antrean" },
-                    { label: "BPJS Kesehatan", query: "BPJS", id: "bpjs" },
-                    { label: "Pajak PBB", query: "PBB", id: "bapenda" },
+                    { label: t("mppPortal.search.chipDukcapil", "Dukcapil & KTP"), query: "KTP", id: "dukcapil" },
+                    { label: t("mppPortal.search.chipNIB", "Izin Usaha NIB"), query: "NIB", id: "oss" },
+                    { label: t("mppPortal.search.chipAntrean", "Antrean Online"), query: "Antrean", id: "antrean" },
+                    { label: t("mppPortal.search.chipBPJS", "BPJS Kesehatan"), query: "BPJS", id: "bpjs" },
+                    { label: t("mppPortal.search.chipPBB", "Pajak PBB"), query: "PBB", id: "bapenda" },
                   ].map((chip) => (
                     <button
                       key={chip.id}
@@ -2111,9 +2111,9 @@ export default function PortalMPP() {
                       </div>
                       <div className="flex flex-col items-center text-center">
                         <span className="font-sans text-[10.5px] xs:text-xs sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                          VIP Investor Desk
+                          {t("mppPortal.quickActions.vipDesk", "VIP Investor Desk")}
                         </span>
-                        <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">Liaison Officer & Fasilitasi</span>
+                        <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">{t("mppPortal.quickActions.vipDeskDesc", "Liaison Officer & Fasilitasi")}</span>
                       </div>
                     </TiltCard>
 
@@ -2130,9 +2130,9 @@ export default function PortalMPP() {
                       </div>
                       <div className="flex flex-col items-center text-center">
                         <span className="font-sans text-[10.5px] xs:text-xs sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                          Peta Spasial RDTR
+                          {t("mppPortal.quickActions.petaSpasial", "Peta Spasial RDTR")}
                         </span>
-                        <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">WebGIS Zonasi & Potensi</span>
+                        <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">{t("mppPortal.quickActions.petaSpasialDesc", "WebGIS Zonasi & Potensi")}</span>
                       </div>
                     </TiltCard>
 
@@ -2149,9 +2149,9 @@ export default function PortalMPP() {
                       </div>
                       <div className="flex flex-col items-center text-center">
                         <span className="font-sans text-[10.5px] xs:text-xs sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                          Izin Usaha OSS
+                          {t("mppPortal.quickActions.izinOss", "Izin Usaha OSS")}
                         </span>
-                        <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">Syarat NIB, PBG & SLF</span>
+                        <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">{t("mppPortal.quickActions.izinOssDesc", "Syarat NIB, PBG & SLF")}</span>
                       </div>
                     </TiltCard>
                   </>
@@ -2230,9 +2230,9 @@ export default function PortalMPP() {
               >
                 <div className="rounded-full bg-slate-100 dark:bg-slate-800/80 p-1 flex flex-wrap items-center justify-center gap-1 w-fit mx-auto border border-slate-200 dark:border-slate-700">
                   {[
-                    { id: "warga", label: "Masyarakat", icon: User },
-                    { id: "investor", label: "Investor & Bisnis", icon: Briefcase },
-                    { id: "semua", label: "Semua Layanan", icon: Globe },
+                    { id: "warga", label: t("mppPortal.persona.warga", "Masyarakat"), icon: User },
+                    { id: "investor", label: t("mppPortal.persona.investor", "Investor & Bisnis"), icon: Briefcase },
+                    { id: "semua", label: t("mppPortal.persona.semua", "Semua Layanan"), icon: Globe },
                   ].map((p) => {
                     const isActive = activePersona === p.id;
                     const Icon = p.icon;
@@ -2259,17 +2259,17 @@ export default function PortalMPP() {
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
                   {activePersona === 'warga' && (
                     <span>
-                      <strong className="text-emerald-700 dark:text-emerald-400 font-semibold">Mode Warga:</strong> Antrean Langsung, Persyaratan Berkas, & Gerai Instansi.
+                      <strong className="text-emerald-700 dark:text-emerald-400 font-semibold">{t("mppPortal.persona.wargaTag", "Mode Warga:")}</strong> {t("mppPortal.persona.wargaDesc", "Antrean Langsung, Persyaratan Berkas, & Gerai Instansi.")}
                     </span>
                   )}
                   {activePersona === 'investor' && (
                     <span>
-                      <strong className="text-emerald-700 dark:text-emerald-400 font-semibold">Mode Investor:</strong> VIP Investor Desk, Peta Spasial RDTR, & OSS-RBA.
+                      <strong className="text-emerald-700 dark:text-emerald-400 font-semibold">{t("mppPortal.persona.investorTag", "Mode Investor:")}</strong> {t("mppPortal.persona.investorDesc", "VIP Investor Desk, Peta Spasial RDTR, & OSS-RBA.")}
                     </span>
                   )}
                   {activePersona === 'semua' && (
                     <span>
-                      <strong className="text-emerald-700 dark:text-emerald-400 font-semibold">Semua Layanan:</strong> Seluruh modul gerai publik, investasi & regulasi.
+                      <strong className="text-emerald-700 dark:text-emerald-400 font-semibold">{t("mppPortal.persona.semuaTag", "Semua Layanan:")}</strong> {t("mppPortal.persona.semuaDesc", "Seluruh modul gerai publik, investasi & regulasi.")}
                     </span>
                   )}
                 </div>
@@ -2311,7 +2311,7 @@ export default function PortalMPP() {
                   className="mt-1 inline-flex items-center gap-1.5 text-xs text-slate-600 hover:text-emerald-700 dark:text-slate-300 dark:hover:text-emerald-400 transition-colors cursor-pointer select-none"
                 >
                   <Building2 className="w-3.5 h-3.5" />
-                  <span>Portal Masuk Petugas Gerai & Operator Tenant</span>
+                  <span>{t("mppPortal.hero.officerPortal", "Portal Masuk Petugas Gerai & Operator Tenant")}</span>
                 </button>
               </motion.div>
             </motion.div>

@@ -125,11 +125,60 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
   const [activeCategory, setActiveCategory] = useState<string>('semua');
   const [isMaklumatExpanded, setIsMaklumatExpanded] = useState<boolean>(false);
 
-  const filteredSla = activeCategory === 'semua'
-    ? SLA_DATA
-    : SLA_DATA.filter(item => item.category === activeCategory);
+  const localizedSlaData = SLA_DATA.map(item => {
+    if (isEn) {
+      if (item.id === 'nib-oss') {
+        return { ...item, serviceName: 'Business Identification Number (OSS RBA Low Risk)', targetSla: 'Max. 15 Mins', cost: 'IDR 0 (Free of Charge)', productType: 'Official NIB BKPM RI' };
+      }
+      if (item.id === 'ktp-el') {
+        return { ...item, serviceName: 'e-KTP / Child ID Card Printing & Replacement', targetSla: 'Max. 30 Mins (Ready to Print)', cost: 'IDR 0 (Free)', productType: 'e-KTP / KIA Card with Active Chip' };
+      }
+      if (item.id === 'akta-kelahiran') {
+        return { ...item, serviceName: 'Birth Certificate & New Family Card Issuance', targetSla: 'Max. 45 Mins', cost: 'IDR 0 (Free)', productType: 'Digitally Signed Birth Certificate & KK' };
+      }
+      if (item.id === 'pbg-simbg') {
+        return { ...item, serviceName: 'Building Approval (PBG SIMBG Technical)', targetSla: 'Max. 3 Work Days', cost: 'According to Building Retribution Bylaw', productType: 'Definitive PBG Certificate & Tech Specs' };
+      }
+      if (item.id === 'pbb-bphtb') {
+        return { ...item, serviceName: 'BPHTB Tax Validation & PBB Mutation', targetSla: 'Max. 20 Mins', cost: 'IDR 0 (Free Admin)', productType: 'Validated BPHTB SSPD Bank Sulselbar' };
+      }
+      if (item.id === 'sertifikat-roya') {
+        return { ...item, serviceName: 'Electronic Mortgage Discharge (Roya)', targetSla: 'Max. 1 Work Day', cost: 'Official PNBP PP 128/2015 (Rp 50,000)', productType: 'Clean Land Title Certificate' };
+      }
+      if (item.id === 'bpjs-mutasi') {
+        return { ...item, serviceName: 'Healthcare Facility Change & BPJS Member Addition', targetSla: 'Max. 15 Mins', cost: 'IDR 0 (Free)', productType: 'Active Digital Healthy Indonesia Card' };
+      }
+    } else if (isZh) {
+      if (item.id === 'nib-oss') {
+        return { ...item, serviceName: '低风险商业登记证 (OSS RBA NIB) 核发', targetSla: '最多 15 分钟', cost: '0 印尼盾（完全免费）', productType: '印尼投资协调委员会 (BKPM) 官方 NIB' };
+      }
+      if (item.id === 'ktp-el') {
+        return { ...item, serviceName: '电子身份证 (e-KTP) / 儿童卡 (KIA) 打印与更换', targetSla: '最多 30 分钟', cost: '0 印尼盾（完全免费）', productType: '带芯片电子身份证 / 儿童身份证' };
+      }
+      if (item.id === 'akta-kelahiran') {
+        return { ...item, serviceName: '出生证明与新户口簿 (KK) 核发', targetSla: '最多 45 分钟', cost: '0 印尼盾（完全免费）', productType: '电子签名 (TTE) 出生证明及户口簿' };
+      }
+      if (item.id === 'pbg-simbg') {
+        return { ...item, serviceName: '建筑物批准 (PBG SIMBG 技术审查)', targetSla: '最多 3 个工作日', cost: '依据地方建筑规费条例', productType: '法定 PBG 证书及技术规范文件' };
+      }
+      if (item.id === 'pbb-bphtb') {
+        return { ...item, serviceName: '契税 (BPHTB) 验证与房产税 (PBB) 变更', targetSla: '最多 20 分钟', cost: '0 印尼盾（免费行政验证）', productType: 'Sulselbar 银行验证 BPHTB 凭单' };
+      }
+      if (item.id === 'sertifikat-roya') {
+        return { ...item, serviceName: '电子抵押权注销 (Roya)', targetSla: '最多 1 个工作日', cost: '官方规费 50,000 印尼盾', productType: '无抵押负担土地产权证书' };
+      }
+      if (item.id === 'bpjs-mutasi') {
+        return { ...item, serviceName: '医保 (BPJS) 定点变更与家庭成员新增', targetSla: '最多 15 分钟', cost: '0 印尼盾（完全免费）', productType: '激活状态电子健康卡 (KIS)' };
+      }
+    }
+    return item;
+  });
 
-  const avgCompliance = (SLA_DATA.reduce((acc, curr) => acc + curr.complianceRate, 0) / SLA_DATA.length).toFixed(1);
+  const filteredSla = activeCategory === 'semua'
+    ? localizedSlaData
+    : localizedSlaData.filter(item => item.category === activeCategory);
+
+  const avgCompliance = (localizedSlaData.reduce((acc, curr) => acc + curr.complianceRate, 0) / localizedSlaData.length).toFixed(1);
 
   return (
     <section 

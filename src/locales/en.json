@@ -2741,6 +2741,37 @@
       "matrixTitle": "Public Service Quality Assessment Matrix",
       "scaleLabel": "Score Scale 0 - 100%"
     },
+    "search": {
+      "popularTitle": "Popular Services:",
+      "chipDukcapil": "Civil Registry & KTP",
+      "chipNIB": "NIB Business License",
+      "chipAntrean": "Online Queue Ticket",
+      "chipBPJS": "BPJS Healthcare",
+      "chipPBB": "PBB Property Tax"
+    },
+    "quickActions": {
+      "vipDesk": "VIP Investor Desk",
+      "vipDeskDesc": "Liaison Officer & Facilitation",
+      "petaSpasial": "RDTR Spatial Map",
+      "petaSpasialDesc": "WebGIS Zoning & Potential",
+      "izinOss": "OSS Business License",
+      "izinOssDesc": "NIB, PBG & SLF Requirements"
+    },
+    "persona": {
+      "warga": "Citizens & Public",
+      "investor": "Investors & Businesses",
+      "semua": "All Services",
+      "wargaTag": "Citizen Mode:",
+      "wargaDesc": "Direct Queue, Document Checklist, & Agency Counters.",
+      "investorTag": "Investor Mode:",
+      "investorDesc": "VIP Investor Desk, RDTR Spatial Map, & OSS-RBA.",
+      "semuaTag": "All Services Mode:",
+      "semuaDesc": "All public counter modules, investment & regulations."
+    },
+    "hero": {
+      "videoTour": "Simpurusiang MPP Service Profile Video",
+      "officerPortal": "Counter Officer & Tenant Operator Login Portal"
+    },
     "interactiveFloorPlan": {
       "title": "Interactive 3D Floor Plan & Facility Navigator",
       "badge": "INTERACTIVE PLAN",
@@ -2803,7 +2834,28 @@
       "takeQueueOnline": "Get Online Ticket",
       "statusClosed": "Closed",
       "statusBusy": "Busy",
-      "statusActive": "Normal"
+      "statusActive": "Normal",
+      "trackerTitle": "Applicant Queue Ticket Position Tracker",
+      "trackerSubtitle": "Know the currently active queue number, remaining turn ahead of you, and estimated call time",
+      "trackerPlaceholder": "Type Ticket Number (e.g., A-012, B-006)...",
+      "trackerBtn": "Track Ticket Position",
+      "trackerQuickTest": "Quick Test:",
+      "serviceLabel": "Service:",
+      "statusCalling": "Now Called at Counter",
+      "statusFinished": "Service Completed",
+      "statusWaiting": "In Waiting Queue",
+      "metricCurrentNumber": "CURRENTLY SERVED NUMBER",
+      "metricAtLoket": "at",
+      "metricWaitingAhead": "TURNS REMAINING AHEAD OF YOU",
+      "metricYourTurn": "Your Turn!",
+      "metricApproachDesk": "Please Approach the Counter Desk",
+      "metricStandbyWaiting": "Please Stand By in Waiting Room",
+      "metricEstimatedTime": "ESTIMATED WAITING TIME",
+      "metricAvgService": "Based on Average Service Speed",
+      "btnTestChime": "Test Counter Call Voice Notification",
+      "btnCalling": "Calling Now...",
+      "btnCloseTrack": "Close Tracking Results",
+      "peopleSuffix": "People"
     },
     "operationalHeatmap": {
       "statusHeader": "Simpurusiang MPP Real-Time Status",
