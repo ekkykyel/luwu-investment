@@ -202,7 +202,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
       </div>
       <div
         id="analitik-spasial-section"
-        className={`pt-6 pb-12 sm:pt-10 sm:pb-16 lg:pt-16 lg:pb-24 border-t ${isDark ? "border-slate-800" : "border-slate-200"}`}
+        className={`pt-6 pb-8 sm:pt-10 sm:pb-14 md:pt-14 md:pb-18 lg:pt-16 lg:pb-20 border-t ${isDark ? "border-slate-800" : "border-slate-200"}`}
       >
         <div className="container max-w-7xl mx-auto px-2 sm:px-4 lg:px-6">
           <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">

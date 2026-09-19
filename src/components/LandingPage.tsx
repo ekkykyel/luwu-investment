@@ -2113,7 +2113,7 @@ export default function LandingPage({
 
       <div className="relative z-10 pt-0">
         {/* 1. HERO SECTION WITH IMMERSIVE BACKGROUND */}
-        <div id="hero-section" className={`relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center pt-20 sm:pt-24 md:pt-28 pb-12 sm:pb-16 overflow-hidden ${isDark ? "bg-[#0b0f19] text-white" : "bg-gradient-to-b from-slate-50 via-white to-slate-50 text-slate-900"}`}>
+        <div id="hero-section" className={`relative min-h-[80vh] sm:min-h-[85vh] md:min-h-[90vh] flex items-center justify-center pt-16 sm:pt-20 md:pt-28 pb-8 sm:pb-12 md:pb-16 overflow-hidden ${isDark ? "bg-[#0b0f19] text-white" : "bg-gradient-to-b from-slate-50 via-white to-slate-50 text-slate-900"}`}>
           <style>{`
             @keyframes aurora1 {
               0%, 100% { transform: translate(0, 0) scale(1); }
@@ -2273,7 +2273,7 @@ export default function LandingPage({
               initial={{ opacity: 0, scaleX: 0 }}
               animate={{ opacity: 1, scaleX: 1 }}
               transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
-              className="w-full max-w-3xl mx-auto my-8 md:my-12 relative flex items-center justify-center"
+              className="w-full max-w-3xl mx-auto my-4 sm:my-8 md:my-12 relative flex items-center justify-center"
             >
               <div className="absolute inset-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
               <div className="absolute inset-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent blur-[2px]" />
@@ -2285,7 +2285,7 @@ export default function LandingPage({
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="mt-8 sm:mt-16 lg:mt-24 max-w-6xl mx-auto px-0 sm:px-4 w-full"
+              className="mt-4 sm:mt-10 md:mt-16 lg:mt-20 max-w-6xl mx-auto px-0 sm:px-4 w-full"
             >
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3.5 md:gap-4.5 rounded-2xl sm:rounded-3xl p-1.5 sm:p-4 md:p-5 bg-slate-100/60 sm:bg-slate-100/70 dark:bg-slate-900/40 sm:dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/70 dark:border-slate-800/70 shadow-xs sm:shadow-[0_10px_35px_-10px_rgba(0,0,0,0.06)] sm:dark:shadow-[0_20px_50px_rgba(0,0,0,0.45)]">
                 {[
@@ -2497,10 +2497,10 @@ export default function LandingPage({
         
         {/* EXECUTIVE LIVE DATA COUNTER PANEL */}
         <section
-          className={`pt-16 pb-12 sm:pt-20 sm:pb-14 border-b relative z-20 ${isDark ? "bg-slate-950/40 border-slate-800/80" : "bg-slate-50/60 border-slate-200/80"}`}
+          className={`pt-12 pb-8 sm:pt-16 sm:pb-12 md:pt-20 md:pb-14 border-b relative z-20 ${isDark ? "bg-slate-950/40 border-slate-800/80" : "bg-slate-50/60 border-slate-200/80"}`}
         >
           <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-14 sm:gap-y-14 sm:gap-x-6 lg:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-12 sm:gap-y-14 sm:gap-x-6 lg:gap-6">
               {/* Card 1: Infrastruktur Pendukung Terpetakan */}
               <div
                 className="group relative pt-13 sm:pt-15 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 hover:border-blue-500/40 dark:hover:border-blue-500/40 hover:shadow-[0_20px_40px_rgba(59,130,246,0.14)]"
@@ -2672,7 +2672,7 @@ export default function LandingPage({
         {/* 2. DAFTAR POTENSI INVESTASI - BENTO GRID */}
         <div
           id="potensi-section"
-          className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-16 min-h-[44px]"
+          className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12 lg:py-16 min-h-[44px]"
         >
           <div className="flex flex-col md:flex-row items-end justify-between mb-10 gap-4">
             <div>
@@ -3083,9 +3083,9 @@ export default function LandingPage({
         {/* 3. LITERASI & KEUNTUNGAN LUTIM */}
         <div
           id="keuntungan-section"
-          className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-20"
+          className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 md:py-14 lg:py-18"
         >
-          <div className="text-center mb-14 sm:mb-20">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16">
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2 text-balance break-words">
               {t("sections.keuntungan.title")}
             </h2>
@@ -3189,12 +3189,12 @@ export default function LandingPage({
         {/* 4.5 FASILITAS PENUNJANG INFRASTRUKTUR */}
         <div
           id="infrastruktur-section"
-          className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-20 relative min-h-[44px]"
+          className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 md:py-14 lg:py-18 relative min-h-[44px]"
         >
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-[20%] right-[10%] w-[50vw] h-[50vw] rounded-full bg-blue-500/5 blur-[120px] mix-blend-screen" />
           </div>
-          <div className="text-center mb-14 sm:mb-20 relative z-10">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16 relative z-10">
             <span
               className={`inline-flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-full text-xs font-bold uppercase tracking-wider mb-4 backdrop-blur-xl border animate-fade-in-up ${isDark ? "bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-orange-200 border-orange-400/30 shadow-sm" : "bg-gradient-to-r from-orange-500/10 to-amber-500/10 text-orange-700 border-orange-300 shadow-sm shadow-orange-500/10"}`}
               style={{ animationDelay: '50ms' }}
@@ -3362,7 +3362,7 @@ export default function LandingPage({
         </div>
 
         {/* INTERACTIVE ROADMAP & LICENSING GUIDE - REIMAGINED WITH FLOATING MEDALLIONS & EXECUTIVE DOSSIER */}
-        <section id="roadmap-section" className={`py-12 sm:py-16 lg:py-20 border-t relative overflow-hidden ${isDark ? "bg-[#0b0f19] border-slate-800/80" : "bg-gradient-to-b from-slate-50/70 via-white to-slate-50/50 border-slate-200/80"}`}>
+        <section id="roadmap-section" className={`py-6 sm:py-10 md:py-14 lg:py-18 border-t relative overflow-hidden ${isDark ? "bg-[#0b0f19] border-slate-800/80" : "bg-gradient-to-b from-slate-50/70 via-white to-slate-50/50 border-slate-200/80"}`}>
           {/* Subtle Ambient Background Gradients */}
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-blue-500/5 dark:bg-blue-400/10 rounded-full blur-[120px] pointer-events-none" />
           <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-emerald-500/5 dark:bg-emerald-400/10 rounded-full blur-[140px] pointer-events-none" />
@@ -3745,7 +3745,7 @@ export default function LandingPage({
         {/* ICONIC SECTION: MAL PELAYANAN PUBLIK (MPP) SIMPURUSIANG - SOVEREIGN GLASS PAVILION */}
         <section
           id="mpp-showcase-section"
-          className={`py-12 md:py-16 lg:py-24 border-y relative overflow-hidden z-10 ${
+          className={`py-8 sm:py-12 md:py-16 lg:py-20 border-y relative overflow-hidden z-10 ${
             isDark
               ? "border-emerald-500/20 bg-[#090d16]"
               : "border-slate-200/80 bg-gradient-to-b from-slate-50/80 via-white to-emerald-50/30"
@@ -4013,15 +4013,15 @@ export default function LandingPage({
 
         {/* 5. SHOWCASE TEKNOLOGI AI & CALCULATOR */}
         <div
-          id="analytics-section"
-          className={`pt-8 pb-4 lg:pt-16 lg:pb-8 border-t relative ${isDark ? "border-slate-800" : "border-slate-200"}`}
+          id="ai-calculator-section"
+          className={`pt-6 pb-4 sm:pt-8 sm:pb-6 md:pt-12 md:pb-8 lg:pt-16 lg:pb-8 border-t relative ${isDark ? "border-slate-800" : "border-slate-200"}`}
         >
           <div className="absolute inset-0 overflow-hidden pointer-events-none hidden dark:block">
             <div className="absolute top-[10%] left-[20%] w-[40vw] h-[40vw] rounded-full bg-indigo-500/5 blur-[120px] mix-blend-screen" />
             <div className="absolute bottom-[20%] right-[10%] w-[35vw] h-[35vw] rounded-full bg-blue-500/5 blur-[100px] mix-blend-screen" />
           </div>
           <div className="container max-w-7xl mx-auto px-2 sm:px-2 sm:px-4 lg:px-6 relative z-10">
-            <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 md:mb-16">
               <span
                 className={`inline-flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-full text-xs font-bold uppercase tracking-wider mb-4 backdrop-blur-xl border animate-fade-in-up ${isDark ? "bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-indigo-200 border-indigo-400/30 shadow-sm" : "bg-gradient-to-r from-indigo-500/10 to-purple-500/10 text-indigo-700 border-indigo-300 shadow-sm shadow-indigo-500/10"}`}
                 style={{ animationDelay: '50ms' }}
@@ -5036,7 +5036,7 @@ export default function LandingPage({
         <TestimonialSection isDark={isDark} />
 
         {/* Akuntabilitas Kinerja */}
-        <section className={`relative py-16 sm:py-24 border-t ${isDark ? "bg-[#050A14] border-slate-800" : "bg-slate-50 border-slate-200"}`}>
+        <section className={`relative py-8 sm:py-12 md:py-16 lg:py-20 border-t ${isDark ? "bg-[#050A14] border-slate-800" : "bg-slate-50 border-slate-200"}`}>
           <div className="container mx-auto px-2 sm:px-4 lg:px-6 relative z-10 max-w-4xl">
             <div className="text-center mb-10">
               <span className={`inline-flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-full text-xs font-bold uppercase tracking-wider mb-4 border ${isDark ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-emerald-50 text-emerald-700 border-emerald-200"}`}>

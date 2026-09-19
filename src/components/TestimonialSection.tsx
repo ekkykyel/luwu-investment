@@ -63,9 +63,9 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
   }, []);
 
   return (
-    <div className={`w-full py-16 sm:py-24 ${isDark ? 'bg-slate-900/50' : 'bg-slate-50'}`}>
+    <div className={`w-full py-8 sm:py-12 md:py-16 lg:py-20 ${isDark ? 'bg-slate-900/50' : 'bg-slate-50'}`}>
       <div className="container max-w-7xl mx-auto px-4 lg:px-6">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 md:mb-16">
           <h2 className={`text-3xl font-bold tracking-tight mb-4 ${isDark ? 'text-white' : 'text-slate-900'}`}>{t('testimonials.title', 'Kisah Sukses Investor')}</h2>
           <p className={`text-sm ${isDark ? 'text-slate-600 dark:text-slate-400' : 'text-slate-600'}`}>{t('testimonials.subtitle', 'Tanggapan dan cerita sukses dari pelaku usaha di Kabupaten Luwu')}</p>
         </div>
