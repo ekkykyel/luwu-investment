@@ -1780,10 +1780,10 @@ export default function LandingPage({
           <div className="flex items-center justify-between h-16 sm:h-20 gap-1.5 sm:gap-4">
             {/* Logo area */}
             <div
-              className="flex items-center gap-1.5 sm:gap-3 cursor-pointer shrink-0 group"
+              className="flex items-center gap-2 sm:gap-3 cursor-pointer shrink-0 group"
               onClick={() => scrollToSection("hero-section")}
             >
-              <div className="p-1 sm:p-2 rounded-[12px] bg-gradient-to-br from-blue-600/10 to-emerald-600/10 shrink-0 border border-blue-500/10 group-hover:shadow-md group-hover:scale-105 transition-all duration-300">
+              <div className="p-1.5 sm:p-2 rounded-2xl bg-gradient-to-br from-emerald-500/20 via-teal-500/10 to-indigo-500/20 border border-emerald-500/30 shadow-inner group-hover:scale-105 transition-all duration-300">
                 <img
                   src={LUWU_LOGO_BASE64}
                   alt="Logo Kabupaten Luwu"
@@ -1791,11 +1791,21 @@ export default function LandingPage({
                   referrerPolicy="no-referrer"
                 />
               </div>
-              <span
-                className={`font-extrabold text-sm sm:text-xl tracking-tight whitespace-nowrap block transition-colors duration-500 ${isDark ? "text-white" : "text-slate-900"}`}
-              >
-                InvestLuwu<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-emerald-500 font-extrabold ml-0.5">{t("landing.hub", "Hub")}</span>
-              </span>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1">
+                  <span
+                    className={`font-black text-base sm:text-xl tracking-tight whitespace-nowrap block transition-colors duration-500 ${isDark ? "text-white" : "text-slate-900"}`}
+                  >
+                    InvestLuwu
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded-md bg-gradient-to-r from-emerald-500 to-teal-400 text-white text-[10px] sm:text-xs font-black tracking-wider uppercase shadow-xs">
+                    Hub
+                  </span>
+                </div>
+                <span className="hidden sm:block text-[9px] font-mono font-bold text-emerald-600 dark:text-emerald-400/90 uppercase tracking-widest leading-none mt-0.5">
+                  PEMKAB LUWU
+                </span>
+              </div>
             </div>
 
             {/* Desktop Menu */}
@@ -2191,35 +2201,42 @@ export default function LandingPage({
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className={`inline-flex items-center gap-2 px-5 py-2 min-h-[44px] rounded-full border mb-4 text-xs font-bold tracking-widest uppercase backdrop-blur-xl ${isDark ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]" : "border-emerald-300 bg-white/95 shadow-sm text-emerald-700"}`}
+                className={`inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2 rounded-full border mb-4 text-[10px] sm:text-xs font-mono font-bold tracking-widest uppercase backdrop-blur-2xl ${
+                  isDark 
+                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.25)]" 
+                    : "border-emerald-300 bg-white/95 text-emerald-700 shadow-md shadow-emerald-500/10"
+                }`}
               >
-                <span className="relative flex h-2 w-2">
+                <span className="relative flex h-2.5 w-2.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                 </span>
-                LIVE SPATIAL ENGINE
+                <span>LIVE SPATIAL ENGINE • POSTGIS SUPABASE SYNC</span>
               </motion.div>
 
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-                className="text-[2.75rem] sm:text-6xl md:text-7xl font-black tracking-tighter leading-[1.05] text-slate-900 dark:text-white mt-1 mb-6 px-2 w-full max-w-[95%] mx-auto break-words text-center text-balance"
+                className="text-3xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.08] text-slate-900 dark:text-white mt-1 mb-5 px-2 w-full max-w-[95%] mx-auto text-center"
               >
-                <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-emerald-600 block mb-2 uppercase">
-                  {t('hero.heroTitleBrand')}
+                <span className="text-xs sm:text-sm font-extrabold tracking-[0.3em] text-emerald-600 dark:text-emerald-400 block mb-2 sm:mb-3 uppercase">
+                  {t('hero.heroTitleBrand', 'SMART-INVESTMENT LUWU')}
                 </span>
-                <span className="transition-all duration-500 ease-in-out block">
-                  {t('hero.heroTitleSlogan')}
+                <span className="block font-extrabold text-slate-900 dark:text-white mb-1">
+                  Pintu Gerbang
+                </span>
+                <span className="block bg-gradient-to-r from-emerald-600 via-teal-500 to-indigo-600 dark:from-emerald-400 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent font-black drop-shadow-sm">
+                  Investasi Digital
                 </span>
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="text-sm sm:text-base leading-relaxed text-slate-600 dark:text-slate-300 max-w-[96%] mx-auto mt-4 mb-6 transition-all duration-500 ease-in-out text-balance"
+                className="text-xs sm:text-base md:text-lg leading-relaxed text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mt-2 mb-8 font-medium text-balance"
               >
-                {t("hero.subtitle")}
+                {t("hero.subtitle", "Cepat. Transparan. Terintegrasi Spasial. Akses data peluang investasi Kabupaten Luwu secara real-time dengan peta interaktif PostGIS dan simulasi ROI.")}
               </motion.p>
 
                {/* HERO CTA BUTTONS */}
@@ -2227,23 +2244,23 @@ export default function LandingPage({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.3 }}
-                className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-4 z-20 relative w-full px-4 sm:px-0"
+                className="flex flex-col sm:flex-row items-center justify-center gap-3.5 mb-6 z-20 relative w-full max-w-2xl mx-auto px-4 sm:px-0"
               >
                 {/* Primary CTA: GIS Analytics */}
                 <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.96 }}
+                  whileHover={{ scale: 1.03 }}
                   type="button"
                   id="btn-hero-gis-analytics"
                   onClick={(e) => handleGisClick(e, "default")}
-                  className="group relative flex w-full sm:w-auto items-center justify-center gap-3 px-8 py-4 min-h-[52px] rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base shadow-[0_0_25px_rgba(16,185,129,0.4)] hover:shadow-[0_0_40px_rgba(99,102,241,0.6)] transition-all duration-300 border border-emerald-300/40 overflow-hidden"
+                  className="group relative flex w-full sm:w-auto items-center justify-center gap-3 px-8 py-4 min-h-[54px] rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm sm:text-base shadow-[0_10px_30px_rgba(16,185,129,0.35)] hover:shadow-[0_15px_40px_rgba(16,185,129,0.5)] transition-all duration-300 border border-emerald-300/40 overflow-hidden cursor-pointer"
                 >
                   <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out pointer-events-none" />
                   <span className="relative flex items-center gap-2.5">
                     <Globe className="w-5 h-5 text-amber-300 group-hover:rotate-12 transition-transform duration-300" />
                     <span>{t('hero.btnGisAnalytics', 'GIS Analytics')}</span>
-                    <span className="hidden sm:inline-block px-2.5 py-0.5 text-[11px] uppercase font-bold tracking-wider bg-white/20 text-emerald-100 rounded-full border border-white/30 ml-1">
-                      {t('hero.btnGisAnalyticsBadge', 'Peta Spasial')}
+                    <span className="px-2.5 py-0.5 text-[10px] uppercase font-bold tracking-wider bg-white/20 text-emerald-100 rounded-full border border-white/30 ml-1">
+                      Peta Spasial
                     </span>
                     <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                   </span>
@@ -2251,15 +2268,15 @@ export default function LandingPage({
 
                 {/* Secondary CTA: Eksplorasi Potensi */}
                 <motion.button
-                  whileTap={{ scale: 0.95 }}
+                  whileTap={{ scale: 0.96 }}
                   whileHover={{ scale: 1.02 }}
                   type="button"
                   id="btn-hero-eksplorasi-potensi"
                   onClick={() => scrollToSection("potensi-section")}
-                  className={`flex w-full sm:w-auto justify-center items-center gap-2 px-7 py-4 min-h-[52px] rounded-2xl font-bold text-base transition-all duration-300 border backdrop-blur-xl ${
+                  className={`flex w-full sm:w-auto justify-center items-center gap-2.5 px-7 py-4 min-h-[54px] rounded-2xl font-extrabold text-sm sm:text-base transition-all duration-300 border backdrop-blur-xl cursor-pointer ${
                     isDark
-                      ? "bg-slate-900/60 border-slate-700/80 text-slate-200 hover:bg-slate-800/80 hover:text-white hover:border-emerald-500/50 shadow-lg"
-                      : "bg-white/80 border-slate-200 text-slate-800 dark:text-slate-200 hover:bg-slate-100 hover:text-emerald-700 hover:border-emerald-300 shadow-md"
+                      ? "bg-slate-900/70 border-slate-700/80 text-slate-100 hover:bg-slate-800/90 hover:text-white hover:border-emerald-500/50 shadow-lg"
+                      : "bg-white border-slate-200/90 text-slate-800 hover:bg-slate-50 hover:text-emerald-700 hover:border-emerald-300 shadow-md shadow-slate-200/60"
                   }`}
                 >
                   <Building2 className="w-5 h-5 text-emerald-500" />
