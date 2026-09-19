@@ -160,11 +160,12 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
       {/* 1. Official Government Pledge Card (Maklumat Pelayanan Publik) */}
       <div className={`p-6 sm:p-8 rounded-3xl border transition-all mb-10 relative overflow-hidden ${
         isDark 
-          ? 'bg-gradient-to-br from-slate-900 via-slate-900/90 to-emerald-950/40 border-emerald-500/30 shadow-2xl' 
-          : 'bg-gradient-to-br from-white via-emerald-50/30 to-teal-50/40 border-emerald-200/80 shadow-xl shadow-emerald-500/5'
+          ? 'bg-gradient-to-br from-slate-900 via-slate-900/95 to-emerald-950/40 border-emerald-500/30 shadow-2xl shadow-emerald-950/30' 
+          : 'bg-gradient-to-br from-white via-emerald-50/40 to-teal-50/50 border-emerald-200/80 shadow-xl shadow-emerald-500/5'
       }`}>
-        <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+        {/* Subtle Ambient Radial Lighting */}
+        <div className="absolute -top-20 -right-20 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-emerald-500/20">
@@ -183,14 +184,14 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold font-mono">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold font-mono">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                 {isEn ? `SLA Compliance: ${avgCompliance}% Excellent` : isZh ? `SLA达标率: ${avgCompliance}% 优秀` : `Kepatuhan SLA: ${avgCompliance}% Prima`}
               </span>
               <button
                 type="button"
                 onClick={() => setIsMaklumatExpanded(!isMaklumatExpanded)}
-                className="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-emerald-500 hover:text-slate-950 transition-all cursor-pointer flex items-center gap-1"
+                className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-emerald-500 hover:text-white dark:hover:text-slate-950 transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
               >
                 <Eye className="w-3.5 h-3.5" />
                 <span>{isMaklumatExpanded ? (isEn ? 'Collapse' : isZh ? '收起' : 'Ringkas') : (isEn ? 'Read Full Pledge' : isZh ? '查看承诺全文' : 'Baca Teks Lengkap')}</span>
@@ -200,13 +201,17 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
 
           {/* Official Pledge Text */}
           <div className="pt-5 space-y-3">
-            <blockquote className="text-xs sm:text-sm md:text-base font-serif italic text-slate-800 dark:text-slate-200 leading-relaxed bg-white/50 dark:bg-slate-950/40 p-4 sm:p-5 rounded-2xl border border-emerald-500/20">
-              {isEn 
-                ? '"Herewith, we the leadership and all personnel of Mal Pelayanan Publik (MPP) Simpurusiang Luwu Regency solemnly pledge and state our capability to deliver services in strict compliance with established Standards, ensuring ease, transparency, and time certainty. If we fail to fulfill this promise, we are fully prepared to accept sanctions in accordance with applicable laws."'
-                : isZh
-                ? '“在此，鲁乌县辛普鲁西亚公共服务大厅领导班子与全体工作人员庄严承诺：严格依照法定服务标准开展各项政务与行政审批，确保办事便捷、流程透明、时效确定。若未履行政诺，愿依法依规接受严格惩戒。”'
-                : '"Dengan ini, kami pimpinan dan segenap aparatur Mal Pelayanan Publik (MPP) Simpurusiang Kabupaten Luwu berjanji dan menyatakan sanggup menyelenggarakan pelayanan sesuai Standar Pelayanan yang telah ditetapkan, memberikan kemudahan, transparansi, serta kepastian waktu, dan apabila kami tidak menepati janji ini, kami siap menerima sanksi sesuai dengan peraturan perundang-undangan yang berlaku."'}
-            </blockquote>
+            <div className="relative">
+              <blockquote className="text-xs sm:text-sm md:text-base font-serif italic text-slate-800 dark:text-slate-100 leading-relaxed bg-white/60 dark:bg-slate-950/60 p-4 sm:p-6 rounded-2xl border border-emerald-500/25 shadow-inner">
+                <span className="text-2xl text-emerald-500 dark:text-emerald-400 font-serif leading-none mr-1 select-none">“</span>
+                {isEn 
+                  ? 'Herewith, we the leadership and all personnel of Mal Pelayanan Publik (MPP) Simpurusiang Luwu Regency solemnly pledge and state our capability to deliver services in strict compliance with established Standards, ensuring ease, transparency, and time certainty. If we fail to fulfill this promise, we are fully prepared to accept sanctions in accordance with applicable laws.'
+                  : isZh
+                  ? '在此，鲁乌县辛普鲁西亚公共服务大厅领导班子与全体工作人员庄严承诺：严格依照法定服务标准开展各项政务与行政审批，确保办事便捷、流程透明、时效确定。若未履行政诺，愿依法依规接受严格惩戒。'
+                  : 'Dengan ini, kami pimpinan dan segenap aparatur Mal Pelayanan Publik (MPP) Simpurusiang Kabupaten Luwu berjanji dan menyatakan sanggup menyelenggarakan pelayanan sesuai Standar Pelayanan yang telah ditetapkan, memberikan kemudahan, transparansi, serta kepastian waktu, dan apabila kami tidak menepati janji ini, kami siap menerima sanksi sesuai dengan peraturan perundang-undangan yang berlaku.'}
+                <span className="text-2xl text-emerald-500 dark:text-emerald-400 font-serif leading-none ml-1 select-none">”</span>
+              </blockquote>
+            </div>
 
             <AnimatePresence>
               {isMaklumatExpanded && (

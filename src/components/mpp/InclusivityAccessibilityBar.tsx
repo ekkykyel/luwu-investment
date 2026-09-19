@@ -605,6 +605,17 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
     };
   }, []);
 
+  // Listener untuk toggle Accessibility Menu dari Desktop Header Utility Bar
+  useEffect(() => {
+    const handleToggleAccessibility = () => {
+      setIsAccessibilityOpen(prev => !prev);
+    };
+    window.addEventListener('toggle-mpp-accessibility', handleToggleAccessibility);
+    return () => {
+      window.removeEventListener('toggle-mpp-accessibility', handleToggleAccessibility);
+    };
+  }, []);
+
   const setAndSaveContrastMode = (mode: ContrastModeType) => {
     setContrastMode(mode);
     setIsContrastMenuOpen(false);
@@ -796,19 +807,17 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
   return (
     <>
       {/* --- FLOATING COLLAPSIBLE ACCESSIBILITY ICON & PANEL (RAMAH INKLUSIF MPP) --- */}
-      {/* Terletak di Hero Section dan Sticky / Fixed saat Pengguna Menggeser Halaman */}
+      {/* Khusus Desktop terintegrasi elegan di Header Utility Bar, Mobile tetap memiliki Quick Floating Access di Hero */}
       <div 
         ref={panelRef}
-        className={`fixed right-3.5 sm:right-6 md:right-8 ${
-          isScrolledPastHero ? 'top-28 sm:top-32' : 'top-20 sm:top-24'
-        } z-40 transition-all duration-300 pointer-events-auto select-none`}
+        className={`fixed right-3.5 sm:right-6 md:right-8 lg:right-24 top-16 sm:top-20 z-50 transition-all duration-300 pointer-events-auto select-none`}
       >
-        {/* The Accessibility Disability Icon Button - Tanpa Tulisan (Sesuai Permintaan) */}
+        {/* The Accessibility Disability Icon Button - Khusus Tampil di Mobile (Di Desktop terpasang rapi di Header Utility Bar) */}
         <motion.button
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.93 }}
           onClick={() => setIsAccessibilityOpen(prev => !prev)}
-          className={`relative w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-xl backdrop-blur-xl border ${
+          className={`md:hidden relative w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-xl backdrop-blur-xl border ${
             isAccessibilityOpen
               ? 'bg-emerald-600 text-white border-emerald-400 ring-4 ring-emerald-500/30 shadow-emerald-500/40'
               : isDark
@@ -2170,7 +2179,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
         initial={{ scale: 0, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         transition={{ type: "spring", damping: 22, stiffness: 280, delay: 0.3 }}
-        className="hidden md:flex fixed bottom-24 right-6 z-40 select-none"
+        className="hidden md:flex fixed bottom-8 right-8 z-40 select-none"
       >
         {/* Animated Sonar Rings saat mendengarkan */}
         {isListening && (

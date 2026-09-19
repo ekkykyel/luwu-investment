@@ -1646,7 +1646,7 @@ export default function PortalMPP() {
             
             {/* Branding Logo & Title - Lambang Kabupaten Luwu & MPP Simpurusiang */}
             <div 
-              className="flex items-center gap-2.5 sm:gap-3.5 min-w-0 group cursor-pointer"
+              className="flex items-center gap-2.5 sm:gap-3.5 shrink-0 group cursor-pointer"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
               <div className="p-1 sm:p-2 rounded-[12px] bg-gradient-to-br from-blue-600/10 to-emerald-600/10 shrink-0 border border-blue-500/20 dark:border-emerald-500/30 group-hover:shadow-[0_0_18px_rgba(0,255,153,0.3)] group-hover:scale-105 transition-all duration-300">
@@ -1662,23 +1662,23 @@ export default function PortalMPP() {
                   }}
                 />
               </div>
-              <div className="flex flex-col min-w-0 shrink">
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <span className="text-[15px] sm:text-base md:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight font-sans truncate">
+              <div className="flex flex-col shrink-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-base sm:text-lg md:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight font-sans whitespace-nowrap">
                     MPP Simpurusiang
                   </span>
-                  <span className="hidden md:inline-flex items-center gap-1 text-[9px] font-bold text-[#FFD700] bg-[#FFD700]/10 border border-[#FFD700]/30 px-1.5 sm:px-4 py-0.5 rounded uppercase tracking-wider shadow-[0_0_10px_rgba(255,215,0,0.2)]">
+                  <span className="hidden xl:inline-flex items-center gap-1 text-[9px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/25 px-2.5 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap shadow-xs">
                     {t("mppPortal.nav.topBadge", "Layanan Unggul")}
                   </span>
                 </div>
-                <span className="hidden sm:block text-[10px] sm:text-xs text-emerald-700 dark:text-emerald-400 font-medium tracking-wide truncate font-sans">
+                <span className="hidden sm:block text-[10px] sm:text-xs text-emerald-700 dark:text-emerald-400 font-medium tracking-wide whitespace-nowrap font-sans">
                   {t("mppPortal.nav.govName")}
                 </span>
               </div>
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-8">
+            <nav className="hidden lg:flex items-center gap-5 xl:gap-7">
               <a className="text-emerald-700 dark:text-emerald-400 border-b-2 border-emerald-600 dark:border-emerald-400 pb-0.5 font-sans text-sm font-semibold hover:text-slate-900 dark:hover:text-white transition-colors" href="#hero">{t("mppPortal.nav.beranda")}</a>
               <a className="text-slate-600 dark:text-slate-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors" href="#layanan">{t("mppPortal.nav.layanan")}</a>
               <a className="text-slate-600 dark:text-slate-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors" href="#instansi">{t("mppPortal.nav.instansi")}</a>
@@ -1688,7 +1688,7 @@ export default function PortalMPP() {
             </nav>
 
             {/* Header Right Actions */}
-            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
               {/* Petugas Gerai Access */}
               <button
                 type="button"
@@ -1714,6 +1714,18 @@ export default function PortalMPP() {
 
               <LanguageToggle />
               <ThemeToggle />
+
+              {/* Ramah Inklusif & Disabilitas Utility Button */}
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent('toggle-mpp-accessibility'))}
+                className="hidden sm:flex w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-900/5 dark:bg-white/5 border border-slate-900/10 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 items-center justify-center transition-all active:scale-95 cursor-pointer"
+                title="Layanan Ramah Inklusif & Disabilitas (Pusat Bantuan & Alat Bantu)"
+                aria-label="Layanan Ramah Inklusif & Disabilitas"
+              >
+                <Accessibility className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              </button>
+
               <button 
                 type="button" 
                 onClick={() => setIsAiModalOpen(true)}
@@ -5271,20 +5283,6 @@ export default function PortalMPP() {
             </div>
           </motion.div>
         </footer>
-
-        {/* Desktop Floating AI Button */}
-        <motion.button 
-          whileHover={{ scale: 1.03, y: -2 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={() => setIsAiModalOpen(true)}
-          className="hidden md:flex fixed bottom-8 right-8 z-40 bg-emerald-700 hover:bg-emerald-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white px-5 py-3 rounded-full shadow-lg shadow-emerald-950/25 items-center gap-3 active:scale-95 transition-all group font-sans font-semibold text-sm tracking-wide cursor-pointer border border-emerald-500/30"
-        >
-          <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center">
-            <Bot className="w-4 h-4 text-white group-hover:rotate-12 transition-transform" />
-          </div>
-          <span>{t("mppPortal.footer.konsultasiAi")}</span>
-          <span className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
-        </motion.button>
 
         {/* Android Native-Style Bottom Navigation Dock */}
         <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 px-3 py-1.5 flex items-center justify-around shadow-xl pb-[calc(env(safe-area-inset-bottom,0px)+6px)]">
