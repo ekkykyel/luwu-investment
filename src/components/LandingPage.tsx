@@ -5180,45 +5180,88 @@ export default function LandingPage({
         {/* Kisah Sukses Investor */}
         <TestimonialSection isDark={isDark} />
 
-        {/* Akuntabilitas Kinerja */}
-        <section className={`relative py-8 sm:py-12 md:py-16 lg:py-20 border-t ${isDark ? "bg-[#050A14] border-slate-800" : "bg-slate-50 border-slate-200"}`}>
-          <div className="container mx-auto px-2 sm:px-4 lg:px-6 relative z-10 max-w-4xl">
-            <div className="text-center mb-10">
-              <span className={`inline-flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-full text-xs font-bold uppercase tracking-wider mb-4 border ${isDark ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-emerald-50 text-emerald-700 border-emerald-200"}`}>
-                <Activity size={14} /> {t("performance.tag", "Akuntabilitas Kinerja Pemkab Luwu")}
+        {/* Akuntabilitas Kinerja DPMPTSP */}
+        <section className={`relative py-12 sm:py-16 md:py-20 border-t ${isDark ? "bg-[#040812] border-slate-800/80" : "bg-slate-50 border-slate-200"}`}>
+          <div className="container mx-auto px-3 sm:px-4 lg:px-6 relative z-10 max-w-5xl">
+            <div className="text-center mb-10 sm:mb-12">
+              <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-3 border ${isDark ? "bg-blue-500/10 text-blue-400 border-blue-500/20" : "bg-blue-50 text-blue-700 border-blue-200"}`}>
+                <Activity size={14} /> {t("performance.tag", "Transparansi & Akuntabilitas Kinerja")}
               </span>
-              <h3 className={`text-xl sm:text-2xl md:text-3xl font-bold tracking-tight mb-3 ${isDark ? "text-white" : "text-slate-900"}`}>
+              <h3 className={`text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-2.5 ${isDark ? "text-white" : "text-slate-900"}`}>
                 {t("performance.title", "Akuntabilitas Kinerja DPMPTSP Kabupaten Luwu")}
               </h3>
-              <p className={`text-xs sm:text-sm font-medium ${isDark ? "text-slate-400" : "text-slate-600"}`}>
-                {t("performance.subtitle", "Laporan transparan capaian IKM serta standar tingkat layanan (SLA) perizinan terpadu.")}
+              <p className={`text-xs sm:text-sm font-medium max-w-2xl mx-auto ${isDark ? "text-slate-400" : "text-slate-600"}`}>
+                {t("performance.subtitle", "Laporan transparan capaian Indeks Kepuasan Masyarakat (IKM) serta standar tingkat layanan (SLA) perizinan terpadu.")}
               </p>
             </div>
             
-            <div className={`rounded-3xl border overflow-hidden ${isDark ? "bg-slate-900/50 border-slate-700/60" : "bg-white border-slate-200 shadow-sm"}`}>
-              <div className="p-6 sm:p-8 flex items-center gap-4 border-b border-slate-200 dark:border-slate-700/60">
-                <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
-                  <ShieldCheck size={24} />
+            <div className={`rounded-3xl border overflow-hidden backdrop-blur-md shadow-2xl ${isDark ? "bg-slate-900/70 border-slate-800 shadow-black/80" : "bg-white border-slate-200/90 shadow-slate-200/60"}`}>
+              {/* Header Bar */}
+              <div className={`p-5 sm:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b ${isDark ? "bg-slate-900/90 border-slate-800" : "bg-slate-50/80 border-slate-100"}`}>
+                <div className="flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 border border-blue-500/30 flex items-center justify-center text-blue-500 shrink-0 shadow-inner">
+                    <ShieldCheck size={26} />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className={`text-base sm:text-lg font-bold ${isDark ? "text-white" : "text-slate-900"}`}>{t("performance.title", "Indikator Utama Layanan DPMPTSP")}</h4>
+                      <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> TERHUBUNG POSTGIS SUPABASE
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{t("performance.subtitle", "Monitoring SLA & Kepuasan Publik Sesuai Permenpan RB")}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className={`text-lg sm:text-xl font-bold ${isDark ? "text-white" : "text-slate-900"}`}>{t("performance.title", "Indikator Layanan DPMPTSP")}</h4>
-                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">{t("performance.subtitle", "SLA & Kepuasan Publik Real-time")}</p>
+
+                <div className="flex items-center gap-2 text-[10px] sm:text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 self-start sm:self-auto">
+                  <BadgeCheck size={14} className="text-blue-500" /> Permenpan RB Framework
                 </div>
               </div>
-              <div className="divide-y divide-slate-100 dark:divide-slate-700/60">
+
+              {/* Performance Metric Pods */}
+              <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
                 {[
-                  { title: t("performance.ikmTitle", "Indeks Kepuasan Masyarakat"), desc: t("performance.ikmDesc", "Survei Kepuasan Publik Sesuai Permenpan RB") },
-                  { title: t("performance.slaTitle", "SLA Penerbitan NIB/Izin"), desc: t("performance.slaDesc", "Pemrosesan izin risiko rendah secara instan") },
-                  { title: t("performance.spatialTitle", "Akurasi Verifikasi Tata Ruang"), desc: t("performance.spatialDesc", "Kesesuaian plotting sistem dengan RT-RW") }
+                  { 
+                    icon: Award,
+                    title: t("performance.ikmTitle", "Indeks Kepuasan Masyarakat (IKM)"), 
+                    desc: t("performance.ikmDesc", "Survei Berkala Kepuasan Publik Sesuai Permenpan RB No. 14/2017"),
+                    tag: "Survei Publik Active",
+                    color: "text-amber-500 bg-amber-500/10 border-amber-500/20"
+                  },
+                  { 
+                    icon: Zap,
+                    title: t("performance.slaTitle", "SLA Penerbitan NIB & Izin Usaha"), 
+                    desc: t("performance.slaDesc", "Pemrosesan Izin Risiko Rendah Instan & Verifikasi Berkas Lanjutan"),
+                    tag: "OSS-RBA Engine",
+                    color: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20"
+                  },
+                  { 
+                    icon: Compass,
+                    title: t("performance.spatialTitle", "Akurasi Verifikasi Tata Ruang Spasial"), 
+                    desc: t("performance.spatialDesc", "Kesesuaian Plotting Koordinat Lahan dengan RTRW Kabupaten Luwu"),
+                    tag: "PostGIS Precision",
+                    color: "text-indigo-500 bg-indigo-500/10 border-indigo-500/20"
+                  }
                 ].map((item, idx) => (
-                  <div key={idx} className="p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-800/20">
-                    <div>
-                      <h5 className={`font-bold text-sm sm:text-base mb-1 ${isDark ? "text-slate-200" : "text-slate-800"}`}>{item.title}</h5>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">{item.desc}</p>
+                  <div key={idx} className="p-5 sm:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                    <div className="flex items-start sm:items-center gap-3.5">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 ${item.color}`}>
+                        <item.icon size={20} />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <h5 className={`font-bold text-xs sm:text-sm ${isDark ? "text-slate-100" : "text-slate-800"}`}>{item.title}</h5>
+                          <span className="text-[9px] font-mono px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">{item.tag}</span>
+                        </div>
+                        <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">{item.desc}</p>
+                      </div>
                     </div>
-                    <div className="flex flex-col items-start sm:items-end gap-2">
-                      <span className="text-[10px] sm:text-xs font-medium text-slate-500 dark:text-slate-400">{t("performance.noDataAvailable", "Belum ada data tersedia")}</span>
-                      <span className={`px-2.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider ${isDark ? "bg-slate-800 text-slate-400 border border-slate-700" : "bg-slate-100 text-slate-500 border border-slate-200"}`}>{t("performance.noDataBadge", "Belum Ada Data")}</span>
+
+                    <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between gap-1.5 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800 shrink-0">
+                      <span className="text-[10px] sm:text-xs font-medium text-slate-500 dark:text-slate-400">{t("performance.noDataAvailable", "Belum ada data publikasi")}</span>
+                      <span className={`px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider ${isDark ? "bg-slate-800/90 text-slate-400 border border-slate-700" : "bg-slate-100 text-slate-500 border border-slate-200"}`}>
+                        {t("performance.noDataBadge", "Belum Ada Data")}
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -5227,46 +5270,117 @@ export default function LandingPage({
           </div>
         </section>
 
-        {/* Ekosistem DPMPTSP */}
-        <section className={`relative py-16 sm:py-24 ${isDark ? "bg-slate-950" : "bg-white"}`}>
-          <div className="container mx-auto px-2 sm:px-4 lg:px-6 relative z-10 max-w-6xl">
-            <div className="text-center mb-16">
-              <h3 className={`text-xl sm:text-2xl md:text-3xl font-bold tracking-tight mb-3 ${isDark ? "text-white" : "text-slate-900"}`}>
-                {t("ecosystem.title", "Ekosistem DPMPTSP")}
+        {/* Ekosistem DPMPTSP (Sovereign Glass Pavilion Style) */}
+        <section className={`relative py-16 sm:py-24 border-t ${isDark ? "bg-[#03060f] border-slate-800/80" : "bg-white border-slate-200"}`}>
+          <div className="container mx-auto px-3 sm:px-4 lg:px-6 relative z-10 max-w-6xl">
+            <div className="text-center mb-12 sm:mb-16">
+              <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-3 border ${isDark ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-emerald-50 text-emerald-700 border-emerald-200"}`}>
+                <Layers className="w-3.5 h-3.5" /> Sinergi Layanan Lintas Sektor
+              </span>
+              <h3 className={`text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-3 ${isDark ? "text-white" : "text-slate-900"}`}>
+                {t("ecosystem.title", "Ekosistem DPMPTSP Kabupaten Luwu")}
               </h3>
-              <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+              <div className="h-1 w-20 bg-gradient-to-r from-emerald-500 via-teal-500 to-indigo-500 rounded-full mb-3 mx-auto" />
+              <p className={`text-xs sm:text-sm font-semibold max-w-2xl mx-auto uppercase tracking-wider ${isDark ? "text-emerald-400" : "text-emerald-700"}`}>
                 {t("ecosystem.subtitle", "Sinergi Layanan Terpadu 4 Bidang Strategis")}
               </p>
             </div>
             
-            <div className="relative">
-              {/* Connecting Line */}
-              <div className="hidden md:block absolute top-10 left-[12%] right-[12%] h-[2px] bg-slate-200 dark:bg-slate-800 z-0" />
-              
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
-                {[
-                  { icon: Megaphone, title: t("ecosystem.promotionTitle", "Bidang Promosi"), desc: t("ecosystem.promotionDesc", "Penjaringan & Verifikasi Minat (LoI)"), color: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-500/10 border-blue-100 dark:border-blue-500/20" },
-                  { icon: ShieldCheck, title: t("ecosystem.dalakTitle", "Bidang Dalak"), desc: t("ecosystem.dalakDesc", "Kawal Site Visit & Mediasi Lahan"), color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-500/10 border-amber-100 dark:border-amber-500/20" },
-                  { icon: Stamp, title: t("ecosystem.licensingTitle", "Bidang Perizinan"), desc: t("ecosystem.licensingDesc", "Eksekusi Legalitas & OSS-RBA"), color: "text-emerald-500", bg: "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-100 dark:border-emerald-500/20" },
-                  { icon: BarChart3, title: t("ecosystem.dataTitle", "Bidang Data"), desc: t("ecosystem.dataDesc", "Pusat Komando & Dashboard Eksekutif"), color: "text-purple-500", bg: "bg-purple-50 dark:bg-purple-500/10 border-purple-100 dark:border-purple-500/20" }
-                ].map((item, idx) => (
-                  <div key={idx} className="flex flex-col items-center text-center group">
-                    <div className={`w-20 h-20 rounded-2xl flex items-center justify-center mb-6 border transition-transform duration-300 group-hover:-translate-y-2 group-hover:shadow-lg ${isDark ? "bg-slate-900 border-slate-800" : "bg-white border-slate-100"} relative z-10`}>
-                      <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${item.bg} ${item.color}`}>
-                        <item.icon size={24} />
+            {/* 2x2 Grid on Mobile, 4-Column on Desktop for Symmetric Perfection */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 relative">
+              {[
+                { 
+                  icon: Megaphone, 
+                  title: t("ecosystem.promotionTitle", "Bidang Promosi"), 
+                  desc: t("ecosystem.promotionDesc", "Penjaringan & Verifikasi Minat (LoI)"), 
+                  color: "text-blue-500", 
+                  bg: "bg-blue-500/10 border-blue-500/20",
+                  rail: "from-blue-500 via-sky-400 to-indigo-500",
+                  badge: "Respon Real-Time",
+                  badgeColor: "bg-blue-500/10 text-blue-500 border-blue-500/20"
+                },
+                { 
+                  icon: ShieldCheck, 
+                  title: t("ecosystem.dalakTitle", "Bidang Dalak"), 
+                  desc: t("ecosystem.dalakDesc", "Kawal Site Visit & Mediasi Lahan"), 
+                  color: "text-amber-500", 
+                  bg: "bg-amber-500/10 border-amber-500/20",
+                  rail: "from-amber-500 via-orange-400 to-yellow-500",
+                  badge: "Kawal 100% On-Site",
+                  badgeColor: "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                },
+                { 
+                  icon: Stamp, 
+                  title: t("ecosystem.licensingTitle", "Bidang Perizinan"), 
+                  desc: t("ecosystem.licensingDesc", "Eksekusi Legalitas & OSS-RBA"), 
+                  color: "text-emerald-500", 
+                  bg: "bg-emerald-500/10 border-emerald-500/20",
+                  rail: "from-emerald-500 via-teal-400 to-cyan-500",
+                  badge: "Persetujuan Instan OSS",
+                  badgeColor: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                },
+                { 
+                  icon: BarChart3, 
+                  title: t("ecosystem.dataTitle", "Bidang Data"), 
+                  desc: t("ecosystem.dataDesc", "Pusat Komando & Dashboard Eksekutif"), 
+                  color: "text-purple-500", 
+                  bg: "bg-purple-500/10 border-purple-500/20",
+                  rail: "from-purple-500 via-violet-400 to-indigo-500",
+                  badge: "Live Command Center",
+                  badgeColor: "bg-purple-500/10 text-purple-500 border-purple-500/20"
+                }
+              ].map((item, idx) => (
+                <div 
+                  key={idx} 
+                  className={`group relative rounded-2xl sm:rounded-3xl border p-4 sm:p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 overflow-hidden backdrop-blur-md ${
+                    isDark 
+                      ? "bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:shadow-[0_20px_40px_rgba(0,0,0,0.6)]" 
+                      : "bg-white border-slate-200/90 hover:border-slate-300 hover:shadow-xl hover:shadow-slate-200/50"
+                  }`}
+                >
+                  {/* Top Glowing Rail Accent Line */}
+                  <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${item.rail}`} />
+                  
+                  <div>
+                    {/* Badge Pill */}
+                    <div className="flex justify-between items-center mb-4">
+                      <span className={`px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wider border ${item.badgeColor}`}>
+                        {item.badge}
+                      </span>
+                      <span className="text-[10px] font-mono text-slate-600 dark:text-slate-400">0{idx + 1}</span>
+                    </div>
+
+                    {/* Icon Header Box */}
+                    <div className="flex justify-center my-2 sm:my-3">
+                      <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center border ${item.bg} ${item.color} shadow-inner transition-transform duration-300 group-hover:scale-110`}>
+                        <item.icon className="w-7 h-7 sm:w-8 sm:h-8" />
                       </div>
                     </div>
-                    <h5 className={`font-bold text-sm sm:text-base mb-1.5 ${isDark ? "text-slate-200" : "text-slate-800"}`}>{item.title}</h5>
-                    <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">{item.desc}</p>
+
+                    {/* Content Title & Subtitle */}
+                    <div className="text-center mt-3">
+                      <h5 className={`font-extrabold text-xs sm:text-base mb-1.5 ${isDark ? "text-slate-100" : "text-slate-900"}`}>
+                        {item.title}
+                      </h5>
+                      <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 leading-relaxed min-h-[32px]">
+                        {item.desc}
+                      </p>
+                    </div>
                   </div>
-                ))}
-              </div>
+
+                  {/* Bottom Footer Accent */}
+                  <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 group-hover:translate-x-0.5 transition-transform">
+                    <span>Terintegrasi System</span>
+                    <ChevronRight size={12} />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
         {/* Widget Prakiraan Cuaca Wilayah Luwu (Tepat Diatas Footer) */}
-        <section id="weather-section" className={`relative py-8 sm:py-10 border-t ${isDark ? "bg-[#070c17] border-slate-800/80" : "bg-slate-50/70 border-slate-200/80"}`}>
+        <section id="weather-section" className={`relative py-8 sm:py-10 border-t ${isDark ? "bg-[#040812] border-slate-800/80" : "bg-slate-50/80 border-slate-200/80"}`}>
           <div className="container mx-auto px-3 sm:px-6 max-w-4xl flex flex-col items-center justify-center">
             <div className="w-full max-w-2xl">
               <WeatherWidget />
@@ -5275,15 +5389,15 @@ export default function LandingPage({
         </section>
 
         {/* BURSA KOMODITAS - LIVE MARKET TICKER SECTION (Elegant Bottom Page Section) */}
-        <section id="bursa-komoditas-section" className={`relative py-6 border-t ${isDark ? "bg-[#060a13] border-slate-800/80" : "bg-slate-100/50 border-slate-200/80"}`}>
-          <div className="container mx-auto px-4 max-w-7xl">
+        <section id="bursa-komoditas-section" className={`relative py-6 sm:py-8 border-t ${isDark ? "bg-[#03060d] border-slate-800/80" : "bg-slate-100/60 border-slate-200/80"}`}>
+          <div className="container mx-auto px-3 sm:px-6 max-w-7xl">
             <div className="flex flex-col items-center mb-3">
-              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-[#00FF99] border border-emerald-500/20 text-[10px] font-bold tracking-wider uppercase font-sans">
+              <div className="flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-[#00FF99] border border-emerald-500/20 text-[10px] font-bold tracking-wider uppercase font-sans">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Bursa Komoditas Luwu
+                Bursa Komoditas Kabupaten Luwu
               </div>
             </div>
-            <div className="w-full flex justify-center py-1 bg-white/50 dark:bg-slate-900/40 rounded-2xl border border-slate-200/30 dark:border-white/5 backdrop-blur-sm shadow-xs">
+            <div className="w-full flex justify-center py-1.5 bg-white/70 dark:bg-slate-900/60 rounded-2xl border border-slate-200/60 dark:border-white/5 backdrop-blur-md shadow-md">
               <LiveMarketTicker
                 isDark={isDark}
                 onSelectCommodity={handleSelectCommodityFromTicker}
@@ -5293,29 +5407,40 @@ export default function LandingPage({
           </div>
         </section>
 
-        {/* Footer Minimalis */}
-        <footer className={`relative border-t pt-6 pb-20 sm:pt-10 sm:pb-12 ${isDark ? "bg-[#050A14] border-slate-800" : "bg-white border-slate-200"}`}>
-          <div className="container mx-auto px-2 sm:px-4 lg:px-6 relative">
-            {/* Scroll to Top Button */}
+        {/* Footer Sovereign Executive */}
+        <footer className={`relative border-t pt-8 pb-20 sm:pt-12 sm:pb-12 ${isDark ? "bg-[#02050b] border-slate-800/90" : "bg-white border-slate-200"}`}>
+          <div className="container mx-auto px-3 sm:px-6 relative max-w-6xl">
+            {/* Floating Back to Top Button */}
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className={`absolute right-4 sm:right-6 lg:right-8 -top-14 w-10 h-10 rounded-full flex items-center justify-center shadow-lg border transition-all hover:-translate-y-1 ${isDark ? "bg-slate-800 border-slate-700 text-emerald-400 hover:bg-slate-700 hover:border-emerald-500/50" : "bg-white border-slate-200 text-emerald-600 hover:bg-emerald-50"}`}
+              className={`absolute right-4 sm:right-6 -top-12 w-10 h-10 rounded-full flex items-center justify-center shadow-xl border transition-all hover:-translate-y-1 cursor-pointer ${
+                isDark 
+                  ? "bg-slate-800/90 border-slate-700 text-emerald-400 hover:bg-slate-700 hover:border-emerald-500/50 shadow-emerald-500/10" 
+                  : "bg-white border-slate-200 text-emerald-600 hover:bg-emerald-50 shadow-slate-300"
+              }`}
               aria-label={t("footer.backToTop", "Kembali ke atas")}
             >
               <ArrowUp className="w-5 h-5" />
             </button>
 
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-4 sm:mb-8">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                  <img src={LUWU_LOGO_BASE64} alt="Logo Resmi Kabupaten Luwu" className="w-6 h-6 object-contain" />
+            {/* Main Footer Block */}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-slate-200/80 dark:border-slate-800/80">
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center p-1 shadow-inner">
+                  <img src={LUWU_LOGO_BASE64} alt="Logo Resmi Kabupaten Luwu" className="w-7 h-7 object-contain" />
                 </div>
                 <div>
-                  <h3 className={`font-bold text-lg leading-tight tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>InvestLuwu Hub</h3>
-                  <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">{t("footer.pemkabLuwu", "Pemerintah Kabupaten Luwu")}</p>
+                  <h3 className={`font-extrabold text-lg sm:text-xl leading-tight tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
+                    InvestLuwu Hub
+                  </h3>
+                  <p className="text-[10px] sm:text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                    {t("footer.pemkabLuwu", "Pemerintah Kabupaten Luwu")}
+                  </p>
                 </div>
               </div>
-              <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+
+              {/* Quick Navigation Links */}
+              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
                 {[
                   { name: t('nav.home', 'Beranda'), icon: Home, action: () => scrollToSection("hero-section") },
                   { name: t('nav.potensiRegional', 'Potensi Regional'), icon: Map, action: () => scrollToSection("potensi-section") },
@@ -5334,18 +5459,33 @@ export default function LandingPage({
                     <button 
                       key={link.name} 
                       onClick={link.action}
-                      className={`flex items-center gap-1.5 text-[11px] font-semibold hover:text-emerald-500 transition-colors cursor-pointer ${isDark ? "text-slate-400" : "text-slate-600"}`}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                        isDark 
+                          ? "text-slate-400 hover:text-white hover:bg-slate-800/60" 
+                          : "text-slate-600 hover:text-emerald-700 hover:bg-emerald-50/80"
+                      }`}
                     >
-                      <IconComponent className="w-3.5 h-3.5" />
+                      <IconComponent className="w-3.5 h-3.5 text-emerald-500" />
                       {link.name}
                     </button>
                   );
                 })}
               </div>
             </div>
-            <div className="pt-4 sm:pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-4 text-[10px] font-medium text-slate-500">
-              <p>{t("footer.copyright", "© 2026 Pemerintah Kabupaten Luwu. Hak Cipta Dilindungi Undang-Undang.")}</p>
-              <p className="font-mono">{t("footer.version", "Versi 2.0.1 (Precision Engine)")}</p>
+
+            {/* Bottom Copyright & Security Metadata */}
+            <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] sm:text-xs font-medium text-slate-500 dark:text-slate-400">
+              <p className="text-center sm:text-left">
+                {t("footer.copyright", "© 2026 Pemerintah Kabupaten Luwu. Hak Cipta Dilindungi Undang-Undang.")}
+              </p>
+              <div className="flex items-center gap-3 font-mono text-[10px]">
+                <span className="inline-flex items-center gap-1 text-emerald-500">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> PostGIS Supabase
+                </span>
+                <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                  {t("footer.version", "v2.0.1 (Precision Engine)")}
+                </span>
+              </div>
             </div>
           </div>
         </footer>

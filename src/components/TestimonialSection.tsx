@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Quote, BadgeCheck, MessageSquareOff, Loader2 } from 'lucide-react';
+import { Quote, BadgeCheck, ShieldCheck, Award, Sparkles, Building2, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase, handleSupabaseError } from '../lib/supabaseClient.js';
 
@@ -14,7 +14,6 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
 
     const fetchTestimonials = async () => {
       try {
-        // Try server API first as it uses backend service role and caching (immune to client JWT expiration)
         const apiRes = await fetch('/api/testimonials', {
           headers: { 'Accept': 'application/json' }
         }).catch(() => null);
@@ -30,7 +29,6 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
           }
         }
 
-        // Direct Supabase query fallback
         const { data, error } = await supabase
           .from('investor_testimonials')
           .select('*')
@@ -63,25 +61,58 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
   }, []);
 
   return (
-    <div className={`w-full py-8 sm:py-12 md:py-16 lg:py-20 ${isDark ? 'bg-slate-900/50' : 'bg-slate-50'}`}>
-      <div className="container max-w-7xl mx-auto px-4 lg:px-6">
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 md:mb-16">
-          <h2 className={`text-3xl font-bold tracking-tight mb-4 ${isDark ? 'text-white' : 'text-slate-900'}`}>{t('testimonials.title', 'Kisah Sukses Investor')}</h2>
-          <p className={`text-sm ${isDark ? 'text-slate-600 dark:text-slate-400' : 'text-slate-600'}`}>{t('testimonials.subtitle', 'Tanggapan dan cerita sukses dari pelaku usaha di Kabupaten Luwu')}</p>
+    <div className={`w-full py-12 sm:py-16 lg:py-20 border-t ${isDark ? 'bg-[#040812] border-slate-800/80' : 'bg-slate-50/80 border-slate-200/80'}`}>
+      <div className="container max-w-6xl mx-auto px-3 sm:px-6">
+        <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
+          <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-3 border ${isDark ? "bg-amber-500/10 text-amber-400 border-amber-500/20" : "bg-amber-50 text-amber-700 border-amber-200"}`}>
+            <Award className="w-3.5 h-3.5" /> {t('testimonials.tag', 'Sertifikasi & Testimoni Investor')}
+          </span>
+          <h2 className={`text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-2.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            {t('testimonials.title', 'Kisah Sukses Investor')}
+          </h2>
+          <p className={`text-xs sm:text-sm font-medium ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+            {t('testimonials.subtitle', 'Bukti nyata komitmen Kabupaten Luwu dalam memberikan kepastian spasial dan kemudahan investasi.')}
+          </p>
         </div>
 
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-12 text-slate-600 dark:text-slate-400">
+          <div className="flex flex-col items-center justify-center py-12 text-slate-500 dark:text-slate-400">
             <Loader2 className="w-8 h-8 animate-spin text-emerald-500 mb-2" />
-            <p className="text-sm font-medium">{t('testimonials.loading', 'Memuat data testimoni...')}</p>
+            <p className="text-xs font-semibold">{t('testimonials.loading', 'Verifikasi data testimoni investor...')}</p>
           </div>
         ) : testimonials.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4 text-slate-600 dark:text-slate-400 border border-slate-800 border-dashed rounded-2xl max-w-lg mx-auto">
-            <MessageSquareOff className="w-10 h-10 mb-3 stroke-1 text-slate-600" />
-            <p className="text-sm font-medium text-center">{t('testimonials.emptyState', 'Belum ada data testimoni terverifikasi yang tersedia.')}</p>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className={`max-w-2xl mx-auto rounded-3xl border p-6 sm:p-8 text-center relative overflow-hidden backdrop-blur-md ${
+              isDark 
+                ? 'bg-gradient-to-b from-slate-900/80 via-slate-900/40 to-slate-950/90 border-slate-800 shadow-2xl shadow-black/60' 
+                : 'bg-gradient-to-b from-white via-slate-50/80 to-slate-100/60 border-slate-200/90 shadow-xl shadow-slate-200/50'
+            }`}
+          >
+            {/* Top Accent Line */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-amber-500 to-indigo-500" />
+            
+            <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 shadow-inner">
+              <ShieldCheck className="w-7 h-7 sm:w-8 sm:h-8" />
+            </div>
+
+            <h3 className={`text-base sm:text-lg font-bold mb-2 ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>
+              Portal Verifikasi Testimoni Investor Resmi
+            </h3>
+            
+            <p className={`text-xs sm:text-sm max-w-lg mx-auto mb-5 leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+              Setiap laporan dan masukan pelaku usaha disaring secara ketat melalui verifikasi NIB & KBLI resmi DPMPTSP Kabupaten Luwu demi menjamin transparansi data publik.
+            </p>
+
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-500/10 border border-slate-500/20 text-[11px] font-mono font-bold text-slate-500 dark:text-slate-400">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              STATUS: SISTEM AUDIT NIB & OSS AKTIF
+            </div>
+          </motion.div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((item, i) => (
               <motion.div 
                 key={item.id || i}
@@ -89,21 +120,21 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className={`p-8 rounded-2xl relative ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200 shadow-sm'} border`}
+                className={`p-6 sm:p-7 rounded-2xl relative ${isDark ? 'bg-slate-900/80 border-slate-800' : 'bg-white border-slate-200 shadow-md'} border flex flex-col justify-between`}
               >
-                <Quote className={`absolute top-6 right-6 w-8 h-8 opacity-10 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />
-                <p className={`text-sm italic mb-6 leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-800 dark:text-slate-200'}`}>"{item.message}"</p>
-                <div>
+                <Quote className={`absolute top-5 right-5 w-7 h-7 opacity-15 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />
+                <p className={`text-xs sm:text-sm italic mb-5 leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>"{item.message}"</p>
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80">
                   <div className="flex items-center gap-2">
-                    <h4 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{item.investor_name || item.company_name}</h4>
+                    <h4 className={`text-xs sm:text-sm font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{item.investor_name || item.company_name}</h4>
                     {item.is_verified && (
-                      <div className="flex items-center text-blue-700 dark:text-blue-400 text-xs gap-1" title={t('testimonial.verified', 'Terverifikasi')}>
+                      <div className="flex items-center text-blue-600 dark:text-blue-400 text-[11px] gap-1 font-semibold" title={t('testimonial.verified', 'Terverifikasi')}>
                         <BadgeCheck size={14} />
-                        <span className="hidden sm:inline-block">{t('testimonial.verified', 'Terverifikasi')}</span>
+                        <span>{t('testimonial.verified', 'Terverifikasi')}</span>
                       </div>
                     )}
                   </div>
-                  <p className={`text-xs ${isDark ? 'text-emerald-400' : 'text-emerald-600'} font-medium mt-1`}>{item.sector}</p>
+                  <p className={`text-[11px] ${isDark ? 'text-emerald-400' : 'text-emerald-600'} font-medium mt-0.5`}>{item.sector}</p>
                 </div>
               </motion.div>
             ))}
