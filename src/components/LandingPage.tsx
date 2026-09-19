@@ -3021,9 +3021,9 @@ export default function LandingPage({
         {/* 3. LITERASI & KEUNTUNGAN LUTIM */}
         <div
           id="keuntungan-section"
-          className="container max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-8 sm:py-12 lg:py-16"
+          className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-20"
         >
-          <div className="text-center mb-10 sm:mb-16">
+          <div className="text-center mb-14 sm:mb-20">
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2 text-balance break-words">
               {t("sections.keuntungan.title")}
             </h2>
@@ -3033,22 +3033,46 @@ export default function LandingPage({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-y-14 md:gap-y-8 md:gap-x-6 lg:gap-x-8">
             {[
               {
                 icon: MapPin,
                 title: t("features.logisticsTitle"),
                 desc: t("features.logisticsDesc"),
+                rail: "via-emerald-500",
+                ambientGlow: "bg-emerald-500/30",
+                gradient: "from-emerald-500 via-emerald-600 to-teal-700",
+                shadow: "shadow-emerald-500/15 dark:shadow-black/70",
+                cardHover: "hover:border-emerald-500/40 hover:shadow-[0_20px_40px_rgba(16,185,129,0.14)]",
+                tag: "Konektivitas Multimoda",
+                badgeBg: "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-500/20",
+                dotColor: "bg-emerald-500",
               },
               {
                 icon: Leaf,
                 title: t("features.commodityTitle"),
                 desc: t("features.commodityDesc"),
+                rail: "via-amber-500",
+                ambientGlow: "bg-amber-500/30",
+                gradient: "from-amber-500 via-amber-600 to-orange-600",
+                shadow: "shadow-amber-500/15 dark:shadow-black/70",
+                cardHover: "hover:border-amber-500/40 hover:shadow-[0_20px_40px_rgba(245,158,11,0.14)]",
+                tag: "Hilirisasi Komoditas",
+                badgeBg: "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-200/80 dark:border-amber-500/20",
+                dotColor: "bg-amber-500",
               },
               {
                 icon: ShieldCheck,
                 title: t("features.bureaucracyTitle"),
                 desc: t("features.bureaucracyDesc"),
+                rail: "via-blue-500",
+                ambientGlow: "bg-blue-500/30",
+                gradient: "from-blue-500 via-indigo-600 to-violet-700",
+                shadow: "shadow-blue-500/15 dark:shadow-black/70",
+                cardHover: "hover:border-blue-500/40 hover:shadow-[0_20px_40px_rgba(59,130,246,0.14)]",
+                tag: "Kemudahan & Kepastian Hukum",
+                badgeBg: "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-200/80 dark:border-blue-500/20",
+                dotColor: "bg-blue-500",
               },
             ].map((item, idx) => (
               <motion.div
@@ -3058,36 +3082,57 @@ export default function LandingPage({
                 viewport={isMobile ? undefined : { once: true, amount: 0.05 }}
                 transition={{ delay: idx * 0.15 }}
                 key={idx}
-                className={`relative p-8 rounded-2xl flex flex-col items-start border transition-all duration-300 ease-in-out group hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-500/20 hover:border-emerald-500/50 overflow-hidden ${cardBg}`}
+                className={`group relative pt-14 sm:pt-16 pb-6 px-6 sm:px-7 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 ${item.cardHover}`}
               >
-                {/* Decorative Glowing Edge on Hover */}
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-emerald-500/0 to-emerald-500/0 group-hover:from-emerald-500/10 group-hover:to-blue-500/10 transition-colors duration-500 rounded-2xl pointer-events-none" />
-                <div className="absolute -bottom-1 -right-1 w-24 h-24 bg-gradient-to-tl from-emerald-500/20 to-transparent blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                {/* Top Subtle Accent Rail */}
+                <div className={`absolute top-0 inset-x-8 h-[3px] bg-gradient-to-r from-transparent ${item.rail} to-transparent rounded-full`} />
 
-                <div
-                  className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 bg-gradient-to-br transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 ${isDark ? "from-emerald-500/20 to-blue-500/20 border border-emerald-500/20" : "from-emerald-100 to-blue-100 border border-emerald-200"}`}
-                >
-                  <item.icon
-                    className={`w-10 h-10 drop-shadow-sm ${isDark ? "text-emerald-700 dark:text-emerald-400" : "text-emerald-600"}`}
-                  />
+                {/* Overlapping Circular Medallion (MPP Badung Aesthetic) */}
+                <div className="absolute -top-10 sm:-top-11 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+                  <div className="relative">
+                    {/* Ambient Glow */}
+                    <div className={`absolute inset-0 rounded-full ${item.ambientGlow} blur-md transform group-hover:scale-115 transition-transform duration-300`} />
+                    
+                    {/* Outer Elevated Podium Ring */}
+                    <div className={`relative w-20 h-20 sm:w-22 sm:h-22 rounded-full ring-4 sm:ring-[6px] ring-white dark:ring-slate-900 ${item.shadow} bg-gradient-to-br ${item.gradient} flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105`}>
+                      {/* Inner Delicate Ring Accent */}
+                      <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
+                      <item.icon size={34} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
+                    </div>
+                  </div>
                 </div>
-                <h3 className="text-xl font-medium mb-3 tracking-tight">
-                  {item.title}
-                </h3>
-                <p className={`leading-relaxed ${textMuted}`}>{item.desc}</p>
+
+                {/* Card Content Body */}
+                <div className="w-full flex flex-col items-center flex-grow mt-1">
+                  <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-3 text-center group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className={`text-sm sm:text-base leading-relaxed ${textMuted} text-center mb-5 flex-grow`}>
+                    {item.desc}
+                  </p>
+                </div>
+
+                {/* Micro Status Chip */}
+                <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800/80 w-full flex justify-center">
+                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider border shadow-xs ${item.badgeBg}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${item.dotColor} animate-pulse`} />
+                    {item.tag}
+                  </span>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
+
         {/* 4.5 FASILITAS PENUNJANG INFRASTRUKTUR */}
         <div
           id="infrastruktur-section"
-          className="container max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 py-8 md:py-12 lg:py-16 relative min-h-[44px]"
+          className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-20 relative min-h-[44px]"
         >
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-[20%] right-[10%] w-[50vw] h-[50vw] rounded-full bg-blue-500/5 blur-[120px] mix-blend-screen" />
           </div>
-          <div className="text-center mb-16 relative z-10">
+          <div className="text-center mb-14 sm:mb-20 relative z-10">
             <span
               className={`inline-flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-full text-xs font-bold uppercase tracking-wider mb-4 backdrop-blur-xl border animate-fade-in-up ${isDark ? "bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-orange-200 border-orange-400/30 shadow-sm" : "bg-gradient-to-r from-orange-500/10 to-amber-500/10 text-orange-700 border-orange-300 shadow-sm shadow-orange-500/10"}`}
               style={{ animationDelay: '50ms' }}
@@ -3104,11 +3149,20 @@ export default function LandingPage({
           </div>
 
           {(() => {
-                        const baseFacilities = [
+            const baseFacilities = [
               {
                 name: t("infrastructure.buaAirportTitle"),
                 desc: t("infrastructure.buaAirportDesc"),
                 type: "airport",
+                icon: Plane,
+                rail: "via-sky-500",
+                ambientGlow: "bg-sky-500/30",
+                gradient: "from-sky-500 via-blue-600 to-indigo-700",
+                shadow: "shadow-sky-500/15 dark:shadow-black/70",
+                cardHover: "hover:border-sky-500/40 hover:shadow-[0_20px_40px_rgba(56,189,248,0.14)]",
+                tag: "Gerbang Udara & Kargo",
+                badgeBg: "bg-sky-50 dark:bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-200/80 dark:border-sky-500/20",
+                dotColor: "bg-sky-500",
                 longitude: facilityCoords.airport ? facilityCoords.airport[0] : 120.24132322502385,
                 latitude: facilityCoords.airport ? facilityCoords.airport[1] : -3.086338491260946,
               },
@@ -3116,6 +3170,15 @@ export default function LandingPage({
                 name: t("infrastructure.uloPortTitle"),
                 desc: t("infrastructure.uloPortDesc"),
                 type: "port",
+                icon: Anchor,
+                rail: "via-teal-500",
+                ambientGlow: "bg-teal-500/30",
+                gradient: "from-teal-500 via-teal-600 to-emerald-700",
+                shadow: "shadow-teal-500/15 dark:shadow-black/70",
+                cardHover: "hover:border-teal-500/40 hover:shadow-[0_20px_40px_rgba(45,212,191,0.14)]",
+                tag: "Dermaga Logistik Laut",
+                badgeBg: "bg-teal-50 dark:bg-teal-500/10 text-teal-700 dark:text-teal-300 border-teal-200/80 dark:border-teal-500/20",
+                dotColor: "bg-teal-500",
                 longitude: facilityCoords.port ? facilityCoords.port[0] : 120.39793462368112,
                 latitude: facilityCoords.port ? facilityCoords.port[1] : -3.386061643485775,
               },
@@ -3123,6 +3186,15 @@ export default function LandingPage({
                 name: t("infrastructure.kiluTitle"),
                 desc: t("infrastructure.kiluDesc"),
                 type: "industrial",
+                icon: Building,
+                rail: "via-amber-500",
+                ambientGlow: "bg-amber-500/30",
+                gradient: "from-amber-500 via-amber-600 to-orange-700",
+                shadow: "shadow-amber-500/15 dark:shadow-black/70",
+                cardHover: "hover:border-amber-500/40 hover:shadow-[0_20px_40px_rgba(245,158,11,0.14)]",
+                tag: "Kawasan Industri Terpadu",
+                badgeBg: "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-200/80 dark:border-amber-500/20",
+                dotColor: "bg-amber-500",
                 longitude: facilityCoords.industrial ? facilityCoords.industrial[0] : 120.252,
                 latitude: facilityCoords.industrial ? facilityCoords.industrial[1] : -3.125,
               },
@@ -3130,6 +3202,15 @@ export default function LandingPage({
                 name: t("infrastructure.mppTitle"),
                 desc: t("infrastructure.mppDesc"),
                 type: "mpp",
+                icon: ShieldCheck,
+                rail: "via-indigo-500",
+                ambientGlow: "bg-indigo-500/30",
+                gradient: "from-indigo-500 via-purple-600 to-violet-700",
+                shadow: "shadow-indigo-500/15 dark:shadow-black/70",
+                cardHover: "hover:border-indigo-500/40 hover:shadow-[0_20px_40px_rgba(99,102,241,0.14)]",
+                tag: "Mal Pelayanan Publik",
+                badgeBg: "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-200/80 dark:border-indigo-500/20",
+                dotColor: "bg-indigo-500",
                 longitude: facilityCoords.mpp ? facilityCoords.mpp[0] : 120.36547889067685,
                 latitude: facilityCoords.mpp ? facilityCoords.mpp[1] : -3.394828505594006,
               }
@@ -3152,7 +3233,7 @@ export default function LandingPage({
             });
 
             return (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-14 sm:gap-y-14 sm:gap-x-6 lg:gap-6 relative z-10">
                 {mappedFacilities.map((facility, idx) => (
                   <motion.div
                     initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -3161,56 +3242,56 @@ export default function LandingPage({
                     viewport={isMobile ? undefined : { once: true, amount: 0.05 }}
                     transition={{ delay: idx * 0.1 }}
                     key={idx}
-                    className={`p-6 rounded-xl flex flex-col h-full border transition-all duration-500 group hover:-translate-y-2 backdrop-blur-2xl glass-panel ${isDark ? "bg-slate-800 border-slate-700 shadow-none" : "bg-white shadow-lg border-slate-100"}`}
+                    className={`group relative pt-14 sm:pt-16 pb-6 px-5 sm:px-6 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 ${facility.cardHover}`}
                   >
-                    <div
-                      className={`p-4 rounded-2xl w-16 h-16 flex items-center justify-center mb-6 transition-transform group-hover:scale-110 backdrop-blur-md ${
-                        facility.type === "airport"
-                          ? isDark
-                            ? "bg-gradient-to-br from-sky-500/20 to-blue-500/20 text-sky-300 border border-sky-400/40 shadow-[0_0_20px_rgba(56,189,248,0.2)]"
-                            : "bg-gradient-to-br from-sky-100 to-blue-100 text-sky-600 border border-sky-200 shadow-sm shadow-sky-500/10"
-                          : facility.type === "port"
-                            ? isDark
-                              ? "bg-gradient-to-br from-teal-500/20 to-emerald-500/20 text-teal-300 border border-teal-400/40 shadow-[0_0_20px_rgba(45,212,191,0.2)]"
-                              : "bg-gradient-to-br from-teal-100 to-emerald-100 text-teal-600 border border-teal-200 shadow-sm shadow-teal-500/10"
-                            : facility.type === "industrial"
-                              ? isDark
-                                ? "bg-gradient-to-br from-amber-500/20 to-orange-500/20 text-amber-300 border border-amber-400/40 shadow-[0_0_20px_rgba(251,191,36,0.2)]"
-                                : "bg-gradient-to-br from-amber-100 to-orange-100 text-amber-600 border border-amber-200 shadow-sm shadow-amber-500/10"
-                              : isDark
-                                ? "bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-300 border border-indigo-400/40 shadow-[0_0_20px_rgba(129,140,248,0.2)]"
-                                : "bg-gradient-to-br from-indigo-100 to-purple-100 text-indigo-600 border border-indigo-200 shadow-sm shadow-indigo-500/10"
-                      }`}
-                    >
-                      {facility.type === "port" ? (
-                        <Anchor className="w-8 h-8 drop-shadow-md" />
-                      ) : facility.type === "airport" ? (
-                        <Plane className="w-8 h-8 drop-shadow-md" />
-                      ) : facility.type === "mpp" ? (
-                        <ShieldCheck className="w-8 h-8 drop-shadow-md" />
+                    {/* Top Subtle Accent Rail */}
+                    <div className={`absolute top-0 inset-x-8 h-[3px] bg-gradient-to-r from-transparent ${facility.rail} to-transparent rounded-full`} />
+
+                    {/* Overlapping Circular Medallion (MPP Badung Aesthetic) */}
+                    <div className="absolute -top-10 sm:-top-11 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+                      <div className="relative">
+                        {/* Ambient Glow */}
+                        <div className={`absolute inset-0 rounded-full ${facility.ambientGlow} blur-md transform group-hover:scale-115 transition-transform duration-300`} />
+                        
+                        {/* Outer Elevated Podium Ring */}
+                        <div className={`relative w-20 h-20 sm:w-22 sm:h-22 rounded-full ring-4 sm:ring-[6px] ring-white dark:ring-slate-900 ${facility.shadow} bg-gradient-to-br ${facility.gradient} flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105`}>
+                          {/* Inner Delicate Ring Accent */}
+                          <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
+                          <facility.icon size={34} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Card Content */}
+                    <div className="w-full flex flex-col items-center flex-grow mt-1">
+                      <h3 className="text-lg sm:text-xl font-bold mb-2.5 tracking-tight text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                        {facility.name}
+                      </h3>
+                      <p
+                        className={`text-xs sm:text-sm leading-relaxed ${textMuted} text-center flex-grow mb-4`}
+                      >
+                        {facility.desc}
+                      </p>
+                    </div>
+
+                    {/* Bottom Info: Distance Calculation or Status Tag */}
+                    <div className="w-full mt-auto pt-3.5 border-t border-slate-100 dark:border-slate-800/80 flex flex-col items-center gap-2">
+                      {facility.distanceKm !== null ? (
+                        <div className="w-full flex items-center justify-between">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                            {t("distance.estimation", "Estimasi Jarak")}
+                          </span>
+                          <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-500/20">
+                            {facility.distanceKm.toFixed(1)} km
+                          </span>
+                        </div>
                       ) : (
-                        <Building className="w-8 h-8 drop-shadow-md" />
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border shadow-xs ${facility.badgeBg}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${facility.dotColor} animate-pulse`} />
+                          {facility.tag}
+                        </span>
                       )}
                     </div>
-                    <h3 className="text-xl font-bold mb-3 tracking-tight">{facility.name}</h3>
-                    <p
-                      className={`text-sm leading-relaxed ${textMuted} flex-grow`}
-                    >
-                      {facility.desc}
-                    </p>
-                    {facility.distanceKm !== null && (
-                      <div className={`mt-5 pt-4 flex items-center justify-between border-t ${isDark ? "border-slate-800/80" : "border-slate-100"}`}>
-                        <span className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                          {t("distance.estimation", "ESTIMASI JARAK")}
-                          <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border shadow-sm ${isDark ? "bg-amber-500/20 text-amber-300 border-amber-400/30" : "bg-amber-100 text-amber-700 border-amber-200"}`}>
-                            {t("distance.airEstimation", "Estimasi Udara")}
-                          </span>
-                        </span>
-                        <span className={`font-mono font-bold px-3 py-1.5 min-h-[44px] rounded-xl flex items-center justify-center backdrop-blur-md border shadow-sm ${isDark ? "bg-emerald-500/20 text-emerald-300 border-emerald-400/30" : "bg-emerald-50 text-emerald-700 border-emerald-200"}`}>
-                          {facility.distanceKm.toFixed(1)} km
-                        </span>
-                      </div>
-                    )}
                   </motion.div>
                 ))}
               </div>
