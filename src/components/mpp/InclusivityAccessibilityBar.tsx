@@ -549,6 +549,17 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
     };
   }, [isContrastMenuOpen]);
 
+  // Listener untuk trigger Voice Assistant dari Smart Search Bar / Command Palette
+  useEffect(() => {
+    const handleOpenVoice = () => {
+      startVoiceListening();
+    };
+    window.addEventListener('open-mpp-voice-assistant', handleOpenVoice);
+    return () => {
+      window.removeEventListener('open-mpp-voice-assistant', handleOpenVoice);
+    };
+  }, []);
+
   const setAndSaveContrastMode = (mode: ContrastModeType) => {
     setContrastMode(mode);
     setIsContrastMenuOpen(false);
@@ -2084,13 +2095,13 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
         )}
       </AnimatePresence>
 
-      {/* Floating Action Button (FAB) Asisten MPP - Collapsible ("Buka-Tutup") & Ultra Nyaman di Layar Android */}
+      {/* Floating Action Button (FAB) Asisten MPP - Khusus Desktop/Tablet (Di Mobile telah terintegrasi di Bottom Nav & Search Bar) */}
       <motion.div
         layout
         initial={{ scale: 0, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         transition={{ type: "spring", damping: 22, stiffness: 280, delay: 0.3 }}
-        className="fixed bottom-20 right-3 sm:bottom-24 sm:right-6 z-40 select-none"
+        className="hidden md:flex fixed bottom-24 right-6 z-40 select-none"
       >
         {/* Animated Sonar Rings saat mendengarkan */}
         {isListening && (
@@ -2103,7 +2114,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
         <AnimatePresence mode="wait">
           {isFabCollapsed ? (
             /* ========================================================================= */
-            /* 1. MODE TERTUTUP (COMPACT FLOATING ORB) - NYAMAN & BEBAS HALANGAN ANDROID  */
+            /* 1. MODE TERTUTUP (COMPACT FLOATING ORB) - ELEGAN & PRESTISIUS GOVTECH     */
             /* ========================================================================= */
             <motion.div
               key="collapsed-fab"
@@ -2126,37 +2137,37 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
 
               <motion.button
                 id="mpp-floating-voice-assistant-button"
-                whileHover={{ scale: 1.08 }}
-                whileTap={{ scale: 0.92 }}
+                whileHover={{ scale: 1.06 }}
+                whileTap={{ scale: 0.94 }}
                 onClick={startVoiceListening}
-                className={`relative w-12 h-12 sm:w-13 sm:h-13 rounded-full flex items-center justify-center shadow-2xl transition-all cursor-pointer backdrop-blur-xl border-2 ${
+                className={`relative w-12 h-12 rounded-full flex items-center justify-center shadow-xl transition-all cursor-pointer backdrop-blur-xl border ${
                   isListening
-                    ? 'bg-rose-600 text-white border-rose-300 shadow-[0_0_25px_rgba(244,63,94,0.8)] ring-4 ring-rose-500/40 animate-pulse'
-                    : 'bg-gradient-to-tr from-slate-950 via-slate-900 to-emerald-950/80 text-white border-emerald-400/80 shadow-[0_8px_25px_rgba(16,185,129,0.4)] hover:border-emerald-300 hover:shadow-[0_0_25px_rgba(16,185,129,0.7)]'
+                    ? 'bg-rose-600 text-white border-rose-300 shadow-[0_0_20px_rgba(244,63,94,0.6)] animate-pulse'
+                    : 'bg-slate-900/95 text-white border-emerald-500/40 shadow-lg shadow-emerald-950/40 hover:border-emerald-400'
                 }`}
-                title="Asisten MPP (Klik untuk Bicara atau Buka Pertanyaan Cepat)"
+                title="Asisten MPP (Klik untuk Bicara)"
                 aria-label="Asisten MPP"
               >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 via-teal-400 to-[#00FF99] flex items-center justify-center text-slate-950 shadow-md">
-                  <Mic className="w-4.5 h-4.5 text-slate-950" />
+                <div className="w-8 h-8 rounded-full bg-emerald-600 hover:bg-emerald-500 flex items-center justify-center text-white shadow-sm transition-colors">
+                  <Mic className="w-4 h-4 text-white" />
                 </div>
                 {/* Rotating Sparkle Badge */}
                 <motion.div
                   animate={{ rotate: 360 }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
                   className="absolute -top-1 -right-1"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-300 drop-shadow-[0_0_6px_rgba(252,211,77,0.95)]" />
+                  <Sparkles className="w-3 h-3 text-amber-400" />
                 </motion.div>
                 {/* Language Tag Indicator */}
-                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1 py-0.2 rounded-full bg-slate-900/90 text-[7.5px] font-mono font-bold text-emerald-400 border border-emerald-500/40 shadow-xs">
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.2 rounded-full bg-slate-900 text-[8px] font-mono font-bold text-emerald-300 border border-emerald-500/30">
                   {voiceLanguage.toUpperCase()}
                 </span>
               </motion.button>
             </motion.div>
           ) : (
             /* ========================================================================= */
-            /* 2. MODE TERBUKA (STREAMLINED CAPSULE PILL) - SINGKAT & JELAS              */
+            /* 2. MODE TERBUKA (STREAMLINED CAPSULE PILL) - EXECUTIVE GOVTECH           */
             /* ========================================================================= */
             <motion.div
               key="expanded-fab"
@@ -2164,52 +2175,39 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               animate={{ scale: 1, opacity: 1, x: 0 }}
               exit={{ scale: 0.85, opacity: 0, x: 20 }}
               transition={{ type: "spring", stiffness: 350, damping: 26 }}
-              className="relative flex items-center gap-1 bg-slate-950/90 dark:bg-slate-900/95 backdrop-blur-2xl border-2 border-emerald-400/80 hover:border-emerald-300 p-1.5 pl-2 pr-1.5 rounded-full shadow-[0_10px_35px_rgba(16,185,129,0.35)] transition-all group"
+              className="relative flex items-center gap-1 bg-slate-900/95 text-white backdrop-blur-2xl border border-emerald-500/40 hover:border-emerald-400 p-1.5 pl-2 pr-1.5 rounded-full shadow-xl shadow-slate-950/50 transition-all group"
             >
               {/* Main Button (Voice Trigger) */}
               <button
                 type="button"
                 id="mpp-floating-voice-assistant-button"
                 onClick={startVoiceListening}
-                className="flex items-center gap-2 sm:gap-2.5 cursor-pointer select-none text-left"
+                className="flex items-center gap-2.5 cursor-pointer select-none text-left"
                 title="Asisten MPP (Klik untuk Bicara)"
                 aria-label="Asisten MPP"
               >
                 {/* Icon Mic with Pulsing Aura */}
-                <div className={`relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full shadow-md shrink-0 transition-transform group-hover:scale-105 ${
+                <div className={`relative flex items-center justify-center w-9 h-9 rounded-full shadow-md shrink-0 transition-transform group-hover:scale-105 ${
                   isListening
                     ? 'bg-rose-600 text-white animate-pulse'
-                    : 'bg-gradient-to-tr from-emerald-500 via-teal-400 to-[#00FF99] text-slate-950 shadow-[0_0_14px_rgba(0,255,153,0.6)]'
+                    : 'bg-emerald-600 text-white shadow-sm'
                 }`}>
-                  {isListening ? (
-                    <Mic className="w-4.5 h-4.5 text-white animate-pulse" />
-                  ) : (
-                    <>
-                      <Mic className="w-4.5 h-4.5 text-slate-950" />
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
-                        className="absolute -top-1 -right-1"
-                      >
-                        <Sparkles className="w-3 h-3 text-amber-300 drop-shadow-[0_0_5px_rgba(252,211,77,0.95)]" />
-                      </motion.div>
-                    </>
-                  )}
+                  <Mic className="w-4.5 h-4.5 text-white" />
                 </div>
 
                 {/* Short Clean Label (Asisten MPP) */}
                 <div className="flex flex-col items-start leading-tight pr-1">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[12px] sm:text-[13px] font-black tracking-tight font-sans text-white group-hover:text-emerald-300 transition-colors">
+                    <span className="text-[12px] font-bold tracking-tight font-sans text-white group-hover:text-emerald-300 transition-colors">
                       {isListening
                         ? (voiceLanguage === 'zh' ? '正在倾听...' : voiceLanguage === 'en' ? 'Listening...' : 'Mendengarkan...')
                         : (voiceLanguage === 'zh' ? 'MPP 助手' : voiceLanguage === 'en' ? 'MPP Assistant' : 'Asisten MPP')}
                     </span>
-                    <span className="text-[8px] font-mono font-black px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">
+                    <span className="text-[8px] font-mono font-bold px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">
                       {voiceLanguage.toUpperCase()}
                     </span>
                   </div>
-                  <span className="text-[9px] font-semibold text-emerald-400/90 font-sans tracking-tight">
+                  <span className="text-[9px] font-medium text-emerald-400 font-sans tracking-tight">
                     {isListening
                       ? 'Bicara sekarang...'
                       : (voiceLanguage === 'zh' ? '智能问答' : voiceLanguage === 'en' ? 'Voice AI' : 'Tanya Suara')}

@@ -5509,7 +5509,14 @@ export default function App() {
             </motion.button>
             <motion.button whileTap={{ scale: 0.95 }}
               type="button"
-              onClick={() => setIsLayerPanelOpen(!isLayerPanelOpen)}
+              onClick={() => {
+                const nextState = !isLayerPanelOpen;
+                setIsLayerPanelOpen(nextState);
+                if (nextState && !isMobile) {
+                  // Collapse Kontrol Peta on desktop so it doesn't obstruct the thematic layer panel
+                  setIsLeftSidebarCollapsed(true);
+                }
+              }}
               className={`px-2.5 py-1.5 rounded-xl transition-all duration-300 cursor-pointer flex items-center gap-1.5 text-xs font-bold active:scale-95 hover:shadow-[0_0_15px_rgba(99,102,241,0.4)] ${
                 isLayerPanelOpen
                   ? "bg-indigo-500/20 text-indigo-700 dark:text-indigo-400 border border-indigo-500/40 shadow-sm"
@@ -6513,14 +6520,17 @@ export default function App() {
 
             {/* DESKTOP FLOATING TOGGLE FOR KONTROL PETA */}
             <AnimatePresence>
-              {!isMobile && isLeftSidebarCollapsed && (
+              {!isMobile && isLeftSidebarCollapsed && !isLayerPanelOpen && (
                 <motion.button
                   key="reopen-left-sidebar"
                   initial={{ opacity: 0, x: -20, scale: 0.95 }}
                   animate={{ opacity: 1, x: 0, scale: 1 }}
                   exit={{ opacity: 0, x: -20, scale: 0.95 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsLeftSidebarCollapsed(false)}
+                  onClick={() => {
+                    setIsLeftSidebarCollapsed(false);
+                    setIsLayerPanelOpen(false);
+                  }}
                   className={`fixed left-4 top-24 z-[50] pointer-events-auto flex items-center gap-2 px-3.5 py-2.5 rounded-2xl shadow-xl border backdrop-blur-xl cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 ${
                     isDarkMode
                       ? "bg-slate-900/95 border-slate-700/90 text-white shadow-black/80 hover:bg-slate-800"
