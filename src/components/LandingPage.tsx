@@ -2435,84 +2435,173 @@ export default function LandingPage({
         
         {/* EXECUTIVE LIVE DATA COUNTER PANEL */}
         <section
-          className={`py-8 sm:py-10 border-b relative z-20 ${isDark ? "bg-slate-950/40 border-slate-800/80" : "bg-white border-slate-200/80"}`}
+          className={`pt-16 pb-12 sm:pt-20 sm:pb-14 border-b relative z-20 ${isDark ? "bg-slate-950/40 border-slate-800/80" : "bg-slate-50/60 border-slate-200/80"}`}
         >
-          <div className="container max-w-7xl mx-auto px-2 sm:px-4 lg:px-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              {/* Card 1 */}
+          <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-14 sm:gap-y-14 sm:gap-x-6 lg:gap-6">
+              {/* Card 1: Infrastruktur Pendukung Terpetakan */}
               <div
-                className="p-4 sm:p-5 rounded-2xl flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/10 bg-white dark:bg-slate-900 shadow-sm border border-slate-200/80 dark:border-slate-800"
+                className="group relative pt-13 sm:pt-15 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 hover:border-blue-500/40 dark:hover:border-blue-500/40 hover:shadow-[0_20px_40px_rgba(59,130,246,0.14)]"
               >
-                <div
-                  className="p-2.5 rounded-xl mb-3 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400"
-                >
-                  <Building size={22} />
+                {/* Top Subtle Accent Rail */}
+                <div className="absolute top-0 inset-x-8 h-[3px] bg-gradient-to-r from-transparent via-blue-500 to-transparent rounded-full" />
+
+                {/* Overlapping Circular Medallion (Enlarged MPP Badung Aesthetic) */}
+                <div className="absolute -top-10 sm:-top-11 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+                  <div className="relative">
+                    {/* Ambient Glow */}
+                    <div className="absolute inset-0 rounded-full bg-blue-500/30 blur-md transform group-hover:scale-115 transition-transform duration-300" />
+                    
+                    {/* Outer Elevated Podium Ring */}
+                    <div className="relative w-20 h-20 sm:w-22 sm:h-22 rounded-full ring-4 sm:ring-[6px] ring-white dark:ring-slate-900 shadow-xl shadow-blue-500/15 dark:shadow-black/70 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
+                      {/* Inner Delicate Ring Accent */}
+                      <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
+                      <Building size={34} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
+                    </div>
+                  </div>
                 </div>
-                <div className={`text-3xl font-bold tracking-tight mb-1 text-blue-600 dark:text-blue-400`}>
-                  <CountUp end={infrastructure?.length || 0} suffix="" /> {t("stats.points")}
+
+                {/* Card Body */}
+                <div className="w-full flex flex-col items-center mt-1">
+                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 min-h-[32px] flex items-center justify-center leading-snug px-1 text-balance">
+                    {t("stats.mappedInfra")}
+                  </div>
+                  <div className="text-3xl sm:text-4xl font-black tracking-tight my-2 font-mono flex items-baseline justify-center gap-1.5 text-blue-600 dark:text-blue-400">
+                    <CountUp end={infrastructure?.length || 0} suffix="" />
+                    <span className="text-sm sm:text-base font-bold text-slate-600 dark:text-slate-400 font-sans">{t("stats.points")}</span>
+                  </div>
                 </div>
-                <p
-                  className={`text-[11px] font-medium uppercase tracking-[0.08em] mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}
-                >
-                  {t("stats.mappedInfra")}
-                </p>
+
+                {/* Micro Status Chip */}
+                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 w-full flex justify-center">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                    GIS Terpetakan
+                  </span>
+                </div>
               </div>
 
-              {/* Card 2 */}
+              {/* Card 2: Lahan Potensial & Komoditas Strategis */}
               <div
-                className="p-4 sm:p-5 rounded-2xl flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/10 bg-white dark:bg-slate-900 shadow-sm border border-slate-200/80 dark:border-slate-800"
+                className="group relative pt-13 sm:pt-15 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 hover:border-emerald-500/40 dark:hover:border-emerald-500/40 hover:shadow-[0_20px_40px_rgba(16,185,129,0.14)]"
               >
-                <div
-                  className="p-2.5 rounded-xl mb-3 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400"
-                >
-                  <MapPin size={22} />
+                {/* Top Subtle Accent Rail */}
+                <div className="absolute top-0 inset-x-8 h-[3px] bg-gradient-to-r from-transparent via-emerald-500 to-transparent rounded-full" />
+
+                {/* Overlapping Circular Medallion */}
+                <div className="absolute -top-10 sm:-top-11 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+                  <div className="relative">
+                    {/* Ambient Glow */}
+                    <div className="absolute inset-0 rounded-full bg-emerald-500/30 blur-md transform group-hover:scale-115 transition-transform duration-300" />
+                    
+                    {/* Outer Elevated Podium Ring */}
+                    <div className="relative w-20 h-20 sm:w-22 sm:h-22 rounded-full ring-4 sm:ring-[6px] ring-white dark:ring-slate-900 shadow-xl shadow-emerald-500/15 dark:shadow-black/70 bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
+                      <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
+                      <MapPin size={34} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
+                    </div>
+                  </div>
                 </div>
-                <div className={`text-3xl font-bold tracking-tight mb-1 text-emerald-600 dark:text-emerald-400`}>
-                  <CountUp end={investments?.length || 0} suffix="" /> {t("stats.locations")}
+
+                {/* Card Body */}
+                <div className="w-full flex flex-col items-center mt-1">
+                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 min-h-[32px] flex items-center justify-center leading-snug px-1 text-balance">
+                    {t("stats.strategicLands")}
+                  </div>
+                  <div className="text-3xl sm:text-4xl font-black tracking-tight my-2 font-mono flex items-baseline justify-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+                    <CountUp end={investments?.length || 0} suffix="" />
+                    <span className="text-sm sm:text-base font-bold text-slate-600 dark:text-slate-400 font-sans">{t("stats.locations")}</span>
+                  </div>
                 </div>
-                <p
-                  className={`text-[11px] font-medium uppercase tracking-[0.08em] mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}
-                >
-                  {t("stats.strategicLands")}
-                </p>
+
+                {/* Micro Status Chip */}
+                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 w-full flex justify-center">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Siap Ditawarkan
+                  </span>
+                </div>
               </div>
 
               {/* Card 3: Serapan Tenaga Kerja */}
               <div
-                className="p-4 sm:p-5 rounded-2xl flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:shadow-teal-500/10 bg-white dark:bg-slate-900 shadow-sm border border-slate-200/80 dark:border-slate-800"
+                className="group relative pt-13 sm:pt-15 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 hover:border-amber-500/40 dark:hover:border-amber-500/40 hover:shadow-[0_20px_40px_rgba(245,158,11,0.14)]"
               >
-                <div
-                  className="p-2.5 rounded-xl mb-3 bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400"
-                >
-                  <Users size={22} />
+                {/* Top Subtle Accent Rail */}
+                <div className="absolute top-0 inset-x-8 h-[3px] bg-gradient-to-r from-transparent via-amber-500 to-transparent rounded-full" />
+
+                {/* Overlapping Circular Medallion */}
+                <div className="absolute -top-10 sm:-top-11 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+                  <div className="relative">
+                    {/* Ambient Glow */}
+                    <div className="absolute inset-0 rounded-full bg-amber-500/30 blur-md transform group-hover:scale-115 transition-transform duration-300" />
+                    
+                    {/* Outer Elevated Podium Ring */}
+                    <div className="relative w-20 h-20 sm:w-22 sm:h-22 rounded-full ring-4 sm:ring-[6px] ring-white dark:ring-slate-900 shadow-xl shadow-amber-500/15 dark:shadow-black/70 bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
+                      <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
+                      <Users size={34} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
+                    </div>
+                  </div>
                 </div>
-                <div className={`text-3xl font-bold tracking-tight mb-1 text-teal-600 dark:text-teal-400`}>
-                  <CountUp end={totalLabor} suffix="" /> {t("stats.workers", "Jiwa")}
+
+                {/* Card Body */}
+                <div className="w-full flex flex-col items-center mt-1">
+                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 min-h-[32px] flex items-center justify-center leading-snug px-1 text-balance">
+                    {t("stats.workforceAbsorption", "Serapan Tenaga Kerja")}
+                  </div>
+                  <div className="text-3xl sm:text-4xl font-black tracking-tight my-2 font-mono flex items-baseline justify-center gap-1.5 text-amber-600 dark:text-amber-400">
+                    <CountUp end={totalLabor} suffix="" />
+                    <span className="text-sm sm:text-base font-bold text-slate-600 dark:text-slate-400 font-sans">{t("stats.workers", "Jiwa")}</span>
+                  </div>
                 </div>
-                <p
-                  className={`text-[11px] font-medium uppercase tracking-[0.08em] mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}
-                >
-                  {t("stats.workforceAbsorption", "Serapan Tenaga Kerja")}
-                </p>
+
+                {/* Micro Status Chip */}
+                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 w-full flex justify-center">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                    TKL & TKA Terdata
+                  </span>
+                </div>
               </div>
 
-              {/* Card 4 */}
+              {/* Card 4: Asisten AI DPMPTSP */}
               <div
-                className="p-4 sm:p-5 rounded-2xl flex flex-col items-center text-center transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/10 bg-white dark:bg-slate-900 shadow-sm border border-slate-200/80 dark:border-slate-800"
+                className="group relative pt-13 sm:pt-15 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 hover:border-purple-500/40 dark:hover:border-purple-500/40 hover:shadow-[0_20px_40px_rgba(168,85,247,0.14)]"
               >
-                <div
-                  className="p-2.5 rounded-xl mb-3 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400"
-                >
-                  <Bot size={22} />
+                {/* Top Subtle Accent Rail */}
+                <div className="absolute top-0 inset-x-8 h-[3px] bg-gradient-to-r from-transparent via-purple-500 to-transparent rounded-full" />
+
+                {/* Overlapping Circular Medallion */}
+                <div className="absolute -top-10 sm:-top-11 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+                  <div className="relative">
+                    {/* Ambient Glow */}
+                    <div className="absolute inset-0 rounded-full bg-purple-500/30 blur-md transform group-hover:scale-115 transition-transform duration-300" />
+                    
+                    {/* Outer Elevated Podium Ring */}
+                    <div className="relative w-20 h-20 sm:w-22 sm:h-22 rounded-full ring-4 sm:ring-[6px] ring-white dark:ring-slate-900 shadow-xl shadow-purple-500/15 dark:shadow-black/70 bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
+                      <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
+                      <Bot size={34} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
+                    </div>
+                  </div>
                 </div>
-                <div className={`text-3xl font-bold tracking-tight mb-1 text-indigo-600 dark:text-indigo-400`}>
-                  {t("stats.twentyFourSevenActive", "24/7 Aktif")}
+
+                {/* Card Body */}
+                <div className="w-full flex flex-col items-center mt-1">
+                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 min-h-[32px] flex items-center justify-center leading-snug px-1 text-balance">
+                    {t("stats.aiAssistant")}
+                  </div>
+                  <div className="text-3xl sm:text-4xl font-black tracking-tight my-2 font-mono flex items-baseline justify-center gap-1.5 text-purple-600 dark:text-purple-400">
+                    <span>{t("stats.twentyFourSevenActive", "24/7")}</span>
+                    <span className="text-sm sm:text-base font-bold text-slate-600 dark:text-slate-400 font-sans">{t("stats.active", "Aktif")}</span>
+                  </div>
                 </div>
-                <p
-                  className={`text-[11px] font-medium uppercase tracking-[0.08em] mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}
-                >
-                  {t("stats.aiAssistant")}
-                </p>
+
+                {/* Micro Status Chip */}
+                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 w-full flex justify-center">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-300 border border-purple-200/80 dark:border-purple-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
+                    Konsultasi Cerdas
+                  </span>
+                </div>
               </div>
             </div>
           </div>
