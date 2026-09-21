@@ -1578,13 +1578,15 @@ export default function AdminPortalDashboard() {
             {/* Unified Cross-OPD Inter-agency Notification Bell (Dynamic Role) */}
             <CrossOpdNotificationBell 
               currentRole={
-                activeTab === 'puptr_clearance' ? 'ADMIN_PUPTR' :
-                activeTab === 'pertanian_clearance' ? 'ADMIN_PERTANIAN' :
+                (userRole?.toLowerCase().includes('puptr') || activeTab.includes('puptr') || activeTab === 'verifikasi_pkkpr') ? 'ADMIN_PUPTR' :
+                (userRole?.toLowerCase().includes('pertanian') || activeTab.includes('pertanian')) ? 'ADMIN_PERTANIAN' :
                 'ADMIN_DPMPTSP'
               }
               onSelectApplication={(appId) => {
-                if (activeTab !== 'puptr_clearance' && activeTab !== 'pertanian_clearance') {
-                  setActiveTab('puptr_clearance');
+                if (userRole?.toLowerCase().includes('pertanian') || activeTab === 'verifikasi_pertanian' || activeTab === 'pertanian_clearance') {
+                  setActiveTab('verifikasi_pertanian');
+                } else {
+                  setActiveTab('verifikasi_pkkpr');
                 }
               }}
             />
@@ -5368,11 +5370,11 @@ export default function AdminPortalDashboard() {
               </div>
             </div>
           </div>
-        ) : activeTab === 'verifikasi_pkkpr' ? (
+        ) : (activeTab === 'verifikasi_pkkpr' || activeTab === 'verifikasi_puptr' || activeTab === 'puptr_clearance' || activeTab === 'puptr_spatial_clearance') ? (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <PuptrSpatialClearanceDashboard />
           </div>
-        ) : activeTab === 'verifikasi_pertanian' ? (
+        ) : (activeTab === 'verifikasi_pertanian' || activeTab === 'pertanian_clearance' || activeTab === 'admin_pertanian') ? (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <PertanianLandClearanceDashboard />
           </div>
