@@ -1,0 +1,220 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { ShieldCheck, AlertOctagon, HeartHandshake, CheckCircle2, X, ExternalLink, Scale, Sparkles, Ban, ShieldAlert, HandCoins, Award } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+
+interface AntiCorruptionBannerProps {
+  isDark?: boolean;
+  className?: string;
+  variant?: 'full' | 'compact' | 'footer';
+}
+
+export function AntiCorruptionBanner({ isDark = false, className = '', variant = 'full' }: AntiCorruptionBannerProps) {
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language || 'id';
+  const isEn = currentLang.startsWith('en');
+  const isZh = currentLang.startsWith('zh');
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
+  return (
+    <>
+      <div 
+        className={`w-full relative rounded-2xl sm:rounded-3xl border transition-all duration-300 overflow-hidden ${
+          isDark 
+            ? 'bg-slate-900/95 border-rose-500/30 shadow-xl shadow-rose-950/20' 
+            : 'bg-white border-rose-200 shadow-lg shadow-rose-500/5'
+        } ${className}`}
+      >
+        {/* Top Header Badge */}
+        <div className={`px-3.5 sm:px-6 py-2.5 sm:py-3 border-b flex flex-wrap items-center justify-between gap-2 ${
+          isDark ? 'bg-rose-950/30 border-rose-500/20' : 'bg-rose-50/70 border-rose-100'
+        }`}>
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400 font-sans">
+              {isEn ? 'Zero-Corruption Integrity Zone (WBK / WBBM)' : isZh ? '廉洁示范与反腐败诚信专区 (WBK/WBBM)' : 'Zona Integritas Bebas Korupsi (WBK / WBBM)'}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsDetailModalOpen(true)}
+            className="min-h-[44px] px-2.5 sm:px-3 text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-200 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95"
+          >
+            <span>{isEn ? 'Integrity Declaration' : isZh ? '廉洁履职声明' : 'Maklumat Integritas'}</span>
+            <ExternalLink className="w-3.5 h-3.5 text-rose-500" />
+          </button>
+        </div>
+
+        {/* The 4 Emblem Interactive Grid */}
+        <div className="p-3.5 sm:p-6 lg:p-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-6 items-stretch justify-center">
+            {/* 1. NO KORUPSI */}
+            <motion.div 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={`p-3.5 sm:p-5 rounded-2xl border flex flex-col items-center justify-center text-center transition-all ${
+                isDark ? 'bg-slate-800/60 border-slate-700/60 hover:border-rose-500/40' : 'bg-slate-50/80 border-slate-200/80 hover:border-rose-300'
+              }`}
+            >
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-rose-700 text-white flex items-center justify-center shadow-md shadow-rose-600/25 mb-2 border border-rose-400/40">
+                <ShieldAlert className="w-5 h-5 sm:w-6 sm:h-6" />
+              </div>
+              <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white tracking-wide font-sans">
+                {isEn ? 'NO CORRUPTION' : isZh ? '坚决杜绝贪腐' : 'NO KORUPSI'}
+              </span>
+              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-normal leading-tight">
+                {isEn ? 'Zero Tolerance Policy' : isZh ? '严厉打击腐败行为' : 'Tolak Semua Praktik'}
+              </span>
+            </motion.div>
+
+            {/* 2. STOP GRATIFIKASI */}
+            <motion.div 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={`p-3.5 sm:p-5 rounded-2xl border flex flex-col items-center justify-center text-center transition-all ${
+                isDark ? 'bg-slate-800/60 border-slate-700/60 hover:border-rose-500/40' : 'bg-slate-50/80 border-slate-200/80 hover:border-rose-300'
+              }`}
+            >
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white flex items-center justify-center shadow-md shadow-amber-600/25 mb-2 border border-amber-400/40">
+                <HandCoins className="w-5 h-5 sm:w-6 sm:h-6" />
+              </div>
+              <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white tracking-wide font-sans">
+                {isEn ? 'NO GRATUITY' : isZh ? '严禁礼品馈赠' : 'STOP GRATIFIKASI'}
+              </span>
+              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-normal leading-tight">
+                {isEn ? 'No Giving or Receiving' : isZh ? '严禁收取任何礼品红包' : 'Dilarang Memberi & Menerima'}
+              </span>
+            </motion.div>
+
+            {/* 3. STOP PUNGLI */}
+            <motion.div 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={`p-3.5 sm:p-5 rounded-2xl border flex flex-col items-center justify-center text-center transition-all ${
+                isDark ? 'bg-slate-800/60 border-slate-700/60 hover:border-rose-500/40' : 'bg-slate-50/80 border-slate-200/80 hover:border-rose-300'
+              }`}
+            >
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-rose-600 to-red-800 text-white flex items-center justify-center shadow-md shadow-rose-700/25 mb-2 border border-rose-400/40">
+                <Ban className="w-5 h-5 sm:w-6 sm:h-6" />
+              </div>
+              <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white tracking-wide font-sans">
+                {isEn ? 'NO EXTORTION' : isZh ? '拒绝违规乱收费' : 'STOP PUNGLI'}
+              </span>
+              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-normal leading-tight">
+                {isEn ? 'Official Bank Rates Only' : isZh ? '官方银行透明收费' : 'Biaya Nol / Resmi Bank'}
+              </span>
+            </motion.div>
+
+            {/* 4. BERANI JUJUR HEBAT! */}
+            <motion.div 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className={`p-3.5 sm:p-5 rounded-2xl border flex flex-col items-center justify-center text-center transition-all ${
+                isDark ? 'bg-slate-800/60 border-slate-700/60 hover:border-emerald-500/40' : 'bg-slate-50/80 border-slate-200/80 hover:border-emerald-300'
+              }`}
+            >
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center shadow-md shadow-emerald-700/25 mb-2 border border-emerald-400/40">
+                <Award className="w-5 h-5 sm:w-6 sm:h-6 text-amber-300" />
+              </div>
+              <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white tracking-wide font-sans">
+                {isEn ? 'INTEGRITY' : isZh ? '诚信执政' : 'INTEGRITAS'}
+              </span>
+              <span className="text-[10px] sm:text-[11px] text-emerald-600 dark:text-emerald-400 font-medium mt-1 leading-tight">
+                {isEn ? 'Anti-Corruption Culture' : isZh ? '崇廉拒腐政务生态' : 'Budaya Anti-Korupsi'}
+              </span>
+            </motion.div>
+          </div>
+
+          {/* Subtext Banner */}
+          <div className="mt-4 pt-3.5 border-t border-slate-200/60 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-normal leading-relaxed">
+              <strong className="font-bold text-rose-600 dark:text-rose-400">{isEn ? 'Official Notice:' : isZh ? '官方郑重声明:' : 'Pemberitahuan Resmi:'}</strong>{' '}
+              {isEn 
+                ? 'All services at MPP Simpurusiang are free of charge, except for official regional retribution fees deposited directly into the regional treasury or Bank BPD Sulselbar.'
+                : isZh 
+                ? '鲁乌县辛普鲁西亚公共服务大厅的所有政务与行政审批事项均不收取额外费用，法定行政事业规费一律直接缴入财政专户或南苏拉威西地方银行。'
+                : 'Seluruh pelayanan di Mal Pelayanan Publik (MPP) Simpurusiang tidak dipungut biaya selain tarif retribusi resmi yang disetor langsung melalui kas daerah / Bank BPD Sulselbar.'}
+            </p>
+            <span className="shrink-0 text-[10px] sm:text-[11px] font-mono px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 font-bold tracking-wider">
+              PERPRES NO. 87/2016
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal Maklumat Integritas & Anti Pungli */}
+      <AnimatePresence>
+        {isDetailModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className={`w-full max-w-2xl rounded-3xl border shadow-2xl p-6 sm:p-8 relative ${
+                isDark ? 'bg-slate-900 border-rose-500/40 text-white' : 'bg-white border-rose-200 text-slate-900'
+              }`}
+            >
+              <button
+                type="button"
+                onClick={() => setIsDetailModalOpen(false)}
+                className="absolute top-4 right-4 p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-500 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-rose-600 dark:text-rose-400 block font-mono">
+                    {isEn ? 'GOVERNMENT OF LUWU REGENCY • DPMPTSP' : isZh ? '鲁乌县政府 • 投资与一站式综合服务局' : 'PEMERINTAH KABUPATEN LUWU • DPMPTSP'}
+                  </span>
+                  <h3 className="text-lg sm:text-xl font-black font-sans">
+                    {isEn ? 'Commitment to Integrity Zone & Clean Governance' : isZh ? '廉洁示范专区与清廉政务建设承诺' : 'Komitmen Zona Integritas & Pelayanan Bersih'}
+                  </h3>
+                </div>
+              </div>
+
+              <div className="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20">
+                  <strong className="text-rose-700 dark:text-rose-300 block mb-1">
+                    {isEn ? '🛑 Strict Prohibition on Gratuities & Illegal Levies:' : isZh ? '🛑 严禁任何形式的礼金受贿与乱收费:' : '🛑 Larangan Keras Gratifikasi & Pungutan Liar:'}
+                  </strong>
+                  <p>
+                    {isEn 
+                      ? 'Officers are strictly prohibited from soliciting or receiving money, gifts, parcels, or any benefits from applicants. Citizens and investors are requested not to provide gratuities in any form.'
+                      : isZh
+                      ? '窗口工作人员严禁索要或收受任何礼金、有价证券、礼品红包或便利待遇。请广大市民与中外投资者切勿提供任何形式的私下报酬。'
+                      : 'Petugas dilarang meminta atau menerima uang, hadiah, bingkisan, atau fasilitas apapun dari pemohon layanan. Masyarakat dan investor dihimbau untuk tidak memberikan imbalan dalam bentuk apapun.'}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700">
+                    <strong className="text-slate-900 dark:text-white block mb-1">{isEn ? 'Official Complaint Channels:' : isZh ? '官方监督举报渠道:' : 'Kanal Pengaduan Resmi:'}</strong>
+                    <p className="text-xs">{isEn ? 'Report any extortion via national SP4N-LAPOR! or Luwu Regency Inspectorate.' : isZh ? '可通过国家 SP4N-LAPOR! 系统或鲁乌县监察局热线举报违规行为。' : 'Laporkan setiap indikasi pungli atau gratifikasi melalui SP4N-LAPOR! atau Call Center Inspektorat Kab. Luwu.'}</p>
+                  </div>
+                  <div className="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700">
+                    <strong className="text-slate-900 dark:text-white block mb-1">{isEn ? 'Whistleblower Protection:' : isZh ? '举报人保密保护机制:' : 'Perlindungan Pelapor:'}</strong>
+                    <p className="text-xs">{isEn ? 'The confidentiality of whistleblowers is fully guaranteed by witness protection legislation.' : isZh ? '依法对实名及匿名举报人信息提供严格的法律保密保障。' : 'Kerahasiaan identitas pelapor (*Whistleblower*) dijamin penuh oleh Undang-Undang Perlindungan Saksi dan Korban.'}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={() => setIsDetailModalOpen(false)}
+                  className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs cursor-pointer transition-colors"
+                >
+                  {isEn ? 'Close Window' : isZh ? '关闭窗口' : 'Tutup Informasi'}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
