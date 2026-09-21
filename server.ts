@@ -10953,8 +10953,20 @@ function getWitaTimeDetails() {
   };
 }
 
-function validateMppOperationalHours(visitDate: string, session: string = 'pagi'): { isValid: boolean; message?: string } {
+function validateMppOperationalHours(visitDate: string, session: string = 'pagi', allowOffHours: boolean = true): { isValid: boolean; message?: string } {
   const wita = getWitaTimeDetails();
+
+  if (visitDate < wita.todayStr) {
+    return {
+      isValid: false,
+      message: "Tanggal kunjungan tidak boleh di masa lalu."
+    };
+  }
+
+  // Jika allowOffHours disetel (default true untuk registrasi online 24/7), lewati pembatasan jam operasional fisik
+  if (allowOffHours) {
+    return { isValid: true };
+  }
 
   // 1. Cek hari libur akhir pekan pada tanggal kunjungan yang dipilih
   const targetDateObj = new Date(`${visitDate}T12:00:00+08:00`);
@@ -10975,9 +10987,6 @@ function validateMppOperationalHours(visitDate: string, session: string = 'pagi'
       };
     }
 
-    // Jam operasional pendaftaran antrean:
-    // Buka: 07:30 WITA
-    // Tutup: 15:30 WITA (Senin - Kamis), 16:00 WITA (Jumat)
     const closingHour = wita.isFriday ? 16.0 : 15.5;
     const closingLabel = wita.isFriday ? "16:00 WITA" : "15:30 WITA";
 
@@ -10995,9 +11004,6 @@ function validateMppOperationalHours(visitDate: string, session: string = 'pagi'
       };
     }
 
-    // Validasi Sesi Kedatangan:
-    // Sesi Pagi: 07:30 - 12:00 WITA
-    // Sesi Siang: 13:00 - 15:30/16:00 WITA
     const normSession = (session || 'pagi').toLowerCase();
     if (normSession === 'pagi' && wita.timeDecimal >= 12.0) {
       return {
@@ -11005,11 +11011,6 @@ function validateMppOperationalHours(visitDate: string, session: string = 'pagi'
         message: "Pendaftaran Sesi Pagi (07:30 - 12:00 WITA) untuk hari ini telah berakhir. Silakan pilih Sesi Siang (13:00 - 15:30 WITA) atau jadwalkan pada hari kerja berikutnya."
       };
     }
-  } else if (visitDate < wita.todayStr) {
-    return {
-      isValid: false,
-      message: "Tanggal kunjungan tidak boleh di masa lalu."
-    };
   }
 
   return { isValid: true };
@@ -11030,7 +11031,8 @@ app.post("/api/mpp/queues", async (req, res) => {
       citizen_occupation,
       queue_date, 
       session,
-      is_priority 
+      is_priority,
+      strict_hours
     } = req.body;
 
     if (!citizen_nik) {
@@ -11041,8 +11043,8 @@ app.post("/api/mpp/queues", async (req, res) => {
     const targetDate = queue_date || wita.todayStr;
     const targetSession = (session || 'pagi').toLowerCase();
 
-    // 1. Validasi Jam Operasional & Sesi Kedatangan berbasis WITA
-    const opValidation = validateMppOperationalHours(targetDate, targetSession);
+    // 1. Validasi Jam Operasional & Sesi Kedatangan berbasis WITA (Bypass jam operasional secara default untuk kemudahan registrasi online)
+    const opValidation = validateMppOperationalHours(targetDate, targetSession, strict_hours === true ? false : true);
     if (!opValidation.isValid) {
       return res.status(400).json({ success: false, message: opValidation.message });
     }
