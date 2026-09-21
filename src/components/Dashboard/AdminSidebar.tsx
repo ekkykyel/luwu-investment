@@ -56,6 +56,7 @@ export const getMenusByRole = (role: string): MenuGroup[] => {
       group: 'Utama',
       items: [
         { id: 'overview', name: 'Overview', icon: LayoutDashboard },
+        { id: 'investor_pipeline', name: 'Alur & Timeline 4 Bidang', icon: Workflow },
         ...(isAllowedWorkspace ? [{ id: 'operator_workspace', name: 'Operator Workspace', icon: Building2 }] : []),
         { id: 'overview_perizinan', name: 'Overview Perizinan', icon: ShieldCheck },
       ]
@@ -129,12 +130,12 @@ export const getMenusByRole = (role: string): MenuGroup[] => {
   else if (normRole === 'admin_data' || normRole.includes('data')) matchedRole = 'admin_data';
 
   const allowedIdsByRole: Record<string, string[]> = {
-    admin_promosi: ['overview', 'operator_workspace', 'loi_verify', 'manage_potential', 'site-selection', 'testimonials'],
-    admin_dalak: ['overview', 'pengaduan', 'pengawasan', 'fasilitasi', 'laporan'],
-    admin_puptr: ['overview', 'pkkpr_sync_monitor', 'verifikasi_pkkpr', 'gis_spatial', 'spatial_analytics', 'puptr_archive', 'puptr_settings'],
-    admin_pertanian: ['overview', 'pkkpr_sync_monitor', 'verifikasi_pertanian', 'gis_spatial', 'spatial_analytics', 'pertanian_archive', 'pertanian_settings'],
-    admin_oss: ['overview_perizinan', 'pkkpr_sync_monitor', 'realisasi_nib', 'spatial_analytics', 'oss_sk_archive', 'oss_settings'],
-    admin_data: ['overview', 'pkkpr_sync_monitor', 'spatial_analytics', 'gis_spatial', 'simulation'],
+    admin_promosi: ['overview', 'investor_pipeline', 'operator_workspace', 'loi_verify', 'manage_potential', 'site-selection', 'testimonials'],
+    admin_dalak: ['overview', 'investor_pipeline', 'pengaduan', 'pengawasan', 'fasilitasi', 'laporan'],
+    admin_puptr: ['overview', 'investor_pipeline', 'pkkpr_sync_monitor', 'verifikasi_pkkpr', 'gis_spatial', 'spatial_analytics', 'puptr_archive', 'puptr_settings'],
+    admin_pertanian: ['overview', 'investor_pipeline', 'pkkpr_sync_monitor', 'verifikasi_pertanian', 'gis_spatial', 'spatial_analytics', 'pertanian_archive', 'pertanian_settings'],
+    admin_oss: ['overview_perizinan', 'investor_pipeline', 'pkkpr_sync_monitor', 'realisasi_nib', 'spatial_analytics', 'oss_sk_archive', 'oss_settings'],
+    admin_data: ['overview', 'investor_pipeline', 'pkkpr_sync_monitor', 'spatial_analytics', 'gis_spatial', 'simulation'],
   };
 
   const allowedIds = allowedIdsByRole[matchedRole] || ['overview'];

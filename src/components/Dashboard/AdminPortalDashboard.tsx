@@ -38,6 +38,7 @@ import {
   ShieldAlert,
   ArrowRight,
   AlertCircle,
+  Zap,
   Filter
 , Users, Plus, PlusCircle, Globe, Info, CheckCircle, Database, Download, FileDown, Settings, BarChart3, BookOpen, Scale, Lightbulb, FileCheck, BookDown} from 'lucide-react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid, ReferenceLine, Legend } from 'recharts';
@@ -55,6 +56,7 @@ import OssSkArchiveView from './OssSkArchiveView';
 import PuptrSpatialClearanceDashboard from './PuptrSpatialClearanceDashboard';
 import PertanianLandClearanceDashboard from './PertanianLandClearanceDashboard';
 import PkkprBusinessProcessMonitorDashboard from './PkkprBusinessProcessMonitorDashboard';
+import InvestorPipelineWorkflowView from './InvestorPipelineWorkflowView';
 import PertanianOverview from './PertanianOverview';
 import PuptrOverview from './PuptrOverview';
 import { LuwuLogo } from '../LuwuLogo.js';
@@ -73,6 +75,7 @@ import AdminSidebar, { isOperatorWorkspaceRole } from './AdminSidebar.js';
 import UploadRagPanel from '../UploadRagPanel';
 import ManageOperatorsModal from '../ManageOperatorsModal';
 import CreateOperatorModal from '../CreateOperatorModal';
+import FourBidangSyncWorkflowModal from './FourBidangSyncWorkflowModal';
 import AdminLayout from '../Admin/AdminLayout';
 import SmartInvestmentFormEngine from '../SmartInvestmentFormEngine';
 import TataRuangInvestasi from '../Admin/Views/TataRuangInvestasi';
@@ -243,6 +246,7 @@ export default function AdminPortalDashboard() {
   const [isSavingDalak, setIsSavingDalak] = useState(false);
 
   // Promosi KYC Modal States
+  const [isSyncWorkflowModalOpen, setIsSyncWorkflowModalOpen] = useState(false);
   const [isKycModalOpen, setIsKycModalOpen] = useState(false);
   const [selectedKycTicket, setSelectedKycTicket] = useState<any | null>(null);
   const [kycCatatan, setKycCatatan] = useState('');
@@ -1575,6 +1579,16 @@ export default function AdminPortalDashboard() {
             </span>
           </div>
           <div className="flex items-center gap-3">
+            {/* Synchronized 4-Bidang Workflow Matrix Modal Trigger */}
+            <button
+              onClick={() => setIsSyncWorkflowModalOpen(true)}
+              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 border border-emerald-400/30 active:scale-95"
+              title="Lihat Blueprint & Timeline Sinkronisasi 4 Bidang DPMPTSP"
+            >
+              <Zap className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
+              <span>Blueprint 4 Bidang</span>
+            </button>
+
             {/* Unified Cross-OPD Inter-agency Notification Bell (Dynamic Role) */}
             <CrossOpdNotificationBell 
               currentRole={
@@ -3535,6 +3549,8 @@ export default function AdminPortalDashboard() {
               </div>
             </div>
           </div>
+        ) : activeTab === 'investor_pipeline' ? (
+          <InvestorPipelineWorkflowView />
         ) : (activeTab === 'pkkpr_sync_monitor' || activeTab === 'pkkpr_monitoring' || activeTab === 'pkkpr_business_process') ? (
           <PkkprBusinessProcessMonitorDashboard />
         ) : (activeTab === 'verifikasi_pkkpr' || activeTab === 'puptr_spatial_clearance') ? (
@@ -5686,6 +5702,11 @@ export default function AdminPortalDashboard() {
           </div>
         </div>
       )}
+      {/* Four Bidang Synchronized Workflow & Timeline Modal */}
+      <FourBidangSyncWorkflowModal 
+        isOpen={isSyncWorkflowModalOpen} 
+        onClose={() => setIsSyncWorkflowModalOpen(false)} 
+      />
     </div>
   );
 }
