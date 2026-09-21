@@ -77,6 +77,7 @@ import ManageOperatorsModal from '../ManageOperatorsModal';
 import CreateOperatorModal from '../CreateOperatorModal';
 import FourBidangSyncWorkflowModal from './FourBidangSyncWorkflowModal';
 import EstafetHandoverModal from './EstafetHandoverModal';
+import EstafetProgressBanner from './EstafetProgressBanner';
 import AdminLayout from '../Admin/AdminLayout';
 import SmartInvestmentFormEngine from '../SmartInvestmentFormEngine';
 import TataRuangInvestasi from '../Admin/Views/TataRuangInvestasi';
@@ -1659,8 +1660,21 @@ export default function AdminPortalDashboard() {
               {t('dashboard.retry', 'Coba Ulang')}
             </button>
           </div>
-        ) : activeTab === 'overview_perizinan' ? (
-          <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500 mt-4 md:mt-0">
+        ) : (
+          <div className="space-y-6">
+            {/* Top Visual Estafet Progress Banner Across 4 Bidang */}
+            <EstafetProgressBanner 
+              tickets={loiTickets}
+              userRole={userRole || 'admin_promosi'}
+              onOpenEstafetModal={(ticket) => {
+                setSelectedEstafetTicket(ticket);
+                setIsEstafetModalOpen(true);
+              }}
+              onOpenBlueprintModal={() => setIsSyncWorkflowModalOpen(true)}
+            />
+
+            {activeTab === 'overview_perizinan' ? (
+              <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500 mt-4 md:mt-0">
             {/* Layout Header & Branding */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 border-b border-slate-200 dark:border-slate-800/60 pb-4 sm:pb-6">
               <div>
@@ -5446,6 +5460,8 @@ export default function AdminPortalDashboard() {
             <p className="text-sm text-slate-800 dark:text-slate-200 max-w-md">
               Fitur <span className="text-emerald-700 dark:text-emerald-400 font-mono font-bold">{activeTab}</span> sedang dalam tahap pengembangan V1.0 DPMPTSP Kabupaten Luwu.
             </p>
+          </div>
+        )}
           </div>
         )}
       </div>
