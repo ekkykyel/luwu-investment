@@ -76,6 +76,7 @@ import UploadRagPanel from '../UploadRagPanel';
 import ManageOperatorsModal from '../ManageOperatorsModal';
 import CreateOperatorModal from '../CreateOperatorModal';
 import FourBidangSyncWorkflowModal from './FourBidangSyncWorkflowModal';
+import EstafetHandoverModal from './EstafetHandoverModal';
 import AdminLayout from '../Admin/AdminLayout';
 import SmartInvestmentFormEngine from '../SmartInvestmentFormEngine';
 import TataRuangInvestasi from '../Admin/Views/TataRuangInvestasi';
@@ -245,8 +246,10 @@ export default function AdminPortalDashboard() {
   const [dalakLaporan, setDalakLaporan] = useState('');
   const [isSavingDalak, setIsSavingDalak] = useState(false);
 
-  // Promosi KYC Modal States
+  // Promosi KYC & Estafet Handover Modal States
   const [isSyncWorkflowModalOpen, setIsSyncWorkflowModalOpen] = useState(false);
+  const [isEstafetModalOpen, setIsEstafetModalOpen] = useState(false);
+  const [selectedEstafetTicket, setSelectedEstafetTicket] = useState<any | null>(null);
   const [isKycModalOpen, setIsKycModalOpen] = useState(false);
   const [selectedKycTicket, setSelectedKycTicket] = useState<any | null>(null);
   const [kycCatatan, setKycCatatan] = useState('');
@@ -2896,16 +2899,28 @@ export default function AdminPortalDashboard() {
                               </div>
                             </td>
                             <td className="p-3.5 text-right">
-                              <button
-                                onClick={() => {
-                                  setSelectedKycTicket(ticket);
-                                  setKycCatatan(ticket.catatan_admin || '');
-                                  setIsKycModalOpen(true);
-                                }}
-                                className="px-3.5 py-1.5 bg-slate-100 dark:bg-slate-800 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-slate-800 text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-700 shadow-sm"
-                              >
-                                Verifikasi (KYC)
-                              </button>
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => {
+                                    setSelectedKycTicket(ticket);
+                                    setKycCatatan(ticket.catatan_admin || '');
+                                    setIsKycModalOpen(true);
+                                  }}
+                                  className="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-slate-800 text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-700 shadow-sm"
+                                >
+                                  Verifikasi (KYC)
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setSelectedEstafetTicket(ticket);
+                                    setIsEstafetModalOpen(true);
+                                  }}
+                                  className="px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-lg shadow-sm transition-all flex items-center gap-1 active:scale-95"
+                                  title="Estafetkan Pendampingan ke Bidang Selanjutnya"
+                                >
+                                  <span>Estafetkan</span> ➔
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))
@@ -5706,6 +5721,17 @@ export default function AdminPortalDashboard() {
       <FourBidangSyncWorkflowModal 
         isOpen={isSyncWorkflowModalOpen} 
         onClose={() => setIsSyncWorkflowModalOpen(false)} 
+      />
+
+      {/* Estafet Handover Lintas Bidang Modal */}
+      <EstafetHandoverModal
+        isOpen={isEstafetModalOpen}
+        onClose={() => setIsEstafetModalOpen(false)}
+        ticket={selectedEstafetTicket}
+        currentRole={userRole || 'admin_promosi'}
+        onSuccess={() => {
+          refreshData();
+        }}
       />
     </div>
   );
