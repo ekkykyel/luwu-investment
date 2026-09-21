@@ -385,7 +385,7 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode 
         throw new Error(queueResData.message || 'Gagal menerbitkan antrean.');
       }
 
-      const newQueue = queueResData.data.queue;
+      const newQueue = queueResData.data?.queue || queueResData.queue || queueResData;
       const ticketCode = newQueue.ticket_code;
       const paddedNum = String(newQueue.queue_number).padStart(3, '0');
 

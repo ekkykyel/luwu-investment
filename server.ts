@@ -11169,14 +11169,20 @@ app.post("/api/mpp/queues", async (req, res) => {
         await client.query("COMMIT");
 
         const newQueue = insertRes.rows[0];
+        const formattedQueue = {
+          ...newQueue,
+          tenant: { id: resolvedTenantId, code: tenantCode, name: tenantName },
+          service: { id: resolvedServiceId, service_name: service_name || "Pelayanan Terpadu" }
+        };
         return res.json({
           success: true,
           message: "Tiket antrean resmi berhasil diterbitkan.",
-          queue: {
-            ...newQueue,
+          data: {
+            queue: formattedQueue,
             tenant: { id: resolvedTenantId, code: tenantCode, name: tenantName },
             service: { id: resolvedServiceId, service_name: service_name || "Pelayanan Terpadu" }
           },
+          queue: formattedQueue,
           tenant: { id: resolvedTenantId, code: tenantCode, name: tenantName },
           service: { id: resolvedServiceId, service_name: service_name || "Pelayanan Terpadu" }
         });

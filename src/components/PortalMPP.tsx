@@ -1395,7 +1395,7 @@ export default function PortalMPP() {
         throw new Error(queueResData.message || 'Gagal menerbitkan nomor antrean.');
       }
 
-      const issuedQueue = queueResData.data.queue;
+      const issuedQueue = queueResData.data?.queue || queueResData.queue || queueResData;
       const ticketNo = issuedQueue.ticket_code;
 
       // 4. Update UI & Local Storage
