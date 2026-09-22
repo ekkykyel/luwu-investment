@@ -800,6 +800,41 @@ async function fetchAndJoinInvestments(bypassCache = false) {
 
   const fetchPromise = (async () => {
     try {
+      // ⚡ FAST-PATH: Mencoba kueri terpadu v_investments_complete jika view sudah aktif di database Supabase
+      try {
+        const viewRes = await safeQuery(
+          () => supabase.from('v_investments_complete').select('*').limit(500),
+          'v_investments_complete',
+          1
+        );
+        if (viewRes?.data && Array.isArray(viewRes.data) && viewRes.data.length > 0) {
+          const formattedList = viewRes.data.map((row: any) => {
+            const rawFin = Array.isArray(row.financials) ? row.financials[0] : row.financials;
+            const rawLoc = Array.isArray(row.locations) ? row.locations[0] : row.locations;
+            const rawLeg = Array.isArray(row.legalities) ? row.legalities[0] : row.legalities;
+            const rawScore = Array.isArray(row.investment_scores) ? row.investment_scores[0] : row.investment_scores;
+            const rawMed = Array.isArray(row.media_assets) ? row.media_assets[0] : row.media_assets;
+
+            return {
+              ...row,
+              geom: row.spatial_geometry || (row.longitude && row.latitude ? { type: "Point", coordinates: [Number(row.longitude), Number(row.latitude)] } : null),
+              financials: rawFin || null,
+              locations: rawLoc || null,
+              legalities: rawLeg || null,
+              investment_scores: rawScore || null,
+              media_assets: rawMed || null,
+            };
+          });
+
+          joinedInvestmentsCache = formattedList;
+          lastJoinedFetchTime = Date.now();
+          console.log(`⚡ [FAST-PATH] Berhasil memuat ${formattedList.length} data investasi via v_investments_complete`);
+          return { data: formattedList, error: null };
+        }
+      } catch (viewCheckErr) {
+        // Fallback transparan ke kueri multi-tabel di bawah
+      }
+
       const [
         { data: invList, error: invErr },
         { data: potList, error: potErr },
