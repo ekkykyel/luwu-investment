@@ -3123,24 +3123,23 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
         return {
           version: 8,
           sources: {
-            "carto-voyager": {
+            "osm-tiles": {
               type: "raster" as const,
               tiles: [
-                "https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
-                "https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
-                "https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
-                "https://d.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png"
+                "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
               ],
               tileSize: 256,
-              maxzoom: 20,
-              attribution: '© OpenStreetMap contributors © CARTO'
+              maxzoom: 19,
+              attribution: '© OpenStreetMap contributors'
             }
           },
           layers: [
             {
-              id: "carto-voyager-layer",
+              id: "osm-tiles-layer",
               type: "raster" as const,
-              source: "carto-voyager"
+              source: "osm-tiles"
             }
           ]
         };
