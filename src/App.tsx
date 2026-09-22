@@ -6938,8 +6938,8 @@ export default function App() {
                         transition={{ type: "spring", damping: 28, stiffness: 220 }}
                         className={`backdrop-blur-xl border p-3 pt-3 sm:pt-4 sm:p-5 h-full md:h-auto rounded-t-[28px] md:rounded-3xl shadow-2xl flex flex-col gap-4 relative overflow-hidden transition-all duration-300 ease-in-out origin-bottom md:origin-right ${
                           isDarkMode
-                            ? "bg-slate-50 dark:bg-slate-950/95 border-slate-700/90 text-slate-900 dark:text-white shadow-black/90"
-                            : "bg-white/95 border-slate-300/90 text-slate-900 shadow-2xl shadow-slate-900/15"
+                            ? "bg-slate-950/75 border-slate-700/60 text-slate-100 shadow-black/80"
+                            : "bg-white/85 border-slate-300/80 text-slate-900 shadow-2xl shadow-slate-900/15"
                         }`}
                       >
                         {isDarkMode && (

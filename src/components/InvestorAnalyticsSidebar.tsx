@@ -42,6 +42,8 @@ interface InvestorAnalyticsSidebarProps {
   stats?: any;
   isStatsLoading?: boolean;
   onToggleSpatialLayer?: (layerId: string) => void;
+  panelOpacity?: number;
+  onSetPanelOpacity?: (opacity: number) => void;
 }
 
 export default function InvestorAnalyticsSidebar({
@@ -62,7 +64,9 @@ export default function InvestorAnalyticsSidebar({
   setIsExpanded: propsSetIsExpanded,
   stats,
   isStatsLoading = false,
-  onToggleSpatialLayer
+  onToggleSpatialLayer,
+  panelOpacity,
+  onSetPanelOpacity
 }: InvestorAnalyticsSidebarProps) {
   const { t, i18n } = useTranslation();
   // AI Recommendation Engine Target Parameters
