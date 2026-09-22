@@ -5714,43 +5714,16 @@ export default function App() {
         <div className="absolute inset-0 pointer-events-none z-[50] pt-20">
           <div className="h-full w-full relative flex items-start justify-between pl-4 md:pl-6 pr-4 md:pr-6 lg:pr-6 pb-6 overflow-hidden">
 
-            {/* Mobile overlay backdrops */}
-            <AnimatePresence>
-              {isSidebarOpen && (
-                <motion.div
-                  key="left-backdrop"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="md:hidden absolute inset-0 bg-slate-50 dark:bg-slate-950/40 backdrop-blur-md z-[65] pointer-events-auto"
-                  onClick={() => setIsSidebarOpen(false)}
-                />
-              )}
-            </AnimatePresence>
-            <AnimatePresence>
-              {isRightSidebarOpen && (
-                <motion.div
-                  key="right-backdrop"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="lg:hidden absolute inset-0 bg-slate-50 dark:bg-slate-950/40 backdrop-blur-md z-[65] pointer-events-auto"
-                  onClick={() => setIsRightSidebarOpen(false)}
-                />
-              )}
-            </AnimatePresence>
-
-            {/* MOBILE BACKDROP OVERLAY */}
+            {/* Unified Mobile overlay backdrop */}
             <AnimatePresence>
               {isMobile && (isSidebarOpen || (isDashboardExpanded && isRightSidebarOpen)) && (
                 <motion.div
+                  key="unified-mobile-backdrop"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-[65] pointer-events-auto"
+                  className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-[65] pointer-events-auto touch-manipulation"
                   onClick={() => {
                     setIsSidebarOpen(false);
                     setIsRightSidebarOpen(false);

@@ -785,6 +785,62 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
   const desaDistrictCacheRef = useRef<Record<string, any>>({});
   const prevRoadsFeaturesRef = useRef<any>(null);
 
+  // Diagnostics: Track Pointer and Touch Events on Touch/Android devices to detect overlay obstruction
+  useEffect(() => {
+    const handlePointerDiagnostic = (e: PointerEvent | TouchEvent) => {
+      const isTouchEvent = ('pointerType' in e && e.pointerType === 'touch') || e.type.startsWith('touch');
+      const clientX = 'clientX' in e ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+      const clientY = 'clientY' in e ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+
+      const targetEl = e.target as HTMLElement | null;
+      const topEl = (clientX && clientY && typeof document !== 'undefined')
+        ? (document.elementFromPoint(clientX, clientY) as HTMLElement | null)
+        : null;
+
+      const formatEl = (el: HTMLElement | null) => {
+        if (!el) return 'null';
+        const tag = el.tagName.toLowerCase();
+        const id = el.id ? `#${el.id}` : '';
+        const classes = el.className && typeof el.className === 'string'
+          ? `.${el.className.trim().split(/\s+/).slice(0, 2).join('.')}`
+          : '';
+        return `<${tag}${id}${classes}>`;
+      };
+
+      const isObstructed = !!(targetEl && topEl && targetEl !== topEl && !targetEl.contains(topEl) && !topEl.contains(targetEl));
+
+      if (isTouchEvent) {
+        const logData = {
+          event: e.type,
+          pointerType: (e as any).pointerType || 'touch',
+          pos: { x: Math.round(clientX), y: Math.round(clientY) },
+          target: formatEl(targetEl),
+          topElementAtPoint: formatEl(topEl),
+          isObstructed,
+          isAndroidMode: typeof document !== 'undefined' && document.documentElement.classList.contains('android-fullscreen-mode')
+        };
+
+        if (isObstructed) {
+          console.warn('[TouchDiagnostics: OBSTRUCTED TOUCH DETECTED]', logData);
+        } else {
+          console.debug('[TouchDiagnostics: Touch Event]', logData);
+        }
+
+        if (typeof window !== 'undefined') {
+          (window as any).__LUWU_LATEST_TOUCH__ = logData;
+        }
+      }
+    };
+
+    window.addEventListener('pointerdown', handlePointerDiagnostic, { passive: true });
+    window.addEventListener('touchstart', handlePointerDiagnostic, { passive: true });
+
+    return () => {
+      window.removeEventListener('pointerdown', handlePointerDiagnostic);
+      window.removeEventListener('touchstart', handlePointerDiagnostic);
+    };
+  }, []);
+
   // Extract Kecamatan GeoJSON directly so other layer toggles don't invalidate district polygon reference
   const kecLayerGeoJSON = useMemo(() => {
     return props.spatialLayers.find(l => l.id === "layer_kecamatan")?.geojson;
