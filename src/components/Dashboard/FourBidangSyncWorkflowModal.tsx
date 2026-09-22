@@ -379,11 +379,11 @@ export const FourBidangSyncWorkflowModal: React.FC<FourBidangSyncWorkflowModalPr
           </div>
 
           {/* Simulation & Real-time Live Pipeline Case */}
-          <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4">
+          <div className="p-5 rounded-2xl bg-slate-900 text-white space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+                <Building2 className="w-5 h-5 text-emerald-400" />
+                <h3 className="text-sm font-bold uppercase tracking-wider text-white">
                   Contoh Simulasi Progres Investor Real-Time (#INV-2026-089)
                 </h3>
               </div>
@@ -393,25 +393,25 @@ export const FourBidangSyncWorkflowModal: React.FC<FourBidangSyncWorkflowModalPr
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-medium">
-              <div className="p-3 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 shadow-sm">
-                <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase font-bold">Nama Perusahaan</span>
-                <span className="text-sm font-bold text-slate-900 dark:text-white">PT Luwu Cocoa Industry</span>
+              <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700/60">
+                <span className="text-slate-400 block text-[10px] uppercase font-bold">Nama Perusahaan</span>
+                <span className="text-sm font-bold text-white">PT Luwu Cocoa Industry</span>
               </div>
-              <div className="p-3 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 shadow-sm">
-                <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase font-bold">Nilai Rencana Investasi</span>
-                <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">Rp 120,5 Miliar (PMDN)</span>
+              <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700/60">
+                <span className="text-slate-400 block text-[10px] uppercase font-bold">Nilai Rencana Investasi</span>
+                <span className="text-sm font-bold text-emerald-400">Rp 120,5 Miliar (PMDN)</span>
               </div>
-              <div className="p-3 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 shadow-sm">
-                <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase font-bold">Lokasi Target</span>
-                <span className="text-sm font-bold text-slate-900 dark:text-white">Kecamatan Bua &amp; Ponrang</span>
+              <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700/60">
+                <span className="text-slate-400 block text-[10px] uppercase font-bold">Lokasi Target</span>
+                <span className="text-sm font-bold text-white">Kecamatan Bua & Ponrang</span>
               </div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/50 text-xs text-emerald-900 dark:text-emerald-200 flex items-center justify-between">
+            <div className="p-3.5 rounded-xl bg-emerald-950/60 border border-emerald-800/50 text-xs text-emerald-200 flex items-center justify-between">
               <span><strong>Catatan Handover Lintas Bidang:</strong> Admin Promosi telah melimpahkan berkas ke Admin Data. Hasil overlay spasial menunjukkan lahan bebas konflik LP2B dan siap untuk pemrosesan PKKPR di Bidang OSS.</span>
               <button 
                 onClick={onClose}
-                className="px-3 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-bold hover:bg-emerald-400 transition-colors ml-4 flex-shrink-0 cursor-pointer"
+                className="px-3 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-bold hover:bg-emerald-400 transition-colors ml-4 flex-shrink-0"
               >
                 Tutup Blueprint
               </button>
