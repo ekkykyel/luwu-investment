@@ -90,6 +90,27 @@ export default function InvestorAnalyticsSidebar({
 
   const [isMobileFullscreen, setIsMobileFullscreen] = useState(false);
   const [localIsExpanded, setLocalIsExpanded] = useState(true);
+  const [isUltraTransparent, setIsUltraTransparent] = useState(true);
+  const [isOpacityPopoverOpen, setIsOpacityPopoverOpen] = useState(false);
+
+  // Active opacity value (synced with parent state if provided)
+  const currentOpacity = panelOpacity !== undefined ? panelOpacity : (isUltraTransparent ? 25 : 95);
+
+  const handleUpdateOpacity = (val: number) => {
+    const clamped = Math.min(Math.max(val, 10), 95);
+    if (onSetPanelOpacity) {
+      onSetPanelOpacity(clamped);
+    }
+    setIsUltraTransparent(clamped <= 50);
+  };
+
+  // High-contrast theme-aware typography tokens for crisp readability over dynamic map layers
+  const textTitle = isDarkMode ? "text-white font-bold" : "text-slate-950 font-black";
+  const textValue = isDarkMode ? "text-white font-mono font-bold" : "text-slate-950 font-mono font-black";
+  const textLabel = isDarkMode ? "text-slate-200 font-semibold" : "text-slate-950 font-extrabold";
+  const textMuted = isDarkMode ? "text-slate-300 font-medium" : "text-slate-850 font-bold";
+  const textSub = isDarkMode ? "text-slate-300 font-medium" : "text-slate-850 font-semibold";
+
   const isExpanded = propsIsExpanded !== undefined ? propsIsExpanded : localIsExpanded;
   const toggleExpanded = () => {
     if (propsSetIsExpanded) {
@@ -1152,11 +1173,13 @@ export default function InvestorAnalyticsSidebar({
       )}
 
       {/* 1. Header Card with Toggle Collapse */}
-      <div className={`shrink-0 flex flex-col gap-3 p-3.5 sm:p-4 mb-3.5 rounded-lg border transition-all duration-300 ease-in-out  hover:shadow-lg hover:shadow-emerald-500/20 hover:border-emerald-500/50 ${
-        isDarkMode 
-          ? "bg-slate-950 border-slate-800 text-slate-100 shadow-xl" 
-          : "bg-slate-50 border-slate-200 text-slate-800 shadow-sm"
-      }`}>
+      <div 
+        className={`shrink-0 flex flex-col gap-3 p-3.5 sm:p-4 mb-3.5 rounded-2xl border transition-all duration-300 ease-in-out hover:shadow-lg hover:border-emerald-500/50 backdrop-blur-md ${
+          isDarkMode 
+            ? "bg-slate-950/40 border-white/15 text-slate-100 shadow-xl" 
+            : "bg-white/75 border-slate-900/15 text-slate-950 shadow-sm"
+        }`}
+      >
         <div 
           onClick={toggleExpanded} 
           className="flex items-center justify-between w-full cursor-pointer select-none hover:opacity-90 active:scale-99 transition-all"
@@ -1239,12 +1262,12 @@ export default function InvestorAnalyticsSidebar({
                   setIsSearchOpen(!isSearchOpen);
                   if (!isExpanded) toggleExpanded(); // Auto-expand when search is clicked
                 }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] border rounded-lg text-xs transition-all font-normal cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] border rounded-lg text-xs transition-all font-bold cursor-pointer ${
                   isSearchOpen
-                    ? "bg-emerald-600 border-emerald-500 text-slate-950 font-normal"
+                    ? "bg-emerald-600 border-emerald-500 text-white font-bold shadow-xs"
                     : isDarkMode 
-                      ? "bg-slate-900 border-slate-800 hover:border-emerald-500 text-slate-300" 
-                      : "bg-white border-slate-200 hover:border-emerald-600 text-slate-800 dark:text-slate-200 sm:hover:bg-slate-50"
+                      ? "bg-slate-900/80 border-slate-700/80 hover:border-emerald-400 text-slate-100" 
+                      : "bg-white/90 border-slate-300 hover:border-emerald-600 text-slate-950 shadow-xs sm:hover:bg-slate-50"
                 }`}
                 title={t('mapAnalytics.searchInvestmentTooltip', 'Cari Investasi (Tombol Lup)')}
               >
@@ -1257,14 +1280,14 @@ export default function InvestorAnalyticsSidebar({
                   e.stopPropagation();
                   handleExportCSV();
                 }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] border rounded-lg text-xs transition-all font-normal cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] border rounded-lg text-xs transition-all font-bold cursor-pointer ${
                   isDarkMode 
-                    ? "bg-slate-900 border-slate-800 hover:border-emerald-500 text-slate-300" 
-                    : "bg-white border-slate-200 hover:border-emerald-600 text-slate-800 dark:text-slate-200 sm:hover:bg-slate-50"
+                    ? "bg-slate-900/80 border-slate-700/80 hover:border-emerald-400 text-slate-100" 
+                    : "bg-white/90 border-slate-300 hover:border-emerald-600 text-slate-950 shadow-xs sm:hover:bg-slate-50"
                 }`}
                 title={t('analyticalHub.exportCsv')}
               >
-                <Download className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${isDarkMode ? "text-emerald-700 dark:text-emerald-400" : "text-emerald-600"}`} />
+                <Download className={`h-3.5 w-3.5 ${isDarkMode ? "text-emerald-400" : "text-emerald-700"}`} />
                 <span>{t('analyticalHub.exportCsv')}</span>
               </motion.button>
               
@@ -1273,14 +1296,14 @@ export default function InvestorAnalyticsSidebar({
                   e.stopPropagation();
                   window.print();
                 }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] border rounded-lg text-xs transition-all font-normal cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] border rounded-lg text-xs transition-all font-bold cursor-pointer ${
                   isDarkMode 
-                    ? "bg-slate-900 border-slate-800 hover:border-indigo-400 text-slate-300" 
-                    : "bg-white border-slate-200 hover:border-indigo-600 text-slate-800 dark:text-slate-200 sm:hover:bg-slate-50"
+                    ? "bg-slate-900/80 border-slate-700/80 hover:border-indigo-400 text-slate-100" 
+                    : "bg-white/90 border-slate-300 hover:border-indigo-600 text-slate-950 shadow-xs sm:hover:bg-slate-50"
                 }`}
                 title={t('mapAnalytics.printReportTooltip', 'Print Map Report')}
               >
-                <Printer className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${isDarkMode ? "text-indigo-700 dark:text-indigo-400" : "text-indigo-600"}`} />
+                <Printer className={`h-3.5 w-3.5 ${isDarkMode ? "text-indigo-400" : "text-indigo-700"}`} />
                 <span>{t('analyticalHub.report')}</span>
               </motion.button>
             </div>
@@ -1289,24 +1312,24 @@ export default function InvestorAnalyticsSidebar({
 
         {/* Real-time search bar toggle filter details */}
         {isSearchOpen && isExpanded && (
-          <div className={`flex items-center border rounded-md px-2.5 py-1.5 focus-within:border-emerald-500 transition-colors ${
-            isDarkMode ? "bg-slate-900/50 border-slate-800/80" : "bg-white border-slate-250"
+          <div className={`flex items-center border rounded-lg px-2.5 py-1.5 focus-within:border-emerald-500 transition-colors ${
+            isDarkMode ? "bg-slate-950/60 border-slate-700" : "bg-white/95 border-slate-300 shadow-xs"
           }`}>
-            <Search className="h-3.5 w-3.5 text-emerald-700 dark:text-emerald-400 shrink-0" />
+            <Search className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
             <input
               type="text"
               autoFocus
               placeholder={t('mapAnalytics.searchPlaceholder', 'Cari berdasarkan nama proyek, sektor, atau status lahan...')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`bg-transparent border-none outline-none text-xs w-full ml-2 font-mono placeholder:text-slate-600 dark:placeholder:text-slate-400 ${
-                isDarkMode ? "text-slate-200" : "text-slate-800"
+              className={`bg-transparent border-none outline-none text-xs w-full ml-2 font-mono placeholder:text-slate-500 dark:placeholder:text-slate-400 ${
+                isDarkMode ? "text-white font-medium" : "text-slate-950 font-bold"
               }`}
             />
             {searchQuery && (
               <motion.button whileTap={{ scale: 0.95 }}
                 onClick={() => setSearchQuery("")}
-                className="text-[10px] text-slate-600 dark:text-slate-400 hover:text-slate-350 px-1 font-normal"
+                className={`text-[10px] px-1 font-bold ${isDarkMode ? "text-slate-300 hover:text-white" : "text-slate-700 hover:text-slate-950"}`}
               >
                 {t('mapAnalytics.clearSearch', 'Hapus')}
               </motion.button>
@@ -1316,8 +1339,8 @@ export default function InvestorAnalyticsSidebar({
 
         {/* Synchronized District & Village Analytics Selector Bar */}
         {isExpanded && (
-          <div className={`mt-2 p-2.5 rounded-xl border flex flex-wrap items-center gap-2 ${
-            isDarkMode ? "bg-slate-900/90 border-slate-800" : "bg-slate-50 border-slate-200"
+          <div className={`mt-2 p-2.5 rounded-xl border flex flex-wrap items-center gap-2 backdrop-blur-md ${
+            isDarkMode ? "bg-slate-950/60 border-white/15 text-white" : "bg-white/80 border-slate-300 text-slate-950 shadow-xs"
           }`}>
             <div className="flex items-center gap-2 flex-1 min-w-[180px]">
               <MapPin className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
@@ -1328,8 +1351,8 @@ export default function InvestorAnalyticsSidebar({
                   if (onFocusDistrict) onFocusDistrict(val);
                   if (onFocusVillage) onFocusVillage(null);
                 }}
-                className={`text-xs font-semibold px-2 py-1.5 rounded-lg border outline-none cursor-pointer w-full ${
-                  isDarkMode ? "bg-slate-800 border-slate-700 text-white" : "bg-white border-slate-300 text-slate-800"
+                className={`text-xs font-bold px-2.5 py-1.5 rounded-lg border outline-none cursor-pointer w-full ${
+                  isDarkMode ? "bg-slate-900 border-slate-700 text-white" : "bg-white border-slate-300 text-slate-950 shadow-xs"
                 }`}
               >
                 <option value="ALL">📍 Semua Kecamatan (Kab. Luwu)</option>
@@ -1350,8 +1373,8 @@ export default function InvestorAnalyticsSidebar({
                     const val = e.target.value === "ALL" ? null : e.target.value;
                     if (onFocusVillage) onFocusVillage(val);
                   }}
-                  className={`text-xs font-semibold px-2 py-1.5 rounded-lg border outline-none cursor-pointer w-full ${
-                    isDarkMode ? "bg-slate-800 border-slate-700 text-white" : "bg-white border-slate-300 text-slate-800"
+                  className={`text-xs font-bold px-2.5 py-1.5 rounded-lg border outline-none cursor-pointer w-full ${
+                    isDarkMode ? "bg-slate-900 border-slate-700 text-white" : "bg-white border-slate-300 text-slate-950 shadow-xs"
                   }`}
                 >
                   <option value="ALL">🏡 Semua Desa/Kelurahan (Kec. {districts.find(d => String(d.id) === String(selectedDistrictId))?.name})</option>
@@ -1834,24 +1857,24 @@ export default function InvestorAnalyticsSidebar({
           )}
 
         {/* 2.7 Active Layer Spatial Synchronization Analytics Hub */}
-        <div className={`border p-3.5 sm:p-5 rounded-lg shadow-lg transition-all duration-300 relative overflow-hidden ${
+        <div className={`border p-4 sm:p-5 rounded-2xl shadow-sm transition-all duration-300 relative overflow-hidden backdrop-blur-md ${
           isDarkMode 
-            ? "bg-slate-950 border-emerald-500/30 text-white" 
-            : "bg-white border-slate-200 text-slate-800"
+            ? "bg-slate-950/50 border-white/10 text-white" 
+            : "bg-white/75 border-slate-900/15 text-slate-950 shadow-sm"
         }`}>
           {isDarkMode && <div className="absolute -top-10 -right-10 h-36 w-36 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />}
           
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-4 border-b pb-3 border-slate-200 dark:border-slate-800/80">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-4 border-b pb-3 border-slate-200 dark:border-white/10">
             <div className="flex items-center gap-2.5">
-              <div className={`h-9 w-9 rounded-md flex items-center justify-center shrink-0 shadow-sm ${
-                isDarkMode ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30" : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+              <div className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${
+                isDarkMode ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-emerald-100 text-emerald-950 font-bold border border-emerald-300"
               }`}>
-                <Layers className="h-4.5 w-4.5 text-emerald-700 dark:text-emerald-400 animate-pulse" />
+                <Layers className="h-4.5 w-4.5 text-emerald-600 dark:text-emerald-400 animate-pulse" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <span className={`text-[9px] font-mono font-bold tracking-widest uppercase block ${
-                    isDarkMode ? "text-emerald-700 dark:text-emerald-400" : "text-emerald-600"
+                    isDarkMode ? "text-emerald-400" : "text-emerald-800"
                   }`}>{t('spatialSync.realtimeTitle', 'SINKRONISASI LAYER PETA REAL-TIME')}</span>
                   <span className="flex h-2 w-2 relative">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -1859,7 +1882,7 @@ export default function InvestorAnalyticsSidebar({
                   </span>
                 </div>
                 <h4 className={`text-xs sm:text-sm font-bold tracking-tight font-sans ${
-                  isDarkMode ? "text-white" : "text-slate-900"
+                  isDarkMode ? "text-white" : "text-slate-950"
                 }`}>
                   {t('spatialSync.subtitle', 'Analisis Presisi Layer Aktif Investor')}
                 </h4>
@@ -1868,20 +1891,20 @@ export default function InvestorAnalyticsSidebar({
 
             <div className={`self-start sm:self-auto px-3 py-1 rounded-full text-[10px] font-mono font-bold flex items-center gap-1.5 border ${
               isDarkMode
-                ? "bg-emerald-950/80 text-emerald-300 border-emerald-500/40 shadow-sm shadow-emerald-950/50"
-                : "bg-emerald-50 text-emerald-800 border-emerald-200 shadow-sm"
+                ? "bg-emerald-950/80 text-emerald-300 border-emerald-500/40 shadow-sm"
+                : "bg-emerald-100 text-emerald-950 border-emerald-300 shadow-sm"
             }`}>
-              <Database className="h-3 w-3 text-emerald-700 dark:text-emerald-400" />
+              <Database className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
               <span>{t('spatialSync.layersAnalyzed', '{{active}} / {{total}} Layer Aktif Dianalisa', { active: activeLayerAnalysis.activeCount, total: activeLayerAnalysis.totalCount })}</span>
             </div>
           </div>
 
           {/* Active Spatial Metrics Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-4">
-            <div className={`p-2.5 rounded-md border flex flex-col justify-between ${
-              isDarkMode ? "bg-slate-900/60 border-slate-800/80" : "bg-slate-50 border-slate-200"
+            <div className={`p-3 rounded-xl border flex flex-col justify-between ${
+              isDarkMode ? "bg-slate-900/60 border-white/10" : "bg-white/90 border-slate-300 shadow-xs"
             }`}>
-              <span className={`text-[9px] font-mono font-semibold uppercase flex items-center gap-1 ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+              <span className={`text-[9px] font-mono font-bold uppercase flex items-center gap-1 ${isDarkMode ? "text-slate-300" : "text-slate-800"}`}>
                 🌾 {t('spatialSync.foodAquaculture', 'Ketahanan Pangan & Aquakultur')}
               </span>
               <div className="mt-1 flex items-baseline justify-between">
@@ -1890,41 +1913,41 @@ export default function InvestorAnalyticsSidebar({
                     ? `${formatNumber(activeLayerAnalysis.foodAndFisheryHa)} Ha`
                     : t('spatialSync.sawahTambakActive', 'Layer Sawah/Tambak Aktif')}
                 </span>
-                <span className={`text-[9px] font-mono ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+                <span className={`text-[9px] font-mono font-semibold ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>
                   {(activeLayerAnalysis.sawahStats.isActive ? 1 : 0) + (activeLayerAnalysis.tambakStats.isActive ? 1 : 0)} {t('spatialSync.layerOnCount', 'Layer ON')}
                 </span>
               </div>
             </div>
 
-            <div className={`p-2.5 rounded-md border flex flex-col justify-between ${
-              isDarkMode ? "bg-slate-900/60 border-slate-800/80" : "bg-slate-50 border-slate-200"
+            <div className={`p-3 rounded-xl border flex flex-col justify-between ${
+              isDarkMode ? "bg-slate-900/60 border-white/10" : "bg-white/90 border-slate-300 shadow-xs"
             }`}>
-              <span className={`text-[9px] font-mono font-semibold uppercase flex items-center gap-1 ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+              <span className={`text-[9px] font-mono font-bold uppercase flex items-center gap-1 ${isDarkMode ? "text-slate-300" : "text-slate-800"}`}>
                 🌲 {t('spatialSync.forestCoastal', 'Hutan & Konservasi Pesisir')}
               </span>
               <div className="mt-1 flex items-baseline justify-between">
-                <span className={`text-sm font-mono font-bold ${isDarkMode ? "text-teal-700 dark:text-teal-400" : "text-teal-700"}`}>
+                <span className={`text-sm font-mono font-bold ${isDarkMode ? "text-teal-400" : "text-teal-800"}`}>
                   {activeLayerAnalysis.ecoShieldHa > 0
                     ? `${formatNumber(activeLayerAnalysis.ecoShieldHa)} Ha`
                     : t('spatialSync.ecoCoverage', 'Cakupan Ekologi')}
                 </span>
-                <span className={`text-[9px] font-mono ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
-                  {(activeLayerAnalysis.mangroveStats.isActive ? 1 : 0) + (activeLayerAnalysis.primerStats.isActive ? 1 : 0) + (activeLayerAnalysis.sekunderStats.isActive ? 1 : 0)} {t('spatialSync.layerOnCount', 'Layer ON')}
+                <span className={`text-[9px] font-mono font-semibold ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>
+                  {(activeLayerAnalysis.mangroveStats.isActive ? 1 : 0) + (activeLayerAnalysis.primerStats.isActive ? 1 : 0)} {t('spatialSync.layerOnCount', 'Layer ON')}
                 </span>
               </div>
             </div>
 
-            <div className={`p-2.5 rounded-md border flex flex-col justify-between ${
-              isDarkMode ? "bg-slate-900/60 border-slate-800/80" : "bg-slate-50 border-slate-200"
+            <div className={`p-3 rounded-xl border flex flex-col justify-between ${
+              isDarkMode ? "bg-slate-900/60 border-white/10" : "bg-white/90 border-slate-300 shadow-xs"
             }`}>
-              <span className={`text-[9px] font-mono font-semibold uppercase flex items-center gap-1 ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+              <span className={`text-[9px] font-mono font-bold uppercase flex items-center gap-1 ${isDarkMode ? "text-slate-300" : "text-slate-800"}`}>
                 🏗️ {t('spatialSync.infraAccess', 'Infrastruktur & Aksesibilitas')}
               </span>
               <div className="mt-1 flex items-baseline justify-between">
-                <span className={`text-sm font-mono font-bold ${isDarkMode ? "text-sky-400" : "text-sky-700"}`}>
+                <span className={`text-sm font-mono font-bold ${isDarkMode ? "text-sky-400" : "text-sky-800"}`}>
                   {activeLayerAnalysis.infraStats.featCount} {t('spatialSync.points', 'Titik')} • {activeLayerAnalysis.jalanStats.lengthKm > 0 ? `${activeLayerAnalysis.jalanStats.lengthKm.toFixed(1)} Km` : t('spatialSync.roadNetwork', 'Jaringan Jalan')}
                 </span>
-                <span className={`text-[9px] font-mono ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+                <span className={`text-[9px] font-mono font-semibold ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>
                   {(activeLayerAnalysis.infraStats.isActive ? 1 : 0) + (activeLayerAnalysis.jalanStats.isActive ? 1 : 0)} {t('spatialSync.layerOnCount', 'Layer ON')}
                 </span>
               </div>
@@ -1933,7 +1956,7 @@ export default function InvestorAnalyticsSidebar({
 
           {/* 9 Requested Layer Matrix */}
           <div className="space-y-2">
-            <span className={`text-[10px] font-mono font-bold uppercase tracking-wider block mb-1 ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+            <span className={`text-[10px] font-mono font-bold uppercase tracking-wider block mb-1 ${isDarkMode ? "text-slate-200" : "text-slate-900"}`}>
               {t('spatialSync.matrixTitle', 'STATUS PRESISI 9 LAYER SPASIAL UTAMA PEMKAB LUWU:')}
             </span>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -1943,14 +1966,14 @@ export default function InvestorAnalyticsSidebar({
                   key={item.id}
                   onClick={() => onToggleSpatialLayer?.(item.id)}
                   title={t('spatialSync.clickToToggle', 'Klik untuk aktifkan/matikan layer di peta')}
-                  className={`p-2 rounded-md border transition-all text-left flex items-center justify-between cursor-pointer hover:scale-[1.02] active:scale-95 ${
+                  className={`p-2.5 rounded-xl border transition-all text-left flex items-center justify-between cursor-pointer hover:scale-[1.02] active:scale-95 ${
                     item.isActive
                       ? isDarkMode
-                        ? "bg-slate-900/80 border-emerald-500/40 text-slate-200 shadow-sm hover:border-emerald-400"
-                        : "bg-emerald-50/80 border-emerald-300 text-slate-900 hover:border-emerald-500 shadow-sm"
+                        ? "bg-slate-900/90 border-emerald-500/50 text-white shadow-sm hover:border-emerald-400"
+                        : "bg-emerald-100 border-emerald-400 text-slate-950 font-bold hover:border-emerald-600 shadow-sm"
                       : isDarkMode
-                      ? "bg-slate-900/20 border-slate-800/50 text-slate-600 dark:text-slate-400 opacity-60 hover:opacity-100 hover:border-slate-600"
-                      : "bg-slate-100/80 border-slate-200 text-slate-600 opacity-70 hover:opacity-100 hover:border-slate-400"
+                      ? "bg-slate-950/40 border-white/10 text-slate-300 opacity-80 hover:opacity-100 hover:border-white/30"
+                      : "bg-white/80 border-slate-300 text-slate-800 opacity-85 hover:opacity-100 hover:border-slate-500"
                   }`}
                 >
                   <div className="flex items-center gap-2 min-w-0">
@@ -1959,7 +1982,7 @@ export default function InvestorAnalyticsSidebar({
                       <div className="flex items-center gap-1">
                         <span className="text-[10px] font-bold truncate block">{t(item.titleKey, item.defaultTitle)}</span>
                       </div>
-                      <span className={`text-[9px] font-mono block truncate ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+                      <span className={`text-[9px] font-mono block truncate ${isDarkMode ? "text-slate-300" : "text-slate-700 font-semibold"}`}>
                         {item.isActive
                           ? item.areaHa > 0
                             ? `${formatNumber(item.areaHa)} Ha`
@@ -1973,13 +1996,13 @@ export default function InvestorAnalyticsSidebar({
 
                   <div className="ml-1 shrink-0">
                     {item.isActive ? (
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[8px] font-mono font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-                        <span className="w-1 h-1 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse mr-1" />
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[8px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                        <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse mr-1" />
                         {t('spatialSync.on', 'ON')}
                       </span>
                     ) : (
-                      <span className={`inline-flex items-center px-1.5 py-0.5 rounded-md text-[8px] font-mono font-semibold border ${
-                        isDarkMode ? "bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-700" : "bg-slate-200 text-slate-600 border-slate-300"
+                      <span className={`inline-flex items-center px-1.5 py-0.5 rounded-md text-[8px] font-mono font-bold border ${
+                        isDarkMode ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-slate-200 text-slate-800 border-slate-300"
                       }`}>
                         {t('spatialSync.off', 'OFF')}
                       </span>
@@ -1991,28 +2014,28 @@ export default function InvestorAnalyticsSidebar({
           </div>
 
           {/* Sync Insights Banner */}
-          <div className={`mt-3 p-2.5 rounded-md text-[10px] flex items-start gap-2 border ${
-            isDarkMode ? "bg-emerald-950/30 border-emerald-500/20 text-slate-300" : "bg-emerald-50 border-emerald-200 text-slate-800"
+          <div className={`mt-3 p-3 rounded-xl text-[10.5px] flex items-start gap-2.5 border ${
+            isDarkMode ? "bg-emerald-950/40 border-emerald-500/30 text-slate-200" : "bg-emerald-50 border-emerald-300 text-slate-950"
           }`}>
             <ShieldCheck className="h-4 w-4 text-emerald-500 dark:text-emerald-400 shrink-0 mt-0.5" />
             <div className="leading-relaxed">
-              <strong className="text-emerald-700 dark:text-emerald-400 font-mono">{t('spatialSync.officialDataIntegrity', 'Integritas Data Spasial Resmi:')} </strong>
+              <strong className="text-emerald-600 dark:text-emerald-400 font-mono font-bold">{t('spatialSync.officialDataIntegrity', 'Integritas Data Spasial Resmi:')} </strong>
               {t('spatialSync.integrityDesc', 'Perhitungan luas hektar, analisis tutupan lahan, dan skor kesesuaian investasi pada dasbor ini telah tersinkronisasi 100% secara real-time dengan status layer aktif di peta geospasial Supabase / PostGIS Pemkab Luwu.')}
             </div>
           </div>
 
           {/* Real-time Overlap Analysis (Mangrove & LP2B Sawah) Widget */}
-          <div className={`mt-3 p-3 sm:p-3.5 rounded-md border transition-all ${
-            isDarkMode ? "bg-slate-900/90 border-teal-500/30" : "bg-emerald-50/60 border-emerald-200 text-slate-800"
+          <div className={`mt-3 p-3.5 sm:p-4 rounded-xl border transition-all ${
+            isDarkMode ? "bg-slate-900/80 border-teal-500/40" : "bg-emerald-50/90 border-emerald-300 text-slate-950"
           }`}>
             <div className="flex items-center justify-between gap-2 mb-2">
               <div className="flex items-center gap-2">
                 <Leaf className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                <h5 className="text-[11px] font-bold tracking-wide uppercase font-mono text-emerald-700 dark:text-emerald-400">
+                <h5 className="text-[11px] font-bold tracking-wide uppercase font-mono text-emerald-700 dark:text-emerald-300">
                   {t('esgOverlap.title', 'ANALISIS TUMPANG TINDIH LINGKUNGAN (ESG OVERLAP)')}
                 </h5>
               </div>
-              <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-bold border ${
+              <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold border ${
                 overlapEsgAnalysis.riskLevel === "BUNKER KONSERVASI"
                   ? "bg-rose-950/80 text-rose-300 border-rose-500/40"
                   : overlapEsgAnalysis.riskLevel === "PERHATIAN ESG"
@@ -2029,22 +2052,22 @@ export default function InvestorAnalyticsSidebar({
               </span>
             </div>
 
-            <p className={`text-[10px] leading-relaxed mb-2.5 font-sans ${isDarkMode ? "text-slate-300" : "text-slate-800 dark:text-slate-200"}`}>
+            <p className={`text-[10.5px] leading-relaxed mb-3 font-sans ${isDarkMode ? "text-slate-200" : "text-slate-900 font-medium"}`}>
               {t('esgOverlap.description', 'Deteksi otomatis tumpang tindih kawasan proyek investasi terhadap tutupan ekosistem Sabuk Hijau Mangrove dan Lahan Sawah LP2B (Pertanian Pangan Berkelanjutan).')}
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {/* Sawah LP2B Overlap Status */}
-              <div className={`p-2.5 rounded-lg border flex items-center justify-between ${
-                isDarkMode ? "bg-slate-950/70 border-slate-800" : "bg-white border-slate-200 shadow-sm"
+              <div className={`p-3 rounded-xl border flex items-center justify-between ${
+                isDarkMode ? "bg-slate-950/80 border-white/10" : "bg-white border-slate-300 shadow-xs"
               }`}>
                 <div className="flex items-center gap-2">
                   <span className="text-base">🌾</span>
                   <div>
-                    <span className={`text-[10px] font-bold block leading-tight ${isDarkMode ? "text-white" : "text-slate-900"}`}>
+                    <span className={`text-[10px] font-bold block leading-tight ${isDarkMode ? "text-white" : "text-slate-950"}`}>
                       {t('esgOverlap.sawahLp2b', 'Lahan Sawah (LP2B)')}
                     </span>
-                    <span className={`text-[9px] font-mono block ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+                    <span className={`text-[9px] font-mono block ${isDarkMode ? "text-slate-300" : "text-slate-700 font-medium"}`}>
                       {t('esgOverlap.coverage', 'Cakupan')}: {formatNumber(overlapEsgAnalysis.sawahAreaHa)} Ha
                     </span>
                   </div>
@@ -2052,28 +2075,28 @@ export default function InvestorAnalyticsSidebar({
                 <div className="text-right">
                   <span className={`text-[10px] font-mono font-bold block ${
                     overlapEsgAnalysis.sawahOverlapCount > 0 
-                      ? (isDarkMode ? "text-amber-700 dark:text-amber-400" : "text-amber-700") 
-                      : (isDarkMode ? "text-emerald-700 dark:text-emerald-400" : "text-emerald-700")
+                      ? (isDarkMode ? "text-amber-400" : "text-amber-800 font-black") 
+                      : (isDarkMode ? "text-emerald-400" : "text-emerald-800 font-black")
                   }`}>
                     {t('esgOverlap.intersectingPlots', '{{count}} Plot Beririsan', { count: overlapEsgAnalysis.sawahOverlapCount })}
                   </span>
-                  <span className={`text-[8px] font-mono ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+                  <span className={`text-[8.5px] font-mono font-semibold ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>
                     {overlapEsgAnalysis.isSawahActive ? t('esgOverlap.layerActive', 'Layer Aktif') : t('esgOverlap.layerDisabled', 'Layer Non-aktif')}
                   </span>
                 </div>
               </div>
 
               {/* Mangrove Overlap Status */}
-              <div className={`p-2.5 rounded-lg border flex items-center justify-between ${
-                isDarkMode ? "bg-slate-950/70 border-slate-800" : "bg-white border-slate-200 shadow-sm"
+              <div className={`p-3 rounded-xl border flex items-center justify-between ${
+                isDarkMode ? "bg-slate-950/80 border-white/10" : "bg-white border-slate-300 shadow-xs"
               }`}>
                 <div className="flex items-center gap-2">
                   <span className="text-base">🌿</span>
                   <div>
-                    <span className={`text-[10px] font-bold block leading-tight ${isDarkMode ? "text-white" : "text-slate-900"}`}>
+                    <span className={`text-[10px] font-bold block leading-tight ${isDarkMode ? "text-white" : "text-slate-950"}`}>
                       {t('esgOverlap.mangroveGreenbelt', 'Sabuk Hijau Mangrove')}
                     </span>
-                    <span className={`text-[9px] font-mono block ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+                    <span className={`text-[9px] font-mono block ${isDarkMode ? "text-slate-300" : "text-slate-700 font-medium"}`}>
                       {t('esgOverlap.coverage', 'Cakupan')}: {formatNumber(overlapEsgAnalysis.mangroveAreaHa)} Ha
                     </span>
                   </div>
@@ -2081,20 +2104,20 @@ export default function InvestorAnalyticsSidebar({
                 <div className="text-right">
                   <span className={`text-[10px] font-mono font-bold block ${
                     overlapEsgAnalysis.mangroveOverlapCount > 0 
-                      ? (isDarkMode ? "text-rose-700 dark:text-rose-400" : "text-rose-700") 
-                      : (isDarkMode ? "text-emerald-700 dark:text-emerald-400" : "text-emerald-700")
+                      ? (isDarkMode ? "text-rose-400" : "text-rose-800 font-black") 
+                      : (isDarkMode ? "text-emerald-400" : "text-emerald-800 font-black")
                   }`}>
                     {t('esgOverlap.intersectingPlots', '{{count}} Plot Beririsan', { count: overlapEsgAnalysis.mangroveOverlapCount })}
                   </span>
-                  <span className={`text-[8px] font-mono ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+                  <span className={`text-[8.5px] font-mono font-semibold ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>
                     {overlapEsgAnalysis.isMangroveActive ? t('esgOverlap.layerActive', 'Layer Aktif') : t('esgOverlap.layerDisabled', 'Layer Non-aktif')}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="mt-2 text-[9.5px] text-emerald-700 dark:text-emerald-400 dark:text-emerald-300 font-mono flex items-center gap-1.5">
-              <Sparkles className="h-3 w-3 shrink-0 text-emerald-700 dark:text-emerald-400" />
+            <div className="mt-2.5 text-[9.5px] text-emerald-700 dark:text-emerald-300 font-mono font-semibold flex items-center gap-1.5">
+              <Sparkles className="h-3 w-3 shrink-0 text-emerald-600 dark:text-emerald-400" />
               <span>{String(t(overlapEsgAnalysis.statusTextKey, { defaultValue: overlapEsgAnalysis.defaultStatusText, ...overlapEsgAnalysis.statusParams }) || overlapEsgAnalysis.defaultStatusText)}</span>
             </div>
           </div>
@@ -2736,35 +2759,35 @@ export default function InvestorAnalyticsSidebar({
         </div>
 
         {/* 5. AI Smart Geospatial Advisor */}
-        <div className={`border p-5 lg:p-6 rounded-lg shadow-md hover:shadow-lg overflow-hidden relative transition-all duration-300 ease-in-out ${
-          isDarkMode ? "bg-slate-900 border-emerald-500/30 text-white" : "bg-emerald-50/20 border-emerald-500/20 text-slate-800"
+        <div className={`border p-5 lg:p-6 rounded-2xl shadow-sm hover:shadow-md overflow-hidden relative transition-all duration-300 ease-in-out backdrop-blur-md ${
+          isDarkMode ? "bg-slate-950/50 border-white/10 text-white" : "bg-white/75 border-slate-900/15 text-slate-950 shadow-sm"
         }`}>
           {isDarkMode && <div className="absolute top-0 right-0 h-28 w-28 bg-emerald-500/10 rounded-full blur-2xl -z-10 pointer-events-none transition-all duration-500 group-hover:bg-emerald-500/20"></div>}
           {isDarkMode && <div className="absolute -bottom-8 -left-8 h-24 w-24 bg-indigo-500/10 rounded-full blur-xl -z-10 pointer-events-none transition-all duration-500 group-hover:bg-indigo-500/20"></div>}
 
           <div className="flex items-center gap-3 mb-4">
-            <div className={`h-8 w-8 rounded-md flex items-center justify-center transition-colors duration-300 hover:bg-emerald-500/30 ${isDarkMode ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-emerald-100 text-emerald-700"}`}>
+            <div className={`h-8 w-8 rounded-xl flex items-center justify-center transition-colors duration-300 ${isDarkMode ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-emerald-100 text-emerald-950 border border-emerald-300 font-bold"}`}>
               <Cpu className="h-5 w-5" />
             </div>
             <div>
-              <h4 className={`text-xs font-semibold tracking-widest uppercase ${isDarkMode ? "text-emerald-700 dark:text-emerald-400" : "text-emerald-700"}`}>{t('mapAnalytics.smartGeospatialIntell')}</h4>
-              <span className={`text-sm md:text-base font-bold tracking-wide block mt-0.5 ${isDarkMode ? "text-white" : "text-slate-900"}`}>{t('mapAnalytics.aiSpatialAdvisor')}</span>
+              <h4 className={`text-xs font-bold tracking-widest uppercase ${isDarkMode ? "text-emerald-400" : "text-emerald-800"}`}>{t('mapAnalytics.smartGeospatialIntell')}</h4>
+              <span className={`text-sm md:text-base font-bold tracking-wide block mt-0.5 ${isDarkMode ? "text-white" : "text-slate-950"}`}>{t('mapAnalytics.aiSpatialAdvisor')}</span>
             </div>
           </div>
 
-          <p className={`text-xs md:text-sm mb-5 leading-relaxed tracking-wide ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+          <p className={`text-xs md:text-sm mb-5 leading-relaxed tracking-wide ${isDarkMode ? "text-slate-200" : "text-slate-900 font-medium"}`}>
             {t('mapAnalytics.advisorDescription')}
           </p>
 
           {/* Advisor Params Form */}
           <div className="flex flex-col gap-4">
             <div>
-              <label className={`text-[10px] md:text-xs block font-semibold mb-1.5 uppercase tracking-widest ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>{t('mapAnalytics.targetSectorAxis')}</label>
+              <label className={`text-[10px] md:text-xs block font-bold mb-1.5 uppercase tracking-widest ${isDarkMode ? "text-slate-200" : "text-slate-950"}`}>{t('mapAnalytics.targetSectorAxis')}</label>
               <select
                 value={recommendSector}
                 onChange={(e) => setRecommendSector(e.target.value as SektorInvestasi)}
-                className={`w-full border rounded-md px-3 py-2 text-xs md:text-sm focus:outline-none transition-all duration-300 hover:shadow-sm cursor-pointer ${
-                  isDarkMode ? "bg-slate-950 border-slate-700 text-white focus:border-emerald-500" : "bg-white border-slate-300 text-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                className={`w-full border rounded-xl px-3 py-2 text-xs md:text-sm focus:outline-none transition-all duration-300 hover:shadow-sm cursor-pointer ${
+                  isDarkMode ? "bg-slate-900/90 border-white/15 text-white focus:border-emerald-500" : "bg-white border-slate-300 text-slate-950 font-bold focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 shadow-xs"
                 }`}
               >
                 {Object.values(SektorInvestasi).map(sec => (
@@ -2775,12 +2798,12 @@ export default function InvestorAnalyticsSidebar({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className={`text-[10px] md:text-xs block font-semibold mb-1.5 uppercase tracking-widest ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>{t('mapAnalytics.districtFocus')}</label>
+                <label className={`text-[10px] md:text-xs block font-bold mb-1.5 uppercase tracking-widest ${isDarkMode ? "text-slate-200" : "text-slate-950"}`}>{t('mapAnalytics.districtFocus')}</label>
                 <select
                   value={recommendDistrictId}
                   onChange={(e) => setRecommendDistrictId(e.target.value)}
-                  className={`w-full border rounded-md px-3 py-2 text-xs md:text-sm focus:outline-none transition-all duration-300 hover:shadow-sm cursor-pointer ${
-                    isDarkMode ? "bg-slate-950 border-slate-700 text-white focus:border-emerald-500" : "bg-white border-slate-300 text-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                  className={`w-full border rounded-xl px-3 py-2 text-xs md:text-sm focus:outline-none transition-all duration-300 hover:shadow-sm cursor-pointer ${
+                    isDarkMode ? "bg-slate-900/90 border-white/15 text-white focus:border-emerald-500" : "bg-white border-slate-300 text-slate-950 font-bold focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 shadow-xs"
                   }`}
                 >
                   <option value="">{t('mapAnalytics.allRegions')}</option>
@@ -2790,7 +2813,7 @@ export default function InvestorAnalyticsSidebar({
                 </select>
               </div>
               <div>
-                <label className={`text-[10px] md:text-xs block font-semibold mb-1.5 uppercase tracking-widest ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>{t('mapAnalytics.targetLandArea')}</label>
+                <label className={`text-[10px] md:text-xs block font-bold mb-1.5 uppercase tracking-widest ${isDarkMode ? "text-slate-200" : "text-slate-950"}`}>{t('mapAnalytics.targetLandArea')}</label>
                 <input
                   type="number"
                   inputMode="numeric"
@@ -2802,8 +2825,8 @@ export default function InvestorAnalyticsSidebar({
                     setTargetAreaHa("" as any);
                   }}
                   onChange={(e) => setTargetAreaHa(e.target.value === "" ? "" as any : Number(e.target.value))}
-                  className={`w-full border rounded-md px-3 py-2 text-xs md:text-sm focus:outline-none transition-all duration-300 hover:shadow-sm ${
-                    isDarkMode ? "bg-slate-950 border-slate-700 text-white focus:border-emerald-500" : "bg-white border-slate-300 text-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                  className={`w-full border rounded-xl px-3 py-2 text-xs md:text-sm focus:outline-none transition-all duration-300 hover:shadow-sm font-mono ${
+                    isDarkMode ? "bg-slate-900/90 border-white/15 text-white focus:border-emerald-500" : "bg-white border-slate-300 text-slate-950 font-bold focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 shadow-xs"
                   }`}
                 />
               </div>
@@ -2812,8 +2835,8 @@ export default function InvestorAnalyticsSidebar({
             <motion.button whileTap={{ scale: 0.95 }}
               onClick={handleFetchAiRecommendation}
               disabled={isLoadingAi}
-              className={`w-full mt-3 py-3 rounded-md transition-all duration-300 ease-in-out text-xs md:text-sm flex items-center justify-center gap-2 font-bold tracking-wide shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-95 ${
-                isDarkMode ? "bg-emerald-500 hover:bg-emerald-400 text-slate-950" : "bg-emerald-600 hover:bg-emerald-500 text-white"
+              className={`w-full mt-3 py-3 rounded-xl transition-all duration-300 ease-in-out text-xs md:text-sm flex items-center justify-center gap-2 font-bold tracking-wide shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-95 cursor-pointer ${
+                isDarkMode ? "bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold" : "bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold"
               }`}
             >
               {isLoadingAi ? (
@@ -2832,20 +2855,20 @@ export default function InvestorAnalyticsSidebar({
 
           {/* AI Answer Screen */}
           {aiRecommendation && (
-            <div className={`mt-4 pt-4 border-t animate-fade-in font-mono ${isDarkMode ? "border-slate-850" : "border-slate-200"}`}>
-              <div className={`flex items-center justify-between mb-3 p-2.5 rounded-lg border ${
-                isDarkMode ? "bg-slate-900 border-slate-800" : "bg-slate-100 border-slate-200"
+            <div className={`mt-4 pt-4 border-t animate-fade-in font-mono ${isDarkMode ? "border-white/10" : "border-slate-900/15"}`}>
+              <div className={`flex items-center justify-between mb-3 p-3 rounded-xl border ${
+                isDarkMode ? "bg-slate-900/90 border-white/10" : "bg-white border-slate-300 shadow-xs"
               }`}>
-                <span className={`text-xs font-normal truncate max-w-[150px] ${isDarkMode ? "text-emerald-700 dark:text-emerald-400" : "text-emerald-850"}`}>{aiRecommendation.title}</span>
+                <span className={`text-xs font-bold truncate max-w-[150px] ${isDarkMode ? "text-emerald-400" : "text-emerald-950"}`}>{aiRecommendation.title}</span>
                 <div className="flex items-center gap-1">
-                  <span className="text-[9px] text-slate-600 dark:text-slate-400 font-mono">{t('mapAnalytics.suitabilityLevel')}</span>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-normal text-white bg-emerald-600">
+                  <span className={`text-[9px] font-mono font-bold ${isDarkMode ? "text-slate-300" : "text-slate-800"}`}>{t('mapAnalytics.suitabilityLevel')}</span>
+                  <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-bold text-white bg-emerald-600 shadow-xs">
                     {aiRecommendation.suitabilityScore}%
                   </span>
                 </div>
               </div>
-              <div className={`p-3 rounded-lg text-[10.5px] leading-relaxed font-mono max-h-56 overflow-y-auto whitespace-pre-line border-l-2 ${
-                isDarkMode ? "bg-slate-900/50 border-slate-800/40 text-slate-350 border-l-emerald-500" : "bg-white border-slate-200/60 text-slate-800 dark:text-slate-200 border-l-emerald-600 shadow-inner"
+              <div className={`p-3.5 rounded-xl text-[10.5px] leading-relaxed font-mono max-h-56 overflow-y-auto whitespace-pre-line border-l-4 ${
+                isDarkMode ? "bg-slate-950/70 border-white/10 text-slate-200 border-l-emerald-500" : "bg-white border-slate-300 text-slate-950 font-medium border-l-emerald-600 shadow-xs"
               }`}>
                 {aiRecommendation.content}
               </div>
@@ -2854,12 +2877,12 @@ export default function InvestorAnalyticsSidebar({
         </div>
 
         {/* Kecamatan Performance Matrix */}
-        <div className={`border p-5 lg:p-6 rounded-lg shadow-sm hover:shadow-md flex flex-col gap-4 transition-all duration-300 ease-in-out mt-4 lg:mt-6 ${
-          isDarkMode ? "bg-slate-900 border-slate-800 text-white" : "bg-white border-slate-200 text-slate-800"
+        <div className={`border p-5 lg:p-6 rounded-2xl shadow-sm hover:shadow-md flex flex-col gap-4 transition-all duration-300 ease-in-out mt-4 lg:mt-6 backdrop-blur-md ${
+          isDarkMode ? "bg-slate-950/50 border-white/10 text-white" : "bg-white/75 border-slate-900/15 text-slate-950 shadow-sm"
         }`}>
           <div>
-            <h4 className={`text-xs md:text-sm font-semibold tracking-wide block ${isDarkMode ? "text-white" : "text-slate-900"}`}>{t('mapAnalytics.kecamatanPerformanceMatrix')}</h4>
-            <span className={`text-[10px] md:text-[11px] block mt-1 leading-relaxed ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>Peringkat Kinerja Komparatif Wilayah</span>
+            <h4 className={`text-xs md:text-sm font-bold tracking-wide block ${isDarkMode ? "text-white" : "text-slate-950"}`}>{t('mapAnalytics.kecamatanPerformanceMatrix')}</h4>
+            <span className={`text-[10px] md:text-[11px] block mt-1 leading-relaxed ${isDarkMode ? "text-slate-300 font-medium" : "text-slate-800 font-bold"}`}>Peringkat Kinerja Komparatif Wilayah</span>
           </div>
           <div className="flex flex-col gap-3 max-h-72 overflow-y-auto pr-2 dark-scroll">
             {districtRankings.map((rank, idx) => {
@@ -2868,19 +2891,19 @@ export default function InvestorAnalyticsSidebar({
                 <div
                   key={rank.id}
                   onClick={() => onFocusDistrict(rank.id)}
-                  className={`p-3 lg:p-4 rounded-md border text-xs cursor-pointer transition-all duration-300 ease-in-out flex flex-col gap-3  ${
+                  className={`p-3.5 lg:p-4 rounded-xl border text-xs cursor-pointer transition-all duration-300 ease-in-out flex flex-col gap-3  ${
                     isSelected 
-                      ? (isDarkMode ? "border-emerald-500 bg-emerald-900/30 shadow-md" : "border-emerald-500 bg-emerald-50 shadow-md") 
-                      : (isDarkMode ? "border-slate-800 bg-slate-900/50 hover:bg-slate-800 hover:border-slate-700 hover:shadow-sm" : "border-slate-200 bg-slate-50/50 hover:bg-white hover:shadow-sm hover:border-slate-300")
+                      ? (isDarkMode ? "border-emerald-500 bg-emerald-950/60 shadow-md" : "border-emerald-600 bg-emerald-100/90 shadow-md") 
+                      : (isDarkMode ? "border-white/10 bg-slate-900/60 hover:bg-slate-900 hover:border-emerald-500/50" : "border-slate-300 bg-white/90 hover:bg-white hover:border-slate-400 shadow-xs")
                   }`}
                 >
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className={`font-mono text-[10px] md:text-xs font-semibold ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>#0{idx + 1}</span>
-                      <span className={`font-semibold tracking-wide truncate text-xs md:text-sm ${isDarkMode ? "text-white" : "text-slate-800"}`}>{rank.name}</span>
+                      <span className={`font-mono text-[10px] md:text-xs font-bold ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>#0{idx + 1}</span>
+                      <span className={`font-bold tracking-wide truncate text-xs md:text-sm ${isDarkMode ? "text-white" : "text-slate-950"}`}>{rank.name}</span>
                       {rank.hasGeo && (
-                        <span className={`shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-semibold tracking-wider rounded border ${
-                          isDarkMode ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20" : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                        <span className={`shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-bold tracking-wider rounded-md border ${
+                          isDarkMode ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30" : "bg-emerald-100 text-emerald-950 border-emerald-300"
                         }`} title="Batas Spasial Poligon Resmi">
                           <Globe className="h-2.5 w-2.5" />
                           POLYGON
@@ -2889,24 +2912,24 @@ export default function InvestorAnalyticsSidebar({
                     </div>
                     <span className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-bold tracking-wide shadow-sm ${
                       rank.suitabilityAvg >= 80 
-                        ? (isDarkMode ? "bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20" : "bg-emerald-100 text-emerald-800 border border-emerald-200") 
-                        : (isDarkMode ? "bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700" : "bg-slate-100 text-slate-600 border border-slate-200")
+                        ? (isDarkMode ? "bg-emerald-900/60 text-emerald-300 border border-emerald-500/40" : "bg-emerald-100 text-emerald-950 border border-emerald-300 font-black") 
+                        : (isDarkMode ? "bg-slate-800 text-slate-300 border border-slate-700" : "bg-slate-200 text-slate-900 border border-slate-300 font-bold")
                     }`}>
                       {t('mapAnalytics.match')} {rank.suitabilityAvg}%
                     </span>
                   </div>
                   
                   <div className={`grid grid-cols-3 gap-2 font-mono text-[10px] border-t pt-3 ${
-                    isDarkMode ? "border-slate-800 text-slate-600 dark:text-slate-400" : "border-slate-200 text-slate-600 dark:text-slate-400"
+                    isDarkMode ? "border-white/10 text-slate-300" : "border-slate-200 text-slate-800 font-semibold"
                   }`}>
-                    <div><span className="block mb-0.5 text-[8px] uppercase tracking-widest">{t('mapAnalytics.area')}</span> <span className={`font-semibold ${isDarkMode ? "text-white" : "text-slate-800"}`}>{formatNumber(rank.area)} Ha</span></div>
-                    <div><span className="block mb-0.5 text-[8px] uppercase tracking-widest">{t('analyticalHub.dense', 'Padat:')}</span> <span className={`font-semibold ${isDarkMode ? "text-white" : "text-slate-800 dark:text-slate-200"}`}>{rank.density} / km²</span></div>
-                    <div><span className="block mb-0.5 text-[8px] uppercase tracking-widest">{t('mapAnalytics.project')}</span> <span className="text-sky-500 dark:text-sky-400 font-semibold">{rank.projectCount} {t('mapAnalytics.active')}</span></div>
+                    <div><span className="block mb-0.5 text-[8px] uppercase tracking-widest">{t('mapAnalytics.area')}</span> <span className={`font-bold ${isDarkMode ? "text-white" : "text-slate-950"}`}>{formatNumber(rank.area)} Ha</span></div>
+                    <div><span className="block mb-0.5 text-[8px] uppercase tracking-widest">{t('analyticalHub.dense', 'Padat:')}</span> <span className={`font-bold ${isDarkMode ? "text-white" : "text-slate-950"}`}>{rank.density} / km²</span></div>
+                    <div><span className="block mb-0.5 text-[8px] uppercase tracking-widest">{t('mapAnalytics.project')}</span> <span className="text-sky-500 dark:text-sky-400 font-bold">{rank.projectCount} {t('mapAnalytics.active')}</span></div>
                   </div>
 
-                  <div className="text-[10px] flex justify-between items-center mt-1 pt-2 border-t border-dashed dark:border-slate-800 border-slate-200">
-                    <span className={`tracking-widest uppercase ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>{t('mapAnalytics.privCommit')}</span>
-                    <span className={`font-bold font-mono text-[11px] ${isDarkMode ? "text-emerald-700 dark:text-emerald-400" : "text-emerald-700"}`}>{rank.value > 0 ? formatRupiahSingkat(rank.value) : "-"}</span>
+                  <div className="text-[10px] flex justify-between items-center mt-1 pt-2 border-t border-dashed dark:border-white/10 border-slate-300">
+                    <span className={`tracking-widest uppercase font-bold ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>{t('mapAnalytics.privCommit')}</span>
+                    <span className={`font-bold font-mono text-[11px] ${isDarkMode ? "text-emerald-400" : "text-emerald-800 font-black"}`}>{rank.value > 0 ? formatRupiahSingkat(rank.value) : "-"}</span>
                   </div>
                 </div>
               );
@@ -2914,22 +2937,21 @@ export default function InvestorAnalyticsSidebar({
           </div>
         </div>
 
-        {}
-        <div id="strategic-location-matrix" className={`border p-4 sm:p-5 rounded-lg shadow-xl flex flex-col gap-3 transition-all duration-300 ${
-          isDarkMode ? "bg-slate-900 border-slate-800 text-white" : "bg-white border-slate-200 text-slate-800"
+        {/* Strategic Location Matrix */}
+        <div id="strategic-location-matrix" className={`border p-5 lg:p-6 rounded-2xl shadow-sm hover:shadow-md flex flex-col gap-3 transition-all duration-300 backdrop-blur-md ${
+          isDarkMode ? "bg-slate-950/50 border-white/10 text-white" : "bg-white/75 border-slate-900/15 text-slate-950 shadow-sm"
         }`}>
           <div className="flex items-center justify-between mb-1">
             <div>
-              <h4 className={`text-xs font-mono font-normal uppercase tracking-wider ${isDarkMode ? "text-emerald-700 dark:text-emerald-400" : "text-emerald-700"}`}>
+              <h4 className={`text-xs md:text-sm font-bold tracking-wide ${isDarkMode ? "text-white" : "text-slate-950"}`}>
                 📈 {t('mapAnalytics.strategicLocationAnalysis')}
               </h4>
-              <span className={`text-[9.5px] font-mono block mt-0.5 ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>
+              <span className={`text-[10px] md:text-[11px] block mt-1 leading-relaxed ${isDarkMode ? "text-slate-300 font-medium" : "text-slate-800 font-bold"}`}>
                 {t('mapAnalytics.strategicIndexDesc')}
               </span>
             </div>
           </div>
 
-          {}
           <div className="h-56 min-h-[224px] w-full mt-2 relative">
             <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
               <BarChart
@@ -2937,16 +2959,16 @@ export default function InvestorAnalyticsSidebar({
                 layout="vertical"
                 margin={{ top: 5, right: 15, left: -20, bottom: 5 }}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? "#1e293b" : "#f1f5f9"} horizontal={false} />
-                <XAxis type="number" domain={[0, 100]} stroke="#64748b" fontSize={9} />
-                <YAxis dataKey="name" type="category" stroke="#64748b" fontSize={9} width={80} />
+                <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)"} horizontal={false} />
+                <XAxis type="number" domain={[0, 100]} stroke={isDarkMode ? "#cbd5e1" : "#0f172a"} fontSize={9} />
+                <YAxis dataKey="name" type="category" stroke={isDarkMode ? "#cbd5e1" : "#0f172a"} fontSize={9} width={80} />
                 <Tooltip
                   contentStyle={{
-                    background: isDarkMode ? "#0a0f1d" : "#ffffff",
-                    border: `1px solid ${isDarkMode ? "#1e293b" : "#cbd5e1"}`,
+                    background: isDarkMode ? "rgba(15, 23, 42, 0.95)" : "rgba(255, 255, 255, 0.95)",
+                    border: `1px solid ${isDarkMode ? "rgba(255, 255, 255, 0.15)" : "rgba(15, 23, 42, 0.15)"}`,
                     borderRadius: "8px",
                     fontSize: "10px",
-                    color: isDarkMode ? "#f8fafc" : "#1e293b",
+                    color: isDarkMode ? "#ffffff" : "#0f172a",
                   }}
                 />
                 <Bar dataKey="Indeks" radius={[0, 4, 4, 0]} barSize={14}>
@@ -2959,27 +2981,26 @@ export default function InvestorAnalyticsSidebar({
             </ResponsiveContainer>
           </div>
 
-          {}
           <div className="grid grid-cols-2 gap-2 mt-1">
             {strategicHotspotsData.slice(0, 4).map((item, idx) => (
-              <div key={`${item.name}-${idx}`} className={`p-2 border rounded-md flex flex-col gap-1 transition-all ${
-                isDarkMode ? "bg-slate-900/40 border-slate-800" : "bg-slate-50 border-slate-200"
+              <div key={`${item.name}-${idx}`} className={`p-2.5 border rounded-xl flex flex-col gap-1 transition-all ${
+                isDarkMode ? "bg-slate-900/60 border-white/10" : "bg-white border-slate-300 shadow-xs"
               }`}>
                 <div className="flex justify-between items-center">
-                  <span className={`text-[10px] font-normal truncate max-w-[85px] ${isDarkMode ? "text-white" : "text-slate-800"}`}>
+                  <span className={`text-[10px] font-bold truncate max-w-[85px] ${isDarkMode ? "text-white" : "text-slate-950"}`}>
                     Kec. {item.name}
                   </span>
-                  <span className={`text-[9px] font-mono font-normal px-1.5 py-0.5 rounded ${
+                  <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-md ${
                     idx === 0 
-                      ? "bg-emerald-100/85 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border dark:border-emerald-500/20" 
-                      : (isDarkMode ? "bg-slate-800 text-slate-350" : "bg-slate-200 text-slate-800 dark:text-slate-200")
+                      ? "bg-emerald-100 text-emerald-950 border border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30" 
+                      : (isDarkMode ? "bg-slate-800 text-slate-300" : "bg-slate-200 text-slate-900 font-bold")
                   }`}>
                     {idx === 0 ? t('mapAnalytics.main') : `#${idx + 1}`}
                   </span>
                 </div>
                 <div className="flex items-center justify-between font-mono text-[9px]">
-                  <span className={isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}>{t('mapAnalytics.scoreIsi')}</span>
-                  <span className={`font-normal ${isDarkMode ? "text-emerald-450" : "text-emerald-650"}`}>
+                  <span className={`font-semibold ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>{t('mapAnalytics.scoreIsi')}</span>
+                  <span className={`font-bold ${isDarkMode ? "text-emerald-400" : "text-emerald-800"}`}>
                     {item.Indeks} {t('mapAnalytics.pts')}
                   </span>
                 </div>
@@ -2988,49 +3009,48 @@ export default function InvestorAnalyticsSidebar({
           </div>
         </div>
 
-        {}
-        <div className={`border p-4 sm:p-5 rounded-lg shadow-xl flex flex-col gap-4 transition-all duration-300 ${
-          isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200"
+        {/* Potential Investment Catalog */}
+        <div className={`border p-5 lg:p-6 rounded-2xl shadow-sm hover:shadow-md flex flex-col gap-4 transition-all duration-300 backdrop-blur-md ${
+          isDarkMode ? "bg-slate-950/50 border-white/10 text-white" : "bg-white/75 border-slate-900/15 text-slate-950 shadow-sm"
         }`}>
           <div className="flex items-center justify-between mb-1">
             <div>
-              <h4 className={`text-xs font-mono font-normal uppercase tracking-wider ${isDarkMode ? "text-emerald-700 dark:text-emerald-400" : "text-emerald-700"}`}>
+              <h4 className={`text-xs md:text-sm font-bold tracking-wide ${isDarkMode ? "text-white" : "text-slate-950"}`}>
                 {t('mapAnalytics.potList')}
               </h4>
-              <span className={`text-[9.5px] font-mono block mt-0.5 ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>
+              <span className={`text-[10px] md:text-[11px] block mt-1 leading-relaxed ${isDarkMode ? "text-slate-300 font-medium" : "text-slate-800 font-bold"}`}>
                 {t('mapAnalytics.catalogDesc')}
               </span>
             </div>
           </div>
 
-          
-          {/* ui enhancement: collapsible summary card */}
-          <div className={`rounded-md p-4 mb-6 mt-4 backdrop-blur-md border transition-all ${
+          {/* Collapsible summary card */}
+          <div className={`rounded-xl p-4 mb-3 mt-2 backdrop-blur-md border transition-all ${
             isDarkMode 
-              ? "bg-slate-900/80 border-slate-800" 
-              : "bg-emerald-50/80 border-emerald-200 shadow-sm"
+              ? "bg-slate-900/80 border-white/10" 
+              : "bg-emerald-50/90 border-emerald-300 shadow-sm"
           }`}>
             <div className="flex justify-between items-center cursor-pointer" onClick={() => setIsSummaryOpen(!isSummaryOpen)}>
               <div className="flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                  isDarkMode ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-emerald-100 text-emerald-700"
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+                  isDarkMode ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-emerald-100 text-emerald-950 border border-emerald-300 font-bold"
                 }`}>
                   <TrendingUp className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className={`text-sm font-bold ${isDarkMode ? "text-white" : "text-slate-900"}`}>
+                  <h4 className={`text-sm font-bold ${isDarkMode ? "text-white" : "text-slate-950"}`}>
                     {t("dashboard.filterSummary", "Ringkasan Hasil Filter")}
                   </h4>
-                  <p className={`text-xs ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+                  <p className={`text-xs ${isDarkMode ? "text-slate-300" : "text-slate-700 font-semibold"}`}>
                     Menampilkan {filteredInvestments.length} proyek aktif
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <span className={`text-sm font-mono font-bold ${isDarkMode ? "text-emerald-700 dark:text-emerald-400" : "text-emerald-700"}`}>
+                <span className={`text-sm font-mono font-bold ${isDarkMode ? "text-emerald-400" : "text-emerald-800 font-black"}`}>
                   {formatRupiah(filteredInvestments.reduce((sum, item) => sum + (Number(item.investmentValue) || 0), 0))}
                 </span>
-                <motion.button whileTap={{ scale: 0.95 }} className={`transition-colors ${isDarkMode ? "text-slate-600 dark:text-slate-400 hover:text-white" : "text-slate-600 dark:text-slate-400 hover:text-slate-900"}`}>
+                <motion.button whileTap={{ scale: 0.95 }} className={`transition-colors ${isDarkMode ? "text-slate-300 hover:text-white" : "text-slate-700 hover:text-slate-950"}`}>
                   {isSummaryOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 </motion.button>
               </div>
@@ -3038,7 +3058,7 @@ export default function InvestorAnalyticsSidebar({
             
             {isSummaryOpen && (
               <div className={`mt-3 pt-3 border-t text-xs flex flex-wrap gap-4 ${
-                isDarkMode ? "border-slate-800 text-slate-600 dark:text-slate-400" : "border-emerald-200 text-slate-800 dark:text-slate-200"
+                isDarkMode ? "border-white/10 text-slate-300 font-medium" : "border-emerald-200 text-slate-900 font-bold"
               }`}>
                 <span>{t("dashboard.sectorFiltered", "📍 Sektor: Terfilter Dinamis")}</span>
                 <span>{t("dashboard.avgScaleEnterprise", "💼 Rata-rata Skala: Enterprise")}</span>
@@ -3049,46 +3069,46 @@ export default function InvestorAnalyticsSidebar({
           <div className="flex flex-col gap-4 mt-2">
             {filteredInvestments.length > 0 ? (
               filteredInvestments.map((inv) => (
-                <div key={inv.id} className={`p-6 rounded-lg  border transition-all ${
+                <div key={inv.id} className={`p-5 rounded-xl border transition-all ${
                   isDarkMode 
-                    ? "bg-slate-950/40 border-slate-800/80 hover:border-emerald-500/30 shadow-2xl" 
-                    : "bg-white border-slate-200 hover:border-emerald-400 shadow-md"
+                    ? "bg-slate-900/70 border-white/10 hover:border-emerald-500/50 shadow-lg" 
+                    : "bg-white border-slate-300 hover:border-emerald-500 shadow-sm"
                 }`}>
                   {/* Tag Kategori Potensi */}
-                  <span className={`px-2.5 py-1 text-xs font-semibold rounded-md border inline-block ${
+                  <span className={`px-2.5 py-1 text-xs font-bold rounded-md border inline-block ${
                     isDarkMode 
-                      ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20" 
-                      : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                      ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30" 
+                      : "bg-emerald-100 text-emerald-950 border-emerald-300"
                   }`}>
                     {t('mapAnalytics.sectorTitle')} {inv.sector || t('mapAnalytics.general')}
                   </span>
 
-                  <h2 className={`mt-3 text-xl font-bold tracking-tight ${isDarkMode ? "text-white" : "text-slate-900"}`}>
+                  <h2 className={`mt-3 text-lg sm:text-xl font-bold tracking-tight ${isDarkMode ? "text-white" : "text-slate-950"}`}>
                     {inv.name}
                   </h2>
 
-                  <div className={`mt-2 text-sm leading-relaxed ${isDarkMode ? "text-slate-300" : "text-slate-800 dark:text-slate-200"}`}>
+                  <div className={`mt-2 text-sm leading-relaxed ${isDarkMode ? "text-slate-200" : "text-slate-900 font-medium"}`}>
                     <AutoTranslatedText text={(inv as any).description || t('mapAnalytics.defaultCatalogDesc')} />
                   </div>
 
                   {/* Detail Finansial / Nilai Investasi */}
-                  <div className={`mt-4 p-4 rounded-md border flex justify-between items-center ${
-                    isDarkMode ? "bg-slate-900/60 border-slate-800" : "bg-slate-50 border-slate-200"
+                  <div className={`mt-4 p-4 rounded-xl border flex justify-between items-center ${
+                    isDarkMode ? "bg-slate-950/70 border-white/10" : "bg-slate-50 border-slate-300"
                   }`}>
                     <div>
-                      <p className={`text-[10px] sm:text-xs font-mono uppercase tracking-wider ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+                      <p className={`text-[10px] sm:text-xs font-mono uppercase font-bold tracking-wider ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>
                         {t('mapAnalytics.estInvValue')}
                       </p>
-                      <p className={`text-sm sm:text-lg font-bold font-mono mt-0.5 ${isDarkMode ? "text-amber-700 dark:text-amber-400" : "text-amber-700"}`}>
+                      <p className={`text-sm sm:text-lg font-bold font-mono mt-0.5 ${isDarkMode ? "text-amber-400" : "text-amber-800 font-black"}`}>
                         {formatRupiah(inv.investmentValue)}
                       </p>
                     </div>
                     <motion.button whileTap={{ scale: 0.95 }} 
                       onClick={() => onFocusInvestment(inv.id)}
-                      className={`px-3 sm:px-4 py-2 text-[10px] sm:text-xs font-bold rounded-lg transition-colors duration-200 flex-shrink-0 cursor-pointer ${
+                      className={`px-3.5 sm:px-4 py-2 text-[10px] sm:text-xs font-bold rounded-xl transition-colors duration-200 flex-shrink-0 cursor-pointer ${
                         isDarkMode 
-                          ? "bg-emerald-400 hover:bg-emerald-300 text-slate-950" 
-                          : "bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
+                          ? "bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-black" 
+                          : "bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm font-black"
                       }`}
                     >
                       {t('mapAnalytics.viewDetail')}
@@ -3097,8 +3117,8 @@ export default function InvestorAnalyticsSidebar({
                 </div>
               ))
             ) : (
-              <div className={`text-center p-6 text-sm border border-dashed rounded-lg ${
-                isDarkMode ? "text-slate-600 dark:text-slate-400 border-slate-700/50" : "text-slate-600 dark:text-slate-400 border-slate-300"
+              <div className={`text-center p-6 text-sm border border-dashed rounded-xl ${
+                isDarkMode ? "text-slate-300 border-white/15" : "text-slate-800 border-slate-300 font-semibold"
               }`}>
                 {t('mapAnalytics.noInvestmentData')}
               </div>
