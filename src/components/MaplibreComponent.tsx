@@ -573,9 +573,46 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
   const [activeInvestmentData, setActiveInvestmentData] = useState<any>(null);
 
   // Active selected investment & dynamic sector coloring for Ripple Pulse Beacon
+  const getCoordinates = useCallback((inv: any): [number, number] | null => {
+    if (!inv) return null;
+    let lng = Number(inv.longitude);
+    let lat = Number(inv.latitude);
+    if ((isNaN(lng) || isNaN(lat) || (lng === 0 && lat === 0)) && inv.geometry?.coordinates) {
+      if (Array.isArray(inv.geometry.coordinates) && inv.geometry.coordinates.length >= 2) {
+        lng = Number(inv.geometry.coordinates[0]);
+        lat = Number(inv.geometry.coordinates[1]);
+      }
+    }
+    if (!isNaN(lng) && !isNaN(lat) && lng !== 0 && lat !== 0) {
+      return [lng, lat];
+    }
+    return null;
+  }, []);
+
   const selectedInvestment = useMemo(() => {
     if (!props.selectedInvestmentId || !props.investments) return null;
     return props.investments.find(i => String(i.id) === String(props.selectedInvestmentId)) || null;
+  }, [props.selectedInvestmentId, props.investments]);
+
+  const selectedInvestments = useMemo(() => {
+    if (!props.selectedInvestmentId || !props.investments || props.investments.length === 0) return [];
+    const targetIds = String(props.selectedInvestmentId)
+      .split(',')
+      .map(s => s.trim().toLowerCase())
+      .filter(Boolean);
+    if (targetIds.length === 0) return [];
+    
+    const matches = props.investments.filter(i => 
+      targetIds.includes(String(i.id).toLowerCase()) ||
+      targetIds.includes(String(i.name).toLowerCase())
+    );
+    if (matches.length > 0) return matches;
+
+    const single = props.investments.find(i => 
+      String(i.id) === String(props.selectedInvestmentId) ||
+      String(i.name).toLowerCase() === String(props.selectedInvestmentId).toLowerCase()
+    );
+    return single ? [single] : [];
   }, [props.selectedInvestmentId, props.investments]);
 
   const selectedInvestmentDistrictName = useMemo(() => {
@@ -4514,114 +4551,132 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
         )}
 
         {/* 5.2 ACTIVE SELECTED INVESTMENT COORDINATE RIPPLE PULSE BEACON */}
-        {selectedInvestment && typeof selectedInvestment.longitude === 'number' && typeof selectedInvestment.latitude === 'number' && (
-          <Marker
-            longitude={selectedInvestment.longitude}
-            latitude={selectedInvestment.latitude}
-            anchor="center"
-          >
-            <div 
-              className="relative flex items-center justify-center pointer-events-auto group cursor-pointer" 
-              onClick={() => {
-                setDetailModalInvestmentId(selectedInvestment.id);
-                if (mapRef.current) {
-                  mapRef.current.flyTo({
-                    center: [selectedInvestment.longitude, selectedInvestment.latitude],
-                    zoom: 15,
-                    pitch: 35,
-                    speed: 1.2,
-                    curve: 1.4,
-                    essential: true
-                  });
-                }
-              }}
+        {selectedInvestments.map((inv) => {
+          const coords = getCoordinates(inv);
+          if (!coords) return null;
+          const [lng, lat] = coords;
+          const theme = getSectorThemeColor(inv.sector);
+          const districtName = props.districts?.find(d => d.id === inv.districtId)?.name || "";
+
+          return (
+            <Marker
+              key={`selected-beacon-${inv.id}`}
+              longitude={lng}
+              latitude={lat}
+              anchor="center"
             >
-              {/* Sonar Radar Wave 1 */}
               <div 
-                className="absolute w-32 h-32 rounded-full pointer-events-none animate-ripple-pulse-1"
-                style={{
-                  backgroundColor: getSectorThemeColor(selectedInvestment.sector).glow,
-                  border: `2px solid ${getSectorThemeColor(selectedInvestment.sector).primary}`
-                }}
-              />
-              {/* Sonar Radar Wave 2 */}
-              <div 
-                className="absolute w-32 h-32 rounded-full pointer-events-none animate-ripple-pulse-2"
-                style={{
-                  backgroundColor: getSectorThemeColor(selectedInvestment.sector).glow,
-                  border: `2px solid ${getSectorThemeColor(selectedInvestment.sector).primary}`
-                }}
-              />
-              {/* Sonar Radar Wave 3 */}
-              <div 
-                className="absolute w-32 h-32 rounded-full pointer-events-none animate-ripple-pulse-3"
-                style={{
-                  backgroundColor: getSectorThemeColor(selectedInvestment.sector).glow,
-                  border: `2px solid ${getSectorThemeColor(selectedInvestment.sector).primary}`
-                }}
-              />
-
-              {/* Ambient Radiant Glow Aura */}
-              <div 
-                className="absolute w-16 h-16 rounded-full blur-md opacity-75 animate-pulse pointer-events-none"
-                style={{
-                  backgroundColor: getSectorThemeColor(selectedInvestment.sector).primary
-                }}
-              />
-
-              {/* Crosshair Scanner Target Rings */}
-              <div 
-                className="absolute w-12 h-12 rounded-full border border-white/60 dark:border-slate-900/60 pointer-events-none animate-spin" 
-                style={{ animationDuration: '8s' }} 
-              />
-
-              {/* Central Glowing Core Jewel Pin */}
-              <div 
-                className="relative z-10 w-10 h-10 rounded-full bg-gradient-to-br from-white via-slate-50 to-slate-200 dark:from-slate-800 dark:to-slate-950 border-2 shadow-2xl flex items-center justify-center transition-all duration-300 transform group-hover:scale-125 animate-beacon-glow"
-                style={{
-                  borderColor: getSectorThemeColor(selectedInvestment.sector).primary,
-                  boxShadow: `0 0 24px ${getSectorThemeColor(selectedInvestment.sector).primary}, inset 0 0 10px ${getSectorThemeColor(selectedInvestment.sector).glow}`
+                className="relative flex items-center justify-center pointer-events-auto group cursor-pointer" 
+                onClick={() => {
+                  setDetailModalInvestmentId(inv.id);
+                  if (mapRef.current) {
+                    mapRef.current.flyTo({
+                      center: [lng, lat],
+                      zoom: 15,
+                      pitch: 35,
+                      speed: 1.2,
+                      curve: 1.4,
+                      essential: true
+                    });
+                  }
                 }}
               >
-                <span className="text-lg select-none leading-none drop-shadow-md">
-                  {getIconForData(selectedInvestment.subSector || '', selectedInvestment.sector || '', '')}
-                </span>
+                {/* Sonar Radar Wave 1 (Wave 1: immediate expansion via ripplePulseExpand) */}
                 <div 
-                  className="absolute -bottom-1 w-2.5 h-2.5 rounded-full ring-2 ring-white dark:ring-slate-900"
-                  style={{ backgroundColor: getSectorThemeColor(selectedInvestment.sector).primary }}
+                  className="absolute w-32 h-32 rounded-full pointer-events-none animate-ripple-pulse-1"
+                  style={{
+                    backgroundColor: theme.glow,
+                    border: `2px solid ${theme.primary}`
+                  }}
                 />
-              </div>
+                {/* Sonar Radar Wave 2 (Wave 2: +0.7s delayed wave via ripplePulseExpand) */}
+                <div 
+                  className="absolute w-32 h-32 rounded-full pointer-events-none animate-ripple-pulse-2"
+                  style={{
+                    backgroundColor: theme.glow,
+                    border: `2px solid ${theme.primary}`
+                  }}
+                />
+                {/* Sonar Radar Wave 3 (Wave 3: +1.4s delayed wave via ripplePulseExpand) */}
+                <div 
+                  className="absolute w-32 h-32 rounded-full pointer-events-none animate-ripple-pulse-3"
+                  style={{
+                    backgroundColor: theme.glow,
+                    border: `2px solid ${theme.primary}`
+                  }}
+                />
 
-              {/* Floating Information Pill Label Above Coordinates */}
-              <motion.div
-                initial={{ opacity: 0, y: 10, scale: 0.88 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ type: "spring", stiffness: 450, damping: 25 }}
-                className="absolute -top-14 left-1/2 -translate-x-1/2 whitespace-nowrap z-30 px-3.5 py-1.5 rounded-2xl bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur-xl border shadow-2xl flex items-center gap-2.5 pointer-events-none"
-                style={{
-                  borderColor: `${getSectorThemeColor(selectedInvestment.sector).primary}90`,
-                  boxShadow: `0 12px 30px -5px rgba(0,0,0,0.6), 0 0 20px ${getSectorThemeColor(selectedInvestment.sector).glow}`
-                }}
-              >
-                <span className="w-2.5 h-2.5 rounded-full animate-ping" style={{ backgroundColor: getSectorThemeColor(selectedInvestment.sector).primary }} />
-                <div className="flex flex-col text-left">
-                  <span className="text-xs font-extrabold text-white font-sora truncate max-w-[200px]">
-                    {selectedInvestment.name || 'Potensi Investasi'}
+                {/* Direct ripplePulseExpand Outer Wave for high-contrast active radar effect */}
+                <div 
+                  className="absolute w-28 h-28 rounded-full pointer-events-none animate-ripple-pulse-expand"
+                  style={{
+                    border: `1.5px dashed ${theme.primary}`,
+                    boxShadow: `0 0 16px ${theme.glow}`
+                  }}
+                />
+
+                {/* Ambient Radiant Glow Aura */}
+                <div 
+                  className="absolute w-16 h-16 rounded-full blur-md opacity-75 animate-pulse pointer-events-none"
+                  style={{
+                    backgroundColor: theme.primary
+                  }}
+                />
+
+                {/* Crosshair Scanner Target Rings */}
+                <div 
+                  className="absolute w-12 h-12 rounded-full border border-white/60 dark:border-slate-900/60 pointer-events-none animate-spin" 
+                  style={{ animationDuration: '8s' }} 
+                />
+
+                {/* Central Glowing Core Jewel Pin */}
+                <div 
+                  className="relative z-10 w-10 h-10 rounded-full bg-gradient-to-br from-white via-slate-50 to-slate-200 dark:from-slate-800 dark:to-slate-950 border-2 shadow-2xl flex items-center justify-center transition-all duration-300 transform group-hover:scale-125 animate-beacon-glow"
+                  style={{
+                    borderColor: theme.primary,
+                    boxShadow: `0 0 24px ${theme.primary}, inset 0 0 10px ${theme.glow}`
+                  }}
+                >
+                  <span className="text-lg select-none leading-none drop-shadow-md">
+                    {getIconForData(inv.subSector || '', inv.sector || '', '')}
                   </span>
-                  <span className="text-[10px] text-slate-300 font-medium flex items-center gap-1">
-                    <span className="text-emerald-400 font-semibold">{selectedInvestment.sector || 'Investasi'}</span>
-                    {selectedInvestmentDistrictName && (
-                      <>
-                        <span className="text-slate-500">•</span>
-                        <span>{selectedInvestmentDistrictName}</span>
-                      </>
-                    )}
-                  </span>
+                  <div 
+                    className="absolute -bottom-1 w-2.5 h-2.5 rounded-full ring-2 ring-white dark:ring-slate-900"
+                    style={{ backgroundColor: theme.primary }}
+                  />
                 </div>
-              </motion.div>
-            </div>
-          </Marker>
-        )}
+
+                {/* Floating Information Pill Label Above Coordinates */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.88 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ type: "spring", stiffness: 450, damping: 25 }}
+                  className="absolute -top-14 left-1/2 -translate-x-1/2 whitespace-nowrap z-30 px-3.5 py-1.5 rounded-2xl bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur-xl border shadow-2xl flex items-center gap-2.5 pointer-events-none"
+                  style={{
+                    borderColor: `${theme.primary}90`,
+                    boxShadow: `0 12px 30px -5px rgba(0,0,0,0.6), 0 0 20px ${theme.glow}`
+                  }}
+                >
+                  <span className="w-2.5 h-2.5 rounded-full animate-ping" style={{ backgroundColor: theme.primary }} />
+                  <div className="flex flex-col text-left">
+                    <span className="text-xs font-extrabold text-white font-sora truncate max-w-[200px]">
+                      {inv.name || 'Potensi Investasi'}
+                    </span>
+                    <span className="text-[10px] text-slate-300 font-medium flex items-center gap-1">
+                      <span className="text-emerald-400 font-semibold">{inv.sector || 'Investasi'}</span>
+                      {districtName && (
+                        <>
+                          <span className="text-slate-500">•</span>
+                          <span>{districtName}</span>
+                        </>
+                      )}
+                    </span>
+                  </div>
+                </motion.div>
+              </div>
+            </Marker>
+          );
+        })}
 
         {/* 5.5 Investment spatial polygons (from Supabase PostGIS geometry) */}
         {investmentsPolygonsGeoJSON && props.heatmapMetric === "none" && (

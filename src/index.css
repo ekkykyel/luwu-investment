@@ -600,16 +600,25 @@ table,
 /* === GIS INVESTMENT RIPPLE PULSE ANIMATIONS === */
 @keyframes ripplePulseExpand {
   0% {
-    transform: scale(0.6);
+    transform: scale(0.4);
     opacity: 0.95;
   }
-  50% {
-    opacity: 0.55;
+  40% {
+    opacity: 0.65;
+  }
+  80% {
+    opacity: 0.25;
   }
   100% {
-    transform: scale(3.5);
+    transform: scale(3.6);
     opacity: 0;
   }
+}
+
+.animate-ripple-pulse-expand,
+.ripple-pulse-expand {
+  animation: ripplePulseExpand 2.2s cubic-bezier(0.1, 0.4, 0.2, 1) infinite;
+  will-change: transform, opacity;
 }
 
 @keyframes rippleSonarWave {
@@ -635,13 +644,16 @@ table,
 }
 
 .animate-ripple-pulse-1 {
-  animation: ripplePulseExpand 2.2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+  animation: ripplePulseExpand 2.2s cubic-bezier(0.1, 0.4, 0.2, 1) infinite;
+  will-change: transform, opacity;
 }
 .animate-ripple-pulse-2 {
-  animation: ripplePulseExpand 2.2s cubic-bezier(0, 0.2, 0.8, 1) infinite 0.7s;
+  animation: ripplePulseExpand 2.2s cubic-bezier(0.1, 0.4, 0.2, 1) infinite 0.7s;
+  will-change: transform, opacity;
 }
 .animate-ripple-pulse-3 {
-  animation: ripplePulseExpand 2.2s cubic-bezier(0, 0.2, 0.8, 1) infinite 1.4s;
+  animation: ripplePulseExpand 2.2s cubic-bezier(0.1, 0.4, 0.2, 1) infinite 1.4s;
+  will-change: transform, opacity;
 }
 .animate-beacon-glow {
   animation: beaconGlowPulse 2s ease-in-out infinite;
