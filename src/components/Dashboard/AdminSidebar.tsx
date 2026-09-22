@@ -83,7 +83,7 @@ export const getMenusByRole = (role: string): MenuGroup[] => {
       group: 'Perizinan & OSS',
       items: [
         { id: 'pkkpr_sync_monitor', name: 'Monitoring Proses Bisnis PKKPR', icon: Workflow },
-        { id: 'verifikasi_pkkpr', name: 'Verifikasi PKKPR & Tata Ruang', icon: ShieldCheck },
+        { id: 'verifikasi_pkkpr', name: 'Admin Studio Clearance & Lisensi PKKPR', icon: ShieldCheck },
         { id: 'verifikasi_pertanian', name: 'Rekomendasi Lahan Pertanian (LP2B)', icon: ShieldCheck },
         { id: 'realisasi_nib', name: 'Realisasi NIB (OSS-RBA)', icon: CheckCircle2 },
         { id: 'puptr_archive', name: 'Arsip Pertek PUPTR', icon: FileCheck2 },
@@ -118,7 +118,15 @@ export const getMenusByRole = (role: string): MenuGroup[] => {
   ];
 
   const normRole = (role || "").toLowerCase().replace(/[\s-]+/g, "_");
-  if (normRole === 'superadmin' || normRole.includes('super') || normRole.includes('operator')) return allMenuGroups;
+  const isPuptr = normRole === 'admin_puptr' || normRole.includes('puptr') || normRole.includes('tata_ruang');
+
+  if (normRole === 'superadmin' || normRole.includes('super') || normRole.includes('operator')) {
+    // Menu Studio Clearance & Lisensi PKKPR hanya boleh tampil jika akun berwenang teknis PUPTR
+    return allMenuGroups.map(group => ({
+      ...group,
+      items: group.items.filter(item => isPuptr || item.id !== 'verifikasi_pkkpr')
+    })).filter(group => group.items.length > 0);
+  }
 
   let matchedRole = 'overview';
   if (normRole === 'admin_dalak' || normRole.includes('dalak')) matchedRole = 'admin_dalak';
@@ -141,7 +149,7 @@ export const getMenusByRole = (role: string): MenuGroup[] => {
 
   return allMenuGroups.map(group => ({
     ...group,
-    items: group.items.filter(item => allowedIds.includes(item.id))
+    items: group.items.filter(item => allowedIds.includes(item.id) && (isPuptr || item.id !== 'verifikasi_pkkpr'))
   })).filter(group => group.items.length > 0);
 };
 

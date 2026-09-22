@@ -21,7 +21,6 @@ import { MppVisionModal } from './MppVisionModal';
 import { AirportCallingAlertModal } from './mpp/AirportCallingAlertModal';
 import { triggerFullAirportCallingAlert } from '../utils/airportAudioAlert';
 import { LiveMarketTicker } from './LiveMarketTicker';
-import { AuroraBackground } from './AuroraBackground';
 import { SmartLiveQueue } from './mpp/SmartLiveQueue';
 import { InteractiveFloorPlan } from './mpp/InteractiveFloorPlan';
 import { SmartDocumentTracker } from './mpp/SmartDocumentTracker';
@@ -1731,10 +1730,8 @@ export default function PortalMPP() {
         }
       `}</style>
       
-      {/* Dynamic Ambient Silk Aurora Background - Clearly visible in Light Mode & Dark Mode */}
-      <div className="opacity-75 dark:opacity-100 transition-opacity duration-700 pointer-events-none">
-        <AuroraBackground />
-      </div>
+      {/* Background container without heavy infinite aurora animation */}
+
       
       <div className="relative z-10 pb-36 md:pb-24 w-full">
         {/* Inclusivity & Accessibility Bar (Mode Ramah Disabilitas, Text-to-Speech & High Contrast) */}

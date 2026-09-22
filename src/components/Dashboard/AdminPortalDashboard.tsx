@@ -39,7 +39,8 @@ import {
   ArrowRight,
   AlertCircle,
   Zap,
-  Filter
+  Filter,
+  Workflow
 , Users, Plus, PlusCircle, Globe, Info, CheckCircle, Database, Download, FileDown, Settings, BarChart3, BookOpen, Scale, Lightbulb, FileCheck, BookDown} from 'lucide-react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid, ReferenceLine, Legend } from 'recharts';
 import Swal from 'sweetalert2';
@@ -153,7 +154,8 @@ export default function AdminPortalDashboard() {
     else if (path.includes('potential') || path.includes('potensi')) setActiveTab('manage_potential');
     else if (path.includes('site-selection') || path.includes('site_selection')) setActiveTab('site-selection');
     else if (path.includes('testimonials') || path.includes('testimoni')) setActiveTab('overview');
-    else if (path.includes('verifikasi_pkkpr') || path.includes('pkkpr')) setActiveTab('verifikasi_pkkpr');
+    else if (path.includes('verifikasi_pkkpr')) setActiveTab('verifikasi_pkkpr');
+    else if (path.includes('pkkpr')) setActiveTab(userRole?.toLowerCase().includes('puptr') ? 'verifikasi_pkkpr' : 'pkkpr_sync_monitor');
     else if (path.includes('realisasi_nib') || path.includes('nib')) setActiveTab('realisasi_nib');
     else if (path.includes('spatial_analytics') || path.includes('analytics')) setActiveTab('spatial_analytics');
     else if (path.includes('gis_spatial') || path.includes('gis')) setActiveTab('gis_spatial');
@@ -999,8 +1001,20 @@ export default function AdminPortalDashboard() {
     if (userRole === 'admin_oss') {
       return [
         { id: 'overview_perizinan', label: 'Overview Perizinan', icon: LayoutDashboard },
-        { id: 'verifikasi_pkkpr', label: 'Verifikasi PKKPR & Tata Ruang', icon: ShieldCheck },
+        { id: 'pkkpr_sync_monitor', label: 'Monitoring Alur PKKPR', icon: Workflow },
         { id: 'realisasi_nib', label: 'Realisasi NIB (OSS-RBA)', icon: CheckCircle2 }
+      ];
+    } else if (userRole === 'admin_puptr' || userRole === 'admin_gis') {
+      return [
+        { id: 'overview', label: 'Overview Tata Ruang', icon: LayoutDashboard },
+        { id: 'verifikasi_pkkpr', label: 'Admin Studio Clearance & Lisensi PKKPR', icon: ShieldCheck },
+        { id: 'gis_spatial', label: 'Studio GIS Spasial', icon: Map }
+      ];
+    } else if (userRole === 'admin_pertanian') {
+      return [
+        { id: 'overview', label: 'Overview Pertanian', icon: LayoutDashboard },
+        { id: 'verifikasi_pertanian', label: 'Rekomendasi Lahan (LP2B)', icon: ShieldCheck },
+        { id: 'gis_spatial', label: 'Peta Spasial LP2B', icon: Map }
       ];
     } else if (userRole === 'admin_dalak') {
       return [
@@ -1606,8 +1620,10 @@ export default function AdminPortalDashboard() {
               onSelectApplication={(appId) => {
                 if (userRole?.toLowerCase().includes('pertanian') || activeTab === 'verifikasi_pertanian' || activeTab === 'pertanian_clearance') {
                   setActiveTab('verifikasi_pertanian');
-                } else {
+                } else if (userRole?.toLowerCase().includes('puptr') || userRole?.toLowerCase().includes('tata_ruang')) {
                   setActiveTab('verifikasi_pkkpr');
+                } else {
+                  setActiveTab('pkkpr_sync_monitor');
                 }
               }}
             />
@@ -3528,11 +3544,11 @@ export default function AdminPortalDashboard() {
                   <p className="text-xs text-slate-800 dark:text-slate-200 mt-1">Daftar permohonan yang membutuhkan verifikasi teknis oleh tim DPMPTSP Kabupaten Luwu.</p>
                 </div>
                 <button
-                  onClick={() => setActiveTab('verifikasi_pkkpr')}
+                  onClick={() => setActiveTab('pkkpr_sync_monitor')}
                   className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-900 dark:text-white font-bold rounded-xl text-xs transition flex items-center gap-2 cursor-pointer shadow-md"
                 >
-                  <ShieldCheck size={16} />
-                  <span>Buka Portal Verifikasi PKKPR</span>
+                  <Workflow size={16} />
+                  <span>Buka Monitoring Alur PKKPR</span>
                 </button>
               </div>
 
@@ -3550,32 +3566,32 @@ export default function AdminPortalDashboard() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60 font-sans">
-                    <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
-                      <td className="py-3.5 px-3 font-mono font-bold text-emerald-700 dark:text-emerald-400">I-202603111300106095835</td>
-                      <td className="py-3.5 px-3 font-bold text-slate-900 dark:text-white">BALO TORAJA</td>
-                      <td className="py-3.5 px-3 text-slate-800 dark:text-slate-200">64191 - Pemberian Kredit Koperasi</td>
-                      <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 font-bold text-[10px]">Menengah Tinggi</span></td>
-                      <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold text-[10px]">Inspeksi PKKPR</span></td>
-                      <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-700 dark:text-amber-400 font-bold text-[10px] border border-amber-500/30">⏱️ Tertahan 2 Hari</span></td>
-                      <td className="py-3.5 px-3 text-right">
-                        <button onClick={() => setActiveTab('verifikasi_pkkpr')} className="px-3 py-1 bg-emerald-600/10 hover:bg-emerald-600 text-emerald-700 dark:text-emerald-400 hover:text-slate-900 dark:text-white rounded-lg font-bold text-[11px] transition">
-                          Proses Verifikasi
-                        </button>
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
-                      <td className="py-3.5 px-3 font-mono font-bold text-emerald-700 dark:text-emerald-400">I-202603110912445821033</td>
-                      <td className="py-3.5 px-3 font-bold text-slate-900 dark:text-white">PT. Luwu Mineral Utama</td>
-                      <td className="py-3.5 px-3 text-slate-800 dark:text-slate-200">07101 - Pertambangan Bijih Besi</td>
-                      <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/20 font-bold text-[10px]">Tinggi</span></td>
-                      <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/20 font-bold text-[10px]">Verifikasi Teknis Lapangan</span></td>
-                      <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-red-500/10 text-red-700 dark:text-red-400 font-bold text-[10px] border border-red-500/30 animate-pulse">⏱️ Tertahan 5 Hari</span></td>
-                      <td className="py-3.5 px-3 text-right">
-                        <button onClick={() => setActiveTab('verifikasi_pkkpr')} className="px-3 py-1 bg-blue-600/10 hover:bg-blue-600 text-blue-700 dark:text-blue-400 hover:text-slate-900 dark:text-white rounded-lg font-bold text-[11px] transition">
-                          Tinjau Berkas
-                        </button>
-                      </td>
-                    </tr>
+                    {loiTickets.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="py-8 text-center text-slate-500 dark:text-slate-400">
+                          <div className="flex flex-col items-center justify-center gap-1">
+                            <span className="text-sm font-semibold">Belum Ada Antrean Permohonan</span>
+                            <span className="text-[11px] text-slate-400">Daftar permohonan verifikasi OSS-RBA akan muncul saat ada permohonan baru dari investor.</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      loiTickets.slice(0, 10).map((t, idx) => (
+                        <tr key={t.id || idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
+                          <td className="py-3.5 px-3 font-mono font-bold text-emerald-700 dark:text-emerald-400">{t.nib_oss || `I-${(t.id || '').toString().slice(0, 8).toUpperCase()}`}</td>
+                          <td className="py-3.5 px-3 font-bold text-slate-900 dark:text-white">{t.company_name || t.investor_name || "-"}</td>
+                          <td className="py-3.5 px-3 text-slate-800 dark:text-slate-200">{t.sektor || t.potensi_name || "Investasi Usaha"}</td>
+                          <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold text-[10px]">{t.skala_usaha || "Menengah"}</span></td>
+                          <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 font-bold text-[10px]">{t.status || "Dalam Proses"}</span></td>
+                          <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold text-[10px] border border-emerald-500/30">Aktif</span></td>
+                          <td className="py-3.5 px-3 text-right">
+                            <button onClick={() => setActiveTab('pkkpr_sync_monitor')} className="px-3 py-1 bg-emerald-600/10 hover:bg-emerald-600 text-emerald-700 dark:text-emerald-400 hover:text-white rounded-lg font-bold text-[11px] transition">
+                              Tinjau Alur
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -3586,7 +3602,32 @@ export default function AdminPortalDashboard() {
         ) : (activeTab === 'pkkpr_sync_monitor' || activeTab === 'pkkpr_monitoring' || activeTab === 'pkkpr_business_process') ? (
           <PkkprBusinessProcessMonitorDashboard />
         ) : (activeTab === 'verifikasi_pkkpr' || activeTab === 'puptr_spatial_clearance') ? (
-          <PuptrSpatialClearanceDashboard />
+          (userRole?.toLowerCase().includes('puptr') || userRole?.toLowerCase().includes('tata_ruang')) ? (
+            <PuptrSpatialClearanceDashboard />
+          ) : (
+            <div className="p-8 sm:p-12 text-center rounded-3xl bg-white/90 dark:bg-slate-900/60 backdrop-blur-xl border border-amber-500/30 shadow-xl max-w-2xl mx-auto my-12 space-y-4">
+              <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto ring-8 ring-amber-500/5">
+                <ShieldAlert size={36} />
+              </div>
+              <div className="space-y-2">
+                <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                  Otoritas Terbatas (Role-Based Access)
+                </span>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Akses Khusus Dinas PUPTR</h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-lg mx-auto">
+                  Modul <strong>Admin Studio Clearance & Lisensi PKKPR</strong> berstatus eksklusif dan hanya berwenang diakses oleh Administrator Dinas PUPTR (Bidang Penataan Ruang & Studio GIS).
+                </p>
+              </div>
+              <div className="pt-2">
+                <button 
+                  onClick={() => setActiveTab(userRole === 'admin_oss' ? 'overview_perizinan' : 'overview')}
+                  className="px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-xs transition"
+                >
+                  Kembali ke Dashboard Utama
+                </button>
+              </div>
+            </div>
+          )
         ) : (activeTab === 'verifikasi_pertanian' || activeTab === 'admin_pertanian') ? (
           <PertanianLandClearanceDashboard />
         ) : activeTab === 'realisasi_nib' ? (
@@ -3645,25 +3686,29 @@ export default function AdminPortalDashboard() {
                       <th className="py-3 px-3">SLA Argometer</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                    <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                      <td className="py-3.5 px-3 font-mono font-bold text-emerald-700 dark:text-emerald-400">1204000392812</td>
-                      <td className="py-3.5 px-3 font-bold text-slate-900 dark:text-white">BALO TORAJA</td>
-                      <td className="py-3.5 px-3 text-slate-800 dark:text-slate-200">64191 - Koperasi Konvensional</td>
-                      <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold text-[10px]">Mikro Kecil</span></td>
-                      <td className="py-3.5 px-3 font-bold text-slate-800 dark:text-slate-200">Rp 1.20 Miliar</td>
-                      <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-bold text-[10px]">Terverifikasi Active</span></td>
-                      <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold text-[10px] border border-emerald-500/30">⏱️ Selesai</span></td>
-                    </tr>
-                    <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                      <td className="py-3.5 px-3 font-mono font-bold text-emerald-700 dark:text-emerald-400">0220100481923</td>
-                      <td className="py-3.5 px-3 font-bold text-slate-900 dark:text-white">PT. Kawasan Industri Bua</td>
-                      <td className="py-3.5 px-3 text-slate-800 dark:text-slate-200">68111 - Pengelolaan Kawasan Industri</td>
-                      <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-bold text-[10px]">Besar</span></td>
-                      <td className="py-3.5 px-3 font-bold text-slate-800 dark:text-slate-200">Rp 250.00 Miliar</td>
-                      <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-bold text-[10px]">Terverifikasi Active</span></td>
-                      <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold text-[10px] border border-emerald-500/30">⏱️ Selesai</span></td>
-                    </tr>
+                  <tbody className="divide-y divide-slate-200 dark:divide-slate-800 font-sans">
+                    {loiTickets.filter(t => t.nib_oss || t.status?.includes('Terbit') || t.status?.includes('Selesai')).length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="py-8 text-center text-slate-500 dark:text-slate-400">
+                          <div className="flex flex-col items-center justify-center gap-1">
+                            <span className="text-sm font-semibold">Belum Ada Realisasi Izin NIB Terbit</span>
+                            <span className="text-[11px] text-slate-400">Data penerbitan NIB resmi dari OSS-RBA akan tercatat secara otomatis setelah pemohon menyelesaikan pemenuhan komitmen.</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      loiTickets.filter(t => t.nib_oss || t.status?.includes('Terbit') || t.status?.includes('Selesai')).map((t, idx) => (
+                        <tr key={t.id || idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
+                          <td className="py-3.5 px-3 font-mono font-bold text-emerald-700 dark:text-emerald-400">{t.nib_oss || `NIB-${(t.id || '').toString().slice(0, 8).toUpperCase()}`}</td>
+                          <td className="py-3.5 px-3 font-bold text-slate-900 dark:text-white">{t.company_name || t.investor_name || "-"}</td>
+                          <td className="py-3.5 px-3 text-slate-800 dark:text-slate-200">{t.sektor || t.potensi_name || "Investasi Usaha"}</td>
+                          <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold text-[10px]">{t.skala_usaha || "Menengah"}</span></td>
+                          <td className="py-3.5 px-3 font-bold text-slate-800 dark:text-slate-200">{formatRupiahSingkat(Number(t.nilai_investasi) || 0)}</td>
+                          <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-bold text-[10px]">Terverifikasi Active</span></td>
+                          <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold text-[10px] border border-emerald-500/30">⏱️ Selesai</span></td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -5259,9 +5304,34 @@ export default function AdminPortalDashboard() {
             <AdminLayout />
           </div>
         ) : (activeTab === 'verifikasi_pkkpr' || activeTab === 'verifikasi_puptr' || activeTab === 'puptr_clearance' || activeTab === 'puptr_spatial_clearance') ? (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <PuptrSpatialClearanceDashboard />
-          </div>
+          (userRole?.toLowerCase().includes('puptr') || userRole?.toLowerCase().includes('tata_ruang')) ? (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <PuptrSpatialClearanceDashboard />
+            </div>
+          ) : (
+            <div className="p-8 sm:p-12 text-center rounded-3xl bg-white/90 dark:bg-slate-900/60 backdrop-blur-xl border border-amber-500/30 shadow-xl max-w-2xl mx-auto my-12 space-y-4">
+              <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto ring-8 ring-amber-500/5">
+                <ShieldAlert size={36} />
+              </div>
+              <div className="space-y-2">
+                <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                  Otoritas Terbatas (Role-Based Access)
+                </span>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Akses Khusus Dinas PUPTR</h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-lg mx-auto">
+                  Modul <strong>Admin Studio Clearance & Lisensi PKKPR</strong> berstatus eksklusif dan hanya berwenang diakses oleh Administrator Dinas PUPTR (Bidang Penataan Ruang & Studio GIS).
+                </p>
+              </div>
+              <div className="pt-2">
+                <button 
+                  onClick={() => setActiveTab(userRole === 'admin_oss' ? 'overview_perizinan' : 'overview')}
+                  className="px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-xs transition"
+                >
+                  Kembali ke Dashboard Utama
+                </button>
+              </div>
+            </div>
+          )
         ) : (activeTab === 'verifikasi_pertanian' || activeTab === 'pertanian_clearance' || activeTab === 'admin_pertanian') ? (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <PertanianLandClearanceDashboard />
