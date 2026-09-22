@@ -98,14 +98,21 @@ export default function InvestorAnalyticsSidebar({
   const [isOpacityPopoverOpen, setIsOpacityPopoverOpen] = useState(false);
 
   // Active opacity value (synced with parent state if provided)
-  const currentOpacity = panelOpacity !== undefined ? panelOpacity : (isUltraTransparent ? 25 : 95);
+  const currentOpacity = panelOpacity !== undefined ? panelOpacity : (isUltraTransparent ? 25 : 80);
+  const effectiveOpacity = Math.max(10, Math.min(100, currentOpacity)) / 100;
+
+  const cardAeroStyle = (factor = 1) => ({
+    backgroundColor: isDarkMode
+      ? `rgba(2, 6, 23, ${Math.min(1, effectiveOpacity * factor).toFixed(2)})`
+      : `rgba(255, 255, 255, ${Math.min(1, effectiveOpacity * factor).toFixed(2)})`,
+  });
 
   const handleUpdateOpacity = (val: number) => {
-    const clamped = Math.min(Math.max(val, 10), 95);
+    const clamped = Math.min(Math.max(val, 15), 95);
     if (onSetPanelOpacity) {
       onSetPanelOpacity(clamped);
     }
-    setIsUltraTransparent(clamped <= 50);
+    setIsUltraTransparent(clamped <= 40);
   };
 
   // High-contrast theme-aware typography tokens for crisp readability over dynamic map layers
@@ -1178,10 +1185,11 @@ export default function InvestorAnalyticsSidebar({
 
       {/* 1. Header Card with Toggle Collapse */}
       <div 
+        style={cardAeroStyle(1)}
         className={`shrink-0 flex flex-col gap-3 p-3.5 sm:p-4 mb-3.5 rounded-2xl border transition-all duration-300 ease-in-out hover:shadow-lg hover:border-emerald-500/50 backdrop-blur-md ${
           isDarkMode 
-            ? "bg-slate-950/40 border-white/15 text-slate-100 shadow-xl" 
-            : "bg-white/75 border-slate-900/15 text-slate-950 shadow-sm"
+            ? "border-white/15 text-slate-100 shadow-xl" 
+            : "border-slate-900/15 text-slate-950 shadow-sm"
         }`}
       >
         <div 
@@ -1310,6 +1318,90 @@ export default function InvestorAnalyticsSidebar({
                 <Printer className={`h-3.5 w-3.5 ${isDarkMode ? "text-indigo-400" : "text-indigo-700"}`} />
                 <span>{t('analyticalHub.report')}</span>
               </motion.button>
+
+              {/* Unified Panel Opacity (HUD Aero-Glass) Control */}
+              <div className="relative">
+                <motion.button whileTap={{ scale: 0.95 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsOpacityPopoverOpen(!isOpacityPopoverOpen);
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] border rounded-lg text-xs transition-all font-bold cursor-pointer ${
+                    isOpacityPopoverOpen
+                      ? "bg-emerald-600 border-emerald-500 text-white shadow-xs"
+                      : isDarkMode 
+                        ? "bg-slate-900/80 border-slate-700/80 hover:border-emerald-400 text-slate-100" 
+                        : "bg-white/90 border-slate-300 hover:border-emerald-600 text-slate-950 shadow-xs sm:hover:bg-slate-50"
+                  }`}
+                  title="Atur Transparansi HUD Peta & Seluruh Panel Analitik"
+                >
+                  <Sliders className={`h-3.5 w-3.5 ${isOpacityPopoverOpen ? "text-white" : isDarkMode ? "text-emerald-400" : "text-emerald-700"}`} />
+                  <span>{Math.round(currentOpacity)}%</span>
+                </motion.button>
+
+                {isOpacityPopoverOpen && (
+                  <div 
+                    onClick={(e) => e.stopPropagation()}
+                    className={`absolute right-0 sm:left-0 top-full mt-2 w-64 p-3.5 rounded-2xl border shadow-2xl z-50 backdrop-blur-2xl flex flex-col gap-3 font-sans transition-all ${
+                      isDarkMode 
+                        ? "bg-slate-950/95 border-slate-700/80 text-white shadow-black/90" 
+                        : "bg-white/98 border-slate-300 text-slate-900 shadow-2xl"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between border-b pb-2 border-slate-200/40 dark:border-slate-800">
+                      <span className="text-xs font-bold font-['Plus_Jakarta_Sans',sans-serif] flex items-center gap-1.5">
+                        <Eye className="h-3.5 w-3.5 text-emerald-500" />
+                        Transparansi HUD
+                      </span>
+                      <span className="text-xs font-mono font-black text-emerald-600 dark:text-emerald-400">
+                        {Math.round(currentOpacity)}%
+                      </span>
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex justify-between text-[10px] text-slate-500 font-mono font-medium">
+                        <span>Transparan (15%)</span>
+                        <span>Pekat (95%)</span>
+                      </div>
+                      <input 
+                        type="range" 
+                        min="15" 
+                        max="95" 
+                        step="5"
+                        value={currentOpacity}
+                        onChange={(e) => handleUpdateOpacity(Number(e.target.value))}
+                        className="w-full accent-emerald-500 cursor-pointer h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none"
+                      />
+                    </div>
+
+                    {/* Quick Presets */}
+                    <div className="grid grid-cols-4 gap-1.5 pt-1">
+                      {[
+                        { label: "25%", val: 25, tip: "Ultra" },
+                        { label: "50%", val: 50, tip: "Glass" },
+                        { label: "75%", val: 75, tip: "Aero" },
+                        { label: "95%", val: 95, tip: "Solid" }
+                      ].map((preset) => (
+                        <button
+                          key={preset.val}
+                          type="button"
+                          onClick={() => handleUpdateOpacity(preset.val)}
+                          className={`py-1 px-1.5 rounded-lg text-[10px] font-mono font-bold transition-all border cursor-pointer flex flex-col items-center justify-center ${
+                            Math.round(currentOpacity) === preset.val
+                              ? "bg-emerald-600 text-white border-emerald-500 shadow-xs"
+                              : isDarkMode
+                                ? "bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-800"
+                                : "bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-200"
+                          }`}
+                        >
+                          <span>{preset.label}</span>
+                          <span className="text-[8px] opacity-75">{preset.tip}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -2660,15 +2752,18 @@ export default function InvestorAnalyticsSidebar({
         <div className="flex flex-col gap-5">
           
           {/* Top: Pie Chart Sector Allocation */}
-          <InvestmentSectorChart data={sectorData} isDarkMode={isDarkMode} />
+          <InvestmentSectorChart data={sectorData} isDarkMode={isDarkMode} panelOpacity={currentOpacity} />
 
           {/* Infrastructure Distribution Statistics */}
-          <InfrastructureStatsChart infrastructure={infrastructure} isDarkMode={isDarkMode} />
+          <InfrastructureStatsChart infrastructure={infrastructure} isDarkMode={isDarkMode} panelOpacity={currentOpacity} />
 
           {/* Right Side: ROI Simulator */}
-          <div className={`border p-5 lg:p-6 rounded-lg shadow-sm transition-all duration-300 ease-in-out hover:shadow-md ${
-            isDarkMode ? "bg-slate-900 border-slate-800 text-white" : "bg-white border-slate-200 text-slate-800"
-          }`}>
+          <div 
+            style={cardAeroStyle()}
+            className={`border p-5 lg:p-6 rounded-2xl shadow-sm transition-all duration-300 ease-in-out hover:shadow-md backdrop-blur-md ${
+              isDarkMode ? "border-white/10 text-white" : "border-slate-900/15 text-slate-950"
+            }`}
+          >
             <div className="flex items-center justify-between mb-5 border-b pb-3 border-slate-200/50 dark:border-slate-800/80">
               <div>
                 <h4 className={`text-xs md:text-sm font-semibold tracking-wide ${isDarkMode ? "text-white" : "text-slate-900"}`}>{t('mapAnalytics.enterpriseROICalculator')}</h4>

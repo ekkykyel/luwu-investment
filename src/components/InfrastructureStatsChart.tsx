@@ -8,6 +8,7 @@ import { Hammer, Ban, LayoutGrid, BarChart2, PieChart as PieIcon, ShieldAlert } 
 interface InfrastructureStatsChartProps {
   infrastructure: any[];
   isDarkMode: boolean;
+  panelOpacity?: number;
 }
 
 const INFRA_COLORS: { [key: string]: string } = {
@@ -43,9 +44,10 @@ function getCategoryColor(name: string): string {
   return colors[Math.abs(hash) % colors.length];
 }
 
-export default function InfrastructureStatsChart({ infrastructure = [], isDarkMode }: InfrastructureStatsChartProps) {
+export default function InfrastructureStatsChart({ infrastructure = [], isDarkMode, panelOpacity = 80 }: InfrastructureStatsChartProps) {
   const { t } = useTranslation();
   const [chartType, setChartType] = useState<"bar" | "pie">("bar");
+  const effectiveOpacity = Math.max(10, Math.min(100, panelOpacity)) / 100;
 
   // Dynamic aggregation of infrastructure from real-time spatial layer points
   const aggregatedData = useMemo(() => {
@@ -73,17 +75,25 @@ export default function InfrastructureStatsChart({ infrastructure = [], isDarkMo
   const totalInfraCount = infrastructure.length;
 
   return (
-    <div className={`border p-5 lg:p-6 rounded-2xl shadow-sm transition-all duration-300 ease-in-out hover:shadow-md relative z-10 ${
-      isDarkMode ? "bg-slate-900 border-slate-800 text-white" : "bg-white border-slate-200 text-slate-800"
-    }`} id="infra-stats-section">
+    <div 
+      style={{
+        backgroundColor: isDarkMode 
+          ? `rgba(2, 6, 23, ${effectiveOpacity})` 
+          : `rgba(255, 255, 255, ${effectiveOpacity})`
+      }}
+      className={`border p-5 lg:p-6 rounded-2xl shadow-sm transition-all duration-300 ease-in-out hover:shadow-md relative z-10 backdrop-blur-md ${
+        isDarkMode ? "border-white/10 text-white" : "border-slate-900/15 text-slate-950"
+      }`} 
+      id="infra-stats-section"
+    >
       
       {/* Header and Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 border-b pb-4 border-slate-200/50 dark:border-slate-800/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 border-b pb-4 border-slate-200/50 dark:border-white/10">
         <div>
-          <h4 className={`text-xs md:text-sm font-semibold tracking-wide ${isDarkMode ? "text-slate-100" : "text-slate-900"}`}>
+          <h4 className={`text-xs md:text-sm font-bold tracking-wide ${isDarkMode ? "text-white" : "text-slate-950"}`}>
             {t("infraStats.title", "Statistik Infrastruktur Luwu")}
           </h4>
-          <span className={`text-[10px] md:text-[11px] block mt-1 leading-relaxed ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>
+          <span className={`text-[10px] md:text-[11px] block mt-1 leading-relaxed ${isDarkMode ? "text-slate-300 font-medium" : "text-slate-800 font-bold"}`}>
             {t("infraStats.subtitle", "Distribusi aset & fasilitas berdasarkan klasifikasi spasial")}
           </span>
         </div>

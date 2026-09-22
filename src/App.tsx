@@ -638,6 +638,7 @@ export default function App() {
   }, [isDarkMode]);
   const [heatmapMetric, setHeatmapMetric] = useState<"count" | "value" | "density" | "road_density" | "none">("none");
   const [heatmapOpacity, setHeatmapOpacity] = useState<number>(0.6);
+  const [gisPanelOpacity, setGisPanelOpacity] = useState<number>(80);
   const [choroplethMetric, setChoroplethMetric] = useState<
     "value" | "density" | "infrastructure" | "suitability" | "none"
   >("none");
@@ -5765,15 +5766,27 @@ export default function App() {
                   animate={isMobile ? { y: 0, opacity: 1 } : { x: 0, opacity: 1, filter: "blur(0px)" }}
                   exit={isMobile ? { y: "100%", opacity: 0 } : { x: "-100%", opacity: 0.5, filter: "blur(4px)" }}
                   transition={{ type: "spring", stiffness: 240, damping: 26, mass: 0.9 }}
-                  className={`fixed inset-x-0 top-3 sm:top-4 bottom-0 md:top-auto md:bottom-auto h-auto md:h-full md:relative md:inset-auto shrink-0 w-full md:max-w-sm md:w-64 lg:w-80 overflow-hidden pointer-events-auto flex flex-col gap-3 z-[70] md:z-[50] rounded-t-[28px] md:rounded-none shadow-[0_-12px_40px_rgba(0,0,0,0.5)] md:shadow-none ${isDarkMode ? "bg-slate-50 dark:bg-slate-950 md:bg-transparent text-slate-900 dark:text-white" : "bg-white md:bg-transparent text-slate-900"} border-t md:border-t-0 md:border-r border-white/10 md:border-transparent`}
+                  style={{
+                    backgroundColor: isMobile 
+                      ? (isDarkMode ? `rgba(2, 6, 23, ${Math.max(20, Math.min(100, gisPanelOpacity)) / 100})` : `rgba(255, 255, 255, ${Math.max(20, Math.min(100, gisPanelOpacity)) / 100})`)
+                      : "transparent"
+                  }}
+                  className={`fixed inset-x-0 top-3 sm:top-4 bottom-0 md:top-auto md:bottom-auto h-auto md:h-full md:relative md:inset-auto shrink-0 w-full md:max-w-sm md:w-64 lg:w-80 overflow-hidden pointer-events-auto flex flex-col gap-3 z-[70] md:z-[50] rounded-t-[28px] md:rounded-none shadow-[0_-12px_40px_rgba(0,0,0,0.5)] md:shadow-none backdrop-blur-xl ${isDarkMode ? "text-slate-100" : "text-slate-900"} border-t md:border-t-0 md:border-r border-white/10 md:border-transparent`}
                 >
                   <div className="flex-1 w-full h-full overflow-y-auto pb-24 md:pb-12 px-4 md:px-0 pt-3 md:pt-4 flex flex-col gap-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-700/50 hover:[&::-webkit-scrollbar-thumb]:bg-slate-600 [&::-webkit-scrollbar-thumb]:rounded-full">
                   {/* Header & close/collapse button (Mobile & Desktop) */}
-                  <div className={`flex flex-col items-center justify-between -mt-1 mb-3 px-1 sticky top-0 z-20 pt-1 pb-2 backdrop-blur-md border-b transition-colors ${
-                    isDarkMode 
-                      ? "bg-slate-50 dark:bg-slate-950/95 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white" 
-                      : "bg-white/98 border-slate-250 text-slate-950 shadow-xs"
-                  }`}>
+                  <div 
+                    style={{
+                      backgroundColor: isDarkMode 
+                        ? `rgba(2, 6, 23, ${Math.max(20, Math.min(100, gisPanelOpacity)) / 100})` 
+                        : `rgba(255, 255, 255, ${Math.max(20, Math.min(100, gisPanelOpacity)) / 100})`
+                    }}
+                    className={`flex flex-col items-center justify-between -mt-1 mb-3 px-1 sticky top-0 z-20 pt-1 pb-2 backdrop-blur-md border-b transition-colors ${
+                      isDarkMode 
+                        ? "border-slate-800 text-white" 
+                        : "border-slate-200 text-slate-950 shadow-xs"
+                    }`}
+                  >
                     <div className={`md:hidden w-12 h-1.5 ${isDarkMode ? "bg-slate-700" : "bg-slate-300"} rounded-full mb-2 pointer-events-none`} />
                     <div className="flex justify-between items-center w-full">
                       <span className={`font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-base ml-2 tracking-tight ${
@@ -5803,7 +5816,14 @@ export default function App() {
                   </div>
 
               {/* AI Consultant Button */}
-              <div className={`${isDarkMode ? "bg-white dark:bg-slate-900/80 backdrop-blur-md border-slate-700/50 shadow-2xl" : "bg-white border-slate-200 shadow-md"} border p-3 rounded-2xl flex flex-col gap-2 relative overflow-hidden group flex-shrink-0 transition-all duration-300`}>
+              <div 
+                style={{
+                  backgroundColor: isDarkMode 
+                    ? `rgba(15, 23, 42, ${Math.max(25, Math.min(100, gisPanelOpacity)) / 100})` 
+                    : `rgba(255, 255, 255, ${Math.max(25, Math.min(100, gisPanelOpacity)) / 100})`
+                }}
+                className={`border p-3 rounded-2xl flex flex-col gap-2 relative overflow-hidden group flex-shrink-0 transition-all duration-300 backdrop-blur-md ${isDarkMode ? "border-slate-700/50 shadow-2xl" : "border-slate-200 shadow-md"}`}
+              >
                 <div className={`absolute -right-4 -top-4 w-20 h-20 bg-blue-600/10 rounded-full blur-2xl ${isDarkMode ? "group-hover:bg-blue-500/20" : "group-hover:bg-blue-300/30"} transition-all`} />
                 <motion.button whileTap={{ scale: 0.95 }}
                   onClick={() => setIsBufferAiModalOpen(true)}
@@ -5822,11 +5842,18 @@ export default function App() {
               </div>
 
               {/* Spatial Control Panel */}
-              <div className={`${
-                isDarkMode
-                  ? "bg-slate-50 dark:bg-slate-950/80 backdrop-blur-2xl border-white/5 text-slate-900 dark:text-white shadow-[0_8px_32px_rgba(0,0,0,0.5)] ring-1 ring-white/10"
-                  : "bg-white/95 border-slate-300/90 text-slate-900 shadow-2xl shadow-slate-900/15"
-              } backdrop-blur-xl border p-4 rounded-3xl flex flex-col gap-2.5 relative flex-shrink-0 group mb-8 transition-all duration-300 font-sans`}>
+              <div 
+                style={{
+                  backgroundColor: isDarkMode 
+                    ? `rgba(2, 6, 23, ${Math.max(25, Math.min(100, gisPanelOpacity)) / 100})` 
+                    : `rgba(255, 255, 255, ${Math.max(25, Math.min(100, gisPanelOpacity)) / 100})`
+                }}
+                className={`border p-4 rounded-3xl flex flex-col gap-2.5 relative flex-shrink-0 group mb-8 transition-all duration-300 font-sans backdrop-blur-xl ${
+                  isDarkMode
+                    ? "border-white/10 text-white shadow-[0_8px_32px_rgba(0,0,0,0.5)] ring-1 ring-white/10"
+                    : "border-slate-300/90 text-slate-900 shadow-2xl shadow-slate-900/15"
+                }`}
+              >
                 <div className="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-colors pointer-events-none" />
 
                 <div className="flex flex-col items-center justify-center gap-1.5 border-b border-slate-500/20 pb-2.5 text-center z-10 relative">
@@ -6936,10 +6963,15 @@ export default function App() {
                         animate={isMobile ? { opacity: 1, y: 0 } : { opacity: 1, x: 0 }}
                         exit={isMobile ? { opacity: 0, y: "100%" } : { opacity: 0, x: "100%" }}
                         transition={{ type: "spring", damping: 28, stiffness: 220 }}
+                        style={{
+                          backgroundColor: isDarkMode
+                            ? `rgba(2, 6, 23, ${Math.max(15, Math.min(100, gisPanelOpacity)) / 100})`
+                            : `rgba(255, 255, 255, ${Math.max(15, Math.min(100, gisPanelOpacity)) / 100})`
+                        }}
                         className={`backdrop-blur-xl border p-3 pt-3 sm:pt-4 sm:p-5 h-full md:h-auto rounded-t-[28px] md:rounded-3xl shadow-2xl flex flex-col gap-4 relative overflow-hidden transition-all duration-300 ease-in-out origin-bottom md:origin-right ${
                           isDarkMode
-                            ? "bg-slate-950/75 border-slate-700/60 text-slate-100 shadow-black/80"
-                            : "bg-white/85 border-slate-300/80 text-slate-900 shadow-2xl shadow-slate-900/15"
+                            ? "border-slate-700/60 text-slate-100 shadow-black/80"
+                            : "border-slate-300/80 text-slate-900 shadow-2xl shadow-slate-900/15"
                         }`}
                       >
                         {isDarkMode && (
@@ -6993,6 +7025,8 @@ export default function App() {
                             stats={stats}
                             isStatsLoading={isStatsLoading}
                             onToggleSpatialLayer={executeToggleLayerVis}
+                            panelOpacity={gisPanelOpacity}
+                            onSetPanelOpacity={setGisPanelOpacity}
                           />
                         </GisErrorBoundary>
                       </motion.div>
