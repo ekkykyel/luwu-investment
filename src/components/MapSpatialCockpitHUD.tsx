@@ -51,8 +51,13 @@ export default function MapSpatialCockpitHUD({
 }: MapSpatialCockpitHUDProps) {
   const { t } = useTranslation();
 
-  // Internal states
-  const [isMinimized, setIsMinimized] = useState<boolean>(false);
+  // Internal states - default to minimized on mobile to avoid map collision
+  const [isMinimized, setIsMinimized] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      return window.innerWidth < 768;
+    }
+    return false;
+  });
   const [isUltraTransparent, setIsUltraTransparent] = useState<boolean>(true);
   const [activeMetricMode, setActiveMetricMode] = useState<"SECTOR" | "DISTRICT">("SECTOR");
   const [chartViewMode, setChartViewMode] = useState<"ALL" | "PIE" | "BAR">("ALL");

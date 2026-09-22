@@ -640,7 +640,7 @@ export default function App() {
   }, [isDarkMode]);
   const [heatmapMetric, setHeatmapMetric] = useState<"count" | "value" | "density" | "road_density" | "none">("none");
   const [heatmapOpacity, setHeatmapOpacity] = useState<number>(0.6);
-  const [gisPanelOpacity, setGisPanelOpacity] = useState<number>(80);
+  const [gisPanelOpacity, setGisPanelOpacity] = useState<number>(75);
   const spatialTheme = useSpatialThemeTokens(isDarkMode, gisPanelOpacity);
   const [choroplethMetric, setChoroplethMetric] = useState<
     "value" | "density" | "infrastructure" | "suitability" | "none"
@@ -5711,7 +5711,7 @@ export default function App() {
 
       {/* ── INVESTOR WORKSPACE ── */}
       {activeWorkspace === "INVESTOR" ? (
-        <div className="absolute inset-0 pointer-events-none z-[50] pt-28">
+        <div className="absolute inset-0 pointer-events-none z-[50] pt-20">
           <div className="h-full w-full relative flex items-start justify-between pl-4 md:pl-6 pr-4 md:pr-6 lg:pr-6 pb-6 overflow-hidden">
 
             {/* Mobile overlay backdrops */}
@@ -5816,106 +5816,172 @@ export default function App() {
                     </div>
                   </div>
 
-              {/* AI Consultant Button */}
+              {/* AI Consultant Banner - Futuristic Cyber Copilot */}
               <div 
                 style={{
-                  backgroundColor: spatialTheme.bg.card(gisPanelOpacity, 0.9)
+                  backgroundColor: spatialTheme.bg.card(gisPanelOpacity, 0.95)
                 }}
-                className={`border p-3 rounded-2xl flex flex-col gap-2 relative overflow-hidden group flex-shrink-0 transition-all duration-300 backdrop-blur-md ${isDarkMode ? "border-slate-700/50 shadow-2xl" : "border-slate-200 shadow-md"}`}
+                className={`border p-3 rounded-2xl flex flex-col gap-2 relative overflow-hidden group flex-shrink-0 transition-all duration-300 backdrop-blur-2xl ${
+                  isDarkMode 
+                    ? "border-emerald-500/30 hover:border-emerald-400/60 shadow-[0_8px_30px_rgba(16,185,129,0.15)] ring-1 ring-emerald-500/20" 
+                    : "border-emerald-500/30 hover:border-emerald-500/60 shadow-md shadow-emerald-500/10 ring-1 ring-emerald-500/20"
+                }`}
               >
-                <div className={`absolute -right-4 -top-4 w-20 h-20 bg-blue-600/10 rounded-full blur-2xl ${isDarkMode ? "group-hover:bg-blue-500/20" : "group-hover:bg-blue-300/30"} transition-all`} />
-                <motion.button whileTap={{ scale: 0.95 }}
+                <div className="absolute -right-6 -top-6 w-24 h-24 bg-gradient-to-br from-emerald-500/20 via-cyan-500/20 to-transparent rounded-full blur-2xl group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
+                <motion.button whileTap={{ scale: 0.97 }}
                   onClick={() => setIsBufferAiModalOpen(true)}
-                  className="py-2.5 px-3.5 bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-bold rounded-xl font-['Plus_Jakarta_Sans',sans-serif] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(0,0,0,0.1)] active:scale-95 border border-blue-500 ring-2 ring-blue-500/20 shadow-[0_0_15px_rgba(37,99,235,0.2)] flex justify-between items-center gap-2 tracking-wide relative z-10 w-full"
+                  className={`py-2.5 px-3.5 rounded-xl font-['Plus_Jakarta_Sans',sans-serif] transition-all duration-300 ease-out hover:shadow-lg active:scale-95 flex justify-between items-center gap-2 relative z-10 w-full cursor-pointer ${
+                    isDarkMode
+                      ? "bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white shadow-emerald-900/40 border border-emerald-400/40"
+                      : "bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700 hover:from-emerald-500 hover:to-cyan-600 text-white shadow-emerald-600/30 border border-emerald-400/30"
+                  }`}
                 >
-                  <div className="flex items-center gap-2">
-                    <Bot className="h-4 w-4" />
-                    <span className="text-left font-bold leading-tight">
-                      Konsultan AI Gemini
-                    </span>
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="p-1.5 rounded-lg bg-white/20 backdrop-blur-md shadow-inner flex items-center justify-center shrink-0">
+                      <Bot className="h-4 w-4 text-white" />
+                    </div>
+                    <div className="flex flex-col text-left">
+                      <span className="text-[11px] font-extrabold tracking-wide text-white leading-tight">
+                        Konsultan AI Gemini
+                      </span>
+                      <span className="text-[9px] font-mono tracking-wider text-emerald-100/90 font-medium">
+                        Smart Spatial Assistant
+                      </span>
+                    </div>
                   </div>
-                  <div className="bg-white/20 p-1.5 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:rotate-12">
-                    <Sparkles className="h-3.5 w-3.5" />
+                  <div className="bg-white/20 p-1.5 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:rotate-12 shrink-0">
+                    <Sparkles className="h-3.5 w-3.5 text-amber-300 animate-pulse" />
                   </div>
                 </motion.button>
               </div>
 
-              {/* Spatial Control Panel */}
+              {/* Spatial Control Panel - Futuristic Aero-Glass Command Console */}
               <div 
                 style={{
                   backgroundColor: spatialTheme.bg.card(gisPanelOpacity)
                 }}
-                className={`border p-4 rounded-3xl flex flex-col gap-2.5 relative flex-shrink-0 group mb-8 transition-all duration-300 font-sans backdrop-blur-xl ${
+                className={`border p-3.5 sm:p-4 rounded-3xl flex flex-col gap-3 relative flex-shrink-0 group mb-8 transition-all duration-300 font-sans backdrop-blur-2xl ${
                   isDarkMode
-                    ? "border-white/10 text-white shadow-[0_8px_32px_rgba(0,0,0,0.5)] ring-1 ring-white/10"
-                    : "border-slate-300/90 text-slate-900 shadow-2xl shadow-slate-900/15"
+                    ? "border-white/15 text-white shadow-[0_12px_40px_rgba(0,0,0,0.6)] ring-1 ring-white/10"
+                    : "border-slate-900/15 text-slate-900 shadow-2xl shadow-slate-900/15 ring-1 ring-slate-900/5"
                 }`}
               >
-                <div className="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-colors pointer-events-none" />
+                <div className="absolute -right-10 -top-10 w-36 h-36 bg-gradient-to-br from-emerald-500/15 to-cyan-500/10 rounded-full blur-3xl group-hover:opacity-100 opacity-60 transition-opacity pointer-events-none" />
 
-                <div className="flex flex-col items-center justify-center gap-1.5 border-b border-slate-500/20 pb-2.5 text-center z-10 relative">
-                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center border shadow-inner ${
-                    isDarkMode ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-emerald-100 border-emerald-300 text-emerald-700"
-                  }`}>
-                    <Layers className="h-4 w-4 animate-pulse" />
+                {/* Futuristic HUD Telemetry Header */}
+                <div className="flex items-center justify-between border-b border-slate-500/15 pb-2.5 z-10 relative">
+                  <div className="flex items-center gap-2.5">
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center border shadow-inner transition-transform duration-300 group-hover:scale-105 ${
+                      isDarkMode 
+                        ? "bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border-emerald-500/30 text-emerald-400" 
+                        : "bg-emerald-100 border-emerald-300 text-emerald-700"
+                    }`}>
+                      <Layers className="h-4 w-4 animate-pulse" />
+                    </div>
+                    <div className="flex flex-col text-left">
+                      <h4 className={`text-xs sm:text-[13px] font-['Plus_Jakarta_Sans',sans-serif] font-black tracking-wider uppercase ${
+                        isDarkMode ? "text-white" : "text-slate-950"
+                      }`}>
+                        {t('mapControls.mapControl', 'Kontrol Peta Spasial')}
+                      </h4>
+                      <span className="text-[9px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping inline-block" />
+                        ONLINE • GIS ENGINE v2.0
+                      </span>
+                    </div>
                   </div>
-                  <h4 className={`text-[14px] font-['Plus_Jakarta_Sans',sans-serif] font-extrabold tracking-tight ${
-                    isDarkMode ? "text-slate-900 dark:text-white" : "text-slate-950"
-                  }`}>
-                    {t('mapControls.mapControl', 'Kontrol Peta Spasial')}
-                  </h4>
                 </div>
 
-                {/* Basemap Selection */}
+                {/* Basemap Selection - Tactical Grid */}
                 <div className="flex flex-col gap-1.5 relative z-10">
-                  <span className="text-[9px] text-slate-600 dark:text-slate-400 font-mono font-bold uppercase tracking-widest pl-1">
-                    {t('map.basemap')}
-                  </span>
-                  <div className="grid grid-cols-2 gap-1 p-1 bg-slate-500/5 rounded-xl border border-slate-500/10">
-                    {(["osm", "google_satellite", "satellite", "dark"] as const).map((mode) => (
-                      <motion.button whileTap={{ scale: 0.95 }}
-                        key={mode}
-                        onClick={() => setMapMode(mode)}
-                        className={`text-[10px] sm:text-[11px] font-mono py-2 rounded-lg border transition-all cursor-pointer ${
-                          mapMode === mode
-                            ? "bg-emerald-600 border-emerald-500 text-white font-bold shadow-md"
-                            : isDarkMode 
-                              ? "border-transparent text-slate-300 hover:bg-slate-800 hover:text-white" 
-                              : "border-transparent text-slate-700 hover:bg-slate-200 hover:text-slate-900"
-                        }`}
-                      >
-                        {mode === "osm" && "Light Map"}
-                        {mode === "google_satellite" && "Google Maps"}
-                        {mode === "satellite" && "Satellite"}
-                        {mode === "dark" && "Dark Engine"}
-                      </motion.button>
-                    ))}
+                  <div className="flex items-center justify-between pl-1">
+                    <span className="text-[9px] text-slate-500 dark:text-slate-400 font-mono font-bold uppercase tracking-widest flex items-center gap-1.5">
+                      <Compass className="h-3 w-3 text-emerald-500" />
+                      {t('map.basemap')}
+                    </span>
+                    <span className="text-[9px] font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase">
+                      {mapMode === "osm" ? "Light" : mapMode === "google_satellite" ? "Google" : mapMode === "satellite" ? "Satelit" : "Dark"}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-500/5 rounded-2xl border border-slate-500/10">
+                    {[
+                      { id: "osm", label: "Light Map", icon: "☀️", badge: "OSM" },
+                      { id: "google_satellite", label: "Google Maps", icon: "🌐", badge: "Live" },
+                      { id: "satellite", label: "Satelit HD", icon: "🛰️", badge: "Citra" },
+                      { id: "dark", label: "Dark Engine", icon: "🌙", badge: "Tactical" }
+                    ].map((modeItem) => {
+                      const isSelected = mapMode === modeItem.id;
+                      return (
+                        <motion.button whileTap={{ scale: 0.96 }}
+                          key={modeItem.id}
+                          onClick={() => setMapMode(modeItem.id as any)}
+                          className={`relative flex flex-col justify-between p-2 rounded-xl text-left border transition-all duration-200 cursor-pointer ${
+                            isSelected
+                              ? isDarkMode
+                                ? "bg-gradient-to-br from-emerald-600/90 to-teal-700/90 border-emerald-400 text-white font-bold shadow-[0_0_15px_rgba(16,185,129,0.35)] ring-1 ring-emerald-300/40"
+                                : "bg-gradient-to-br from-emerald-600 to-teal-600 border-emerald-500 text-white font-bold shadow-md ring-1 ring-emerald-400/30"
+                              : isDarkMode 
+                                ? "bg-slate-800/40 border-white/10 text-slate-300 hover:bg-slate-800/80 hover:text-white hover:border-emerald-500/40 backdrop-blur-md" 
+                                : "bg-white/70 border-slate-200 text-slate-700 hover:bg-white hover:text-slate-950 hover:border-emerald-500/40 backdrop-blur-md"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between w-full mb-1">
+                            <span className="text-sm">{modeItem.icon}</span>
+                            <span className={`text-[8px] font-mono px-1.5 py-0.5 rounded font-bold uppercase ${
+                              isSelected
+                                ? "bg-white/20 text-white"
+                                : isDarkMode
+                                  ? "bg-slate-900/80 text-slate-400 border border-white/5"
+                                  : "bg-slate-100 text-slate-600 border border-slate-200"
+                            }`}>
+                              {modeItem.badge}
+                            </span>
+                          </div>
+                          <span className="text-[11px] font-['Plus_Jakarta_Sans',sans-serif] font-bold leading-snug tracking-tight">
+                            {modeItem.label}
+                          </span>
+                          {isSelected && (
+                            <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-white animate-ping" />
+                          )}
+                        </motion.button>
+                      );
+                    })}
                   </div>
                 </div>
 
-                {/* Temporal GIS Toggle */}
-                <div className="flex flex-col gap-1.5 relative z-10 mt-0.5">
-                  <span className="text-[9px] text-slate-600 dark:text-slate-400 font-mono font-bold uppercase tracking-widest pl-1 flex items-center gap-1">
-                    <Clock className="h-3 w-3 text-emerald-500" /> {t('map.temporalGis')}
-                  </span>
-                  <div className="grid grid-cols-2 gap-1 p-1 bg-slate-500/5 rounded-xl border border-slate-500/10">
-                    <motion.button whileTap={{ scale: 0.95 }}
+                {/* Temporal GIS Controller - Futuristic Timeline HUD */}
+                <div className="flex flex-col gap-1.5 relative z-10 mt-0.5 p-2 rounded-2xl bg-slate-500/5 border border-slate-500/10">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[9px] text-slate-500 dark:text-slate-400 font-mono font-bold uppercase tracking-widest flex items-center gap-1">
+                      <Clock className="h-3 w-3 text-emerald-500" /> {t('map.temporalGis')}
+                    </span>
+                    <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-full ${
+                      isTemporalGisControlActive
+                        ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                        : "bg-slate-500/10 text-slate-500"
+                    }`}>
+                      {isTemporalGisControlActive ? `TH. ${temporalYear}` : "OFF"}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1 p-0.5 bg-slate-500/10 rounded-xl border border-slate-500/10">
+                    <motion.button whileTap={{ scale: 0.96 }}
                       onClick={() => setIsTemporalGisControlActive(true)}
-                      className={`text-[10px] sm:text-[11px] font-mono py-2 rounded-lg border transition-all cursor-pointer ${
+                      className={`text-[10px] font-mono py-1.5 rounded-lg border transition-all cursor-pointer flex items-center justify-center gap-1 ${
                         isTemporalGisControlActive
-                          ? "bg-emerald-600 border-emerald-500 text-white font-extrabold shadow-md"
+                          ? "bg-emerald-600 border-emerald-400 text-white font-extrabold shadow-sm"
                           : `border-transparent hover:bg-slate-500/10 ${isDarkMode ? "text-slate-400 hover:text-slate-200" : "text-slate-600 hover:text-slate-900"}`
                       }`}
                     >
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
                       {t('mapControls.active')}
                     </motion.button>
-                    <motion.button whileTap={{ scale: 0.95 }}
+                    <motion.button whileTap={{ scale: 0.96 }}
                       onClick={() => setIsTemporalGisControlActive(false)}
-                      className={`text-[10px] sm:text-[11px] font-mono py-2 rounded-lg border transition-all cursor-pointer ${
+                      className={`text-[10px] font-mono py-1.5 rounded-lg border transition-all cursor-pointer ${
                         !isTemporalGisControlActive
                           ? isDarkMode 
-                            ? "bg-slate-700 border-slate-600 text-white font-bold shadow-md" 
-                            : "bg-slate-200 border-slate-300 text-slate-900 font-bold shadow-md"
+                            ? "bg-slate-700 border-slate-600 text-white font-bold shadow-sm" 
+                            : "bg-slate-200 border-slate-300 text-slate-900 font-bold shadow-sm"
                           : `border-transparent hover:bg-slate-500/10 ${isDarkMode ? "text-slate-400 hover:text-slate-200" : "text-slate-600 hover:text-slate-900"}`
                       }`}
                     >
@@ -5923,10 +5989,14 @@ export default function App() {
                     </motion.button>
                   </div>
                   {isTemporalGisControlActive && (
-                    <div className="mt-2 flex flex-col gap-1.5 px-1 pb-1">
-                      <div className={`flex justify-between items-center text-[10px] font-mono ${isDarkMode ? "text-slate-600 dark:text-slate-300" : "text-slate-600 dark:text-slate-400"}`}>
+                    <div className="mt-1 flex flex-col gap-1 px-1">
+                      <div className={`flex justify-between items-center text-[10px] font-mono ${isDarkMode ? "text-slate-400" : "text-slate-600"}`}>
                         <span>2015</span>
-                        <span className={`font-bold ${isDarkMode ? "text-emerald-700 dark:text-emerald-400" : "text-emerald-600"}`}>Target: {temporalYear}</span>
+                        <span className={`font-bold px-2 py-0.5 rounded-md ${
+                          isDarkMode ? "bg-emerald-950/60 text-emerald-400 border border-emerald-500/30" : "bg-emerald-50 text-emerald-700 border border-emerald-300"
+                        }`}>
+                          Target: {temporalYear}
+                        </span>
                         <span>{new Date().getFullYear()}</span>
                       </div>
                       <input 
@@ -5936,9 +6006,9 @@ export default function App() {
                         step="1"
                         value={temporalYear}
                         onChange={(e) => setTemporalYear(parseInt(e.target.value, 10))}
-                        className="w-full accent-emerald-500 appearance-none bg-slate-600/50 h-1 rounded-full outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-emerald-400 [&::-webkit-slider-thumb]:rounded-full cursor-pointer"
+                        className="w-full accent-emerald-500 appearance-none bg-slate-600/30 h-1.5 rounded-full outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:bg-emerald-400 [&::-webkit-slider-thumb]:ring-2 [&::-webkit-slider-thumb]:ring-emerald-600 [&::-webkit-slider-thumb]:rounded-full cursor-pointer transition-all"
                       />
-                      <p className="text-[9px] text-slate-600 dark:text-slate-400 italic mt-1 leading-tight text-center">
+                      <p className="text-[9px] text-slate-500 dark:text-slate-400 italic leading-tight text-center">
                         {t('mapControls.temporalGisDesc')}
                       </p>
                     </div>
@@ -5946,28 +6016,40 @@ export default function App() {
                 </div>
 
                 {/* Thematic Overlays */}
-                <div className="flex flex-col gap-1.5 relative z-10 mt-1 pb-1 border-b border-slate-500/20">
-                  <span className="text-[9px] text-slate-600 dark:text-slate-400 font-mono font-bold uppercase tracking-widest pl-1 text-emerald-500">
-                    Thematic Overlays
-                  </span>
-                  <div className="flex flex-col gap-1.5 mt-1">
+                <div className="flex flex-col gap-1.5 relative z-10 mt-1 pb-1 border-b border-slate-500/15">
+                  <div className="flex items-center justify-between pl-1">
+                    <span className="text-[9px] text-slate-500 dark:text-slate-400 font-mono font-bold uppercase tracking-widest flex items-center gap-1.5">
+                      <Layers className="h-3 w-3 text-indigo-500" />
+                      Thematic Overlays
+                    </span>
+                    <span className="text-[9px] font-mono font-bold text-indigo-500">
+                      {Object.values(spatialLayers).filter(l => ["layer_land_use_zoning", "layer_flood_risk", "layer_landslide_risk", "layer_historical_suitability", "layer_potensi"].includes(l.id) && l.isActive).length} AKTIF
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-1 mt-1">
                     {Object.values(spatialLayers).filter(l => ["layer_land_use_zoning", "layer_flood_risk", "layer_landslide_risk", "layer_historical_suitability", "layer_potensi"].includes(l.id)).map((l, idx) => (
-                      <div key={`thematic-${l.id}`} className="flex items-center justify-between group px-1 opacity-0 animate-stagger-in" style={{ animationDelay: `${idx * 40}ms` }}>
-                        <label className={`flex items-center gap-2 cursor-pointer text-[10px] sm:text-xs font-mono font-semibold select-none py-2 transition-colors duration-200 ${
-                          l.isActive ? (isDarkMode ? "text-slate-900 dark:text-white" : "text-slate-900") : (isDarkMode ? "text-slate-600 dark:text-slate-300 hover:text-slate-200" : "text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200")
+                      <div key={`thematic-${l.id}`} className={`flex items-center justify-between group px-2 py-1.5 rounded-xl border transition-all duration-200 ${
+                        l.isActive 
+                          ? isDarkMode 
+                            ? "bg-slate-800/80 border-slate-700/80 shadow-xs" 
+                            : "bg-white border-slate-200/90 shadow-xs"
+                          : "border-transparent hover:bg-slate-500/5 opacity-75 hover:opacity-100"
+                      }`}>
+                        <label className={`flex items-center gap-2.5 cursor-pointer text-[10px] sm:text-xs font-['Plus_Jakarta_Sans',sans-serif] font-bold select-none transition-colors duration-200 flex-1 min-w-0 ${
+                          l.isActive ? (isDarkMode ? "text-white" : "text-slate-950") : (isDarkMode ? "text-slate-400 hover:text-slate-200" : "text-slate-600 hover:text-slate-900")
                         }`}>
                           <input
                             type="checkbox"
                             checked={l.isActive}
                             onChange={() => handleToggleLayerVis(l.id)}
                             disabled={l.isLoading}
-                            className={`rounded h-4 w-4 ${
-                              isDarkMode ? "accent-emerald-400" : "accent-emerald-500"
+                            className={`rounded-md h-4 w-4 cursor-pointer ${
+                              isDarkMode ? "accent-emerald-400" : "accent-emerald-600"
                             } ${l.isLoading ? "opacity-50 cursor-wait" : ""}`}
                           />
-                          {l.isLoading && (
+                          {l.isLoading ? (
                             <Loader2 className="h-3.5 w-3.5 animate-spin text-emerald-500 shrink-0" />
-                          )}
+                          ) : null}
                           <span className="truncate">
                             {l.id === 'layer_potensi' ? t('map.investmentPotential') : 
                              l.id === 'layer_land_use_zoning' ? t('map.landUseZoning') : 
@@ -5975,7 +6057,7 @@ export default function App() {
                           </span>
                         </label>
                         <div
-                          className="w-3 h-3 rounded-full opacity-80"
+                          className="w-2.5 h-2.5 rounded-full ring-2 ring-white/20 shrink-0 shadow-xs"
                           style={{ backgroundColor: l.color }}
                         />
                       </div>
@@ -6023,7 +6105,8 @@ export default function App() {
                 {/* Filter Wilayah */}
                 <div className="flex flex-col gap-1.5 relative z-10">
                   <div className="flex items-center justify-between pl-1">
-                    <span className="text-[9px] text-slate-600 dark:text-slate-400 font-mono font-bold uppercase tracking-widest">
+                    <span className="text-[9px] text-slate-500 dark:text-slate-400 font-mono font-bold uppercase tracking-widest flex items-center gap-1.5">
+                      <MapPin className="h-3 w-3 text-amber-500" />
                       {t('mapControls.regionFilter')}
                     </span>
                     {selectedDistrictId && (
@@ -6046,12 +6129,12 @@ export default function App() {
                         setIsSidebarOpen(false);
                       }
                     }}
-                    className={`w-full rounded-xl px-2.5 py-1.5 text-xs focus:outline-none transition-all font-mono border ${
+                    className={`w-full rounded-xl px-2.5 py-2 text-xs focus:outline-none transition-all font-mono border cursor-pointer ${
                       selectedDistrictId
-                        ? "border-amber-500/80 shadow-[0_0_12px_rgba(245,158,11,0.25)] bg-amber-500/5 text-amber-600 dark:text-amber-400 font-bold"
+                        ? "border-amber-500/80 shadow-[0_0_12px_rgba(245,158,11,0.25)] bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold"
                         : isDarkMode
-                          ? "bg-white dark:bg-slate-900 border-slate-700 text-slate-900 dark:text-white focus:border-emerald-500/50"
-                          : "bg-slate-50 border-slate-200 text-slate-800 focus:border-emerald-500"
+                          ? "bg-slate-800/80 border-slate-700 text-white focus:border-emerald-500/50"
+                          : "bg-white border-slate-300 text-slate-900 focus:border-emerald-500"
                     }`}
                   >
                     <option value="all">🔍 {t('mapControls.allSubdistricts')}</option>
@@ -6066,9 +6149,9 @@ export default function App() {
                     id="btn-center-map-sidebar"
                     onClick={() => handleCenterMap(selectedDistrictId)}
                     title={t('mapControls.centerMapTooltip', 'Pusatkan dan sesuaikan viewport peta ke seluruh sebaran titik investasi wilayah terpilih')}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 mt-1 rounded-xl text-xs font-semibold tracking-wide transition-all border shadow-sm cursor-pointer bg-white hover:bg-emerald-50 text-emerald-700 border-slate-200 hover:border-emerald-500/50 dark:bg-slate-900 dark:hover:bg-emerald-950/30 dark:text-emerald-300 dark:border-slate-700 dark:hover:border-emerald-500/60 active:scale-[0.98]"
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2 mt-1 rounded-xl text-xs font-bold tracking-wide transition-all border shadow-sm cursor-pointer bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.4)] active:scale-[0.98]"
                   >
-                    <LocateFixed className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <LocateFixed className="w-3.5 h-3.5 text-white shrink-0 animate-pulse" />
                     <span>
                       {t('mapControls.centerMap', 'Pusatkan Peta')} {selectedDistrictId ? `(${districts.find(d => d.id === selectedDistrictId)?.name || 'Kecamatan'})` : `(${t('mapControls.allSectors', 'Semua Wilayah')})`}
                     </span>
@@ -6570,15 +6653,25 @@ export default function App() {
                     setIsLeftSidebarCollapsed(false);
                     setIsLayerPanelOpen(false);
                   }}
-                  className={`fixed left-4 top-24 z-[50] pointer-events-auto flex items-center gap-2 px-3.5 py-2.5 rounded-2xl shadow-xl border backdrop-blur-xl cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 ${
+                  className={`fixed left-4 top-20 z-[50] pointer-events-auto flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl shadow-xl border backdrop-blur-2xl cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 group ${
                     isDarkMode
-                      ? "bg-slate-900/95 border-slate-700/90 text-white shadow-black/80 hover:bg-slate-800"
-                      : "bg-white/95 border-slate-300 text-slate-900 shadow-xl shadow-slate-900/10 hover:bg-slate-50"
+                      ? "bg-slate-900/90 border-white/15 text-white shadow-black/80 hover:bg-slate-800/90 hover:border-emerald-400/80 ring-1 ring-white/10"
+                      : "bg-white/90 border-slate-900/15 text-slate-900 shadow-xl shadow-slate-900/10 hover:bg-white hover:border-emerald-500 ring-1 ring-slate-900/5"
                   }`}
                   title="Buka Menu Kontrol Peta"
                 >
-                  <Filter className="w-4 h-4 text-emerald-500" />
-                  <span className="text-xs font-bold font-sans">Kontrol Peta</span>
+                  <div className="p-1 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-500">
+                    <Filter className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
+                  </div>
+                  <div className="flex flex-col items-start text-left">
+                    <span className="text-xs font-bold font-['Plus_Jakarta_Sans',sans-serif] uppercase tracking-wider">
+                      Kontrol Peta
+                    </span>
+                    <span className="text-[9px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping inline-block" />
+                      GIS Engine
+                    </span>
+                  </div>
                 </motion.button>
               )}
             </AnimatePresence>
@@ -6630,7 +6723,7 @@ export default function App() {
 
             {/* ── MAP SPATIAL COCKPIT HUD (Aero-Glass Floating Charts) ── */}
             {!selectedInvestment && (
-              <div className="absolute bottom-[120px] sm:bottom-[70px] md:bottom-[54px] left-1/2 -translate-x-1/2 z-[42] pointer-events-none w-auto max-w-[96vw] sm:max-w-xl md:max-w-3xl lg:max-w-4xl px-1 sm:px-2">
+              <div className="absolute bottom-[116px] sm:bottom-[70px] md:bottom-[54px] left-1/2 -translate-x-1/2 z-[42] pointer-events-none w-auto max-w-[96vw] sm:max-w-xl md:max-w-3xl lg:max-w-4xl px-1 sm:px-2">
                 <MapSpatialCockpitHUD
                   investments={filteredInvestments}
                   districts={districts}
@@ -6937,15 +7030,15 @@ export default function App() {
                   animate={isMobile ? { y: 0, opacity: 1 } : { x: 0, opacity: 1 }}
                   exit={isMobile ? { y: "100%", opacity: 0 } : { x: 50, opacity: 0 }}
                   transition={{ type: "spring", stiffness: 320, damping: 30 }}
-                  className={`fixed inset-x-0 top-3 sm:top-4 bottom-0 md:top-4 md:bottom-auto md:absolute md:inset-auto md:right-4 z-[70] md:z-[50] pointer-events-auto origin-bottom md:origin-right transition-all duration-300 ${
+                  className={`fixed inset-x-0 top-3 sm:top-4 bottom-0 md:top-0 md:bottom-auto md:absolute md:inset-auto md:right-4 z-[70] md:z-[50] pointer-events-auto origin-bottom md:origin-right transition-all duration-300 ${
                     isDashboardExpanded 
                       ? "w-full h-auto md:max-w-none md:w-[440px] lg:w-[490px] xl:w-[540px] md:h-auto md:max-h-[85vh] rounded-t-[28px] md:rounded-3xl overflow-y-auto pb-20 md:pb-0 shadow-[0_-12px_40px_rgba(0,0,0,0.5)] md:shadow-none bg-slate-50 dark:bg-slate-950 md:bg-transparent" 
-                      : "w-auto ml-auto md:top-4 top-20 right-2 md:right-4 absolute"
+                      : "w-auto ml-auto md:top-0 top-16 right-2 md:right-4 absolute"
                   }`}
                 >
                   <AnimatePresence mode="wait">
                     {!isDashboardExpanded ? (
-                      /* Collapsed state: compact horizontal button collapsing to the right edge */
+                      /* Collapsed state: Sleek Aero-Glass Tactical Capsule */
                       <motion.button whileTap={{ scale: 0.95 }}
                         key="collapsed-analytical-btn"
                         initial={{ opacity: 0, x: 30, scale: 0.95 }}
@@ -6956,24 +7049,32 @@ export default function App() {
                           setIsDashboardExpanded(true);
                           setIsRightSidebarOpen(true);
                         }}
-                        className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl shadow-2xl border transition-all duration-300 hover:scale-105 active:scale-95 group ${
+                        className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl shadow-xl border transition-all duration-300 hover:scale-105 active:scale-95 group ${
                           isDarkMode 
-                            ? "bg-white dark:bg-slate-900/95 border-slate-700/90 text-slate-900 dark:text-white shadow-black/80 backdrop-blur-xl hover:border-emerald-500/80 hover:bg-slate-800" 
-                            : "bg-white/95 border-slate-300 text-slate-900 shadow-xl shadow-slate-900/10 backdrop-blur-xl hover:border-emerald-500 hover:bg-slate-50"
+                            ? "bg-slate-900/90 border-white/15 text-white shadow-black/80 backdrop-blur-2xl hover:border-emerald-400/80 hover:bg-slate-800/90 ring-1 ring-white/10" 
+                            : "bg-white/90 border-slate-900/15 text-slate-900 shadow-xl shadow-slate-900/10 backdrop-blur-2xl hover:border-emerald-500 hover:bg-white ring-1 ring-slate-900/5"
                         }`}
                       >
                         <ChevronLeft size={16} className={`transition-transform duration-300 group-hover:-translate-x-1 ${
-                          isDarkMode ? "text-emerald-700 dark:text-emerald-400" : "text-emerald-600"
+                          isDarkMode ? "text-emerald-400" : "text-emerald-600"
                         }`} />
 
                         <div className="relative flex items-center justify-center">
-                          <PieChart size={17} className={`${isDarkMode ? "text-emerald-700 dark:text-emerald-400" : "text-emerald-600"} group-hover:rotate-12 transition-transform duration-300`} />
-                          <span className="absolute -top-1.5 -right-1.5 w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                          <div className="p-1 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-500">
+                            <PieChart size={17} className="group-hover:rotate-12 transition-transform duration-300" />
+                          </div>
+                          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white animate-ping" />
                         </div>
 
-                        <span className={`font-['Plus_Jakarta_Sans',sans-serif] font-bold text-xs uppercase tracking-wider ${isDarkMode ? "text-slate-100" : "text-slate-900"}`}>
-                          Hub Analitik Berbasis Investor
-                        </span>
+                        <div className="flex flex-col items-start text-left">
+                          <span className={`font-['Plus_Jakarta_Sans',sans-serif] font-bold text-xs uppercase tracking-wider ${isDarkMode ? "text-slate-100" : "text-slate-900"}`}>
+                            Hub Analitik Investor
+                          </span>
+                          <span className="text-[9px] text-slate-500 dark:text-slate-400 font-mono flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
+                            {filteredInvestments.length} Titik Potensi
+                          </span>
+                        </div>
                       </motion.button>
                     ) : (
                       /* Expanded state: full analytical hub card */
@@ -6984,12 +7085,12 @@ export default function App() {
                         exit={isMobile ? { opacity: 0, y: "100%" } : { opacity: 0, x: "100%" }}
                         transition={{ type: "spring", damping: 28, stiffness: 220 }}
                         style={{
-                          backgroundColor: spatialTheme.bg.card(gisPanelOpacity)
+                          backgroundColor: spatialTheme.bg.card(gisPanelOpacity, 0.9)
                         }}
-                        className={`backdrop-blur-xl border p-3 pt-3 sm:pt-4 sm:p-5 h-full md:h-auto rounded-t-[28px] md:rounded-3xl shadow-2xl flex flex-col gap-4 relative overflow-hidden transition-all duration-300 ease-in-out origin-bottom md:origin-right ${
+                        className={`backdrop-blur-2xl border p-3 pt-3 sm:pt-4 sm:p-5 h-full md:h-auto rounded-t-[28px] md:rounded-3xl shadow-2xl flex flex-col gap-4 relative overflow-hidden transition-all duration-300 ease-in-out origin-bottom md:origin-right ${
                           isDarkMode
-                            ? "border-slate-700/60 text-slate-100 shadow-black/80"
-                            : "border-slate-300/80 text-slate-900 shadow-2xl shadow-slate-900/15"
+                            ? "border-white/15 text-slate-100 shadow-[0_16px_50px_rgba(0,0,0,0.8)] ring-1 ring-white/10"
+                            : "border-slate-900/15 text-slate-900 shadow-2xl shadow-slate-900/15 ring-1 ring-slate-900/5"
                         }`}
                       >
                         {isDarkMode && (
