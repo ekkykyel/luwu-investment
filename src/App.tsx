@@ -22,6 +22,7 @@ import InvestorAnalyticsSidebar from "./components/InvestorAnalyticsSidebar";
 import ExecutiveDashboard from "./components/ExecutiveDashboard";
 import GisErrorBoundary from "./components/GisErrorBoundary";
 import InfrastructureStatsChart from "./components/InfrastructureStatsChart";
+import { useSpatialThemeTokens } from "./hooks/useSpatialThemeTokens";
 import { lazyWithRetry } from "./utils/lazyWithRetry";
 import { safeFetchWithBackoff } from "./lib/globalApiRetry";
 const UploadGeoJsonPanel = lazyWithRetry(() => import('./components/UploadGeoJsonPanel'));
@@ -639,6 +640,7 @@ export default function App() {
   const [heatmapMetric, setHeatmapMetric] = useState<"count" | "value" | "density" | "road_density" | "none">("none");
   const [heatmapOpacity, setHeatmapOpacity] = useState<number>(0.6);
   const [gisPanelOpacity, setGisPanelOpacity] = useState<number>(80);
+  const spatialTheme = useSpatialThemeTokens(isDarkMode, gisPanelOpacity);
   const [choroplethMetric, setChoroplethMetric] = useState<
     "value" | "density" | "infrastructure" | "suitability" | "none"
   >("none");
@@ -5768,7 +5770,7 @@ export default function App() {
                   transition={{ type: "spring", stiffness: 240, damping: 26, mass: 0.9 }}
                   style={{
                     backgroundColor: isMobile 
-                      ? (isDarkMode ? `rgba(2, 6, 23, ${Math.max(20, Math.min(100, gisPanelOpacity)) / 100})` : `rgba(255, 255, 255, ${Math.max(20, Math.min(100, gisPanelOpacity)) / 100})`)
+                      ? spatialTheme.bg.card(gisPanelOpacity)
                       : "transparent"
                   }}
                   className={`fixed inset-x-0 top-3 sm:top-4 bottom-0 md:top-auto md:bottom-auto h-auto md:h-full md:relative md:inset-auto shrink-0 w-full md:max-w-sm md:w-64 lg:w-80 overflow-hidden pointer-events-auto flex flex-col gap-3 z-[70] md:z-[50] rounded-t-[28px] md:rounded-none shadow-[0_-12px_40px_rgba(0,0,0,0.5)] md:shadow-none backdrop-blur-xl ${isDarkMode ? "text-slate-100" : "text-slate-900"} border-t md:border-t-0 md:border-r border-white/10 md:border-transparent`}
@@ -5777,9 +5779,7 @@ export default function App() {
                   {/* Header & close/collapse button (Mobile & Desktop) */}
                   <div 
                     style={{
-                      backgroundColor: isDarkMode 
-                        ? `rgba(2, 6, 23, ${Math.max(20, Math.min(100, gisPanelOpacity)) / 100})` 
-                        : `rgba(255, 255, 255, ${Math.max(20, Math.min(100, gisPanelOpacity)) / 100})`
+                      backgroundColor: spatialTheme.bg.card(gisPanelOpacity, 1.05)
                     }}
                     className={`flex flex-col items-center justify-between -mt-1 mb-3 px-1 sticky top-0 z-20 pt-1 pb-2 backdrop-blur-md border-b transition-colors ${
                       isDarkMode 
@@ -5818,9 +5818,7 @@ export default function App() {
               {/* AI Consultant Button */}
               <div 
                 style={{
-                  backgroundColor: isDarkMode 
-                    ? `rgba(15, 23, 42, ${Math.max(25, Math.min(100, gisPanelOpacity)) / 100})` 
-                    : `rgba(255, 255, 255, ${Math.max(25, Math.min(100, gisPanelOpacity)) / 100})`
+                  backgroundColor: spatialTheme.bg.card(gisPanelOpacity, 0.9)
                 }}
                 className={`border p-3 rounded-2xl flex flex-col gap-2 relative overflow-hidden group flex-shrink-0 transition-all duration-300 backdrop-blur-md ${isDarkMode ? "border-slate-700/50 shadow-2xl" : "border-slate-200 shadow-md"}`}
               >
@@ -5844,9 +5842,7 @@ export default function App() {
               {/* Spatial Control Panel */}
               <div 
                 style={{
-                  backgroundColor: isDarkMode 
-                    ? `rgba(2, 6, 23, ${Math.max(25, Math.min(100, gisPanelOpacity)) / 100})` 
-                    : `rgba(255, 255, 255, ${Math.max(25, Math.min(100, gisPanelOpacity)) / 100})`
+                  backgroundColor: spatialTheme.bg.card(gisPanelOpacity)
                 }}
                 className={`border p-4 rounded-3xl flex flex-col gap-2.5 relative flex-shrink-0 group mb-8 transition-all duration-300 font-sans backdrop-blur-xl ${
                   isDarkMode
@@ -6964,9 +6960,7 @@ export default function App() {
                         exit={isMobile ? { opacity: 0, y: "100%" } : { opacity: 0, x: "100%" }}
                         transition={{ type: "spring", damping: 28, stiffness: 220 }}
                         style={{
-                          backgroundColor: isDarkMode
-                            ? `rgba(2, 6, 23, ${Math.max(15, Math.min(100, gisPanelOpacity)) / 100})`
-                            : `rgba(255, 255, 255, ${Math.max(15, Math.min(100, gisPanelOpacity)) / 100})`
+                          backgroundColor: spatialTheme.bg.card(gisPanelOpacity)
                         }}
                         className={`backdrop-blur-xl border p-3 pt-3 sm:pt-4 sm:p-5 h-full md:h-auto rounded-t-[28px] md:rounded-3xl shadow-2xl flex flex-col gap-4 relative overflow-hidden transition-all duration-300 ease-in-out origin-bottom md:origin-right ${
                           isDarkMode

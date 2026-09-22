@@ -11,6 +11,7 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { SpatialSymbologyModal, MASTER_SYMBOLOGY_DEFINITIONS } from "./SpatialSymbologyModal";
+import { useSpatialThemeTokens } from "../hooks/useSpatialThemeTokens";
 
 interface LayerLegendControlProps {
   spatialLayers: GeoJSONLayer[];
@@ -52,6 +53,7 @@ export default function LayerLegendControl({
   const { t } = useTranslation();
   const [controlContainer, setControlContainer] = useState<HTMLDivElement | null>(null);
   const [localIsLayerPanelOpen, setLocalIsLayerPanelOpen] = useState(false);
+  const { isDark, text, border, bg } = useSpatialThemeTokens(isDarkMode);
   
   const isLayerPanelOpen = parentIsLayerPanelOpen !== undefined ? parentIsLayerPanelOpen : localIsLayerPanelOpen;
   const setIsLayerPanelOpen = parentSetIsLayerPanelOpen !== undefined ? parentSetIsLayerPanelOpen : setLocalIsLayerPanelOpen;

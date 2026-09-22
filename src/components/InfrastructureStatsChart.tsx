@@ -4,6 +4,7 @@ import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, PieChart, Pie, Legend, CartesianGrid 
 } from "recharts";
 import { Hammer, Ban, LayoutGrid, BarChart2, PieChart as PieIcon, ShieldAlert } from "lucide-react";
+import { useSpatialThemeTokens } from "../hooks/useSpatialThemeTokens";
 
 interface InfrastructureStatsChartProps {
   infrastructure: any[];
@@ -47,7 +48,7 @@ function getCategoryColor(name: string): string {
 export default function InfrastructureStatsChart({ infrastructure = [], isDarkMode, panelOpacity = 80 }: InfrastructureStatsChartProps) {
   const { t } = useTranslation();
   const [chartType, setChartType] = useState<"bar" | "pie">("bar");
-  const effectiveOpacity = Math.max(10, Math.min(100, panelOpacity)) / 100;
+  const { isDark, text, chart, getCardStyle } = useSpatialThemeTokens(isDarkMode, panelOpacity);
 
   // Dynamic aggregation of infrastructure from real-time spatial layer points
   const aggregatedData = useMemo(() => {
@@ -76,13 +77,9 @@ export default function InfrastructureStatsChart({ infrastructure = [], isDarkMo
 
   return (
     <div 
-      style={{
-        backgroundColor: isDarkMode 
-          ? `rgba(2, 6, 23, ${effectiveOpacity})` 
-          : `rgba(255, 255, 255, ${effectiveOpacity})`
-      }}
+      style={getCardStyle(panelOpacity, 1)}
       className={`border p-5 lg:p-6 rounded-2xl shadow-sm transition-all duration-300 ease-in-out hover:shadow-md relative z-10 backdrop-blur-md ${
-        isDarkMode ? "border-white/10 text-white" : "border-slate-900/15 text-slate-950"
+        isDark ? "border-white/10 text-white" : "border-slate-900/15 text-slate-950"
       }`} 
       id="infra-stats-section"
     >
@@ -90,10 +87,10 @@ export default function InfrastructureStatsChart({ infrastructure = [], isDarkMo
       {/* Header and Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 border-b pb-4 border-slate-200/50 dark:border-white/10">
         <div>
-          <h4 className={`text-xs md:text-sm font-bold tracking-wide ${isDarkMode ? "text-white" : "text-slate-950"}`}>
+          <h4 className={`text-xs md:text-sm font-bold tracking-wide ${isDark ? "text-white" : "text-slate-950"}`}>
             {t("infraStats.title", "Statistik Infrastruktur Luwu")}
           </h4>
-          <span className={`text-[10px] md:text-[11px] block mt-1 leading-relaxed ${isDarkMode ? "text-slate-300 font-medium" : "text-slate-800 font-bold"}`}>
+          <span className={`text-[10px] md:text-[11px] block mt-1 leading-relaxed ${isDark ? "text-slate-300 font-medium" : "text-slate-800 font-bold"}`}>
             {t("infraStats.subtitle", "Distribusi aset & fasilitas berdasarkan klasifikasi spasial")}
           </span>
         </div>
@@ -105,9 +102,9 @@ export default function InfrastructureStatsChart({ infrastructure = [], isDarkMo
             className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
               chartType === "bar"
                 ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-400"
-                : isDarkMode
-                  ? "border-slate-800 hover:bg-slate-800 text-slate-600 dark:text-slate-400"
-                  : "border-slate-200 hover:bg-slate-50 text-slate-600"
+                : isDark
+                  ? "border-slate-800 hover:bg-slate-800 text-slate-400"
+                  : "border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold"
             }`}
             title={t("infraStats.barChart", "Grafik Batang")}
           >
@@ -118,16 +115,16 @@ export default function InfrastructureStatsChart({ infrastructure = [], isDarkMo
             className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
               chartType === "pie"
                 ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-400"
-                : isDarkMode
-                  ? "border-slate-800 hover:bg-slate-800 text-slate-600 dark:text-slate-400"
-                  : "border-slate-200 hover:bg-slate-50 text-slate-600"
+                : isDark
+                  ? "border-slate-800 hover:bg-slate-800 text-slate-400"
+                  : "border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold"
             }`}
             title={t("infraStats.pieChart", "Grafik Donat")}
           >
             <PieIcon className="h-3.5 w-3.5" />
           </button>
           <div className={`p-1.5 rounded-lg border font-mono text-[9.5px] font-bold ${
-            isDarkMode ? "bg-slate-950 border-slate-800 text-emerald-700 dark:text-emerald-400" : "bg-slate-50 border-slate-200 text-emerald-600"
+            isDark ? "bg-slate-950 border-slate-800 text-emerald-400" : "bg-slate-100 border-slate-300 text-emerald-700"
           }`}>
             {t("infraStats.assetCount", "{{count}} Aset", { count: totalInfraCount })}
           </div>
@@ -139,10 +136,10 @@ export default function InfrastructureStatsChart({ infrastructure = [], isDarkMo
         {aggregatedData.length === 0 ? (
           <div className="text-center italic py-6 flex flex-col items-center gap-2 font-sans">
             <Ban className="h-8 w-8 text-rose-500 animate-pulse opacity-80" />
-            <span className={`text-[11px] font-semibold ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>
+            <span className={`text-[11px] font-semibold ${isDark ? "text-slate-400" : "text-slate-700"}`}>
               {t("infraStats.noData", "Belum ada data spasial infrastruktur")}
             </span>
-            <span className={`text-[9.5px] ${isDarkMode ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>
+            <span className={`text-[9.5px] ${isDark ? "text-slate-400" : "text-slate-600"}`}>
               {t("infraStats.noDataDesc", "Gunakan form untuk menambahkan titik atau sinkronkan peta.")}
             </span>
           </div>
@@ -153,34 +150,34 @@ export default function InfrastructureStatsChart({ infrastructure = [], isDarkMo
               layout="vertical"
               margin={{ top: 5, right: 10, left: -20, bottom: 5 }}
             >
-              <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={isDarkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)"} />
+              <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={chart.grid} />
               <XAxis 
                 type="number" 
-                tick={{ fill: isDarkMode ? "#94a3b8" : "#475569", fontSize: 9, fontFamily: "monospace" }} 
-                stroke={isDarkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)"}
+                tick={{ fill: text.muted, fontSize: 9, fontFamily: "monospace" }} 
+                stroke={isDark ? "rgba(255, 255, 255, 0.15)" : "rgba(15, 23, 42, 0.2)"}
               />
               <YAxis 
                 type="category" 
                 dataKey="name" 
-                tick={{ fill: isDarkMode ? "#e2e8f0" : "#0f172a", fontSize: 9 }}
-                stroke={isDarkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)"}
+                tick={{ fill: text.primary, fontSize: 9, fontWeight: 600 }}
+                stroke={isDark ? "rgba(255, 255, 255, 0.15)" : "rgba(15, 23, 42, 0.2)"}
                 width={85}
               />
               <Tooltip
-                cursor={{ fill: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.02)" }}
+                cursor={{ fill: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.04)" }}
                 formatter={(val, name) => [val, t("infraStats.assetCountTooltip", "Jumlah Aset")]}
                 contentStyle={{
-                  background: isDarkMode ? "rgba(15, 23, 42, 0.95)" : "rgba(255, 255, 255, 0.95)",
+                  background: chart.tooltipBg,
                   backdropFilter: "blur(12px)",
-                  border: `1px solid ${isDarkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)"}`,
+                  border: `1px solid ${chart.tooltipBorder}`,
                   borderRadius: "12px",
                   fontSize: "11px",
                   fontFamily: "sans-serif",
-                  color: isDarkMode ? "#ffffff" : "#0f172a",
+                  color: chart.tooltipText,
                   boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2)"
                 }}
-                itemStyle={{ color: isDarkMode ? "#ffffff" : "#0f172a", fontWeight: "bold", fontSize: "11px" }}
-                labelStyle={{ color: isDarkMode ? "#94a3b8" : "#475569", fontWeight: "600", fontSize: "11px" }}
+                itemStyle={{ color: chart.tooltipText, fontWeight: "bold", fontSize: "11px" }}
+                labelStyle={{ color: text.muted, fontWeight: "600", fontSize: "11px" }}
               />
               <Bar dataKey="count" radius={[0, 4, 4, 0]}>
                 {aggregatedData.map((entry, index) => (
@@ -209,16 +206,16 @@ export default function InfrastructureStatsChart({ infrastructure = [], isDarkMo
               <Tooltip
                 formatter={(val, name) => [val, t("infraStats.countTooltip", "Jumlah")]}
                 contentStyle={{
-                  background: isDarkMode ? "rgba(15, 23, 42, 0.95)" : "rgba(255, 255, 255, 0.95)",
+                  background: chart.tooltipBg,
                   backdropFilter: "blur(12px)",
-                  border: `1px solid ${isDarkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)"}`,
+                  border: `1px solid ${chart.tooltipBorder}`,
                   borderRadius: "12px",
                   fontSize: "11px",
-                  color: isDarkMode ? "#ffffff" : "#0f172a",
+                  color: chart.tooltipText,
                   boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2)"
                 }}
-                itemStyle={{ color: isDarkMode ? "#ffffff" : "#0f172a", fontWeight: "bold", fontSize: "11px" }}
-                labelStyle={{ color: isDarkMode ? "#94a3b8" : "#475569", fontWeight: "600", fontSize: "11px" }}
+                itemStyle={{ color: chart.tooltipText, fontWeight: "bold", fontSize: "11px" }}
+                labelStyle={{ color: text.muted, fontWeight: "600", fontSize: "11px" }}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -228,20 +225,20 @@ export default function InfrastructureStatsChart({ infrastructure = [], isDarkMo
       {/* Grid List Breakdown (Anti-AI-Slop Clean Typography) */}
       {aggregatedData.length > 0 && (
         <div className={`grid grid-cols-2 gap-x-4 gap-y-2.5 mt-3 pt-3.5 border-t max-h-[140px] overflow-y-auto custom-scrollbar ${
-          isDarkMode ? "border-white/5" : "border-slate-900/5"
+          isDark ? "border-white/10" : "border-slate-900/10"
         }`}>
           {aggregatedData.map((item, idx) => (
             <div key={`${item.name}-${idx}`} className="flex items-center gap-2 min-w-0">
               <span className="h-2 w-2 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: item.color }}></span>
               <div className="flex flex-col min-w-0 flex-1">
-                <span className={`text-[10px] truncate font-medium leading-tight ${isDarkMode ? "text-slate-200" : "text-slate-700"}`} title={item.name}>
+                <span className={`text-[10px] truncate font-medium leading-tight ${isDark ? "text-slate-200" : "text-slate-800 font-semibold"}`} title={item.name}>
                   {item.name}
                 </span>
-                <span className={`text-[8.5px] font-mono leading-none ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
+                <span className={`text-[8.5px] font-mono leading-none ${isDark ? "text-slate-400" : "text-slate-600 font-semibold"}`}>
                   {t("infraStats.ofTotal", "{{percentage}}% dari total", { percentage: item.percentage })}
                 </span>
               </div>
-              <span className={`text-[10.5px] font-bold font-mono ml-auto pl-1 ${isDarkMode ? "text-white" : "text-slate-900"}`}>
+              <span className={`text-[10.5px] font-bold font-mono ml-auto pl-1 ${isDark ? "text-white" : "text-slate-950"}`}>
                 {item.count}
               </span>
             </div>

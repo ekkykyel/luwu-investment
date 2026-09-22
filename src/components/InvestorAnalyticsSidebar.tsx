@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { showGisErrorToast } from "../utils/toastNotification";
 import { normalizeDistrictName } from "../utils/geoUtils";
+import { useSpatialThemeTokens } from "../hooks/useSpatialThemeTokens";
 
 interface InvestorAnalyticsSidebarProps {
   districts?: District[];
@@ -99,12 +100,12 @@ export default function InvestorAnalyticsSidebar({
 
   // Active opacity value (synced with parent state if provided)
   const currentOpacity = panelOpacity !== undefined ? panelOpacity : (isUltraTransparent ? 25 : 80);
+  const { isDark, text: themeText, bg, border, chart, getCardStyle } = useSpatialThemeTokens(isDarkMode, currentOpacity);
   const effectiveOpacity = Math.max(10, Math.min(100, currentOpacity)) / 100;
 
   const cardAeroStyle = (factor = 1) => ({
-    backgroundColor: isDarkMode
-      ? `rgba(2, 6, 23, ${Math.min(1, effectiveOpacity * factor).toFixed(2)})`
-      : `rgba(255, 255, 255, ${Math.min(1, effectiveOpacity * factor).toFixed(2)})`,
+    backgroundColor: bg.card(currentOpacity, factor),
+    borderColor: border.default,
   });
 
   const handleUpdateOpacity = (val: number) => {
@@ -115,12 +116,12 @@ export default function InvestorAnalyticsSidebar({
     setIsUltraTransparent(clamped <= 40);
   };
 
-  // High-contrast theme-aware typography tokens for crisp readability over dynamic map layers
-  const textTitle = isDarkMode ? "text-white font-bold" : "text-slate-950 font-black";
-  const textValue = isDarkMode ? "text-white font-mono font-bold" : "text-slate-950 font-mono font-black";
-  const textLabel = isDarkMode ? "text-slate-200 font-semibold" : "text-slate-950 font-extrabold";
-  const textMuted = isDarkMode ? "text-slate-300 font-medium" : "text-slate-850 font-bold";
-  const textSub = isDarkMode ? "text-slate-300 font-medium" : "text-slate-850 font-semibold";
+  // High-contrast theme-aware typography tokens for crisp readability over dynamic map layers (WCAG 2.1 AA/AAA)
+  const textTitle = isDark ? "text-white font-bold" : "text-slate-950 font-black";
+  const textValue = isDark ? "text-white font-mono font-bold" : "text-slate-950 font-mono font-black";
+  const textLabel = isDark ? "text-slate-200 font-semibold" : "text-slate-950 font-extrabold";
+  const textMuted = isDark ? "text-slate-300 font-medium" : "text-slate-900 font-bold";
+  const textSub = isDark ? "text-slate-300 font-medium" : "text-slate-900 font-semibold";
 
   const isExpanded = propsIsExpanded !== undefined ? propsIsExpanded : localIsExpanded;
   const toggleExpanded = () => {
