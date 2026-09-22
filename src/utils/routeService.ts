@@ -1,12 +1,135 @@
 import * as turf from '@turf/turf';
 // @ts-ignore
 import PathFinderPkg from 'geojson-path-finder';
+import { supabase } from '@/lib/supabaseClient';
+import type { FeatureCollection, LineString, Feature, GeoJsonProperties } from 'geojson';
 const PathFinder = (PathFinderPkg as any).default || PathFinderPkg;
+
+// --- pgRouting & Supabase Routing Types ---
+export interface RouteStep {
+  seq: number;
+  path_seq: number;
+  node: number;
+  edge: number;
+  cost: number;
+  agg_cost: number;
+  nama_jalan: string;
+  geom_geojson: LineString | null;
+  total_distance_m: number;
+}
+
+export interface ShortestRouteResult {
+  startNode: number;
+  endNode: number;
+  totalDistance: number;
+  formattedDistance: string;
+  steps: RouteStep[];
+  routeGeoJson: FeatureCollection<LineString, GeoJsonProperties>;
+}
 
 export interface DistanceResult {
   distance: number;
   method: 'NETWORK' | 'EUCLIDEAN';
 }
+
+/**
+ * Format jarak meter ke kilometer / meter
+ */
+export const formatDistance = (meters: number): string => {
+  if (meters == null || isNaN(meters)) return '0 m';
+  if (meters >= 1000) {
+    return `${(meters / 1000).toFixed(2)} km`;
+  }
+  return `${Math.round(meters)} m`;
+};
+
+/**
+ * Mencari simpul jalan terdekat dari koordinat [lng, lat] via Supabase PostGIS RPC
+ */
+export const findNearestVertex = async (lng: number, lat: number): Promise<number> => {
+  const { data, error } = await supabase.rpc('get_nearest_road_vertex', {
+    lng,
+    lat
+  });
+
+  if (error || !data || data.length === 0) {
+    throw new Error(`Gagal menemukan simpul jalan terdekat untuk koordinat [${lng}, ${lat}]`);
+  }
+
+  return Number(data[0].vertex_id);
+};
+
+/**
+ * Tarik rute terpendek antar simpul (Node ID) via pgRouting pgr_dijkstra di Supabase
+ */
+export const calculateShortestRoute = async (
+  startNode: number, 
+  endNode: number
+): Promise<ShortestRouteResult> => {
+  if (startNode === endNode) {
+    throw new Error('Simpul awal dan simpul tujuan tidak boleh sama.');
+  }
+
+  const { data, error } = await supabase.rpc('get_shortest_route', {
+    start_node: startNode,
+    end_node: endNode
+  });
+
+  if (error) {
+    console.error('[pgRouting Error]:', error.message);
+    throw new Error(`Gagal menghitung rute: ${error.message}`);
+  }
+
+  if (!data || data.length === 0) {
+    throw new Error('Tidak ditemukan jaringan jalan yang menghubungkan kedua titik ini.');
+  }
+
+  const steps: RouteStep[] = data;
+  const totalDistance = steps[0]?.total_distance_m || 0;
+
+  // Format ke FeatureCollection GeoJSON standar
+  const features: Feature<LineString>[] = steps
+    .filter((s) => s.geom_geojson && s.geom_geojson.coordinates)
+    .map((s) => ({
+      type: 'Feature',
+      properties: {
+        seq: s.seq,
+        nama_jalan: s.nama_jalan,
+        cost: s.cost,
+        agg_cost: s.agg_cost
+      },
+      geometry: s.geom_geojson as LineString
+    }));
+
+  const routeGeoJson: FeatureCollection<LineString> = {
+    type: 'FeatureCollection',
+    features
+  };
+
+  return {
+    startNode,
+    endNode,
+    totalDistance,
+    formattedDistance: formatDistance(totalDistance),
+    steps,
+    routeGeoJson
+  };
+};
+
+/**
+ * Tarik rute dari koordinat A [lng, lat] ke koordinat B [lng, lat]
+ */
+export const calculateRouteFromCoordinates = async (
+  startCoord: [number, number],
+  endCoord: [number, number]
+): Promise<ShortestRouteResult> => {
+  const [startNode, endNode] = await Promise.all([
+    findNearestVertex(startCoord[0], startCoord[1]),
+    findNearestVertex(endCoord[0], endCoord[1])
+  ]);
+
+  return calculateShortestRoute(startNode, endNode);
+};
 
 let cachedPathFinder: any = null;
 
