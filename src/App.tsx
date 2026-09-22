@@ -7177,6 +7177,7 @@ export default function App() {
                  // Handle AI Consultant open if needed, or no-op if handled differently
               }}
               isDarkMode={isDarkMode}
+              currentRole={currentRole}
               onMinimizeToggle={setIsProfileMinimized}
               onFocusDistrict={setSelectedDistrictId}
               infrastructure={infrastructure}

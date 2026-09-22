@@ -392,15 +392,15 @@ export const InvestorPipelineWorkflowView: React.FC = () => {
                 onClick={() => setActiveProject(proj)}
                 className={`cursor-pointer rounded-xl p-4 border transition-all duration-200 space-y-2 ${
                   activeProject.code === proj.code
-                    ? 'bg-slate-900 text-white border-slate-800 shadow-md ring-2 ring-emerald-500/20'
+                    ? 'bg-emerald-50 dark:bg-emerald-950/40 text-slate-900 dark:text-white border-emerald-500 shadow-md ring-2 ring-emerald-500/20'
                     : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white hover:border-slate-300'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold text-emerald-400">
+                  <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">
                     {proj.code}
                   </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-700 text-slate-200">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium">
                     Tahap {proj.currentStage} dari 4
                   </span>
                 </div>

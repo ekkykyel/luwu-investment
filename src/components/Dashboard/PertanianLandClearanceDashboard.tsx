@@ -1696,7 +1696,7 @@ export default function PertanianLandClearanceDashboard() {
                   <button
                     type="button"
                     onClick={() => window.print()}
-                    className="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md transition cursor-pointer"
+                    className="px-5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md transition cursor-pointer"
                   >
                     <Printer className="w-4 h-4" />
                     <span>Cetak Direct</span>

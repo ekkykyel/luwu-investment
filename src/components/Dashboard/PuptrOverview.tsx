@@ -126,9 +126,9 @@ export default function PuptrOverview({
             </button>
             <button
               onClick={() => onNavigateTab('spatial_analytics')}
-              className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs transition flex items-center gap-2 cursor-pointer shadow-lg"
+              className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold text-xs transition flex items-center gap-2 cursor-pointer shadow-lg"
             >
-              <Compass size={15} className="text-indigo-400" />
+              <Compass size={15} className="text-indigo-300" />
               <span>Studio GIS &amp; Layer RTRW</span>
             </button>
           </div>

@@ -5772,38 +5772,8 @@ app.delete("/api/testimonials/:id", async (req, res) => {
 });
 
 // In-memory store fallback for Letter of Intent (investment_interests)
-let localInvestmentInterests: any[] = [
-  {
-    id: "interest-seed-1",
-    investor_name: "Yusuf Kalla",
-    company_name: "Kalla Group",
-    contact_info: "yusuf@kallagroup.co.id",
-    potensi_name: "Agroindustri Kopi Latimojong",
-    nilai_investasi: 120000000000,
-    kebutuhan_lahan: 15.5,
-    pesan_tambahan: "Mohon asistensi percepatan perizinan pemanfaatan kawasan aliran sungai.",
-    status: "Menunggu Verifikasi",
-    nib_oss: "",
-    catatan_admin: "",
-    created_at: new Date(Date.now() - 3600000 * 24 * 2).toISOString(),
-    last_status_updated_at: new Date(Date.now() - 3600000 * 24 * 5).toISOString()
-  },
-  {
-    id: "interest-seed-2",
-    investor_name: "Budi Santoso",
-    company_name: "PT Bumi Agro Luwu",
-    contact_info: "budi.s@bumiagro.co.id",
-    potensi_name: "Sentra Kakao Noling",
-    nilai_investasi: 45000000000,
-    kebutuhan_lahan: 50.0,
-    pesan_tambahan: "Kami berencana mendirikan pabrik pengolahan biji kakao skala ekspor.",
-    status: "Verifikasi OSS Berjalan",
-    nib_oss: "9120301928374",
-    catatan_admin: "Berkas awal NIB terverifikasi. Menunggu persetujuan teknis tata ruang.",
-    created_at: new Date(Date.now() - 3600000 * 24 * 5).toISOString(),
-    last_status_updated_at: new Date(Date.now() - 3600000 * 24 * 1).toISOString()
-  }
-];
+// Strictly ZERO DUMMY: initialized as empty array, only populated when user/investor submits real data
+let localInvestmentInterests: any[] = [];
 
 // 1. Get Investment Interests / LoI Tickets
 app.get("/api/investment-interests", async (req, res) => {

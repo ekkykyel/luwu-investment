@@ -4124,7 +4124,7 @@ export default function MasyarakatDashboard({
                             <button
                               type="button"
                               onClick={() => setIsDrawerOpen(true)}
-                              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
+                              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-300 dark:border-transparent rounded-xl text-xs font-bold transition-all cursor-pointer"
                             >
                               Lihat Peta
                             </button>
@@ -4417,24 +4417,24 @@ export default function MasyarakatDashboard({
       {/* FULLSCREEN MAP POLYGON DRAWER OVERLAY */}
       {isDrawerOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex flex-col p-2 sm:p-6 animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden flex-1 flex flex-col border border-slate-700 shadow-2xl">
-            <div className="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden flex-1 flex flex-col border border-slate-200 dark:border-slate-700 shadow-2xl">
+            <div className="p-4 bg-white dark:bg-slate-900 text-slate-900 dark:text-white flex items-center justify-between border-b border-slate-200 dark:border-slate-800">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400">
+                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
                   <span className="font-extrabold text-sm sm:text-base block">
                     Digitasi Spasial Batas Lahan PKKPR {pkkprCategory}
                   </span>
-                  <span className="text-[10px] text-slate-400 font-mono">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
                     Kabupaten Luwu - Peta Citra Satelit Google & GIS
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setIsDrawerOpen(false)}
-                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>

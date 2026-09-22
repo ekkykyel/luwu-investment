@@ -152,7 +152,7 @@ export default function AdminPortalDashboard() {
     else if (path.includes('loi') || path.includes('tickets')) setActiveTab('loi_verify');
     else if (path.includes('potential') || path.includes('potensi')) setActiveTab('manage_potential');
     else if (path.includes('site-selection') || path.includes('site_selection')) setActiveTab('site-selection');
-    else if (path.includes('testimonials') || path.includes('testimoni')) setActiveTab('testimonials');
+    else if (path.includes('testimonials') || path.includes('testimoni')) setActiveTab('overview');
     else if (path.includes('verifikasi_pkkpr') || path.includes('pkkpr')) setActiveTab('verifikasi_pkkpr');
     else if (path.includes('realisasi_nib') || path.includes('nib')) setActiveTab('realisasi_nib');
     else if (path.includes('spatial_analytics') || path.includes('analytics')) setActiveTab('spatial_analytics');
@@ -523,12 +523,18 @@ export default function AdminPortalDashboard() {
   const [simRunCount, setSimRunCount] = useState<number>(0); // Trigger to rerun calculations or track clicks
   const [isPdfGenerating, setIsPdfGenerating] = useState<boolean>(false);
 
-  // States for Testimonial Submission
-  const [testiCompany, setTestiCompany] = useState('');
-  const [testiSector, setTestiSector] = useState('Agroindustri');
-  const [testiMessage, setTestiMessage] = useState('');
-  const [isSubmittingTesti, setIsSubmittingTesti] = useState(false);
   const [companyName, setCompanyName] = useState<string>('');
+
+  const [isDarkTheme, setIsDarkTheme] = useState(() => typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') : true);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const observer = new MutationObserver(() => {
+      setIsDarkTheme(document.documentElement.classList.contains('dark'));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
 
   // Strict Protected Route & Role Validation
   useEffect(() => {
@@ -653,7 +659,6 @@ export default function AdminPortalDashboard() {
         const meta = u?.user_metadata || {};
         const name = meta.company_name || meta.full_name || u?.email || (effectiveRole === 'admin_dalak' ? 'Bidang Dalak & Pengawasan' : "Administrator Terverifikasi");
         setCompanyName(name);
-        setTestiCompany(name);
         setIsAuthLoading(false);
         setIsLoading(false);
       } catch (err) {
@@ -1007,8 +1012,7 @@ export default function AdminPortalDashboard() {
       return [
         { id: 'overview', label: 'Performa Promosi', icon: LayoutDashboard },
         { id: 'site-selection', label: 'Rekomendasi Lokasi AI', icon: MapPin },
-        { id: 'manage_potential', label: 'Kelola IPRO', icon: Layers },
-        { id: 'testimonials', label: 'Review Testimoni', icon: MessageSquare }
+        { id: 'manage_potential', label: 'Kelola IPRO', icon: Layers }
       ];
     }
     // Default fallback
@@ -1132,7 +1136,7 @@ export default function AdminPortalDashboard() {
             </div>
             <button 
               onClick={fetchLoiTickets}
-              className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl transition-all cursor-pointer"
+              className="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl transition-all cursor-pointer"
               title="Segarkan data"
             >
               <Activity size={16} className={loadingLoiTickets ? "animate-spin text-emerald-700 dark:text-emerald-400" : ""} />
@@ -1162,15 +1166,15 @@ export default function AdminPortalDashboard() {
                     <th className="p-4 text-right">Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/50">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
                   {pendingPromosi.map((ticket) => (
-                    <tr key={ticket.id} className="hover:bg-slate-800/30 transition-colors">
+                    <tr key={ticket.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                       <td className="p-4 text-slate-800 dark:text-slate-200 font-mono">
                         {new Date(ticket.created_at).toLocaleDateString("id-ID")}
                       </td>
                       <td className="p-4 font-medium text-slate-900 dark:text-white">
                         <div>{ticket.company_name || ticket.investor_name}</div>
-                        <div className="text-[10px] text-slate-800 dark:text-slate-200 dark:text-slate-400 font-mono">{ticket.contact_info}</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">{ticket.contact_info}</div>
                       </td>
                       <td className="p-4 text-slate-800 dark:text-slate-200">
                         {ticket.potensi_name || "Luwu General"}
@@ -1238,7 +1242,7 @@ export default function AdminPortalDashboard() {
               </div>
               <button 
                 onClick={fetchComplaints}
-                className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl transition-all cursor-pointer"
+                className="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl transition-all cursor-pointer"
                 title="Segarkan aduan"
               >
                 <Activity size={16} className={loadingComplaints ? "animate-spin text-rose-700 dark:text-rose-400" : ""} />
@@ -1267,19 +1271,19 @@ export default function AdminPortalDashboard() {
                       <th className="p-4 text-right">Aksi</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/50">
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
                     {pendingComplaints.map((item) => (
-                      <tr key={item.id} className="hover:bg-slate-800/30 transition-colors">
+                      <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                         <td className="p-4 text-slate-800 dark:text-slate-200 font-mono">
                           {new Date(item.created_at).toLocaleDateString("id-ID")}
                         </td>
                         <td className="p-4 font-medium text-slate-900 dark:text-white">
                           <div>{item.nama_pelapor || "Masyarakat Luwu"}</div>
-                          <div className="text-[10px] text-slate-800 dark:text-slate-200 dark:text-slate-400 font-mono">{item.kontak_pelapor || "-"}</div>
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">{item.kontak_pelapor || "-"}</div>
                         </td>
                         <td className="p-4 text-slate-800 dark:text-slate-200">
-                          <div className="font-semibold text-rose-300">{item.kategori_pengaduan || 'Pengaduan'}</div>
-                          <div className="text-[10px] text-slate-800 dark:text-slate-200 truncate max-w-xs">{item.deskripsi_masalah || "-"}</div>
+                          <div className="font-semibold text-rose-700 dark:text-rose-300">{item.kategori_pengaduan || 'Pengaduan'}</div>
+                          <div className="text-[10px] text-slate-600 dark:text-slate-300 truncate max-w-xs">{item.deskripsi_masalah || "-"}</div>
                         </td>
                         <td className="p-4">
                           <div className="flex flex-col gap-1 items-start">
@@ -1346,10 +1350,10 @@ export default function AdminPortalDashboard() {
                       <th className="p-4 text-right">Aksi</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/50">
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
                     {pendingDalakLoI.map((ticket) => (
                       <React.Fragment key={ticket.id}>
-                        <tr className="hover:bg-slate-800/30 transition-colors cursor-pointer" onClick={() => toggleTicketExpand(ticket.id)}>
+                        <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors cursor-pointer" onClick={() => toggleTicketExpand(ticket.id)}>
                           <td className="p-4 text-slate-800 dark:text-slate-200 font-mono">
                             {new Date(ticket.created_at).toLocaleDateString("id-ID")}
                           </td>
@@ -1426,7 +1430,7 @@ export default function AdminPortalDashboard() {
             </div>
             <button 
               onClick={fetchLoiTickets}
-              className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl transition-all cursor-pointer"
+              className="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl transition-all cursor-pointer"
               title="Segarkan data"
             >
               <Activity size={16} className={loadingLoiTickets ? "animate-spin text-emerald-700 dark:text-emerald-400" : ""} />
@@ -1455,15 +1459,15 @@ export default function AdminPortalDashboard() {
                     <th className="p-4 text-right">Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/50">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
                   {pendingOss.map((ticket) => (
-                    <tr key={ticket.id} className="hover:bg-slate-800/30 transition-colors">
+                    <tr key={ticket.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                       <td className="p-4 text-slate-800 dark:text-slate-200 font-mono">
                         {new Date(ticket.created_at).toLocaleDateString("id-ID")}
                       </td>
                       <td className="p-4 font-medium text-slate-900 dark:text-white">
                         <div>{ticket.company_name || ticket.investor_name}</div>
-                        <div className="text-[10px] text-slate-800 dark:text-slate-200 dark:text-slate-400 font-mono">{ticket.contact_info}</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">{ticket.contact_info}</div>
                       </td>
                       <td className="p-4 text-slate-800 dark:text-slate-200">
                         {ticket.potensi_name || "Luwu General"}
@@ -1569,7 +1573,6 @@ export default function AdminPortalDashboard() {
                 : activeTab === 'site-selection' ? 'Rekomendasi Lokasi AI'
                 : activeTab === 'loi_verify' ? 'Tiket Minat Investor (LoI)'
                 : activeTab === 'manage_potential' ? 'Kelola Potensi Investasi (IPRO)'
-                : activeTab === 'testimonials' ? 'Review Testimoni'
                 : activeTab === 'pengaduan' ? 'Pengaduan Masyarakat'
                 : activeTab === 'pengawasan' ? 'Pengawasan & Kepatuhan'
                 : activeTab === 'fasilitasi' ? 'Fasilitasi & Mediasi'
@@ -1626,7 +1629,7 @@ export default function AdminPortalDashboard() {
             )}
 
             <ThemeToggle />
-            <div className="h-6 w-px bg-slate-800"></div>
+            <div className="h-6 w-px bg-slate-200 dark:bg-slate-800"></div>
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-700 dark:text-emerald-400 font-bold text-xs uppercase">
                 {companyName ? companyName.substring(0,2).toUpperCase() : 'AD'}
@@ -1655,7 +1658,7 @@ export default function AdminPortalDashboard() {
             </div>
             <button 
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl text-xs font-semibold border border-slate-700/50 transition-all"
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white rounded-xl text-xs font-semibold border border-slate-300 dark:border-slate-700/50 transition-all"
             >
               {t('dashboard.retry', 'Coba Ulang')}
             </button>
@@ -2097,26 +2100,26 @@ export default function AdminPortalDashboard() {
                         <div className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-2">Checklist Persyaratan Administrasi</div>
                         
                         <label className="flex items-start gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-800/30 cursor-pointer transition-colors">
-                          <input type="checkbox" className="mt-0.5 rounded text-emerald-500 bg-slate-900 border-slate-700 focus:ring-emerald-500" />
+                          <input type="checkbox" className="mt-0.5 rounded text-emerald-500 bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 focus:ring-emerald-500" />
                           <div>
                             <div className="text-sm font-bold text-slate-900 dark:text-white leading-none">Persetujuan KKPR</div>
-                            <div className="text-xs text-slate-800 dark:text-slate-200 dark:text-slate-400 mt-1">Kesesuaian Kegiatan Pemanfaatan Ruang (Tata Ruang).</div>
+                            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Kesesuaian Kegiatan Pemanfaatan Ruang (Tata Ruang).</div>
                           </div>
                         </label>
 
                         <label className="flex items-start gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-800/30 cursor-pointer transition-colors">
-                          <input type="checkbox" className="mt-0.5 rounded text-emerald-500 bg-slate-900 border-slate-700 focus:ring-emerald-500" />
+                          <input type="checkbox" className="mt-0.5 rounded text-emerald-500 bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 focus:ring-emerald-500" />
                           <div>
                             <div className="text-sm font-bold text-slate-900 dark:text-white leading-none">Dokumen Lingkungan</div>
-                            <div className="text-xs text-slate-800 dark:text-slate-200 dark:text-slate-400 mt-1">Persetujuan AMDAL atau UKL-UPL terkait dampak lingkungan.</div>
+                            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Persetujuan AMDAL atau UKL-UPL terkait dampak lingkungan.</div>
                           </div>
                         </label>
 
                         <label className="flex items-start gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-800/30 cursor-pointer transition-colors">
-                          <input type="checkbox" className="mt-0.5 rounded text-emerald-500 bg-slate-900 border-slate-700 focus:ring-emerald-500" />
+                          <input type="checkbox" className="mt-0.5 rounded text-emerald-500 bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 focus:ring-emerald-500" />
                           <div>
                             <div className="text-sm font-bold text-slate-900 dark:text-white leading-none">Rekomendasi Teknis OPD</div>
-                            <div className="text-xs text-slate-800 dark:text-slate-200 dark:text-slate-400 mt-1">Izin sektoral dan pertimbangan teknis dari Dinas terkait.</div>
+                            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">Izin sektoral dan pertimbangan teknis dari Dinas terkait.</div>
                           </div>
                         </label>
                       </div>
@@ -3223,7 +3226,7 @@ export default function AdminPortalDashboard() {
                               </span>
                               <button
                                 onClick={() => setSelectedInvestmentId(inv.id)}
-                                className="px-3 py-1 bg-white dark:bg-slate-900 hover:bg-slate-800 border border-slate-200 dark:border-slate-800 hover:border-slate-700 text-slate-800 dark:text-slate-200 hover:text-slate-900 dark:text-white rounded-lg text-[11px] font-semibold flex items-center gap-1 transition-all"
+                                className="px-3 py-1 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white rounded-lg text-[11px] font-semibold flex items-center gap-1 transition-all"
                               >
                                 <span>{t('dashboard.viewDetails', 'Lihat Detail')}</span>
                                 <ArrowUpRight size={12} />
@@ -3357,7 +3360,7 @@ export default function AdminPortalDashboard() {
                 </div>
                 <button 
                   onClick={() => setActiveTab('verify')}
-                  className="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-slate-900 dark:text-white rounded-xl text-xs font-semibold tracking-wide border border-slate-700/50 hover:border-slate-600 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white rounded-xl text-xs font-semibold tracking-wide border border-slate-200 dark:border-slate-700/50 hover:border-slate-300 dark:hover:border-slate-600 transition-all flex items-center justify-center gap-2"
                 >
                   <span>{t('dashboard.btnGoVerify', 'Buka Form Verifikasi')}</span>
                   <ChevronRight size={14} />
@@ -3668,7 +3671,7 @@ export default function AdminPortalDashboard() {
           </div>
         ) : (activeTab === 'verify' || activeTab === 'permit_process') ? (
           <div className="py-4 sm:py-8 animate-in fade-in zoom-in-95 duration-300">
-            <NibVerificationForm isDarkMode={true} />
+            <NibVerificationForm isDarkMode={isDarkTheme} />
           </div>
         ) : activeTab === 'loi_verify' ? (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -3690,22 +3693,33 @@ export default function AdminPortalDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="p-5 rounded-2xl bg-white/90 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/60 dark:border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-300 space-y-1">
                 <span className="text-xs text-slate-800 dark:text-slate-200 dark:text-slate-400 font-bold uppercase">LoI Baru Masuk</span>
-                <div className="text-2xl font-black text-amber-700 dark:text-amber-400">12 Tiket</div>
+                <div className="text-2xl font-black text-amber-700 dark:text-amber-400">
+                  {loiTickets.filter(t => !t.status || t.status === 'Menunggu Verifikasi' || t.status === 'Draft' || t.status === 'Menunggu Respon').length} Tiket
+                </div>
                 <div className="text-[10px] text-amber-700 dark:text-amber-400 font-bold">Menunggu Respon</div>
               </div>
               <div className="p-5 rounded-2xl bg-white/90 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/60 dark:border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-300 space-y-1">
                 <span className="text-xs text-slate-800 dark:text-slate-200 dark:text-slate-400 font-bold uppercase">Nilai Komitmen Investasi</span>
-                <div className="text-2xl font-black text-emerald-700 dark:text-emerald-400">Rp 4.25 Triliun</div>
+                <div className="text-2xl font-black text-emerald-700 dark:text-emerald-400">
+                  {(() => {
+                    const totalCommitment = loiTickets.reduce((acc, curr) => acc + (Number(curr.nilai_investasi) || 0), 0);
+                    return totalCommitment > 0 ? formatRupiahSingkat(totalCommitment) : "Rp 0";
+                  })()}
+                </div>
                 <div className="text-[10px] text-slate-800 dark:text-slate-200">Estimasi Total Proyek</div>
               </div>
               <div className="p-5 rounded-2xl bg-white/90 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/60 dark:border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-300 space-y-1">
                 <span className="text-xs text-slate-800 dark:text-slate-200 dark:text-slate-400 font-bold uppercase">Dalam Pembahasan</span>
-                <div className="text-2xl font-black text-blue-700 dark:text-blue-400">4 Investor</div>
+                <div className="text-2xl font-black text-blue-700 dark:text-blue-400">
+                  {loiTickets.filter(t => t.status === 'Verifikasi OSS Berjalan' || t.status === 'Persiapan Site Visit' || t.status === 'Dalam Pembahasan' || t.status === 'Mediasi Lapangan Selesai').length} Investor
+                </div>
                 <div className="text-[10px] text-slate-800 dark:text-slate-200">Tahap Negosiasi</div>
               </div>
               <div className="p-5 rounded-2xl bg-white/90 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/60 dark:border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-300 space-y-1">
                 <span className="text-xs text-slate-800 dark:text-slate-200 dark:text-slate-400 font-bold uppercase">Disetujui (Deal)</span>
-                <div className="text-2xl font-black text-purple-400">8 Proyek</div>
+                <div className="text-2xl font-black text-purple-400">
+                  {loiTickets.filter(t => t.status === 'Izin Terbit / Realisasi' || t.status === 'Izin Terbit' || t.status === 'Disetujui' || t.status === 'Deal' || t.status === 'Selesai').length} Proyek
+                </div>
                 <div className="text-[10px] text-purple-400 font-bold">Siap Konstruksi</div>
               </div>
             </div>
@@ -3728,21 +3742,31 @@ export default function AdminPortalDashboard() {
                   </thead>
                   <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                     {loiTickets.length > 0 ? (
-                      loiTickets.map((t) => (
-                        <tr key={t.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                          <td className="py-3.5 px-3 font-mono font-bold text-purple-400">{t.tiket_id || `LOI-${t.id.substring(0,6)}`}</td>
-                          <td className="py-3.5 px-3 font-bold text-slate-900 dark:text-white">{t.company_name || t.nama_investor}</td>
-                          <td className="py-3.5 px-3 text-slate-800 dark:text-slate-200">{t.sector || 'Agroindustri'}</td>
-                          <td className="py-3.5 px-3 font-bold text-emerald-700 dark:text-emerald-400">Rp {t.nilai_investasi || '150.00 M'}</td>
-                          <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 font-bold text-[10px]">{t.status || 'Menunggu Respon'}</span></td>
-                          <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-700 dark:text-amber-400 font-bold text-[10px] border border-amber-500/30">⏱️ Tertahan 1 Hari</span></td>
-                          <td className="py-3.5 px-3 text-right">
-                            <button onClick={() => openActionModal(t)} className="px-3 py-1 bg-purple-600/10 hover:bg-purple-600 text-purple-400 hover:text-slate-900 dark:text-white rounded-lg font-bold text-[11px] transition">
-                              Review & Balas LoI
-                            </button>
-                          </td>
-                        </tr>
-                      ))
+                      loiTickets.map((t) => {
+                        const daysAgo = t.created_at ? Math.max(0, Math.floor((Date.now() - new Date(t.created_at).getTime()) / (1000 * 60 * 60 * 24))) : 0;
+                        const valNum = Number(t.nilai_investasi) || 0;
+                        return (
+                          <tr key={t.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                            <td className="py-3.5 px-3 font-mono font-bold text-purple-400">{t.tiket_id || `LOI-${String(t.id).substring(0,6)}`}</td>
+                            <td className="py-3.5 px-3 font-bold text-slate-900 dark:text-white">{t.company_name || t.nama_investor || t.investor_name || '-'}</td>
+                            <td className="py-3.5 px-3 text-slate-800 dark:text-slate-200">{t.sector || t.potensi_name || 'Agroindustri'}</td>
+                            <td className="py-3.5 px-3 font-bold text-emerald-700 dark:text-emerald-400">
+                              {valNum > 0 ? formatRupiahSingkat(valNum) : 'Rp 0'}
+                            </td>
+                            <td className="py-3.5 px-3"><span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 font-bold text-[10px]">{t.status || 'Menunggu Respon'}</span></td>
+                            <td className="py-3.5 px-3">
+                              <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-700 dark:text-amber-400 font-bold text-[10px] border border-amber-500/30">
+                                ⏱️ {daysAgo > 0 ? `Tertahan ${daysAgo} Hari` : 'Hari Ini'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-3 text-right">
+                              <button onClick={() => openActionModal(t)} className="px-3 py-1 bg-purple-600/10 hover:bg-purple-600 text-purple-400 hover:text-slate-900 dark:text-white rounded-lg font-bold text-[11px] transition">
+                                Review & Balas LoI
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
                     ) : (
                       <tr>
                         <td colSpan={7} className="py-8 text-center text-xs text-slate-500 font-sans italic">
@@ -3880,7 +3904,7 @@ export default function AdminPortalDashboard() {
 
               {/* Map Container — h-[500px] proportional, full width */}
               <div className="w-full h-[350px] md:h-[500px] rounded-xl relative overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm">
-                <DalakMap isDarkMode={true} complaints={complaints} />
+                <DalakMap isDarkMode={isDarkTheme} complaints={complaints} />
               </div>
             </div>
 
@@ -3896,7 +3920,7 @@ export default function AdminPortalDashboard() {
                 <button
                   onClick={fetchComplaints}
                   disabled={loadingComplaints}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <RefreshCw size={14} className={loadingComplaints ? "animate-spin" : ""} />
                   Refresh Data
@@ -3928,7 +3952,7 @@ export default function AdminPortalDashboard() {
                         <th className="py-3.5 px-4 text-center">Aksi</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800/60">
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
                       {complaints.map((c) => {
                         const dateStr = c.created_at ? new Date(c.created_at).toLocaleDateString("id-ID", {
                           day: "numeric",
@@ -3952,7 +3976,7 @@ export default function AdminPortalDashboard() {
                         }
 
                         return (
-                          <tr key={c.id} className="hover:bg-slate-800/20 transition-colors">
+                          <tr key={c.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors">
                             <td className="py-3.5 px-4 font-mono font-bold text-red-700 dark:text-red-400">
                               <div>{c.tiket_id || `LAPOR-${c.id.substring(0, 6).toUpperCase()}`}</div>
                               <div className="text-[9px] text-slate-800 dark:text-slate-200 dark:text-slate-400 font-normal">{dateStr}</div>
@@ -4108,7 +4132,7 @@ export default function AdminPortalDashboard() {
                               confirmButtonColor: '#10b981'
                             });
                           }}
-                          className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-[11px] font-bold transition cursor-pointer border border-slate-700"
+                          className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg text-[11px] font-bold transition cursor-pointer border border-slate-200 dark:border-slate-700"
                         >
                           Input Hasil
                         </button>
@@ -4236,7 +4260,7 @@ export default function AdminPortalDashboard() {
                 <button
                   onClick={fetchComplaints}
                   disabled={loadingComplaints}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <RefreshCw size={14} className={loadingComplaints ? "animate-spin" : ""} />
                   Refresh Data
@@ -4255,7 +4279,7 @@ export default function AdminPortalDashboard() {
                       <th className="py-3.5 px-4 text-center">Tindak Lanjut</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60">
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
                     {complaints.length === 0 ? (
                       <EmptyState 
                         isTable={true} 
@@ -4265,7 +4289,7 @@ export default function AdminPortalDashboard() {
                       />
                     ) : (
                       complaints.map((c) => (
-                        <tr key={c.id} className="hover:bg-slate-800/20 transition-colors">
+                        <tr key={c.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors">
                           <td className="py-3.5 px-4 font-mono font-bold text-emerald-700 dark:text-emerald-400">
                             <div>{c.tiket_id || `MEDIASI-${c.id.substring(0, 6).toUpperCase()}`}</div>
                             <div className="text-[9px] text-slate-800 dark:text-slate-200 dark:text-slate-400 font-normal">{new Date(c.created_at).toLocaleDateString('id-ID')}</div>
@@ -4956,7 +4980,7 @@ export default function AdminPortalDashboard() {
                         </p>
                       </div>
                       {/* Tooltip (appears on card hover) */}
-                      <div className="absolute opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-300 bg-slate-800 text-xs text-slate-800 dark:text-slate-200 p-2.5 rounded-xl shadow-2xl border border-slate-700 z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap">
+                      <div className="absolute opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-300 bg-slate-900 text-xs text-slate-200 p-2.5 rounded-xl shadow-2xl border border-slate-700 z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap">
                         Rumus: (Laba Bersih Tahunan / Total Nilai CAPEX) × 100%
                       </div>
                     </div>
@@ -5193,7 +5217,7 @@ export default function AdminPortalDashboard() {
             })()}
           </div>
         ) : activeTab === 'spatial_analytics' ? (
-          <SpatialAnalyticsEditorView userRole={userRole} isDarkMode={true} />
+          <SpatialAnalyticsEditorView userRole={userRole} isDarkMode={isDarkTheme} />
         ) : activeTab === 'gis_spatial' ? (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Tata Ruang, Layer Spasial & PostGIS Sync */}
@@ -5201,12 +5225,12 @@ export default function AdminPortalDashboard() {
 
             {/* Upload Layer GeoJSON Baru */}
             <div className="p-6 rounded-3xl bg-white/90 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800 space-y-4">
-              <UploadGeoJsonPanel onUploadSuccess={() => refreshData()} isDarkMode={true} />
+              <UploadGeoJsonPanel onUploadSuccess={() => refreshData()} isDarkMode={isDarkTheme} />
             </div>
           </div>
         ) : activeTab === 'rag_injection' ? (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <UploadRagPanel isDarkMode={true} />
+            <UploadRagPanel isDarkMode={isDarkTheme} />
           </div>
         ) : activeTab === 'manage_operators' ? (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -5233,187 +5257,6 @@ export default function AdminPortalDashboard() {
         ) : activeTab === 'mpp_portal' ? (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
             <AdminLayout />
-          </div>
-        ) : activeTab === 'testimonials' ? (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">{t('submit_testimonial', 'Kirim Testimoni')}</h1>
-              <p className="text-slate-800 dark:text-slate-200 text-sm">{t('testimonial_desc', 'Sampaikan cerita sukses atau tanggapan Anda mengenai ekosistem investasi di Kabupaten Luwu.')}</p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-              {/* Left Column (Form) */}
-              <form 
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  if (!companyName.trim() || !testiMessage.trim()) {
-                    Swal.fire({
-                      title: t('dashboard.testiErrorTitle', 'Gagal'),
-                      text: t('dashboard.testiErrorFields', 'Harap isi semua kolom form.'),
-                      icon: 'error',
-                      background: '#0f172a',
-                      color: '#f8fafc',
-                      confirmButtonColor: '#10b981'
-                    });
-                    return;
-                  }
-                  
-                  setIsSubmittingTesti(true);
-                  try {
-                    const { data, error } = await supabase
-                      .from('investor_testimonials')
-                      .insert([
-                        {
-                          company_name: companyName,
-                          sector: testiSector,
-                          message: testiMessage,
-                          is_verified: false,
-                          created_at: new Date().toISOString()
-                        }
-                      ]);
-
-                    if (error) throw error;
-                    
-                    Swal.fire({
-                      title: t('dashboard.testiSuccessTitle', 'Berhasil!'),
-                      text: t('dashboard.testiSuccessText', 'Testimoni berhasil dikirim dan menunggu verifikasi oleh tim administrator DPMPTSP Luwu.'),
-                      icon: 'success',
-                      background: '#0f172a',
-                      color: '#f8fafc',
-                      confirmButtonColor: '#10b981'
-                    });
-
-                    setTestiMessage('');
-                    setTestiSector('Agroindustri');
-                  } catch (err: any) {
-                    console.error("Error submitting testimonial:", err);
-                    Swal.fire({
-                      title: t('dashboard.testiErrorTitle', 'Gagal'),
-                      text: err.message || t('dashboard.testiErrorSubmit', 'Terjadi kesalahan saat mengirim testimoni.'),
-                      icon: 'error',
-                      background: '#0f172a',
-                      color: '#f8fafc',
-                      confirmButtonColor: '#10b981'
-                    });
-                  } finally {
-                    setIsSubmittingTesti(false);
-                  }
-                }}
-                className="lg:col-span-3 p-6 rounded-2xl bg-white/90 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/60 dark:border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-300 space-y-5"
-              >
-                <div>
-                  <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-1">{t('investor_feedback', 'Umpan Balik Investor')}</h3>
-                  <p className="text-xs text-slate-800 dark:text-slate-200">{t('investor_feedback_desc', 'Pesan Anda akan ditampilkan di Landing Page utama setelah proses peninjauan.')}</p>
-                </div>
- 
-                {/* Company Name */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
-                    {t('company_name', 'Nama Perusahaan / Investor')}
-                  </label>
-                  <input
-                    type="text"
-                    name="companyName"
-                    value={companyName}
-                    disabled
-                    className="w-full bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-slate-800 dark:text-slate-200 cursor-not-allowed opacity-80 focus:ring-0 text-xs"
-                    placeholder="PT. Luwu Maju Sejahtera"
-                  />
-                </div>
-
-                {/* Sector Selection */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
-                    {t('potential_sector', 'Sektor Potensi')}
-                  </label>
-                  <select
-                    value={testiSector}
-                    onChange={(e) => setTestiSector(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-emerald-500/50 rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none transition-colors"
-                  >
-                    <option value="Agroindustri">{t('sector.agroindustri', 'Agroindustri')}</option>
-                    <option value="Pariwisata">{t('sector.pariwisata', 'Pariwisata')}</option>
-                    <option value="Energi">{t('sector.energi', 'Energi')}</option>
-                    <option value="Perikanan">{t('sector.perikanan', 'Perikanan')}</option>
-                    <option value="Infrastruktur">{t('sector.infrastruktur', 'Infrastruktur')}</option>
-                    <option value="Pertambangan">{t('sector.pertambangan', 'Pertambangan')}</option>
-                    <option value="Jasa">{t('sector.jasa', 'Jasa')}</option>
-                    <option value="Lainnya">{t('sector.lainnya', 'Lainnya')}</option>
-                  </select>
-                </div>
-
-                {/* Testimonial message */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
-                    {t('your_message', 'Pesan / Tanggapan Anda')}
-                  </label>
-                  <textarea
-                    value={testiMessage}
-                    onChange={(e) => setTestiMessage(e.target.value)}
-                    rows={5}
-                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-emerald-500/50 rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none transition-colors"
-                    placeholder={t('dashboard.testiMessagePlaceholder', 'Ceritakan kesan Anda terhadap layanan penanaman modal Kabupaten Luwu...')}
-                    required
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isSubmittingTesti}
-                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 text-slate-900 dark:text-white font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2"
-                >
-                  {isSubmittingTesti ? (
-                    <>
-                      <Loader2 size={16} className="animate-spin" />
-                      <span>{t('dashboard.testiSubmitting', 'Mengirim...')}</span>
-                    </>
-                  ) : (
-                    <span>{t('btn_send_testimonial', 'Kirim Testimoni')}</span>
-                  )}
-                </button>
-              </form>
-
-              {/* Right Column (Info) */}
-              <div className="lg:col-span-2 p-6 rounded-2xl bg-white/90 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/60 dark:border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-300 space-y-6">
-                <div>
-                  <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-1">{t('verification_flow', 'Alur Verifikasi Testimoni')}</h3>
-                  <p className="text-xs text-slate-800 dark:text-slate-200">{t('flow_desc', 'Bagaimana Pemkab Luwu menjaga kredibilitas portal.')}</p>
-                </div>
-
-                <div className="space-y-4 text-xs text-slate-800 dark:text-slate-200">
-                  <div className="flex gap-3">
-                    <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold font-mono shrink-0">1</div>
-                    <div>
-                      <h4 className="font-semibold text-slate-900 dark:text-white mb-1">{t('step_1', '1. Pengisian Form')}</h4>
-                      <p className="leading-relaxed text-slate-800 dark:text-slate-200 text-[11px]">{t('step_1_desc', 'Investor menyampaikan data kepuasan investasi di portal ini.')}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold font-mono shrink-0">2</div>
-                    <div>
-                      <h4 className="font-semibold text-slate-900 dark:text-white mb-1">{t('step_2', '2. Verifikasi Admin')}</h4>
-                      <p className="leading-relaxed text-slate-800 dark:text-slate-200 text-[11px]">{t('step_2_desc', 'Tim administrator DPMPTSP Luwu meninjau kelayakan konten untuk mencegah spam.')}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold font-mono shrink-0">3</div>
-                    <div>
-                      <h4 className="font-semibold text-slate-900 dark:text-white mb-1">{t('step_3', '3. Publikasi Otomatis')}</h4>
-                      <p className="leading-relaxed text-slate-800 dark:text-slate-200 text-[11px]">{t('step_3_desc', 'Jika disetujui, testimoni Anda akan langsung terbit secara dinamis di Landing Page utama.')}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl space-y-2 text-xs">
-                  <p className="font-semibold text-slate-900 dark:text-white">⭐ {t('positive_feedback', 'Umpan Balik Positif')}</p>
-                  <p className="leading-relaxed text-slate-800 dark:text-slate-200 text-[11px]">
-                    {t('positive_feedback_desc', 'Tanggapan Anda sangat membantu kami dalam terus melakukan perbaikan infrastruktur spasial dan regulasi perizinan demi iklim investasi Luwu yang lebih baik.')}
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
         ) : (activeTab === 'verifikasi_pkkpr' || activeTab === 'verifikasi_puptr' || activeTab === 'puptr_clearance' || activeTab === 'puptr_spatial_clearance') ? (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -5475,7 +5318,8 @@ export default function AdminPortalDashboard() {
             onOpenAiConsultant={(inv) => {
               // handle consultant redirection/trigger if needed
             }}
-            isDarkMode={true}
+            isDarkMode={isDarkTheme}
+            currentRole={userRole as any}
           />
         )}
       </AnimatePresence>
@@ -5499,7 +5343,7 @@ export default function AdminPortalDashboard() {
               </div>
               <button
                 onClick={() => setIsDalakModalOpen(false)}
-                className="p-1 rounded-full hover:bg-slate-800 text-slate-800 dark:text-slate-200 hover:text-slate-900 dark:text-white transition-colors"
+                className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
               >
                 <X size={18} />
               </button>
@@ -5595,7 +5439,7 @@ export default function AdminPortalDashboard() {
                     <select
                       value={dalakStatus}
                       onChange={(e) => setDalakStatus(e.target.value)}
-                      className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-700 focus:border-rose-500 text-slate-900 dark:text-white font-bold text-xs cursor-pointer outline-none transition-colors"
+                      className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 focus:border-rose-500 text-slate-900 dark:text-white font-bold text-xs cursor-pointer outline-none transition-colors"
                     >
                       <option value="Menunggu Verifikasi">⏳ Menunggu Verifikasi</option>
                       <option value="Tinjauan Lapangan">🔍 Tinjauan Lapangan</option>
@@ -5612,7 +5456,7 @@ export default function AdminPortalDashboard() {
                       onChange={(e) => setDalakLaporan(e.target.value)}
                       rows={3}
                       placeholder="Masukkan log operasional, hasil mediasi, atau keputusan di lapangan..."
-                      className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-700 focus:border-amber-500 text-amber-100 placeholder-slate-600 leading-relaxed text-xs outline-none transition-colors"
+                      className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 focus:border-amber-500 text-slate-900 dark:text-amber-100 placeholder-slate-400 dark:placeholder-slate-600 leading-relaxed text-xs outline-none transition-colors"
                     />
                   </div>
 
@@ -5623,7 +5467,7 @@ export default function AdminPortalDashboard() {
                       type="datetime-local"
                       value={dalakSiteVisit}
                       onChange={(e) => setDalakSiteVisit(e.target.value)}
-                      className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-700 text-slate-900 dark:text-white font-mono text-xs outline-none"
+                      className="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white font-mono text-xs outline-none"
                     />
                   </div>
                 </div>
@@ -5682,14 +5526,14 @@ export default function AdminPortalDashboard() {
                 <button
                   type="button"
                   onClick={() => setIsDalakModalOpen(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl font-bold transition-all cursor-pointer"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold transition-all cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSavingDalak}
-                  className="px-6 py-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 disabled:opacity-50 text-slate-900 dark:text-white rounded-xl font-bold transition-all flex items-center gap-2 cursor-pointer shadow-lg shadow-rose-900/20"
+                  className="px-6 py-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 disabled:opacity-50 text-white rounded-xl font-bold transition-all flex items-center gap-2 cursor-pointer shadow-lg shadow-rose-900/20"
                 >
                   {isSavingDalak && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                   SIMPAN PROGRESS
@@ -5711,10 +5555,10 @@ export default function AdminPortalDashboard() {
       {/* Modal Smart Form Engine for Adding IPRO Potensi */}
       {isAddIproModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 overflow-y-auto">
-          <div className="w-full max-w-6xl max-h-[92vh] overflow-y-auto rounded-3xl bg-slate-900 border border-slate-800 p-4 relative shadow-2xl">
+          <div className="w-full max-w-6xl max-h-[92vh] overflow-y-auto rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 relative shadow-2xl">
             <button
               onClick={() => setIsAddIproModalOpen(false)}
-              className="absolute top-4 right-4 z-50 p-2 bg-slate-800 hover:bg-slate-700 text-white rounded-full transition-colors cursor-pointer"
+              className="absolute top-4 right-4 z-50 p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-white rounded-full transition-colors cursor-pointer"
             >
               <X size={20} />
             </button>
@@ -5727,7 +5571,7 @@ export default function AdminPortalDashboard() {
               districts={districts}
               villages={villages}
               currentRole={userRole}
-              isDarkMode={true}
+              isDarkMode={isDarkTheme}
               onRefreshAllData={refreshData}
             />
           </div>

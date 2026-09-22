@@ -68,7 +68,6 @@ export const getMenusByRole = (role: string): MenuGroup[] => {
         { id: 'manage_potential', name: 'Kelola Potensi Investasi', icon: Layers },
         { id: 'site-selection', name: 'Rekomendasi Lokasi AI', icon: MapPin },
         { id: 'komoditas', name: 'Harga Komoditas', icon: Activity },
-        { id: 'testimonials', name: 'Review Testimoni', icon: MessageSquare },
       ]
     },
     {
@@ -130,7 +129,7 @@ export const getMenusByRole = (role: string): MenuGroup[] => {
   else if (normRole === 'admin_data' || normRole.includes('data')) matchedRole = 'admin_data';
 
   const allowedIdsByRole: Record<string, string[]> = {
-    admin_promosi: ['overview', 'investor_pipeline', 'operator_workspace', 'loi_verify', 'manage_potential', 'site-selection', 'testimonials'],
+    admin_promosi: ['overview', 'investor_pipeline', 'operator_workspace', 'loi_verify', 'manage_potential', 'site-selection'],
     admin_dalak: ['overview', 'investor_pipeline', 'pengaduan', 'pengawasan', 'fasilitasi', 'laporan'],
     admin_puptr: ['overview', 'investor_pipeline', 'pkkpr_sync_monitor', 'verifikasi_pkkpr', 'gis_spatial', 'spatial_analytics', 'puptr_archive', 'puptr_settings'],
     admin_pertanian: ['overview', 'investor_pipeline', 'pkkpr_sync_monitor', 'verifikasi_pertanian', 'gis_spatial', 'spatial_analytics', 'pertanian_archive', 'pertanian_settings'],

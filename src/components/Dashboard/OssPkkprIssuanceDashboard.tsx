@@ -668,7 +668,7 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
                               setGeneratedSkNumber(item.skPkkprNum || `503/SK-PKKPR/DPMPTSP-LW/${item.id}`);
                               setIsPdfPreviewOpen(true);
                             }}
-                            className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-lg text-xs flex items-center gap-1 cursor-pointer"
+                            className="px-3 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-white border border-slate-200 dark:border-transparent font-bold rounded-lg text-xs flex items-center gap-1 cursor-pointer"
                           >
                             <Eye className="w-3 h-3" />
                             <span>Lihat SK</span>
@@ -950,7 +950,7 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shadow-sm"
                 >
                   <Printer className="w-4 h-4" />
                   <span>Cetak / Print PDF</span>

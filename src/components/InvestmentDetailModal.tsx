@@ -1078,15 +1078,108 @@ export function InvestmentDetailModal({
     }
   }, [capex, opex, cashFlow, roi, cumulativeRoi, bep, discountedPayback, tenorWaktu, npv, irr, sukuBunga]);
 
+  // Ensure real-time theme sync between prop and document element class
+  const [effectiveDarkMode, setEffectiveDarkMode] = useState(() => {
+    if (typeof document !== 'undefined') {
+      return document.documentElement.classList.contains('dark') || isDarkMode;
+    }
+    return isDarkMode;
+  });
+
+  useEffect(() => {
+    setEffectiveDarkMode(isDarkMode);
+  }, [isDarkMode]);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const updateTheme = () => {
+      const isDocDark = document.documentElement.classList.contains('dark');
+      setEffectiveDarkMode(isDocDark);
+    };
+    updateTheme();
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
+  // Helper to determine if current viewer is an investor
+  // Admin dinas (PUPTR, Pertanian) & all admin bidang must NEVER see "Ajukan Minat" button
+  const isInvestor = () => {
+    // 1. Check if currentRole prop is provided
+    if (currentRole) {
+      const roleStr = String(currentRole).toLowerCase().replace(/[\s_-]+/g, "");
+      if (
+        roleStr.includes("admin") ||
+        roleStr.includes("puptr") ||
+        roleStr.includes("pertanian") ||
+        roleStr.includes("operator") ||
+        roleStr.includes("dinas") ||
+        roleStr.includes("bidang") ||
+        roleStr.includes("dalak") ||
+        roleStr.includes("promosi") ||
+        roleStr.includes("data") ||
+        roleStr.includes("pelayanan") ||
+        roleStr.includes("oss") ||
+        roleStr.includes("mpp")
+      ) {
+        return false;
+      }
+      if (roleStr.includes("investor")) {
+        return true;
+      }
+    }
+
+    // 2. Check localStorage session role
+    if (typeof window !== "undefined") {
+      const storedRole = (
+        localStorage.getItem("luwu_user_role") ||
+        localStorage.getItem("user_role") ||
+        localStorage.getItem("userRole") ||
+        ""
+      ).toLowerCase().replace(/[\s_-]+/g, "");
+
+      if (
+        storedRole.includes("admin") ||
+        storedRole.includes("puptr") ||
+        storedRole.includes("pertanian") ||
+        storedRole.includes("operator") ||
+        storedRole.includes("dinas") ||
+        storedRole.includes("bidang") ||
+        storedRole.includes("dalak") ||
+        storedRole.includes("promosi") ||
+        storedRole.includes("data") ||
+        storedRole.includes("pelayanan") ||
+        storedRole.includes("oss") ||
+        storedRole.includes("mpp")
+      ) {
+        return false;
+      }
+
+      // 3. Check current route / path
+      const currentPath = window.location.pathname.toLowerCase();
+      const currentHash = window.location.hash.toLowerCase();
+      if (
+        currentPath.includes("admin") ||
+        currentHash.includes("admin") ||
+        currentPath.includes("puptr") ||
+        currentPath.includes("pertanian")
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   if (loadingProfile && !profileData) {
     return (
       <div className="fixed inset-0 z-[9999] bg-black/60 flex items-center justify-center p-4">
         <div
-          className={`p-8 rounded-lg ${isDarkMode ? "bg-slate-900" : "bg-white"} shadow-2xl flex flex-col items-center gap-4`}
+          className={`p-8 rounded-lg ${effectiveDarkMode ? "bg-slate-900 text-white" : "bg-white text-slate-800 border border-slate-200"} shadow-2xl flex flex-col items-center gap-4`}
         >
           <div className="animate-spin rounded-full w-12 h-12 border-[4px] border-indigo-200 border-t-indigo-600"></div>
           <span
-            className={`${isDarkMode ? "text-gray-100" : "text-gray-800 dark:text-gray-200"} font-normal font-mono animate-pulse`}
+            className={`${effectiveDarkMode ? "text-gray-100" : "text-gray-800"} font-normal font-mono animate-pulse`}
           >
             Memuat Profil Kelayakan...
           </span>
@@ -1100,7 +1193,7 @@ export function InvestmentDetailModal({
     return (
       <div className="fixed inset-0 z-[9999] bg-black/60 flex items-center justify-center p-4">
         <div
-          className={`p-8 rounded-lg ${isDarkMode ? "bg-slate-900 text-white" : "bg-white text-gray-900 dark:text-gray-50"} shadow-2xl max-w-sm text-center`}
+          className={`p-8 rounded-lg ${effectiveDarkMode ? "bg-slate-900 text-white" : "bg-white text-slate-900 border border-slate-200"} shadow-2xl max-w-sm text-center`}
         >
           <h3 className="text-xs font-normal mb-2">Gagal Memuat</h3>
           <p className="text-xs text-slate-800 dark:text-slate-200">
@@ -1135,18 +1228,18 @@ export function InvestmentDetailModal({
     }
   };
 
-  // Base theme classes with subtle premium glassmorphism & delicate border rings
-  const modalBg = isDarkMode
-    ? "bg-slate-900/90  border border-slate-700/60 text-white shadow-2xl shadow-slate-950/80"
-    : "bg-white  border border-slate-200/90 text-slate-900 shadow-2xl shadow-slate-900/10";
-  const sectionBg = isDarkMode
-    ? "bg-slate-800/50 backdrop-blur-md border border-slate-700/40"
-    : "bg-slate-50/70 backdrop-blur-md border border-slate-200/70";
-  const innerCardBg = isDarkMode
-    ? "bg-slate-800/70 backdrop-blur-md border border-slate-700/50"
-    : "bg-white/80 backdrop-blur-md border border-slate-200/80";
-  const sectionBorder = isDarkMode ? "border-slate-800/80" : "border-slate-200/80";
-  const textMuted = isDarkMode ? "text-gray-300" : "text-gray-800 dark:text-gray-200";
+  // Base theme classes: crisp & solid without milky backdrop-blur artifacts in light mode
+  const modalBg = effectiveDarkMode
+    ? "dark bg-slate-900 border border-slate-700/80 text-white shadow-2xl shadow-slate-950/80"
+    : "bg-white border border-slate-200 text-slate-900 shadow-2xl shadow-slate-900/10";
+  const sectionBg = effectiveDarkMode
+    ? "bg-slate-800/70 border border-slate-700/60"
+    : "bg-white border border-slate-200 shadow-xs";
+  const innerCardBg = effectiveDarkMode
+    ? "bg-slate-800/90 border border-slate-700/60"
+    : "bg-slate-50 border border-slate-200";
+  const sectionBorder = effectiveDarkMode ? "border-slate-700/60" : "border-slate-200";
+  const textMuted = effectiveDarkMode ? "text-slate-400" : "text-slate-600";
 
   function getActualVillageName() {
     const targetId = 
@@ -1447,7 +1540,7 @@ export function InvestmentDetailModal({
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex overflow-hidden transition-all duration-300 animate-fade-in ${isMinimized ? "items-end justify-end pointer-events-none p-4 sm:p-8" : "bg-black/40 backdrop-blur-sm items-center justify-center p-0 sm:p-4 lg:p-6"}`}
+      className={`fixed inset-0 z-[9999] flex overflow-hidden transition-all duration-300 animate-fade-in ${isMinimized ? "items-end justify-end pointer-events-none p-4 sm:p-8" : "bg-slate-950/40 items-center justify-center p-0 sm:p-4 lg:p-6"}`}
       onClick={isMinimized ? undefined : () => onClose()}
     >
       <div
@@ -1456,11 +1549,11 @@ export function InvestmentDetailModal({
       >
         {/* HEADER BRAND */}
         <div
-          className={`p-4 md:p-6 shrink-0 border-b ${sectionBorder} flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 bg-gradient-to-r ${isDarkMode ? "from-slate-900/50 to-indigo-950/20" : "from-indigo-50/40 to-white"}`}
+          className={`p-4 md:p-6 shrink-0 border-b ${sectionBorder} flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 ${effectiveDarkMode ? "bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/40 text-white" : "bg-gradient-to-r from-slate-50 via-teal-50/20 to-white text-slate-900"}`}
         >
           <div
-            className={`w-20 h-20 rounded-xl shadow-inner border border-slate-200 dark:border-slate-700 flex items-center justify-center relative overflow-hidden shrink-0 ${
-              isDarkMode ? "bg-gradient-to-br from-slate-800 to-indigo-950/80" : "bg-gradient-to-br from-emerald-50 to-indigo-50/80"
+            className={`w-20 h-20 rounded-xl shadow-inner border flex items-center justify-center relative overflow-hidden shrink-0 ${
+              effectiveDarkMode ? "bg-gradient-to-br from-slate-800 to-indigo-950/80 border-slate-700" : "bg-gradient-to-br from-emerald-50 to-indigo-50/80 border-slate-200"
             }`}
           >
             {featuredPhoto ? (
@@ -1468,18 +1561,18 @@ export function InvestmentDetailModal({
                 src={featuredPhoto}
                 alt={profileData?.name || "Featured Investment"}
                 loading="eager"
-                fallbackIcon={<Building className={`w-8 h-8 ${isDarkMode ? "text-emerald-400" : "text-emerald-600"}`} />}
+                fallbackIcon={<Building className={`w-8 h-8 ${effectiveDarkMode ? "text-emerald-400" : "text-emerald-600"}`} />}
               />
             ) : (
               <div className="flex flex-col items-center justify-center gap-0.5 p-1 text-center">
-                <Building className={`w-7 h-7 ${isDarkMode ? "text-emerald-400" : "text-emerald-600"}`} />
-                <span className={`text-[8px] font-mono font-bold uppercase tracking-wider ${isDarkMode ? "text-emerald-300" : "text-emerald-700"}`}>IPRO GIS</span>
+                <Building className={`w-7 h-7 ${effectiveDarkMode ? "text-emerald-400" : "text-emerald-600"}`} />
+                <span className={`text-[8px] font-mono font-bold uppercase tracking-wider ${effectiveDarkMode ? "text-emerald-300" : "text-emerald-700"}`}>IPRO GIS</span>
               </div>
             )}
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2.5 flex-wrap">
-              <h2 className="text-xs font-black tracking-tight">
+              <h2 className="text-sm sm:text-base font-bold tracking-tight">
                 <AutoTranslatedText
                   text={
                     profileData?.name ||
@@ -1491,29 +1584,35 @@ export function InvestmentDetailModal({
                 />
               </h2>
               {isPublished ? (
-                <span className="px-2 py-1 text-[10px] font-bold rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
+                <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
                   PUBLISHED
                 </span>
               ) : (
-                <span className="px-2 py-1 text-[10px] font-bold rounded bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-700">
+                <span className={`px-2 py-0.5 text-[10px] font-bold rounded border ${
+                  effectiveDarkMode ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-slate-100 text-slate-700 border-slate-300"
+                }`}>
                   DRAFT
                 </span>
               )}
             </div>
-            <div className="flex flex-row items-center justify-start gap-2 flex-wrap text-slate-600 dark:text-slate-300 mt-2 text-xs">
+            <div className={`flex flex-row items-center justify-start gap-2 flex-wrap mt-2 text-xs ${effectiveDarkMode ? "text-slate-300" : "text-slate-600"}`}>
               <span
-                className={`px-2 py-0.5 rounded ${isDarkMode ? "bg-slate-800" : "bg-slate-100"} border ${sectionBorder}`}
+                className={`px-2 py-0.5 rounded border ${
+                  effectiveDarkMode ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-slate-100 text-slate-700 border-slate-200"
+                }`}
               >
                 {t(getSectorI18nKey(profileData?.sector || geo?.sektor_utama || "Sektor"))}
               </span>
               {geo?.sub_sektor && (
                 <span
-                  className={`px-2 py-0.5 rounded ${isDarkMode ? "bg-slate-800" : "bg-slate-100"} border ${sectionBorder}`}
+                  className={`px-2 py-0.5 rounded border ${
+                    effectiveDarkMode ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-slate-100 text-slate-700 border-slate-200"
+                  }`}
                 >
                   <AutoTranslatedText text={geo.sub_sektor} inline />
                 </span>
               )}
-              <span className="font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1.5 ml-1">
+              <span className={`font-medium flex items-center gap-1.5 ml-1 ${effectiveDarkMode ? "text-slate-400" : "text-slate-500"}`}>
                 <Navigation className="w-3.5 h-3.5 text-indigo-500" />{" "}
                 {t('investmentProfile.kecamatan', 'Kecamatan')} {profileData?.districtId || geo?.kecamatan || getActualDistrictName()}, {t('investmentProfile.kabLuwu', 'Kabupaten Luwu')}
               </span>
@@ -1522,7 +1621,7 @@ export function InvestmentDetailModal({
           <div className="absolute top-4 right-4 md:top-6 md:right-6 z-50 flex items-center gap-2">
             <motion.button whileTap={{ scale: 0.95 }}
               onClick={onClose}
-              className="px-3.5 py-2 rounded-md bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 border border-emerald-400/30 flex items-center gap-2 transition-all cursor-pointer min-h-[40px]"
+              className="px-3.5 py-2 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-500/20 border border-emerald-400/30 flex items-center gap-2 transition-all cursor-pointer min-h-[40px]"
               title="Arahkan & Lihat Lokasi Potensi di Peta Spasial"
             >
               <MapPin className="w-4 h-4 text-emerald-200 animate-pulse shrink-0" />
@@ -1530,14 +1629,18 @@ export function InvestmentDetailModal({
             </motion.button>
             <motion.button whileTap={{ scale: 0.95 }}
               onClick={() => setIsMinimized(!isMinimized)}
-              className={`p-2.5 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center ${isDarkMode ? "hover:bg-slate-800 text-gray-300 bg-slate-800/80 shadow-md" : "hover:bg-slate-200 text-gray-800 bg-white/80 backdrop-blur-sm shadow-md border border-slate-200"} transition-colors`}
+              className={`p-2.5 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors shadow-sm ${
+                effectiveDarkMode ? "hover:bg-slate-800 text-slate-300 bg-slate-800/80 border border-slate-700" : "hover:bg-slate-100 text-slate-700 bg-white border border-slate-200"
+              }`}
               title="Minimize / Maximize"
             >
               {isMinimized ? <Maximize2 className="w-5 h-5" /> : <Minimize2 className="w-5 h-5" />}
             </motion.button>
             <motion.button whileTap={{ scale: 0.95 }}
               onClick={onClose}
-              className={`p-2.5 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center ${isDarkMode ? "hover:bg-slate-800 text-gray-300 bg-slate-800/80 shadow-md" : "hover:bg-slate-200 text-gray-800 bg-white/80 backdrop-blur-sm shadow-md border border-slate-200"} transition-colors`}
+              className={`p-2.5 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors shadow-sm ${
+                effectiveDarkMode ? "hover:bg-slate-800 text-slate-300 bg-slate-800/80 border border-slate-700" : "hover:bg-slate-100 text-slate-700 bg-white border border-slate-200"
+              }`}
               title="Tutup Modal"
             >
               <X className="w-5 h-5" />
@@ -1556,13 +1659,15 @@ export function InvestmentDetailModal({
               className="flex flex-col flex-1 overflow-hidden"
             >
         {/* TAB CONTROLS */}
-        <div className="flex shrink-0 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40 p-2 gap-2 overflow-x-auto hide-scrollbar whitespace-nowrap">
+        <div className={`flex shrink-0 border-b ${sectionBorder} ${effectiveDarkMode ? "bg-slate-900/80" : "bg-slate-100/90"} p-2 gap-2 overflow-x-auto hide-scrollbar whitespace-nowrap`}>
           <motion.button whileTap={{ scale: 0.95 }}
             onClick={() => setActiveTab("profile")}
             className={`flex-1 min-h-[44px] py-3 px-4 rounded-md text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
               activeTab === "profile"
-                ? "bg-emerald-600 dark:bg-emerald-500 text-white shadow-md shadow-emerald-500/20"
-                : "text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                ? "bg-emerald-600 text-white shadow-md shadow-emerald-500/20"
+                : effectiveDarkMode
+                ? "text-slate-300 hover:bg-slate-800"
+                : "text-slate-700 hover:bg-slate-200/70"
             }`}
           >
             <User className="w-5 h-5" /> 
@@ -1572,8 +1677,10 @@ export function InvestmentDetailModal({
             onClick={() => setActiveTab("simulator")}
             className={`flex-1 min-h-[44px] py-3 px-4 rounded-md text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
               activeTab === "simulator"
-                ? "bg-emerald-600 dark:bg-emerald-500 text-white shadow-md shadow-emerald-500/20"
-                : "text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                ? "bg-emerald-600 text-white shadow-md shadow-emerald-500/20"
+                : effectiveDarkMode
+                ? "text-slate-300 hover:bg-slate-800"
+                : "text-slate-700 hover:bg-slate-200/70"
             }`}
           >
             <Calculator className="w-5 h-5" /> 
@@ -1588,7 +1695,7 @@ export function InvestmentDetailModal({
               {/* VIRTUAL DATA ROOM (unduh pdf) - SPAN FULL WIDTH AT THE TOP */}
               <div className="col-span-full">
                 <div
-                  className={`p-5 rounded-lg ${isDarkMode ? "bg-indigo-950/10" : "bg-slate-50"} border-2 border-dashed ${sectionBorder}`}
+                  className={`p-5 rounded-lg border-2 border-dashed ${sectionBorder} ${effectiveDarkMode ? "bg-indigo-950/20" : "bg-slate-50"}`}
                 >
                   <h3 className="text-sm font-bold flex items-center gap-2 mb-3 text-slate-800 dark:text-slate-100">
                     <FileText className="w-4 h-4" /> {t('investmentProfile.vdrTitle')}
@@ -1604,7 +1711,11 @@ export function InvestmentDetailModal({
                           "Kajian Teknis & Akademik",
                         )
                       }
-                      className="px-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 rounded-md text-left flex items-start gap-3 shadow-sm transition-all duration-300 ease-in-out active:scale-95 hover:shadow-md group w-full min-h-[44px] cursor-pointer"
+                      className={`px-4 py-3.5 border rounded-md text-left flex items-start gap-3 transition-all duration-300 ease-in-out active:scale-95 group w-full min-h-[44px] cursor-pointer ${
+                        effectiveDarkMode
+                          ? "bg-slate-800 border-slate-700 hover:border-emerald-500 text-slate-100"
+                          : "bg-white border-slate-200 hover:border-emerald-500 text-slate-900 shadow-xs hover:shadow-md"
+                      }`}
                     >
                       <FileText className="w-5 h-5 text-emerald-500 mt-0.5 group-hover:scale-110 transition-transform shrink-0" />
                       <div>
@@ -1625,7 +1736,11 @@ export function InvestmentDetailModal({
                           "Rancangan Feasibility Study (FS)",
                         )
                       }
-                      className="px-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 rounded-md text-left flex items-start gap-3 shadow-sm transition-all duration-300 ease-in-out active:scale-95 hover:shadow-md group w-full min-h-[44px] cursor-pointer"
+                      className={`px-4 py-3.5 border rounded-md text-left flex items-start gap-3 transition-all duration-300 ease-in-out active:scale-95 group w-full min-h-[44px] cursor-pointer ${
+                        effectiveDarkMode
+                          ? "bg-slate-800 border-slate-700 hover:border-emerald-500 text-slate-100"
+                          : "bg-white border-slate-200 hover:border-emerald-500 text-slate-900 shadow-xs hover:shadow-md"
+                      }`}
                     >
                       <Briefcase className="w-5 h-5 text-emerald-500 mt-0.5 group-hover:scale-110 transition-transform shrink-0" />
                       <div>
@@ -1641,20 +1756,28 @@ export function InvestmentDetailModal({
                   </div>
 
                   {/* ADVANCED IPRO & SPATIAL INSPECTION TOOLS */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+                  <div className={`grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3 pt-3 border-t ${sectionBorder}`}>
                     {/* Tool 1: IPRO Pitch Deck Generator */}
                     <motion.button whileTap={{ scale: 0.95 }}
                       onClick={() => setShowIproPitchDeck(true)}
-                      className="px-4 py-3 bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-md text-left flex items-start gap-3 shadow-sm border border-indigo-500/30 hover:border-indigo-400 transition-all group w-full min-h-[44px] cursor-pointer"
+                      className={`px-4 py-3 rounded-md text-left flex items-start gap-3 border transition-all group w-full min-h-[44px] cursor-pointer ${
+                        effectiveDarkMode
+                          ? "bg-gradient-to-br from-slate-900 to-indigo-950 text-white border-indigo-500/30 hover:border-indigo-400"
+                          : "bg-gradient-to-br from-emerald-50 via-teal-50 to-indigo-50/40 text-slate-900 border-emerald-200 hover:border-emerald-400 shadow-xs"
+                      }`}
                     >
-                      <FileCheck className="w-5 h-5 text-emerald-400 mt-0.5 group-hover:scale-110 transition-transform shrink-0" />
+                      <FileCheck className="w-5 h-5 text-emerald-500 mt-0.5 group-hover:scale-110 transition-transform shrink-0" />
                       <div>
-                        <span className="text-[10px] uppercase tracking-wider font-bold text-emerald-300 block mb-0.5">
+                        <span className={`text-[10px] uppercase tracking-wider font-bold block mb-0.5 ${
+                          effectiveDarkMode ? "text-emerald-300" : "text-emerald-700"
+                        }`}>
                           Standard BKPM / IPRO
                         </span>
-                        <span className="block text-xs font-bold text-white flex items-center gap-1">
+                        <span className={`block text-xs font-bold flex items-center gap-1 ${
+                          effectiveDarkMode ? "text-white" : "text-slate-900"
+                        }`}>
                           IPRO Pitch Deck & Dossier
-                          <ArrowUpRight className="w-3 h-3 text-emerald-300" />
+                          <ArrowUpRight className={`w-3 h-3 ${effectiveDarkMode ? "text-emerald-300" : "text-emerald-600"}`} />
                         </span>
                       </div>
                     </motion.button>
@@ -1662,7 +1785,11 @@ export function InvestmentDetailModal({
                     {/* Tool 2: Logistics & Routing Inspector */}
                     <motion.button whileTap={{ scale: 0.95 }}
                       onClick={() => setShowLogisticsInspector(true)}
-                      className="px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-400 rounded-md text-left flex items-start gap-3 shadow-sm transition-all group w-full min-h-[44px] cursor-pointer"
+                      className={`px-4 py-3 border rounded-md text-left flex items-start gap-3 transition-all group w-full min-h-[44px] cursor-pointer ${
+                        effectiveDarkMode
+                          ? "bg-slate-900 border-slate-800 text-slate-100 hover:border-blue-400"
+                          : "bg-white border-slate-200 text-slate-900 shadow-xs hover:border-blue-400"
+                      }`}
                     >
                       <Navigation className="w-5 h-5 text-blue-500 mt-0.5 group-hover:scale-110 transition-transform shrink-0" />
                       <div>
@@ -1671,7 +1798,7 @@ export function InvestmentDetailModal({
                         </span>
                         <span className="block text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1">
                           Inspektur Logistik & Rute
-                          <ArrowUpRight className="w-3 h-3 text-blue-700 dark:text-blue-400" />
+                          <ArrowUpRight className="w-3 h-3 text-blue-600 dark:text-blue-400" />
                         </span>
                       </div>
                     </motion.button>
@@ -1679,7 +1806,11 @@ export function InvestmentDetailModal({
                     {/* Tool 3: Spatial Risk & ESG Shield */}
                     <motion.button whileTap={{ scale: 0.95 }}
                       onClick={() => setShowEsgShield(true)}
-                      className="px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-400 rounded-md text-left flex items-start gap-3 shadow-sm transition-all group w-full min-h-[44px] cursor-pointer"
+                      className={`px-4 py-3 border rounded-md text-left flex items-start gap-3 transition-all group w-full min-h-[44px] cursor-pointer ${
+                        effectiveDarkMode
+                          ? "bg-slate-900 border-slate-800 text-slate-100 hover:border-emerald-400"
+                          : "bg-white border-slate-200 text-slate-900 shadow-xs hover:border-emerald-400"
+                      }`}
                     >
                       <ShieldCheck className="w-5 h-5 text-emerald-500 mt-0.5 group-hover:scale-110 transition-transform shrink-0" />
                       <div>
@@ -1688,7 +1819,7 @@ export function InvestmentDetailModal({
                         </span>
                         <span className="block text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1">
                           Audit Risiko Spasial & ESG
-                          <ArrowUpRight className="w-3 h-3 text-emerald-700 dark:text-emerald-400" />
+                          <ArrowUpRight className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                         </span>
                       </div>
                     </motion.button>
@@ -2295,78 +2426,80 @@ export function InvestmentDetailModal({
                     </div>
                   </div>
 
-                  {/* HIGHLY VISIBLE PRIMARY CALL TO ACTION BUTTON FOR LOI */}
-                  <div className="mb-4">
-                    <motion.button whileTap={{ scale: 0.95 }}
-                      type="button"
-                      onClick={async () => {
-                        // Security Gatekeeper Check: Ensure user is authenticated
-                        const { data: { session } } = await supabase.auth.getSession();
-                        if (!session || !session.user) {
-                          Swal.fire({
-                            title: t('investmentProfile.authRequiredTitle', 'Akses Investor Diperlukan'),
-                            text: t(
-                              'investmentProfile.authRequiredMessage',
-                              'Silakan Login atau Registrasi sebagai Investor untuk mengajukan Letter of Intent (LoI).'
-                            ),
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonText: t('investmentProfile.loginNow', 'Login / Registrasi Investor'),
-                            cancelButtonText: t('investmentProfile.cancel', 'Batal'),
-                            background: isDarkMode ? '#0f172a' : '#ffffff',
-                            color: isDarkMode ? '#f8fafc' : '#0f172a',
-                            confirmButtonColor: '#10b981',
-                          }).then((result) => {
-                            if (result.isConfirmed) {
-                              if (onClose) onClose();
-                              try {
-                                navigate('/login?role=investor');
-                              } catch (e) {
-                                window.location.href = '/login?role=investor';
+                  {/* HIGHLY VISIBLE PRIMARY CALL TO ACTION BUTTON FOR LOI (INVESTOR ONLY) */}
+                  {isInvestor() && (
+                    <div className="mb-4">
+                      <motion.button whileTap={{ scale: 0.95 }}
+                        type="button"
+                        onClick={async () => {
+                          // Security Gatekeeper Check: Ensure user is authenticated
+                          const { data: { session } } = await supabase.auth.getSession();
+                          if (!session || !session.user) {
+                            Swal.fire({
+                              title: t('investmentProfile.authRequiredTitle', 'Akses Investor Diperlukan'),
+                              text: t(
+                                'investmentProfile.authRequiredMessage',
+                                'Silakan Login atau Registrasi sebagai Investor untuk mengajukan Letter of Intent (LoI).'
+                              ),
+                              icon: 'warning',
+                              showCancelButton: true,
+                              confirmButtonText: t('investmentProfile.loginNow', 'Login / Registrasi Investor'),
+                              cancelButtonText: t('investmentProfile.cancel', 'Batal'),
+                              background: effectiveDarkMode ? '#0f172a' : '#ffffff',
+                              color: effectiveDarkMode ? '#f8fafc' : '#0f172a',
+                              confirmButtonColor: '#10b981',
+                            }).then((result) => {
+                              if (result.isConfirmed) {
+                                if (onClose) onClose();
+                                try {
+                                  navigate('/login?role=investor');
+                                } catch (e) {
+                                  window.location.href = '/login?role=investor';
+                                }
                               }
-                            }
-                          });
-                          return;
-                        }
-
-                        // Authenticated user: Populate verified user profile metadata & lock inputs
-                        const u = session.user;
-                        let profileName = "";
-                        let profileCompany = "";
-                        try {
-                          const { data: profile } = await supabase.from('profiles').select('*').eq('id', u.id).single();
-                          if (profile) {
-                            profileName = profile.full_name || profile.nama_lengkap || "";
-                            profileCompany = profile.company_name || profile.perusahaan || "";
+                            });
+                            return;
                           }
-                        } catch (e) {}
 
-                        const meta = u.user_metadata || {};
-                        const fullNameVal = profileName || meta.full_name || meta.company_name || u.email || "";
-                        const companyVal = profileCompany || meta.company_name || meta.company || meta.perusahaan || "";
-                        const contactVal = meta.no_whatsapp || meta.whatsapp || meta.phone || u.email || "";
+                          // Authenticated user: Populate verified user profile metadata & lock inputs
+                          const u = session.user;
+                          let profileName = "";
+                          let profileCompany = "";
+                          try {
+                            const { data: profile } = await supabase.from('profiles').select('*').eq('id', u.id).single();
+                            if (profile) {
+                              profileName = profile.full_name || profile.nama_lengkap || "";
+                              profileCompany = profile.company_name || profile.perusahaan || "";
+                            }
+                          } catch (e) {}
 
-                        setLoiInvestorName(fullNameVal);
-                        setLoiCompanyName(companyVal);
-                        setLoiContactInfo(contactVal);
-                        setIsLoiFieldsLocked(true);
+                          const meta = u.user_metadata || {};
+                          const fullNameVal = profileName || meta.full_name || meta.company_name || u.email || "";
+                          const companyVal = profileCompany || meta.company_name || meta.company || meta.perusahaan || "";
+                          const contactVal = meta.no_whatsapp || meta.whatsapp || meta.phone || u.email || "";
 
-                        const rawInvestment = profileData?.investment_value || geo?.nilai_investasi || "";
-                        setLoiInvestmentValue(rawInvestment ? String(rawInvestment).replace(/\D/g, "") : "");
-                        setLoiLandNeeded(formatLandArea(profileData?.land_area || geo?.luas_lahan || ""));
-                        setLoiMessage("");
-                        setIsLoiModalOpen(true);
-                      }}
-                      className="w-full flex items-center justify-center gap-2.5 py-3.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-md text-xs sm:text-sm min-h-[44px] transition-all shadow-sm hover:shadow-md transform active:scale-95 cursor-pointer"
-                    >
-                      <Handshake size={18} className="shrink-0" />
-                      <span>{t('investmentProfile.btnSubmitLoi', 'Ajukan Minat Investasi (LoI)')}</span>
-                    </motion.button>
-                  </div>
+                          setLoiInvestorName(fullNameVal);
+                          setLoiCompanyName(companyVal);
+                          setLoiContactInfo(contactVal);
+                          setIsLoiFieldsLocked(true);
+
+                          const rawInvestment = profileData?.investment_value || geo?.nilai_investasi || "";
+                          setLoiInvestmentValue(rawInvestment ? String(rawInvestment).replace(/\D/g, "") : "");
+                          setLoiLandNeeded(formatLandArea(profileData?.land_area || geo?.luas_lahan || ""));
+                          setLoiMessage("");
+                          setIsLoiModalOpen(true);
+                        }}
+                        className="w-full flex items-center justify-center gap-2.5 py-3.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-md text-xs sm:text-sm min-h-[44px] transition-all shadow-sm hover:shadow-md transform active:scale-95 cursor-pointer"
+                      >
+                        <Handshake size={18} className="shrink-0" />
+                        <span>{t('investmentProfile.btnSubmitLoi', 'Ajukan Minat Investasi (LoI)')}</span>
+                      </motion.button>
+                    </div>
+                  )}
 
                   {/* PIC Card */}
                   <div
-                    className={`p-4 rounded-md border border-dashed ${isDarkMode ? "border-slate-700 bg-slate-900/40" : "border-slate-200 bg-white"} flex flex-col gap-3.5`}
+                    className={`p-4 rounded-md border border-dashed ${effectiveDarkMode ? "border-slate-700 bg-slate-900/60" : "border-slate-300 bg-slate-50"} flex flex-col gap-3.5`}
                   >
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col items-center justify-center text-slate-600 dark:text-slate-400">
@@ -3112,19 +3245,27 @@ export function InvestmentDetailModal({
 
         {/* FOOTER */}
         <div
-          className={`p-4 shrink-0 border-t ${sectionBorder} flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 ${isDarkMode ? "bg-slate-900" : "bg-white"}`}
+          className={`p-4 shrink-0 border-t ${sectionBorder} flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 ${effectiveDarkMode ? "bg-slate-900" : "bg-white"}`}
         >
           <div className="flex gap-2 items-center flex-wrap">
             <motion.button whileTap={{ scale: 0.95 }}
               onClick={onClose}
-              className={`w-full sm:w-auto px-5 py-3 sm:py-2 flex justify-center font-normal text-xs uppercase tracking-wider rounded-lg border ${isDarkMode ? "border-slate-800 hover:bg-slate-800 text-gray-100" : "border-slate-200 hover:bg-slate-50 text-gray-800 dark:text-gray-200"}`}
+              className={`w-full sm:w-auto px-5 py-3 sm:py-2 flex justify-center font-semibold text-xs uppercase tracking-wider rounded-lg border transition-all ${
+                effectiveDarkMode
+                  ? "border-slate-700 hover:bg-slate-800 text-slate-200"
+                  : "border-slate-300 hover:bg-slate-100 text-slate-700 shadow-2xs"
+              }`}
             >
               {t('investmentProfile.kembali')} &times;
             </motion.button>
             <motion.button whileTap={{ scale: 0.95 }}
               onClick={handleGeneratePdf}
               disabled={isGeneratingPdf}
-              className="w-full sm:w-auto px-4 py-3 sm:py-2 flex justify-center items-center gap-2 font-bold text-xs uppercase tracking-wider rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 shadow-sm border border-slate-300 dark:border-slate-700 disabled:opacity-60 transition-all cursor-pointer"
+              className={`w-full sm:w-auto px-4 py-3 sm:py-2 flex justify-center items-center gap-2 font-bold text-xs uppercase tracking-wider rounded-lg shadow-xs border disabled:opacity-60 transition-all cursor-pointer ${
+                effectiveDarkMode
+                  ? "bg-slate-800 hover:bg-slate-700 text-slate-100 border-slate-700"
+                  : "bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300"
+              }`}
             >
               {isGeneratingPdf ? (
                 <>
@@ -3133,7 +3274,7 @@ export function InvestmentDetailModal({
                 </>
               ) : (
                 <>
-                  <FileText className="w-4 h-4 shrink-0" />
+                  <FileText className="w-4 h-4 shrink-0 text-emerald-600" />
                   <span>Cetak Resume (PDF)</span>
                 </>
               )}
@@ -3151,13 +3292,16 @@ export function InvestmentDetailModal({
             )}
           </div>
 
-          <motion.button whileTap={{ scale: 0.95 }}
-            onClick={handleOpenLoi}
-            className="w-full sm:w-auto px-5 py-3 sm:py-2 flex justify-center items-center gap-2 font-black text-xs uppercase tracking-wider rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md shadow-emerald-500/20 border border-emerald-400/40 transition-all cursor-pointer"
-          >
-            <Handshake className="w-4 h-4 text-emerald-100 shrink-0" />
-            <span>{t('investmentProfile.btnAjukanMinat', 'Ajukan Minat (LOI)')}</span>
-          </motion.button>
+          {/* AJUKAN MINAT (LOI) - HANYA DITAMPILKAN UNTUK INVESTOR */}
+          {isInvestor() && (
+            <motion.button whileTap={{ scale: 0.95 }}
+              onClick={handleOpenLoi}
+              className="w-full sm:w-auto px-5 py-3 sm:py-2 flex justify-center items-center gap-2 font-black text-xs uppercase tracking-wider rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md shadow-emerald-500/20 border border-emerald-400/40 transition-all cursor-pointer"
+            >
+              <Handshake className="w-4 h-4 text-emerald-100 shrink-0" />
+              <span>{t('investmentProfile.btnAjukanMinat', 'Ajukan Minat (LOI)')}</span>
+            </motion.button>
+          )}
         </div>
             </div>
           )}
@@ -3177,18 +3321,15 @@ export function InvestmentDetailModal({
           irr={irr}
           npv={npv}
           discountRate={sukuBunga}
-          isDarkMode={isDarkMode}
+          isDarkMode={effectiveDarkMode}
         />
       )}
 
       {isLoiModalOpen && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
           <div
-            
-            
-            
             className={`w-full max-w-lg rounded-lg border p-6 shadow-2xl relative overflow-hidden ${
-              isDarkMode ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-slate-200 text-slate-800"
+              effectiveDarkMode ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-slate-200 text-slate-800"
             }`}
           >
             {/* Header */}
@@ -3200,7 +3341,7 @@ export function InvestmentDetailModal({
               <motion.button whileTap={{ scale: 0.95 }}
                 type="button"
                 onClick={() => setIsLoiModalOpen(false)}
-                className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 dark:hover:text-slate-300"
+                className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
               >
                 <X size={20} />
               </motion.button>
@@ -3215,8 +3356,8 @@ export function InvestmentDetailModal({
                     title: t('investmentProfile.errorTitle', 'Kesalahan'),
                     text: t('investmentProfile.errorNameRequired', 'Nama investor harus diisi.'),
                     icon: "error",
-                    background: isDarkMode ? "#0f172a" : "#ffffff",
-                    color: isDarkMode ? "#f8fafc" : "#0f172a"
+                    background: effectiveDarkMode ? "#0f172a" : "#ffffff",
+                    color: effectiveDarkMode ? "#f8fafc" : "#0f172a"
                   });
                   return;
                 }
@@ -3225,8 +3366,8 @@ export function InvestmentDetailModal({
                     title: t('investmentProfile.errorTitle', 'Kesalahan'),
                     text: t('investmentProfile.errorContactRequired', 'Informasi kontak (No. WA/Email) harus diisi.'),
                     icon: "error",
-                    background: isDarkMode ? "#0f172a" : "#ffffff",
-                    color: isDarkMode ? "#f8fafc" : "#0f172a"
+                    background: effectiveDarkMode ? "#0f172a" : "#ffffff",
+                    color: effectiveDarkMode ? "#f8fafc" : "#0f172a"
                   });
                   return;
                 }
@@ -3240,8 +3381,8 @@ export function InvestmentDetailModal({
                       title: t('investmentProfile.authRequiredTitle', 'Akses Investor Diperlukan'),
                       text: t('investmentProfile.authRequiredMessage', 'Silakan Login atau Registrasi sebagai Investor untuk mengajukan Letter of Intent (LoI).'),
                       icon: "warning",
-                      background: isDarkMode ? "#0f172a" : "#ffffff",
-                      color: isDarkMode ? "#f8fafc" : "#0f172a"
+                      background: effectiveDarkMode ? "#0f172a" : "#ffffff",
+                      color: effectiveDarkMode ? "#f8fafc" : "#0f172a"
                     });
                     setIsLoiModalOpen(false);
                     try {
@@ -3286,8 +3427,8 @@ export function InvestmentDetailModal({
                     title: t('investmentProfile.submitSuccessTitle', 'LoI Terkirim!'),
                     text: t('investmentProfile.submitSuccessDesc', 'Minat investasi Anda telah diterima. Tim DPMPTSP Luwu akan segera menghubungi Anda.'),
                     icon: "success",
-                    background: isDarkMode ? "#0f172a" : "#ffffff",
-                    color: isDarkMode ? "#f8fafc" : "#0f172a"
+                    background: effectiveDarkMode ? "#0f172a" : "#ffffff",
+                    color: effectiveDarkMode ? "#f8fafc" : "#0f172a"
                   });
                 } catch (error: any) {
                   console.error("LoI submit error:", error);
@@ -3295,8 +3436,8 @@ export function InvestmentDetailModal({
                     title: t('investmentProfile.submitErrorTitle', 'Gagal Mengirim LoI'),
                     text: error.message || t('investmentProfile.errorConnection', 'Terjadi kesalahan koneksi.'),
                     icon: "error",
-                    background: isDarkMode ? "#0f172a" : "#ffffff",
-                    color: isDarkMode ? "#f8fafc" : "#0f172a"
+                    background: effectiveDarkMode ? "#0f172a" : "#ffffff",
+                    color: effectiveDarkMode ? "#f8fafc" : "#0f172a"
                   });
                 } finally {
                   setIsSubmittingLoi(false);
@@ -3453,7 +3594,7 @@ export function InvestmentDetailModal({
           isOpen={isRtrwModalOpen}
           onClose={() => setIsRtrwModalOpen(false)}
           selectedInvestment={profileData as any}
-          isDark={isDarkMode}
+          isDark={effectiveDarkMode}
           simulationContext={
             profileData
               ? {
@@ -3478,7 +3619,7 @@ export function InvestmentDetailModal({
           isOpen={isIncentiveModalOpen}
           onClose={() => setIsIncentiveModalOpen(false)}
           selectedInvestment={profileData as any}
-          isDark={isDarkMode}
+          isDark={effectiveDarkMode}
           simulationContext={
             profileData
               ? {
@@ -3503,7 +3644,7 @@ export function InvestmentDetailModal({
           isOpen={isProximityModalOpen}
           onClose={() => setIsProximityModalOpen(false)}
           selectedInvestment={profileData as any}
-          isDark={isDarkMode}
+          isDark={effectiveDarkMode}
           simulationContext={
             profileData
               ? {
@@ -3530,7 +3671,7 @@ export function InvestmentDetailModal({
           onClose={() => setShowIproPitchDeck(false)}
           investment={profileData as any}
           district={districts.find((d: any) => d.id === profileData?.districtId) || null}
-          isDarkMode={isDarkMode}
+          isDarkMode={effectiveDarkMode}
         />
 
         {/* 2. Real-Time Spatial Infrastructure & Logistics Inspector Modal */}
@@ -3539,7 +3680,7 @@ export function InvestmentDetailModal({
           onClose={() => setShowLogisticsInspector(false)}
           investment={profileData as any}
           districts={districts}
-          isDarkMode={isDarkMode}
+          isDarkMode={effectiveDarkMode}
         />
 
         {/* 3. Automated Spatial ESG Risk & Environmental Audit Modal */}
@@ -3548,7 +3689,7 @@ export function InvestmentDetailModal({
           onClose={() => setShowEsgShield(false)}
           investment={profileData as any}
           district={districts.find((d: any) => d.id === profileData?.districtId) || null}
-          isDarkMode={isDarkMode}
+          isDarkMode={effectiveDarkMode}
         />
       </div>
     </div>

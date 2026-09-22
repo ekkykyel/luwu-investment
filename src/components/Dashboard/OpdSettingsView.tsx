@@ -176,7 +176,7 @@ export const OpdSettingsView: React.FC<OpdSettingsViewProps> = ({ opdKey, title 
           <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={() => setSettings(getOpdSettings(opdKey))}
-              className="px-4 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700/80 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+              className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
               title="Reset ke data awal"
             >
               <RefreshCw size={14} />

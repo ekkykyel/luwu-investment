@@ -4,12 +4,14 @@ import { useNavigate, useLocation } from "react-router-dom";
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
+import Swal from 'sweetalert2';
 import { 
   Building2, 
   Mail, 
   Lock, 
   LogIn, 
   ChevronRight, 
+  ChevronDown,
   AlertCircle, 
   ArrowLeft, 
   Eye, 
@@ -30,6 +32,67 @@ import {
 import { supabase } from '../../lib/supabaseClient';
 import { useProfile } from '../../hooks/useProfile';
 
+export const ADMIN_ROLE_DETAILS: Record<string, { label: string; email: string; aliases: string[] }> = {
+  admin_promosi: {
+    label: 'Bidang Promosi & Penanaman Modal',
+    email: 'promosiluwu@gmail.com',
+    aliases: ['promosiluwu@gmail.com', 'promosi@luwukab.go.id']
+  },
+  admin_puptr: {
+    label: 'Dinas PUPTR (Tata Ruang & Studio GIS)',
+    email: 'puptr@luwukab.go.id',
+    aliases: ['puptr@luwukab.go.id', 'adminpuptr@luwukab.go.id', 'tataruangluwu@gmail.com']
+  },
+  admin_pertanian: {
+    label: 'Dinas Pertanian (Verifikasi Lahan LP2B)',
+    email: 'pertanian@luwukab.go.id',
+    aliases: ['pertanian@luwukab.go.id', 'adminpertanian@luwukab.go.id', 'distanluwu@gmail.com']
+  },
+  admin_dalak: {
+    label: 'Bidang Pengendalian & Pengawasan (Dalak)',
+    email: 'dalakluwu@gmail.com',
+    aliases: ['dalakluwu@gmail.com', 'dalak@luwukab.go.id']
+  },
+  admin_oss: {
+    label: 'Bidang Penyelenggaraan Pelayanan Perizinan (OSS)',
+    email: 'dpmptspluwu@gmail.com',
+    aliases: ['dpmptspluwu@gmail.com', 'officialdpmptspluwu@gmail.com', 'oss@luwukab.go.id']
+  },
+  admin_data: {
+    label: 'Bidang Perencanaan, Pengembangan Iklim & Data',
+    email: 'dataluwu@gmail.com',
+    aliases: ['dataluwu@gmail.com', 'data@luwukab.go.id']
+  },
+  admin_mpp: {
+    label: 'Admin MPP (Pengelola Mal Pelayanan Publik)',
+    email: 'adminmpp@luwukab.go.id',
+    aliases: ['adminmpp@luwukab.go.id', 'mppluwu@gmail.com']
+  }
+};
+
+export const ROLE_LABELS: Record<string, string> = {
+  investor: 'Investor',
+  masyarakat: 'Warga OTP',
+  admin_promosi: 'Bidang Promosi & Penanaman Modal',
+  admin_puptr: 'Dinas PUPTR (Tata Ruang & Studio GIS)',
+  admin_pertanian: 'Dinas Pertanian (Verifikasi Lahan LP2B)',
+  admin_dalak: 'Bidang Pengendalian & Pengawasan (Dalak)',
+  admin_oss: 'Bidang Penyelenggaraan Pelayanan Perizinan (OSS)',
+  admin_data: 'Bidang Perencanaan, Pengembangan Iklim & Data',
+  admin_mpp: 'Admin MPP (Pengelola Mal Pelayanan Publik)',
+  superadmin: 'Super Administrator'
+};
+
+export function getKnownRoleFromEmail(email: string): string | null {
+  const clean = email.trim().toLowerCase();
+  for (const [roleKey, details] of Object.entries(ADMIN_ROLE_DETAILS)) {
+    if (details.email.toLowerCase() === clean || details.aliases.some(a => a.toLowerCase() === clean)) {
+      return roleKey;
+    }
+  }
+  return null;
+}
+
 export default function InvestorLogin() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,7 +111,7 @@ export default function InvestorLogin() {
     return 'masyarakat'; // Default friendly citizen portal
   });
 
-  const [adminSpecificRole, setAdminSpecificRole] = useState<'admin_puptr' | 'admin_pertanian' | 'admin_dalak' | 'admin_data' | 'admin_promosi' | 'admin_oss' | 'admin_mpp'>('admin_puptr');
+  const [adminSpecificRole, setAdminSpecificRole] = useState<'admin_puptr' | 'admin_pertanian' | 'admin_dalak' | 'admin_data' | 'admin_promosi' | 'admin_oss' | 'admin_mpp'>('admin_promosi');
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -121,19 +184,75 @@ export default function InvestorLogin() {
     'dataluwu@gmail.com': 'admin_data',
     'promosiluwu@gmail.com': 'admin_promosi',
     'dpmptspluwu@gmail.com': 'admin_oss',
+    'adminmpp@luwukab.go.id': 'admin_mpp',
+  };
+
+  // ── Role Barometer Discrepancy Notifier ──
+  const notifyRoleMismatch = ({
+    message,
+    suggestedCategory,
+    suggestedAdminRole
+  }: {
+    message: string;
+    suggestedCategory?: 'masyarakat' | 'investor' | 'admin';
+    suggestedAdminRole?: string;
+  }) => {
+    const fullMsg = `Silahkan Sesuaikan Role Anda: ${message}`;
+    setError(fullMsg);
+    Swal.fire({
+      title: 'Silahkan Sesuaikan Role Anda',
+      html: `
+        <div class="text-left text-sm text-slate-300 space-y-3">
+          <div class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 flex items-start gap-2.5">
+            <span class="text-xl shrink-0">⚠️</span>
+            <p class="leading-relaxed text-xs">${message}</p>
+          </div>
+          <p class="text-[11px] text-slate-400">Pilihan role pada halaman portal ini bertindak sebagai barometer kontrol. Mohon sesuaikan opsi masuk dengan akun Anda.</p>
+        </div>
+      `,
+      icon: 'warning',
+      confirmButtonText: suggestedCategory || suggestedAdminRole ? 'Sesuaikan Role Sekarang' : 'Mengerti',
+      showCancelButton: true,
+      cancelButtonText: 'Tutup',
+      confirmButtonColor: '#10b981',
+      cancelButtonColor: '#475569',
+      background: '#0f172a',
+      color: '#f8fafc'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (suggestedCategory) {
+          setMainRoleCategory(suggestedCategory);
+          setError(null);
+        }
+        if (suggestedAdminRole && ADMIN_ROLE_DETAILS[suggestedAdminRole]) {
+          setMainRoleCategory('admin');
+          setAdminSpecificRole(suggestedAdminRole as any);
+          setError(null);
+        }
+      }
+    });
   };
 
   const handleIdentifierChange = (val: string) => {
     setIdentifier(val);
-    const cleanEmail = val.trim().toLowerCase();
-    if (OFFICIAL_EMAIL_ROLE_MAP[cleanEmail]) {
-      setMainRoleCategory('admin');
-      setAdminSpecificRole(OFFICIAL_EMAIL_ROLE_MAP[cleanEmail] as any);
-    }
+    setError(null);
   };
 
   // ── Auto Search Citizen when NIK is typed ──
   const handleNikInputChange = async (val: string) => {
+    // Barometer check: Deteksi jika user memasukkan email di tab Warga OTP
+    if (val.includes('@')) {
+      const cleanEmail = val.trim().toLowerCase();
+      const knownRole = getKnownRoleFromEmail(cleanEmail);
+      const targetLabel = knownRole ? (ADMIN_ROLE_DETAILS[knownRole]?.label || 'Admin OPD') : 'Investor / Admin';
+      notifyRoleMismatch({
+        message: `Anda memasukkan alamat email pada menu Warga OTP. Akun email ini diperuntukkan untuk login ${targetLabel}. Silakan sesuaikan pilihan role Anda.`,
+        suggestedCategory: knownRole ? 'admin' : 'investor',
+        suggestedAdminRole: knownRole || undefined
+      });
+      return;
+    }
+
     const clean = val.replace(/\D/g, '').slice(0, 16);
     setOtpNik(clean);
     setOtpError(null);
@@ -142,6 +261,26 @@ export default function InvestorLogin() {
     if (clean.length === 16) {
       setIsSearchingCitizen(true);
       try {
+        // Barometer check: Pastikan NIK bukan akun terdaftar sebagai Investor atau Admin di profiles
+        const { data: profData } = await supabase
+          .from('profiles')
+          .select('id, role, full_name, email, nik')
+          .eq('nik', clean)
+          .maybeSingle();
+
+        if (profData && profData.role && profData.role !== 'masyarakat') {
+          const isInvestor = profData.role === 'investor';
+          const roleLabel = isInvestor ? 'Investor' : (ADMIN_ROLE_DETAILS[profData.role]?.label || 'Administrator OPD');
+          notifyRoleMismatch({
+            message: `NIK ${clean} terdaftar dalam database sebagai akun ${roleLabel}. Mohon sesuaikan pilihan role Anda pada tab ${isInvestor ? 'Investor' : 'Admin'}.`,
+            suggestedCategory: isInvestor ? 'investor' : 'admin',
+            suggestedAdminRole: isInvestor ? undefined : profData.role
+          });
+          setOtpError(`Silahkan Sesuaikan Role Anda: NIK ini terdaftar sebagai ${roleLabel}.`);
+          setIsSearchingCitizen(false);
+          return;
+        }
+
         const { data, error } = await supabase
           .from('mpp_citizens')
           .select('*')
@@ -166,6 +305,25 @@ export default function InvestorLogin() {
     if (e) e.preventDefault();
     if (otpNik.length !== 16) {
       setOtpError('NIK wajib 16 digit angka sesuai KTP');
+      return;
+    }
+
+    // Barometer check sebelum kirim OTP
+    const { data: profData } = await supabase
+      .from('profiles')
+      .select('id, role, full_name, email, nik')
+      .eq('nik', otpNik)
+      .maybeSingle();
+
+    if (profData && profData.role && profData.role !== 'masyarakat') {
+      const isInvestor = profData.role === 'investor';
+      const roleLabel = isInvestor ? 'Investor' : (ADMIN_ROLE_DETAILS[profData.role]?.label || 'Administrator OPD');
+      notifyRoleMismatch({
+        message: `NIK ini terdaftar sebagai akun ${roleLabel}. Mohon login melalui tab ${isInvestor ? 'Investor' : 'Admin'}.`,
+        suggestedCategory: isInvestor ? 'investor' : 'admin',
+        suggestedAdminRole: isInvestor ? undefined : profData.role
+      });
+      setOtpError(`Silahkan Sesuaikan Role Anda: NIK terdaftar sebagai ${roleLabel}.`);
       return;
     }
 
@@ -235,6 +393,26 @@ export default function InvestorLogin() {
     setOtpError(null);
 
     try {
+      // Barometer check: pastikan bukan investor atau admin
+      const { data: profData } = await supabase
+        .from('profiles')
+        .select('id, role, full_name, email, nik')
+        .eq('nik', otpNik)
+        .maybeSingle();
+
+      if (profData && profData.role && profData.role !== 'masyarakat') {
+        const isInvestor = profData.role === 'investor';
+        const roleLabel = isInvestor ? 'Investor' : (ADMIN_ROLE_DETAILS[profData.role]?.label || 'Administrator OPD');
+        notifyRoleMismatch({
+          message: `Akun dengan NIK ${otpNik} terdaftar sebagai ${roleLabel}. Akses ditolak pada portal Warga OTP. Silakan sesuaikan role login Anda.`,
+          suggestedCategory: isInvestor ? 'investor' : 'admin',
+          suggestedAdminRole: isInvestor ? undefined : profData.role
+        });
+        setOtpError(`Silahkan Sesuaikan Role Anda: Akun terdaftar sebagai ${roleLabel}.`);
+        setIsVerifyingOtp(false);
+        return;
+      }
+
       const res = await fetch('/api/kiosk/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -303,10 +481,76 @@ export default function InvestorLogin() {
       const cleanEmail = finalEmail.toLowerCase();
       let effectiveRole = currentEffectiveRole;
 
-      if (OFFICIAL_EMAIL_ROLE_MAP[cleanEmail]) {
-        effectiveRole = OFFICIAL_EMAIL_ROLE_MAP[cleanEmail];
-        setMainRoleCategory('admin');
-        setAdminSpecificRole(effectiveRole as any);
+      // ── BAROMETER KONTROL PENENTUAN ROLE ──
+      const knownAdminRole = getKnownRoleFromEmail(cleanEmail);
+
+      // Check 1: User memilih tab Investor, namun email yang dimasukkan adalah akun resmi Admin OPD
+      if (mainRoleCategory === 'investor' && knownAdminRole) {
+        const adminLabel = ADMIN_ROLE_DETAILS[knownAdminRole]?.label || 'Administrator OPD';
+        notifyRoleMismatch({
+          message: `Akun email "${cleanEmail}" terdaftar sebagai ${adminLabel}, bukan Investor. Silakan pilih tab Admin dan sesuaikan bidang dinas Anda.`,
+          suggestedCategory: 'admin',
+          suggestedAdminRole: knownAdminRole
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Check 2: User memilih tab Admin, namun email yang dimasukkan terdaftar untuk OPD / bidang dinas lain
+      if (mainRoleCategory === 'admin' && knownAdminRole && knownAdminRole !== adminSpecificRole) {
+        const chosenLabel = ADMIN_ROLE_DETAILS[adminSpecificRole]?.label || adminSpecificRole;
+        const actualLabel = ADMIN_ROLE_DETAILS[knownAdminRole]?.label || knownAdminRole;
+        notifyRoleMismatch({
+          message: `Anda memilih role "${chosenLabel}", tetapi akun email yang dimasukkan terdaftar untuk "${actualLabel}". Silakan sesuaikan pilihan Masuk Sebagai Anda.`,
+          suggestedCategory: 'admin',
+          suggestedAdminRole: knownAdminRole
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Check 3: Pre-check profil di database jika email terdaftar
+      try {
+        const { data: existingProf } = await supabase
+          .from('profiles')
+          .select('id, role, email')
+          .ilike('email', cleanEmail)
+          .maybeSingle();
+
+        if (existingProf?.role) {
+          const profRole = existingProf.role;
+          if (mainRoleCategory === 'investor' && profRole.startsWith('admin_')) {
+            const adminLabel = ADMIN_ROLE_DETAILS[profRole]?.label || profRole;
+            notifyRoleMismatch({
+              message: `Akun email ini terdaftar sebagai ${adminLabel}, bukan Investor. Silakan pilih tab Admin dan sesuaikan bidang dinas Anda.`,
+              suggestedCategory: 'admin',
+              suggestedAdminRole: profRole
+            });
+            setIsSubmitting(false);
+            return;
+          }
+          if (mainRoleCategory === 'admin' && profRole === 'investor') {
+            notifyRoleMismatch({
+              message: `Akun email ini terdaftar sebagai Investor, bukan Administrator. Silakan pilih tab Investor untuk masuk.`,
+              suggestedCategory: 'investor'
+            });
+            setIsSubmitting(false);
+            return;
+          }
+          if (mainRoleCategory === 'admin' && profRole.startsWith('admin_') && profRole !== adminSpecificRole && profRole !== 'superadmin') {
+            const chosenLabel = ADMIN_ROLE_DETAILS[adminSpecificRole]?.label || adminSpecificRole;
+            const actualLabel = ADMIN_ROLE_DETAILS[profRole]?.label || profRole;
+            notifyRoleMismatch({
+              message: `Anda memilih role "${chosenLabel}", tetapi profil akun ini terdaftar untuk "${actualLabel}". Silakan sesuaikan pilihan Masuk Sebagai Anda.`,
+              suggestedCategory: 'admin',
+              suggestedAdminRole: profRole
+            });
+            setIsSubmitting(false);
+            return;
+          }
+        }
+      } catch (checkErr) {
+        console.warn('Pre-check profiles error:', checkErr);
       }
 
       let { data, error: signInError } = await supabase.auth.signInWithPassword({
@@ -343,39 +587,84 @@ export default function InvestorLogin() {
       if (signInError) throw signInError;
 
       if (data?.session) {
+        // Query user's profile to verify actual role post-auth
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role, full_name')
+          .eq('id', data.session.user.id)
+          .maybeSingle();
+
+        const activeRole = profile?.role || data.session.user.user_metadata?.role || effectiveRole;
+
+        // Post-auth validation against chosen role barometer
+        if (mainRoleCategory === 'investor' && activeRole && activeRole.startsWith('admin_')) {
+          await supabase.auth.signOut();
+          localStorage.removeItem("luwu_session_token");
+          localStorage.removeItem("luwu_user_role");
+          localStorage.removeItem("luwu_user_email");
+          const adminLabel = ADMIN_ROLE_DETAILS[activeRole]?.label || 'Administrator OPD';
+          notifyRoleMismatch({
+            message: `Akun Anda terverifikasi sebagai ${adminLabel}. Silahkan sesuaikan role Anda dengan memilih tab Admin.`,
+            suggestedCategory: 'admin',
+            suggestedAdminRole: activeRole
+          });
+          setIsSubmitting(false);
+          return;
+        }
+
+        if (mainRoleCategory === 'admin') {
+          if (activeRole === 'investor') {
+            await supabase.auth.signOut();
+            localStorage.removeItem("luwu_session_token");
+            localStorage.removeItem("luwu_user_role");
+            localStorage.removeItem("luwu_user_email");
+            notifyRoleMismatch({
+              message: `Akun Anda terdaftar sebagai Investor, bukan Administrator. Silahkan sesuaikan role Anda dengan memilih tab Investor.`,
+              suggestedCategory: 'investor'
+            });
+            setIsSubmitting(false);
+            return;
+          }
+
+          if (activeRole && activeRole.startsWith('admin_') && activeRole !== adminSpecificRole && activeRole !== 'superadmin') {
+            await supabase.auth.signOut();
+            localStorage.removeItem("luwu_session_token");
+            localStorage.removeItem("luwu_user_role");
+            localStorage.removeItem("luwu_user_email");
+            const chosenLabel = ADMIN_ROLE_DETAILS[adminSpecificRole]?.label || adminSpecificRole;
+            const actualLabel = ADMIN_ROLE_DETAILS[activeRole]?.label || activeRole;
+            notifyRoleMismatch({
+              message: `Anda memilih role "${chosenLabel}", tetapi akun Anda adalah "${actualLabel}". Silahkan sesuaikan pilihan Masuk Sebagai Anda.`,
+              suggestedCategory: 'admin',
+              suggestedAdminRole: activeRole
+            });
+            setIsSubmitting(false);
+            return;
+          }
+        }
+
         document.cookie = `sb-access-token=${data.session.access_token}; path=/; max-age=86400; SameSite=None; Secure`;
         localStorage.setItem("luwu_session_token", data.session.access_token);
-        localStorage.setItem("luwu_user_role", effectiveRole);
+        localStorage.setItem("luwu_user_role", activeRole);
         localStorage.setItem("luwu_user_email", cleanEmail);
         
         await supabase.auth.setSession(data.session);
 
-        if (OFFICIAL_EMAIL_ROLE_MAP[cleanEmail] || effectiveRole) {
+        if (OFFICIAL_EMAIL_ROLE_MAP[cleanEmail] || activeRole) {
           try {
             await supabase.from('profiles').upsert({
               id: data.session.user.id,
-              role: effectiveRole,
-              full_name: effectiveRole === 'admin_puptr' ? 'Admin Dinas PUPTR (Tata Ruang & Studio GIS)'
-                       : effectiveRole === 'admin_pertanian' ? 'Admin Dinas Pertanian (Lahan LP2B)'
-                       : effectiveRole === 'admin_dalak' ? 'Bidang Pengendalian Pelaksanaan & Pengawasan'
-                       : effectiveRole === 'admin_data' ? 'Bidang Perencanaan, Pengembangan Iklim & Data'
-                       : effectiveRole === 'admin_promosi' ? 'Bidang Promosi & Penanaman Modal'
-                       : effectiveRole === 'admin_oss' ? 'Bidang Penyelenggaraan Pelayanan Perizinan'
-                       : effectiveRole === 'admin_mpp' ? 'Admin MPP (Pengelola Mal Pelayanan Publik)'
+              role: activeRole,
+              full_name: activeRole === 'admin_puptr' ? 'Admin Dinas PUPTR (Tata Ruang & Studio GIS)'
+                       : activeRole === 'admin_pertanian' ? 'Admin Dinas Pertanian (Lahan LP2B)'
+                       : activeRole === 'admin_dalak' ? 'Bidang Pengendalian Pelaksanaan & Pengawasan'
+                       : activeRole === 'admin_data' ? 'Bidang Perencanaan, Pengembangan Iklim & Data'
+                       : activeRole === 'admin_promosi' ? 'Bidang Promosi & Penanaman Modal'
+                       : activeRole === 'admin_oss' ? 'Bidang Penyelenggaraan Pelayanan Perizinan'
+                       : activeRole === 'admin_mpp' ? 'Admin MPP (Pengelola Mal Pelayanan Publik)'
                        : (data.session.user.user_metadata?.full_name || data.session.user.user_metadata?.company_name || cleanEmail.split('@')[0])
             });
           } catch (e) {}
-        }
-
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', data.session.user.id)
-          .maybeSingle();
-
-        const activeRole = profile?.role || effectiveRole;
-        if (!activeRole) {
-          throw new Error(t('auth.roleVerifyFailed', 'Gagal memverifikasi akun. Profil atau peran tidak ditemukan.'));
         }
 
         setIsSuccess(true);
@@ -417,7 +706,7 @@ export default function InvestorLogin() {
           </div>
         </div>
         <h2 className="text-center text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white mb-1 font-display">
-          {t('auth.portalTitle', 'Portal Masuk Terpadu')}
+          {t('auth.portalTitle', 'Dashboard Portal Login')}
         </h2>
         <p className="text-center text-xs text-slate-600 dark:text-slate-400 font-medium max-w-xs sm:max-w-sm mx-auto">
           {t('appSubtitle', 'Kabupaten Luwu • Satu Pintu Investasi & Layanan Publik')}
@@ -443,7 +732,7 @@ export default function InvestorLogin() {
                 }}
                 className={`py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs font-black transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap ${
                   mainRoleCategory === 'masyarakat'
-                    ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-md ring-2 ring-emerald-500/30'
+                    ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-md border border-emerald-500/50 ring-2 ring-emerald-500/30 font-bold'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
               >
@@ -461,7 +750,7 @@ export default function InvestorLogin() {
                 }}
                 className={`py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs font-black transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap ${
                   mainRoleCategory === 'investor'
-                    ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-md ring-2 ring-emerald-500/30'
+                    ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-md border border-emerald-500/50 ring-2 ring-emerald-500/30 font-bold'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
               >
@@ -478,11 +767,11 @@ export default function InvestorLogin() {
                 }}
                 className={`py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs font-black transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap ${
                   mainRoleCategory === 'admin'
-                    ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-md ring-2 ring-emerald-500/30'
+                    ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-md border border-emerald-500/50 ring-2 ring-emerald-500/30 font-bold'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
               >
-                <Shield size={13} className="shrink-0 text-indigo-500" />
+                <Shield size={13} className="shrink-0 text-emerald-500" />
                 <span>Admin</span>
               </button>
             </div>
@@ -736,27 +1025,32 @@ export default function InvestorLogin() {
               
               {/* SUB-ROLE SELECTOR FOR ADMIN DINAS */}
               {mainRoleCategory === 'admin' && (
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 animate-in fade-in duration-200">
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                    {t('auth.loginAs', 'Pilih Instansi / Bidang Dinas')}
+                <div className="p-3.5 rounded-2xl bg-slate-50/80 dark:bg-slate-950/60 border border-slate-200/90 dark:border-slate-800 animate-in fade-in duration-200">
+                  <label className="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-1.5">
+                    {t('auth.loginAs', 'Masuk Sebagai')}
                   </label>
-                  <select
-                    value={adminSpecificRole}
-                    onChange={(e) => {
-                      const newRole = e.target.value as any;
-                      setAdminSpecificRole(newRole);
-                      setIdentifier('');
-                    }}
-                    className="block w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors cursor-pointer"
-                  >
-                    <option value="admin_puptr">Dinas PUPTR (Tata Ruang & Studio GIS)</option>
-                    <option value="admin_pertanian">Dinas Pertanian (Verifikasi Lahan LP2B)</option>
-                    <option value="admin_dalak">Bidang Pengendalian & Pengawasan (Dalak)</option>
-                    <option value="admin_oss">Bidang Pelayanan Perizinan (OSS)</option>
-                    <option value="admin_promosi">Bidang Promosi & Penanaman Modal</option>
-                    <option value="admin_data">Bidang Perencanaan & Data</option>
-                    <option value="admin_mpp">Admin MPP (Pengelola Mal Pelayanan Publik)</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={adminSpecificRole}
+                      onChange={(e) => {
+                        const newRole = e.target.value as any;
+                        setAdminSpecificRole(newRole);
+                        setError(null);
+                      }}
+                      className="block w-full px-3.5 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors cursor-pointer appearance-none pr-10"
+                    >
+                      <option value="admin_promosi">Bidang Promosi & Penanaman Modal</option>
+                      <option value="admin_puptr">Dinas PUPTR (Tata Ruang & Studio GIS)</option>
+                      <option value="admin_pertanian">Dinas Pertanian (Verifikasi Lahan LP2B)</option>
+                      <option value="admin_dalak">Bidang Pengendalian & Pengawasan (Dalak)</option>
+                      <option value="admin_oss">Bidang Penyelenggaraan Pelayanan Perizinan (OSS)</option>
+                      <option value="admin_data">Bidang Perencanaan, Pengembangan Iklim & Data</option>
+                      <option value="admin_mpp">Admin MPP (Pengelola Mal Pelayanan Publik)</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-500">
+                      <ChevronDown size={16} />
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -833,9 +1127,22 @@ export default function InvestorLogin() {
               </div>
 
               {error && (
-                <div className="flex items-start gap-2 text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 p-3 rounded-xl text-xs">
-                  <AlertCircle size={16} className="shrink-0 mt-0.5" />
-                  <span>{error}</span>
+                <div className={`p-3.5 rounded-xl border flex items-start gap-2.5 text-xs animate-in fade-in duration-200 ${
+                  error.includes('Silahkan Sesuaikan Role Anda')
+                    ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-200 shadow-sm'
+                    : 'bg-rose-50 dark:bg-rose-500/10 border-rose-200 dark:border-rose-500/20 text-rose-600 dark:text-rose-400'
+                }`}>
+                  <AlertCircle size={17} className={`shrink-0 mt-0.5 ${
+                    error.includes('Silahkan Sesuaikan Role Anda') ? 'text-amber-600 dark:text-amber-400' : 'text-rose-500'
+                  }`} />
+                  <div className="space-y-1">
+                    <p className="font-bold text-xs">
+                      {error.includes('Silahkan Sesuaikan Role Anda') ? 'Silahkan Sesuaikan Role Anda' : 'Gagal Masuk'}
+                    </p>
+                    <p className="text-[11px] leading-relaxed opacity-95">
+                      {error.replace(/^Silahkan Sesuaikan Role Anda:\s*/i, '')}
+                    </p>
+                  </div>
                 </div>
               )}
 
@@ -858,7 +1165,7 @@ export default function InvestorLogin() {
                   ) : (
                     <>
                       <LogIn size={16} />
-                      <span>{t('auth.loginBtn', 'Masuk ke Portal')}</span>
+                      <span>{t('auth.loginBtn', 'MASUK')}</span>
                     </>
                   )}
                 </button>
@@ -892,7 +1199,7 @@ export default function InvestorLogin() {
               className="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors flex items-center justify-center gap-1.5 mx-auto cursor-pointer py-1"
             >
               <ArrowLeft size={13} />
-              <span>{t('auth.backToHome', 'Kembali ke Beranda')}</span>
+              <span>{t('auth.backToHome', 'Kembali ke Landing Page')}</span>
             </button>
           </div>
           </div>

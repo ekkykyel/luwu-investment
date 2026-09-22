@@ -242,26 +242,26 @@ export const EstafetProgressBanner: React.FC<EstafetProgressBannerProps> = ({
       </div>
 
       {/* Bottom Summary Bar & Realisasi Metric */}
-      <div className="p-3.5 rounded-2xl bg-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-medium">
+      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-medium shadow-sm">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+          <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
             <CheckCircle2 className="w-4 h-4" />
           </div>
           <div>
-            <span className="text-slate-400 text-[10px] uppercase font-bold block">Total Tiket Pendampingan Selesai / Realisasi</span>
-            <span className="text-sm font-black text-emerald-400">{countDone} Berkas Berhasil Dampingi</span>
+            <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold block">Total Tiket Pendampingan Selesai / Realisasi</span>
+            <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">{countDone} Berkas Berhasil Dampingi</span>
           </div>
         </div>
 
         {actionableTicket ? (
-          <div className="flex items-center gap-2 text-slate-300 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700/80">
-            <Building2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+          <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700/80 shadow-sm">
+            <Building2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
             <span className="line-clamp-1">
               <strong>Tiket Siap Estafet:</strong> {actionableTicket.company_name} ({actionableTicket.potensi_name})
             </span>
           </div>
         ) : (
-          <span className="text-slate-400 text-xs italic">Semua tiket di bidang Anda telah diestafetkan.</span>
+          <span className="text-slate-500 dark:text-slate-400 text-xs italic">Semua tiket di bidang Anda telah diestafetkan.</span>
         )}
       </div>
 

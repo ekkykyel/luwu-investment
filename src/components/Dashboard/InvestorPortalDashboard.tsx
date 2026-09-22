@@ -118,6 +118,17 @@ export default function InvestorPortalDashboard() {
   });
 
   // Corporate PKKPR Application Modal States
+  const [isDarkTheme, setIsDarkTheme] = useState(() => typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') : true);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const observer = new MutationObserver(() => {
+      setIsDarkTheme(document.documentElement.classList.contains('dark'));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
   const [isCorporatePkkprModalOpen, setIsCorporatePkkprModalOpen] = useState(false);
   const [pkkprJudulProyek, setPkkprJudulProyek] = useState("");
   const [pkkprSektor, setPkkprSektor] = useState("Industri Pengolahan");
@@ -875,7 +886,7 @@ export default function InvestorPortalDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col md:flex-row font-sans text-slate-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col md:flex-row font-sans text-slate-900 dark:text-slate-200">
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 z-20">
         <div className="flex items-center gap-2">
@@ -918,7 +929,7 @@ export default function InvestorPortalDashboard() {
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                     isActive 
                       ? 'bg-emerald-600/10 text-emerald-700 dark:text-emerald-400 font-medium border border-emerald-500/20 shadow-inner' 
-                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-800 hover:text-slate-900 dark:text-white'
+                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   <Icon size={18} className={isActive ? 'text-emerald-400' : 'text-slate-600 dark:text-slate-400'} />
@@ -991,7 +1002,7 @@ export default function InvestorPortalDashboard() {
             </button>
             <LanguageToggle />
             <ThemeToggle />
-            <div className="h-6 w-px bg-slate-800"></div>
+            <div className="h-6 w-px bg-slate-200 dark:bg-slate-800"></div>
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-700 dark:text-emerald-400 font-bold text-xs uppercase">
                 {companyName ? companyName.substring(0,2).toUpperCase() : 'IP'}
@@ -1050,7 +1061,7 @@ export default function InvestorPortalDashboard() {
             </div>
             <button 
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl text-xs font-semibold border border-slate-700/50 transition-all"
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white rounded-xl text-xs font-semibold border border-slate-300 dark:border-slate-700/50 transition-all"
             >
               {t('dashboard.retry', 'Coba Ulang')}
             </button>
@@ -1226,7 +1237,7 @@ export default function InvestorPortalDashboard() {
                               </span>
                               <button
                                 onClick={() => setSelectedInvestmentId(inv.id)}
-                                className="px-3 py-1 bg-white dark:bg-slate-900 hover:bg-slate-800 border border-slate-200 dark:border-slate-800 hover:border-slate-700 text-slate-300 hover:text-slate-900 dark:text-white rounded-lg text-[11px] font-semibold flex items-center gap-1 transition-all"
+                                className="px-3 py-1 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg text-[11px] font-semibold flex items-center gap-1 transition-all"
                               >
                                 <span>{t('dashboard.viewDetails', 'Lihat Detail')}</span>
                                 <ArrowUpRight size={12} />
@@ -1325,7 +1336,7 @@ export default function InvestorPortalDashboard() {
                         <div key={item.name} className="flex items-center justify-between text-xs">
                           <div className="flex items-center gap-2 truncate">
                             <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: color }}></span>
-                            <span className="text-slate-300 truncate">{item.name}</span>
+                            <span className="text-slate-700 dark:text-slate-300 truncate">{item.name}</span>
                           </div>
                           <div className="flex items-center gap-2 shrink-0 font-mono">
                             <span className="text-slate-600 dark:text-slate-300 font-medium">({item.value})</span>
@@ -1356,7 +1367,7 @@ export default function InvestorPortalDashboard() {
                 </div>
                 <button 
                   onClick={() => setActiveTab('verify')}
-                  className="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-slate-900 dark:text-white rounded-xl text-xs font-semibold tracking-wide border border-slate-700/50 hover:border-slate-600 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white rounded-xl text-xs font-semibold tracking-wide border border-slate-200 dark:border-slate-700/50 hover:border-slate-300 dark:hover:border-slate-600 transition-all flex items-center justify-center gap-2"
                 >
                   <span>{t('dashboard.btnGoVerify', 'Buka Form Verifikasi')}</span>
                   <ChevronRight size={14} />
@@ -1426,7 +1437,7 @@ export default function InvestorPortalDashboard() {
           </div>
         ) : activeTab === 'verify' ? (
           <div className="py-4 sm:py-8 animate-in fade-in zoom-in-95 duration-300">
-            <NibVerificationForm isDarkMode={true} />
+            <NibVerificationForm isDarkMode={isDarkTheme} />
           </div>
         ) : activeTab === 'simulation' ? (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -1958,7 +1969,7 @@ export default function InvestorPortalDashboard() {
                         <div className="text-3xl font-black text-slate-900 dark:text-white font-mono tracking-tight">
                           {roiTahunan.toFixed(2)}%
                         </div>
-                        <div className="text-sm font-bold text-slate-200">
+                        <div className="text-sm font-bold text-slate-700 dark:text-slate-200">
                           {t('financial.roiAnnual', 'ROI Tahunan (Rata-rata)')}
                         </div>
                       </div>
@@ -1992,7 +2003,7 @@ export default function InvestorPortalDashboard() {
                         <div className="text-3xl font-black text-slate-900 dark:text-white font-mono tracking-tight">
                           {paybackSederhana > 0 ? `${paybackSederhana.toFixed(1)} ${t('roiSimulator.years', 'Tahun')}` : 'N/A'}
                         </div>
-                        <div className="text-sm font-bold text-slate-200">
+                        <div className="text-sm font-bold text-slate-700 dark:text-slate-200">
                           {t('financial.paybackSimple', 'Payback Sederhana')}
                         </div>
                       </div>
@@ -2018,7 +2029,7 @@ export default function InvestorPortalDashboard() {
                         <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono tracking-tight truncate">
                           {formatRupiah(labaBersih)}
                         </div>
-                        <div className="text-sm font-bold text-slate-200">
+                        <div className="text-sm font-bold text-slate-700 dark:text-slate-200">
                           {t('roiSimulator.netProfit', 'Laba Bersih Tahunan')}
                         </div>
                       </div>
@@ -2042,7 +2053,7 @@ export default function InvestorPortalDashboard() {
                         <div className={`text-xl sm:text-2xl font-black font-sans tracking-tight ${isViable ? 'text-emerald-400' : 'text-rose-400'}`}>
                           {viabilityText}
                         </div>
-                        <div className="text-sm font-bold text-slate-200">
+                        <div className="text-sm font-bold text-slate-700 dark:text-slate-200">
                           Kelayakan Proyek
                         </div>
                       </div>
@@ -2065,7 +2076,7 @@ export default function InvestorPortalDashboard() {
                         <div className={`text-2xl sm:text-3xl font-black font-mono tracking-tight truncate ${npv > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                           {npv > 0 ? '+' : ''}{formatRupiah(npv)}
                         </div>
-                        <div className="text-sm font-bold text-slate-200">
+                        <div className="text-sm font-bold text-slate-700 dark:text-slate-200">
                           {t('financial.npvTitle', 'Net Present Value (NPV)')}
                         </div>
                       </div>
@@ -2094,7 +2105,7 @@ export default function InvestorPortalDashboard() {
                         <div className={`text-3xl font-black font-mono tracking-tight truncate ${irr > numWacc ? 'text-emerald-400' : 'text-rose-400'}`}>
                           {irr.toFixed(2)}%
                         </div>
-                        <div className="text-sm font-bold text-slate-200">
+                        <div className="text-sm font-bold text-slate-700 dark:text-slate-200">
                           Internal Rate of Return (IRR)
                         </div>
                       </div>
@@ -2227,7 +2238,7 @@ export default function InvestorPortalDashboard() {
                     <button
                       type="button"
                       onClick={() => setActiveTab('overview')}
-                      className="flex-1 border border-slate-700 bg-white dark:bg-slate-900/80 hover:bg-slate-800 text-slate-200 hover:text-slate-900 dark:text-white font-bold py-3.5 px-6 rounded-2xl transition-colors flex items-center justify-center gap-2 cursor-pointer text-sm tracking-wide uppercase"
+                      className="flex-1 border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 hover:text-slate-950 dark:hover:text-white font-bold py-3.5 px-6 rounded-2xl transition-colors flex items-center justify-center gap-2 cursor-pointer text-sm tracking-wide uppercase"
                     >
                       <Map size={16} className="text-emerald-700 dark:text-emerald-400" />
                       <span>{i18n.language?.startsWith("zh") ? "卢乌潜力分析 🗺️" : i18n.language?.startsWith("en") ? "LUWU POTENTIAL ANALYSIS 🗺️" : "ANALISIS POTENSI LUWU 🗺️"}</span>
@@ -2244,7 +2255,7 @@ export default function InvestorPortalDashboard() {
               isLoggedIn={true}
               defaultName={hydratedCorporateProfile.namaPenanggungJawab || companyName || ""}
               defaultCompany={hydratedCorporateProfile.namaPerusahaan || companyName || ""}
-              isDarkMode={true}
+              isDarkMode={isDarkTheme}
             />
           </div>
         ) : activeTab === 'testimonial' ? (
@@ -2253,7 +2264,7 @@ export default function InvestorPortalDashboard() {
               userType="investor"
               defaultName={hydratedCorporateProfile.namaPenanggungJawab || companyName || ""}
               defaultCompany={hydratedCorporateProfile.namaPerusahaan || companyName || ""}
-              isDarkMode={true}
+              isDarkMode={isDarkTheme}
             />
           </div>
         ) : null}
@@ -2268,7 +2279,8 @@ export default function InvestorPortalDashboard() {
             onOpenAiConsultant={(inv) => {
               // handle consultant redirection/trigger if needed
             }}
-            isDarkMode={true}
+            isDarkMode={isDarkTheme}
+            currentRole={userRole as any}
           />
         )}
       </AnimatePresence>
@@ -2689,7 +2701,7 @@ export default function InvestorPortalDashboard() {
                               <button
                                 type="button"
                                 onClick={() => setIsDrawerOpen(true)}
-                                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
+                                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer"
                               >
                                 Lihat Peta
                               </button>
@@ -2771,7 +2783,7 @@ export default function InvestorPortalDashboard() {
       {/* SPATIAL GIS DRAWER WITH BOUNDARY CLIPPING & AUTO-ZOOM */}
       {isDrawerOpen && (
         <SimplePolygonDrawer
-          isDarkMode={true}
+          isDarkMode={isDarkTheme}
           onCancel={() => setIsDrawerOpen(false)}
           focusTarget={{
             districtName: pkkprKecamatan,

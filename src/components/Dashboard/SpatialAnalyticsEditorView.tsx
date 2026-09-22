@@ -521,7 +521,7 @@ export default function SpatialAnalyticsEditorView({
           <div className="flex flex-wrap items-center gap-3 shrink-0">
             <button
               onClick={() => refreshData()}
-              className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition flex items-center gap-2 cursor-pointer shadow-lg active:scale-95"
+              className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition flex items-center gap-2 cursor-pointer shadow-lg active:scale-95"
               title="Sinkronisasi Ulang Data Spasial dari Supabase"
             >
               <RefreshCw size={14} className="text-emerald-400" />
@@ -771,11 +771,11 @@ export default function SpatialAnalyticsEditorView({
       </div>
 
       {/* Primary Interactive Map Canvas (Spatial Editor Studio) */}
-      <div className="rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-2xl bg-slate-900 h-[780px] min-h-[700px] flex flex-col relative">
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-2xl bg-slate-100 dark:bg-slate-900 h-[780px] min-h-[700px] flex flex-col relative">
         {isLoadingLayers ? (
-          <div className="h-[780px] w-full flex flex-col items-center justify-center space-y-3 bg-slate-950 text-white">
-            <RefreshCw className="w-8 h-8 text-emerald-400 animate-spin" />
-            <p className="text-xs font-mono font-bold text-slate-300">Memuat Layer Spasial Pertanian &amp; Pola Ruang RTRW Luwu...</p>
+          <div className="h-[780px] w-full flex flex-col items-center justify-center space-y-3 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-white">
+            <RefreshCw className="w-8 h-8 text-emerald-500 animate-spin" />
+            <p className="text-xs font-mono font-bold text-slate-600 dark:text-slate-300">Memuat Layer Spasial Pertanian &amp; Pola Ruang RTRW Luwu...</p>
           </div>
         ) : (
           <SpatialEditorStudio

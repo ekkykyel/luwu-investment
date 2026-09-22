@@ -296,7 +296,7 @@ export const PkkprSlaTimelineTracker: React.FC<Props> = ({
                 <button
                   type="button"
                   onClick={onPrintSk}
-                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition cursor-pointer"
+                  className="px-3 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white border border-slate-300 dark:border-transparent font-bold rounded-xl text-xs flex items-center gap-1.5 transition cursor-pointer"
                 >
                   <Printer className="w-4 h-4" />
                   <span>Cetak</span>
