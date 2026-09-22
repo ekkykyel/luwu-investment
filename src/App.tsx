@@ -18,6 +18,7 @@ import {
 import { supabase, safeFetchLayerData } from "./lib/supabaseClient";
 import { LuwuLogo } from "./components/LuwuLogo";
 import MapComponent from "./components/MaplibreComponent";
+import MapSpatialCockpitHUD from "./components/MapSpatialCockpitHUD";
 import InvestorAnalyticsSidebar from "./components/InvestorAnalyticsSidebar";
 import ExecutiveDashboard from "./components/ExecutiveDashboard";
 import GisErrorBoundary from "./components/GisErrorBoundary";
@@ -6627,6 +6628,29 @@ export default function App() {
               </motion.button>
             </div>
 
+            {/* ── MAP SPATIAL COCKPIT HUD (Aero-Glass Floating Charts) ── */}
+            {!selectedInvestment && (
+              <div className="absolute bottom-[66px] md:bottom-[54px] left-1/2 -translate-x-1/2 z-[42] pointer-events-none w-auto max-w-[96vw] md:max-w-4xl px-2">
+                <MapSpatialCockpitHUD
+                  investments={filteredInvestments}
+                  districts={districts}
+                  selectedDistrictId={selectedDistrictId}
+                  onSelectDistrict={(dId) => {
+                    setSelectedDistrictId(dId);
+                    if (dId && mapComponentRef.current?.flyToCoordinate) {
+                      const dObj = districts.find(d => String(d.id) === String(dId));
+                      if (dObj && dObj.coordinates) {
+                        mapComponentRef.current.flyToCoordinate(dObj.coordinates[1], dObj.coordinates[0], 12);
+                      }
+                    }
+                  }}
+                  isDarkMode={isDarkMode}
+                  panelOpacity={gisPanelOpacity}
+                  onSetPanelOpacity={setGisPanelOpacity}
+                />
+              </div>
+            )}
+
             {/* INVESTMENT DETAIL FOOTER */}
             {selectedInvestment && (
               <motion.div
@@ -8507,24 +8531,26 @@ export default function App() {
                 </>
               )}
 
-              <SpatialQueryPanel
-                isDarkMode={isDarkMode}
-                onExecuteQuery={(params) => {
-                  setIsManagementPanelOpen(false);
-                  handleExecuteSpatialQuery(params);
-                }}
-                queryResults={spatialQueryResults}
-                onFocusInvestment={(id) => {
-                  setIsManagementPanelOpen(false);
-                  setSelectedInvestmentId(id);
-                }}
-                infrastructure={infrastructure}
-                onProximityFilterChange={handleProximityFilterChange}
-                onSelectShortestPathRoute={handleSelectShortestPathRoute}
-                activeRouteInfo={activeRouteInfo}
-                onClearShortestPathRoute={handleClearShortestPathRoute}
-                onOpenSuitabilityModal={() => setIsSuitabilityModalOpen(true)}
-              />
+              <Suspense fallback={<div className="p-4 text-center text-xs text-slate-400">Memuat Panel Spasial...</div>}>
+                <SpatialQueryPanel
+                  isDarkMode={isDarkMode}
+                  onExecuteQuery={(params) => {
+                    setIsManagementPanelOpen(false);
+                    handleExecuteSpatialQuery(params);
+                  }}
+                  queryResults={spatialQueryResults}
+                  onFocusInvestment={(id) => {
+                    setIsManagementPanelOpen(false);
+                    setSelectedInvestmentId(id);
+                  }}
+                  infrastructure={infrastructure}
+                  onProximityFilterChange={handleProximityFilterChange}
+                  onSelectShortestPathRoute={handleSelectShortestPathRoute}
+                  activeRouteInfo={activeRouteInfo}
+                  onClearShortestPathRoute={handleClearShortestPathRoute}
+                  onOpenSuitabilityModal={() => setIsSuitabilityModalOpen(true)}
+                />
+              </Suspense>
             </div>
           </div>
         </div>
@@ -8651,12 +8677,14 @@ export default function App() {
         )}
       </AnimatePresence>
       {}
-      <ImageLightbox
-        isOpen={lightboxOpen}
-        onClose={() => setLightboxOpen(false)}
-        images={lightboxImages}
-        initialIndex={lightboxIndex}
-      />
+      <Suspense fallback={null}>
+        <ImageLightbox
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+          images={lightboxImages}
+          initialIndex={lightboxIndex}
+        />
+      </Suspense>
 
       <React.Suspense fallback={null}>
         {isSuitabilityModalOpen && (

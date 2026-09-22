@@ -18,6 +18,17 @@ export default defineConfig(() => {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
+              if (
+                id.includes('react') || 
+                id.includes('react-dom') || 
+                id.includes('scheduler') || 
+                id.includes('react-router') || 
+                id.includes('react-i18next') || 
+                id.includes('motion') || 
+                id.includes('framer-motion')
+              ) {
+                return 'vendor-react';
+              }
               if (id.includes('maplibre-gl') || id.includes('mapbox-gl')) {
                 return 'vendor-maplibre';
               }
