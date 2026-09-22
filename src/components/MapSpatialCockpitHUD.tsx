@@ -188,44 +188,44 @@ export default function MapSpatialCockpitHUD({
       <div
         style={{
           backgroundColor: isDarkMode
-            ? `rgba(2, 6, 23, ${effectiveAlpha})`
-            : `rgba(255, 255, 255, ${Math.min(effectiveAlpha + 0.15, 0.95)})`,
-          backdropFilter: `blur(${isUltraTransparent ? 3 : 8}px)`,
+            ? `rgba(2, 6, 23, ${Math.min(effectiveAlpha, 0.45)})`
+            : `rgba(255, 255, 255, ${Math.min(effectiveAlpha + 0.1, 0.65)})`,
+          backdropFilter: `blur(${isUltraTransparent ? 2 : 6}px)`,
         }}
-        className={`border shadow-2xl rounded-2xl md:rounded-3xl transition-all duration-300 relative overflow-hidden ${
+        className={`border shadow-xl rounded-xl sm:rounded-2xl transition-all duration-300 relative overflow-hidden ${
           isDarkMode
             ? "border-white/15 text-slate-100 shadow-black/80"
-            : "border-slate-900/20 text-slate-950 shadow-slate-900/15"
-        } ${isMinimized ? "p-2 px-3" : "p-3 sm:p-4 max-w-4xl"}`}
+            : "border-slate-900/15 text-slate-950 shadow-slate-900/15"
+        } ${isMinimized ? "p-1.5 px-2.5" : "p-2 sm:p-3 w-full max-w-[96vw] sm:max-w-xl md:max-w-3xl lg:max-w-4xl"}`}
       >
         {/* Glow ambient background in dark mode */}
         {isDarkMode && (
-          <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
         )}
 
-        {/* ── HEADER BAR ── */}
-        <div className="flex items-center justify-between gap-3 relative z-10">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30">
+        {/* ── COMPACT HEADER BAR ── */}
+        <div className="flex items-center justify-between gap-2 relative z-10">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 shrink-0">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+              <span className="text-[8px] sm:text-[9px] font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
                 LIVE HUD
               </span>
             </div>
 
-            <div className="flex flex-col">
-              <h4 className={`text-xs sm:text-sm tracking-tight flex items-center gap-1.5 ${textTitle}`}>
-                <Sparkles className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                <span>Cockpit Analitik Spasial</span>
+            <div className="flex items-baseline gap-1.5 truncate">
+              <h4 className={`text-[11px] sm:text-xs tracking-tight flex items-center gap-1 truncate ${textTitle}`}>
+                <Sparkles className="w-3 h-3 text-emerald-500 shrink-0" />
+                <span className="truncate">Cockpit Spasial</span>
                 {selectedDistrictName && (
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30">
+                  <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30 truncate">
                     {selectedDistrictName}
                   </span>
                 )}
               </h4>
               {!isMinimized && (
-                <span className={`text-[10px] font-mono ${textSub}`}>
-                  {investments.length} Proyek Terdata • Total:{" "}
+                <span className={`hidden sm:inline text-[9px] font-mono truncate ${textSub}`}>
+                  • {investments.length} Proyek • Total:{" "}
                   <strong className={textValue}>{formatRupiahSingkat(totalInvestmentVolume)}</strong>
                 </span>
               )}
@@ -238,7 +238,7 @@ export default function MapSpatialCockpitHUD({
             <button
               type="button"
               onClick={toggleTransparency}
-              className={`flex items-center gap-1 px-2 py-1 rounded-xl text-[10px] font-bold border transition-all cursor-pointer ${
+              className={`flex items-center gap-1 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg text-[9px] font-bold border transition-all cursor-pointer ${
                 isUltraTransparent
                   ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border-emerald-500/40"
                   : isDarkMode
@@ -249,13 +249,13 @@ export default function MapSpatialCockpitHUD({
             >
               {isUltraTransparent ? (
                 <>
-                  <Eye className="w-3 h-3 text-emerald-500" />
-                  <span className="hidden sm:inline">Tembus</span>
+                  <Eye className="w-2.5 h-2.5 text-emerald-500" />
+                  <span className="hidden xs:inline">Tembus</span>
                 </>
               ) : (
                 <>
-                  <EyeOff className="w-3 h-3" />
-                  <span className="hidden sm:inline">Kaca</span>
+                  <EyeOff className="w-2.5 h-2.5" />
+                  <span className="hidden xs:inline">Kaca</span>
                 </>
               )}
             </button>
@@ -264,36 +264,36 @@ export default function MapSpatialCockpitHUD({
             <button
               type="button"
               onClick={() => setIsMinimized(!isMinimized)}
-              className={`p-1.5 rounded-xl border transition-all cursor-pointer ${
+              className={`p-1 rounded-lg border transition-all cursor-pointer ${
                 isDarkMode
-                  ? "bg-slate-800/80 text-slate-300 border-slate-700 hover:text-white hover:bg-slate-700"
-                  : "bg-slate-100 text-slate-800 border-slate-300 hover:text-slate-950 hover:bg-slate-200"
+                  ? "bg-slate-800/80 text-slate-300 border-slate-700 hover:text-white"
+                  : "bg-slate-100 text-slate-800 border-slate-300 hover:text-slate-950"
               }`}
               title={isMinimized ? "Perluas HUD Analitik" : "Kecilkan HUD Analitik"}
             >
-              {isMinimized ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              {isMinimized ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
             </button>
           </div>
         </div>
 
-        {/* ── EXPANDED CHARTS BODY ── */}
+        {/* ── EXPANDED COMPACT CHARTS BODY (HORIZONTAL LAYOUT) ── */}
         <AnimatePresence>
           {!isMinimized && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25 }}
-              className="mt-3 pt-3 border-t border-slate-200/50 dark:border-white/10"
+              transition={{ duration: 0.2 }}
+              className="mt-1.5 pt-1.5 border-t border-slate-200/40 dark:border-white/10"
             >
-              {/* Controls bar: Mode Wilayah/Sektor & View Switcher */}
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+              {/* Controls bar: Metric Mode & View Switcher (Slim) */}
+              <div className="flex items-center justify-between gap-1.5 mb-1.5">
                 {/* Metric Mode Switcher */}
-                <div className="flex items-center gap-1 p-0.5 rounded-xl bg-black/10 dark:bg-white/10 border border-slate-300/60 dark:border-white/10">
+                <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-black/10 dark:bg-white/10 border border-slate-300/40 dark:border-white/10">
                   <button
                     type="button"
                     onClick={() => setActiveMetricMode("SECTOR")}
-                    className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer ${
+                    className={`px-2 py-0.5 text-[9px] sm:text-[10px] font-bold rounded transition-all cursor-pointer ${
                       activeMetricMode === "SECTOR"
                         ? "bg-emerald-600 text-white shadow-xs"
                         : isDarkMode
@@ -301,12 +301,12 @@ export default function MapSpatialCockpitHUD({
                         : "text-slate-700 hover:text-slate-950"
                     }`}
                   >
-                    Sebaran Sektor
+                    Sektor
                   </button>
                   <button
                     type="button"
                     onClick={() => setActiveMetricMode("DISTRICT")}
-                    className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all cursor-pointer ${
+                    className={`px-2 py-0.5 text-[9px] sm:text-[10px] font-bold rounded transition-all cursor-pointer ${
                       activeMetricMode === "DISTRICT"
                         ? "bg-emerald-600 text-white shadow-xs"
                         : isDarkMode
@@ -314,16 +314,16 @@ export default function MapSpatialCockpitHUD({
                         : "text-slate-700 hover:text-slate-950"
                     }`}
                   >
-                    Sebaran Wilayah
+                    Wilayah
                   </button>
                 </div>
 
                 {/* View Switcher: Semua, Pie, Bar */}
-                <div className="flex items-center gap-1 p-0.5 rounded-xl bg-black/10 dark:bg-white/10 border border-slate-300/60 dark:border-white/10">
+                <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-black/10 dark:bg-white/10 border border-slate-300/40 dark:border-white/10">
                   <button
                     type="button"
                     onClick={() => setChartViewMode("ALL")}
-                    className={`px-2 py-0.5 text-[10px] font-bold rounded-lg transition-all cursor-pointer ${
+                    className={`px-1.5 py-0.5 text-[9px] font-bold rounded transition-all cursor-pointer ${
                       chartViewMode === "ALL"
                         ? "bg-indigo-600 text-white shadow-xs"
                         : isDarkMode
@@ -336,7 +336,7 @@ export default function MapSpatialCockpitHUD({
                   <button
                     type="button"
                     onClick={() => setChartViewMode("PIE")}
-                    className={`px-2 py-0.5 text-[10px] font-bold rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
+                    className={`px-1.5 py-0.5 text-[9px] font-bold rounded transition-all flex items-center gap-0.5 cursor-pointer ${
                       chartViewMode === "PIE"
                         ? "bg-indigo-600 text-white shadow-xs"
                         : isDarkMode
@@ -344,13 +344,13 @@ export default function MapSpatialCockpitHUD({
                         : "text-slate-700 hover:text-slate-950"
                     }`}
                   >
-                    <PieIcon className="w-3 h-3" />
-                    Pie
+                    <PieIcon className="w-2.5 h-2.5" />
+                    <span>Pie</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setChartViewMode("BAR")}
-                    className={`px-2 py-0.5 text-[10px] font-bold rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
+                    className={`px-1.5 py-0.5 text-[9px] font-bold rounded transition-all flex items-center gap-0.5 cursor-pointer ${
                       chartViewMode === "BAR"
                         ? "bg-indigo-600 text-white shadow-xs"
                         : isDarkMode
@@ -358,49 +358,51 @@ export default function MapSpatialCockpitHUD({
                         : "text-slate-700 hover:text-slate-950"
                     }`}
                   >
-                    <BarChart2 className="w-3 h-3" />
-                    Bar
+                    <BarChart2 className="w-2.5 h-2.5" />
+                    <span>Bar</span>
                   </button>
                 </div>
               </div>
 
-              {/* ── CHARTS CONTAINER ── */}
+              {/* ── CHARTS CONTAINER (HORIZONTAL ON BOTH MOBILE AND DESKTOP) ── */}
               {investments.length === 0 ? (
                 /* Honest Empty State per Doktrin Zero Dummy */
-                <div className="py-6 px-4 text-center rounded-xl bg-slate-500/5 border border-dashed border-slate-400/30 flex flex-col items-center justify-center gap-2">
-                  <Info className="w-6 h-6 text-slate-400" />
-                  <p className={`text-xs font-semibold ${textSub}`}>
+                <div className="py-3 px-3 text-center rounded-lg bg-slate-500/5 border border-dashed border-slate-400/30 flex flex-col items-center justify-center gap-1">
+                  <Info className="w-4 h-4 text-slate-400" />
+                  <p className={`text-[10px] font-semibold ${textSub}`}>
                     Belum Ada Data Proyek Investasi Terdaftar
                   </p>
-                  <span className={`text-[10px] ${isDarkMode ? "text-slate-400" : "text-slate-700"}`}>
+                  <span className={`text-[8px] ${isDarkMode ? "text-slate-400" : "text-slate-700"}`}>
                     Sistem beroperasi dengan Doktrin Zero Dummy. Data grafik akan otomatis terisi saat data dimasukkan ke Supabase.
                   </span>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                <div className={`grid gap-2 items-stretch ${
+                  chartViewMode === "ALL" ? "grid-cols-2" : "grid-cols-1"
+                }`}>
                   {/* CHART 1: PIE CHART (Sektor / Wilayah) */}
                   {(chartViewMode === "ALL" || chartViewMode === "PIE") && (
-                    <div className="flex flex-col gap-2 p-2 rounded-xl bg-black/5 dark:bg-white/5 border border-slate-200/50 dark:border-white/5">
-                      <div className="flex items-center justify-between px-1">
-                        <span className={`text-[11px] font-extrabold uppercase tracking-wider ${textTitle}`}>
+                    <div className="flex flex-col gap-1 p-1.5 sm:p-2 rounded-xl bg-transparent border border-white/10 dark:border-white/5 backdrop-blur-none">
+                      <div className="flex items-center justify-between px-0.5">
+                        <span className={`text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider ${textTitle}`}>
                           {activeMetricMode === "SECTOR" ? "Proporsi Sektor" : "Proporsi Wilayah"}
                         </span>
-                        <span className="text-[9px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">
-                          {currentPieData.length} Entitas
+                        <span className="text-[8px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">
+                          {currentPieData.length} Data
                         </span>
                       </div>
 
-                      <div className="h-36 min-h-[144px] w-full flex items-center justify-between">
-                        <div className="h-full w-1/2 min-w-[120px] relative">
+                      <div className="h-22 sm:h-26 min-h-[88px] sm:min-h-[104px] w-full flex items-center justify-between">
+                        <div className="h-full w-1/2 min-w-[70px] sm:min-w-[90px] relative">
                           <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <PieChart>
                               <Pie
                                 data={currentPieData}
                                 cx="50%"
                                 cy="50%"
-                                innerRadius={32}
-                                outerRadius={50}
-                                paddingAngle={3}
+                                innerRadius={18}
+                                outerRadius={34}
+                                paddingAngle={2}
                                 dataKey="value"
                                 stroke="none"
                               >
@@ -413,24 +415,25 @@ export default function MapSpatialCockpitHUD({
                                 })}
                               </Pie>
                               <Tooltip
-                                formatter={(val) => [formatRupiahSingkat(Number(val)), "Nilai Proyek"]}
+                                formatter={(val) => [formatRupiahSingkat(Number(val)), "Nilai"]}
                                 contentStyle={{
                                   background: isDarkMode ? "rgba(15, 23, 42, 0.95)" : "rgba(255, 255, 255, 0.95)",
                                   backdropFilter: "blur(6px)",
                                   border: `1px solid ${isDarkMode ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.15)"}`,
-                                  borderRadius: "10px",
-                                  fontSize: "11px",
+                                  borderRadius: "8px",
+                                  fontSize: "9px",
                                   fontWeight: "bold",
                                   color: isDarkMode ? "#ffffff" : "#0f172a",
+                                  padding: "4px 8px",
                                 }}
                               />
                             </PieChart>
                           </ResponsiveContainer>
                         </div>
 
-                        {/* Pie Legend List */}
-                        <div className="w-1/2 flex flex-col gap-1 pl-1 max-h-32 overflow-y-auto custom-scrollbar">
-                          {currentPieData.slice(0, 5).map((item, idx) => {
+                        {/* Pie Legend List (Slim) */}
+                        <div className="w-1/2 flex flex-col gap-0.5 pl-1 max-h-22 sm:max-h-26 overflow-y-auto custom-scrollbar">
+                          {currentPieData.slice(0, 4).map((item, idx) => {
                             const fill =
                               activeMetricMode === "SECTOR"
                                 ? SECTOR_COLORS[item.name as SektorInvestasi] || DISTRICT_PALETTE[idx % DISTRICT_PALETTE.length]
@@ -443,11 +446,11 @@ export default function MapSpatialCockpitHUD({
                             return (
                               <div
                                 key={idx}
-                                className="flex items-center justify-between text-[10px] leading-tight pr-1"
+                                className="flex items-center justify-between text-[8px] sm:text-[9px] leading-tight pr-0.5"
                               >
-                                <div className="flex items-center gap-1.5 truncate max-w-[100px]">
+                                <div className="flex items-center gap-1 truncate max-w-[70px] sm:max-w-[85px]">
                                   <span
-                                    className="w-2 h-2 rounded-full shrink-0"
+                                    className="w-1.5 h-1.5 rounded-full shrink-0"
                                     style={{ backgroundColor: fill }}
                                   />
                                   <span className={`truncate font-medium ${isDarkMode ? "text-slate-200" : "text-slate-900"}`}>
@@ -467,26 +470,26 @@ export default function MapSpatialCockpitHUD({
 
                   {/* CHART 2: BAR CHART (Kesiapan & Realisasi 0-100%) */}
                   {(chartViewMode === "ALL" || chartViewMode === "BAR") && (
-                    <div className="flex flex-col gap-2 p-2 rounded-xl bg-black/5 dark:bg-white/5 border border-slate-200/50 dark:border-white/5">
-                      <div className="flex items-center justify-between px-1">
-                        <span className={`text-[11px] font-extrabold uppercase tracking-wider ${textTitle}`}>
+                    <div className="flex flex-col gap-1 p-1.5 sm:p-2 rounded-xl bg-transparent border border-white/10 dark:border-white/5 backdrop-blur-none">
+                      <div className="flex items-center justify-between px-0.5">
+                        <span className={`text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider ${textTitle}`}>
                           Kesiapan & Realisasi
                         </span>
-                        <span className="text-[9px] font-mono text-indigo-600 dark:text-indigo-400 font-bold">
-                          Skala 0–100%
+                        <span className="text-[8px] font-mono text-indigo-600 dark:text-indigo-400 font-bold">
+                          0–100%
                         </span>
                       </div>
 
-                      <div className="h-36 min-h-[144px] w-full">
+                      <div className="h-22 sm:h-26 min-h-[88px] sm:min-h-[104px] w-full">
                         {readinessData.length === 0 ? (
-                          <div className="h-full flex items-center justify-center text-xs text-slate-500">
+                          <div className="h-full flex items-center justify-center text-[10px] text-slate-500">
                             Belum ada tahapan terdata
                           </div>
                         ) : (
                           <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <BarChart
-                              data={readinessData}
-                              margin={{ top: 12, right: 8, left: -22, bottom: 0 }}
+                              data={readinessData.slice(0, 5)}
+                              margin={{ top: 8, right: 4, left: -28, bottom: 0 }}
                             >
                               <defs>
                                 <linearGradient id="hudBarGrad" x1="0" y1="0" x2="0" y2="1">
@@ -496,40 +499,41 @@ export default function MapSpatialCockpitHUD({
                               </defs>
                               <XAxis
                                 dataKey="name"
-                                tick={{ fill: axisColor, fontSize: 9, fontWeight: 700 }}
+                                tick={{ fill: axisColor, fontSize: 8, fontWeight: 700 }}
                                 tickLine={false}
                                 axisLine={{ stroke: isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.15)" }}
                                 interval={0}
-                                tickFormatter={(val) => (val && val.length > 7 ? val.slice(0, 6) + "…" : val)}
+                                tickFormatter={(val) => (val && val.length > 5 ? val.slice(0, 4) + "…" : val)}
                               />
                               <YAxis
                                 domain={[0, 100]}
                                 ticks={[0, 50, 100]}
-                                tick={{ fill: axisColor, fontSize: 9, fontWeight: 700 }}
+                                tick={{ fill: axisColor, fontSize: 7, fontWeight: 700 }}
                                 tickLine={false}
                                 axisLine={false}
                               />
                               <Tooltip
-                                formatter={(val) => [`${val}%`, "Tingkat Kesiapan"]}
-                                labelFormatter={(label) => `Kecamatan ${label}`}
+                                formatter={(val) => [`${val}%`, "Kesiapan"]}
+                                labelFormatter={(label) => `Kec. ${label}`}
                                 contentStyle={{
                                   background: isDarkMode ? "rgba(15, 23, 42, 0.95)" : "rgba(255, 255, 255, 0.95)",
                                   backdropFilter: "blur(6px)",
                                   border: `1px solid ${isDarkMode ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.15)"}`,
-                                  borderRadius: "10px",
-                                  fontSize: "11px",
+                                  borderRadius: "8px",
+                                  fontSize: "9px",
                                   fontWeight: "bold",
                                   color: isDarkMode ? "#ffffff" : "#0f172a",
+                                  padding: "4px 8px",
                                 }}
                               />
                               <Bar
                                 dataKey="readiness"
                                 fill="url(#hudBarGrad)"
-                                radius={[4, 4, 0, 0]}
+                                radius={[3, 3, 0, 0]}
                                 label={{
                                   position: "top",
                                   fill: axisColor,
-                                  fontSize: 8,
+                                  fontSize: 7,
                                   fontWeight: 800,
                                   formatter: (v: any) => `${v}%`,
                                 }}

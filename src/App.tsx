@@ -6630,7 +6630,7 @@ export default function App() {
 
             {/* ── MAP SPATIAL COCKPIT HUD (Aero-Glass Floating Charts) ── */}
             {!selectedInvestment && (
-              <div className="absolute bottom-[66px] md:bottom-[54px] left-1/2 -translate-x-1/2 z-[42] pointer-events-none w-auto max-w-[96vw] md:max-w-4xl px-2">
+              <div className="absolute bottom-[120px] sm:bottom-[70px] md:bottom-[54px] left-1/2 -translate-x-1/2 z-[42] pointer-events-none w-auto max-w-[96vw] sm:max-w-xl md:max-w-3xl lg:max-w-4xl px-1 sm:px-2">
                 <MapSpatialCockpitHUD
                   investments={filteredInvestments}
                   districts={districts}
