@@ -98,6 +98,7 @@ export default defineConfig(() => {
       include: [
         'react',
         'react-dom',
+        'react-router',
         'react-router-dom',
         '@supabase/supabase-js',
         'lucide-react',
@@ -108,15 +109,24 @@ export default defineConfig(() => {
         'react-i18next',
         'i18next-browser-languagedetector',
         'motion',
-        'motion/react'
+        'motion/react',
+        'axios',
+        'browser-image-compression',
       ],
     },
     server: {
       host: '0.0.0.0',
       port: 3000,
-      hmr: process.env.NODE_ENV === 'development' ? {
-        clientPort: 443
-      } : false,
+      hmr: false,
+      warmup: {
+        clientFiles: [
+          './src/main.tsx',
+          './src/App.tsx',
+          './src/components/LandingPage.tsx',
+          './src/components/PortalMPP.tsx',
+          './src/components/mpp/AntiCorruptionBanner.tsx',
+        ],
+      },
     },
   };
 });

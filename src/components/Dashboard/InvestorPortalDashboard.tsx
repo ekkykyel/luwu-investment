@@ -1432,7 +1432,7 @@ export default function InvestorPortalDashboard() {
             </div>
           </div>
         ) : activeTab === 'site-selection' ? (
-          <div className="py-4 sm:py-8 animate-in fade-in zoom-in-95 duration-300 h-[calc(100vh-140px)] md:h-[calc(100vh-100px)]">
+          <div className="py-2 sm:py-4 animate-in fade-in zoom-in-95 duration-300 w-full max-w-7xl mx-auto">
             <AISiteSelection />
           </div>
         ) : activeTab === 'verify' ? (

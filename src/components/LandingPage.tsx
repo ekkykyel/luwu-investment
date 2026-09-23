@@ -328,6 +328,49 @@ export default function LandingPage({
   }, [isUserInteractingStats]);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Mobile IPRO Opportunities Slider State & Navigation
+  const iproScrollContainerRef = useRef<HTMLDivElement>(null);
+  const [activeIproIndex, setActiveIproIndex] = useState(0);
+
+  const scrollToIproCard = (index: number) => {
+    const container = iproScrollContainerRef.current;
+    if (!container) return;
+    const cards = Array.from(container.children).filter(
+      (el) => el.getAttribute('data-ipro-card') === 'true' || (el as HTMLElement).classList.contains('snap-center')
+    ) as HTMLElement[];
+    if (cards && cards[index]) {
+      const card = cards[index];
+      const targetScrollLeft = card.offsetLeft - (container.clientWidth - card.clientWidth) / 2;
+      container.scrollTo({
+        left: Math.max(0, targetScrollLeft),
+        behavior: "smooth",
+      });
+      setActiveIproIndex(index);
+    }
+  };
+
+  const handleIproScroll = () => {
+    const container = iproScrollContainerRef.current;
+    if (!container) return;
+    const containerCenter = container.scrollLeft + container.clientWidth / 2;
+    const cards = Array.from(container.children).filter(
+      (el) => el.getAttribute('data-ipro-card') === 'true' || (el as HTMLElement).classList.contains('snap-center')
+    ) as HTMLElement[];
+    let closestIndex = 0;
+    let minDiff = Infinity;
+    cards.forEach((card, idx) => {
+      const cardCenter = card.offsetLeft + card.clientWidth / 2;
+      const diff = Math.abs(containerCenter - cardCenter);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIndex = idx;
+      }
+    });
+    if (closestIndex !== activeIproIndex && closestIndex >= 0) {
+      setActiveIproIndex(closestIndex);
+    }
+  };
   const hasTriggeredInitialFullscreen = useRef(false);
   const [facilityCoords, setFacilityCoords] = useState<{ airport?: number[], port?: number[], mpp?: number[], industrial?: number[] }>({});
 
@@ -790,6 +833,21 @@ export default function LandingPage({
       return true;
     });
   }, [investments, smartFilterState]);
+
+  const topIproInvestmentsList = useMemo(() => {
+    return [...filteredInvestmentsList]
+      .sort((a, b) => {
+        const aAI = Number(
+          a.smartData?.aiScore || a.smartData?.ai_score || 0,
+        );
+        const bAI = Number(
+          b.smartData?.aiScore || b.smartData?.ai_score || 0,
+        );
+        if (bAI !== aAI) return bAI - aAI;
+        return (b.investmentValue || 0) - (a.investmentValue || 0);
+      })
+      .slice(0, 6);
+  }, [filteredInvestmentsList]);
 
   const sensitivityChartData = useMemo(() => {
     const cap = parseFloat(capital) || 0;
@@ -1848,8 +1906,12 @@ export default function LandingPage({
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
-        className={`fixed top-0 left-0 w-full z-[100] border-b shadow-sm transition-colors duration-500 ease-in-out ${isDark ? "bg-slate-950/70 border-white/5 shadow-black/20" : "bg-white/80 border-slate-200/50 shadow-slate-200/30"}`}
-        style={{ paddingTop: 'env(safe-area-inset-top)', backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)" }}
+        className={`fixed top-0 left-0 w-full z-[100] border-b transition-colors duration-500 ease-in-out ${
+          isDark 
+            ? "bg-slate-950/75 border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)]" 
+            : "bg-white/80 border-white/70 shadow-[0_4px_30px_rgba(15,23,42,0.06)]"
+        }`}
+        style={{ paddingTop: 'env(safe-area-inset-top)', backdropFilter: "blur(24px) saturate(190%)", WebkitBackdropFilter: "blur(24px) saturate(190%)" }}
       >
         <div className="max-w-screen-2xl mx-auto px-2.5 sm:px-6 lg:px-12">
           <div className="flex items-center justify-between h-16 sm:h-20 gap-1.5 sm:gap-4">
@@ -2375,7 +2437,7 @@ export default function LandingPage({
               transition={{ duration: 0.8, delay: 0.5 }}
               className="mt-4 sm:mt-10 md:mt-16 lg:mt-20 max-w-6xl mx-auto px-0 sm:px-4 w-full"
             >
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3.5 md:gap-4.5 rounded-2xl sm:rounded-3xl p-1.5 sm:p-4 md:p-5 bg-slate-100/60 sm:bg-slate-100/70 dark:bg-slate-900/40 sm:dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/70 dark:border-slate-800/70 shadow-xs sm:shadow-[0_10px_35px_-10px_rgba(0,0,0,0.06)] sm:dark:shadow-[0_20px_50px_rgba(0,0,0,0.45)]">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3.5 md:gap-4.5 rounded-2xl sm:rounded-3xl p-2 sm:p-4 md:p-5 glass-crystal backdrop-blur-2xl border border-white/50 dark:border-white/10 shadow-xl shadow-slate-200/50 dark:shadow-black/50">
                 {[
                   {
                     id: 'stat-investment',
@@ -2483,10 +2545,10 @@ export default function LandingPage({
                   <div
                     key={stat.id}
                     id={stat.id}
-                    className={`relative flex flex-col items-center justify-between p-2.5 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl border transition-all duration-300 group overflow-hidden ${stat.borderHover} ${
+                    className={`relative flex flex-col items-center justify-between p-2.5 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl border transition-all duration-300 group overflow-hidden ${stat.borderHover} backdrop-blur-xl ${
                       isDark
-                        ? 'bg-slate-900/90 hover:bg-slate-850 border-slate-800/90 shadow-[0_4px_16px_rgba(0,0,0,0.35)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]'
-                        : 'bg-white/95 hover:bg-white border-slate-200/90 shadow-[0_2px_10px_rgba(15,23,42,0.04)] hover:shadow-[0_10px_25px_rgba(15,23,42,0.08)]'
+                        ? 'bg-slate-900/65 hover:bg-slate-850/80 border-white/10 shadow-[0_6px_24px_rgba(0,0,0,0.4)] hover:shadow-[0_12px_36px_rgba(0,0,0,0.6)]'
+                        : 'bg-white/70 hover:bg-white/90 border-white/70 shadow-[0_4px_20px_rgba(15,23,42,0.04)] hover:shadow-[0_12px_30px_rgba(15,23,42,0.1)]'
                     } hover:-translate-y-1 active:scale-[0.98] w-full min-h-[172px] sm:min-h-[192px] md:min-h-[208px]`}
                   >
                     {/* Top Edge Glowing Line */}
@@ -2601,7 +2663,7 @@ export default function LandingPage({
                   setIsUserInteractingStats(false);
                 }, 4000);
               }}
-              className="flex sm:grid overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-y-14 sm:gap-x-6 lg:gap-6 pb-4 sm:pb-0 scrollbar-hide pt-10 sm:pt-0 px-2 sm:px-0 scroll-smooth"
+              className="flex sm:grid overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pb-4 sm:pb-0 scrollbar-hide pt-2 sm:pt-4 px-2 sm:px-0 scroll-smooth"
             >
               {/* Card 1: Infrastruktur Pendukung Terpetakan */}
               <TiltCard
@@ -2609,29 +2671,29 @@ export default function LandingPage({
                 scaleOnHover={1.03}
                 maxTilt={10}
                 glareOpacity={0.18}
-                className="w-full h-full group relative pt-13 sm:pt-15 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 hover:border-blue-500/40 dark:hover:border-blue-500/40 hover:shadow-[0_20px_40px_rgba(59,130,246,0.14)]"
+                className="w-full h-full group relative pt-5 sm:pt-6 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 glass-crystal glass-card-interactive bg-white/75 dark:bg-slate-900/70 backdrop-blur-2xl shadow-[0_12px_36px_rgba(15,23,42,0.06)] dark:shadow-[0_16px_45px_rgba(0,0,0,0.55)] border border-white/70 dark:border-white/10 hover:border-blue-500/50 dark:hover:border-blue-400/50 hover:shadow-[0_22px_45px_rgba(59,130,246,0.18)]"
               >
-                {/* Top Subtle Accent Rail */}
-                <div className="absolute top-0 inset-x-8 h-[3px] bg-gradient-to-r from-transparent via-blue-500 to-transparent rounded-full" />
+                {/* Elevated Circular Icon with Accent Rail */}
+                <div className="relative w-full flex items-center justify-center pt-1 mb-3.5">
+                  {/* Horizontal Accent Rail */}
+                  <div className="absolute inset-x-2 h-[2px] bg-gradient-to-r from-transparent via-blue-500/40 dark:via-blue-400/40 to-transparent" />
 
-                {/* Overlapping Circular Medallion (Enlarged MPP Badung Aesthetic) */}
-                <div className="absolute -top-10 sm:-top-11 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+                  {/* Outer Elevated Podium Ring */}
                   <div className="relative">
                     {/* Ambient Glow */}
                     <div className="absolute inset-0 rounded-full bg-blue-500/30 blur-md transform group-hover:scale-115 transition-transform duration-300" />
                     
-                    {/* Outer Elevated Podium Ring */}
-                    <div className="relative w-20 h-20 sm:w-22 sm:h-22 rounded-full ring-4 sm:ring-[6px] ring-white dark:ring-slate-900 shadow-xl shadow-blue-500/15 dark:shadow-black/70 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
+                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full ring-4 ring-white dark:ring-slate-900 shadow-xl shadow-blue-500/20 dark:shadow-black/70 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
                       {/* Inner Delicate Ring Accent */}
                       <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
-                      <Building size={34} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
+                      <Building size={28} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
                     </div>
                   </div>
                 </div>
 
                 {/* Card Body */}
-                <div className="w-full flex flex-col items-center mt-1">
-                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 min-h-[32px] flex items-center justify-center leading-snug px-1 text-balance">
+                <div className="w-full flex flex-col items-center">
+                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 min-h-[34px] flex items-center justify-center leading-snug px-1 text-balance">
                     {t("stats.mappedInfra")}
                   </div>
                   <div className="text-3xl sm:text-4xl font-black tracking-tight my-2 font-mono flex items-baseline justify-center gap-1.5 text-blue-600 dark:text-blue-400">
@@ -2655,28 +2717,28 @@ export default function LandingPage({
                 scaleOnHover={1.03}
                 maxTilt={10}
                 glareOpacity={0.18}
-                className="w-full h-full group relative pt-13 sm:pt-15 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 hover:border-emerald-500/40 dark:hover:border-emerald-500/40 hover:shadow-[0_20px_40px_rgba(16,185,129,0.14)]"
+                className="w-full h-full group relative pt-5 sm:pt-6 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 glass-crystal glass-card-interactive bg-white/75 dark:bg-slate-900/70 backdrop-blur-2xl shadow-[0_12px_36px_rgba(15,23,42,0.06)] dark:shadow-[0_16px_45px_rgba(0,0,0,0.55)] border border-white/70 dark:border-white/10 hover:border-emerald-500/50 dark:hover:border-emerald-400/50 hover:shadow-[0_22px_45px_rgba(16,185,129,0.18)]"
               >
-                {/* Top Subtle Accent Rail */}
-                <div className="absolute top-0 inset-x-8 h-[3px] bg-gradient-to-r from-transparent via-emerald-500 to-transparent rounded-full" />
+                {/* Elevated Circular Icon with Accent Rail */}
+                <div className="relative w-full flex items-center justify-center pt-1 mb-3.5">
+                  {/* Horizontal Accent Rail */}
+                  <div className="absolute inset-x-2 h-[2px] bg-gradient-to-r from-transparent via-emerald-500/40 dark:via-emerald-400/40 to-transparent" />
 
-                {/* Overlapping Circular Medallion */}
-                <div className="absolute -top-10 sm:-top-11 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+                  {/* Outer Elevated Podium Ring */}
                   <div className="relative">
                     {/* Ambient Glow */}
                     <div className="absolute inset-0 rounded-full bg-emerald-500/30 blur-md transform group-hover:scale-115 transition-transform duration-300" />
                     
-                    {/* Outer Elevated Podium Ring */}
-                    <div className="relative w-20 h-20 sm:w-22 sm:h-22 rounded-full ring-4 sm:ring-[6px] ring-white dark:ring-slate-900 shadow-xl shadow-emerald-500/15 dark:shadow-black/70 bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
+                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full ring-4 ring-white dark:ring-slate-900 shadow-xl shadow-emerald-500/20 dark:shadow-black/70 bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
                       <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
-                      <MapPin size={34} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
+                      <MapPin size={28} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
                     </div>
                   </div>
                 </div>
 
                 {/* Card Body */}
-                <div className="w-full flex flex-col items-center mt-1">
-                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 min-h-[32px] flex items-center justify-center leading-snug px-1 text-balance">
+                <div className="w-full flex flex-col items-center">
+                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 min-h-[34px] flex items-center justify-center leading-snug px-1 text-balance">
                     {t("stats.strategicLands")}
                   </div>
                   <div className="text-3xl sm:text-4xl font-black tracking-tight my-2 font-mono flex items-baseline justify-center gap-1.5 text-emerald-600 dark:text-emerald-400">
@@ -2700,28 +2762,28 @@ export default function LandingPage({
                 scaleOnHover={1.03}
                 maxTilt={10}
                 glareOpacity={0.18}
-                className="w-full h-full group relative pt-13 sm:pt-15 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 hover:border-amber-500/40 dark:hover:border-amber-500/40 hover:shadow-[0_20px_40px_rgba(245,158,11,0.14)]"
+                className="w-full h-full group relative pt-5 sm:pt-6 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 glass-crystal glass-card-interactive bg-white/75 dark:bg-slate-900/70 backdrop-blur-2xl shadow-[0_12px_36px_rgba(15,23,42,0.06)] dark:shadow-[0_16px_45px_rgba(0,0,0,0.55)] border border-white/70 dark:border-white/10 hover:border-amber-500/50 dark:hover:border-amber-400/50 hover:shadow-[0_22px_45px_rgba(245,158,11,0.18)]"
               >
-                {/* Top Subtle Accent Rail */}
-                <div className="absolute top-0 inset-x-8 h-[3px] bg-gradient-to-r from-transparent via-amber-500 to-transparent rounded-full" />
+                {/* Elevated Circular Icon with Accent Rail */}
+                <div className="relative w-full flex items-center justify-center pt-1 mb-3.5">
+                  {/* Horizontal Accent Rail */}
+                  <div className="absolute inset-x-2 h-[2px] bg-gradient-to-r from-transparent via-amber-500/40 dark:via-amber-400/40 to-transparent" />
 
-                {/* Overlapping Circular Medallion */}
-                <div className="absolute -top-10 sm:-top-11 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+                  {/* Outer Elevated Podium Ring */}
                   <div className="relative">
                     {/* Ambient Glow */}
                     <div className="absolute inset-0 rounded-full bg-amber-500/30 blur-md transform group-hover:scale-115 transition-transform duration-300" />
                     
-                    {/* Outer Elevated Podium Ring */}
-                    <div className="relative w-20 h-20 sm:w-22 sm:h-22 rounded-full ring-4 sm:ring-[6px] ring-white dark:ring-slate-900 shadow-xl shadow-amber-500/15 dark:shadow-black/70 bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
+                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full ring-4 ring-white dark:ring-slate-900 shadow-xl shadow-amber-500/20 dark:shadow-black/70 bg-gradient-to-br from-amber-500 via-orange-500 to-amber-600 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
                       <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
-                      <Users size={34} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
+                      <Users size={28} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
                     </div>
                   </div>
                 </div>
 
                 {/* Card Body */}
-                <div className="w-full flex flex-col items-center mt-1">
-                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 min-h-[32px] flex items-center justify-center leading-snug px-1 text-balance">
+                <div className="w-full flex flex-col items-center">
+                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 min-h-[34px] flex items-center justify-center leading-snug px-1 text-balance">
                     {t("stats.workforceAbsorption", "Serapan Tenaga Kerja")}
                   </div>
                   <div className="text-3xl sm:text-4xl font-black tracking-tight my-2 font-mono flex items-baseline justify-center gap-1.5 text-amber-600 dark:text-amber-400">
@@ -2745,28 +2807,28 @@ export default function LandingPage({
                 scaleOnHover={1.03}
                 maxTilt={10}
                 glareOpacity={0.18}
-                className="w-full h-full group relative pt-13 sm:pt-15 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 hover:border-purple-500/40 dark:hover:border-purple-500/40 hover:shadow-[0_20px_40px_rgba(168,85,247,0.14)]"
+                className="w-full h-full group relative pt-5 sm:pt-6 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 glass-crystal glass-card-interactive bg-white/75 dark:bg-slate-900/70 backdrop-blur-2xl shadow-[0_12px_36px_rgba(15,23,42,0.06)] dark:shadow-[0_16px_45px_rgba(0,0,0,0.55)] border border-white/70 dark:border-white/10 hover:border-purple-500/50 dark:hover:border-purple-400/50 hover:shadow-[0_22px_45px_rgba(168,85,247,0.18)]"
               >
-                {/* Top Subtle Accent Rail */}
-                <div className="absolute top-0 inset-x-8 h-[3px] bg-gradient-to-r from-transparent via-purple-500 to-transparent rounded-full" />
+                {/* Elevated Circular Icon with Accent Rail */}
+                <div className="relative w-full flex items-center justify-center pt-1 mb-3.5">
+                  {/* Horizontal Accent Rail */}
+                  <div className="absolute inset-x-2 h-[2px] bg-gradient-to-r from-transparent via-purple-500/40 dark:via-purple-400/40 to-transparent" />
 
-                {/* Overlapping Circular Medallion */}
-                <div className="absolute -top-10 sm:-top-11 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+                  {/* Outer Elevated Podium Ring */}
                   <div className="relative">
                     {/* Ambient Glow */}
                     <div className="absolute inset-0 rounded-full bg-purple-500/30 blur-md transform group-hover:scale-115 transition-transform duration-300" />
                     
-                    {/* Outer Elevated Podium Ring */}
-                    <div className="relative w-20 h-20 sm:w-22 sm:h-22 rounded-full ring-4 sm:ring-[6px] ring-white dark:ring-slate-900 shadow-xl shadow-purple-500/15 dark:shadow-black/70 bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
+                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full ring-4 ring-white dark:ring-slate-900 shadow-xl shadow-purple-500/20 dark:shadow-black/70 bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
                       <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
-                      <Bot size={34} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
+                      <Bot size={28} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
                     </div>
                   </div>
                 </div>
 
                 {/* Card Body */}
-                <div className="w-full flex flex-col items-center mt-1">
-                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 min-h-[32px] flex items-center justify-center leading-snug px-1 text-balance">
+                <div className="w-full flex flex-col items-center">
+                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 min-h-[34px] flex items-center justify-center leading-snug px-1 text-balance">
                     {t("stats.aiAssistant")}
                   </div>
                   <div className="text-3xl sm:text-4xl font-black tracking-tight my-2 font-mono flex items-baseline justify-center gap-1.5 text-purple-600 dark:text-purple-400">
@@ -2978,8 +3040,8 @@ export default function LandingPage({
                                 opacity-0 animate-fade-in-up
                                 transition-all duration-300 ease-out hover:-translate-y-2
                                 hover:shadow-2xl ${getSectorColor(inv.sector).glow}
-                                hover:border-emerald-500/50
-                                ${isDark ? 'bg-slate-900/95 border-slate-800 shadow-[0_12px_36px_rgba(0,0,0,0.35)]' : 'bg-white border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.06)]'}`}
+                                hover:border-emerald-500/50 glass-crystal glass-card-interactive
+                                ${isDark ? 'bg-slate-900/75 border-white/10 shadow-[0_16px_45px_rgba(0,0,0,0.5)]' : 'bg-white/80 border-white/70 shadow-[0_14px_40px_rgba(15,23,42,0.06)]'}`}
                   >
                     {/* Header Image Section */}
                     <div className="h-60 sm:h-64 overflow-hidden relative w-full">
@@ -3991,7 +4053,7 @@ export default function LandingPage({
               whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
               viewport={isMobile ? undefined : { once: true, amount: 0.05 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="p-6 sm:p-8 lg:p-12 rounded-[32px] relative overflow-hidden transition-all duration-500 bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xl dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10"
+              className="p-4 sm:p-8 lg:p-12 rounded-[28px] sm:rounded-[32px] relative overflow-hidden transition-all duration-500 bg-white/80 dark:bg-slate-900/75 glass-crystal backdrop-blur-2xl border border-white/60 dark:border-white/10 shadow-2xl dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10"
             >
               {/* Subtle tech background line grid */}
               <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:32px_32px]" />
@@ -4001,7 +4063,7 @@ export default function LandingPage({
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
                 {/* LEFT COLUMN: Strategic Value Propositions & Actions */}
-                <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
+                <div className="lg:col-span-7 flex flex-col justify-between space-y-5 sm:space-y-6">
                   {/* Live Operation Status Pill */}
                   <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold text-emerald-800 dark:text-emerald-300 w-fit">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
@@ -4012,45 +4074,60 @@ export default function LandingPage({
                     {t("mppBanner.desc", "Mempercepat perizinan investasi yang komprehensif dan modern di Kabupaten Luwu. Mengintegrasikan seluruh administrasi perizinan, pengelolaan kesesuaian ruang, dan pengawasan investasi dalam satu lokasi fisik, didukung penuh oleh platform GIS digital interaktif ini.")}
                   </p>
 
-                  {/* 3 SOVEREIGN KEY PILLARS (Bento Grid Mini) */}
+                  {/* 3 SOVEREIGN KEY PILLARS (Optically Balanced & Symmetrical Bento Grid) */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                     {/* Pilar 1: 21 Instansi */}
-                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 flex flex-col justify-between group hover:border-emerald-400 dark:hover:border-emerald-500/50 transition-all">
-                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center mb-2 shadow-xs group-hover:scale-105 transition-transform">
+                    <div className="p-3.5 sm:p-4 rounded-2xl bg-white/70 dark:bg-slate-800/60 glass-crystal glass-card-interactive border border-white/60 dark:border-white/10 flex flex-row sm:flex-col items-center sm:items-start gap-3.5 sm:gap-2 justify-between group hover:border-emerald-400 dark:hover:border-emerald-500/50 transition-all shadow-xs">
+                      <div className="w-10 h-10 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center sm:mb-2 shadow-xs group-hover:scale-105 transition-transform shrink-0">
                         <Building2 size={18} />
                       </div>
-                      <span className="text-xs font-bold text-slate-900 dark:text-white leading-snug">
-                        21 Instansi Terpadu
-                      </span>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                        DPMPTSP, Pajak, BPN, Imigrasi, Samsat
-                      </span>
+                      <div className="flex-1 min-w-0 flex flex-col text-left">
+                        <span className="text-xs sm:text-xs font-bold text-slate-900 dark:text-white leading-snug">
+                          21 Instansi Terpadu
+                        </span>
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                          DPMPTSP, Pajak, BPN, Imigrasi, Samsat
+                        </span>
+                      </div>
+                      <div className="sm:hidden w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-700/60 flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shrink-0">
+                        <ChevronRight size={14} />
+                      </div>
                     </div>
 
                     {/* Pilar 2: Fast-Track OSS */}
-                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 flex flex-col justify-between group hover:border-sky-400 dark:hover:border-sky-500/50 transition-all">
-                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 text-white flex items-center justify-center mb-2 shadow-xs group-hover:scale-105 transition-transform">
+                    <div className="p-3.5 sm:p-4 rounded-2xl bg-white/70 dark:bg-slate-800/60 glass-crystal glass-card-interactive border border-white/60 dark:border-white/10 flex flex-row sm:flex-col items-center sm:items-start gap-3.5 sm:gap-2 justify-between group hover:border-sky-400 dark:hover:border-sky-500/50 transition-all shadow-xs">
+                      <div className="w-10 h-10 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 text-white flex items-center justify-center sm:mb-2 shadow-xs group-hover:scale-105 transition-transform shrink-0">
                         <Zap size={18} />
                       </div>
-                      <span className="text-xs font-bold text-slate-900 dark:text-white leading-snug">
-                        Fast-Track OSS & GIS
-                      </span>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                        Penerbitan NIB & Validasi Ruang Instan
-                      </span>
+                      <div className="flex-1 min-w-0 flex flex-col text-left">
+                        <span className="text-xs sm:text-xs font-bold text-slate-900 dark:text-white leading-snug">
+                          Fast-Track OSS & GIS
+                        </span>
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                          Penerbitan NIB & Validasi Ruang Instan
+                        </span>
+                      </div>
+                      <div className="sm:hidden w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-700/60 flex items-center justify-center text-slate-400 group-hover:text-sky-500 transition-colors shrink-0">
+                        <ChevronRight size={14} />
+                      </div>
                     </div>
 
                     {/* Pilar 3: Klinik Investasi VIP */}
-                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 flex flex-col justify-between group hover:border-amber-400 dark:hover:border-amber-500/50 transition-all">
-                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center mb-2 shadow-xs group-hover:scale-105 transition-transform">
+                    <div className="p-3.5 sm:p-4 rounded-2xl bg-white/70 dark:bg-slate-800/60 glass-crystal glass-card-interactive border border-white/60 dark:border-white/10 flex flex-row sm:flex-col items-center sm:items-start gap-3.5 sm:gap-2 justify-between group hover:border-amber-400 dark:hover:border-amber-500/50 transition-all shadow-xs">
+                      <div className="w-10 h-10 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center sm:mb-2 shadow-xs group-hover:scale-105 transition-transform shrink-0">
                         <Award size={18} />
                       </div>
-                      <span className="text-xs font-bold text-slate-900 dark:text-white leading-snug">
-                        Klinik Investasi VIP
-                      </span>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                        Konsultasi 1-on-1 & Pendampingan Lahan
-                      </span>
+                      <div className="flex-1 min-w-0 flex flex-col text-left">
+                        <span className="text-xs sm:text-xs font-bold text-slate-900 dark:text-white leading-snug">
+                          Klinik Investasi VIP
+                        </span>
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                          Konsultasi 1-on-1 & Pendampingan Lahan
+                        </span>
+                      </div>
+                      <div className="sm:hidden w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-700/60 flex items-center justify-center text-slate-400 group-hover:text-amber-500 transition-colors shrink-0">
+                        <ChevronRight size={14} />
+                      </div>
                     </div>
                   </div>
 

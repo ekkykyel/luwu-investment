@@ -12,6 +12,22 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
   useEffect(() => {
     let isMounted = true;
 
+    // Helper to deduplicate testimonials by company/author + message
+    const deduplicateTestimonials = (list: any[]) => {
+      const seen = new Set<string>();
+      const result: any[] = [];
+      for (const item of list) {
+        const author = (item.company_name || item.investor_name || item.nama || '').trim().toLowerCase();
+        const msg = (item.message || item.teks || item.content || '').trim().toLowerCase();
+        const key = `${author}::${msg}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          result.push(item);
+        }
+      }
+      return result;
+    };
+
     const fetchTestimonials = async () => {
       try {
         const apiRes = await fetch('/api/testimonials', {
@@ -22,7 +38,7 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
           const apiData = await apiRes.json().catch(() => null);
           if (Array.isArray(apiData) && apiData.length > 0) {
             if (isMounted) {
-              setTestimonials(apiData);
+              setTestimonials(deduplicateTestimonials(apiData));
               setIsLoading(false);
             }
             return;
@@ -39,7 +55,7 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
           await handleSupabaseError(error);
           if (isMounted) setTestimonials([]);
         } else if (isMounted) {
-          setTestimonials(Array.isArray(data) ? data : []);
+          setTestimonials(Array.isArray(data) ? deduplicateTestimonials(data) : []);
         }
       } catch (err: any) {
         console.warn("Notice loading testimonials, using safe empty array fallback:", err?.message || err);
@@ -55,8 +71,15 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
 
     fetchTestimonials();
 
+    // Listen to real-time feedback submissions across tabs/components
+    const handleFeedbackUpdate = () => {
+      fetchTestimonials();
+    };
+    window.addEventListener('mpp_feedback_updated', handleFeedbackUpdate);
+
     return () => {
       isMounted = false;
+      window.removeEventListener('mpp_feedback_updated', handleFeedbackUpdate);
     };
   }, []);
 

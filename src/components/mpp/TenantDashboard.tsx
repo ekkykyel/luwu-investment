@@ -16,6 +16,7 @@ import { MppMagattiAdminManager } from './MppMagattiAdminManager';
 import { MppFoHelpTriggerButton } from './MppFoHelpTriggerButton';
 import { MppReprimandHardStopModal } from './MppReprimandHardStopModal';
 import { ReprimandModal } from './ReprimandModal';
+import { PkkprTechnicalRecommendationModal, PkkprRecommendationData } from './PkkprTechnicalRecommendationModal';
 
 interface Props {
   isDarkMode: boolean;
@@ -121,6 +122,10 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
     id: string;
     title: string;
   }>({ isOpen: false, type: 'service', id: '', title: '' });
+
+  // Modal Rekomendasi Teknis PKKPR PUPTR / FPR
+  const [isPkkprModalOpen, setIsPkkprModalOpen] = useState(false);
+  const [selectedPkkprData, setSelectedPkkprData] = useState<Partial<PkkprRecommendationData> | undefined>(undefined);
 
   const showToast = (type: 'success' | 'error' | 'info', text: string) => {
     setToastMessage({ type, text });
@@ -2072,17 +2077,32 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
                     Perbarui tahap disposisi berkas warga secara berkala. Warga dapat melacak status ini via menu E-Lacak Portal MPP.
                   </p>
                 </div>
-                <div className="relative w-full sm:w-64">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                  <input
-                    type="text"
-                    placeholder="Cari kode TRK atau nama..."
-                    value={trackingSearch}
-                    onChange={(e) => setTrackingSearch(e.target.value)}
-                    className={`w-full pl-9 pr-3 py-2 text-xs rounded-xl border outline-none focus:ring-2 focus:ring-indigo-500 ${
-                      isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-300'
-                    }`}
-                  />
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <div className="relative flex-1 sm:w-64">
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input
+                      type="text"
+                      placeholder="Cari kode TRK atau nama..."
+                      value={trackingSearch}
+                      onChange={(e) => setTrackingSearch(e.target.value)}
+                      className={`w-full pl-9 pr-3 py-2 text-xs rounded-xl border outline-none focus:ring-2 focus:ring-indigo-500 ${
+                        isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-300'
+                      }`}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedPkkprData(undefined);
+                      setIsPkkprModalOpen(true);
+                    }}
+                    className="px-3 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all shrink-0 cursor-pointer"
+                    title="Buka Generator Rekomendasi Teknis PKKPR PUPTR / Forum Penataan Ruang"
+                  >
+                    <FileText className="w-4 h-4" />
+                    <span className="hidden sm:inline">Rekomendasi PUPTR (FPR)</span>
+                    <span className="sm:hidden">FPR</span>
+                  </button>
                 </div>
               </div>
 
@@ -2147,16 +2167,45 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
                         </div>
 
                         {/* Quick action buttons */}
-                        <div className="flex items-center justify-between text-xs text-slate-500">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-slate-500">
                           <span>Klik salah satu tahap di atas untuk memperbarui disposisi berkas secara langsung.</span>
-                          {currentIdx < TRACKING_STAGES.length - 1 && (
+                          <div className="flex items-center gap-2 self-end sm:self-auto flex-wrap">
                             <button
-                              onClick={() => handleUpdateTrackingStage(doc.id, TRACKING_STAGES[currentIdx + 1])}
-                              className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg flex items-center gap-1 shadow-sm transition-colors"
+                              type="button"
+                              onClick={() => {
+                                setSelectedPkkprData({
+                                  nomorBa: '120/BA-FPR/NB/IX/2026',
+                                  pemohon: {
+                                    nama: doc.queue?.citizen?.full_name?.toUpperCase() || 'ERMON AMBING',
+                                    npwp: '-',
+                                    alamat: 'Dusun Pongsamelung RT/RW 001/001, Kel. Pongsamelung, Kec. Lamasi',
+                                    dusun: 'Dusun Pongsamelung',
+                                    desaKel: 'Pongsamelung',
+                                    kecamatan: 'Lamasi',
+                                    kabupaten: 'Luwu',
+                                    provinsi: 'Sulawesi Selatan',
+                                    noTelp: doc.queue?.citizen?.phone_number || '-',
+                                    email: '-'
+                                  }
+                                });
+                                setIsPkkprModalOpen(true);
+                              }}
+                              className="px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                              title="Tampilkan Dokumen Rekomendasi Teknis PUPTR (FPR) untuk pemohon ini"
                             >
-                              Lanjut ke {TRACKING_STAGES[currentIdx + 1]} <ArrowRight className="w-3.5 h-3.5" />
+                              <FileText className="w-3.5 h-3.5" />
+                              <span>BA Rekomendasi PUPTR</span>
                             </button>
-                          )}
+
+                            {currentIdx < TRACKING_STAGES.length - 1 && (
+                              <button
+                                onClick={() => handleUpdateTrackingStage(doc.id, TRACKING_STAGES[currentIdx + 1])}
+                                className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg flex items-center gap-1 shadow-sm transition-colors cursor-pointer"
+                              >
+                                Lanjut ke {TRACKING_STAGES[currentIdx + 1]} <ArrowRight className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     );
@@ -2594,6 +2643,19 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
           filterByCounterName={operatorInfo?.counterName || 'Loket 1'}
         />
       )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: REKOMENDASI TEKNIS PKKPR PUPTR (BERITA ACARA FORUM PENATAAN RUANG) */}
+      {/* ========================================================================= */}
+      <PkkprTechnicalRecommendationModal
+        isOpen={isPkkprModalOpen}
+        onClose={() => {
+          setIsPkkprModalOpen(false);
+          setSelectedPkkprData(undefined);
+        }}
+        isDark={isDarkMode}
+        initialData={selectedPkkprData}
+      />
 
     </div>
   );

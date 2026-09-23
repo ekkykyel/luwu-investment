@@ -5719,11 +5719,11 @@ export default function App() {
               {isMobile && (isSidebarOpen || (isDashboardExpanded && isRightSidebarOpen)) && (
                 <motion.div
                   key="unified-mobile-backdrop"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-[65] pointer-events-auto touch-manipulation"
+                  initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+                  animate={{ opacity: 1, backdropFilter: "blur(6px)" }}
+                  exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+                  transition={{ duration: 0.28, ease: "easeOut" }}
+                  className="fixed inset-0 bg-slate-950/60 z-[65] pointer-events-auto touch-manipulation"
                   onClick={() => {
                     setIsSidebarOpen(false);
                     setIsRightSidebarOpen(false);
@@ -5733,15 +5733,30 @@ export default function App() {
               )}
             </AnimatePresence>
 
-            {/* LEFT SIDEBAR */}
+            {/* LEFT SIDEBAR (KONTROL PETA - SILKY SLIDE-IN & FADE-IN) */}
             <AnimatePresence>
               {(!isMobile ? !isLeftSidebarCollapsed : isSidebarOpen) && (
                 <motion.aside
                   key="left-sidebar"
-                  initial={isMobile ? { y: "100%", opacity: 0 } : { x: "-100%", opacity: 0.5, filter: "blur(4px)" }}
-                  animate={isMobile ? { y: 0, opacity: 1 } : { x: 0, opacity: 1, filter: "blur(0px)" }}
-                  exit={isMobile ? { y: "100%", opacity: 0 } : { x: "-100%", opacity: 0.5, filter: "blur(4px)" }}
-                  transition={{ type: "spring", stiffness: 240, damping: 26, mass: 0.9 }}
+                  initial={
+                    isMobile 
+                      ? { y: "100%", opacity: 0, filter: "blur(8px)" } 
+                      : { x: -48, opacity: 0, scale: 0.98, filter: "blur(8px)" }
+                  }
+                  animate={
+                    isMobile 
+                      ? { y: 0, opacity: 1, filter: "blur(0px)" } 
+                      : { x: 0, opacity: 1, scale: 1, filter: "blur(0px)" }
+                  }
+                  exit={
+                    isMobile 
+                      ? { y: "100%", opacity: 0, filter: "blur(8px)" } 
+                      : { x: -48, opacity: 0, scale: 0.98, filter: "blur(8px)" }
+                  }
+                  transition={{ 
+                    duration: 0.36, 
+                    ease: [0.16, 1, 0.3, 1] 
+                  }}
                   style={{
                     backgroundColor: isMobile 
                       ? spatialTheme.bg.card(gisPanelOpacity)
@@ -6994,15 +7009,30 @@ export default function App() {
               </motion.div>
             )}
 
-            {/* RIGHT SIDEBAR: ANALYTICAL DASHBOARD */}
+            {/* RIGHT SIDEBAR: ANALYTICAL DASHBOARD (SILKY SLIDE-IN & FADE-IN) */}
             <AnimatePresence mode="wait">
               {showRightDashboard && (!isMobile || isRightSidebarOpen) && (
                 <motion.aside
                   key="right-sidebar"
-                  initial={isMobile ? { y: "100%", opacity: 0 } : { x: 50, opacity: 0 }}
-                  animate={isMobile ? { y: 0, opacity: 1 } : { x: 0, opacity: 1 }}
-                  exit={isMobile ? { y: "100%", opacity: 0 } : { x: 50, opacity: 0 }}
-                  transition={{ type: "spring", stiffness: 320, damping: 30 }}
+                  initial={
+                    isMobile 
+                      ? { y: "100%", opacity: 0, filter: "blur(8px)" } 
+                      : { x: 48, opacity: 0, scale: 0.98, filter: "blur(8px)" }
+                  }
+                  animate={
+                    isMobile 
+                      ? { y: 0, opacity: 1, filter: "blur(0px)" } 
+                      : { x: 0, opacity: 1, scale: 1, filter: "blur(0px)" }
+                  }
+                  exit={
+                    isMobile 
+                      ? { y: "100%", opacity: 0, filter: "blur(8px)" } 
+                      : { x: 48, opacity: 0, scale: 0.98, filter: "blur(8px)" }
+                  }
+                  transition={{ 
+                    duration: 0.36, 
+                    ease: [0.16, 1, 0.3, 1] 
+                  }}
                   className={`fixed inset-x-0 top-3 sm:top-4 bottom-0 md:top-0 md:bottom-auto md:absolute md:inset-auto md:right-4 z-[70] md:z-[50] pointer-events-auto origin-bottom md:origin-right transition-all duration-300 ${
                     isDashboardExpanded 
                       ? "w-full h-auto md:max-w-none md:w-[440px] lg:w-[490px] xl:w-[540px] md:h-auto md:max-h-[85vh] rounded-t-[28px] md:rounded-3xl overflow-y-auto pb-20 md:pb-0 shadow-[0_-12px_40px_rgba(0,0,0,0.5)] md:shadow-none bg-slate-50 dark:bg-slate-950 md:bg-transparent" 

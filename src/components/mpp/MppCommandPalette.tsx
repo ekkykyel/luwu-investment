@@ -22,7 +22,8 @@ import {
   ExternalLink,
   ShieldCheck,
   ChevronRight,
-  BookOpen
+  BookOpen,
+  FileText
 } from 'lucide-react';
 
 export interface MppCommandItem {
@@ -176,6 +177,20 @@ export const MppCommandPalette: React.FC<MppCommandPaletteProps> = ({
       badge: 'VIP EoDB',
       keywords: ['investor', 'vip', 'penanaman modal', 'liaison officer', 'investasi', 'bisnis', 'eodb'],
       action: () => scrollToSection('investor-vip')
+    },
+    {
+      id: 'action-pkkpr-recommendation',
+      title: 'Rekomendasi Teknis PKKPR (Dinas PUPTR)',
+      description: 'Berita Acara Forum Penataan Ruang No. 120/BA-FPR/NB/IX/2026 sebagai landasan cetak izin OSS',
+      category: 'aksi',
+      categoryLabel: 'Aksi Cepat',
+      icon: FileText,
+      badge: 'PUPTR · OSS',
+      keywords: ['pkkpr', 'rekomendasi teknis', 'puptr', 'fpr', 'tata ruang', 'oss', 'kesesuaian ruang', 'ermon ambing', 'lamasi', '120/ba-fpr', 'izin tata ruang', 'berita acara'],
+      action: () => {
+        onClose();
+        window.dispatchEvent(new CustomEvent('open-pkkpr-recommendation'));
+      }
     },
 
     // --- PERSONA SWITCHER MODES ---

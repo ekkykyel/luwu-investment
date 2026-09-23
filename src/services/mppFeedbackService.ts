@@ -90,28 +90,10 @@ export async function submitMppTestimonial(data: {
     console.warn('Failed to write testimonial to localStorage', e);
   }
 
-  // 2. Persist to Supabase investor_testimonials (which stores both citizen & investor testimonials)
+  // 2. Persist to backend API (which handles Supabase DB insert + deduplication)
+  let persistedRemotely = false;
   try {
-    const resolvedCompany = newTestimonial.perusahaan
-      ? `${newTestimonial.nama} (${newTestimonial.perusahaan})`
-      : `${newTestimonial.nama} (${data.user_type === 'masyarakat' ? 'Warga Kab. Luwu' : 'Badan Usaha / Investor'})`;
-
-    await supabase.from('investor_testimonials').insert([
-      {
-        company_name: resolvedCompany,
-        sector: newTestimonial.layanan || 'Pelayanan Publik MPP',
-        message: newTestimonial.teks,
-        is_verified: true, // Auto-verified for instant portal showcase
-        created_at: nowIso
-      }
-    ]);
-  } catch (err) {
-    console.warn('Supabase insert testimonial fallback (using local cache):', err);
-  }
-
-  // 3. Post to backend API if available
-  try {
-    await fetch('/api/testimonials', {
+    const apiRes = await fetch('/api/testimonials', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -122,7 +104,34 @@ export async function submitMppTestimonial(data: {
         rating: newTestimonial.rating
       })
     }).catch(() => null);
-  } catch {}
+
+    if (apiRes && apiRes.ok) {
+      persistedRemotely = true;
+    }
+  } catch (err) {
+    console.warn('Backend API /api/testimonials unavailable, falling back to direct Supabase:', err);
+  }
+
+  // 3. Fallback: only if backend API did not persist, insert directly into Supabase
+  if (!persistedRemotely) {
+    try {
+      const resolvedCompany = newTestimonial.perusahaan
+        ? `${newTestimonial.nama} (${newTestimonial.perusahaan})`
+        : `${newTestimonial.nama} (${data.user_type === 'masyarakat' ? 'Warga Kab. Luwu' : 'Badan Usaha / Investor'})`;
+
+      await supabase.from('investor_testimonials').insert([
+        {
+          company_name: resolvedCompany,
+          sector: newTestimonial.layanan || 'Pelayanan Publik MPP',
+          message: newTestimonial.teks,
+          is_verified: true,
+          created_at: nowIso
+        }
+      ]);
+    } catch (err) {
+      console.warn('Supabase insert testimonial fallback (using local cache):', err);
+    }
+  }
 
   // 4. Notify all components on this tab or other tabs
   if (typeof window !== 'undefined') {

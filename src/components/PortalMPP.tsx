@@ -61,6 +61,7 @@ import { PetugasGeraiLoginModal } from './mpp/PetugasGeraiLoginModal';
 import { FoOfficerLoginModal } from './mpp/FoOfficerLoginModal';
 import { MppAirportKioskModal } from './MppAirportKioskModal';
 import { MppCommandPalette } from './mpp/MppCommandPalette';
+import { PkkprTechnicalRecommendationModal, PkkprRecommendationData } from './mpp/PkkprTechnicalRecommendationModal';
 import { LUWU_LOGO_BASE64 } from '../lib/logoBase64';
 import { supabase } from '../lib/supabaseClient';
 import { 
@@ -617,6 +618,8 @@ export default function PortalMPP() {
   });
   const [isSurveySubmitted, setIsSurveySubmitted] = useState(false);
   const [activeAlurModal, setActiveAlurModal] = useState<'pbg' | 'mpp' | 'pkkpr' | null>(null);
+  const [isPkkprModalOpen, setIsPkkprModalOpen] = useState(false);
+  const [pkkprInitialData, setPkkprInitialData] = useState<Partial<PkkprRecommendationData> | undefined>(undefined);
 
   // --- State Fase 4 (Fitur 8: Interactive Virtual Helpdesk & Fitur 9: Interactive FAQ Accordion) ---
   const [isHelpdeskModalOpen, setIsHelpdeskModalOpen] = useState(false);
@@ -839,7 +842,13 @@ export default function PortalMPP() {
           tanggal: t.created_at ? new Date(t.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Terbaru'
         }));
 
-        setCommunityReviews([...feedbackReviews, ...mappedTestimonials]);
+        const allReviews = [...feedbackReviews, ...mappedTestimonials];
+        const uniqueReviews = allReviews.filter((item, index, self) =>
+          index === self.findIndex((r) => 
+            (r.teks || '').trim().toLowerCase() === (item.teks || '').trim().toLowerCase()
+          )
+        );
+        setCommunityReviews(uniqueReviews);
         setIsReviewsLoading(false);
       }
     } catch (err) {
@@ -1450,6 +1459,20 @@ export default function PortalMPP() {
     }
   }, []);
 
+  // Listener untuk membuka modal Rekomendasi Teknis PKKPR Dinas PUPTR
+  useEffect(() => {
+    const handleOpenPkkpr = (e: Event) => {
+      const customEv = e as CustomEvent<Partial<PkkprRecommendationData> | undefined>;
+      if (customEv.detail) {
+        setPkkprInitialData(customEv.detail);
+      }
+      setIsPkkprModalOpen(true);
+    };
+
+    window.addEventListener('open-pkkpr-recommendation', handleOpenPkkpr);
+    return () => window.removeEventListener('open-pkkpr-recommendation', handleOpenPkkpr);
+  }, []);
+
   // Realtime Listener untuk status antrean (jika tiket aktif)
   useEffect(() => {
     if (!activeTicket || !activeTicket.number) return;
@@ -1738,7 +1761,7 @@ export default function PortalMPP() {
         <InclusivityAccessibilityBar isDark={isDark} />
 
         {/* Header - Android First & Ultra Responsive */}
-        <header className="bg-white/90 dark:bg-[#0B1120]/90 backdrop-blur-md border-b border-slate-200/70 dark:border-slate-800/70 shadow-xs sticky top-0 z-30 transition-all duration-300">
+        <header className="bg-white/90 dark:bg-[#0B1120]/90 backdrop-blur-md border-b border-slate-200/70 dark:border-slate-800/70 shadow-xs sticky top-0 z-50 transition-all duration-300">
           <div className={`flex justify-between items-center w-full px-2.5 sm:px-4 md:px-8 lg:px-16 max-w-[1440px] mx-auto transition-all duration-300 ${isScrolled ? "py-1.5 sm:py-2" : "py-2 sm:py-3 md:py-4"}`}>
             
             {/* Branding Logo & Title - Lambang Kabupaten Luwu & MPP Simpurusiang */}
@@ -1874,10 +1897,10 @@ export default function PortalMPP() {
                 <span>Petugas Gerai</span>
               </button>
 
-              <div className="shrink-0 scale-90 sm:scale-100 origin-right">
+              <div className="shrink-0 relative">
                 <LanguageToggle />
               </div>
-              <div className="shrink-0 scale-90 sm:scale-100 origin-right">
+              <div className="shrink-0 relative">
                 <ThemeToggle />
               </div>
 
@@ -1915,7 +1938,7 @@ export default function PortalMPP() {
 
         {/* --- FASE 1: STICKY ACTIVE TICKET STATUS BAR (FITUR 3) --- */}
         {activeTicket && !isTicketBarDismissed && (
-          <div className={`sticky top-[58px] sm:top-[68px] z-20 w-full backdrop-blur-xl border-b text-white shadow-lg transition-all animate-fadeIn ${
+          <div className={`sticky top-[58px] sm:top-[68px] z-30 w-full backdrop-blur-xl border-b text-white shadow-lg transition-all animate-fadeIn ${
             activeTicket.status === 'dipanggil'
               ? 'bg-gradient-to-r from-amber-950/95 via-slate-900/95 to-amber-950/95 border-amber-400/80 shadow-amber-500/20'
               : 'bg-emerald-950/95 dark:bg-slate-900/95 border-emerald-500/30'
@@ -1989,7 +2012,7 @@ export default function PortalMPP() {
 
         {/* --- FASE 1: STICKY QUICK-NAV (FITUR 2) --- */}
         {showQuickNav && (
-          <div className="sticky top-[58px] sm:top-[68px] z-30 w-full bg-white/90 dark:bg-[#001424]/90 backdrop-blur-2xl border-b border-emerald-500/20 shadow-md transition-all">
+          <div className="sticky top-[58px] sm:top-[68px] z-20 w-full bg-white/90 dark:bg-[#001424]/90 backdrop-blur-2xl border-b border-emerald-500/20 shadow-md transition-all">
             <div className="relative max-w-[1440px] mx-auto">
               {/* Fade Gradient Masking Right */}
               <div className="pointer-events-none absolute top-0 right-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-white dark:from-[#001424] to-transparent z-10" />
@@ -2162,7 +2185,7 @@ export default function PortalMPP() {
               >
                 <div 
                   onClick={() => setIsCommandPaletteOpen(true)}
-                  className="relative min-h-[48px] h-12 sm:h-14 flex items-center bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200 dark:border-slate-800/90 shadow-lg shadow-slate-200/60 dark:shadow-black/50 rounded-2xl px-3 sm:px-4 hover:border-emerald-500/80 dark:hover:border-emerald-500/70 hover:ring-2 hover:ring-emerald-500/20 transition-all cursor-pointer group"
+                  className="glass-crystal glass-card-interactive relative min-h-[48px] h-12 sm:h-14 flex items-center bg-white/80 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/60 dark:border-white/10 shadow-[0_10px_35px_rgba(0,0,0,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.5)] rounded-2xl px-3 sm:px-4 hover:border-emerald-500/80 dark:hover:border-emerald-400/80 hover:ring-2 hover:ring-emerald-500/20 transition-all cursor-pointer group"
                 >
                   <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors shrink-0">
                     <Search className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400" />
@@ -2247,7 +2270,7 @@ export default function PortalMPP() {
                   <>
                     <div
                       onClick={() => document.getElementById('investor-vip')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/95 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 hover:border-amber-500/80 dark:hover:border-amber-500/60 shadow-md shadow-slate-200/40 dark:shadow-black/40 hover:shadow-xl hover:shadow-amber-500/15 hover:-translate-y-0.5"
+                      className="glass-crystal glass-card-interactive relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/80 dark:bg-slate-900/75 backdrop-blur-xl border border-white/60 dark:border-white/10 hover:border-amber-500/80 dark:hover:border-amber-400/80 shadow-[0_8px_25px_rgba(0,0,0,0.05)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.45)] hover:shadow-xl hover:shadow-amber-500/20 hover:-translate-y-0.5"
                     >
                       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-400" />
                       <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/25 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
@@ -2265,7 +2288,7 @@ export default function PortalMPP() {
 
                     <div
                       onClick={() => document.getElementById('peta-spasial')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/95 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 hover:border-blue-500/80 dark:hover:border-blue-500/60 shadow-md shadow-slate-200/40 dark:shadow-black/40 hover:shadow-xl hover:shadow-blue-500/15 hover:-translate-y-0.5"
+                      className="glass-crystal glass-card-interactive relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/80 dark:bg-slate-900/75 backdrop-blur-xl border border-white/60 dark:border-white/10 hover:border-blue-500/80 dark:hover:border-blue-400/80 shadow-[0_8px_25px_rgba(0,0,0,0.05)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.45)] hover:shadow-xl hover:shadow-blue-500/20 hover:-translate-y-0.5"
                     >
                       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-500" />
                       <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/25 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
@@ -2283,7 +2306,7 @@ export default function PortalMPP() {
 
                     <div
                       onClick={() => document.getElementById('syarat-dokumen')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/95 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 hover:border-emerald-500/80 dark:hover:border-emerald-500/60 shadow-md shadow-slate-200/40 dark:shadow-black/40 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-0.5"
+                      className="glass-crystal glass-card-interactive relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/80 dark:bg-slate-900/75 backdrop-blur-xl border border-white/60 dark:border-white/10 hover:border-emerald-500/80 dark:hover:border-emerald-400/80 shadow-[0_8px_25px_rgba(0,0,0,0.05)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.45)] hover:shadow-xl hover:shadow-emerald-500/20 hover:-translate-y-0.5"
                     >
                       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-400" />
                       <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
@@ -2303,7 +2326,7 @@ export default function PortalMPP() {
                   <>
                     <div
                       onClick={() => setIsQueueBookingOpen(true)}
-                      className="relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/95 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 hover:border-emerald-500/80 dark:hover:border-emerald-500/60 shadow-md shadow-slate-200/40 dark:shadow-black/40 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-0.5"
+                      className="glass-crystal glass-card-interactive relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/80 dark:bg-slate-900/75 backdrop-blur-xl border border-white/60 dark:border-white/10 hover:border-emerald-500/80 dark:hover:border-emerald-400/80 shadow-[0_8px_25px_rgba(0,0,0,0.05)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.45)] hover:shadow-xl hover:shadow-emerald-500/20 hover:-translate-y-0.5"
                     >
                       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-400" />
                       <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
@@ -2321,7 +2344,7 @@ export default function PortalMPP() {
 
                     <div
                       onClick={() => document.getElementById('tracking-berkas')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/95 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 hover:border-blue-500/80 dark:hover:border-blue-500/60 shadow-md shadow-slate-200/40 dark:shadow-black/40 hover:shadow-xl hover:shadow-blue-500/15 hover:-translate-y-0.5"
+                      className="glass-crystal glass-card-interactive relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/80 dark:bg-slate-900/75 backdrop-blur-xl border border-white/60 dark:border-white/10 hover:border-blue-500/80 dark:hover:border-blue-400/80 shadow-[0_8px_25px_rgba(0,0,0,0.05)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.45)] hover:shadow-xl hover:shadow-blue-500/20 hover:-translate-y-0.5"
                     >
                       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-500" />
                       <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/25 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
@@ -2342,7 +2365,7 @@ export default function PortalMPP() {
                         setAirportKioskInitialMode('citizen');
                         setIsAirportKioskOpen(true);
                       }}
-                      className="relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/95 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 hover:border-amber-500/80 dark:hover:border-amber-500/60 shadow-md shadow-slate-200/40 dark:shadow-black/40 hover:shadow-xl hover:shadow-amber-500/15 hover:-translate-y-0.5"
+                      className="glass-crystal glass-card-interactive relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/80 dark:bg-slate-900/75 backdrop-blur-xl border border-white/60 dark:border-white/10 hover:border-amber-500/80 dark:hover:border-amber-400/80 shadow-[0_8px_25px_rgba(0,0,0,0.05)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.45)] hover:shadow-xl hover:shadow-amber-500/20 hover:-translate-y-0.5"
                     >
                       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-400" />
                       <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/25 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
@@ -2822,7 +2845,7 @@ export default function PortalMPP() {
                         scaleOnHover={1.03}
                         glareOpacity={0.15}
                         onClick={() => setSelectedAgencyDetail(rawItem)}
-                        className="w-[78vw] xs:w-[280px] sm:w-[320px] bg-white/95 dark:bg-slate-800/50 backdrop-blur-xl border border-slate-200/90 dark:border-white/10 shadow-lg shadow-slate-200/50 dark:shadow-emerald-950/20 rounded-3xl p-4 sm:p-6 md:p-8 flex flex-col items-center text-center justify-between group cursor-pointer hover:border-emerald-500/80 hover:shadow-xl hover:shadow-emerald-500/15 transition-all relative overflow-hidden h-full"
+                        className="w-[78vw] xs:w-[280px] sm:w-[320px] glass-crystal glass-card-interactive bg-white/80 dark:bg-slate-800/60 backdrop-blur-2xl border border-white/65 dark:border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.45)] rounded-3xl p-4 sm:p-6 md:p-8 flex flex-col items-center text-center justify-between group cursor-pointer hover:border-emerald-500/80 hover:shadow-2xl hover:shadow-emerald-500/20 transition-all relative overflow-hidden h-full"
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-emerald-500/0 to-emerald-500/5 group-hover:to-emerald-500/10 transition-colors pointer-events-none" />
                         <div className="flex flex-col items-center text-center w-full relative z-10">
@@ -2888,8 +2911,8 @@ export default function PortalMPP() {
             className="w-full max-w-6xl mx-auto py-8 sm:py-14 md:py-20 px-0.5 sm:px-5 md:px-8"
           >
             <SpotlightCard 
-              spotlightColor={isDark ? "rgba(16, 185, 129, 0.16)" : "rgba(16, 185, 129, 0.12)"}
-              className="w-full bg-white/95 dark:bg-slate-800/50 backdrop-blur-xl shadow-xl shadow-slate-200/50 dark:shadow-emerald-900/20 border border-slate-200/90 dark:border-white/10 rounded-3xl p-3 sm:p-6 md:p-10 relative overflow-hidden transition-all duration-300"
+              spotlightColor={isDark ? "rgba(16, 185, 129, 0.2)" : "rgba(16, 185, 129, 0.15)"}
+              className="w-full glass-crystal backdrop-blur-2xl shadow-2xl shadow-slate-200/50 dark:shadow-emerald-950/30 border border-white/65 dark:border-white/10 rounded-3xl p-3 sm:p-6 md:p-10 relative overflow-hidden transition-all duration-300"
             >
               <div className="hidden dark:block absolute inset-0 bg-gradient-to-br from-emerald-950/20 to-transparent pointer-events-none"></div>
               
@@ -3060,7 +3083,7 @@ export default function PortalMPP() {
                           onClick={() => {
                             setSelectedServiceDetail(service as any);
                           }}
-                          className="w-full h-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-3xl overflow-hidden group shadow-xl shadow-slate-950/5 dark:shadow-emerald-950/20 transition-all duration-300 hover:shadow-2xl hover:border-teal-500/30 flex flex-col justify-between cursor-pointer relative min-h-[440px]"
+                          className="w-full h-full glass-crystal glass-card-interactive bg-white/80 dark:bg-slate-900/70 backdrop-blur-2xl border border-white/60 dark:border-white/10 rounded-3xl overflow-hidden group shadow-[0_12px_36px_rgba(0,0,0,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.45)] transition-all duration-300 hover:shadow-2xl hover:border-teal-500/40 flex flex-col justify-between cursor-pointer relative min-h-[440px]"
                         >
                           {/* Subtle Ambient Gradient Highlight */}
                           <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.04] via-transparent to-teal-500/[0.03] dark:from-emerald-400/[0.06] dark:to-transparent pointer-events-none" />
@@ -7499,6 +7522,17 @@ export default function PortalMPP() {
           }}
           onOpenAgenciesCatalog={() => setIsAgenciesCatalogOpen(true)}
           onOpenServicesCatalog={() => setIsServicesMatrixOpen(true)}
+        />
+
+        {/* Modal Rekomendasi Teknis PKKPR Dinas PUPTR / Berita Acara Forum Penataan Ruang */}
+        <PkkprTechnicalRecommendationModal
+          isOpen={isPkkprModalOpen}
+          onClose={() => {
+            setIsPkkprModalOpen(false);
+            setPkkprInitialData(undefined);
+          }}
+          isDark={isDark}
+          initialData={pkkprInitialData}
         />
       </div>
     </div>

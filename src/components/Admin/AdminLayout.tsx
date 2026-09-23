@@ -210,7 +210,11 @@ export default function AdminLayout() {
 
   useEffect(() => {
     checkDatabaseConnection();
-    const interval = setInterval(checkDatabaseConnection, 20000);
+    const interval = setInterval(() => {
+      if (typeof document !== "undefined" && document.visibilityState === "visible") {
+        checkDatabaseConnection();
+      }
+    }, 60000); // 60s lightweight polling when tab is active
     return () => clearInterval(interval);
   }, [checkDatabaseConnection]);
 

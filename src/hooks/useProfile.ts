@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient.js';
 
-// In-memory module-level cache to eliminate re-fetching on component re-mounts
+// In-memory module-level cache & in-flight promise deduplicator to eliminate redundant requests
 let memoryCachedProfile: any = null;
-
+let inFlightFetchPromise: Promise<any> | null = null;
 const PROFILE_CACHE_KEY = 'luwu_cached_profile_data';
 
 export function useProfile() {
@@ -23,8 +23,9 @@ export function useProfile() {
   });
 
   const [isProfileLoading, setIsProfileLoading] = useState<boolean>(!memoryCachedProfile);
+  const isMountedRef = useRef<boolean>(true);
 
-  const saveProfileToCache = (newProfile: any) => {
+  const saveProfileToCache = useCallback((newProfile: any) => {
     memoryCachedProfile = newProfile;
     if (newProfile) {
       try {
@@ -39,17 +40,12 @@ export function useProfile() {
         // Ignore
       }
     }
-    setProfileState(newProfile);
-  };
-
-  const fetchProfile = useCallback(async (skipCacheCheck = false) => {
-    // If we already have a cached profile and skipCacheCheck is false, do not block loading
-    if (!skipCacheCheck && memoryCachedProfile) {
-      setIsProfileLoading(false);
-    } else {
-      setIsProfileLoading(true);
+    if (isMountedRef.current) {
+      setProfileState(newProfile);
     }
+  }, []);
 
+  const executeFetch = async (skipCacheCheck = false): Promise<any> => {
     try {
       // Restore session manually from cookie or localStorage to bypass iframe restrictions
       let token = localStorage.getItem("luwu_session_token") || localStorage.getItem("sb-access-token");
@@ -151,6 +147,7 @@ export function useProfile() {
         };
 
         saveProfileToCache(combinedProfile);
+        return combinedProfile;
       } else if (localStorage.getItem("luwu_session_token") || localStorage.getItem("luwu_user_role")) {
         const localEmail = localStorage.getItem("luwu_user_email") || "";
         const localRole = localStorage.getItem("luwu_user_role") || "admin_dalak";
@@ -178,6 +175,7 @@ export function useProfile() {
           ...citizenData
         };
         saveProfileToCache(combinedProfile as any);
+        return combinedProfile;
       } else {
         // --- Seamless Login Handoff from MPP Portal ---
         let mppTokenFound = false;
@@ -201,7 +199,7 @@ export function useProfile() {
                 };
                 saveProfileToCache(combinedProfile as any);
                 mppTokenFound = true;
-                break;
+                return combinedProfile;
               }
             }
           }
@@ -209,17 +207,47 @@ export function useProfile() {
         
         if (!mppTokenFound) {
           saveProfileToCache(null);
+          return null;
         }
       }
-    } catch {
+    } catch (err) {
       // Clean fallback for unauthenticated / offline states
-    } finally {
-      setIsProfileLoading(false);
+      return null;
     }
-  }, []);
+  };
+
+  const fetchProfile = useCallback(async (skipCacheCheck = false) => {
+    // If we already have a cached profile and skipCacheCheck is false, do not block loading
+    if (!skipCacheCheck && memoryCachedProfile) {
+      if (isMountedRef.current) setIsProfileLoading(false);
+      return memoryCachedProfile;
+    }
+
+    if (isMountedRef.current) setIsProfileLoading(true);
+
+    // In-flight deduplication: reuse active promise if one is already running
+    if (!inFlightFetchPromise || skipCacheCheck) {
+      inFlightFetchPromise = executeFetch(skipCacheCheck).finally(() => {
+        inFlightFetchPromise = null;
+      });
+    }
+
+    try {
+      const result = await inFlightFetchPromise;
+      return result;
+    } finally {
+      if (isMountedRef.current) {
+        setIsProfileLoading(false);
+      }
+    }
+  }, [saveProfileToCache]);
 
   useEffect(() => {
+    isMountedRef.current = true;
     fetchProfile();
+    return () => {
+      isMountedRef.current = false;
+    };
   }, [fetchProfile]);
 
   const refreshProfile = useCallback(() => {
@@ -228,7 +256,7 @@ export function useProfile() {
 
   const clearProfile = useCallback(() => {
     saveProfileToCache(null);
-  }, []);
+  }, [saveProfileToCache]);
 
   return {
     profile,
