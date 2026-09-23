@@ -183,26 +183,23 @@ export const MppVisitorAnalyticsModal: React.FC<MppVisitorAnalyticsModalProps> =
   return (
     <AnimatePresence>
       <div
-        className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/70 backdrop-blur-md overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]"
+        className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-slate-950/70 backdrop-blur-md overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]"
         onClick={onClose}
       >
         <motion.div
-          initial={{ opacity: 0, y: 100, scale: 0.95 }}
+          initial={{ opacity: 0, y: 20, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 100, scale: 0.95 }}
+          exit={{ opacity: 0, y: 20, scale: 0.98 }}
           transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-          className={`w-full max-w-3xl max-h-[92vh] flex flex-col rounded-t-3xl sm:rounded-3xl border shadow-2xl overflow-hidden ${
+          className={`w-full h-full sm:h-auto max-w-3xl max-h-full sm:max-h-[92vh] flex flex-col rounded-none sm:rounded-3xl border-0 sm:border shadow-2xl overflow-hidden ${
             isDark
               ? 'bg-slate-900 border-slate-800 text-white shadow-emerald-950/40'
               : 'bg-white border-slate-200 text-slate-900 shadow-slate-300/50'
           }`}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Header Bar dengan Handle Drag Android */}
-          <div className="relative pt-3 pb-4 px-5 sm:px-7 border-b border-slate-200/80 dark:border-slate-800 shrink-0">
-            {/* Handle Bar indikator mobile */}
-            <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto mb-3 sm:hidden" />
-
+          {/* Header Bar dengan Mobile Safe Area */}
+          <div className="relative pt-[calc(env(safe-area-inset-top,0px)+12px)] sm:pt-5 pb-4 px-5 sm:px-7 border-b border-slate-200/80 dark:border-slate-800 shrink-0">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-inner">
@@ -519,7 +516,7 @@ export const MppVisitorAnalyticsModal: React.FC<MppVisitorAnalyticsModalProps> =
           </div>
 
           {/* Modal Footer Bar */}
-          <div className="p-4 px-5 sm:px-7 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200/80 dark:border-slate-800 shrink-0 flex items-center justify-between gap-3">
+          <div className="p-4 px-5 sm:px-7 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] sm:pb-4 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200/80 dark:border-slate-800 shrink-0 flex items-center justify-between gap-3">
             <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
               <Activity className="w-3.5 h-3.5 text-emerald-500" /> {isZh ? "自动实时更新" : isEn ? "Updated automatically" : "Diperbarui secara otomatis"}
             </span>

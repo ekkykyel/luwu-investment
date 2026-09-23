@@ -11,7 +11,7 @@ import {
 
 export interface RoomZone {
   id: string;
-  floor: 1 | 2;
+  floor: number;
   name: string;
   category: string;
   description: string;
@@ -33,7 +33,6 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
   const isEn = currentLang.startsWith('en');
   const isZh = currentLang.startsWith('zh');
 
-  const [activeFloor, setActiveFloor] = useState<1 | 2>(1);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isWheelchairFilterActive, setIsWheelchairFilterActive] = useState<boolean>(false);
 
@@ -83,6 +82,26 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
           ]
         },
         {
+          id: 'l1-perizinan-oss',
+          floor: 1,
+          name: '商业许可 (OSS) 与建筑工程服务区 (DPMPTSP & PUPTR)',
+          category: '服务窗口',
+          description: 'PBG 建筑物批准、环保许可、商业经营许可 (NIB)、卫生许可及跨部门技术推荐核验中心。',
+          icon: Building2,
+          color: 'from-blue-500 to-teal-600',
+          coordinates: { x: 55, y: 15, w: 40, h: 35 },
+          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
+          services: ['建筑物批准 (PBG SIMBG)', '大中型企业 NIB 核发', '药房/诊所执业许可', '环境文件核验 (AMDAL/UKL-UPL)'],
+          capacity: '25 人',
+          image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800',
+          deskHeight: '半私密咨询服务台',
+          wheelchairAccessible: true,
+          wayfindingRoute: [
+            '从前台出发，顺着主走廊向北直行 15 米',
+            'OSS & PBG 许可大厅位于 1 楼中央明亮的大玻璃厅内'
+          ]
+        },
+        {
           id: 'l1-pajak-bank',
           floor: 1,
           name: '地方税收 (Bapenda) 与 Sulselbar 银行服务区',
@@ -101,6 +120,46 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
             '从前台出发，左转沿 1 楼西侧走廊直行 15 米',
             'Bank Sulselbar 窗口和 Bapenda 税务窗口位于走廊尽头左侧',
             '配有 ATM 机和无障碍出纳窗口'
+          ]
+        },
+        {
+          id: 'l1-investor-lounge',
+          floor: 1,
+          name: 'VIP 投资者贵宾厅与绿色通道 (DPMPTSP)',
+          category: 'VIP 投资者',
+          description: '专为投资者提供的综合咨询贵宾室，配备 DPMPTSP 专人协助、鲁乌投资地图 GIS 空间系统及地方优惠政策解读。',
+          icon: Armchair,
+          color: 'from-emerald-500 to-cyan-600',
+          coordinates: { x: 10, y: 15, w: 40, h: 35 },
+          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
+          services: ['技术团队一对一 VIP 咨询', 'ROI 投资回报模拟与 RTRW GIS 系统', 'OSS-RBA 与 PKKPR 办理协助', '特级鲁乌咖啡招待'],
+          capacity: '15 名 VIP 投资者',
+          image: 'https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&q=80&w=800',
+          deskHeight: '人体工程学会议桌与宽敞进出通道',
+          wheelchairAccessible: true,
+          wayfindingRoute: [
+            '从 1 楼大厅入口右侧进入 VIP 走廊直行 10 米',
+            'VIP 投资者休息室位于 1 楼东翼双开玻璃门处'
+          ]
+        },
+        {
+          id: 'l1-ruang-mediasi',
+          floor: 1,
+          name: '调解室与检察院法律咨询处',
+          category: '法律咨询',
+          description: '隔音会议室，用于行政许可争议解决、鲁乌县地方检察院免费法律咨询及 SP4N-LAPOR 投诉受理。',
+          icon: HeartHandshake,
+          color: 'from-slate-600 to-slate-800',
+          coordinates: { x: 10, y: 55, w: 35, h: 35 },
+          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
+          services: ['地方检察院民事行政免费法律门诊', '土地与许可纠纷调解', 'SP4N-LAPOR 现场投诉通道', '残障人士法律援助咨询'],
+          capacity: '12 人',
+          image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=800',
+          deskHeight: '声学隔音无障碍会议室',
+          wheelchairAccessible: true,
+          wayfindingRoute: [
+            '从 1 楼西侧走廊向南直行 10 米',
+            '调解室位于挂有 "综合法律诊所" 门牌的隔音门处'
           ]
         },
         {
@@ -145,91 +204,8 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
           ]
         },
         {
-          id: 'l1-toilet-difabel',
+          id: 'l1-musholla-vip',
           floor: 1,
-          name: '无障碍卫生间与主无障碍坡道',
-          category: '无障碍设施',
-          description: '符合公共工程部标准的无障碍卫生间，配备 90 cm 移门、不锈钢扶手、SOS 紧急呼叫按钮及低矮洗手池。',
-          icon: Accessibility,
-          color: 'from-teal-600 to-emerald-700',
-          coordinates: { x: 75, y: 55, w: 20, h: 35 },
-          hours: '全营业时间开放',
-          services: ['100 cm 宽平移门', '结实不锈钢安全扶手', '直通值班人员的 SOS 呼叫按钮', '防滑地板'],
-          capacity: '1 名申请人 + 1 名陪同',
-          image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800',
-          deskHeight: '马桶高度 45-50 cm 符合轮椅标准',
-          wheelchairAccessible: true,
-          wayfindingRoute: [
-            '从 1 楼东侧走廊出发，顺着国际残疾人标识指示',
-            '位于电梯前的走廊右侧'
-          ]
-        },
-        {
-          id: 'l2-investor-lounge',
-          floor: 2,
-          name: 'VIP 投资者贵宾厅与绿色通道',
-          category: 'VIP 投资者',
-          description: '专为投资者提供的综合咨询贵宾室，配备 DPMPTSP 专人协助、鲁乌投资地图 GIS 空间系统及地方优惠政策解读。',
-          icon: Armchair,
-          color: 'from-emerald-500 to-cyan-600',
-          coordinates: { x: 10, y: 15, w: 40, h: 35 },
-          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
-          services: ['技术团队一对一 VIP 咨询', 'ROI 投资回报模拟与 RTRW GIS 系统', 'OSS-RBA 与 PKKPR 办理协助', '特级鲁乌咖啡招待'],
-          capacity: '15 名 VIP 投资者',
-          image: 'https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&q=80&w=800',
-          deskHeight: '人体工程学会议桌与宽敞进出通道',
-          wheelchairAccessible: true,
-          wayfindingRoute: [
-            '乘坐 1 楼东南侧无障碍电梯前往 2 楼',
-            '出电梯后右转，沿铺地毯的 VIP 走廊直行 8 米',
-            'VIP 投资者休息室位于右侧双开玻璃门处'
-          ]
-        },
-        {
-          id: 'l2-perizinan-oss',
-          floor: 2,
-          name: '商业许可 (OSS) 与建筑工程服务区 (PUPTR)',
-          category: '服务窗口',
-          description: 'PBG 建筑物批准、环保许可、商业经营许可、卫生许可及跨部门技术推荐核验中心。',
-          icon: Building2,
-          color: 'from-blue-500 to-teal-600',
-          coordinates: { x: 55, y: 15, w: 40, h: 35 },
-          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
-          services: ['建筑物批准 (PBG SIMBG)', '大中型企业 NIB 核发', '药房/诊所执业许可', '环境文件核验 (AMDAL/UKL-UPL)'],
-          capacity: '25 人',
-          image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800',
-          deskHeight: '半私密咨询服务台',
-          wheelchairAccessible: true,
-          wayfindingRoute: [
-            '乘坐电梯前往 2 楼',
-            '出电梯后，顺着主走廊向北直行 15 米',
-            'OSS & PBG 许可大厅位于明亮的大玻璃厅内'
-          ]
-        },
-        {
-          id: 'l2-ruang-mediasi',
-          floor: 2,
-          name: '调解室与检察院法律咨询处',
-          category: '法律咨询',
-          description: '隔音会议室，用于行政许可争议解决、鲁乌县地方检察院免费法律咨询及 SP4N-LAPOR 投诉受理。',
-          icon: HeartHandshake,
-          color: 'from-slate-600 to-slate-800',
-          coordinates: { x: 10, y: 55, w: 35, h: 35 },
-          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
-          services: ['地方检察院民事行政免费法律门诊', '土地与许可纠纷调解', 'SP4N-LAPOR 现场投诉通道', '残障人士法律援助咨询'],
-          capacity: '12 人',
-          image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=800',
-          deskHeight: '声学隔音无障碍会议室',
-          wheelchairAccessible: true,
-          wayfindingRoute: [
-            '乘坐无障碍电梯前往 2 楼',
-            '左转进入 2 楼西侧走廊直行 10 米',
-            '调解室位于挂有 "综合法律诊所" 门牌的隔音门处'
-          ]
-        },
-        {
-          id: 'l2-musholla-vip',
-          floor: 2,
           name: 'Al-Mabrur 祈祷室与无障碍洗礼处',
           category: '公共设施',
           description: '宽敞、清洁、舒适的祈祷设施，配备空调、干净礼拜用品以及专为老年人和残障人士设计的坐式小净池。',
@@ -243,8 +219,28 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
           deskHeight: '平整地面，配有专用祈祷椅子',
           wheelchairAccessible: true,
           wayfindingRoute: [
-            '在 2 楼，顺着绿色圆顶指示牌前往东侧走廊',
-            '位于东侧走廊尽头，紧邻楼宇露台'
+            '在 1 楼，顺着绿色圆顶指示牌前往东侧走廊',
+            '位于东侧走廊尽头，紧邻楼宇花园'
+          ]
+        },
+        {
+          id: 'l1-toilet-difabel',
+          floor: 1,
+          name: '无障碍卫生间与主无障碍坡道',
+          category: '无障碍设施',
+          description: '符合公共工程部标准的无障碍卫生间，配备 90 cm 移门、不锈钢扶手、SOS 紧急呼叫按钮及低矮洗手池。',
+          icon: Accessibility,
+          color: 'from-teal-600 to-emerald-700',
+          coordinates: { x: 75, y: 55, w: 20, h: 35 },
+          hours: '全营业时间开放',
+          services: ['100 cm 宽平移门', '结实不锈钢安全扶手', '直通值班人员的 SOS 呼叫按钮', '防滑地板'],
+          capacity: '1 名申请人 + 1 名陪同',
+          image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800',
+          deskHeight: '马桶高度 45-50 cm 符合轮椅 standard',
+          wheelchairAccessible: true,
+          wayfindingRoute: [
+            '从 1 楼东侧走廊出发，顺着国际残疾人标识指示',
+            '位于 1 楼东翼走廊右侧'
           ]
         }
       ];
@@ -293,6 +289,26 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
           ]
         },
         {
+          id: 'l1-perizinan-oss',
+          floor: 1,
+          name: 'Business Licensing Cluster (OSS) & PUPTR Sectoral',
+          category: 'Service Counters',
+          description: 'Building Approvals (PBG), Environmental Permits, Business Licenses, Health Permits, and cross-department technical recommendations.',
+          icon: Building2,
+          color: 'from-blue-500 to-teal-600',
+          coordinates: { x: 55, y: 15, w: 40, h: 35 },
+          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
+          services: ['Building Approval (PBG SIMBG)', 'Medium & Large NIB Issuance', 'Pharmacy / Clinic Operational Permits', 'Environmental Document Verification'],
+          capacity: '25 Applicants',
+          image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800',
+          deskHeight: 'Semi-Private Consultation Counter',
+          wheelchairAccessible: true,
+          wayfindingRoute: [
+            'From Front Office, follow main corridor North for 15 meters',
+            'OSS & PBG Licensing Cluster is located inside the central hall of Floor 1'
+          ]
+        },
+        {
           id: 'l1-pajak-bank',
           floor: 1,
           name: 'Regional Revenue (Bapenda) & Bank Sulselbar Cluster',
@@ -311,6 +327,46 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
             'From Front Office, turn left along West Corridor Floor 1 for 15 meters',
             'Bank Sulselbar Counter & Bapenda Tax Desk are at the end on the left',
             'ATM machines and accessible counters available'
+          ]
+        },
+        {
+          id: 'l1-investor-lounge',
+          floor: 1,
+          name: 'VIP Investor Lounge & Fast-Track Desk (DPMPTSP)',
+          category: 'VIP Investor',
+          description: 'Exclusive consultation lounge for investors with personal DPMPTSP assistance, Luwu GIS spatial investment mapping, and regional incentives.',
+          icon: Armchair,
+          color: 'from-emerald-500 to-cyan-600',
+          coordinates: { x: 10, y: 15, w: 40, h: 35 },
+          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
+          services: ['One-on-One Technical Team Consultation', 'ROI Simulation & Luwu Spatial GIS', 'OSS-RBA & PKKPR Assistance', 'Luwu Specialty Coffee Hospitality'],
+          capacity: '15 VIP Investors',
+          image: 'https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&q=80&w=800',
+          deskHeight: 'Ergonomic Meeting Table & Wide Doorway',
+          wheelchairAccessible: true,
+          wayfindingRoute: [
+            'From Floor 1 Entrance, walk 10 meters along the East Wing corridor',
+            'VIP Investor Lounge is at the double glass doors on the right side of Floor 1'
+          ]
+        },
+        {
+          id: 'l1-ruang-mediasi',
+          floor: 1,
+          name: 'Mediation Room & Legal Consultation Desk',
+          category: 'Consultation',
+          description: 'Soundproof meeting room for licensing dispute resolution, free legal consultation by Luwu State Prosecutor, and SP4N-LAPOR complaints.',
+          icon: HeartHandshake,
+          color: 'from-slate-600 to-slate-800',
+          coordinates: { x: 10, y: 55, w: 35, h: 35 },
+          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
+          services: ['Free Legal Clinic by State Prosecutor', 'Land & Permit Dispute Mediation', 'Face-to-Face SP4N-LAPOR Complaint Desk', 'Disability Legal Aid'],
+          capacity: '12 Persons',
+          image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=800',
+          deskHeight: 'Soundproof Acoustic Room Barrier-Free',
+          wheelchairAccessible: true,
+          wayfindingRoute: [
+            'Walk into West Corridor Floor 1 for 10 meters',
+            'Mediation Room is at the soundproof door labeled "Integrated Legal Clinic"'
           ]
         },
         {
@@ -355,6 +411,26 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
           ]
         },
         {
+          id: 'l1-musholla-vip',
+          floor: 1,
+          name: 'Al-Mabrur Prayer Room & Seated Ablution',
+          category: 'Public Facilities',
+          description: 'Spacious, clean prayer facility with AC, clean prayer rugs/garments, and seated ablution area for elderly and disabled visitors.',
+          icon: Moon,
+          color: 'from-teal-600 to-emerald-700',
+          coordinates: { x: 50, y: 55, w: 45, h: 35 },
+          hours: 'Open All Operational Hours',
+          services: ['Clean Prayer Rugs & Attire', 'Cooling Air Conditioning', 'Seated Ablution Area for Disabled / Elderly', 'CCTV Security Camera'],
+          capacity: '30 Worshippers',
+          image: 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&q=80&w=800',
+          deskHeight: 'Flat Flooring with Special Prayer Chairs',
+          wheelchairAccessible: true,
+          wayfindingRoute: [
+            'On Floor 1, follow green dome signage to East corridor',
+            'Located at the end of the east corridor next to the garden patio'
+          ]
+        },
+        {
           id: 'l1-toilet-difabel',
           floor: 1,
           name: 'Accessible Restroom & Main Ramp',
@@ -371,245 +447,59 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
           wheelchairAccessible: true,
           wayfindingRoute: [
             'From East Corridor Floor 1, follow international disability pictograms',
-            'Located on the right before the building elevator'
-          ]
-        },
-        {
-          id: 'l2-investor-lounge',
-          floor: 2,
-          name: 'VIP Investor Lounge & Fast-Track Desk',
-          category: 'VIP Investor',
-          description: 'Exclusive consultation lounge for investors with personal DPMPTSP assistance, Luwu GIS spatial investment mapping, and regional incentives.',
-          icon: Armchair,
-          color: 'from-emerald-500 to-cyan-600',
-          coordinates: { x: 10, y: 15, w: 40, h: 35 },
-          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
-          services: ['One-on-One Technical Team Consultation', 'ROI Simulation & Luwu Spatial GIS', 'OSS-RBA & PKKPR Assistance', 'Luwu Specialty Coffee Hospitality'],
-          capacity: '15 VIP Investors',
-          image: 'https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&q=80&w=800',
-          deskHeight: 'Ergonomic Meeting Table & Wide Doorway',
-          wheelchairAccessible: true,
-          wayfindingRoute: [
-            'Take Accessible Elevator on Southeast side of Floor 1 to Floor 2',
-            'Exit elevator, turn right and walk 8 meters along VIP carpeted corridor',
-            'VIP Investor Lounge is at the double glass doors on the right'
-          ]
-        },
-        {
-          id: 'l2-perizinan-oss',
-          floor: 2,
-          name: 'Business Licensing Cluster (OSS) & PUPTR Sectoral',
-          category: 'Service Counters',
-          description: 'Building Approvals (PBG), Environmental Permits, Business Licenses, Health Permits, and cross-department technical recommendations.',
-          icon: Building2,
-          color: 'from-blue-500 to-teal-600',
-          coordinates: { x: 55, y: 15, w: 40, h: 35 },
-          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
-          services: ['Building Approval (PBG SIMBG)', 'Medium & Large NIB Issuance', 'Pharmacy / Clinic Operational Permits', 'Environmental Document Verification'],
-          capacity: '25 Applicants',
-          image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800',
-          deskHeight: 'Semi-Private Consultation Counter',
-          wheelchairAccessible: true,
-          wayfindingRoute: [
-            'Take Building Elevator to Floor 2',
-            'Exit elevator, follow main corridor North for 15 meters',
-            'OSS & PBG Licensing Cluster is inside the bright glass hall'
-          ]
-        },
-        {
-          id: 'l2-ruang-mediasi',
-          floor: 2,
-          name: 'Mediation Room & Legal Consultation Desk',
-          category: 'Consultation',
-          description: 'Soundproof meeting room for licensing dispute resolution, free legal consultation by Luwu State Prosecutor, and SP4N-LAPOR complaints.',
-          icon: HeartHandshake,
-          color: 'from-slate-600 to-slate-800',
-          coordinates: { x: 10, y: 55, w: 35, h: 35 },
-          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
-          services: ['Free Legal Clinic by State Prosecutor', 'Land & Permit Dispute Mediation', 'Face-to-Face SP4N-LAPOR Complaint Desk', 'Disability Legal Aid'],
-          capacity: '12 Persons',
-          image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=800',
-          deskHeight: 'Soundproof Acoustic Room Barrier-Free',
-          wheelchairAccessible: true,
-          wayfindingRoute: [
-            'Take Accessible Elevator to Floor 2',
-            'Turn left into West Corridor Floor 2 for 10 meters',
-            'Mediation Room is at the soundproof door labeled "Integrated Legal Clinic"'
-          ]
-        },
-        {
-          id: 'l2-musholla-vip',
-          floor: 2,
-          name: 'Al-Mabrur Prayer Room & Seated Ablution',
-          category: 'Public Facilities',
-          description: 'Spacious, clean prayer facility with AC, clean prayer rugs/garments, and seated ablution area for elderly and disabled visitors.',
-          icon: Moon,
-          color: 'from-teal-600 to-emerald-700',
-          coordinates: { x: 50, y: 55, w: 45, h: 35 },
-          hours: 'Open All Operational Hours',
-          services: ['Clean Prayer Rugs & Attire', 'Cooling Air Conditioning', 'Seated Ablution Area for Disabled / Elderly', 'CCTV Security Camera'],
-          capacity: '30 Worshipers',
-          image: 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&q=80&w=800',
-          deskHeight: 'Level Floor with Special Prayer Chairs',
-          wheelchairAccessible: true,
-          wayfindingRoute: [
-            'From Floor 2, follow green dome signs to East Corridor',
-            'Located at the end of East Corridor next to balcony'
+            'Located on the right side of the East corridor'
           ]
         }
       ];
     } else {
-      // Indonesian Default
+      // Indonesian Language Default
       return [
         {
           id: 'l1-frontoffice',
           floor: 1,
           name: 'Front Office, Meja Resepsionis & E-Kiosk Antrean',
           category: 'Fasilitas Umum',
-          description: 'Pusat registrasi kedatangan, pengambilan tiket antrean digital layar sentuh dengan tinggi ergonomis, dan informasi awal pelayanan terpadu.',
+          description: 'Pusat registrasi kedatangan, pengambilan tiket antrean digital layar sentuh dengan ketinggian ergonomis, dan informasi awal layanan terpadu.',
           icon: Laptop,
           color: 'from-blue-500 to-indigo-600',
           coordinates: { x: 10, y: 15, w: 25, h: 30 },
           hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
-          services: ['Check-in Tiket Digital', 'Informasi Syarat Berkas', 'Asistensi Pengisian Formulir Mandiri', 'Penyediaan Kursi Roda Gratis'],
+          services: ['Check-in Tiket Digital', 'Informasi Persyaratan Berkas', 'Bantuan Pengisian Formulir Mandiri', 'Peminjaman Kursi Roda Gratis'],
           capacity: '15 Pemohon',
           image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800',
-          deskHeight: 'Meja Rendah 75 cm (Ramah Kursi Roda)',
+          deskHeight: 'Meja Rendah 75 cm (Aksesibel Kursi Roda)',
           wheelchairAccessible: true,
           wayfindingRoute: [
-            'Titik Awal: Gerbang Pintu Masuk Utama MPP Simpurusiang',
-            'Masuk melewati pintu kaca sensor otomatis dan jalur ramp landai kemiringan 6%',
-            'E-Kiosk Antrean dan Meja Resepsionis berada tepat 5 meter lurus di depan pintu masuk'
+            'Titik Awal: Pintu Masuk Utama Gerbang MPP Simpurusiang Lantai 1',
+            'Masuk melewati pintu kaca sensor otomatis dan jalur ramp landai kelandaian 6%',
+            'Mesin E-Kiosk dan Meja Resepsionis berada 5 meter lurus di depan pintu masuk'
           ]
         },
         {
           id: 'l1-kependudukan',
           floor: 1,
-          name: 'Klaster Kependudukan & Catatan Sipil (Disdukcapil)',
+          name: 'Klaster Kependudukan & Pencatatan Sipil (Disdukcapil)',
           category: 'Loket Layanan',
-          description: 'Loket terpadu Disdukcapil Luwu untuk perekaman & cetak KTP-el, Kartu Keluarga, KIA, Akta Kelahiran, dan Surat Pindah.',
+          description: 'Layanan terpadu cetak KTP-el, Kartu Keluarga, Kartu Identitas Anak (KIA), Akta Kelahiran, dan Surat Pindah Domisili tanpa calo.',
           icon: Building2,
           color: 'from-emerald-500 to-teal-600',
           coordinates: { x: 40, y: 15, w: 30, h: 30 },
           hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
-          services: ['Perekaman & Cetak KTP-el Cepat', 'Kartu Identitas Anak (KIA)', 'Akta Kelahiran & Kematian', 'Aktivasi Identitas Kependudukan Digital (IKD)'],
+          services: ['Perekaman & Cetak Cepat KTP-el', 'Penerbitan KIA', 'Akta Kelahiran & Kematian', 'Aktivasi Identitas Kependudukan Digital (IKD)'],
           capacity: '20 Pemohon',
           image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800',
-          deskHeight: 'Loket 01 Khusus Meja Rendah 75 cm (Prioritas Lansia & Difabel)',
+          deskHeight: 'Loket 01 Meja Rendah 75 cm (Prioritas Lansia & Difabel)',
           wheelchairAccessible: true,
           wayfindingRoute: [
-            'Dari Front Office, ikuti garis kuning pemandu (guiding block) lurus sejauh 12 meter',
-            'Belok kanan di sayap Timur Lantai 1',
-            'Loket 01-04 Disdukcapil berada di sebelah kanan berdampingan dengan bilik foto KTP'
+            'Dari Front Office, ikuti ubin pemandu kuning (guiding block) lurus 12 meter',
+            'Belok kanan pada Sayap Timur Lantai 1',
+            'Loket 01-04 Disdukcapil berada di sisi kanan berdampingan dengan bilik foto KTP'
           ]
         },
         {
-          id: 'l1-pajak-bank',
+          id: 'l1-perizinan-oss',
           floor: 1,
-          name: 'Klaster Pendapatan Daerah (Bapenda) & Bank Sulselbar',
-          category: 'Loket Layanan',
-          description: 'Layanan pembayaran pajak daerah (PBB-P2, BPHTB, Retribusi) serta counter kas teller perbankan resmi tanpa antre luar gedung.',
-          icon: Store,
-          color: 'from-amber-500 to-orange-600',
-          coordinates: { x: 75, y: 15, w: 20, h: 30 },
-          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
-          services: ['Pembayaran PBB & Validasi BPHTB', 'Loket Kas Teller Bank Sulselbar', 'Konsultasi Pajak Daerah & Usaha', 'Mesin ATM Tarik Tunai'],
-          capacity: '12 Pemohon',
-          image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800',
-          deskHeight: 'Meja Kas Rendah & Jalur Antrean Kursi Roda',
-          wheelchairAccessible: true,
-          wayfindingRoute: [
-            'Dari Front Office, belok kiri menyusuri koridor Barat Lantai 1 sejauh 15 meter',
-            'Counter Kas Bank Sulselbar dan Loket Pajak Bapenda berada di ujung lorong sebelah kiri',
-            'Tersedia mesin ATM dan loket teller ramah disabilitas'
-          ]
-        },
-        {
-          id: 'l1-laktasi-kids',
-          floor: 1,
-          name: 'Ruang Laktasi & Arena Edukasi Bermain Anak',
-          category: 'Fasilitas Ramah',
-          description: 'Fasilitas ramah ibu dan anak yang bersih, higienis, ber-AC sejuk, dilengkapi sofa laktasi privat, wastafel sterilizer, dan mainan edukatif SNI.',
-          icon: Baby,
-          color: 'from-rose-500 to-pink-600',
-          coordinates: { x: 10, y: 55, w: 25, h: 35 },
-          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
-          services: ['Sofa Laktasi Privat Bersih', 'Sterilizer Botol Susu & Wastafel Air Hangat', 'Mini Playground & Buku Cerita Anak', 'Kulkas Penyimpan ASI'],
-          capacity: '10 Anak & Ibu',
-          image: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&q=80&w=800',
-          deskHeight: 'Pintu Lebar 90 cm Bebas Hambatan (Stroller Friendly)',
-          wheelchairAccessible: true,
-          wayfindingRoute: [
-            'Dari Front Office, berjalan ke arah koridor Selatan menuju ruang tunggu utama',
-            'Pintu Ruang Laktasi berada di sebelah kiri sebelum akses toilet umum',
-            'Pintu geser otomatis dengan tombol pembuka ramah anak'
-          ]
-        },
-        {
-          id: 'l1-lounge-baca',
-          floor: 1,
-          name: 'Executive Waiting Lounge & Pojok Baca Digital',
-          category: 'Fasilitas Umum',
-          description: 'Ruang tunggu berkarpet dan sofa empuk dengan koneksi Wi-Fi kencang, charging station gratis, tablet e-library, dan air minum higienis gratis.',
-          icon: BookOpen,
-          color: 'from-purple-500 to-violet-600',
-          coordinates: { x: 40, y: 55, w: 55, h: 35 },
-          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
-          services: ['High-speed Wi-Fi 100 Mbps', 'Digital Library Tablet Screen & Buku Cetak', 'Free Water & Coffee Station', 'Layar FIDS Panggilan Antrean'],
-          capacity: '50 Pemohon',
-          image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&q=80&w=800',
-          deskHeight: 'Area Parkir Khusus Kursi Roda dengan Stop Kontak Pengisian Daya',
-          wheelchairAccessible: true,
-          wayfindingRoute: [
-            'Berada persis di tengah atrium gedung Lantai 1',
-            'Dikelilingi layar monitor LED pemanggilan antrean dari segala sudut pandang'
-          ]
-        },
-        {
-          id: 'l1-toilet-difabel',
-          floor: 1,
-          name: 'Toilet Aksesibel & Ramp Difabel Utama',
-          category: 'Fasilitas Ramah',
-          description: 'Toilet standar aksesibilitas permen PUPR dengan pintu geser 90 cm, pegangan rambat (grab bar), tombol darurat SOS, dan wastafel rendah.',
-          icon: Accessibility,
-          color: 'from-teal-600 to-emerald-700',
-          coordinates: { x: 75, y: 55, w: 20, h: 35 },
-          hours: 'Buka Sepanjang Jam Operasional',
-          services: ['Pintu Geser Lebar 100 cm', 'Pegangan Rambat Stainless Steel Kokoh', 'Tombol Alarm Darurat SOS ke Petugas', 'Lantai Anti-Selip'],
-          capacity: '1 Pemohon + 1 Pendamping',
-          image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800',
-          deskHeight: 'Ketinggian Kloset 45-50 cm Sesuai Standar Kursi Roda',
-          wheelchairAccessible: true,
-          wayfindingRoute: [
-            'Dari koridor Timur Lantai 1, ikuti rambu piktogram disabilitas internasional',
-            'Terletak di sebelah kanan koridor sebelum akses lift gedung'
-          ]
-        },
-        {
-          id: 'l2-investor-lounge',
-          floor: 2,
-          name: 'VIP Investor Lounge & Fast-Track Desk',
-          category: 'Investor VIP',
-          description: 'Ruang khusus konsultasi investor terpadu dengan asistensi personal DPMPTSP, integrasi GIS Spasial peta investasi Luwu, dan insentif daerah.',
-          icon: Armchair,
-          color: 'from-emerald-500 to-cyan-600',
-          coordinates: { x: 10, y: 15, w: 40, h: 35 },
-          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
-          services: ['Konsultasi One-on-One Tim Teknis Terpadu', 'Simulasi ROI & GIS RTRW Luwu', 'Asistensi OSS-RBA & PKKPR', 'Hospitality Jamuan Kopi Toraja-Luwu'],
-          capacity: '15 Investor VIP',
-          image: 'https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&q=80&w=800',
-          deskHeight: 'Meja Rapat Ergonomis & Akses Pintu Lebar',
-          wheelchairAccessible: true,
-          wayfindingRoute: [
-            'Gunakan Lift Aksesibel di sisi Tenggara Lantai 1 menuju Lantai 2',
-            'Keluar dari lift, belok kanan 8 meter melewati koridor VIP berkarpet',
-            'Ruang VIP Investor Lounge berada di pintu kaca berpintu ganda sebelah kanan'
-          ]
-        },
-        {
-          id: 'l2-perizinan-oss',
-          floor: 2,
-          name: 'Klaster Perizinan Berusaha (OSS) & Sektoral PUPTR',
+          name: 'Klaster Perizinan Berusaha (OSS) & Sektoral DPMPTSP / PUPTR',
           category: 'Loket Layanan',
           description: 'Pusat perizinan PBG, Lingkungan Hidup, Izin Usaha Perdagangan, Kesehatan, serta verifikasi rekomendasi teknis OPD lintas instansi.',
           icon: Building2,
@@ -622,14 +512,54 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
           deskHeight: 'Loket Meja Konsultasi Semi-Private',
           wheelchairAccessible: true,
           wayfindingRoute: [
-            'Gunakan Lift Gedung menuju Lantai 2',
-            'Keluar lift, ikuti lorong utama ke arah Utara sejauh 15 meter',
+            'Dari Front Office, ikuti lorong utama ke arah Utara Lantai 1 sejauh 15 meter',
             'Klaster Perizinan OSS & PBG berada di ruangan aula kaca berlampu terang'
           ]
         },
         {
-          id: 'l2-ruang-mediasi',
-          floor: 2,
+          id: 'l1-pajak-bank',
+          floor: 1,
+          name: 'Klaster Pendapatan Daerah (Bapenda) & Bank Sulselbar',
+          category: 'Loket Layanan',
+          description: 'Layanan pembayaran PBB-P2, BPHTB, retribusi daerah, dan kasir teller resmi Bank Sulselbar tanpa perlu keluar gedung.',
+          icon: Store,
+          color: 'from-amber-500 to-orange-600',
+          coordinates: { x: 75, y: 15, w: 20, h: 30 },
+          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
+          services: ['Pembayaran PBB & Validasi BPHTB', 'Loket Kas Teller Bank Sulselbar', 'Konsultasi Pajak Daerah & Usaha', 'Mesin Tarik Tunai ATM'],
+          capacity: '12 Pemohon',
+          image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800',
+          deskHeight: 'Meja Kasir Rendah & Jalur Antrean Kursi Roda',
+          wheelchairAccessible: true,
+          wayfindingRoute: [
+            'Dari Front Office, belok kiri menyusuri koridor Barat Lantai 1 sejauh 15 meter',
+            'Loket Bank Sulselbar dan Bapenda berada di ujung lorong sebelah kiri',
+            'Tersedia mesin ATM dan teller ramah disabilitas'
+          ]
+        },
+        {
+          id: 'l1-investor-lounge',
+          floor: 1,
+          name: 'VIP Investor Lounge & Fast-Track DPMPTSP',
+          category: 'VIP Investor',
+          description: 'Ruang konsultasi eksklusif bagi investor dengan pendampingan personal DPMPTSP, GIS Peta Potensi Investasi Luwu, dan simulasi insentif fiskal.',
+          icon: Armchair,
+          color: 'from-emerald-500 to-cyan-600',
+          coordinates: { x: 10, y: 15, w: 40, h: 35 },
+          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
+          services: ['Konsultasi VIP One-on-One Tim Teknis', 'Simulasi ROI & GIS Tata Ruang RTRW', 'Asistensi OSS-RBA & PKKPR', 'Hospitality Kopi Luwu Premium'],
+          capacity: '15 Investor VIP',
+          image: 'https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&q=80&w=800',
+          deskHeight: 'Meja Rapat Ergonomis & Akses Pintu Lebar',
+          wheelchairAccessible: true,
+          wayfindingRoute: [
+            'Dari pintu masuk Lantai 1, susuri koridor Sayap Timur sejauh 10 meter',
+            'Ruang VIP Investor Lounge berada di pintu kaca berpintu ganda sebelah kanan Lantai 1'
+          ]
+        },
+        {
+          id: 'l1-ruang-mediasi',
+          floor: 1,
           name: 'Ruang Mediasi & Konsultasi Hukum Kejaksaan',
           category: 'Konsultasi',
           description: 'Ruang rapat kedap suara untuk penyelesaian sengketa perizinan, konsultasi hukum gratis Kejaksaan Negeri Luwu, dan pengaduan SP4N-LAPOR.',
@@ -643,14 +573,54 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
           deskHeight: 'Ruangan Akustik Kedap Suara Bebas Hambatan',
           wheelchairAccessible: true,
           wayfindingRoute: [
-            'Naik ke Lantai 2 menggunakan Lift Difabel',
-            'Belok kiri menuju koridor Barat Lantai 2 sejauh 10 meter',
+            'Susuri koridor Barat Lantai 1 sejauh 10 meter',
             'Ruang Mediasi berada di pintu kedap suara berlabel "Klinik Hukum Terpadu"'
           ]
         },
         {
-          id: 'l2-musholla-vip',
-          floor: 2,
+          id: 'l1-laktasi-kids',
+          floor: 1,
+          name: 'Ruang Laktasi (Ibu Menyusui) & Arena Bermain Anak',
+          category: 'Fasilitas Inklusif',
+          description: 'Fasilitas ramah ibu dan anak yang bersih, higienis, ber-AC, dilengkapi sofa menyusui privat, wastafel sterilisasi, dan mainan edukatif SNI.',
+          icon: Baby,
+          color: 'from-rose-500 to-pink-600',
+          coordinates: { x: 10, y: 55, w: 25, h: 35 },
+          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
+          services: ['Sofa Privat Menyusui Higienis', 'Wastafel Air Hangat & Alat Steril Botol', 'Playground Mini & Buku Cerita Anak', 'Kulkas Khusus Penyimpanan ASI'],
+          capacity: '10 Anak & Ibu',
+          image: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&q=80&w=800',
+          deskHeight: 'Pintu Lebar 90 cm (Aksesibel Kereta Bayi/Stroller)',
+          wheelchairAccessible: true,
+          wayfindingRoute: [
+            'Dari Front Office, berjalan ke arah lorong Selatan menuju area tunggu utama',
+            'Pintu Ruang Laktasi berada di sebelah kiri sebelum toilet umum',
+            'Pintu geser otomatis dengan tombol pembuka ramah anak'
+          ]
+        },
+        {
+          id: 'l1-lounge-baca',
+          floor: 1,
+          name: 'Executive Waiting Lounge & Pojok Baca Digital',
+          category: 'Fasilitas Umum',
+          description: 'Area tunggu nyaman berkarpet dengan sofa empuk, Wi-Fi berkecepatan tinggi, charging station gratis, tablet perpustakaan digital, dan air minum gratis.',
+          icon: BookOpen,
+          color: 'from-purple-500 to-violet-600',
+          coordinates: { x: 40, y: 55, w: 55, h: 35 },
+          hours: "07:30 - 16:00 WITA (Jumat s/d 16:30)",
+          services: ['Wi-Fi 100 Mbps Kecepatan Tinggi', 'Tablet Layar Baca Digital & Buku Fisik', 'Stasiun Air Minum & Kopi Gratis', 'Layar Monitor Pemanggil Antrean FIDS'],
+          capacity: '50 Pemohon',
+          image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&q=80&w=800',
+          deskHeight: 'Area Parkir Khusus Kursi Roda dengan Stopkontak Charger',
+          wheelchairAccessible: true,
+          wayfindingRoute: [
+            'Terletak tepat di atrium tengah Lantai 1',
+            'Dikelilingi layar LED display antrean yang terlihat dari semua sudut'
+          ]
+        },
+        {
+          id: 'l1-musholla-vip',
+          floor: 1,
           name: 'Musholla Al-Mabrur & Tempat Wudhu Duduk',
           category: 'Fasilitas Umum',
           description: 'Sarana ibadah yang luas, bersih, dan sejuk dengan pendingin AC, mukena/sarung bersih, dan tempat wudhu khusus duduk untuk lansia dan difabel.',
@@ -664,8 +634,28 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
           deskHeight: 'Lantai Rata Dilengkapi Kursi Sholat Khusus',
           wheelchairAccessible: true,
           wayfindingRoute: [
-            'Dari Lantai 2, ikuti penunjuk arah kubah hijau ke koridor Timur',
-            'Terletak di ujung koridor timur berdampingan dengan balkon sejuk gedung'
+            'Dari Lantai 1, ikuti penunjuk arah kubah hijau ke koridor Timur',
+            'Terletak di ujung koridor timur berdampingan dengan taman sejuk gedung'
+          ]
+        },
+        {
+          id: 'l1-toilet-difabel',
+          floor: 1,
+          name: 'Toilet Khusus Disabilitas & Ramp Utama',
+          category: 'Fasilitas Inklusif',
+          description: 'Toilet standar Kementerian PUPR dengan pintu geser 90 cm, pegangan tangan stainless, tombol alarm SOS darurat, dan wastafel rendah.',
+          icon: Accessibility,
+          color: 'from-teal-600 to-emerald-700',
+          coordinates: { x: 75, y: 55, w: 20, h: 35 },
+          hours: 'Buka Sepanjang Jam Operasional',
+          services: ['Pintu Geser Lebar 100 cm', 'Handrail / Pegangan Kuat Stainless Steel', 'Tombol Alarm Darurat SOS ke Petugas Piket', 'Lantai Anti-Selip'],
+          capacity: '1 Pemohon + 1 Pendamping',
+          image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800',
+          deskHeight: 'Ketinggian Kloset 45-50 cm Standar Kursi Roda',
+          wheelchairAccessible: true,
+          wayfindingRoute: [
+            'Dari koridor Timur Lantai 1, ikuti rambu piktogram internasional disabilitas',
+            'Terletak di sisi kanan koridor sayap timur Lantai 1'
           ]
         }
       ];
@@ -674,23 +664,21 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
 
   const [selectedZone, setSelectedZone] = useState<RoomZone | null>(null);
 
-  // Sync selected zone on mount or language/floor change
+  // Sync selected zone on mount or language change
   useEffect(() => {
     if (selectedZone) {
-      const updated = zonesData.find(z => z.id === selectedZone.id && z.floor === activeFloor);
+      const updated = zonesData.find(z => z.id === selectedZone.id);
       if (updated) {
         setSelectedZone(updated);
         return;
       }
     }
-    const first = zonesData.find(z => z.floor === activeFloor);
-    if (first) setSelectedZone(first);
-  }, [zonesData, activeFloor]);
+    if (zonesData.length > 0) setSelectedZone(zonesData[0]);
+  }, [zonesData]);
 
-  // Filtered zones based on floor, search query, and accessibility mode
+  // Filtered zones based on search query and accessibility mode
   const currentFloorZones = useMemo(() => {
     return zonesData.filter(z => {
-      if (z.floor !== activeFloor) return false;
       if (isWheelchairFilterActive && !z.wheelchairAccessible) return false;
       if (!searchQuery.trim()) return true;
       const q = searchQuery.toLowerCase();
@@ -701,7 +689,7 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
         z.category.toLowerCase().includes(q)
       );
     });
-  }, [zonesData, activeFloor, isWheelchairFilterActive, searchQuery]);
+  }, [zonesData, isWheelchairFilterActive, searchQuery]);
 
   return (
     <div className="w-full space-y-6">
@@ -711,18 +699,18 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-base sm:text-lg md:text-xl font-bold tracking-tight font-sans text-slate-900 dark:text-white flex items-center gap-2">
               <Navigation className="w-5 h-5 text-emerald-500 shrink-0" />
-              <span>{isEn ? 'Interactive Digital Wayfinding & Floor Plan' : isZh ? '数字大厅导航与互动楼层平面图' : t("mppPortal.interactiveFloorPlan.title", "Digital Wayfinding & Denah Interaktif MPP")}</span>
+              <span>{isEn ? 'Interactive Digital Wayfinding & Floor Plan' : isZh ? '数字大厅导航与互动平面图' : t("mppPortal.interactiveFloorPlan.title", "Digital Wayfinding & Denah Interaktif MPP")}</span>
             </h3>
             <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono shrink-0">
               {isEn ? 'BARRIER-FREE ACCESSIBLE' : isZh ? '无障碍通行友好' : 'RAMAH DISABILITAS'}
             </span>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-            {isEn ? 'Interactive navigation map for Floor 1 & Floor 2 with wheelchair accessibility routes and direct counter directions.' : isZh ? '1层与2层互动导航地图，配备轮椅无障碍指引及各窗口精准路线。' : 'Peta denah navigasi Lantai 1 & Lantai 2 dengan penunjuk arah ramah kursi roda dan rute loket terpadu'}
+          <p className="text-xs text-slate-700 dark:text-slate-300 mt-1 leading-relaxed font-medium">
+            {isEn ? 'All applicant services are unified on Floor 1 of MPP Simpurusiang with wheelchair accessibility routes. (Floor 2 is dedicated to DPMPTSP internal employee offices).' : isZh ? '辛普鲁西亚政务中心 1 楼一站式综合服务大厅导航平面图（2 楼为 DPMPTSP 内部办公区）。' : 'Peta denah navigasi Lantai 1 (Pusat Pelayanan Terpadu Satu Pintu Pemohon). Seluruh loket pelayanan berpusat di Lantai 1, sedangkan Lantai 2 khusus perkantoran pegawai DPMPTSP.'}
           </p>
         </div>
 
-        {/* Floor Switcher & Accessibility Mode Toggle */}
+        {/* Floor Indicator & Accessibility Mode Toggle */}
         <div className="flex flex-wrap items-center gap-2">
           {/* Wheelchair Accessibility Mode Toggle */}
           <button
@@ -745,43 +733,19 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
             </span>
           </button>
 
-          {/* Floor Tabs */}
-          <div className={`flex items-center p-1 rounded-2xl border ${
-            isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'
+          {/* Unified Floor Badge (Lantai 1 Pelayanan Terpadu) */}
+          <div className={`flex items-center gap-2 px-3.5 py-2 min-h-[44px] rounded-2xl border ${
+            isDark ? 'bg-slate-900/90 border-emerald-500/30 text-emerald-400' : 'bg-emerald-50/80 border-emerald-200 text-emerald-800'
           }`}>
-            <button
-              type="button"
-              onClick={() => {
-                setActiveFloor(1);
-                const first = zonesData.find(z => z.floor === 1);
-                if (first) setSelectedZone(first);
-              }}
-              className={`flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] rounded-xl text-xs font-bold transition-all cursor-pointer active:scale-95 ${
-                activeFloor === 1
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Layers className="w-3.5 h-3.5 shrink-0" />
-              <span>{isEn ? 'Floor 1' : isZh ? '1 楼' : 'Lantai 1'}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setActiveFloor(2);
-                const first = zonesData.find(z => z.floor === 2);
-                if (first) setSelectedZone(first);
-              }}
-              className={`flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] rounded-xl text-xs font-bold transition-all cursor-pointer active:scale-95 ${
-                activeFloor === 2
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Layers className="w-3.5 h-3.5 shrink-0" />
-              <span>{isEn ? 'Floor 2' : isZh ? '2 楼' : 'Lantai 2'}</span>
-            </button>
+            <Layers className="w-4 h-4 text-emerald-500 shrink-0" />
+            <div className="flex flex-col text-left">
+              <span className="text-xs font-extrabold tracking-tight">
+                {isEn ? 'Floor 1: Public Services' : isZh ? '1 楼: 一站式服务区' : 'Lantai 1: Layanan Pemohon'}
+              </span>
+              <span className="text-[9px] opacity-75 font-normal">
+                {isEn ? 'L2: DPMPTSP Internal Offices' : isZh ? '2 楼为内部办公区' : 'L2: Kantor Internal Pegawai'}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -822,7 +786,7 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
             <div className="flex items-center gap-2">
               <Compass className="w-4 h-4 text-emerald-500 animate-spin" style={{ animationDuration: '12s' }} />
               <span className="text-xs font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500 font-mono">
-                {isEn ? `MPP SIMPURUSIANG BUILDING • FLOOR ${activeFloor}` : isZh ? `辛普鲁西亚政务中心大楼 • ${activeFloor} 层` : `GEDUNG MPP SIMPURUSIANG • LANTAI ${activeFloor}`}
+                {isEn ? `MPP SIMPURUSIANG • ALL PUBLIC SERVICES (FLOOR 1)` : isZh ? `辛普鲁西亚政务中心 • 1 楼一站式服务全景` : `GEDUNG MPP SIMPURUSIANG • LANTAI 1 (PUSAT LAYANAN PEMOHON)`}
               </span>
             </div>
 
@@ -879,16 +843,16 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
                     <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white line-clamp-2 font-sans leading-snug">
                       {zone.name}
                     </h4>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mt-1 leading-snug">
+                    <p className="text-[11px] text-slate-700 dark:text-slate-300 line-clamp-2 mt-1 leading-snug font-medium">
                       {zone.description}
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-between mt-3 pt-2 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400 min-h-[28px]">
-                    <span className="flex items-center gap-1 font-mono">
-                      <Clock className="w-3 h-3 text-emerald-500 shrink-0" /> {zone.hours.split(' ')[0]}
+                  <div className="flex items-center justify-between mt-3 pt-2 border-t border-slate-200/80 dark:border-slate-800 text-[10px] text-slate-600 dark:text-slate-400 min-h-[28px]">
+                    <span className="flex items-center gap-1 font-mono font-medium">
+                      <Clock className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" /> {zone.hours.split(' ')[0]}
                     </span>
-                    <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold hover:underline">
+                    <span className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-bold hover:underline">
                       <span>{isEn ? 'Wayfinding Route' : isZh ? '查看指引路线' : 'Rute Petunjuk'}</span>
                       <ChevronRight className="w-3 h-3 shrink-0" />
                     </span>
@@ -898,9 +862,9 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
             })}
           </div>
 
-          <div className="relative z-10 text-center text-[10px] text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-center gap-2">
+          <div className="relative z-10 text-center text-[10px] text-slate-700 dark:text-slate-400 pt-3 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-center gap-2 font-medium">
             <Footprints className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-            <span>{isEn ? 'Yellow tactile guiding blocks installed along all corridors for visually impaired visitors.' : isZh ? '全楼道铺设黄色无障碍盲道引导地砖，便利视障人士安全通行。' : 'Guiding Block (ubin pemandu kuning) terpasang di seluruh koridor untuk penyandang tunanetra.'}</span>
+            <span>{isEn ? 'Yellow tactile guiding blocks installed along all Floor 1 corridors for visually impaired visitors.' : isZh ? '1 楼全楼道铺设黄色无障碍盲道引导地砖，便利视障人士安全通行。' : 'Guiding Block (ubin pemandu kuning) terpasang di seluruh koridor Lantai 1 untuk kenyamanan disabilitas.'}</span>
           </div>
         </div>
 
@@ -931,7 +895,7 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                     <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
                       <span className="text-xs font-bold bg-emerald-600 px-2.5 py-1 rounded-lg">
-                        {isEn ? `Floor ${selectedZone.floor}` : isZh ? `${selectedZone.floor} 楼` : `Lantai ${selectedZone.floor}`}
+                        {isEn ? 'Floor 1 (Public Area)' : isZh ? '1 楼 (服务区)' : 'Lantai 1 (Area Layanan)'}
                       </span>
                       <span className="text-xs font-semibold bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-lg font-mono">
                         {isEn ? `Capacity: ${selectedZone.capacity}` : isZh ? `容纳人数: ${selectedZone.capacity}` : `Kapasitas: ${selectedZone.capacity}`}
@@ -955,8 +919,8 @@ export function InteractiveFloorPlan({ isDark = false }: { isDark?: boolean }) {
                   </div>
 
                   {/* Step-by-Step Wayfinding Guidance */}
-                  <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2.5">
-                    <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-mono">
+                  <div className="mt-4 pt-3 border-t border-slate-200/80 dark:border-slate-800 space-y-2.5">
+                    <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-1.5 font-mono">
                       <Navigation className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                       <span>{isEn ? 'Step-by-Step Route Guidance (Wayfinding):' : isZh ? '分步导航指引 (路线步骤):' : 'Panduan Langkah Rute (Wayfinding):'}</span>
                     </h5>

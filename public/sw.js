@@ -69,16 +69,37 @@ if (isWorkboxReady) {
     })
   );
 
-  // 3. Document / App Shell (NetworkFirst)
+  // 3. Document / App Shell (NetworkFirst with App Shell Cache Fallback)
   registerRoute(
-    ({ request }) => request.mode === 'navigate' || request.destination === 'document',
+    ({ request, url }) => 
+      (request.mode === 'navigate' || request.destination === 'document') &&
+      url.origin === self.location.origin,
     new NetworkFirst({
       cacheName: 'app-shell-cache-v1',
-      networkTimeoutSeconds: 3
+      networkTimeoutSeconds: 3,
+      plugins: [
+        new CacheableResponsePlugin({
+          statuses: [0, 200]
+        })
+      ]
     })
   );
 
-  self.addEventListener('install', () => self.skipWaiting());
+  // Fallback Catch Handler to prevent uncaught no-response errors on offline/iframe preview
+  workbox.routing.setCatchHandler(async ({ event }) => {
+    if (event.request.mode === 'navigate' || event.request.destination === 'document') {
+      const cachedIndex = await caches.match('/index.html') || await caches.match('/');
+      if (cachedIndex) return cachedIndex;
+    }
+    return Response.error();
+  });
+
+  self.addEventListener('install', (event) => {
+    event.waitUntil(
+      caches.open('app-shell-cache-v1').then((cache) => cache.add('/index.html').catch(() => {}))
+    );
+    self.skipWaiting();
+  });
   self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
 } else {
   // NATIVE SERVICE WORKER SWR & TTL SPATIAL ENGINE

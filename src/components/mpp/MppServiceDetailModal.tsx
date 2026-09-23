@@ -536,7 +536,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
     <AnimatePresence>
       <div 
         id="mpp-service-detail-backdrop"
-        className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-y-auto backdrop-blur-md bg-slate-950/70"
+        className="fixed inset-0 z-[100] flex items-center justify-center p-0 sm:p-4 md:p-6 overflow-y-auto backdrop-blur-md bg-slate-950/70 font-['Plus_Jakarta_Sans',sans-serif]"
         onClick={(e) => {
           if (e.target === e.currentTarget) {
             onClose();
@@ -548,14 +548,14 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
           role="dialog"
           aria-modal="true"
           aria-labelledby="service-detail-title"
-          initial={{ opacity: 0, scale: 0.94, y: 20 }}
+          initial={{ opacity: 0, scale: 0.97, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.94, y: 20 }}
+          exit={{ opacity: 0, scale: 0.97, y: 20 }}
           transition={{ type: "spring", stiffness: 320, damping: 28 }}
-          className="relative w-full max-w-4xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] text-slate-900 dark:text-white font-sans"
+          className="relative w-full h-full sm:h-auto max-w-4xl max-h-full sm:max-h-[92vh] bg-white dark:bg-slate-900 border-0 sm:border border-slate-200/80 dark:border-white/10 rounded-none sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col text-slate-900 dark:text-white font-sans"
         >
           {/* Header Bar dengan Tombol Tutup Presisi */}
-          <div className="relative z-10 px-5 sm:px-7 py-4 border-b border-slate-100 dark:border-white/10 flex items-center justify-between bg-white/90 dark:bg-slate-900/90 backdrop-blur-md">
+          <div className="relative z-10 px-5 sm:px-7 py-4 pt-[calc(env(safe-area-inset-top,0px)+12px)] sm:pt-4 border-b border-slate-100 dark:border-white/10 flex items-center justify-between bg-white/90 dark:bg-slate-900/90 backdrop-blur-md">
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${service.iconContainerClass || 'bg-emerald-500/10 dark:bg-emerald-500/20'}`}>
                 <IconComponent className={`w-5 h-5 ${service.iconColor || 'text-emerald-600 dark:text-emerald-400'}`} />
@@ -582,11 +582,11 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
           </div>
 
           {/* Body Konten Scrollable */}
-          <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 p-5 sm:p-7 space-y-6">
-            {/* Hero Showcase: Dokumentasi Foto HD & Keterangan Lokasi */}
-            <div className="relative rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 shadow-lg bg-slate-950 group">
+          <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 p-4 sm:p-7 space-y-6">
+            {/* Hero Showcase: Dokumentasi Foto HD & Keterangan Lokasi (Lebih Luas & Elegan) */}
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/80 dark:border-white/10 shadow-xl bg-slate-950 group">
               <div 
-                className="relative h-56 sm:h-72 md:h-80 w-full overflow-hidden cursor-pointer"
+                className="relative h-72 sm:h-80 md:h-96 w-full overflow-hidden cursor-pointer"
                 onClick={() => setIsPhotoPreviewOpen(true)}
                 title={t("mppPortal.serviceDetail.clickToEnlarge", "Klik untuk memperbesar foto")}
               >
@@ -599,15 +599,15 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                     e.currentTarget.src = service.image;
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent pointer-events-none" />
 
                 {/* Badges di Kiri Atas */}
-                <div className="absolute top-3.5 left-3.5 flex flex-wrap items-center gap-2 z-10">
-                  <div className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-md border border-white/20 px-3 py-1.5 rounded-full text-white text-[11px] font-semibold shadow-sm">
-                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <div className="absolute top-3 sm:top-3.5 left-3 sm:left-3.5 flex flex-wrap items-center gap-1.5 sm:gap-2 z-10">
+                  <div className="flex items-center gap-1.5 bg-slate-900/85 backdrop-blur-md border border-white/20 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-white text-[10px] sm:text-[11px] font-semibold shadow-sm">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
                     <span>MPP Simpurusiang Certified</span>
                   </div>
-                  <span className={`text-[11px] font-bold tracking-wide uppercase px-3 py-1.5 rounded-full border shadow-sm ${service.badgeClass || 'bg-white/90 text-slate-900 border-white/30'}`}>
+                  <span className={`text-[10px] sm:text-[11px] font-bold tracking-wide uppercase px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border shadow-sm ${service.badgeClass || 'bg-white/90 text-slate-900 border-white/30'}`}>
                     {serviceBadge}
                   </span>
                 </div>
@@ -619,7 +619,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                     e.stopPropagation();
                     setIsPhotoPreviewOpen(true);
                   }}
-                  className="absolute top-3.5 right-3.5 z-20 flex items-center gap-1.5 bg-slate-900/80 hover:bg-slate-900 backdrop-blur-md border border-white/20 text-white text-[11px] font-semibold px-3 py-1.5 rounded-full shadow-md transition-all cursor-pointer hover:scale-105"
+                  className="absolute top-3 sm:top-3.5 right-3 sm:right-3.5 z-20 flex items-center gap-1.5 bg-slate-900/85 hover:bg-slate-900 backdrop-blur-md border border-white/20 text-white text-[10px] sm:text-[11px] font-semibold px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full shadow-md transition-all cursor-pointer hover:scale-105"
                 >
                   <Maximize2 className="w-3.5 h-3.5 text-emerald-400" />
                   <span>{t("mppPortal.serviceDetail.enlargeHd", "Perbesar HD")}</span>
@@ -634,10 +634,10 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                         e.stopPropagation();
                         setSelectedPhotoIndex(prev => (prev > 0 ? prev - 1 : gallery.length - 1));
                       }}
-                      className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white border border-white/20 flex items-center justify-center transition-all cursor-pointer opacity-80 hover:opacity-100 shadow-md"
+                      className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white border border-white/20 flex items-center justify-center transition-all cursor-pointer opacity-80 hover:opacity-100 shadow-md"
                       aria-label="Foto sebelumnya"
                     >
-                      <ChevronLeft className="w-5 h-5" />
+                      <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                     </button>
                     <button
                       type="button"
@@ -645,29 +645,29 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                         e.stopPropagation();
                         setSelectedPhotoIndex(prev => (prev < gallery.length - 1 ? prev + 1 : 0));
                       }}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white border border-white/20 flex items-center justify-center transition-all cursor-pointer opacity-80 hover:opacity-100 shadow-md"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white border border-white/20 flex items-center justify-center transition-all cursor-pointer opacity-80 hover:opacity-100 shadow-md"
                       aria-label="Foto berikutnya"
                     >
-                      <ChevronRight className="w-5 h-5" />
+                      <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                     </button>
                   </>
                 )}
 
                 {/* Overlay Keterangan di Atas Foto */}
-                <div className="absolute bottom-3.5 left-3.5 right-3.5 flex flex-col sm:flex-row sm:items-end justify-between gap-3 text-white pointer-events-none">
+                <div className="absolute bottom-3.5 left-3.5 right-3.5 flex flex-col sm:flex-row sm:items-end justify-between gap-2.5 text-white pointer-events-none">
                   <div className="space-y-1">
-                    <p className="text-xs text-emerald-400 font-semibold flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5" />
+                    <p className="text-[11px] sm:text-xs text-emerald-400 font-bold flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 shrink-0" />
                       {location}
                     </p>
-                    <p className="text-xs sm:text-sm text-slate-200 max-w-xl line-clamp-2">
+                    <p className="text-xs sm:text-sm text-slate-200 max-w-xl line-clamp-2 leading-relaxed">
                       {serviceDescription}
                     </p>
                   </div>
 
                   {/* Indikator Jumlah Foto */}
                   {gallery.length > 1 && (
-                    <div className="text-[11px] text-slate-300 bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-md border border-white/10 self-start sm:self-auto">
+                    <div className="text-[10px] sm:text-[11px] font-mono font-bold text-slate-300 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-md border border-white/10 self-start sm:self-auto shrink-0">
                       {selectedPhotoIndex + 1} / {gallery.length}
                     </div>
                   )}
@@ -676,13 +676,13 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
 
               {/* Thumbnails Bar (Bila ada lebih dari 1 foto dokumentasi) */}
               {gallery.length > 1 && (
-                <div className="p-3 bg-slate-900/95 border-t border-white/10 flex items-center gap-2.5 overflow-x-auto scrollbar-none">
+                <div className="p-2.5 sm:p-3 bg-slate-900/95 border-t border-white/10 flex items-center gap-2 overflow-x-auto scrollbar-none">
                   {gallery.map((photoUrl, idx) => (
                     <button
                       key={idx}
                       type="button"
                       onClick={() => setSelectedPhotoIndex(idx)}
-                      className={`relative w-16 h-12 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 cursor-pointer ${
+                      className={`relative w-14 h-10 sm:w-16 sm:h-12 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 cursor-pointer ${
                         selectedPhotoIndex === idx
                           ? 'border-emerald-500 scale-105 shadow-md shadow-emerald-500/30'
                           : 'border-transparent opacity-60 hover:opacity-100'
@@ -903,7 +903,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
           </div>
 
           {/* Footer Aksi Presisi: Daftar Antrean atau Kembali */}
-          <div className="p-4 sm:p-6 border-t border-slate-100 dark:border-white/10 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-3.5">
+          <div className="p-4 sm:p-6 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] sm:pb-6 border-t border-slate-100 dark:border-white/10 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-3.5">
             <div className="text-xs text-slate-500 dark:text-slate-400 text-center sm:text-left">
               {t("mppPortal.serviceDetail.understandNotice", "Sudah memahami spesifikasi? Lanjutkan untuk mengambil nomor antrean resmi.")}
             </div>
@@ -928,7 +928,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                 className="flex-1 sm:flex-none px-6 py-2.5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:brightness-105 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer group font-['Plus_Jakarta_Sans',sans-serif]"
               >
                 <Calendar className="w-4 h-4 text-slate-950" />
-                <span>{t("mppPortal.serviceDetail.bookQueueBtn", "Daftar Antrean Layanan Ini")}</span>
+                <span>{t("mppPortal.serviceDetail.bookQueueBtn", "Daftar Antrean")}</span>
                 <ChevronRight className="w-4 h-4 text-slate-950 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>

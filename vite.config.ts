@@ -54,13 +54,16 @@ export default defineConfig(() => {
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
+        devOptions: {
+          enabled: false,
+        },
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png'],
         workbox: {
           cleanupOutdatedCaches: true, // WAJIB ADA: Membersihkan cache lama mencegah error IDB
           clientsClaim: true,
           skipWaiting: true,
           maximumFileSizeToCacheInBytes: 5242880, // 5 MiB to accommodate the large index chunk
-          navigateFallbackDenylist: [/^\/api/],
+          navigateFallbackDenylist: [/^\/api/, /#.*/],
         },
         manifest: {
           name: 'Portal Investasi Luwu',
