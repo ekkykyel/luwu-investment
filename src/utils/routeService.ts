@@ -15,6 +15,7 @@ export interface RouteStep {
   agg_cost: number;
   nama_jalan: string;
   geom_geojson: LineString | null;
+  segment_distance_m?: number;
   total_distance_m: number;
 }
 

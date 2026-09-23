@@ -1,8 +1,25 @@
 import { motion } from "motion/react";
 import React, { useState, useEffect, useRef } from "react";
-import { X, Send, Bot, Sparkles, MapPin, Building2, HelpCircle, MessageSquare, Compass, ArrowRight, ShieldCheck, Zap } from "lucide-react";
+import { 
+  X, 
+  Send, 
+  Bot, 
+  Sparkles, 
+  MapPin, 
+  Building2, 
+  HelpCircle, 
+  MessageSquare, 
+  Compass, 
+  ArrowRight, 
+  ShieldCheck, 
+  Zap, 
+  Volume2, 
+  VolumeX, 
+  Loader2 
+} from "lucide-react";
 import ResponsiveChatInput from "./ResponsiveChatInput";
 import { useTranslation } from "react-i18next";
+import { playAirportChime } from "../utils/airportAudioAlert";
 
 interface Message {
   role: "user" | "model";
@@ -27,8 +44,161 @@ export default function LuwuInvestmentAiModal({
   const [messages, setMessages] = useState<Message[]>([]);
   const [aiInput, setAiInput] = useState("");
   const [isAiTyping, setIsAiTyping] = useState(false);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [speakingMsgIdx, setSpeakingMsgIdx] = useState<number | null>(null);
+  
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+
+  const stopAllAudio = () => {
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current.currentTime = 0;
+    }
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsSpeaking(false);
+    setSpeakingMsgIdx(null);
+  };
+
+  const speakTextWithChime = async (text: string, lang: "id" | "en" | "zh", msgIdx?: number) => {
+    if (!text) return;
+    stopAllAudio();
+    setIsSpeaking(true);
+    if (msgIdx !== undefined) setSpeakingMsgIdx(msgIdx);
+
+    try {
+      // 1. Play authentic 4-tone Airport Chime (Ding-Dong / Garuda & Changi style)
+      await playAirportChime();
+
+      // 2. Play TTS voice via /api/tts-edge or Browser SpeechSynthesis with sentence-chaining
+      try {
+        const res = await fetch("/api/tts-edge", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text, lang, voiceGender: "FEMALE" })
+        });
+
+        if (res.ok) {
+          const ttsData = await res.json();
+          if (ttsData.audioUrl) {
+            if (!audioPlayerRef.current) {
+              audioPlayerRef.current = new Audio();
+            }
+            audioPlayerRef.current.src = ttsData.audioUrl;
+            audioPlayerRef.current.onended = () => {
+              setIsSpeaking(false);
+              setSpeakingMsgIdx(null);
+            };
+            audioPlayerRef.current.onerror = () => {
+              fallbackSpeakBrowser(text, lang, msgIdx);
+            };
+            await audioPlayerRef.current.play();
+            return;
+          }
+        }
+      } catch (edgeErr) {
+        console.warn("Edge TTS request failed, using browser fallback:", edgeErr);
+      }
+
+      fallbackSpeakBrowser(text, lang, msgIdx);
+    } catch (err) {
+      console.warn("Audio playback error:", err);
+      setIsSpeaking(false);
+      setSpeakingMsgIdx(null);
+    }
+  };
+
+  const fallbackSpeakBrowser = (text: string, lang: "id" | "en" | "zh", msgIdx?: number) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      setIsSpeaking(false);
+      setSpeakingMsgIdx(null);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    const cleanText = text
+      .replace(/[*#_`~\[\]\(\)>]/g, "")
+      .replace(/https?:\/\/\S+/g, "")
+      .trim();
+
+    if (!cleanText) {
+      setIsSpeaking(false);
+      setSpeakingMsgIdx(null);
+      return;
+    }
+
+    // Split sentences including Chinese punctuation
+    const sentenceRegex = lang === "zh"
+      ? /[^。！？；\n]+[。！？；\n]?/g
+      : /[^.!?;\n]+[.!?;\n]?/g;
+
+    const sentences = cleanText.match(sentenceRegex) || [cleanText];
+    const voices = window.speechSynthesis.getVoices();
+    const targetLang = lang === "zh" ? "zh-cn" : lang === "en" ? "en-us" : "id-id";
+    const voice = voices.find((v) => {
+      const vl = v.lang.toLowerCase();
+      return vl === targetLang || vl.startsWith(lang);
+    });
+
+    let currentIdx = 0;
+    const playNext = () => {
+      if (currentIdx >= sentences.length) {
+        setIsSpeaking(false);
+        setSpeakingMsgIdx(null);
+        return;
+      }
+
+      const chunk = sentences[currentIdx].trim();
+      if (!chunk) {
+        currentIdx++;
+        playNext();
+        return;
+      }
+
+      const utterance = new SpeechSynthesisUtterance(chunk);
+      utterance.rate = lang === "zh" ? 0.95 : 1.0;
+      utterance.pitch = 1.0;
+      utterance.lang = lang === "zh" ? "zh-CN" : lang === "en" ? "en-US" : "id-ID";
+      if (voice) utterance.voice = voice;
+
+      utterance.onstart = () => {
+        setIsSpeaking(true);
+      };
+      utterance.onend = () => {
+        currentIdx++;
+        if (currentIdx < sentences.length) {
+          playNext();
+        } else {
+          setIsSpeaking(false);
+          setSpeakingMsgIdx(null);
+        }
+      };
+      utterance.onerror = () => {
+        currentIdx++;
+        if (currentIdx < sentences.length) {
+          playNext();
+        } else {
+          setIsSpeaking(false);
+          setSpeakingMsgIdx(null);
+        }
+      };
+
+      window.speechSynthesis.speak(utterance);
+    };
+
+    playNext();
+  };
+
+  useEffect(() => {
+    return () => {
+      stopAllAudio();
+    };
+  }, []);
 
   const welcomeGreetings = {
     id: [
@@ -149,10 +319,14 @@ export default function LuwuInvestmentAiModal({
       }
 
       if (res.ok) {
+        const replyText = data.text || data.reply || "Respon asisten selesai, Bapak/Ibu.";
         setMessages((prev) => [
           ...prev,
-          { role: "model", text: data.text || data.reply || "Respon asisten selesai, Bapak/Ibu." },
+          { role: "model", text: replyText },
         ]);
+        if (isAudioEnabled) {
+          speakTextWithChime(replyText, aiLanguage);
+        }
       } else {
         setMessages((prev) => [
           ...prev,
@@ -283,6 +457,40 @@ export default function LuwuInvestmentAiModal({
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
+            {/* AUDIO SOUND & CHIME TOGGLE */}
+            <button
+              type="button"
+              onClick={() => {
+                if (isSpeaking) {
+                  stopAllAudio();
+                }
+                setIsAudioEnabled(!isAudioEnabled);
+              }}
+              className={`px-2 py-1 rounded-lg border transition-all flex items-center gap-1 text-[11px] font-bold ${
+                isAudioEnabled
+                  ? isDarkMode
+                    ? "bg-amber-500/15 border-amber-500/40 text-amber-300 hover:bg-amber-500/25"
+                    : "bg-amber-50 border-amber-200 text-amber-800 hover:bg-amber-100 shadow-2xs"
+                  : isDarkMode
+                    ? "bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200"
+                    : "bg-slate-100 border-slate-200 text-slate-500 hover:text-slate-800"
+              }`}
+              title={isAudioEnabled ? "Bel Bandara & TTS Suara Aktif (Klik untuk Membisukan)" : "Suara Dibisukan (Klik untuk Mengaktifkan)"}
+              aria-label="Toggle audio chime and voice"
+            >
+              {isAudioEnabled ? (
+                <>
+                  <Volume2 size={13} className={isSpeaking ? "text-amber-500 animate-pulse" : "text-amber-600 dark:text-amber-400"} />
+                  <span className="hidden sm:inline text-[10px]">Bel & Audio</span>
+                </>
+              ) : (
+                <>
+                  <VolumeX size={13} />
+                  <span className="hidden sm:inline text-[10px]">Bisu</span>
+                </>
+              )}
+            </button>
+
             {/* LANGUAGE SELECTOR */}
             <div className="flex items-center p-0.5 rounded-lg bg-slate-200/60 dark:bg-slate-800 border border-slate-300/40 dark:border-slate-700">
               <button
@@ -385,9 +593,25 @@ export default function LuwuInvestmentAiModal({
                           </span>
                           <span className="text-[10px] text-slate-400">• Tata Ruang</span>
                         </div>
-                        <span className="text-[9px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5">
-                          <ShieldCheck className="w-3 h-3" /> PostGIS
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => speakTextWithChime(msg.text, aiLanguage, idx)}
+                            className={`p-1 rounded-md transition-all flex items-center gap-1 text-[10px] font-semibold ${
+                              speakingMsgIdx === idx && isSpeaking
+                                ? "bg-amber-500/20 text-amber-500 animate-pulse font-bold"
+                                : "text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-slate-800"
+                            }`}
+                            title="Dengarkan Jawaban (Bel Bandara + Suara)"
+                            aria-label="Play voice response"
+                          >
+                            <Volume2 size={12} className={speakingMsgIdx === idx && isSpeaking ? "text-amber-500" : ""} />
+                            <span className="text-[9px]">{speakingMsgIdx === idx && isSpeaking ? "Berbunyi..." : "Dengar"}</span>
+                          </button>
+                          <span className="text-[9px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5">
+                            <ShieldCheck className="w-3 h-3" /> PostGIS
+                          </span>
+                        </div>
                       </div>
                     )}
                     <div className="space-y-1 text-xs sm:text-sm leading-relaxed">
