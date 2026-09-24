@@ -56,7 +56,6 @@ export function AntiCorruptionBanner({
   const isZh = currentLang.startsWith('zh');
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isWbsModalOpen, setIsWbsModalOpen] = useState(false);
   const [selectedPillar, setSelectedPillar] = useState<CommitmentSlide | null>(null);
@@ -150,7 +149,10 @@ export function AntiCorruptionBanner({
       const container = scrollContainerRef.current;
       const targetChild = container.children[index] as HTMLElement;
       if (targetChild) {
-        targetChild.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        container.scrollTo({
+          left: targetChild.offsetLeft,
+          behavior: 'smooth'
+        });
       }
       setTimeout(() => {
         isProgrammaticScrollRef.current = false;
@@ -193,15 +195,6 @@ export function AntiCorruptionBanner({
     }
   };
 
-  // Auto-cycling timer effect with pause-on-hover/touch
-  useEffect(() => {
-    if (isPaused) return;
-    const interval = setInterval(() => {
-      nextSlide();
-    }, autoCycleInterval);
-    return () => clearInterval(interval);
-  }, [isPaused, autoCycleInterval, nextSlide]);
-
   const currentSlide = slides[currentIndex] || slides[0];
 
   return (
@@ -212,24 +205,9 @@ export function AntiCorruptionBanner({
             ? 'bg-slate-900/95 border-rose-500/30 shadow-2xl shadow-rose-950/25' 
             : 'bg-white border-rose-200/90 shadow-xl shadow-rose-500/5'
         } ${className}`}
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-        onTouchStart={() => setIsPaused(true)}
-        onTouchEnd={() => setIsPaused(false)}
       >
-        {/* Animated Cycle Progress Line */}
-        <div className="absolute top-0 inset-x-0 h-1 bg-slate-200 dark:bg-slate-800 overflow-hidden z-20">
-          <motion.div 
-            key={currentIndex + (isPaused ? '-paused' : '-running')}
-            initial={{ width: '0%' }}
-            animate={{ width: isPaused ? '100%' : '100%' }}
-            transition={{ 
-              duration: isPaused ? 0 : autoCycleInterval / 1000, 
-              ease: 'linear' 
-            }}
-            className={`h-full bg-gradient-to-r ${currentSlide.gradient}`}
-          />
-        </div>
+        {/* Static Header Line */}
+        <div className={`h-1 bg-gradient-to-r ${currentSlide.gradient}`} />
 
         {/* Compact Header Bar Optimized for Android Viewport */}
         <div className={`px-3 sm:px-5 py-2.5 sm:py-3 border-b flex items-center justify-between gap-2 relative z-10 ${
@@ -254,17 +232,6 @@ export function AntiCorruptionBanner({
 
           {/* Controls & Quick Actions */}
           <div className="flex items-center gap-1.5 shrink-0">
-            {/* Auto-cycle pause/play toggle */}
-            <button
-              type="button"
-              onClick={() => setIsPaused(!isPaused)}
-              className="p-1.5 min-w-[28px] min-h-[28px] rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-rose-500 transition-colors cursor-pointer border border-slate-200/80 dark:border-white/10 flex items-center justify-center text-[10px]"
-              title={isPaused ? "Lanjutkan Putaran Otomatis" : "Jeda Putaran"}
-              aria-label="Toggle Auto Cycle"
-            >
-              {isPaused ? <Play size={12} className="text-emerald-500" /> : <Pause size={12} />}
-            </button>
-
             {/* Pakta Maklumat modal trigger */}
             <button
               type="button"
