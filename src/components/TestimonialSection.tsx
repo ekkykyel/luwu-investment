@@ -375,14 +375,6 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
               </button>
             ))}
           </div>
-
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-amber-500 to-emerald-600 hover:from-amber-600 hover:to-emerald-700 transition-all shadow-md hover:shadow-lg active:scale-95 shrink-0 cursor-pointer"
-          >
-            <MessageSquarePlus className="w-4 h-4" />
-            <span>Tulis Ulasan Investor</span>
-          </button>
         </div>
 
         {/* Content State: Loading / Items Slider */}
