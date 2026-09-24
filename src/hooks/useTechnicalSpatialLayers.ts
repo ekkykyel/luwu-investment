@@ -328,6 +328,29 @@ export function useTechnicalSpatialLayers(initialOverrides?: Record<string, bool
     return stats;
   }, [geoJsonData]);
 
+  // Clear cache or update specific layer GeoJSON dynamically
+  const clearCache = useCallback((layerId?: string) => {
+    if (layerId) {
+      delete globalGeoJsonCache[layerId];
+      setGeoJsonData(prev => {
+        const next = { ...prev };
+        delete next[layerId];
+        return next;
+      });
+    } else {
+      Object.keys(globalGeoJsonCache).forEach(k => delete globalGeoJsonCache[k]);
+      setGeoJsonData({});
+    }
+  }, []);
+
+  const setLayerGeoJson = useCallback((layerId: string, geojson: any) => {
+    globalGeoJsonCache[layerId] = geojson;
+    setGeoJsonData(prev => ({
+      ...prev,
+      [layerId]: geojson
+    }));
+  }, []);
+
   return {
     spatialLayers,
     activeStates,
@@ -339,6 +362,8 @@ export function useTechnicalSpatialLayers(initialOverrides?: Record<string, bool
     setLayerOpacity,
     onChangeLayerOpacity: setLayerOpacity,
     setAllLayers,
+    clearCache,
+    setLayerGeoJson,
     config: TECHNICAL_LAYERS_CONFIG
   };
 }

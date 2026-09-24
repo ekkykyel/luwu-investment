@@ -6406,6 +6406,215 @@ app.post("/api/investments/validate-environment", async (req, res) => {
   }
 });
 
+// POST /api/v1/pkkpr/approve-alih-fungsi
+// Dynamic Spatial Difference: Cuts LP2B / Sawah layer geometry with application polygon and updates luas_m2 in PostGIS / Supabase
+app.post("/api/v1/pkkpr/approve-alih-fungsi", async (req, res) => {
+  try {
+    const { permohonan_id, berita_acara_num, surat_rekomendasi_num, notes } = req.body;
+
+    if (!permohonan_id) {
+      return res.status(400).json({
+        success: false,
+        error: "permohonan_id wajib diisi!"
+      });
+    }
+
+    console.log(`[approve-alih-fungsi] Memproses Dynamic Spatial Difference untuk permohonan_id: ${permohonan_id}`);
+
+    // 1. Fetch application record from gis_pkkpr or investments
+    let permohonanGeom: any = null;
+    let appRecord: any = null;
+
+    const { data: pkkprData } = await supabase
+      .from('gis_pkkpr')
+      .select('*')
+      .eq('id', permohonan_id)
+      .maybeSingle();
+
+    if (pkkprData) {
+      appRecord = pkkprData;
+      permohonanGeom = pkkprData.geom || pkkprData.geometry;
+    } else {
+      const { data: invData } = await supabase
+        .from('investments')
+        .select('*')
+        .eq('id', permohonan_id)
+        .maybeSingle();
+
+      if (invData) {
+        appRecord = invData;
+        permohonanGeom = invData.geometry || invData.geom;
+      }
+    }
+
+    if (!permohonanGeom) {
+      return res.status(404).json({
+        success: false,
+        error: `Permohonan ID #${permohonan_id} tidak ditemukan atau tidak memiliki poligon geometri.`
+      });
+    }
+
+    // Convert to Turf feature
+    let permohonanFeature: any = null;
+    if (permohonanGeom.type === 'Feature') {
+      permohonanFeature = permohonanGeom;
+    } else if (permohonanGeom.type === 'Polygon' || permohonanGeom.type === 'MultiPolygon') {
+      permohonanFeature = turf.feature(permohonanGeom);
+    } else if (permohonanGeom.geometry) {
+      permohonanFeature = turf.feature(permohonanGeom.geometry);
+    }
+
+    if (!permohonanFeature) {
+      return res.status(400).json({
+        success: false,
+        error: "Geometri permohonan tidak valid untuk pemotongan spasial (bukan Polygon/MultiPolygon)."
+      });
+    }
+
+    // 2. Fetch active LP2B / Sawah layer features from DB (gis_sawah) or spatialLayers
+    const { data: sawahRows, error: sawahErr } = await supabase
+      .from('gis_sawah')
+      .select('*');
+
+    let sawahFeatures: any[] = [];
+    if (!sawahErr && sawahRows && sawahRows.length > 0) {
+      sawahFeatures = sawahRows.map(r => ({
+        id: r.id,
+        dbId: r.id,
+        type: 'Feature',
+        geometry: r.geom || r.geometry,
+        properties: {
+          id: r.id,
+          name: r.name || 'Sawah LP2B',
+          description: r.description,
+          fill: r.fill,
+          stroke: r.stroke
+        }
+      })).filter(f => f.geometry);
+    } else {
+      // Fallback to in-memory spatialLayers
+      const sawahLayer = spatialLayers.find(l => l.id === "layer_sawah");
+      if (sawahLayer && sawahLayer.geojson && Array.isArray(sawahLayer.geojson.features)) {
+        sawahFeatures = sawahLayer.geojson.features;
+      }
+    }
+
+    let updatedCount = 0;
+    const updatedSawahFeatures: any[] = [];
+
+    // 3. Execute ST_Difference / Turf difference for each intersecting LP2B polygon
+    for (const sawahFeat of sawahFeatures) {
+      try {
+        const intersects = turf.booleanIntersects(sawahFeat, permohonanFeature);
+        if (intersects) {
+          let diffResult: any = null;
+          try {
+            diffResult = turf.difference(turf.featureCollection([sawahFeat, permohonanFeature]));
+          } catch (diffErr) {
+            diffResult = (turf as any).difference(sawahFeat, permohonanFeature);
+          }
+
+          if (diffResult && diffResult.geometry) {
+            // Compute updated area in m2
+            const newLuasM2 = Math.round(turf.area(diffResult));
+            diffResult.properties = {
+              ...(sawahFeat.properties || {}),
+              luas_m2: newLuasM2,
+              last_alih_fungsi_cut: new Date().toISOString(),
+              last_permohonan_id: permohonan_id
+            };
+
+            // Update in Supabase DB (gis_sawah)
+            const targetId = sawahFeat.dbId || sawahFeat.id;
+            if (targetId) {
+              await supabase
+                .from('gis_sawah')
+                .update({
+                  geom: diffResult.geometry,
+                  description: {
+                    '@type': 'html',
+                    value: `PL = Sawah LP2B<br>Luas_m2 = ${newLuasM2}<br>Post Alih Fungsi = ${new Date().toLocaleDateString('id-ID')}`
+                  }
+                })
+                .eq('id', targetId);
+            }
+
+            updatedCount++;
+            updatedSawahFeatures.push(diffResult);
+          } else {
+            updatedSawahFeatures.push(sawahFeat);
+          }
+        } else {
+          updatedSawahFeatures.push(sawahFeat);
+        }
+      } catch (errFeat: any) {
+        console.warn(`[approve-alih-fungsi] Feature warning ${sawahFeat.id}:`, errFeat.message);
+        updatedSawahFeatures.push(sawahFeat);
+      }
+    }
+
+    // 4. Update in-memory spatialLayers and server cache
+    const sawahLayerIdx = spatialLayers.findIndex(l => l.id === "layer_sawah");
+    const updatedGeoJsonPayload = {
+      type: "FeatureCollection",
+      features: updatedSawahFeatures
+    };
+
+    if (sawahLayerIdx !== -1) {
+      spatialLayers[sawahLayerIdx].geojson = updatedGeoJsonPayload;
+    }
+    cache["gis_sawah_geojson"] = {
+      data: updatedGeoJsonPayload,
+      timestamp: Date.now()
+    };
+
+    // 5. Update permohonan status in gis_pkkpr and investments
+    const baNum = berita_acara_num || `BA-LP2B/DISTAN-LUWU/2026/${Math.floor(100 + Math.random() * 900)}`;
+    const srNum = surat_rekomendasi_num || `503/REK-DISTAN/LUWU/2026/${Math.floor(100 + Math.random() * 900)}`;
+    const noteText = notes || 'Rekomendasi alih fungsi disetujui dengan Dynamic Spatial Difference LP2B.';
+
+    const updatePayloadGis = {
+      status_pkkpr: 'Approved_Pertanian',
+      berita_acara_pertanian_num: baNum,
+      catatan_teknis: `[REKOMENDASI ALIH FUNGSI LP2B DISETUJUI - ${baNum}]: ${noteText}`,
+      updated_at: new Date().toISOString()
+    };
+
+    const updatePayloadInv = {
+      status: 'Approved_Pertanian',
+      pertanian_status: 'APPROVED',
+      berita_acara_num: baNum,
+      surat_rekomendasi_num: srNum,
+      override_justification: `[REKOMENDASI ALIH FUNGSI LP2B DISETUJUI - ${baNum}]: ${noteText}`,
+      updated_at: new Date().toISOString()
+    };
+
+    await Promise.all([
+      supabase.from('gis_pkkpr').update(updatePayloadGis).eq('id', permohonan_id),
+      supabase.from('investments').update(updatePayloadInv).eq('id', permohonan_id)
+    ]);
+
+    console.log(`[approve-alih-fungsi] Berhasil memotong ${updatedCount} poligon LP2B/sawah. BA: ${baNum}`);
+
+    return res.json({
+      success: true,
+      message: "Dynamic Spatial Difference LP2B berhasil diproses. Poligon LP2B terpotong dan luas_m2 diperbarui.",
+      permohonan_id,
+      updated_features_count: updatedCount,
+      berita_acara_num: baNum,
+      surat_rekomendasi_num: srNum,
+      updated_sawah_geojson: updatedGeoJsonPayload
+    });
+
+  } catch (err: any) {
+    console.error("[POST /api/v1/pkkpr/approve-alih-fungsi] Error:", err);
+    return res.status(500).json({
+      success: false,
+      error: err.message || "Gagal memproses Dynamic Spatial Difference."
+    });
+  }
+});
+
 
 // Create Investment (CRUD: Create)
 app.post("/api/investments", async (req, res) => {

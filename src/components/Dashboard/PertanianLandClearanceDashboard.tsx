@@ -110,7 +110,9 @@ export default function PertanianLandClearanceDashboard() {
     layerStats,
     toggleLayer,
     setLayerOpacity,
-    setAllLayers
+    setAllLayers,
+    setLayerGeoJson,
+    clearCache
   } = useTechnicalSpatialLayers({
     layer_sawah: true,
     layer_lahan_kering_primer: true,
@@ -474,6 +476,33 @@ export default function PertanianLandClearanceDashboard() {
         updated_at: new Date().toISOString()
       };
 
+      // 1. Call Backend API POST /api/v1/pkkpr/approve-alih-fungsi to run PostGIS/Turf Dynamic Spatial Difference
+      let apiUpdatedSawahGeoJson: any = null;
+      try {
+        const apiResp = await fetch('/api/v1/pkkpr/approve-alih-fungsi', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            permohonan_id: selectedApp.id,
+            berita_acara_num: baDocNum,
+            surat_rekomendasi_num: srDocNum,
+            notes: stipulationNotes
+          })
+        });
+
+        if (apiResp.ok) {
+          const apiData = await apiResp.json();
+          if (apiData.success && apiData.updated_sawah_geojson) {
+            apiUpdatedSawahGeoJson = apiData.updated_sawah_geojson;
+          }
+        }
+      } catch (apiErr) {
+        console.warn('API /api/v1/pkkpr/approve-alih-fungsi call failed, falling back to direct Supabase update:', apiErr);
+      }
+
+      // 2. Direct Supabase update as resilient guarantee
       await Promise.all([
         supabase
           .from('gis_pkkpr')
@@ -489,6 +518,13 @@ export default function PertanianLandClearanceDashboard() {
           .update(updatePayload)
           .eq('id', selectedApp.id)
       ]);
+
+      // 3. Real-time Map Update: setData / setLayerGeoJson or clearCache on LP2B source layer
+      if (apiUpdatedSawahGeoJson) {
+        setLayerGeoJson('layer_sawah', apiUpdatedSawahGeoJson);
+      } else {
+        clearCache('layer_sawah');
+      }
 
       // Update local state queue
       setQueueList(prev =>
