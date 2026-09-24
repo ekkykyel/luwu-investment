@@ -408,6 +408,8 @@ export default function SimpleInfrastructureDrawer({
         <Map
           ref={mapRef}
           initialViewState={viewState}
+          // @ts-ignore
+          preserveDrawingBuffer={true}
           transformRequest={(url) => {
             if (url.includes('cartocdn.com') || url.includes('openstreetmap.org') || url.includes('google') || url.includes('arcgisonline.com')) {
               return {

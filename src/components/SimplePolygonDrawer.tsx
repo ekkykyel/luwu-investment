@@ -780,6 +780,8 @@ export default function SimplePolygonDrawer({
         <Map
           ref={mapRef}
           {...viewState}
+          // @ts-ignore
+          preserveDrawingBuffer={true}
           maxZoom={22}
           minZoom={5}
           onMove={(e) => setViewState(e.viewState)}

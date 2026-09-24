@@ -36,7 +36,7 @@ import { supabase } from '../../lib/supabaseClient';
 import { parseKmlKmzFile, ParsedKmzResult } from '../../utils/kmlKmzParser';
 import { detectAdministrativeLocation } from '../../utils/spatialLookup';
 import { checkPkkprSpatialZoning, PkkprZoningResult, calculateBoundingBox, normalizeDistrictName, findDistrictMatch, isSameDistrict, identifyDistrictFromGeometryOrCoord, normalizeName } from '../../utils/geoUtils';
-import MapComponent from '../MaplibreComponent';
+import MapComponent, { MapComponentRef } from '../MaplibreComponent';
 import OrientationPrompt from '../OrientationPrompt';
 import { getOpdSettings } from '../../utils/opdSettingsStorage';
 import { formatRupiah } from '../../lib/formatters';
@@ -93,6 +93,7 @@ export default function PuptrSpatialClearanceDashboard() {
   // Active Application for Inspection
   const [selectedApp, setSelectedApp] = useState<PkkprApplicationItem | null>(null);
   const [isMapExpanded, setIsMapExpanded] = useState<boolean>(false);
+  const mapRef = useRef<MapComponentRef>(null);
 
   // Profile Modal & Inter-Agency Routing State
   const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
@@ -338,13 +339,43 @@ export default function PuptrSpatialClearanceDashboard() {
 
   // Open BAP Document Modal with High-Res Map Canvas Snapshot
   const handleOpenBapModal = () => {
-    const mapCanvas = document.querySelector('.maplibregl-canvas') as HTMLCanvasElement | null;
-    if (mapCanvas) {
+    const map = mapRef.current?.getMapInstance?.();
+    if (map) {
+      // 1. If map canvas is currently ready, capture immediately
       try {
-        const snap = mapCanvas.toDataURL('image/png');
-        setMapSnapshot(snap);
+        if (map.loaded()) {
+          const snap = map.getCanvas().toDataURL('image/png');
+          if (snap && snap !== 'data:,' && snap.length > 500) {
+            setMapSnapshot(snap);
+          }
+        }
       } catch (e) {
-        console.warn('Map canvas snapshot error:', e);
+        console.warn('Initial map snapshot error:', e);
+      }
+
+      // 2. Wait until map completes idle rendering (guarantees crisp satellite tiles & polygons)
+      map.once('idle', () => {
+        try {
+          const snapshot = map.getCanvas().toDataURL('image/png');
+          if (snapshot && snapshot !== 'data:,' && snapshot.length > 500) {
+            setMapSnapshot(snapshot);
+          }
+        } catch (err) {
+          console.warn('Async map idle snapshot error:', err);
+        }
+      });
+    } else {
+      // Fallback DOM canvas query
+      const mapCanvas = document.querySelector('.maplibregl-canvas') as HTMLCanvasElement | null;
+      if (mapCanvas) {
+        try {
+          const snap = mapCanvas.toDataURL('image/png');
+          if (snap && snap.length > 500) {
+            setMapSnapshot(snap);
+          }
+        } catch (e) {
+          console.warn('Map canvas fallback snapshot error:', e);
+        }
       }
     }
     setShowBapModal(true);
@@ -1520,6 +1551,7 @@ export default function PuptrSpatialClearanceDashboard() {
 
               <div className={`w-full ${isMapExpanded ? 'min-h-[600px] h-[85vh]' : 'h-[500px] sm:h-[600px] lg:h-[75vh]'} rounded-2xl relative overflow-hidden border border-slate-200 dark:border-slate-800 shadow-inner transition-all duration-300`}>
                 <MapComponent
+                  ref={mapRef}
                   key={selectedApp.id}
                   districts={districts}
                   villages={villages}
@@ -2024,6 +2056,7 @@ export default function PuptrSpatialClearanceDashboard() {
                   getOpdSettings('puptr'),
                   mapSnapshot || undefined
                 )}
+                mapSnapshot={mapSnapshot}
                 onClose={() => setShowBapModal(false)}
                 showEditorToolbar={true}
               />

@@ -208,29 +208,33 @@ export const DEFAULT_BAP_KTR_DATA: BapKtrDocumentData = {
 
 export interface BapKtrPuptrDocumentProps {
   initialData?: Partial<BapKtrDocumentData>;
+  mapSnapshot?: string | null;
   onClose?: () => void;
   showEditorToolbar?: boolean;
 }
 
 export function BapKtrPuptrDocument({
   initialData,
+  mapSnapshot,
   onClose,
   showEditorToolbar = true
 }: BapKtrPuptrDocumentProps) {
   const [data, setData] = useState<BapKtrDocumentData>({
     ...DEFAULT_BAP_KTR_DATA,
-    ...initialData
+    ...initialData,
+    ...(mapSnapshot ? { petaImageUrl: mapSnapshot } : {})
   });
 
-  // Sync state if initialData changes
+  // Sync state if initialData or mapSnapshot changes
   useEffect(() => {
-    if (initialData) {
+    if (initialData || mapSnapshot) {
       setData(prev => ({
         ...prev,
-        ...initialData
+        ...initialData,
+        petaImageUrl: mapSnapshot || initialData?.petaImageUrl || prev.petaImageUrl
       }));
     }
-  }, [initialData]);
+  }, [initialData, mapSnapshot]);
 
   const [activeTab, setActiveTab] = useState<"all" | "page1" | "page2" | "page3" | "page4">("all");
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
@@ -897,9 +901,10 @@ export function BapKtrPuptrDocument({
             {/* CONTAINER PETA DELINEASI BERSIH (Tanpa widget web UI) */}
             <div style={{ border: "1.5px solid #000000", position: "relative", width: "100%", height: "135mm", overflow: "hidden", marginBottom: "10px", backgroundColor: "#e2e8f0" }}>
               <img 
-                src={data.petaImageUrl || "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80"} 
+                src={mapSnapshot || data.petaImageUrl || "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80"} 
                 alt="Peta Delineasi Geospasial" 
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                crossOrigin="anonymous"
               />
               
               {/* Overlay Grid Simbolik & Garis Delineasi */}
