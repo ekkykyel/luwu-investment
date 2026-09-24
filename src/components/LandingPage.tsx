@@ -51,6 +51,7 @@ import {
   Smartphone,
   Cpu,
   Play,
+  Pause,
   Download,
   ChevronDown,
   ChevronUp,
@@ -728,6 +729,11 @@ export default function LandingPage({
   const [selectedInvestmentForConsultation, setSelectedInvestmentForConsultation] = useState<Investment | null>(null);
   const [isMppModalOpen, setIsMppModalOpen] = useState(false);
 
+  // Peluang Emas Luwu - Horizontal Slider State & Helpers
+  const potensiSliderRef = useRef<HTMLDivElement>(null);
+  const [activePotensiIndex, setActivePotensiIndex] = useState(0);
+  const [isPotensiAutoPlay, setIsPotensiAutoPlay] = useState(true);
+
   // GIS Booting State
   const [isGisBooting, setIsGisBooting] = useState(false);
   const [gisBootTarget, setGisBootTarget] = useState<"workspace" | "default">("default");
@@ -833,6 +839,62 @@ export default function LandingPage({
       return true;
     });
   }, [investments, smartFilterState]);
+
+  const sortedInvestmentsList = useMemo(() => {
+    return [...filteredInvestmentsList].sort((a, b) => {
+      const aAI = Number(a.smartData?.aiScore || a.smartData?.ai_score || 0);
+      const bAI = Number(b.smartData?.aiScore || b.smartData?.ai_score || 0);
+      if (bAI !== aAI) return bAI - aAI;
+      return (b.investmentValue || 0) - (a.investmentValue || 0);
+    });
+  }, [filteredInvestmentsList]);
+
+  useEffect(() => {
+    if (!isPotensiAutoPlay || sortedInvestmentsList.length <= 1) return;
+    const interval = setInterval(() => {
+      if (!potensiSliderRef.current) return;
+      const container = potensiSliderRef.current;
+      const cardWidth = container.firstElementChild?.clientWidth || 360;
+      const gap = 20;
+      const scrollStep = cardWidth + gap;
+
+      if (container.scrollLeft + container.clientWidth >= container.scrollWidth - 15) {
+        container.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        container.scrollBy({ left: scrollStep, behavior: "smooth" });
+      }
+    }, 4500);
+
+    return () => clearInterval(interval);
+  }, [isPotensiAutoPlay, sortedInvestmentsList.length]);
+
+  const handlePotensiScroll = () => {
+    if (!potensiSliderRef.current) return;
+    const container = potensiSliderRef.current;
+    const cardWidth = (container.firstElementChild?.clientWidth || 360) + 20;
+    const currentIndex = Math.round(container.scrollLeft / cardWidth);
+    setActivePotensiIndex(Math.max(0, Math.min(currentIndex, sortedInvestmentsList.length - 1)));
+  };
+
+  const scrollToPotensiSlide = (index: number) => {
+    if (!potensiSliderRef.current) return;
+    const container = potensiSliderRef.current;
+    const cardWidth = (container.firstElementChild?.clientWidth || 360) + 20;
+    container.scrollTo({ left: index * cardWidth, behavior: "smooth" });
+    setActivePotensiIndex(index);
+  };
+
+  const handleNextPotensiSlide = () => {
+    if (sortedInvestmentsList.length <= 1) return;
+    const nextIdx = (activePotensiIndex + 1) % sortedInvestmentsList.length;
+    scrollToPotensiSlide(nextIdx);
+  };
+
+  const handlePrevPotensiSlide = () => {
+    if (sortedInvestmentsList.length <= 1) return;
+    const prevIdx = activePotensiIndex === 0 ? sortedInvestmentsList.length - 1 : activePotensiIndex - 1;
+    scrollToPotensiSlide(prevIdx);
+  };
 
   const topIproInvestmentsList = useMemo(() => {
     return [...filteredInvestmentsList]
@@ -2355,15 +2417,22 @@ export default function LandingPage({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-                className="text-[32px] xs:text-[38px] sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.12] sm:leading-[1.08] text-slate-900 dark:text-white mt-1 mb-4 px-2 w-full max-w-4xl mx-auto text-center"
+                className="tracking-tight text-slate-900 dark:text-white mt-1 mb-4 px-2 w-full max-w-5xl mx-auto text-center relative"
               >
-                <span className="text-[11px] xs:text-xs sm:text-sm font-extrabold tracking-[0.25em] sm:tracking-[0.3em] text-emerald-600 dark:text-emerald-400 block mb-2 sm:mb-3 uppercase">
-                  {t('hero.heroTitleBrand', 'SMART-INVESTMENT LUWU')}
+                {/* Subtle Ambient Radial Backlight Glow */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-emerald-500/10 dark:bg-emerald-500/15 blur-3xl rounded-full pointer-events-none -z-10" />
+
+                <span className="text-[11px] xs:text-xs sm:text-sm font-extrabold tracking-[0.25em] sm:tracking-[0.3em] text-emerald-600 dark:text-emerald-400 block mb-2 sm:mb-3 uppercase font-mono">
+                  {t('hero.heroTitleBrand', 'SMART-INVESTMENT LUWU:')}
                 </span>
-                <span className="block font-extrabold text-slate-900 dark:text-white mb-1">
+
+                {/* "Pintu Gerbang" - Larger size, dominant font weight */}
+                <span className="block text-[38px] xs:text-[46px] sm:text-7xl md:text-8xl lg:text-[88px] font-black text-slate-900 dark:text-white leading-[1.04] tracking-tight mb-1 sm:mb-2 font-['Plus_Jakarta_Sans',sans-serif]">
                   Pintu Gerbang
                 </span>
-                <span className="block bg-gradient-to-r from-teal-500 via-emerald-500 to-blue-600 bg-clip-text text-transparent font-black drop-shadow-xs">
+
+                {/* "Investasi Digital" - Rich gradient, glowing drop shadow, slightly smaller proportion */}
+                <span className="block text-[30px] xs:text-[38px] sm:text-5xl md:text-6xl lg:text-7xl font-extrabold bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 dark:from-emerald-400 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent leading-[1.1] tracking-tight drop-shadow-[0_4px_25px_rgba(16,185,129,0.3)] font-['Plus_Jakarta_Sans',sans-serif]">
                   Investasi Digital
                 </span>
               </motion.h1>
@@ -2895,10 +2964,15 @@ export default function LandingPage({
         {/* 2. DAFTAR POTENSI INVESTASI - BENTO GRID */}
         <div
           id="potensi-section"
-          className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12 lg:py-16 min-h-[44px]"
+          className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 md:py-12 lg:py-16 min-h-[44px] border-t border-slate-200/60 dark:border-slate-800/60"
         >
-          <div className="flex flex-col md:flex-row items-end justify-between mb-10 gap-4">
+          {/* Section Header with Slider Navigation Controls */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
             <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20 mb-3 uppercase tracking-wider backdrop-blur-md">
+                <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-500/20" />
+                <span>Katalog Spasial IPRO & Sektor Unggulan</span>
+              </div>
               <motion.h2 
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -2906,7 +2980,7 @@ export default function LandingPage({
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2 text-balance break-words"
               >
-                <span className="bg-gradient-to-r from-teal-500 to-blue-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-teal-600 via-emerald-600 to-blue-600 dark:from-teal-400 dark:via-emerald-400 dark:to-blue-400 bg-clip-text text-transparent">
                   {t("sections.potensi.title")}
                 </span>
               </motion.h2>
@@ -2915,34 +2989,76 @@ export default function LandingPage({
                 whileInView={{ opacity: 1, scaleX: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="h-1 w-16 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full mb-4 ml-0 origin-left"
+                className="h-1 w-16 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full mb-3 ml-0 origin-left"
               />
               <motion.p 
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className={`text-sm sm:text-base ${textMuted}`}
+                className={`text-sm sm:text-base font-medium ${
+                  isDark ? "text-slate-400" : "text-slate-600"
+                }`}
               >
                 {t("sections.potensi.subtitle")}
               </motion.p>
             </div>
-            <motion.button whileTap={{ scale: 0.95 }}
-              whileHover={{ scale: 1.04 }}
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                navigate("/peta-spasial");
-              }}
-              className={`shrink-0 px-6 py-3 min-h-[44px] rounded-full font-bold text-xs sm:text-sm tracking-wider uppercase border flex items-center gap-2 transition-all duration-300 backdrop-blur-xl ${
-                isDark
-                  ? "bg-gradient-to-r from-emerald-900/40 via-slate-800/80 to-blue-900/40 border-emerald-500/40 text-emerald-300 hover:border-emerald-400 shadow-[0_4px_20px_rgba(16,185,129,0.2)]"
-                  : "bg-gradient-to-r from-emerald-50 via-white to-blue-50 border-emerald-300 text-emerald-700 hover:border-emerald-500 shadow-md shadow-emerald-500/10"
-              }`}
-            >
-              {t("ui.viewInteractiveMap")} <ChevronRight size={16} />
-            </motion.button>
+
+            {/* Slider Navigation Controls Header - Unified Glass Capsule Bar */}
+            <div className="flex items-center gap-3 shrink-0 self-start md:self-end">
+              {sortedInvestmentsList.length > 0 && (
+                <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-white/90 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 shadow-md shadow-slate-200/50 dark:shadow-none backdrop-blur-xl">
+                  <button
+                    type="button"
+                    onClick={handlePrevPotensiSlide}
+                    className="w-8 h-8 rounded-xl flex items-center justify-center transition-all active:scale-95 text-slate-700 dark:text-slate-200 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 cursor-pointer"
+                    title="Potensi Sebelumnya"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+
+                  <div className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-black text-slate-800 dark:text-slate-200">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="font-mono">{activePotensiIndex + 1} / {sortedInvestmentsList.length} Potensi</span>
+                    <button
+                      type="button"
+                      onClick={() => setIsPotensiAutoPlay(!isPotensiAutoPlay)}
+                      className="ml-0.5 p-1 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-slate-500 dark:text-slate-400 cursor-pointer"
+                      title={isPotensiAutoPlay ? "Jeda Auto-Slider" : "Putar Auto-Slider"}
+                    >
+                      {isPotensiAutoPlay ? <Pause className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Play className="w-3.5 h-3.5 text-slate-400" />}
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleNextPotensiSlide}
+                    className="w-8 h-8 rounded-xl flex items-center justify-center transition-all active:scale-95 text-slate-700 dark:text-slate-200 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 cursor-pointer"
+                    title="Potensi Berikutnya"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+
+              <motion.button 
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.04 }}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  navigate("/peta-spasial");
+                }}
+                className={`hidden lg:flex shrink-0 px-4 py-2 rounded-xl font-bold text-xs tracking-wider uppercase border items-center gap-1.5 transition-all duration-300 backdrop-blur-xl cursor-pointer ${
+                  isDark
+                    ? "bg-gradient-to-r from-emerald-900/40 via-slate-800/80 to-blue-900/40 border-emerald-500/40 text-emerald-300 hover:border-emerald-400 shadow-[0_4px_20px_rgba(16,185,129,0.2)]"
+                    : "bg-gradient-to-r from-emerald-50 via-white to-blue-50 border-emerald-300 text-emerald-700 hover:border-emerald-500 shadow-md shadow-emerald-500/10"
+                }`}
+              >
+                {t("ui.viewInteractiveMap")} <ChevronRight size={15} />
+              </motion.button>
+            </div>
           </div>
 
           {/* SMART MATRIX FILTER PANEL */}
@@ -2997,11 +3113,11 @@ export default function LandingPage({
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="flex gap-6 overflow-hidden">
               {[1, 2, 3].map((num) => (
                 <div
                   key={num}
-                  className={`rounded-3xl border overflow-hidden flex flex-col h-[400px] animate-pulse bg-slate-200 dark:bg-slate-700 border-transparent`}
+                  className="shrink-0 w-[88vw] xs:w-[82vw] sm:w-[380px] md:w-[400px] rounded-3xl border overflow-hidden flex flex-col h-[400px] animate-pulse bg-slate-200 dark:bg-slate-700 border-transparent"
                 >
                   <div className="h-48 bg-slate-300 dark:bg-slate-600" />
                   <div className="p-6 flex flex-col flex-grow gap-4">
@@ -3015,268 +3131,297 @@ export default function LandingPage({
                 </div>
               ))}
             </div>
-          ) : filteredInvestmentsList.length > 0 ? (
-            <div className={`w-full grid gap-6 sm:gap-8 ${filteredInvestmentsList.length === 1 ? 'grid-cols-1 max-w-xl sm:max-w-2xl lg:max-w-3xl mx-auto' : 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'}`}>
-              {[...filteredInvestmentsList]
-                .sort((a, b) => {
-                  const aAI = Number(
-                    a.smartData?.aiScore || a.smartData?.ai_score || 0,
-                  );
-                  const bAI = Number(
-                    b.smartData?.aiScore || b.smartData?.ai_score || 0,
-                  );
-                  if (bAI !== aAI) return bAI - aAI;
-                  return (b.investmentValue || 0) - (a.investmentValue || 0);
-                })
-                .slice(0, 6)
-                .map((inv, idx) => (
-                  <TiltCard
+          ) : sortedInvestmentsList.length > 0 ? (
+            <div className="relative group/slider">
+              {/* Horizontal Animated Slider Container */}
+              <div
+                ref={potensiSliderRef}
+                onScroll={handlePotensiScroll}
+                onMouseEnter={() => setIsPotensiAutoPlay(false)}
+                onMouseLeave={() => setIsPotensiAutoPlay(true)}
+                className="flex gap-5 sm:gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                {sortedInvestmentsList.map((inv, idx) => (
+                  <div
                     key={inv.id}
-                    maxTilt={6}
-                    scaleOnHover={1.015}
-                    glareOpacity={0.12}
-                    style={{ animationDelay: `${idx * 150}ms` }}
-                    className={`w-full rounded-[26px] sm:rounded-[28px] border overflow-hidden flex flex-col group
-                                opacity-0 animate-fade-in-up
-                                transition-all duration-300 ease-out hover:-translate-y-2
-                                hover:shadow-2xl ${getSectorColor(inv.sector).glow}
-                                hover:border-emerald-500/50 glass-crystal glass-card-interactive
-                                ${isDark ? 'bg-slate-900/75 border-white/10 shadow-[0_16px_45px_rgba(0,0,0,0.5)]' : 'bg-white/80 border-white/70 shadow-[0_14px_40px_rgba(15,23,42,0.06)]'}`}
+                    className="snap-start shrink-0 w-[88vw] xs:w-[82vw] sm:w-[380px] md:w-[400px] lg:w-[420px] flex flex-col"
                   >
-                    {/* Header Image Section */}
-                    <div className="h-60 sm:h-64 overflow-hidden relative w-full">
-                      <LazyImage
-                        src={
-                          inv.photoUrl ||
-                          "https://images.unsplash.com/photo-1590496794008-383c8070b257"
-                        }
-                        alt={inv.name}
-                        isDark={isDark}
-                        imgClassName="w-full h-full object-cover transform group-hover:scale-108 transition-transform duration-700 ease-out"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/35 to-transparent pointer-events-none" />
+                    <TiltCard
+                      maxTilt={6}
+                      scaleOnHover={1.015}
+                      glareOpacity={0.12}
+                      style={{ animationDelay: `${idx * 150}ms` }}
+                      className={`w-full h-full rounded-[26px] sm:rounded-[28px] border overflow-hidden flex flex-col group/card
+                                  transition-all duration-300 ease-out hover:-translate-y-2
+                                  hover:shadow-2xl ${getSectorColor(inv.sector).glow}
+                                  hover:border-emerald-500/50 glass-crystal glass-card-interactive
+                                  ${isDark ? 'bg-slate-900/85 border-white/10 shadow-[0_16px_45px_rgba(0,0,0,0.5)]' : 'bg-white/90 border-slate-200 shadow-[0_14px_40px_rgba(15,23,42,0.06)]'}`}
+                    >
+                      {/* Header Image Section */}
+                      <div className="h-60 sm:h-64 overflow-hidden relative w-full">
+                        <LazyImage
+                          src={
+                            inv.photoUrl ||
+                            "https://images.unsplash.com/photo-1590496794008-383c8070b257"
+                          }
+                          alt={inv.name}
+                          isDark={isDark}
+                          imgClassName="w-full h-full object-cover transform group-hover/card:scale-108 transition-transform duration-700 ease-out"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/35 to-transparent pointer-events-none" />
 
-                      {/* Top Badges */}
-                      <div className="absolute top-3.5 left-3.5 right-3.5 flex items-start justify-between gap-2 z-10">
-                        <div className="flex flex-wrap items-center gap-1.5">
-                          <div
-                            className={`px-3 py-1 rounded-full text-xs font-bold backdrop-blur-md shadow-md ${getSectorColor(inv.sector).badgeBg}`}
-                          >
-                            {t(getSectorI18nKey(inv.sector))}
+                        {/* Top Badges */}
+                        <div className="absolute top-3.5 left-3.5 right-3.5 flex items-start justify-between gap-2 z-10">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <div
+                              className={`px-3 py-1 rounded-full text-xs font-bold backdrop-blur-md shadow-md ${getSectorColor(inv.sector).badgeBg}`}
+                            >
+                              {t(getSectorI18nKey(inv.sector))}
+                            </div>
+
+                            {/* BADGE PROJECT READINESS TIER (BKPM RI Standard) */}
+                            {(() => {
+                              const isTier1 = (inv as any).readinessTier === 'Tier 1' || 
+                                              (inv as any).readiness_tier === 'Tier 1' || 
+                                              (inv as any).status_kesiapan?.toLowerCase().includes('ready') ||
+                                              Boolean(inv.investmentValue && inv.investmentValue > 0 && inv.areaHa && inv.areaHa > 0 && inv.landStatus);
+
+                              return isTier1 ? (
+                                <div 
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-950/85 text-emerald-300 border border-emerald-400/50 backdrop-blur-md shadow-md"
+                                  title="Ready to Offer (Tier 1): Full FS Siap, Lahan Clean & Clear, Kesesuaian RTRW Terkonfirmasi (Standar BKPM RI)"
+                                >
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                  <span>Tier 1: Ready to Offer</span>
+                                </div>
+                              ) : (
+                                <div 
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-950/85 text-amber-300 border border-amber-400/50 backdrop-blur-md shadow-md"
+                                  title="Under Development (Tier 2): Pre-FS Tersedia, Kajian Tata Ruang Sedang Difinalisasi (Standar BKPM RI)"
+                                >
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                                  <span>Tier 2: Under Development</span>
+                                </div>
+                              );
+                            })()}
                           </div>
 
-                          {/* BADGE PROJECT READINESS TIER (BKPM RI Standard) */}
-                          {(() => {
-                            const isTier1 = (inv as any).readinessTier === 'Tier 1' || 
-                                            (inv as any).readiness_tier === 'Tier 1' || 
-                                            (inv as any).status_kesiapan?.toLowerCase().includes('ready') ||
-                                            Boolean(inv.investmentValue && inv.investmentValue > 0 && inv.areaHa && inv.areaHa > 0 && inv.landStatus);
-
-                            return isTier1 ? (
-                              <div 
-                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-950/85 text-emerald-300 border border-emerald-400/50 backdrop-blur-md shadow-md"
-                                title="Ready to Offer (Tier 1): Full FS Siap, Lahan Clean & Clear, Kesesuaian RTRW Terkonfirmasi (Standar BKPM RI)"
-                              >
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                <span>Tier 1: Ready to Offer</span>
-                              </div>
-                            ) : (
-                              <div 
-                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-950/85 text-amber-300 border border-amber-400/50 backdrop-blur-md shadow-md"
-                                title="Under Development (Tier 2): Pre-FS Tersedia, Kajian Tata Ruang Sedang Difinalisasi (Standar BKPM RI)"
-                              >
-                                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                                <span>Tier 2: Under Development</span>
-                              </div>
-                            );
-                          })()}
+                          {(inv.smartData?.aiScore || inv.smartData?.ai_score) && (
+                            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-950/75 backdrop-blur-md border border-white/20 text-white shadow-md shrink-0">
+                              <span className="text-amber-400 text-xs">★</span>
+                              <span className="text-[11px] font-bold tracking-tight">
+                                {inv.smartData?.aiScore || inv.smartData?.ai_score} <span className="text-white/60 font-normal">AI Score</span>
+                              </span>
+                            </div>
+                          )}
                         </div>
 
-                        {(inv.smartData?.aiScore || inv.smartData?.ai_score) && (
-                          <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-950/75 backdrop-blur-md border border-white/20 text-white shadow-md shrink-0">
-                            <span className="text-amber-400 text-xs">★</span>
-                            <span className="text-[11px] font-bold tracking-tight">
-                              {inv.smartData?.aiScore || inv.smartData?.ai_score} <span className="text-white/60 font-normal">AI Score</span>
+                        {/* Bottom Photo Geotag Info */}
+                        <div className="absolute bottom-3 inset-x-3.5 flex items-center justify-between text-xs text-white/95 z-10 pointer-events-none">
+                          <div className="flex items-center gap-1.5 font-medium bg-slate-950/60 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                            <MapPin size={12} className="text-emerald-400 shrink-0" />
+                            <span className="truncate max-w-[180px] sm:max-w-[220px]">
+                              {districts.find((d) => d.id === inv.districtId)?.name || (inv as any).districtName || (inv as any).lokasi || inv.districtId || "Kabupaten Luwu"}
                             </span>
                           </div>
-                        )}
-                      </div>
-
-                      {/* Bottom Photo Geotag Info */}
-                      <div className="absolute bottom-3 inset-x-3.5 flex items-center justify-between text-xs text-white/95 z-10 pointer-events-none">
-                        <div className="flex items-center gap-1.5 font-medium bg-slate-950/60 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
-                          <MapPin size={12} className="text-emerald-400 shrink-0" />
-                          <span className="truncate max-w-[180px] sm:max-w-[220px]">
-                            {districts.find((d) => d.id === inv.districtId)?.name || (inv as any).districtName || (inv as any).lokasi || inv.districtId || "Kabupaten Luwu"}
-                          </span>
-                        </div>
-                        <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-950/80 backdrop-blur-md px-2 py-1 rounded-lg border border-emerald-500/30 flex items-center gap-1">
-                          <ShieldCheck size={12} className="text-emerald-400" />
-                          <span>GIS Clean & Clear</span>
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-950/80 backdrop-blur-md px-2 py-1 rounded-lg border border-emerald-500/30 flex items-center gap-1">
+                            <ShieldCheck size={12} className="text-emerald-400" />
+                            <span>GIS Clean & Clear</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Card Content Body */}
-                    <div className="p-5 sm:p-6 flex flex-col flex-grow">
-                      <div className="mb-4">
-                        <h3 className="text-lg sm:text-xl font-bold font-sans line-clamp-2 leading-snug group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors tracking-tight text-slate-900 dark:text-white">
-                          {inv.name}
-                        </h3>
-                      </div>
+                      {/* Card Content Body */}
+                      <div className="p-5 sm:p-6 flex flex-col flex-grow">
+                        <div className="mb-4">
+                          <h3 className="text-lg sm:text-xl font-bold font-sans line-clamp-2 leading-snug group-hover/card:text-emerald-600 dark:group-hover/card:text-emerald-400 transition-colors tracking-tight text-slate-900 dark:text-white">
+                            {inv.name}
+                          </h3>
+                        </div>
 
-                      {/* Symmetrical 3-Column Bento Metric Matrix */}
-                      {(() => {
-                        const rawLabor = inv.komitmenTenagaLokal ?? inv.komitmen_tenaga_lokal ?? inv.tenagaKerja ?? inv.tenaga_kerja ?? inv.tenagaLokal ?? inv.tenaga_lokal ?? inv.tkl ?? 0;
-                        const laborVal = typeof rawLabor === 'number' ? rawLabor : parseFloat(String(rawLabor).replace(/[^0-9.]/g, '')) || 0;
+                        {/* Symmetrical 3-Column Bento Metric Matrix */}
+                        {(() => {
+                          const rawLabor = inv.komitmenTenagaLokal ?? inv.komitmen_tenaga_lokal ?? inv.tenagaKerja ?? inv.tenaga_kerja ?? inv.tenagaLokal ?? inv.tenaga_lokal ?? inv.tkl ?? 0;
+                          const laborVal = typeof rawLabor === 'number' ? rawLabor : parseFloat(String(rawLabor).replace(/[^0-9.]/g, '')) || 0;
 
-                        return (
-                          <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-5">
-                            {/* Spec 1: Luas Lahan */}
-                            <div className={`p-2.5 rounded-2xl border text-center flex flex-col items-center justify-center transition-colors ${
-                              isDark ? 'bg-slate-800/60 border-slate-700/60 group-hover:border-slate-700' : 'bg-slate-50 border-slate-200/80 group-hover:border-slate-300'
-                            }`}>
-                              <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                                Luas Lahan
-                              </span>
-                              <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white flex items-center justify-center gap-1">
-                                <MapPin size={12} className="text-blue-500 shrink-0" />
-                                <span>{formatAreaHa(inv.areaHa)} Ha</span>
-                              </span>
+                          return (
+                            <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-5">
+                              {/* Spec 1: Luas Lahan */}
+                              <div className={`p-2.5 rounded-2xl border text-center flex flex-col items-center justify-center transition-colors ${
+                                isDark ? 'bg-slate-800/60 border-slate-700/60 group-hover/card:border-slate-700' : 'bg-slate-50 border-slate-200/80 group-hover/card:border-slate-300'
+                              }`}>
+                                <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                                  Luas Lahan
+                                </span>
+                                <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white flex items-center justify-center gap-1">
+                                  <MapPin size={12} className="text-blue-500 shrink-0" />
+                                  <span>{formatAreaHa(inv.areaHa)} Ha</span>
+                                </span>
+                              </div>
+
+                              {/* Spec 2: Estimasi Investasi */}
+                              <div className={`p-2.5 rounded-2xl border text-center flex flex-col items-center justify-center transition-colors ${
+                                isDark ? 'bg-slate-800/60 border-slate-700/60 group-hover/card:border-slate-700' : 'bg-slate-50 border-slate-200/80 group-hover/card:border-slate-300'
+                              }`}>
+                                <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                                  Est. Investasi
+                                </span>
+                                <span className="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400 flex items-center justify-center gap-1">
+                                  <Building size={12} className="shrink-0" />
+                                  <span>{formatRupiah(inv.investmentValue)}</span>
+                                </span>
+                              </div>
+
+                              {/* Spec 3: Tenaga Kerja */}
+                              <div className={`p-2.5 rounded-2xl border text-center flex flex-col items-center justify-center transition-colors ${
+                                isDark ? 'bg-slate-800/60 border-slate-700/60 group-hover/card:border-slate-700' : 'bg-slate-50 border-slate-200/80 group-hover/card:border-slate-300'
+                              }`}>
+                                <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                                  Tenaga Kerja
+                                </span>
+                                <span className="text-xs sm:text-sm font-black text-teal-600 dark:text-teal-400 flex items-center justify-center gap-1">
+                                  <Users size={12} className="shrink-0" />
+                                  <span>{laborVal > 0 ? `${laborVal} Jiwa` : '-'}</span>
+                                </span>
+                              </div>
                             </div>
+                          );
+                        })()}
 
-                            {/* Spec 2: Estimasi Investasi */}
-                            <div className={`p-2.5 rounded-2xl border text-center flex flex-col items-center justify-center transition-colors ${
-                              isDark ? 'bg-slate-800/60 border-slate-700/60 group-hover:border-slate-700' : 'bg-slate-50 border-slate-200/80 group-hover:border-slate-300'
-                            }`}>
-                              <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                                Est. Investasi
-                              </span>
-                              <span className="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400 flex items-center justify-center gap-1">
-                                <Building size={12} className="shrink-0" />
-                                <span>{formatRupiah(inv.investmentValue)}</span>
-                              </span>
+                        {/* Realization Progress Bar */}
+                        {(() => {
+                          const rawPct = Math.min(100, Math.round(((inv.investmentValue || 0) / 2500000000000) * 100 * Math.max(investments.length, 1)));
+                          const pct = typeof rawPct === 'number' && !isNaN(rawPct) ? rawPct : 0;
+                          const { progress } = getSectorColor(inv.sector);
+                          return (
+                            <div className="mb-5">
+                              <div className="flex justify-between items-center mb-1.5">
+                                <span className={`text-[10px] uppercase tracking-widest font-bold ${textMuted}`}>
+                                  {t("investmentProfile.targetRealisasi", "Target Realisasi")}
+                                </span>
+                                <span className="text-xs font-black text-slate-800 dark:text-slate-200">{pct}%</span>
+                              </div>
+                              <div className={`h-1.5 rounded-full overflow-hidden ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`}>
+                                <div
+                                  className={`h-full rounded-full ${progress} transition-all duration-700`}
+                                  style={{ width: `${pct}%` }}
+                                />
+                              </div>
                             </div>
+                          );
+                        })()}
 
-                            {/* Spec 3: Tenaga Kerja */}
-                            <div className={`p-2.5 rounded-2xl border text-center flex flex-col items-center justify-center transition-colors ${
-                              isDark ? 'bg-slate-800/60 border-slate-700/60 group-hover:border-slate-700' : 'bg-slate-50 border-slate-200/80 group-hover:border-slate-300'
-                            }`}>
-                              <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                                Tenaga Kerja
-                              </span>
-                              <span className="text-xs sm:text-sm font-black text-teal-600 dark:text-teal-400 flex items-center justify-center gap-1">
-                                <Users size={12} className="shrink-0" />
-                                <span>{laborVal > 0 ? `${laborVal} Jiwa` : '-'}</span>
-                              </span>
-                            </div>
-                          </div>
-                        );
-                      })()}
-
-                      {/* Realization Progress Bar */}
-                      {(() => {
-                        const rawPct = Math.min(100, Math.round(((inv.investmentValue || 0) / 2500000000000) * 100 * Math.max(investments.length, 1)));
-                        const pct = typeof rawPct === 'number' && !isNaN(rawPct) ? rawPct : 0;
-                        const { progress } = getSectorColor(inv.sector);
-                        return (
-                          <div className="mb-5">
-                            <div className="flex justify-between items-center mb-1.5">
-                              <span className={`text-[10px] uppercase tracking-widest font-bold ${textMuted}`}>
-                                {t("investmentProfile.targetRealisasi", "Target Realisasi")}
-                              </span>
-                              <span className="text-xs font-black text-slate-800 dark:text-slate-200">{pct}%</span>
-                            </div>
-                            <div className={`h-1.5 rounded-full overflow-hidden ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`}>
-                              <div
-                                className={`h-full rounded-full ${progress} transition-all duration-700`}
-                                style={{ width: `${pct}%` }}
-                              />
-                            </div>
-                          </div>
-                        );
-                      })()}
-
-                      {/* Action Buttons Section */}
-                      <div className={`mt-auto pt-4 flex flex-col gap-2.5 border-t ${isDark ? 'border-slate-800/80' : 'border-slate-100'}`}>
-                        {/* Row 1: Primary Actions */}
-                        <div className="grid grid-cols-2 gap-2.5">
-                          <motion.button
-                            whileTap={{ scale: 0.96 }}
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              if (onSelectInvestment) {
-                                onSelectInvestment(inv.id);
-                              } else {
-                                window.history.pushState({}, "", `/peta-spasial?id=${inv.id}`);
-                                if (onEnter) {
-                                  onEnter(Role.INVESTOR);
+                        {/* Action Buttons Section */}
+                        <div className={`mt-auto pt-4 flex flex-col gap-2.5 border-t ${isDark ? 'border-slate-800/80' : 'border-slate-100'}`}>
+                          {/* Row 1: Primary Actions */}
+                          <div className="grid grid-cols-2 gap-2.5">
+                            <motion.button
+                              whileTap={{ scale: 0.96 }}
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                if (onSelectInvestment) {
+                                  onSelectInvestment(inv.id);
                                 } else {
-                                  navigate(`/peta-spasial?id=${inv.id}`);
+                                  window.history.pushState({}, "", `/peta-spasial?id=${inv.id}`);
+                                  if (onEnter) {
+                                    onEnter(Role.INVESTOR);
+                                  } else {
+                                    navigate(`/peta-spasial?id=${inv.id}`);
+                                  }
                                 }
-                              }
-                            }}
-                            className={`min-h-[44px] py-2.5 px-3 rounded-xl border text-xs sm:text-sm font-bold transition-all duration-300 flex items-center justify-center gap-1.5 hover:scale-[1.02] active:scale-[0.97]
-                                        ${isDark
-                                          ? 'border-slate-700/80 bg-slate-800/80 text-slate-200 hover:border-emerald-500/50 hover:bg-slate-800 hover:text-emerald-400 shadow-sm'
-                                          : 'border-slate-200 bg-slate-50 text-slate-800 hover:border-emerald-300 hover:bg-white hover:text-emerald-700 shadow-sm'}`}
-                          >
-                            <Search size={14} className="text-slate-400 group-hover:text-emerald-500 transition-colors" />
-                            <span>{t("common.detail", "Detail")}</span>
-                          </motion.button>
+                              }}
+                              className={`min-h-[44px] py-2.5 px-3 rounded-xl border text-xs sm:text-sm font-bold transition-all duration-300 flex items-center justify-center gap-1.5 hover:scale-[1.02] active:scale-[0.97] cursor-pointer
+                                          ${isDark
+                                            ? 'border-slate-700/80 bg-slate-800/80 text-slate-200 hover:border-emerald-500/50 hover:bg-slate-800 hover:text-emerald-400 shadow-sm'
+                                            : 'border-slate-200 bg-slate-50 text-slate-800 hover:border-emerald-300 hover:bg-white hover:text-emerald-700 shadow-sm'}`}
+                            >
+                              <Search size={14} className="text-slate-400 group-hover/card:text-emerald-500 transition-colors" />
+                              <span>{t("common.detail", "Detail")}</span>
+                            </motion.button>
 
-                          <motion.button
-                            whileTap={{ scale: 0.96 }}
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              navigate("/login?role=investor");
-                            }}
-                            className="min-h-[44px] py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-md shadow-emerald-600/25 flex items-center justify-center gap-1.5"
-                          >
-                            <span>{t("landing.ajukanMinat", "Ajukan Minat")}</span>
-                            <ChevronRight size={15} />
-                          </motion.button>
-                        </div>
+                            <motion.button
+                              whileTap={{ scale: 0.96 }}
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                navigate("/login?role=investor");
+                              }}
+                              className="min-h-[44px] py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-md shadow-emerald-600/25 flex items-center justify-center gap-1.5 cursor-pointer"
+                            >
+                              <span>{t("landing.ajukanMinat", "Ajukan Minat")}</span>
+                              <ChevronRight size={15} />
+                            </motion.button>
+                          </div>
 
-                        {/* Row 2: Inovasi Khusus Investor (IPRO PDF & Konsultasi VIP) */}
-                        <div className="grid grid-cols-2 gap-2.5">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setSelectedIproForModal(inv);
-                              setIsIproPitchModalOpen(true);
-                            }}
-                            className="min-h-[40px] px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-500/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs group/btn"
-                            title="Unduh Executive Summary Resmi IPRO (PDF Standar BKPM RI)"
-                          >
-                            <FileText className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 group-hover/btn:scale-110 transition-transform shrink-0" />
-                            <span className="truncate">Teaser IPRO (PDF)</span>
-                          </button>
+                          {/* Row 2: Inovasi Khusus Investor (IPRO PDF & Konsultasi VIP) */}
+                          <div className="grid grid-cols-2 gap-2.5">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setSelectedIproForModal(inv);
+                                setIsIproPitchModalOpen(true);
+                              }}
+                              className="min-h-[40px] px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-500/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs group/btn"
+                              title="Unduh Executive Summary Resmi IPRO (PDF Standar BKPM RI)"
+                            >
+                              <FileText className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 group-hover/btn:scale-110 transition-transform shrink-0" />
+                              <span className="truncate">Teaser IPRO (PDF)</span>
+                            </button>
 
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setSelectedInvestmentForConsultation(inv);
-                              setIsFastTrackConsultationOpen(true);
-                            }}
-                            className="min-h-[40px] px-2.5 py-1.5 rounded-xl text-xs font-bold bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-300/80 dark:border-amber-500/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs group/btn"
-                            title="Jadwalkan Konsultasi VIP DPMPTSP Kabupaten Luwu (Online/Offline)"
-                          >
-                            <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 group-hover/btn:scale-110 transition-transform shrink-0" />
-                            <span className="truncate">Konsultasi VIP</span>
-                          </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setSelectedInvestmentForConsultation(inv);
+                                setIsFastTrackConsultationOpen(true);
+                              }}
+                              className="min-h-[40px] px-2.5 py-1.5 rounded-xl text-xs font-bold bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-300/80 dark:border-amber-500/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs group/btn"
+                              title="Jadwalkan Konsultasi VIP DPMPTSP Kabupaten Luwu (Online/Offline)"
+                            >
+                              <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 group-hover/btn:scale-110 transition-transform shrink-0" />
+                              <span className="truncate">Konsultasi VIP</span>
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </TiltCard>
+                    </TiltCard>
+                  </div>
                 ))}
+              </div>
+
+              {/* Below Slider: Touch Swipe Indicator & Pagination Dots */}
+              <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-900/5 dark:bg-slate-800/40 px-3 py-1.5 rounded-xl border border-slate-200/50 dark:border-slate-800">
+                  <span className="inline-block animate-pulse text-emerald-500 font-bold">←</span>
+                  <span>Geser horizontal untuk mengeksplorasi {sortedInvestmentsList.length} potensi</span>
+                  <span className="inline-block animate-pulse text-emerald-500 font-bold">→</span>
+                </div>
+
+                {/* Pagination Dots */}
+                {sortedInvestmentsList.length > 1 && (
+                  <div className="flex items-center gap-1.5 overflow-x-auto max-w-full py-1.5 px-3 rounded-full bg-slate-900/5 dark:bg-slate-800/60 border border-slate-200/50 dark:border-slate-700/50">
+                    {sortedInvestmentsList.map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => scrollToPotensiSlide(i)}
+                        className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                          activePotensiIndex === i
+                            ? "w-7 bg-emerald-500 shadow-sm shadow-emerald-500/50"
+                            : "w-2 bg-slate-300 dark:bg-slate-700 hover:bg-emerald-400/50"
+                        }`}
+                        title={`Ke Potensi #${i + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           ) : (
             <div
@@ -3482,6 +3627,7 @@ export default function LandingPage({
           {(() => {
             const baseFacilities = [
               {
+                id: "airport",
                 name: t("infrastructure.buaAirportTitle"),
                 desc: t("infrastructure.buaAirportDesc"),
                 type: "airport",
@@ -3498,6 +3644,7 @@ export default function LandingPage({
                 latitude: facilityCoords.airport ? facilityCoords.airport[1] : -3.086338491260946,
               },
               {
+                id: "port",
                 name: t("infrastructure.uloPortTitle"),
                 desc: t("infrastructure.uloPortDesc"),
                 type: "port",
@@ -3514,6 +3661,7 @@ export default function LandingPage({
                 latitude: facilityCoords.port ? facilityCoords.port[1] : -3.386061643485775,
               },
               {
+                id: "industrial",
                 name: t("infrastructure.kiluTitle"),
                 desc: t("infrastructure.kiluDesc"),
                 type: "industrial",
@@ -3530,6 +3678,7 @@ export default function LandingPage({
                 latitude: facilityCoords.industrial ? facilityCoords.industrial[1] : -3.125,
               },
               {
+                id: "mpp",
                 name: t("infrastructure.mppTitle"),
                 desc: t("infrastructure.mppDesc"),
                 type: "mpp",
@@ -3546,6 +3695,7 @@ export default function LandingPage({
                 latitude: facilityCoords.mpp ? facilityCoords.mpp[1] : -3.394828505594006,
               }
             ];
+
             const invGeom = (selectedInvestmentId && investments.find((i) => i.id === selectedInvestmentId)?.geometry) || null;
             let invCenter = null;
             if (invGeom) {
@@ -3564,67 +3714,71 @@ export default function LandingPage({
             });
 
             return (
-              <div className="flex sm:grid overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-y-14 sm:gap-x-6 lg:gap-6 relative z-10 pb-4 sm:pb-0 scrollbar-hide pt-10 sm:pt-0 px-2 sm:px-0">
-                {mappedFacilities.map((facility, idx) => (
-                  <motion.div
-                    initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                    style={{ willChange: "transform, opacity" }}
-                    whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
-                    viewport={isMobile ? undefined : { once: true, amount: 0.05 }}
-                    transition={{ delay: idx * 0.1 }}
-                    key={idx}
-                    className={`group relative pt-14 sm:pt-16 pb-6 px-5 sm:px-6 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 ${facility.cardHover} snap-center shrink-0 w-[82vw] sm:w-auto`}
-                  >
-                    {/* Top Subtle Accent Rail */}
-                    <div className={`absolute top-0 inset-x-8 h-[3px] bg-gradient-to-r from-transparent ${facility.rail} to-transparent rounded-full`} />
+              <div className="w-full">
+                {/* Responsive 2x2 Grid on Mobile, 4-Column on Desktop for Maximum Visual Clarity */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 sm:gap-y-14 relative z-10 pt-8 sm:pt-12">
+                  {mappedFacilities.map((facility, idx) => (
+                    <motion.div
+                      initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                      style={{ willChange: "transform, opacity" }}
+                      whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
+                      viewport={isMobile ? undefined : { once: true, amount: 0.05 }}
+                      transition={{ delay: idx * 0.1 }}
+                      key={idx}
+                      className={`group relative pt-10 xs:pt-12 sm:pt-16 pb-4 sm:pb-6 px-3 xs:px-4 sm:px-6 rounded-2xl sm:rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-1.5 bg-white dark:bg-slate-900/95 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200/90 dark:border-slate-800 ${facility.cardHover} w-full`}
+                    >
+                      {/* Top Subtle Accent Rail */}
+                      <div className={`absolute top-0 inset-x-5 sm:inset-x-8 h-[3px] bg-gradient-to-r from-transparent ${facility.rail} to-transparent rounded-full`} />
 
-                    {/* Overlapping Circular Medallion (MPP Badung Aesthetic) */}
-                    <div className="absolute -top-10 sm:-top-11 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-                      <div className="relative">
-                        {/* Ambient Glow */}
-                        <div className={`absolute inset-0 rounded-full ${facility.ambientGlow} blur-md transform group-hover:scale-115 transition-transform duration-300`} />
-                        
-                        {/* Outer Elevated Podium Ring */}
-                        <div className={`relative w-20 h-20 sm:w-22 sm:h-22 rounded-full ring-4 sm:ring-[6px] ring-white dark:ring-slate-900 ${facility.shadow} bg-gradient-to-br ${facility.gradient} flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105`}>
-                          {/* Inner Delicate Ring Accent */}
-                          <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
-                          <facility.icon size={34} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
+                      {/* Overlapping Circular Medallion */}
+                      <div className="absolute -top-7 xs:-top-8 sm:-top-11 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+                        <div className="relative">
+                          {/* Ambient Glow */}
+                          <div className={`absolute inset-0 rounded-full ${facility.ambientGlow} blur-md transform group-hover:scale-115 transition-transform duration-300`} />
+                          
+                          {/* Outer Elevated Podium Ring */}
+                          <div className={`relative w-14 h-14 xs:w-16 xs:h-16 sm:w-22 sm:h-22 rounded-full ring-2 sm:ring-[6px] ring-white dark:ring-slate-900 ${facility.shadow} bg-gradient-to-br ${facility.gradient} flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105`}>
+                            {/* Inner Delicate Ring Accent */}
+                            <div className="absolute inset-1 sm:inset-1.5 rounded-full border border-white/30 pointer-events-none" />
+                            <facility.icon size={22} className="sm:hidden relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
+                            <facility.icon size={34} className="hidden sm:block relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Card Content */}
-                    <div className="w-full flex flex-col items-center flex-grow mt-1">
-                      <h3 className="text-lg sm:text-xl font-bold mb-2.5 tracking-tight text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                        {facility.name}
-                      </h3>
-                      <p
-                        className={`text-xs sm:text-sm leading-relaxed ${textMuted} text-center flex-grow mb-4`}
-                      >
-                        {facility.desc}
-                      </p>
-                    </div>
+                      {/* Card Content */}
+                      <div className="w-full flex flex-col items-center flex-grow mt-1 sm:mt-2">
+                        <h3 className="text-xs xs:text-sm sm:text-xl font-extrabold mb-1.5 sm:mb-2.5 tracking-tight text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-snug">
+                          {facility.name}
+                        </h3>
+                        <p
+                          className={`text-[10px] xs:text-xs sm:text-sm leading-snug sm:leading-relaxed ${textMuted} text-center flex-grow mb-3 sm:mb-4 line-clamp-3 sm:line-clamp-none`}
+                        >
+                          {facility.desc}
+                        </p>
+                      </div>
 
-                    {/* Bottom Info: Distance Calculation or Status Tag */}
-                    <div className="w-full mt-auto pt-3.5 border-t border-slate-100 dark:border-slate-800/80 flex flex-col items-center gap-2">
-                      {facility.distanceKm !== null ? (
-                        <div className="w-full flex items-center justify-between">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                            {t("distance.estimation", "Estimasi Jarak")}
+                      {/* Bottom Info: Distance Calculation or Status Tag */}
+                      <div className="w-full mt-auto pt-2.5 sm:pt-3.5 border-t border-slate-100 dark:border-slate-800/80 flex flex-col items-center gap-1.5 sm:gap-2">
+                        {facility.distanceKm !== null ? (
+                          <div className="w-full flex items-center justify-between text-[9px] sm:text-[10px]">
+                            <span className="font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                              {t("distance.estimation", "Estimasi Jarak")}
+                            </span>
+                            <span className="font-mono font-black px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-500/20">
+                              {facility.distanceKm.toFixed(1)} km
+                            </span>
+                          </div>
+                        ) : (
+                          <span className={`inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[8.5px] xs:text-[9.5px] sm:text-[10px] font-bold uppercase tracking-tight border shadow-xs ${facility.badgeBg} truncate max-w-full`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${facility.dotColor} animate-pulse shrink-0`} />
+                            <span className="truncate">{facility.tag}</span>
                           </span>
-                          <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-500/20">
-                            {facility.distanceKm.toFixed(1)} km
-                          </span>
-                        </div>
-                      ) : (
-                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border shadow-xs ${facility.badgeBg}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${facility.dotColor} animate-pulse`} />
-                          {facility.tag}
-                        </span>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             );
           })()}
@@ -3661,7 +3815,7 @@ export default function LandingPage({
                 />
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 relative z-10">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 relative z-10">
                 {stepsData.map((step, idx) => {
                   const isActive = activeRoadmapStep === idx;
                   const isCompleted = activeRoadmapStep > idx;
@@ -3673,19 +3827,19 @@ export default function LandingPage({
                       whileTap={{ scale: 0.97 }}
                       key={idx}
                       onClick={() => setActiveRoadmapStep(idx)}
-                      className={`group p-3 sm:p-4 rounded-2xl border text-center flex flex-col items-center justify-between transition-all duration-300 relative ${
+                      className={`group p-2.5 xs:p-3 sm:p-4 rounded-xl sm:rounded-2xl border text-center flex flex-col items-center justify-between transition-all duration-300 relative ${
                         isActive
                           ? `bg-white dark:bg-slate-900 shadow-xl border-slate-300 dark:border-slate-700 ring-2 ${isDark ? "ring-sky-500/40" : "ring-sky-500/30"}`
                           : `bg-white/70 dark:bg-slate-900/60 border-slate-200/90 dark:border-slate-800/80 hover:bg-white dark:hover:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700`
                       }`}
                     >
                       {/* Floating Circular Medallion */}
-                      <div className="relative mb-3">
+                      <div className="relative mb-2 sm:mb-3">
                         <div className={`absolute inset-0 rounded-full ${step.ambientGlow} blur-md transition-opacity duration-300 ${isActive ? "opacity-100 scale-110" : "opacity-0 group-hover:opacity-60"}`} />
                         <div
-                          className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center font-mono font-bold text-sm sm:text-base relative z-10 transition-all duration-300 ${
+                          className={`w-10 h-10 sm:w-14 sm:h-14 rounded-full flex items-center justify-center font-mono font-bold text-xs sm:text-base relative z-10 transition-all duration-300 ${
                             isActive
-                              ? `bg-gradient-to-br ${step.gradient} text-white ring-4 ring-white dark:ring-slate-900 ${step.shadow} scale-105`
+                              ? `bg-gradient-to-br ${step.gradient} text-white ring-2 sm:ring-4 ring-white dark:ring-slate-900 ${step.shadow} scale-105`
                               : isCompleted
                               ? `bg-emerald-500 text-white ring-2 ring-emerald-300 dark:ring-emerald-800`
                               : `bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 group-hover:scale-105`
@@ -3693,7 +3847,9 @@ export default function LandingPage({
                         >
                           <div className="absolute inset-1 rounded-full border border-white/20 pointer-events-none" />
                           {isCompleted && !isActive ? (
-                            <CheckCircle2 size={20} className="text-white" />
+                            <CheckCircle2 size={16} className="sm:hidden text-white" />
+                          ) : isCompleted && !isActive ? (
+                            <CheckCircle2 size={20} className="hidden sm:block text-white" />
                           ) : (
                             <span className="relative z-10">{step.num}</span>
                           )}
@@ -3702,20 +3858,20 @@ export default function LandingPage({
 
                       {/* Title & SLA Badge */}
                       <div className="w-full flex flex-col items-center">
-                        <span className="text-xs sm:text-sm font-bold tracking-tight text-slate-900 dark:text-white line-clamp-1 mb-1.5">
+                        <span className="text-[11px] xs:text-xs sm:text-sm font-bold tracking-tight text-slate-900 dark:text-white line-clamp-1 mb-1 sm:mb-1.5">
                           {step.title}
                         </span>
-                        <div className="flex items-center gap-1.5 flex-wrap justify-center">
-                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+                        <div className="flex items-center gap-1 flex-wrap justify-center">
+                          <span className={`inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold border ${
                             isActive
                               ? step.badgeClass
                               : "bg-slate-100 dark:bg-slate-800/70 text-slate-600 dark:text-slate-400 border-slate-200/80 dark:border-slate-700/80"
                           }`}>
-                            <Clock size={10} />
-                            {step.duration}
+                            <Clock size={9} className="shrink-0" />
+                            <span className="truncate max-w-[80px] sm:max-w-none">{step.duration}</span>
                           </span>
                           {stepCheckedCount > 0 && (
-                            <span className="px-1.5 py-0.5 rounded-md text-[9px] font-mono font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-600/30">
+                            <span className="px-1 py-0.5 rounded-md text-[8.5px] sm:text-[9px] font-mono font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-600/30">
                               {stepCheckedCount}/{stepReqs.length}
                             </span>
                           )}
@@ -3724,7 +3880,7 @@ export default function LandingPage({
 
                       {/* Active Indicator Pulse Dot */}
                       {isActive && (
-                        <span className={`absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full ${step.dotColor} ring-2 ring-white dark:ring-slate-900 animate-pulse`} />
+                        <span className={`absolute -bottom-1 sm:-bottom-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ${step.dotColor} ring-2 ring-white dark:ring-slate-900 animate-pulse`} />
                       )}
                     </motion.button>
                   );
@@ -3833,53 +3989,56 @@ export default function LandingPage({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -15 }}
                         transition={{ duration: 0.3, ease: "easeOut" }}
-                        className="p-6 sm:p-8 rounded-[28px] border min-h-full flex flex-col justify-between relative overflow-hidden bg-white dark:bg-slate-900/95 shadow-xl dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] border-slate-200/90 dark:border-slate-800"
+                        className="p-3.5 xs:p-4.5 sm:p-7 md:p-8 rounded-2xl sm:rounded-[28px] border min-h-full flex flex-col justify-between relative overflow-hidden bg-white dark:bg-slate-900/95 shadow-xl dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] border-slate-200/90 dark:border-slate-800"
                       >
                         {/* Top Accent Gradient Rail */}
-                        <div className={`absolute top-0 inset-x-10 h-[3px] bg-gradient-to-r from-transparent ${curStep.railColor} to-transparent rounded-full`} />
+                        <div className={`absolute top-0 inset-x-6 sm:inset-x-10 h-[3px] bg-gradient-to-r from-transparent ${curStep.railColor} to-transparent rounded-full`} />
 
                         <div>
-                          {/* Dossier Header with Floating Medallion */}
-                          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-slate-100 dark:border-slate-800">
-                            <div className="flex items-center gap-4">
-                              {/* Large Medallion Podium */}
+                          {/* Dossier Header with Symmetrical Responsive Layout */}
+                          <div className="pb-4 sm:pb-6 mb-4 sm:mb-6 border-b border-slate-100 dark:border-slate-800 flex flex-col gap-3">
+                            {/* Top Meta Bar: Badge + Authority Code + SLA Chip */}
+                            <div className="flex items-center justify-between gap-2 flex-wrap">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className={`px-2.5 py-0.5 rounded-full text-[9.5px] sm:text-[11px] font-bold uppercase tracking-wider border ${curStep.badgeClass}`}>
+                                  {curStep.tag}
+                                </span>
+                                <span className="text-[10px] sm:text-xs font-mono font-bold text-slate-400 dark:text-slate-500">
+                                  {curStep.authorityCode}
+                                </span>
+                              </div>
+
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] sm:text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 shadow-xs shrink-0">
+                                <Clock size={13} className="text-emerald-500 shrink-0" />
+                                <span>{curStep.duration}</span>
+                              </span>
+                            </div>
+
+                            {/* Main Title Row with Medallion Icon */}
+                            <div className="flex items-center gap-3 sm:gap-4 mt-1">
+                              {/* Medallion Icon */}
                               <div className="relative shrink-0">
                                 <div className={`absolute inset-0 rounded-full ${curStep.ambientGlow} blur-md`} />
-                                <div className={`relative w-16 h-16 sm:w-18 sm:h-18 rounded-full ring-4 ring-white dark:ring-slate-900 ${curStep.shadow} bg-gradient-to-br ${curStep.gradient} flex items-center justify-center text-white`}>
-                                  <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
-                                  <curStep.icon size={28} className="drop-shadow-md" strokeWidth={2.2} />
+                                <div className={`relative w-12 h-12 sm:w-16 sm:h-16 rounded-full ring-2 sm:ring-4 ring-white dark:ring-slate-900 ${curStep.shadow} bg-gradient-to-br ${curStep.gradient} flex items-center justify-center text-white`}>
+                                  <div className="absolute inset-1 sm:inset-1.5 rounded-full border border-white/30 pointer-events-none" />
+                                  <curStep.icon size={22} className="sm:hidden drop-shadow-md" strokeWidth={2.2} />
+                                  <curStep.icon size={28} className="hidden sm:block drop-shadow-md" strokeWidth={2.2} />
                                 </div>
                               </div>
 
-                              {/* Title Info */}
+                              {/* Title Text */}
                               <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider border ${curStep.badgeClass}`}>
-                                    {curStep.tag}
-                                  </span>
-                                  <span className="text-xs font-mono font-bold text-slate-400 dark:text-slate-500">
-                                    {curStep.authorityCode}
-                                  </span>
-                                </div>
-                                <h3 className="text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
+                                <h3 className="text-base xs:text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
                                   {curStep.long_title}
                                 </h3>
                               </div>
                             </div>
-
-                            {/* SLA Chip */}
-                            <div className="flex items-center gap-2 sm:self-center shrink-0">
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 shadow-xs">
-                                <Clock size={14} className="text-emerald-500" />
-                                {curStep.duration}
-                              </span>
-                            </div>
                           </div>
 
                           {/* Legal Basis Callout Banner */}
-                          <div className="mb-6 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 flex items-start gap-3">
+                          <div className="mb-4 sm:mb-6 p-3 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 flex items-start gap-2.5">
                             <ShieldCheck size={16} className="text-sky-500 shrink-0 mt-0.5" />
-                            <div className="text-xs leading-relaxed">
+                            <div className="text-[11px] sm:text-xs leading-relaxed">
                               <span className="font-bold text-slate-800 dark:text-slate-200 mr-1.5">
                                 Landasan Hukum & Regulasi:
                               </span>
@@ -3890,18 +4049,19 @@ export default function LandingPage({
                           </div>
 
                           {/* Narrative Description */}
-                          <p className={`text-sm sm:text-base leading-relaxed mb-6 ${textMuted}`}>
+                          <p className={`text-xs xs:text-sm sm:text-base leading-relaxed mb-4 sm:mb-6 ${textMuted}`}>
                             {curStep.desc}
                           </p>
 
                           {/* Interactive Requirements Checklist Workspace */}
-                          <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 mb-6">
-                            <div className="flex items-center justify-between gap-3 mb-3">
-                              <div className="flex items-center gap-2">
-                                <h4 className="text-xs sm:text-sm uppercase tracking-wider font-extrabold text-slate-800 dark:text-slate-200">
+                          <div className="p-3 xs:p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 mb-4 sm:mb-6">
+                            {/* Checklist Header Responsive Row */}
+                            <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-2 mb-2.5">
+                              <div className="flex items-center justify-between xs:justify-start gap-2 w-full xs:w-auto">
+                                <h4 className="text-[11px] sm:text-xs uppercase tracking-wider font-extrabold text-slate-800 dark:text-slate-200 truncate">
                                   {t("roadmap.reqHeader", "Berkas Persyaratan Wajib:")}
                                 </h4>
-                                <span className={`px-2 py-0.5 rounded-md text-[11px] font-mono font-bold ${
+                                <span className={`px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-bold shrink-0 ${
                                   isAllChecked
                                     ? "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700"
                                     : "bg-sky-100 dark:bg-sky-950 text-sky-700 dark:text-sky-300 border border-sky-300 dark:border-sky-700"
@@ -3911,14 +4071,14 @@ export default function LandingPage({
                               </div>
                               <button
                                 onClick={toggleAll}
-                                className="text-[11px] font-bold text-sky-600 dark:text-sky-400 hover:underline cursor-pointer"
+                                className="text-[10.5px] sm:text-[11px] font-bold text-sky-600 dark:text-sky-400 hover:underline cursor-pointer self-end xs:self-auto shrink-0"
                               >
                                 {isAllChecked ? "Batal Semua" : "Centang Semua"}
                               </button>
                             </div>
 
                             {/* Progress Indicator Rail */}
-                            <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mb-4 overflow-hidden">
+                            <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mb-3.5 overflow-hidden">
                               <div
                                 className="h-full bg-gradient-to-r from-sky-500 via-teal-500 to-emerald-500 rounded-full transition-all duration-300"
                                 style={{ width: `${completionPercent}%` }}
@@ -3926,7 +4086,7 @@ export default function LandingPage({
                             </div>
 
                             {/* 4 Interactive Check Items */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
                               {curReqs.map((chk, i) => {
                                 const isChecked = !!checkedRequirements[`${activeRoadmapStep}-${i}`];
 
@@ -3934,7 +4094,7 @@ export default function LandingPage({
                                   <div
                                     key={i}
                                     onClick={() => toggleRequirement(activeRoadmapStep, i)}
-                                    className={`p-2.5 sm:p-3 rounded-xl border flex items-start gap-2.5 text-xs sm:text-sm cursor-pointer transition-all duration-200 select-none ${
+                                    className={`p-2.5 sm:p-3 rounded-lg sm:rounded-xl border flex items-start gap-2.5 text-xs sm:text-sm cursor-pointer transition-all duration-200 select-none ${
                                       isChecked
                                         ? "bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-600/40 text-emerald-900 dark:text-emerald-200"
                                         : "bg-white dark:bg-slate-900/80 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700"
@@ -3949,7 +4109,7 @@ export default function LandingPage({
                                     >
                                       {isChecked && <CheckCircle2 size={12} className="text-white" />}
                                     </div>
-                                    <span className="leading-snug flex-1 font-medium break-words">
+                                    <span className="leading-snug flex-1 font-medium break-words text-[11.5px] sm:text-xs">
                                       {chk}
                                     </span>
                                   </div>
@@ -3960,14 +4120,14 @@ export default function LandingPage({
                         </div>
 
                         {/* Direct Government Portals & VIP Consultation Footer */}
-                        <div className="pt-5 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
-                          <div className="flex items-center gap-2 w-full sm:w-auto">
+                        <div className="pt-4 sm:pt-5 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                          <div className="flex flex-col xs:flex-row items-center gap-2 w-full sm:w-auto">
                             {curStep.portalUrl && (
                               <a
                                 href={curStep.portalUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r ${curStep.gradient} shadow-md hover:opacity-90 transition-opacity w-full sm:w-auto`}
+                                className={`inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r ${curStep.gradient} shadow-md hover:opacity-90 transition-opacity w-full sm:w-auto min-h-[40px]`}
                               >
                                 <span>{curStep.portalLabel}</span>
                                 <ExternalLink size={14} />
@@ -3977,7 +4137,7 @@ export default function LandingPage({
                               href="https://wa.me/6281142011"
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors w-full sm:w-auto border border-slate-200 dark:border-slate-700"
+                              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors w-full sm:w-auto border border-slate-200 dark:border-slate-700 min-h-[40px]"
                             >
                               <MessageSquare size={14} className="text-emerald-500" />
                               <span>{t("roadmap.contactMpp", "Konsultasi MPP Luwu")}</span>
@@ -3985,18 +4145,18 @@ export default function LandingPage({
                           </div>
 
                           {/* Prev / Next Step Controls */}
-                          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                          <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
                             <button
                               disabled={activeRoadmapStep === 0}
                               onClick={() => setActiveRoadmapStep((prev) => Math.max(0, prev - 1))}
-                              className="px-3 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-800 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                              className="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-800 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors min-h-[40px] flex items-center justify-center"
                             >
                               ← Sebelumnya
                             </button>
                             <button
                               disabled={activeRoadmapStep === stepsData.length - 1}
                               onClick={() => setActiveRoadmapStep((prev) => Math.min(stepsData.length - 1, prev + 1))}
-                              className="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-white dark:bg-white dark:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
+                              className="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-slate-900 text-white dark:bg-white dark:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 transition-opacity min-h-[40px] flex items-center justify-center"
                             >
                               Selanjutnya →
                             </button>
@@ -4249,45 +4409,69 @@ export default function LandingPage({
                 </div>
               </div>
 
-              {/* QUICK STATS RIBBON AT CARD BOTTOM */}
-              <div className="mt-8 pt-6 border-t border-slate-200/80 dark:border-slate-800 grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-                    <Building2 size={20} />
+              {/* QUICK STATS RIBBON AT CARD BOTTOM - Symmetrical 2x2 Bento Grid on Mobile */}
+              <div className="mt-8 pt-6 border-t border-slate-200/80 dark:border-slate-800/80 grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
+                {/* Stat 1: 21 Instansi */}
+                <div className="p-3 sm:p-4 rounded-2xl bg-white/70 dark:bg-slate-800/50 border border-slate-200/90 dark:border-slate-700/60 shadow-xs flex items-start gap-2.5 sm:gap-3 transition-all hover:border-emerald-400 dark:hover:border-emerald-500/50">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <Building2 size={18} className="sm:hidden" />
+                    <Building2 size={20} className="hidden sm:block" />
                   </div>
-                  <div>
-                    <div className="text-lg font-extrabold text-slate-900 dark:text-white font-mono">21 Instansi</div>
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400">Pusat, Daerah & BUMN</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-sky-500/10 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
-                    <FileText size={20} />
-                  </div>
-                  <div>
-                    <div className="text-lg font-extrabold text-slate-900 dark:text-white font-mono">100+ Layanan</div>
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400">Administrasi & Izin Usaha</div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs xs:text-sm sm:text-base font-black text-slate-900 dark:text-white font-mono leading-snug truncate">
+                      21 Instansi
+                    </div>
+                    <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
+                      Pusat, Daerah & BUMN
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-                    <Award size={20} />
+                {/* Stat 2: 100+ Layanan */}
+                <div className="p-3 sm:p-4 rounded-2xl bg-white/70 dark:bg-slate-800/50 border border-slate-200/90 dark:border-slate-700/60 shadow-xs flex items-start gap-2.5 sm:gap-3 transition-all hover:border-sky-400 dark:hover:border-sky-500/50">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-sky-500/10 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <FileText size={18} className="sm:hidden" />
+                    <FileText size={20} className="hidden sm:block" />
                   </div>
-                  <div>
-                    <div className="text-lg font-extrabold text-slate-900 dark:text-white font-mono">4.85 / 5.0</div>
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400">Indeks Kepuasan (IKM)</div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs xs:text-sm sm:text-base font-black text-slate-900 dark:text-white font-mono leading-snug truncate">
+                      100+ Layanan
+                    </div>
+                    <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
+                      Administrasi & Izin Usaha
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-teal-500/10 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0">
-                    <ShieldCheck size={20} />
+                {/* Stat 3: 4.85 / 5.0 */}
+                <div className="p-3 sm:p-4 rounded-2xl bg-white/70 dark:bg-slate-800/50 border border-slate-200/90 dark:border-slate-700/60 shadow-xs flex items-start gap-2.5 sm:gap-3 transition-all hover:border-amber-400 dark:hover:border-amber-500/50">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <Award size={18} className="sm:hidden" />
+                    <Award size={20} className="hidden sm:block" />
                   </div>
-                  <div>
-                    <div className="text-lg font-extrabold text-slate-900 dark:text-white font-mono">Rp 0 (Nol)</div>
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400">Transparan Tanpa Pungli</div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs xs:text-sm sm:text-base font-black text-slate-900 dark:text-white font-mono leading-snug truncate">
+                      4.85 / 5.0
+                    </div>
+                    <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
+                      Indeks Kepuasan (IKM)
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stat 4: Rp 0 (Nol) */}
+                <div className="p-3 sm:p-4 rounded-2xl bg-white/70 dark:bg-slate-800/50 border border-slate-200/90 dark:border-slate-700/60 shadow-xs flex items-start gap-2.5 sm:gap-3 transition-all hover:border-teal-400 dark:hover:border-teal-500/50">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-teal-500/10 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <ShieldCheck size={18} className="sm:hidden" />
+                    <ShieldCheck size={20} className="hidden sm:block" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs xs:text-sm sm:text-base font-black text-slate-900 dark:text-white font-mono leading-snug truncate">
+                      Rp 0 (Nol)
+                    </div>
+                    <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
+                      Transparan Tanpa Pungli
+                    </div>
                   </div>
                 </div>
               </div>
@@ -5606,7 +5790,7 @@ export default function LandingPage({
             </div>
             
             {/* 2x2 Grid on Mobile, 4-Column on Desktop for Symmetric Perfection */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 relative">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-6 relative">
               {[
                 { 
                   icon: Megaphone, 
@@ -5651,7 +5835,7 @@ export default function LandingPage({
               ].map((item, idx) => (
                 <div 
                   key={idx} 
-                  className={`group relative rounded-2xl sm:rounded-3xl border p-4 sm:p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 overflow-hidden backdrop-blur-md ${
+                  className={`group relative rounded-2xl sm:rounded-3xl border p-3 sm:p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 overflow-hidden backdrop-blur-md ${
                     isDark 
                       ? "bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:shadow-[0_20px_40px_rgba(0,0,0,0.6)]" 
                       : "bg-white border-slate-200/90 hover:border-slate-300 hover:shadow-xl hover:shadow-slate-200/50"
@@ -5662,35 +5846,35 @@ export default function LandingPage({
                   
                   <div>
                     {/* Badge Pill */}
-                    <div className="flex justify-between items-center mb-4">
-                      <span className={`px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wider border ${item.badgeColor}`}>
+                    <div className="flex justify-between items-center mb-2 sm:mb-4 gap-1">
+                      <span className={`px-1.5 py-0.5 rounded-full text-[8px] xs:text-[9px] sm:text-[10px] font-bold uppercase tracking-tight border truncate max-w-[80%] ${item.badgeColor}`}>
                         {item.badge}
                       </span>
-                      <span className="text-[10px] font-mono text-slate-600 dark:text-slate-400">0{idx + 1}</span>
+                      <span className="text-[9px] sm:text-[10px] font-mono text-slate-600 dark:text-slate-400 shrink-0">0{idx + 1}</span>
                     </div>
 
                     {/* Icon Header Box */}
-                    <div className="flex justify-center my-2 sm:my-3">
-                      <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center border ${item.bg} ${item.color} shadow-inner transition-transform duration-300 group-hover:scale-110`}>
-                        <item.icon className="w-7 h-7 sm:w-8 sm:h-8" />
+                    <div className="flex justify-center my-1.5 sm:my-3">
+                      <div className={`w-11 h-11 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center border ${item.bg} ${item.color} shadow-inner transition-transform duration-300 group-hover:scale-110`}>
+                        <item.icon className="w-5.5 h-5.5 sm:w-8 sm:h-8" />
                       </div>
                     </div>
 
                     {/* Content Title & Subtitle */}
-                    <div className="text-center mt-3">
-                      <h5 className={`font-extrabold text-xs sm:text-base mb-1.5 ${isDark ? "text-slate-100" : "text-slate-900"}`}>
+                    <div className="text-center mt-2 sm:mt-3">
+                      <h5 className={`font-extrabold text-[11px] xs:text-xs sm:text-base leading-tight tracking-tight mb-1.5 ${isDark ? "text-slate-100" : "text-slate-900"}`}>
                         {item.title}
                       </h5>
-                      <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 leading-relaxed min-h-[32px]">
+                      <p className="text-[9.5px] xs:text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 leading-snug min-h-[28px] sm:min-h-[32px]">
                         {item.desc}
                       </p>
                     </div>
                   </div>
 
                   {/* Bottom Footer Accent */}
-                  <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 group-hover:translate-x-0.5 transition-transform">
+                  <div className="mt-2.5 sm:mt-4 pt-2 sm:pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 group-hover:translate-x-0.5 transition-transform">
                     <span>Terintegrasi System</span>
-                    <ChevronRight size={12} />
+                    <ChevronRight size={11} className="shrink-0" />
                   </div>
                 </div>
               ))}
@@ -5759,7 +5943,7 @@ export default function LandingPage({
               </div>
 
               {/* Quick Navigation Links */}
-              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
+              <div className="grid grid-cols-2 xs:flex xs:flex-wrap items-center justify-center gap-1.5 sm:gap-3 w-full md:w-auto">
                 {[
                   { name: t('nav.home', 'Beranda'), icon: Home, action: () => scrollToSection("hero-section") },
                   { name: t('nav.potensiRegional', 'Potensi Regional'), icon: Map, action: () => scrollToSection("potensi-section") },
@@ -5778,14 +5962,14 @@ export default function LandingPage({
                     <button 
                       key={link.name} 
                       onClick={link.action}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                      className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-[10.5px] sm:text-xs font-semibold transition-all cursor-pointer border border-transparent ${
                         isDark 
-                          ? "text-slate-400 hover:text-white hover:bg-slate-800/60" 
-                          : "text-slate-600 hover:text-emerald-700 hover:bg-emerald-50/80"
+                          ? "text-slate-300 hover:text-white hover:bg-slate-800/80 hover:border-slate-700" 
+                          : "text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/80 hover:border-emerald-200"
                       }`}
                     >
-                      <IconComponent className="w-3.5 h-3.5 text-emerald-500" />
-                      {link.name}
+                      <IconComponent className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <span className="truncate">{link.name}</span>
                     </button>
                   );
                 })}
@@ -5794,8 +5978,8 @@ export default function LandingPage({
 
             {/* Bottom Copyright & Security Metadata */}
             <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] sm:text-xs font-medium text-slate-500 dark:text-slate-400">
-              <p className="text-center sm:text-left">
-                {t("footer.copyright", "© 2026 Pemerintah Kabupaten Luwu. Hak Cipta Dilindungi Undang-Undang.")}
+              <p className="text-center sm:text-left font-mono">
+                {t("footer.copyright", "@2026 Luwu Wanua Mappatuo Naewai Alena. All Rights Reserved.")}
               </p>
               <div className="flex items-center gap-3 font-mono text-[10px]">
                 <span className="inline-flex items-center gap-1 text-emerald-500">

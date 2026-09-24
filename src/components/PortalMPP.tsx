@@ -502,7 +502,21 @@ export default function PortalMPP() {
   }, []);
 
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [aiInitialQuery, setAiInitialQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleOpenAiModal = (e: any) => {
+      setIsAiModalOpen(true);
+      if (e?.detail?.query) {
+        setAiInitialQuery(e.detail.query);
+      } else {
+        setAiInitialQuery('');
+      }
+    };
+    window.addEventListener('open-mpp-ai-modal', handleOpenAiModal);
+    return () => window.removeEventListener('open-mpp-ai-modal', handleOpenAiModal);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -1906,11 +1920,11 @@ export default function PortalMPP() {
               <button
                 type="button"
                 onClick={() => window.dispatchEvent(new CustomEvent('toggle-mpp-accessibility'))}
-                className="flex w-7 h-7 xs:w-8 xs:h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-slate-900/5 dark:bg-white/5 border border-slate-900/10 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 items-center justify-center transition-all active:scale-95 cursor-pointer shrink-0"
+                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-white/10 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-all shadow-sm active:scale-95 cursor-pointer shrink-0 flex items-center justify-center"
                 title="Layanan Ramah Inklusif & Disabilitas (Pusat Bantuan & Alat Bantu)"
                 aria-label="Layanan Ramah Inklusif & Disabilitas"
               >
-                <Accessibility className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 dark:text-emerald-400" />
+                <Accessibility size={18} className="text-emerald-600 dark:text-emerald-400" />
               </button>
 
               <button 
@@ -1921,14 +1935,6 @@ export default function PortalMPP() {
               >
                 <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 <span>{t("mppPortal.nav.asistenAi")}</span>
-              </button>
-              
-              <button 
-                type="button" 
-                className="w-7 h-7 xs:w-8 xs:h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-slate-900/5 dark:bg-white/5 border border-slate-900/10 dark:border-white/10 text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:text-white flex items-center justify-center transition-colors active:scale-95 shrink-0"
-                title={t("mppPortal.tooltips.notifications")}
-              >
-                <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </button>
             </div>
           </div>
@@ -2148,17 +2154,30 @@ export default function PortalMPP() {
                 </span>
               </motion.div>
               
-              {/* Judul: Transformasi Digital - Tipografi Institusional Kuat */}
+              {/* Judul: Transformasi Digital Menuju Luwu Unggul - Tipografi Hirarki Elegan & Ambient Backlight */}
               <motion.h1 
                 variants={{
                   hidden: { opacity: 0, y: 25 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.35 } },
                 }}
-                className="text-[26px] xs:text-[30px] sm:text-4xl md:text-5xl lg:text-6xl font-black text-center text-slate-900 dark:text-white mb-2 sm:mb-3.5 max-w-4xl leading-[1.15] sm:leading-tight tracking-tight font-sans text-balance"
+                className="text-center text-slate-900 dark:text-white mb-2 sm:mb-4 max-w-5xl mx-auto tracking-tight font-sans relative"
               >
-                {t("mppPortal.hero.titlePrefix", "Transformasi Digital Menuju")}{" "}
-                <span className="bg-gradient-to-r from-teal-600 via-emerald-500 to-cyan-500 dark:from-teal-400 dark:via-emerald-300 dark:to-cyan-300 bg-clip-text text-transparent font-black">
-                  {t("mppPortal.hero.titleHighlight", "Luwu Unggul")}
+                {/* Subtle Ambient Radial Backlight Glow */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-emerald-500/10 dark:bg-emerald-500/15 blur-3xl rounded-full pointer-events-none -z-10" />
+
+                {/* Line 1: "Transformasi Digital" - Ukuran Font Lebih Besar & Dominan */}
+                <span className="block text-[34px] xs:text-[40px] sm:text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white leading-[1.05] tracking-tight mb-1 font-['Plus_Jakarta_Sans',sans-serif]">
+                  {t("mppPortal.hero.titleMain", "Transformasi Digital")}
+                </span>
+
+                {/* Line 2: "Menuju Luwu Unggul" - Ukuran Sedikit Lebih Kecil Dengan Gradien & Pendaran Glow */}
+                <span className="block text-[24px] xs:text-[30px] sm:text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.12] tracking-tight font-['Plus_Jakarta_Sans',sans-serif]">
+                  <span className="text-slate-800 dark:text-slate-200">
+                    {t("mppPortal.hero.titlePrefix", "Menuju")}{" "}
+                  </span>
+                  <span className="bg-gradient-to-r from-teal-500 via-emerald-500 to-cyan-500 dark:from-teal-400 dark:via-emerald-300 dark:to-cyan-300 bg-clip-text text-transparent drop-shadow-[0_4px_25px_rgba(16,185,129,0.3)]">
+                    {t("mppPortal.hero.titleHighlight", "Luwu Unggul")}
+                  </span>
                 </span>
               </motion.h1>
               
@@ -6043,10 +6062,8 @@ export default function PortalMPP() {
 
             {/* Bottom Symmetrical Copyright Bar */}
             <div className="mt-8 pt-6 pb-[calc(env(safe-area-inset-bottom,0px)+72px)] md:pb-0 border-t border-slate-200/80 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              <div className="flex items-center gap-2 text-center md:text-left">
-                <span>© {new Date().getFullYear()} MPP Simpurusiang Kabupaten Luwu.</span>
-                <span className="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
-                <span className="hidden sm:inline">{t("mppPortal.footer.integratedServiceDot", "Pelayanan Publik Terintegrasi.")}</span>
+              <div className="flex items-center gap-2 text-center md:text-left font-mono">
+                <span>{t("mppPortal.footer.copyright", "@2026 Luwu Wanua Mappatuo Naewai Alena. All Rights Reserved.")}</span>
               </div>
               <div className="flex items-center gap-2 text-center md:text-right font-medium text-slate-600 dark:text-slate-300">
                 <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
@@ -7354,7 +7371,7 @@ export default function PortalMPP() {
         />
 
         {/* AI Modal */}
-        <MppVisionModal isOpen={isAiModalOpen} onClose={() => setIsAiModalOpen(false)} />
+        <MppVisionModal isOpen={isAiModalOpen} onClose={() => setIsAiModalOpen(false)} initialQuery={aiInitialQuery} />
 
         {/* Airport Self-Service Kiosk Modal */}
         <MppAirportKioskModal

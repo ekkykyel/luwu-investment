@@ -663,7 +663,7 @@
     "infrastructure": "Infrastructure",
     "interactiveDashboard": "Interactive Dashboard",
     "pemkabLuwu": "Government of Luwu Regency",
-    "copyright": "© 2026 Government of Luwu Regency. All Rights Reserved.",
+    "copyright": "@2026 Luwu Wanua Mappatuo Naewai Alena. All Rights Reserved.",
     "version": "Version 2.0.1 (Precision Engine)"
   },
   "chartsExtra": {
@@ -1940,8 +1940,9 @@
   "opex_kemasan": "Packaging Costs",
   "mppPortal": {
     "hero": {
-      "titlePrefix": "Welcome to the Public Service",
-      "titleHighlight": "Mall of Luwu Regency",
+      "titleMain": "Digital Transformation",
+      "titlePrefix": "Towards",
+      "titleHighlight": "Luwu Excellence",
       "subtitle": "Integrated, Fast, and Transparent Public Services in One Place",
       "award": "Government of Luwu",
       "videoTour": "Simpurusiang MPP Service Profile Video",
@@ -2366,7 +2367,7 @@
       "tanyaJawab": "Frequently Asked Questions (FAQ)",
       "webgis": "Luwu Investment WebGIS",
       "konsultasiAi": "Asisten Digital Ta' Consultation",
-      "copyright": "© 2024 MPP Simpurusiang Luwu Regency. Integrated Public Service Standard.",
+      "copyright": "@2026 Luwu Wanua Mappatuo Naewai Alena. All Rights Reserved.",
       "hoursText": "Operating Hours: Monday – Thursday (07:30 – 16:00 WITA) & Friday (07:30 – 16:30 WITA)",
       "agencyText": "Luwu Regency Government · DPMPTSP"
     },
@@ -2867,7 +2868,7 @@
       "optionalBadge": "OPTIONAL",
       "downloadTemplate": "Download Form Draft / Template",
       "stepsTitle": "SERVICE PROCEDURE STEPS:",
-      "aiAssistantTitle": "Ask AI Requirements Assistant",
+      "aiAssistantTitle": "Asisten MPP",
       "aiPlaceholder": "Ask specific questions (e.g., Does NIB for restaurant require distribution permit?)...",
       "askAiBtn": "Ask AI",
       "askingAi": "Analyzing..."

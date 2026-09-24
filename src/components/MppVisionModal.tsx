@@ -9,6 +9,7 @@ import { supabase } from "../lib/supabaseClient";
 interface MppVisionModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialQuery?: string;
 }
 
 interface Message {
@@ -18,7 +19,7 @@ interface Message {
   time: string;
 }
 
-export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose }) => {
+export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose, initialQuery }) => {
   const { t, i18n } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -26,6 +27,7 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose 
   const [typedWelcome, setTypedWelcome] = useState("");
   const [knowledgeDocs, setKnowledgeDocs] = useState<KnowledgeDocMeta[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const initialQueryTriggered = useRef(false);
 
   const welcomeText = t(
     "mppVision.welcome",
@@ -78,6 +80,7 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose 
       setTypedWelcome("");
       setMessages([]);
       setInputValue("");
+      initialQueryTriggered.current = false;
       return;
     }
 
@@ -93,6 +96,17 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose 
 
     return () => clearInterval(interval);
   }, [isOpen]);
+
+  // Handle Initial Query from external triggers (e.g. Asisten MPP card)
+  useEffect(() => {
+    if (isOpen && initialQuery && initialQuery.trim() && !initialQueryTriggered.current) {
+      initialQueryTriggered.current = true;
+      const timer = setTimeout(() => {
+        handleSendMessage(initialQuery);
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, initialQuery]);
 
   // Auto scroll to bottom when new messages arrive
   useEffect(() => {
@@ -251,30 +265,40 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose 
               </button>
             </div>
 
-            {/* Fixed Greeting Header */}
-            <div className="px-4 sm:px-6 py-4 border-b border-white/10 bg-[#00162B]/50 shrink-0">
-              {/* Initial Greeting Bubble */}
-              <div className="flex items-start gap-2.5">
-                <div className="w-7 h-7 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 mt-1">
-                  <Sparkles className="w-3.5 h-3.5 text-[#00FF99]" />
-                </div>
-                <div className="max-w-[90%] sm:max-w-[85%] rounded-2xl rounded-tl-xs p-4 sm:p-5 bg-emerald-50 dark:bg-emerald-900/20 text-slate-800 dark:text-emerald-50 border border-emerald-100 dark:border-emerald-800/30 shadow-sm">
-                  <p className="text-xs sm:text-sm leading-relaxed text-pretty">
-                    {typedWelcome}
-                    {typedWelcome.length < welcomeText.length && (
-                      <motion.span
-                        animate={{ opacity: [1, 0] }}
-                        transition={{ repeat: Infinity, duration: 0.6 }}
-                        className="inline-block w-1.5 h-3.5 bg-[#00FF99] ml-1 align-middle"
-                      />
-                    )}
-                  </p>
-                  <span className="block text-[10px] text-slate-400 mt-2 text-right">
-                    {t("mppVision.centerName", "MPP Simpurusiang Luwu")}
-                  </span>
-                </div>
-              </div>
-            </div>
+            {/* Fixed Greeting Header - Auto-hidden when chat starts for maximum screen real estate */}
+            <AnimatePresence>
+              {messages.length === 0 && (
+                <motion.div 
+                  initial={{ opacity: 1, height: "auto" }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0, padding: 0, border: 0 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="px-4 sm:px-6 py-4 border-b border-white/10 bg-[#00162B]/50 shrink-0 overflow-hidden"
+                >
+                  {/* Initial Greeting Bubble */}
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-7 h-7 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 mt-1">
+                      <Sparkles className="w-3.5 h-3.5 text-[#00FF99]" />
+                    </div>
+                    <div className="max-w-[90%] sm:max-w-[85%] rounded-2xl rounded-tl-xs p-4 sm:p-5 bg-emerald-50 dark:bg-emerald-900/20 text-slate-800 dark:text-emerald-50 border border-emerald-100 dark:border-emerald-800/30 shadow-sm">
+                      <p className="text-xs sm:text-sm leading-relaxed text-pretty">
+                        {typedWelcome}
+                        {typedWelcome.length < welcomeText.length && (
+                          <motion.span
+                            animate={{ opacity: [1, 0] }}
+                            transition={{ repeat: Infinity, duration: 0.6 }}
+                            className="inline-block w-1.5 h-3.5 bg-[#00FF99] ml-1 align-middle"
+                          />
+                        )}
+                      </p>
+                      <span className="block text-[10px] text-slate-400 mt-2 text-right">
+                        {t("mppVision.centerName", "MPP Simpurusiang Luwu")}
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Scrollable Chat Area */}
             <div className="flex-1 overflow-y-auto overscroll-contain px-4 sm:px-6 py-4 space-y-4">

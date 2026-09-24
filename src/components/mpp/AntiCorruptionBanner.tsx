@@ -150,7 +150,10 @@ export function AntiCorruptionBanner({
       const container = scrollContainerRef.current;
       const targetChild = container.children[index] as HTMLElement;
       if (targetChild) {
-        targetChild.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        container.scrollTo({
+          left: targetChild.offsetLeft - container.offsetLeft,
+          behavior: 'smooth'
+        });
       }
       setTimeout(() => {
         isProgrammaticScrollRef.current = false;

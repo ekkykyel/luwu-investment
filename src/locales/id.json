@@ -659,7 +659,7 @@
     "infrastructure": "Infrastruktur",
     "interactiveDashboard": "Dashboard Interaktif",
     "pemkabLuwu": "Pemerintah Kabupaten Luwu",
-    "copyright": "© 2026 Pemerintah Kabupaten Luwu. Hak Cipta Dilindungi Undang-Undang.",
+    "copyright": "@2026 Luwu Wanua Mappatuo Naewai Alena. All Rights Reserved.",
     "version": "Versi 2.0.1 (Precision Engine)"
   },
   "chartsExtra": {
@@ -1936,7 +1936,8 @@
   "opex_kemasan": "Biaya Kemasan (Packaging)",
   "mppPortal": {
     "hero": {
-      "titlePrefix": "Transformasi Digital Menuju",
+      "titleMain": "Transformasi Digital",
+      "titlePrefix": "Menuju",
       "titleHighlight": "Luwu Unggul",
       "subtitle": "Pusat pelayanan publik terintegrasi Kabupaten Luwu. Menghubungkan 19 instansi pemerintah, BUMN, dan swasta dalam satu pintu yang cepat, transparan, dan nyaman.",
       "award": "Inovasi Pelayanan Publik Terintegrasi",
@@ -2362,7 +2363,7 @@
       "tanyaJawab": "Tanya Jawab (FAQ)",
       "webgis": "WebGIS Investasi Luwu",
       "konsultasiAi": "Konsultasi Asisten Digital Ta'",
-      "copyright": "© 2024 MPP Simpurusiang Kabupaten Luwu. Standar Pelayanan Publik Terintegrasi.",
+      "copyright": "@2026 Luwu Wanua Mappatuo Naewai Alena. All Rights Reserved.",
       "hoursText": "Jam Pelayanan: Senin – Kamis (07:30 – 16:00 WITA) & Jumat (07:30 – 16:30 WITA)",
       "agencyText": "Pemerintah Kabupaten Luwu · DPMPTSP"
     },
@@ -2863,7 +2864,7 @@
       "optionalBadge": "OPSIONAL",
       "downloadTemplate": "Unduh Draf Formulir / Template",
       "stepsTitle": "TAHAPAN PROSEDUR PELAYANAN:",
-      "aiAssistantTitle": "Tanya AI Asisten Syarat Layanan",
+      "aiAssistantTitle": "Asisten MPP",
       "aiPlaceholder": "Tanyakan syarat khusus (contoh: Apakah syarat NIB untuk usaha resto butuh izin edar?)...",
       "askAiBtn": "Tanyakan",
       "askingAi": "Menganalisis Syarat..."

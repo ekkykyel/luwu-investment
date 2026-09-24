@@ -1940,8 +1940,9 @@
   "opex_kemasan": "包装费用",
   "mppPortal": {
     "hero": {
-      "titlePrefix": "欢迎来到公共服务",
-      "titleHighlight": "鲁乌县商场",
+      "titleMain": "数字转型",
+      "titlePrefix": "迈向",
+      "titleHighlight": "卓越陆屋",
       "subtitle": "一站式综合、快速、透明的公共服务",
       "award": "鲁乌县政府",
       "videoTour": "Simpurusiang 政务中心宣传视频",
@@ -2306,7 +2307,7 @@
       "informasiFasilitas": "设施信息",
       "webgis": "鲁乌投资 WebGIS",
       "konsultasiAi": "Asisten Digital Ta' 咨询",
-      "copyright": "© 2024 MPP Simpurusiang 鲁乌县。公共服务标准。",
+      "copyright": "@2026 Luwu Wanua Mappatuo Naewai Alena. All Rights Reserved.",
       "hoursText": "办公时间：周一至周四 (07:30 – 16:00 WITA) & 周五 (07:30 – 16:30 WITA)",
       "agencyText": "鲁乌县政府 · 投资与一站式许可局 (DPMPTSP)",
       "tanyaJawab": "常见问答 (FAQ)"
@@ -2867,7 +2868,7 @@
       "optionalBadge": "选填",
       "downloadTemplate": "下载表格草案 / 模板",
       "stepsTitle": "办理流程与步骤：",
-      "aiAssistantTitle": "咨询 AI 办事材料智能助手",
+      "aiAssistantTitle": "Asisten MPP",
       "aiPlaceholder": "提问具体办事问题（例如：餐饮业 NIB 是否需要食品流通许可证？）...",
       "askAiBtn": "提问",
       "askingAi": "正在分析条件..."

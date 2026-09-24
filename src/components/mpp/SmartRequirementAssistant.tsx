@@ -328,18 +328,14 @@ export function SmartRequirementAssistant({ isDark = false }: { isDark?: boolean
 
   const handleAskAi = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!aiQuestion.trim()) return;
-    setIsAiLoading(true);
-    setTimeout(() => {
-      setAiAnswer(
-        isEn
-          ? `Based on official regulations and service standards of ${selectedReq.agency}, "${selectedReq.title}" applications are processed transparently. ${aiQuestion.toLowerCase().includes('fee') || aiQuestion.toLowerCase().includes('cost') ? 'All fees are strictly per official regulation with zero illegal levies.' : 'Please ensure physical documents are brought for verification at ' + selectedReq.loket + '.'}`
-          : isZh
-            ? `根据 ${selectedReq.agency} 的官方行政法规与服务标准，"${selectedReq.title}" 的申请均公开透明办理。${aiQuestion.includes('费') || aiQuestion.includes('钱') ? '所有费用均严格按官方规费收取，绝无任何违规收费。' : '请确保前往 ' + selectedReq.loket + ' 窗口核验时携带纸质原件。'}`
-            : `Berdasarkan regulasi resmi dan standar operasional pelayanan ${selectedReq.agency}, permohonan "${selectedReq.title}" diproses secara transparan. ${aiQuestion.includes('biaya') ? 'Seluruh biaya resmi sesuai perda tanpa retribusi liar.' : 'Pastikan dokumen fisik dibawa saat verifikasi di ' + selectedReq.loket + '.'}`
-      );
-      setIsAiLoading(false);
-    }, 1200);
+    const query = aiQuestion.trim() || `Tanyakan syarat permohonan ${selectedReq.title}`;
+    window.dispatchEvent(new CustomEvent('open-mpp-ai-modal', { detail: { query } }));
+    setAiQuestion('');
+  };
+
+  const handleOpenAiModal = (customQuery?: string) => {
+    const query = customQuery || aiQuestion.trim() || `Tanyakan syarat permohonan ${selectedReq.title}`;
+    window.dispatchEvent(new CustomEvent('open-mpp-ai-modal', { detail: { query } }));
   };
 
   return (
@@ -460,7 +456,7 @@ export function SmartRequirementAssistant({ isDark = false }: { isDark?: boolean
             <div className="flex items-center justify-between">
               <div className={`flex items-center gap-2 text-xs font-bold font-sans ${isDark ? 'text-emerald-400' : 'text-emerald-700'}`}>
                 <Bot className="w-4 h-4 text-emerald-500" />
-                <span>{t("mppPortal.smartRequirement.aiAssistantTitle", "Tanya AI Asisten Syarat Layanan")}</span>
+                <span>{t("mppPortal.smartRequirement.aiAssistantTitle", "Asisten MPP")}</span>
               </div>
               <Sparkles className="w-4 h-4 text-amber-500" />
             </div>
@@ -470,43 +466,33 @@ export function SmartRequirementAssistant({ isDark = false }: { isDark?: boolean
                 type="text"
                 value={aiQuestion}
                 onChange={(e) => setAiQuestion(e.target.value)}
-                placeholder={t("mppPortal.smartRequirement.aiPlaceholder", "Tanyakan syarat khusus (contoh: Apakah syarat NIB untuk usaha resto butuh izin edar?)...")}
-                className={`w-full pr-10 pl-3 py-2 rounded-xl border text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium ${
+                placeholder={t("mppPortal.smartRequirement.aiPlaceholder", "Tanyakan syarat khusus (contoh: KTP, NIB, PBG)...")}
+                className={`w-full pr-10 pl-3 py-2.5 rounded-xl border text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium ${
                   isDark
-                    ? 'bg-slate-800 border-slate-700 text-white placeholder:text-slate-500'
+                    ? 'bg-slate-800/90 border-slate-700 text-white placeholder:text-slate-500'
                     : 'bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 shadow-inner'
                 }`}
               />
               <button
                 type="submit"
-                disabled={isAiLoading}
-                className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-all cursor-pointer"
+                className="absolute right-1 top-1/2 -translate-y-1/2 p-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-all cursor-pointer shadow-md active:scale-95"
+                title="Kirim ke Asisten Digital Ta'"
               >
                 <Send className="w-3.5 h-3.5" />
               </button>
             </form>
 
-            <AnimatePresence>
-              {isAiLoading && (
-                <div className="text-[11px] text-emerald-600 dark:text-emerald-300 flex items-center gap-2 animate-pulse font-medium">
-                  <Sparkles className="w-3.5 h-3.5 animate-spin" />
-                  <span>{t("mppPortal.smartRequirement.askingAi", "Menganalisis Syarat...")}</span>
-                </div>
-              )}
-              {aiAnswer && !isAiLoading && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`p-3 rounded-xl border text-xs leading-relaxed ${
-                    isDark
-                      ? 'bg-slate-800/80 border-emerald-500/30 text-slate-200'
-                      : 'bg-emerald-50/90 border-emerald-200 text-slate-800 font-medium'
-                  }`}
-                >
-                  {aiAnswer}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between text-[11px]">
+              <span className="text-slate-500 dark:text-slate-400 font-medium">Konsultasi interaktif 24/7:</span>
+              <button
+                type="button"
+                onClick={() => handleOpenAiModal()}
+                className="inline-flex items-center gap-1 font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors cursor-pointer"
+              >
+                <span>Buka Asisten Digital Ta'</span>
+                <Sparkles className="w-3 h-3 text-amber-500" />
+              </button>
+            </div>
           </div>
         </div>
 

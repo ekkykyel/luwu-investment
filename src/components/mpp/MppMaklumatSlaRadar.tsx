@@ -7,6 +7,7 @@ import {
   AlertCircle, PhoneCall, ExternalLink, X, FileText, Megaphone
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { AntiCorruptionBanner } from './AntiCorruptionBanner';
 
 interface SlaItem {
   id: string;
@@ -311,64 +312,8 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
         </div>
       </div>
 
-      {/* Compact Integrity Trust Widget Bar */}
-      <div className={`mb-10 rounded-2xl p-3.5 sm:p-4 border backdrop-blur-md transition-all shadow-sm ${
-        isDark 
-          ? 'bg-gradient-to-r from-red-950/40 via-amber-950/20 to-slate-900/80 border-red-900/40' 
-          : 'bg-gradient-to-r from-red-50/80 via-amber-50/50 to-slate-50 border-red-200/90 shadow-slate-200/50'
-      }`}>
-        <div className="flex flex-col md:flex-row items-center justify-between gap-3.5">
-          
-          {/* Left: Shield & Title */}
-          <div className="flex items-center gap-3">
-            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 shrink-0">
-              <ShieldCheck className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
-              </span>
-            </div>
-
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h4 className={`text-xs sm:text-sm font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                  {isEn ? 'Integrity Zone WBK / WBBM' : isZh ? '廉政反腐 zones (WBK/WBBM)' : 'ZONA INTEGRITAS WBK / WBBM'}
-                </h4>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 font-mono">
-                  PERMENPAN-RB 90/2021
-                </span>
-              </div>
-              <p className={`text-[11px] font-medium mt-0.5 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-                {isEn ? 'Zero Extortion, Anti-Gratification, and Transparent Public Services Guarantee' : isZh ? '零勒索、反受贿及 100% 透明公共服务保障' : 'Komitmen Bebas Pungli, Stop Gratifikasi, & Transparansi Layanan Publik 100%'}
-              </p>
-            </div>
-          </div>
-
-          {/* Center: Quick Trust Badges */}
-          <div className="hidden lg:flex items-center gap-2 text-[10px] font-bold">
-            <span className="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3" /> 0% Pungli
-            </span>
-            <span className="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center gap-1">
-              <Award className="w-3 h-3" /> WBS Online
-            </span>
-            <span className="px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 flex items-center gap-1">
-              <HeartHandshake className="w-3 h-3" /> Saber Pungli WA
-            </span>
-          </div>
-
-          {/* Right: Trigger Modal Button */}
-          <button
-            type="button"
-            onClick={() => setIsIntegrityModalOpen(true)}
-            className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 hover:from-red-700 hover:to-amber-700 transition-all shadow-md hover:shadow-lg active:scale-95 shrink-0 cursor-pointer"
-          >
-            <FileText className="w-4 h-4" />
-            <span>{isEn ? 'View Integrity Charter & Report WBS' : isZh ? '查看廉政宪章与 WBS 举报' : 'Buka Maklumat & Lapor WBS'}</span>
-          </button>
-
-        </div>
-      </div>
+      {/* Zona Integritas WBK/WBBM Auto-Cycling Responsive Horizontal Slider */}
+      <AntiCorruptionBanner isDark={isDark} className="mb-10" />
 
       {/* Modal Interactive WBK / WBBM */}
       <AnimatePresence>
