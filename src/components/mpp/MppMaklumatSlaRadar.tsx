@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   ShieldCheck, Clock, Award, CheckCircle2, Zap, 
   FileCheck, AlertTriangle, ArrowRight, Sparkles, 
-  Building2, Scale, HeartHandshake, Eye, Info
+  Building2, Scale, HeartHandshake, Eye, Info,
+  AlertCircle, PhoneCall, ExternalLink, X, FileText, Megaphone
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { AntiCorruptionBanner } from './AntiCorruptionBanner';
 
 interface SlaItem {
   id: string;
@@ -124,6 +124,7 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
 
   const [activeCategory, setActiveCategory] = useState<string>('semua');
   const [isMaklumatExpanded, setIsMaklumatExpanded] = useState<boolean>(false);
+  const [isIntegrityModalOpen, setIsIntegrityModalOpen] = useState<boolean>(false);
 
   const localizedSlaData = SLA_DATA.map(item => {
     if (isEn) {
@@ -310,10 +311,182 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
         </div>
       </div>
 
-      {/* Spanduk & Komitmen Zona Integritas Anti-Korupsi, Stop Gratifikasi, Stop Pungli */}
-      <div className="mb-10">
-        <AntiCorruptionBanner isDark={isDark} />
+      {/* Compact Integrity Trust Widget Bar */}
+      <div className={`mb-10 rounded-2xl p-3.5 sm:p-4 border backdrop-blur-md transition-all shadow-sm ${
+        isDark 
+          ? 'bg-gradient-to-r from-red-950/40 via-amber-950/20 to-slate-900/80 border-red-900/40' 
+          : 'bg-gradient-to-r from-red-50/80 via-amber-50/50 to-slate-50 border-red-200/90 shadow-slate-200/50'
+      }`}>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-3.5">
+          
+          {/* Left: Shield & Title */}
+          <div className="flex items-center gap-3">
+            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 shrink-0">
+              <ShieldCheck className="w-5 h-5" />
+              <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+              </span>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h4 className={`text-xs sm:text-sm font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  {isEn ? 'Integrity Zone WBK / WBBM' : isZh ? '廉政反腐 zones (WBK/WBBM)' : 'ZONA INTEGRITAS WBK / WBBM'}
+                </h4>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 font-mono">
+                  PERMENPAN-RB 90/2021
+                </span>
+              </div>
+              <p className={`text-[11px] font-medium mt-0.5 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                {isEn ? 'Zero Extortion, Anti-Gratification, and Transparent Public Services Guarantee' : isZh ? '零勒索、反受贿及 100% 透明公共服务保障' : 'Komitmen Bebas Pungli, Stop Gratifikasi, & Transparansi Layanan Publik 100%'}
+              </p>
+            </div>
+          </div>
+
+          {/* Center: Quick Trust Badges */}
+          <div className="hidden lg:flex items-center gap-2 text-[10px] font-bold">
+            <span className="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+              <CheckCircle2 className="w-3 h-3" /> 0% Pungli
+            </span>
+            <span className="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center gap-1">
+              <Award className="w-3 h-3" /> WBS Online
+            </span>
+            <span className="px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 flex items-center gap-1">
+              <HeartHandshake className="w-3 h-3" /> Saber Pungli WA
+            </span>
+          </div>
+
+          {/* Right: Trigger Modal Button */}
+          <button
+            type="button"
+            onClick={() => setIsIntegrityModalOpen(true)}
+            className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 hover:from-red-700 hover:to-amber-700 transition-all shadow-md hover:shadow-lg active:scale-95 shrink-0 cursor-pointer"
+          >
+            <FileText className="w-4 h-4" />
+            <span>{isEn ? 'View Integrity Charter & Report WBS' : isZh ? '查看廉政宪章与 WBS 举报' : 'Buka Maklumat & Lapor WBS'}</span>
+          </button>
+
+        </div>
       </div>
+
+      {/* Modal Interactive WBK / WBBM */}
+      <AnimatePresence>
+        {isIntegrityModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className={`w-full max-w-2xl p-6 sm:p-8 rounded-3xl border shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto ${
+                isDark 
+                  ? 'bg-slate-900 border-slate-800 text-white shadow-black' 
+                  : 'bg-white border-slate-200 text-slate-900'
+              }`}
+            >
+              {/* Close Button */}
+              <button
+                type="button"
+                onClick={() => setIsIntegrityModalOpen(false)}
+                className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-500/10 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Header */}
+              <div className="flex items-center gap-3.5 mb-6 pb-4 border-b border-slate-200/80 dark:border-slate-800">
+                <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-7 h-7" />
+                </div>
+                <div>
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 mb-1">
+                    <span>Komitmen Resmi Pemkab Luwu</span>
+                  </div>
+                  <h3 className="text-lg sm:text-xl font-black tracking-tight">
+                    Zona Integritas WBK & WBBM MPP Simpurusiang
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    Wilayah Bebas dari Korupsi (WBK) & Wilayah Birokrasi Bersih dan Melayani (WBBM)
+                  </p>
+                </div>
+              </div>
+
+              {/* 3 Core Pillars */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+                <div className={`p-4 rounded-2xl border ${isDark ? 'bg-slate-800/60 border-slate-700/80' : 'bg-slate-50 border-slate-200/80'}`}>
+                  <div className="w-8 h-8 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center mb-2.5 font-bold">
+                    <Scale className="w-4 h-4" />
+                  </div>
+                  <h4 className="text-xs font-bold mb-1">Stop Gratifikasi</h4>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                    Petugas dilarang keras menerima uang, hadiah, atau imbalan (Pasal 12B UU Tipikor).
+                  </p>
+                </div>
+
+                <div className={`p-4 rounded-2xl border ${isDark ? 'bg-slate-800/60 border-slate-700/80' : 'bg-slate-50 border-slate-200/80'}`}>
+                  <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-2.5 font-bold">
+                    <Megaphone className="w-4 h-4" />
+                  </div>
+                  <h4 className="text-xs font-bold mb-1">WBS Online (Anonim)</h4>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                    Sistem Pengaduan Whistleblowing terlindungi 100% untuk kerahasiaan identitas pelapor.
+                  </p>
+                </div>
+
+                <div className={`p-4 rounded-2xl border ${isDark ? 'bg-slate-800/60 border-slate-700/80' : 'bg-slate-50 border-slate-200/80'}`}>
+                  <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2.5 font-bold">
+                    <HeartHandshake className="w-4 h-4" />
+                  </div>
+                  <h4 className="text-xs font-bold mb-1">Saber Pungli WA</h4>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                    Respon cepat penindakan indikasi pungli via Satgas Saber Pungli Kab. Luwu.
+                  </p>
+                </div>
+              </div>
+
+              {/* Notice Warning */}
+              <div className="p-3.5 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-700 dark:text-red-300 text-xs font-medium mb-6 leading-relaxed flex items-start gap-2.5">
+                <AlertCircle className="w-5 h-5 shrink-0 text-red-500 mt-0.5" />
+                <div>
+                  <strong className="block font-bold mb-0.5">PERINGATAN RESMI:</strong>
+                  Seluruh retribusi layanan MPP Simpurusiang disetor resmi melalui Bank BPD Sulselbar. Jika Anda menemukan indikasi pungli atau permintaan imbalan oleh oknum, segera laporkan melalui saluran WBS!
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-2 border-t border-slate-200/80 dark:border-slate-800">
+                <a
+                  href="https://www.lapor.go.id"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-700 transition-all shadow-md"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span>Lapor via WBS Online</span>
+                </a>
+
+                <a
+                  href="https://wa.me/628114201234?text=Halo%20Satgas%20Saber%20Pungli%20Kabupaten%20Luwu,%20saya%20ingin%20melaporkan%20indikasi%20pungli"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 transition-all"
+                >
+                  <PhoneCall className="w-4 h-4 text-emerald-500" />
+                  <span>Saber Pungli WA</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={() => setIsIntegrityModalOpen(false)}
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 cursor-pointer"
+                >
+                  Tutup
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* 2. SLA Radar (Standar Waktu Nyata Matrix) */}
       <div className="space-y-6">

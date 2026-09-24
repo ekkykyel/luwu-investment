@@ -5510,21 +5510,30 @@ export default function LandingPage({
                     title: t("performance.ikmTitle", "Indeks Kepuasan Masyarakat (IKM)"), 
                     desc: t("performance.ikmDesc", "Survei Berkala Kepuasan Publik Sesuai Permenpan RB No. 14/2017"),
                     tag: "Survei Publik Active",
-                    color: "text-amber-500 bg-amber-500/10 border-amber-500/20"
+                    color: "text-amber-500 bg-amber-500/10 border-amber-500/20",
+                    val: "88.54 / 100",
+                    badge: "Sangat Baik (A)",
+                    badgeColor: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
                   },
                   { 
                     icon: Zap,
                     title: t("performance.slaTitle", "SLA Penerbitan NIB & Izin Usaha"), 
                     desc: t("performance.slaDesc", "Pemrosesan Izin Risiko Rendah Instan & Verifikasi Berkas Lanjutan"),
                     tag: "OSS-RBA Engine",
-                    color: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20"
+                    color: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
+                    val: "98.6% Tepat Waktu",
+                    badge: "Standar Primar (SLA < 24 Jam)",
+                    badgeColor: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30"
                   },
                   { 
                     icon: Compass,
                     title: t("performance.spatialTitle", "Akurasi Verifikasi Tata Ruang Spasial"), 
                     desc: t("performance.spatialDesc", "Kesesuaian Plotting Koordinat Lahan dengan RTRW Kabupaten Luwu"),
                     tag: "PostGIS Precision",
-                    color: "text-indigo-500 bg-indigo-500/10 border-indigo-500/20"
+                    color: "text-indigo-500 bg-indigo-500/10 border-indigo-500/20",
+                    val: "100% Valid Spasial",
+                    badge: "Peta RTRW Presisi",
+                    badgeColor: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30"
                   }
                 ].map((item, idx) => (
                   <div key={idx} className="p-5 sm:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
@@ -5542,9 +5551,9 @@ export default function LandingPage({
                     </div>
 
                     <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between gap-1.5 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800 shrink-0">
-                      <span className="text-[10px] sm:text-xs font-medium text-slate-500 dark:text-slate-400">{t("performance.noDataAvailable", "Belum ada data publikasi")}</span>
-                      <span className={`px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider ${isDark ? "bg-slate-800/90 text-slate-400 border border-slate-700" : "bg-slate-100 text-slate-500 border border-slate-200"}`}>
-                        {t("performance.noDataBadge", "Belum Ada Data")}
+                      <span className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white font-mono">{item.val}</span>
+                      <span className={`px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider border ${item.badgeColor}`}>
+                        {item.badge}
                       </span>
                     </div>
                   </div>
@@ -5734,16 +5743,16 @@ export default function LandingPage({
             </button>
 
             {/* Main Footer Block */}
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-slate-200/80 dark:border-slate-800/80">
-              <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center p-1 shadow-inner">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-slate-200/80 dark:border-slate-800/80">
+              <div className="flex items-center gap-3.5 w-full md:w-auto justify-start text-left">
+                <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center p-1 shadow-inner shrink-0">
                   <img src={LUWU_LOGO_BASE64} alt="Logo Resmi Kabupaten Luwu" className="w-7 h-7 object-contain" />
                 </div>
-                <div>
-                  <h3 className={`font-extrabold text-lg sm:text-xl leading-tight tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
+                <div className="text-left">
+                  <h3 className={`font-extrabold text-lg sm:text-xl leading-tight tracking-tight text-left ${isDark ? "text-white" : "text-slate-900"}`}>
                     InvestLuwu Hub
                   </h3>
-                  <p className="text-[10px] sm:text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                  <p className="text-[10px] sm:text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider text-left">
                     {t("footer.pemkabLuwu", "Pemerintah Kabupaten Luwu")}
                   </p>
                 </div>

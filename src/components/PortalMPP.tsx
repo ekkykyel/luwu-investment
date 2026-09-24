@@ -6042,7 +6042,7 @@ export default function PortalMPP() {
             </div>
 
             {/* Bottom Symmetrical Copyright Bar */}
-            <div className="mt-8 pt-6 border-t border-slate-200/80 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            <div className="mt-8 pt-6 pb-[calc(env(safe-area-inset-bottom,0px)+72px)] md:pb-0 border-t border-slate-200/80 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
               <div className="flex items-center gap-2 text-center md:text-left">
                 <span>© {new Date().getFullYear()} MPP Simpurusiang Kabupaten Luwu.</span>
                 <span className="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
@@ -7236,7 +7236,7 @@ export default function PortalMPP() {
               initial={{ opacity: 0, y: 50, x: "-50%" }}
               animate={{ opacity: 1, y: 0, x: "-50%" }}
               exit={{ opacity: 0, y: 50, x: "-50%" }}
-              className={`fixed bottom-6 left-1/2 z-40 w-[90%] max-w-sm backdrop-blur-md text-white shadow-2xl rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between border pr-10 gap-3 sm:gap-0 transition-all ${
+              className={`fixed bottom-[calc(env(safe-area-inset-bottom,0px)+72px)] md:bottom-6 left-1/2 z-40 w-[90%] max-w-sm backdrop-blur-md text-white shadow-2xl rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between border pr-10 gap-3 sm:gap-0 transition-all ${
                 activeTicket.status === 'dipanggil'
                   ? 'bg-gradient-to-r from-amber-600 via-amber-500 to-amber-700 border-amber-300 ring-4 ring-amber-400/80 shadow-[0_0_35px_rgba(245,158,11,0.6)] animate-pulse'
                   : activeTicket.status === 'selesai_langsung'
