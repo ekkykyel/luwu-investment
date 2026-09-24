@@ -4295,6 +4295,7 @@ export default function LandingPage({
                   <div className="pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                     <motion.button
                       whileTap={{ scale: 0.97 }}
+                      whileHover={{ scale: 1.01 }}
                       onClick={() => {
                         if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
                           window.history.scrollRestoration = 'manual';
@@ -4305,54 +4306,57 @@ export default function LandingPage({
                         requestSmartFullscreen();
                         navigate("/mpp");
                       }}
-                      className="py-3.5 px-7 min-h-[48px] inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-emerald-600 via-emerald-700 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-bold text-sm uppercase tracking-wider rounded-2xl border border-emerald-500/30 shadow-lg shadow-emerald-700/25 active:scale-[0.98] transition-all duration-300 cursor-pointer"
+                      className="py-3.5 px-6 min-h-[48px] inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-600 text-white font-bold text-sm tracking-wide rounded-2xl border border-emerald-400/40 shadow-lg shadow-emerald-700/25 active:scale-[0.98] transition-all duration-300 cursor-pointer group"
                     >
-                      <Building2 size={18} />
+                      <Building2 size={18} className="transition-transform group-hover:scale-110" />
                       <span>Masuk Portal MPP Simpurusiang</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                     </motion.button>
 
                     <a
                       href="https://wa.me/6281142011"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="py-3.5 px-5 min-h-[48px] inline-flex items-center justify-center gap-2 text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold text-xs rounded-2xl border border-slate-200 dark:border-slate-700 transition-colors"
+                      className="py-3.5 px-5 min-h-[48px] inline-flex items-center justify-center gap-2 text-slate-800 dark:text-slate-100 bg-white/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700/90 font-semibold text-xs rounded-2xl border border-slate-300/80 dark:border-white/10 shadow-xs backdrop-blur-md transition-all group"
                     >
-                      <MessageSquare size={16} className="text-emerald-500" />
-                      <span>Konsultasi Front Office</span>
+                      <MessageSquare size={16} className="text-emerald-500 group-hover:scale-110 transition-transform" />
+                      <span>Konsultasi Front Office (WhatsApp)</span>
                     </a>
                   </div>
                 </div>
 
                 {/* RIGHT COLUMN: SOVEREIGN GLASS ARCH & FRONT OFFICE SHOWCASE */}
-                <div className="lg:col-span-5 flex flex-col items-center justify-end relative w-full pt-6 lg:pt-0 self-end">
+                <div className="lg:col-span-5 flex flex-col items-center justify-end relative w-full pt-4 lg:pt-0 self-end">
                   <div className="relative flex flex-col items-center justify-end w-full max-w-sm sm:max-w-md">
-                    {/* Arch Backdrop Glow & Frame */}
-                    <div className="absolute bottom-0 w-full h-[320px] sm:h-[380px] bg-gradient-to-b from-emerald-500/10 via-teal-500/10 to-transparent dark:from-emerald-400/20 dark:via-teal-400/10 rounded-t-[140px] border-t-2 border-x-2 border-emerald-500/30 dark:border-emerald-400/30 pointer-events-none -z-0" />
-                    <div className="absolute -bottom-6 inset-x-8 h-16 bg-emerald-500/20 dark:bg-emerald-400/30 rounded-full blur-2xl pointer-events-none -z-10" />
+                    {/* Volumetric Ambient Halo Glow */}
+                    <div className="absolute -top-4 inset-x-2 bottom-8 bg-gradient-to-b from-emerald-400/25 via-teal-500/15 to-transparent rounded-t-[180px] sm:rounded-t-[220px] blur-2xl pointer-events-none -z-10" />
+                    <div className="absolute -bottom-6 inset-x-6 h-16 bg-emerald-500/20 dark:bg-emerald-400/30 rounded-full blur-2xl pointer-events-none -z-10" />
 
-                    {/* Floating Badges */}
-                    <div className="w-full flex items-center justify-between px-2 mb-2 relative z-20">
-                      {/* Left Badge */}
-                      <div className="px-3 py-1 min-h-[32px] rounded-full bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-white/10 shadow-md backdrop-blur-md flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[10px] font-bold font-mono tracking-wider text-slate-800 dark:text-slate-200">
-                          21 INSTANSI
+                    {/* Frosted Glass Arch Architecture */}
+                    <div className="absolute bottom-0 inset-x-1 h-[340px] sm:h-[400px] bg-gradient-to-b from-emerald-500/15 via-teal-500/5 to-slate-900/20 dark:from-emerald-400/20 dark:via-teal-400/5 dark:to-slate-950/60 rounded-t-[160px] sm:rounded-t-[200px] border-t border-x border-emerald-500/30 dark:border-emerald-400/30 backdrop-blur-md pointer-events-none -z-0 overflow-hidden">
+                      {/* Architectural Top Highlight & Grid Lattice */}
+                      <div className="absolute top-0 inset-x-0 h-28 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/30 via-emerald-300/10 to-transparent dark:from-white/10 opacity-70" />
+                      <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:16px_16px]" />
+                    </div>
+
+                    {/* Single Unified Floating Status Badge */}
+                    <div className="w-full flex items-center justify-center mb-3 relative z-20">
+                      <div className="px-4 py-1.5 rounded-full bg-slate-900/85 dark:bg-slate-950/90 text-white border border-emerald-400/40 shadow-xl shadow-emerald-950/20 backdrop-blur-xl flex items-center gap-2">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                         </span>
-                      </div>
-
-                      {/* Right Badge */}
-                      <div className="px-3 py-1 min-h-[32px] rounded-full bg-slate-950/90 text-white border border-emerald-500/40 shadow-md backdrop-blur-md flex items-center gap-1.5">
-                        <Sparkles size={11} className="text-amber-400 animate-spin" />
-                        <span className="text-[10px] font-extrabold font-mono tracking-wider text-emerald-400">
-                          OSS INTEGRATED
+                        <span className="text-[10.5px] sm:text-xs font-bold tracking-wide text-slate-100 flex items-center gap-1.5 font-sans">
+                          <span className="text-emerald-400 font-extrabold font-mono">21 Instansi</span>
+                          <span className="text-slate-500">•</span>
+                          <span>Fast-Track OSS-RBA</span>
                         </span>
                       </div>
                     </div>
 
-                    {/* Staff Photos Container */}
+                    {/* Staff Photos Container with Smooth Elevation */}
                     {staffImageLeft && staffImageRight ? (
-                      <div className="flex items-end justify-center gap-2 sm:gap-4 w-full relative z-10">
+                      <div className="flex items-end justify-center gap-1 sm:gap-3 w-full relative z-10 px-2">
                         {/* Petugas Kiri */}
                         <div className="relative flex-1 flex flex-col items-center justify-end group">
                           <img
@@ -4382,7 +4386,7 @@ export default function LandingPage({
                         </div>
                       </div>
                     ) : (
-                      <div className="relative w-full flex flex-col items-center justify-end group z-10">
+                      <div className="relative w-full flex flex-col items-center justify-end group z-10 px-2">
                         <img
                           src={staffImageLeft || staffImageRight || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800"}
                           alt="DPMPTSP MPP Simpurusiang - Petugas Front Office"
@@ -4396,12 +4400,24 @@ export default function LandingPage({
                       </div>
                     )}
 
-                    {/* Bottom Floating Identity Capsule */}
-                    <div className="w-full text-center mt-2 relative z-20">
-                      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 border border-emerald-500/30 dark:border-emerald-400/30 shadow-lg backdrop-blur-md">
-                        <BadgeCheck size={14} className="text-emerald-500 shrink-0" />
-                        <span className="text-[11px] font-bold text-slate-800 dark:text-slate-100">
-                          Front Office DPMPTSP Kab. Luwu
+                    {/* Elegant Frosted Pedestal Plinth at Base */}
+                    <div className="w-full relative z-20 -mt-3 sm:-mt-4">
+                      <div className="mx-auto w-[94%] sm:w-[90%] p-2 sm:p-2.5 rounded-2xl bg-white/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/15 shadow-xl shadow-slate-950/10 dark:shadow-black/40 backdrop-blur-xl flex items-center justify-between gap-2 transition-all">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-500/15 dark:bg-emerald-500/25 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
+                            <BadgeCheck size={14} className="sm:scale-110" />
+                          </div>
+                          <div className="flex flex-col min-w-0 text-left">
+                            <span className="text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white leading-tight truncate">
+                              Front Office DPMPTSP Kab. Luwu
+                            </span>
+                            <span className="text-[9.5px] sm:text-[10px] text-emerald-700 dark:text-emerald-400 font-medium leading-none mt-0.5">
+                              Hospitality & Layanan Terpadu
+                            </span>
+                          </div>
+                        </div>
+                        <span className="hidden xs:inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 shrink-0">
+                          Siap Melayani
                         </span>
                       </div>
                     </div>
