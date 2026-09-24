@@ -4174,7 +4174,7 @@ export default function LandingPage({
         {/* ICONIC SECTION: MAL PELAYANAN PUBLIK (MPP) SIMPURUSIANG - SOVEREIGN GLASS PAVILION */}
         <section
           id="mpp-showcase-section"
-          className={`py-8 sm:py-12 md:py-16 lg:py-20 border-y relative overflow-hidden z-10 ${
+          className={`py-10 sm:py-14 md:py-16 lg:py-20 pb-16 sm:pb-20 md:pb-24 border-y relative overflow-hidden z-10 ${
             isDark
               ? "border-emerald-500/20 bg-[#090d16]"
               : "border-slate-200/80 bg-gradient-to-b from-slate-50/80 via-white to-emerald-50/30"
@@ -4213,7 +4213,7 @@ export default function LandingPage({
               whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
               viewport={isMobile ? undefined : { once: true, amount: 0.05 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="p-4 sm:p-8 lg:p-12 rounded-[28px] sm:rounded-[32px] relative overflow-hidden transition-all duration-500 bg-white/80 dark:bg-slate-900/75 glass-crystal backdrop-blur-2xl border border-white/60 dark:border-white/10 shadow-2xl dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10"
+              className="p-4 sm:p-8 lg:p-12 pb-8 sm:pb-10 rounded-[28px] sm:rounded-[32px] relative overflow-hidden transition-all duration-500 bg-white/80 dark:bg-slate-900/75 glass-crystal backdrop-blur-2xl border border-white/60 dark:border-white/10 shadow-2xl dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10"
             >
               {/* Subtle tech background line grid */}
               <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:32px_32px]" />
@@ -4306,20 +4306,22 @@ export default function LandingPage({
                         requestSmartFullscreen();
                         navigate("/mpp");
                       }}
-                      className="py-3.5 px-6 min-h-[48px] inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-600 text-white font-bold text-sm tracking-wide rounded-2xl border border-emerald-400/40 shadow-lg shadow-emerald-700/25 active:scale-[0.98] transition-all duration-300 cursor-pointer group"
+                      className="relative overflow-hidden py-3.5 px-6 min-h-[48px] inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-600 text-white font-bold text-sm tracking-wide rounded-2xl border border-emerald-400/40 shadow-lg shadow-emerald-700/25 active:scale-[0.98] transition-all duration-300 cursor-pointer group"
                     >
-                      <Building2 size={18} className="transition-transform group-hover:scale-110" />
-                      <span>Masuk Portal MPP Simpurusiang</span>
-                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                      {/* Subtle white-gold shimmer sweep */}
+                      <span className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none animate-shimmer-sweep" />
+                      <Building2 size={18} className="transition-transform group-hover:scale-110 relative z-10" />
+                      <span className="relative z-10">Masuk Portal MPP Simpurusiang</span>
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 relative z-10" />
                     </motion.button>
 
                     <a
                       href="https://wa.me/6281142011"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="py-3.5 px-5 min-h-[48px] inline-flex items-center justify-center gap-2 text-slate-800 dark:text-slate-100 bg-white/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700/90 font-semibold text-xs rounded-2xl border border-slate-300/80 dark:border-white/10 shadow-xs backdrop-blur-md transition-all group"
+                      className="py-3.5 px-5 min-h-[48px] inline-flex items-center justify-center gap-2 text-emerald-950 dark:text-emerald-200 bg-emerald-500/10 dark:bg-emerald-950/50 hover:bg-emerald-500/15 dark:hover:bg-emerald-900/60 font-semibold text-xs rounded-2xl border border-emerald-500/30 dark:border-emerald-500/40 shadow-xs backdrop-blur-md transition-all group"
                     >
-                      <MessageSquare size={16} className="text-emerald-500 group-hover:scale-110 transition-transform" />
+                      <MessageSquare size={16} className="text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform" />
                       <span>Konsultasi Front Office (WhatsApp)</span>
                     </a>
                   </div>
