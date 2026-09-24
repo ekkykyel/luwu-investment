@@ -22,6 +22,7 @@ import {
   Building
 } from "lucide-react";
 import { supabase } from "../../../lib/supabaseClient";
+import { BapKtrPuptrDocument } from "../../documents/BapKtrPuptrDocument";
 
 interface SuratItem {
   id: string;
@@ -43,6 +44,7 @@ export default function EOffice({ isDark = true }: { isDark?: boolean }) {
   const [suratList, setSuratList] = useState<SuratItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDocPreview, setSelectedDocPreview] = useState<SuratItem | null>(null);
+  const [showBapTemplateModal, setShowBapTemplateModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // Fetch data dari Supabase (knowledge_documents)
@@ -117,6 +119,17 @@ export default function EOffice({ isDark = true }: { isDark?: boolean }) {
         </div>
 
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowBapTemplateModal(true)}
+            className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border text-xs font-semibold transition-all min-h-[44px] cursor-pointer ${
+              isDark 
+                ? "bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border-emerald-500/40" 
+                : "bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-300"
+            }`}
+          >
+            <FileCheck size={14} className="text-emerald-500" />
+            <span>Template BAP-KTR PUPTR</span>
+          </button>
           <button
             onClick={fetchData}
             disabled={isLoading}
@@ -472,6 +485,18 @@ export default function EOffice({ isDark = true }: { isDark?: boolean }) {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL TEMPLATE BAP-KTR DINAS PUPTR */}
+      {showBapTemplateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto print:p-0 print:bg-white print:static">
+          <div className="relative w-full max-w-5xl max-h-[96vh] overflow-y-auto bg-[#f1f5f9] rounded-3xl shadow-2xl p-2 sm:p-4 print:p-0 print:m-0 print:bg-white print:max-h-none print:overflow-visible print:rounded-none print:shadow-none">
+            <BapKtrPuptrDocument
+              onClose={() => setShowBapTemplateModal(false)}
+              showEditorToolbar={true}
+            />
           </div>
         </div>
       )}

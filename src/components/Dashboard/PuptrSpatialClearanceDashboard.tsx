@@ -48,6 +48,7 @@ import { LuwuLogo } from '../LuwuLogo';
 import { generateBapPdfFromElement } from '../../utils/bapPdfGenerator';
 import { CrossOpdNotificationBell } from '../CrossOpdNotificationBell';
 import { addCrossOpdNotification } from '../../utils/crossOpdNotificationStore';
+import { BapKtrPuptrDocument, convertAppToBapKtrData } from '../documents/BapKtrPuptrDocument';
 
 export interface PkkprApplicationItem {
   id: string;
@@ -96,6 +97,7 @@ export default function PuptrSpatialClearanceDashboard() {
   // Profile Modal & Inter-Agency Routing State
   const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
   const [showBapModal, setShowBapModal] = useState<boolean>(false);
+  const [mapSnapshot, setMapSnapshot] = useState<string | null>(null);
   const [showForwardPertanianModal, setShowForwardPertanianModal] = useState<boolean>(false);
   const [forwardingJustification, setForwardingJustification] = useState<string>('');
   const [isForwarding, setIsForwarding] = useState<boolean>(false);
@@ -332,6 +334,20 @@ export default function PuptrSpatialClearanceDashboard() {
     } finally {
       setIsIssuingSk(false);
     }
+  };
+
+  // Open BAP Document Modal with High-Res Map Canvas Snapshot
+  const handleOpenBapModal = () => {
+    const mapCanvas = document.querySelector('.maplibregl-canvas') as HTMLCanvasElement | null;
+    if (mapCanvas) {
+      try {
+        const snap = mapCanvas.toDataURL('image/png');
+        setMapSnapshot(snap);
+      } catch (e) {
+        console.warn('Map canvas snapshot error:', e);
+      }
+    }
+    setShowBapModal(true);
   };
 
   // Download BAP PDF using jsPDF
@@ -1754,7 +1770,7 @@ export default function PuptrSpatialClearanceDashboard() {
               {/* BAP Resmi PUPTR Preview & Print Button */}
               <button
                 type="button"
-                onClick={() => setShowBapModal(true)}
+                onClick={handleOpenBapModal}
                 className="w-full py-2.5 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition cursor-pointer"
               >
                 <FileText className="w-4 h-4" />
@@ -1987,7 +2003,7 @@ export default function PuptrSpatialClearanceDashboard() {
 
       {/* ─────────────────────────────────────────────────────────────
           OFFICIAL BAP KESESUAIAN TATA RUANG DINAS PUPTR KAB. LUWU
-          (Page 1: Naskah Resmi BAP | Page 2: Peta Delineasi Spasial)
+          (Pixel-Perfect BAP-KTR 4-Page Naskah Dinas & Static Map Snapshot)
          ───────────────────────────────────────────────────────────── */}
       <AnimatePresence>
         {showBapModal && selectedApp && (
@@ -1996,336 +2012,21 @@ export default function PuptrSpatialClearanceDashboard() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white text-slate-900 border border-slate-200 rounded-2xl sm:rounded-3xl p-4 sm:p-8 max-w-4xl w-full shadow-2xl space-y-6 my-auto max-h-[92vh] overflow-y-auto print:max-h-none print:overflow-visible print:border-none print:shadow-none print:p-0 print:m-0 print:rounded-none"
+              className="relative w-full max-w-5xl max-h-[96vh] overflow-y-auto bg-[#f1f5f9] rounded-3xl shadow-2xl p-2 sm:p-4 print:p-0 print:m-0 print:bg-white print:max-h-none print:overflow-visible print:rounded-none print:shadow-none"
             >
-              {/* Modal Top Controls (Hidden in Print) */}
-              <div className="flex items-center justify-between border-b border-slate-200 pb-3 print:hidden">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 bg-indigo-50 text-indigo-700 rounded-xl">
-                    <FileText className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900">
-                      Berita Acara Pemeriksaan (BAP) Kesesuaian Tata Ruang
-                    </h3>
-                    <p className="text-[11px] text-slate-500">
-                      Dokumen Resmi Dinas PUPTR Kabupaten Luwu &bull; Format Standar OSS / PKKPR
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleDownloadBapPdf}
-                    disabled={isExportingPdf}
-                    className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm cursor-pointer transition disabled:opacity-50"
-                  >
-                    {isExportingPdf ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                    <span>{isExportingPdf ? 'Mengunduh PDF...' : 'Download PDF (jsPDF)'}</span>
-                  </button>
-                  <button
-                    onClick={() => window.print()}
-                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer transition"
-                  >
-                    <Printer className="w-4 h-4" />
-                    <span>Cetak Direct</span>
-                  </button>
-                  <button
-                    onClick={() => setShowBapModal(false)}
-                    className="p-1.5 text-slate-400 hover:text-slate-700 rounded-xl transition cursor-pointer"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Printable container for jsPDF capture - Standard A4 Format */}
-              <div id="puptr-bap-printable-document" className="space-y-6 bg-white p-2 rounded-xl max-w-[210mm] mx-auto print:max-w-none print:w-[210mm] print:m-0 print:p-0">
-                {/* ══════════════════════════════════════════════════════════
-                    LEMBAR 1: NASKAH RESMI BERITA ACARA PEMERIKSAAN (BAP)
-                   ══════════════════════════════════════════════════════════ */}
-              <div className="bap-page-1 border border-slate-200 p-6 sm:p-8 rounded-2xl bg-white space-y-6 print:border-none print:p-0 min-h-[297mm]">
-                {/* KOP SURAT RESMI DINAS PUPTR */}
-                {(() => {
-                  const puptrSettings = getOpdSettings('puptr');
-                  if (puptrSettings.opd.kopSuratUrl) {
-                    return (
-                      <div className="w-full text-center pb-3 border-b-4 border-double border-slate-950 mb-4">
-                        <img 
-                          src={puptrSettings.opd.kopSuratUrl} 
-                          alt="Kop Surat Dinas PUPTR" 
-                          className="w-full max-h-28 object-contain mx-auto"
-                        />
-                      </div>
-                    );
-                  }
-                  return (
-                    <div className="flex items-center gap-4 border-b-4 border-double border-slate-900 pb-4">
-                      <div className="shrink-0 flex items-center justify-center">
-                        <LuwuLogo size="xl" className="w-20 h-24 object-contain" />
-                      </div>
-                      <div className="flex-1 text-center space-y-0.5">
-                        <h4 className="text-xs sm:text-sm font-bold tracking-wider uppercase text-slate-800 font-serif">
-                          PEMERINTAH KABUPATEN LUWU
-                        </h4>
-                        <h2 className="text-base sm:text-xl font-black tracking-wide uppercase text-slate-950 font-serif">
-                          {puptrSettings.opd.officialName.toUpperCase()}
-                        </h2>
-                        <h5 className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-indigo-900 font-serif">
-                          BIDANG TATA RUANG DAN BINA KONSTRUKSI
-                        </h5>
-                        <p className="text-[10px] text-slate-600 leading-tight">
-                          {puptrSettings.opd.address}
-                        </p>
-                        <p className="text-[9.5px] text-slate-500 font-mono">
-                          Email: {puptrSettings.opd.email} &bull; Website: {puptrSettings.opd.website}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })()}
-
-                {/* JUDUL NASKAH */}
-                <div className="text-center space-y-1">
-                  <h3 className="text-sm sm:text-base font-black uppercase underline decoration-2 underline-offset-4 text-slate-950 font-serif">
-                    BERITA ACARA PEMERIKSAAN KESESUAIAN TATA RUANG (BAP-KTR)
-                  </h3>
-                  <p className="text-xs font-mono font-bold text-slate-700">
-                    Nomor: {issuedSkNumber || selectedApp.skPkkprDocNumber || `600.1.2/BAP-TR/PUPTR-LW/${new Date().getFullYear()}/${selectedApp.id.substring(0, 5).toUpperCase()}`}
-                  </p>
-                  <p className="text-[11px] text-slate-600 italic">
-                    Tentang Hasil Analisis Teknis Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR) Non-LP2B
-                  </p>
-                </div>
-
-                {/* PARAGRAF PEMBUKA */}
-                <div className="text-xs text-slate-800 leading-relaxed text-justify space-y-3 font-serif">
-                  <p>
-                    Pada hari ini, <span className="font-bold">{new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>, bertempat di Kantor Dinas Pekerjaan Umum dan Tata Ruang Kabupaten Luwu, Tim Teknis Pengendalian dan Pemanfaatan Ruang telah melaksanakan verifikasi, telaah spasial, dan audit overlay geospasial terhadap permohonan Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR) yang diajukan melalui Sistem Perizinan Berusaha Terintegrasi Secara Elektronik (OSS-RBA):
-                  </p>
-
-                  {/* IDENTITAS PEMOHON */}
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1.5 font-sans text-xs">
-                    <div className="grid grid-cols-3 gap-2">
-                      <span className="text-slate-500 font-medium">1. Nomor Induk Berusaha (NIB) / NIK:</span>
-                      <span className="col-span-2 font-mono font-bold text-slate-900">{selectedApp.nibNik}</span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <span className="text-slate-500 font-medium">2. Nama Pemohon / Penanggung Jawab:</span>
-                      <span className="col-span-2 font-bold text-slate-900">{selectedApp.applicantName}</span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <span className="text-slate-500 font-medium">3. Nama Perusahaan / Badan Usaha:</span>
-                      <span className="col-span-2 font-bold text-slate-900">{selectedApp.companyName}</span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <span className="text-slate-500 font-medium">4. Rencana Kegiatan / Sektor Usaha:</span>
-                      <span className="col-span-2 text-slate-900">{selectedApp.sector}</span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <span className="text-slate-500 font-medium">5. Lokasi Rencana Investasi:</span>
-                      <span className="col-span-2 font-semibold text-slate-900">
-                        Desa {selectedApp.villageName}, Kecamatan {selectedApp.districtName}, Kabupaten Luwu
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <span className="text-slate-500 font-medium">6. Luas Lahan Permohonan:</span>
-                      <span className="col-span-2 font-mono font-bold text-emerald-700">{selectedApp.areaHa} Hektar (Ha)</span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <span className="text-slate-500 font-medium">7. Bukti Penguasaan Hak Atas Tanah:</span>
-                      <span className="col-span-2 font-mono text-slate-900">{selectedApp.certificateType} (No. {selectedApp.certificateDocNumber})</span>
-                    </div>
-                  </div>
-
-                  {/* HASIL TELAAH DAN KESIMPULAN */}
-                  <div className="space-y-2">
-                    <h5 className="font-bold text-slate-950 uppercase text-xs">A. HASIL AUDIT POLA RUANG RTRW KABUPATEN LUWU:</h5>
-                    <ol className="list-decimal list-inside space-y-1 pl-1 text-[11.5px] leading-normal text-slate-800">
-                      <li>
-                        Berdasarkan Peraturan Daerah Kabupaten Luwu tentang Rencana Tata Ruang Wilayah (RTRW), lokasi yang dimohonkan berada pada <strong>Kawasan Peruntukan {selectedApp.sector.toUpperCase()}</strong>.
-                      </li>
-                      <li>
-                        <strong>Status Lahan Pertanian Pangan Berkelanjutan (LP2B):</strong> <span className="font-bold text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">LOKASI BERADA DILUAR ZONA LP2B (NON-LP2B)</span>, sehingga tidak memerlukan kompensasi cetak sawah baru.
-                      </li>
-                      <li>
-                        <strong>Status Kawasan Lindung &amp; Sempadan:</strong> Bebas dari kawasan Hutan Lindung, Sempadan Sungai, Mangrove Konservasi, dan Kawasan Rawan Bencana Geologi Tinggi.
-                      </li>
-                      <li>
-                        <strong>Validasi Geometris Spasial:</strong> Berkas KMZ/KML (<span className="font-mono text-indigo-700">{selectedApp.kmzFileName || 'Batas_Poligon_Lokasi.kmz'}</span>) telah teruji secara topologi (zero self-intersection) dengan tingkat ketelitian koordinat WGS84 UTM Zone 51S.
-                      </li>
-                    </ol>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <h5 className="font-bold text-slate-950 uppercase text-xs">B. KEPUTUSAN DAN REKOMENDASI TEKNIS:</h5>
-                    <div className="p-3 bg-emerald-50 border-l-4 border-emerald-600 rounded-r-xl text-slate-900">
-                      <p className="font-bold text-emerald-900">
-                        DINYATAKAN: MEMENUHI KESESUAIAN TATA RUANG ({clearanceDecision.toUpperCase()})
-                      </p>
-                      <p className="text-[11px] text-slate-700 mt-0.5">
-                        {technicalNotes || 'Diberikan rekomendasi teknis kesesuaian ruang untuk diterbitkan Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR) oleh DPMPTSP Kabupaten Luwu.'}
-                      </p>
-                    </div>
-                  </div>
-
-                  <p className="text-[11px] text-slate-700">
-                    Demikian Berita Acara Pemeriksaan ini dibuat dengan sebenarnya dalam 3 (tiga) rangkap untuk dipergunakan sebagai dasar pertimbangan teknis bagi DPMPTSP Kabupaten Luwu dalam menerbitkan Izin PKKPR.
-                  </p>
-                </div>
-
-                {/* TANDA TANGAN RESMI KEPALA DINAS & TIM TEKNIS */}
-                {(() => {
-                  const puptrSet = getOpdSettings('puptr');
-                  return (
-                    <div className="grid grid-cols-2 gap-6 pt-4 font-serif text-xs">
-                      <div className="text-center space-y-1">
-                        <p className="text-slate-600">Mengetahui / Menyetujui,</p>
-                        <p className="font-bold text-slate-900 uppercase">{puptrSet.kabidSignatory?.officialTitle || 'Kepala Bidang Tata Ruang PUPTR'}</p>
-                        <div className="h-16 flex items-center justify-center">
-                          <span className="font-mono text-[10px] text-indigo-700 bg-indigo-50 px-2 py-1 rounded border border-indigo-200">
-                            [ TTE Tersertifikasi BSrE ]
-                          </span>
-                        </div>
-                        <p className="font-bold underline text-slate-950">{puptrSet.kabidSignatory?.fullName || "IR. H. IRWANTO, S.T., M.T."}</p>
-                        <p className="text-[10px] text-slate-500 font-mono">NIP. {puptrSet.kabidSignatory?.nip || "19780412 200502 1 003"}</p>
-                        {puptrSet.kabidSignatory?.pangkatGolongan && (
-                          <p className="text-[9.5px] text-slate-500 font-sans italic">{puptrSet.kabidSignatory.pangkatGolongan}</p>
-                        )}
-                      </div>
-
-                      <div className="text-center space-y-1">
-                        <p className="text-slate-600">Belopa, {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                        <p className="font-bold text-slate-900 uppercase">{puptrSet.kepalaDinas.officialTitle || 'Kepala Dinas PUPTR Kab. Luwu'}</p>
-                        <div className="h-16 flex items-center justify-center">
-                          <span className="font-mono text-[10px] text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
-                            [ Tanda Tangan Elektronik Sah ]
-                          </span>
-                        </div>
-                        <p className="font-bold underline text-slate-950">{puptrSet.kepalaDinas.fullName || "IR. IKHSAN AS'AD, S.T., M.Si."}</p>
-                        <p className="text-[10px] text-slate-500 font-mono">NIP. {puptrSet.kepalaDinas.nip || "19710815 199803 1 007"}</p>
-                        {puptrSet.kepalaDinas.pangkatGolongan && (
-                          <p className="text-[9.5px] text-slate-500 font-sans italic">{puptrSet.kepalaDinas.pangkatGolongan}</p>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
-
-              {/* ══════════════════════════════════════════════════════════
-                  LEMBAR 2: LAMPIRAN PETA DELINEASI SPASIAL (SPATIAL MAP)
-                 ══════════════════════════════════════════════════════════ */}
-              <div className="bap-page-2 border border-slate-200 p-6 sm:p-8 rounded-2xl bg-white space-y-5 print:border-none print:p-0 print:break-before-page">
-                {/* HEADER LAMPIRAN */}
-                <div className="border-b-2 border-slate-900 pb-3 flex items-center justify-between">
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider font-sans">
-                      LAMPIRAN BERITA ACARA PEMERIKSAAN KESESUAIAN TATA RUANG
-                    </h4>
-                    <h3 className="text-sm sm:text-base font-black text-slate-950 uppercase font-serif">
-                      PETA DELINEASI GEOSPASIAL &amp; ZONASI POLA RUANG
-                    </h3>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] font-mono text-slate-500">Lembar Ke-2 / Lampiran Spasial</p>
-                    <p className="text-[11px] font-mono font-bold text-indigo-900">
-                      No. Dokumen: {issuedSkNumber || selectedApp.skPkkprDocNumber || `600.1.2/BAP-TR/PUPTR-LW/${new Date().getFullYear()}`}
-                    </p>
-                  </div>
-                </div>
-
-                {/* INFORMASI KOORDINAT & DELINEASI */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200 text-[11px] font-sans">
-                  <div>
-                    <span className="text-slate-500 block">Kecamatan:</span>
-                    <span className="font-bold text-slate-900">{selectedApp.districtName}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-500 block">Desa / Kelurahan:</span>
-                    <span className="font-bold text-slate-900">{selectedApp.villageName}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-500 block">Luas Delineasi:</span>
-                    <span className="font-bold font-mono text-emerald-700">{selectedApp.areaHa} Ha</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-500 block">Sistem Koordinat:</span>
-                    <span className="font-bold font-mono text-slate-900">WGS84 UTM Zone 51S</span>
-                  </div>
-                </div>
-
-                {/* MAP RENDER CONTAINER */}
-                <div className="h-96 w-full rounded-2xl overflow-hidden border-2 border-slate-800 shadow-inner relative bg-slate-100">
-                  <MapComponent
-                    investments={appAsInvestment ? [appAsInvestment] : []}
-                    districts={districts}
-                    villages={villages}
-                    spatialLayers={spatialLayers}
-                    selectedDistrictId={selectedDistrictId}
-                    selectedVillageId={selectedVillageId}
-                    customGeoJson={currentMapGeoJson}
-                  />
-                  {/* Map Overlay Badge */}
-                  <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm border border-slate-300 rounded-xl p-2.5 shadow-lg text-[10px] font-sans space-y-1">
-                    <div className="flex items-center gap-1.5 font-bold text-slate-900">
-                      <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                      <span>Poligon Delineasi Terverifikasi PUPTR</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-slate-600">
-                      <div className="w-3 h-3 rounded bg-amber-400 border border-amber-600" />
-                      <span>Batas Administrasi Kecamatan {selectedApp.districtName}</span>
-                    </div>
-                    <div className="text-[9px] text-slate-400 pt-1 border-t border-slate-200 font-mono">
-                      Data Terverifikasi Engine Spatial Luwu
-                    </div>
-                  </div>
-                </div>
-
-                {/* FOOTER PENGESAHAN LAMPIRAN PETA */}
-                <div className="flex items-center justify-between pt-4 border-t border-slate-200 text-xs font-serif">
-                  <div className="text-slate-600 space-y-0.5">
-                    <p className="font-bold text-slate-900">Catatan Surveyor / Geospasial:</p>
-                    <p className="text-[10px]">
-                      Delineasi batas poligon telah divalidasi dengan citra satelit resolusi tinggi dan peta dasar BIG skala 1:50.000.
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-slate-600 text-[11px]">Tim Verifikasi Geospasial PUPTR Luwu</p>
-                    <p className="font-bold underline text-slate-950 mt-4">SEKSI PENGUKURAN &amp; PEMETAAN</p>
-                  </div>
-                </div>
-              </div>
-              </div>
-
-              {/* MODAL FOOTER */}
-              <div className="flex items-center justify-between pt-4 border-t border-slate-200 print:hidden">
-                <p className="text-xs text-slate-500">
-                  💡 Dokumen ini terformat siap cetak 2 halaman (A4 Standar Pemerintah Kabupaten Luwu).
-                </p>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setShowBapModal(false)}
-                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition cursor-pointer"
-                  >
-                    Tutup Preview
-                  </button>
-                  <button
-                    onClick={handleDownloadBapPdf}
-                    disabled={isExportingPdf}
-                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md transition cursor-pointer disabled:opacity-50"
-                  >
-                    {isExportingPdf ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                    <span>{isExportingPdf ? 'Mengunduh...' : 'Download PDF (jsPDF)'}</span>
-                  </button>
-                  <button
-                    onClick={() => window.print()}
-                    className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md transition cursor-pointer"
-                  >
-                    <Printer className="w-4 h-4" />
-                    <span>Cetak BAP Resmi</span>
-                  </button>
-                </div>
-              </div>
+              <BapKtrPuptrDocument
+                initialData={convertAppToBapKtrData(
+                  {
+                    ...selectedApp,
+                    technicalNotes,
+                    pkkprStatus: clearanceDecision === 'Approved' ? 'Approved' : 'Rejected'
+                  },
+                  getOpdSettings('puptr'),
+                  mapSnapshot || undefined
+                )}
+                onClose={() => setShowBapModal(false)}
+                showEditorToolbar={true}
+              />
             </motion.div>
           </div>
         )}

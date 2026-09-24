@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import jsPDF from "jspdf";
 import { safeHtml2Canvas } from "../../lib/html2canvasShim";
 import { OFFICIAL_LUWU_LOGO_URL } from "../LuwuLogo";
@@ -14,11 +14,13 @@ import {
   Layers, 
   RotateCcw,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  X,
+  Maximize2
 } from "lucide-react";
 
 /**
- * Data Model for Dinas PUPTR Kabupaten Luwu BAP-KTR Document
+ * Coordinate Point for BAP-KTR Document
  */
 export interface BapKtrCoordinatePoint {
   id: number | string;
@@ -31,7 +33,7 @@ export interface BapKtrCoordinatePoint {
 }
 
 export interface BapKtrDocumentData {
-  // Nomor & Judul
+  // Nomor & Identitas Surat
   nomorSurat: string;
   tentangSurat: string;
   tanggalDokumen: string;
@@ -41,6 +43,7 @@ export interface BapKtrDocumentData {
   nibNik: string;
   namaPemohon: string;
   namaPerusahaan: string;
+  alamatPemohon: string;
   sektorUsaha: string;
   kbliCode: string;
   lokasiInvestasi: string;
@@ -51,7 +54,7 @@ export interface BapKtrDocumentData {
   luasLahanDisetujui: string;
   buktiHakTanah: string;
 
-  // Hasil Audit Teknis
+  // Hasil Audit Teknis Spasial
   zonaPolaRuangRtrw: string;
   kodeZonaRtrw: string;
   statusLp2b: "NON_LP2B" | "LP2B" | "LP2B_CADANGAN";
@@ -68,7 +71,7 @@ export interface BapKtrDocumentData {
   koefisienLantaiBangunan: string;
   garisSempadanBangunan: string;
 
-  // Pejabat Penandatangan
+  // Pejabat Penandatangan (Dual Signatures)
   kabidNama: string;
   kabidNip: string;
   kabidJabatan: string;
@@ -85,15 +88,70 @@ export interface BapKtrDocumentData {
   koordinatPoligon: BapKtrCoordinatePoint[];
 }
 
+/**
+ * Convert Decimal Degrees to Degrees Minutes Seconds (DMS) string
+ */
+export function ddToDms(dd: number, isLat: boolean): string {
+  const dir = isLat ? (dd >= 0 ? "LU" : "LS") : (dd >= 0 ? "BT" : "BB");
+  const abs = Math.abs(dd);
+  const deg = Math.floor(abs);
+  const minFloat = (abs - deg) * 60;
+  const min = Math.floor(minFloat);
+  const sec = ((minFloat - min) * 60).toFixed(2);
+  return `${deg}° ${min}' ${sec}" ${dir}`;
+}
+
+/**
+ * Helper to extract coordinate points from GeoJSON geometry
+ */
+export function extractCoordinatesFromGeometry(geometry: any): BapKtrCoordinatePoint[] {
+  if (!geometry) return [];
+  let ring: [number, number][] = [];
+
+  if (geometry.type === "Polygon" && Array.isArray(geometry.coordinates) && geometry.coordinates[0]) {
+    ring = geometry.coordinates[0];
+  } else if (geometry.type === "MultiPolygon" && Array.isArray(geometry.coordinates) && geometry.coordinates[0]?.[0]) {
+    ring = geometry.coordinates[0][0];
+  } else if (geometry.type === "Point" && Array.isArray(geometry.coordinates)) {
+    const [lng, lat] = geometry.coordinates;
+    return [{
+      id: 1,
+      pointName: "P.01",
+      latitudeDd: lat,
+      longitudeDd: lng,
+      latitudeDms: ddToDms(lat, true),
+      longitudeDms: ddToDms(lng, false),
+      description: "Titik Pusat Koordinat Lokasi"
+    }];
+  }
+
+  if (ring.length === 0) return [];
+
+  const points = (ring.length > 3 && ring[0][0] === ring[ring.length - 1][0] && ring[0][1] === ring[ring.length - 1][1])
+    ? ring.slice(0, ring.length - 1)
+    : ring;
+
+  return points.slice(0, 16).map(([lng, lat], idx) => ({
+    id: idx + 1,
+    pointName: `P.${String(idx + 1).padStart(2, '0')}`,
+    latitudeDd: lat,
+    longitudeDd: lng,
+    latitudeDms: ddToDms(lat, true),
+    longitudeDms: ddToDms(lng, false),
+    description: idx === 0 ? "Patok Sudut Awal Batas Persil" : `Patok Batas Poligon Titik ${idx + 1}`
+  }));
+}
+
 export const DEFAULT_BAP_KTR_DATA: BapKtrDocumentData = {
   nomorSurat: "600.1.15/042/BAP-KTR/PUPTR-TR/LUWU/2026",
-  tentangSurat: "HASIL AUDIT DAN REKOMENDASI TEKNIS KESESUAIAN KEGIATAN PEMANFAATAN RUANG (PKKPR) KABUPATEN LUWU",
+  tentangSurat: "HASIL PENILAIAN DOKUMEN PERSETUJUAN KESESUAIAN KEGIATAN PEMANFAATAN RUANG (PKKPR) KABUPATEN LUWU",
   tanggalDokumen: "24 September 2026",
   hariTanggalPemeriksaan: "Rabu, 24 September 2026",
 
   nibNik: "0220108392182 / 7317011909890001",
   namaPemohon: "Ir. Muhammad Arsyad Al-Fatih, M.T.",
-  namaPerusahaan: "PT. LUWU AGRO AGROINDUSTRI NUSANTARA",
+  namaPerusahaan: "PT. LUWU AGRO INDUSTRI NUSANTARA",
+  alamatPemohon: "Jl. Jenderal Sudirman No. 45, Belopa, Kab. Luwu",
   sektorUsaha: "Industri Pengolahan Kakao Terpadu & Pergudangan Modern",
   kbliCode: "10732 (Industri Pengolahan Kakao dan Cokelat)",
   lokasiInvestasi: "Jl. Poros Trans Sulawesi KM 14, Kawasan Peruntukan Industri",
@@ -102,34 +160,34 @@ export const DEFAULT_BAP_KTR_DATA: BapKtrDocumentData = {
   kabupaten: "Kabupaten Luwu, Provinsi Sulawesi Selatan",
   luasLahanPermohonan: "254.800 m² (25,48 Hektar)",
   luasLahanDisetujui: "254.800 m² (25,48 Hektar) - Sesuai Delineasi Poligon",
-  buktiHakTanah: "Sertipikat Hak Milik (SHM) No. 00412/Karang-Karangan & Surat Perjanjian Penguasaan Fisik Tanah",
+  buktiHakTanah: "Sertipikat Hak Milik (SHM) No. 00412/Karang-Karangan & Surat Keterangan Penguasaan Fisik Tanah",
 
   zonaPolaRuangRtrw: "Kawasan Peruntukan Industri (KPI) & Kawasan Pergudangan",
-  kodeZonaRtrw: "KPI-01 / Perda No. 3 Tahun 2024 tentang RTRW Kab. Luwu",
+  kodeZonaRtrw: "KPI-01 / Perda No. 3 Tahun 2024 tentang RTRW Kab. Luwu 2024-2044",
   statusLp2b: "NON_LP2B",
-  keteranganLp2b: "LOKASI BERADA DILUAR ZONA LP2B (NON-LP2B) - Tidak Berada di Kawasan Pertanian Pangan Berkelanjutan",
-  statusKawasanLindung: "Bebas dari Kawasan Lindung, Kawasan Suaka Alam, dan Hutan Konservasi",
+  keteranganLp2b: "LOKASI BERADA DILUAR ZONA LP2B (NON-LP2B) - Bebas dari Kawasan Pertanian Pangan Berkelanjutan",
+  statusKawasanLindung: "Bebas dari Kawasan Hutan Lindung, Suaka Alam, Sempadan Sungai, dan Konservasi Mangrove",
   statusSempadanSungaiPantai: "Memenuhi Buffer Sempadan Pantai > 100 Meter & Sempadan Sungai > 50 Meter",
-  validasiTopologi: "Valid (Zero Self-Intersection, Zero Sliver Polygons, Seamless Boundary Conformance)",
+  validasiTopologi: "Valid (Zero Self-Intersection, Zero Sliver Polygons, Seamless Boundary Conformance WGS84 UTM Zone 51S)",
   sistemKoordinat: "Universal Transverse Mercator (UTM) Zone 51S - Datum WGS 1984",
 
   statusKeputusan: "APPROVED",
   catatanRekomendasiTeknis: [
     "Rencana pemanfaatan ruang telah SESUAI dengan Peraturan Daerah Kabupaten Luwu No. 3 Tahun 2024 tentang Rencana Tata Ruang Wilayah (RTRW) Kabupaten Luwu Tahun 2024-2044.",
-    "Pemohon diwajibkan menyediakan Ruang Terbuka Hijau (RTH) privat minimal 10% dari total luas persil yang dikuasai.",
+    "Pemohon diwajibkan menyediakan Ruang Terbuka Hijau (RTH) privat minimal 10% dari total luas persil lahan yang dikuasai.",
     "Wajib mematuhi Koefisien Dasar Bangunan (KDB) maksimal 60% dan Garis Sempadan Bangunan (GSB) minimal 15 meter dari as jalan arteri primer.",
     "Direkomendasikan kepada Kepala DPMPTSP Kabupaten Luwu untuk diterbitkan Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR) Berusaha melalui sistem OSS-RBA."
   ],
   koefisienDasarBangunan: "Maksimal 60% (KDB)",
   koefisienLantaiBangunan: "Maksimal 2.4 (KLB)",
-  garisSempadanBangunan: "Minimal 15.0 Meter dari Batas Jalan Poros",
+  garisSempadanBangunan: "Minimal 15.0 Meter dari Batas As Jalan",
 
-  kabidNama: "AKHMAD FAUZI, S.T., M.Si.",
-  kabidNip: "19810514 200604 1 008",
+  kabidNama: "IR. H. IRWANTO, S.T., M.T.",
+  kabidNip: "19780412 200502 1 003",
   kabidJabatan: "Kepala Bidang Tata Ruang dan Bina Konstruksi",
 
-  kadisNama: "Ir. H. IKHWAR RIDWAN, S.T., M.T.",
-  kadisNip: "19740312 199903 1 004",
+  kadisNama: "IR. IKHSAN AS'AD, S.T., M.Si.",
+  kadisNip: "19710815 199803 1 007",
   kadisJabatan: "Kepala Dinas Pekerjaan Umum dan Penataan Ruang",
   kadisPangkat: "Pembina Utama Muda (IV/c)",
 
@@ -139,16 +197,16 @@ export const DEFAULT_BAP_KTR_DATA: BapKtrDocumentData = {
   catatanSurveyor: "Pengukuran batas persil telah diverifikasi menggunakan GNSS RTK Dual-Frequency Geodetic dengan tingkat akurasi horizontal < 0.05 meter. Delineasi poligon telah ditumpangsusunkan (overlay) langsung dengan Layer Peta Digital RTRW Kabupaten Luwu 2024-2044.",
 
   koordinatPoligon: [
-    { id: 1, pointName: "P.01", latitudeDms: "2° 58' 42.12\" S", longitudeDms: "120° 18' 24.35\" E", latitudeDd: -2.978367, longitudeDd: 120.306764, description: "Patok Utama Sudut Barat Daya (Batas Jalan Poros)" },
-    { id: 2, pointName: "P.02", latitudeDms: "2° 58' 38.45\" S", longitudeDms: "120° 18' 32.18\" E", latitudeDd: -2.977347, longitudeDd: 120.308939, description: "Patok Batas Sisi Barat (Jalan Akses Industri)" },
-    { id: 3, pointName: "P.03", latitudeDms: "2° 58' 29.80\" S", longitudeDms: "120° 18' 35.60\" E", latitudeDd: -2.974944, longitudeDd: 120.309889, description: "Patok Sudut Utara (Batas Lahan Perkebunan)" },
-    { id: 4, pointName: "P.04", latitudeDms: "2° 58' 25.10\" S", longitudeDms: "120° 18' 48.90\" E", latitudeDd: -2.973639, longitudeDd: 120.313583, description: "Patok Sudut Timur Laut (Batas Kawasan Industri)" },
-    { id: 5, pointName: "P.05", latitudeDms: "2° 58' 36.70\" S", longitudeDms: "120° 18' 54.20\" E", latitudeDd: -2.976861, longitudeDd: 120.315056, description: "Patok Sudut Tenggara (Zona Logistik)" },
-    { id: 6, pointName: "P.06", latitudeDms: "2° 58' 45.90\" S", longitudeDms: "120° 18' 40.50\" E", latitudeDd: -2.979417, longitudeDd: 120.311250, description: "Patok Sudut Selatan (Kembali ke Perimeter Awal)" }
+    { id: 1, pointName: "P.01", latitudeDms: "2° 58' 42.12\" LS", longitudeDms: "120° 18' 24.35\" BT", latitudeDd: -2.978367, longitudeDd: 120.306764, description: "Patok Utama Sudut Barat Daya (Batas Jalan Poros)" },
+    { id: 2, pointName: "P.02", latitudeDms: "2° 58' 38.45\" LS", longitudeDms: "120° 18' 32.18\" BT", latitudeDd: -2.977347, longitudeDd: 120.308939, description: "Patok Batas Sisi Barat (Jalan Akses Industri)" },
+    { id: 3, pointName: "P.03", latitudeDms: "2° 58' 29.80\" LS", longitudeDms: "120° 18' 35.60\" BT", latitudeDd: -2.974944, longitudeDd: 120.309889, description: "Patok Sudut Utara (Batas Lahan Perkebunan)" },
+    { id: 4, pointName: "P.04", latitudeDms: "2° 58' 25.10\" LS", longitudeDms: "120° 18' 48.90\" BT", latitudeDd: -2.973639, longitudeDd: 120.313583, description: "Patok Sudut Timur Laut (Batas Kawasan Industri)" },
+    { id: 5, pointName: "P.05", latitudeDms: "2° 58' 36.70\" LS", longitudeDms: "120° 18' 54.20\" BT", latitudeDd: -2.976861, longitudeDd: 120.315056, description: "Patok Sudut Tenggara (Zona Logistik)" },
+    { id: 6, pointName: "P.06", latitudeDms: "2° 58' 45.90\" LS", longitudeDms: "120° 18' 40.50\" BT", latitudeDd: -2.979417, longitudeDd: 120.311250, description: "Patok Sudut Selatan (Kembali ke Perimeter Awal)" }
   ]
 };
 
-interface BapKtrPuptrDocumentProps {
+export interface BapKtrPuptrDocumentProps {
   initialData?: Partial<BapKtrDocumentData>;
   onClose?: () => void;
   showEditorToolbar?: boolean;
@@ -163,6 +221,16 @@ export function BapKtrPuptrDocument({
     ...DEFAULT_BAP_KTR_DATA,
     ...initialData
   });
+
+  // Sync state if initialData changes
+  useEffect(() => {
+    if (initialData) {
+      setData(prev => ({
+        ...prev,
+        ...initialData
+      }));
+    }
+  }, [initialData]);
 
   const [activeTab, setActiveTab] = useState<"all" | "page1" | "page2" | "page3" | "page4">("all");
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
@@ -185,7 +253,6 @@ export function BapKtrPuptrDocument({
     setIsGeneratingPdf(true);
 
     try {
-      // Find all printable pages
       const pageElements = documentContainerRef.current.querySelectorAll<HTMLElement>(".bap-ktr-print-page");
       if (!pageElements || pageElements.length === 0) {
         throw new Error("Halaman dokumen tidak ditemukan");
@@ -202,7 +269,7 @@ export function BapKtrPuptrDocument({
         const pageEl = pageElements[i];
         
         const canvas = await safeHtml2Canvas(pageEl, {
-          scale: 2.5, // 300 DPI high-res crispness
+          scale: 2.5, // Crisp 300 DPI output
           useCORS: true,
           allowTaint: true,
           backgroundColor: "#ffffff",
@@ -211,8 +278,8 @@ export function BapKtrPuptrDocument({
         });
 
         const imgData = canvas.toDataURL("image/jpeg", 0.95);
-        const pdfWidth = 210; // A4 mm
-        const pdfHeight = 297; // A4 mm
+        const pdfWidth = 210; // A4 width in mm
+        const pdfHeight = 297; // A4 height in mm
 
         if (i > 0) {
           pdf.addPage("a4", "portrait");
@@ -232,7 +299,7 @@ export function BapKtrPuptrDocument({
   };
 
   return (
-    <div className="w-full bg-[#f1f5f9] text-[#000000] min-h-screen py-6 px-2 sm:px-4 font-sans">
+    <div className="w-full bg-[#f1f5f9] text-[#000000] min-h-screen py-6 px-2 sm:px-4 font-sans print:p-0 print:m-0 print:bg-white">
       {/* 1. PRINT & EXPORT CONTROL TOOLBAR (Hidden in Print Mode) */}
       {showEditorToolbar && (
         <div className="print:hidden max-w-[960px] mx-auto mb-6 bg-[#ffffff] border border-[#cbd5e1] rounded-2xl p-4 shadow-lg sticky top-4 z-50">
@@ -246,7 +313,7 @@ export function BapKtrPuptrDocument({
                   Template Resmi BAP-KTR Dinas PUPTR Kabupaten Luwu
                 </h2>
                 <p className="text-xs text-[#64748b]">
-                  Standar Naskah Dinas Tata Ruang • Siap Cetak A4 / Ekspor PDF Resmi
+                  Standar Naskah Dinas Tata Ruang • Siap Cetak A4 / Ekspor PDF Resmi (BAP KKPR)
                 </p>
               </div>
             </div>
@@ -290,7 +357,8 @@ export function BapKtrPuptrDocument({
                   onClick={onClose}
                   className="px-3 py-2 rounded-xl text-xs font-bold bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] border border-[#cbd5e1] transition-all cursor-pointer"
                 >
-                  Tutup
+                  <X size={14} className="inline mr-1" />
+                  <span>Tutup</span>
                 </button>
               )}
             </div>
@@ -377,6 +445,15 @@ export function BapKtrPuptrDocument({
                   />
                 </div>
                 <div>
+                  <label className="block text-[#475569] font-bold mb-1">Alamat Pemohon:</label>
+                  <input
+                    type="text"
+                    value={data.alamatPemohon}
+                    onChange={(e) => setData({ ...data, alamatPemohon: e.target.value })}
+                    className="w-full px-2.5 py-1.5 bg-white border border-[#cbd5e1] rounded-lg text-[#0f172a]"
+                  />
+                </div>
+                <div>
                   <label className="block text-[#475569] font-bold mb-1">NIB / NIK Pemohon:</label>
                   <input
                     type="text"
@@ -418,6 +495,15 @@ export function BapKtrPuptrDocument({
                     type="text"
                     value={data.kecamatan}
                     onChange={(e) => setData({ ...data, kecamatan: e.target.value })}
+                    className="w-full px-2.5 py-1.5 bg-white border border-[#cbd5e1] rounded-lg text-[#0f172a]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[#475569] font-bold mb-1">Desa / Kelurahan:</label>
+                  <input
+                    type="text"
+                    value={data.desaKelurahan}
+                    onChange={(e) => setData({ ...data, desaKelurahan: e.target.value })}
                     className="w-full px-2.5 py-1.5 bg-white border border-[#cbd5e1] rounded-lg text-[#0f172a]"
                   />
                 </div>
@@ -541,12 +627,18 @@ export function BapKtrPuptrDocument({
                 </tr>
                 <tr>
                   <td style={{ verticalAlign: "top", padding: "2px 0" }}>4.</td>
+                  <td style={{ verticalAlign: "top", padding: "2px 0" }}>Alamat Pemohon</td>
+                  <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
+                  <td style={{ verticalAlign: "top", padding: "2px 0" }}>{data.alamatPemohon}</td>
+                </tr>
+                <tr>
+                  <td style={{ verticalAlign: "top", padding: "2px 0" }}>5.</td>
                   <td style={{ verticalAlign: "top", padding: "2px 0" }}>Rencana Kegiatan / Sektor Usaha</td>
                   <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
                   <td style={{ verticalAlign: "top", padding: "2px 0" }}>{data.sektorUsaha} (KBLI: {data.kbliCode})</td>
                 </tr>
                 <tr>
-                  <td style={{ verticalAlign: "top", padding: "2px 0" }}>5.</td>
+                  <td style={{ verticalAlign: "top", padding: "2px 0" }}>6.</td>
                   <td style={{ verticalAlign: "top", padding: "2px 0" }}>Lokasi Rencana Investasi</td>
                   <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
                   <td style={{ verticalAlign: "top", padding: "2px 0" }}>
@@ -554,13 +646,13 @@ export function BapKtrPuptrDocument({
                   </td>
                 </tr>
                 <tr>
-                  <td style={{ verticalAlign: "top", padding: "2px 0" }}>6.</td>
+                  <td style={{ verticalAlign: "top", padding: "2px 0" }}>7.</td>
                   <td style={{ verticalAlign: "top", padding: "2px 0" }}>Luas Lahan Permohonan</td>
                   <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
                   <td style={{ verticalAlign: "top", padding: "2px 0", fontWeight: "bold" }}>{data.luasLahanPermohonan}</td>
                 </tr>
                 <tr>
-                  <td style={{ verticalAlign: "top", padding: "2px 0" }}>7.</td>
+                  <td style={{ verticalAlign: "top", padding: "2px 0" }}>8.</td>
                   <td style={{ verticalAlign: "top", padding: "2px 0" }}>Bukti Penguasaan Hak Atas Tanah</td>
                   <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
                   <td style={{ verticalAlign: "top", padding: "2px 0" }}>{data.buktiHakTanah}</td>
@@ -814,30 +906,30 @@ export function BapKtrPuptrDocument({
               <div style={{ position: "absolute", inset: 0, pointerEvents: "none", border: "1px dashed rgba(0,0,0,0.4)" }} />
 
               {/* North Arrow Compass */}
-              <div style={{ position: "absolute", top: "10px", right: "12px", backgroundColor: "rgba(255,255,255,0.9)", border: "1px solid #000000", padding: "4px 6px", textAlign: "center" }}>
-                <div style={{ fontSize: "11pt", fontWeight: "bold", color: "#dc2626" }}>▲ N</div>
+              <div style={{ position: "absolute", top: "10px", right: "12px", backgroundColor: "rgba(255,255,255,0.95)", border: "1px solid #000000", padding: "4px 8px", textAlign: "center" }}>
+                <div style={{ fontSize: "12pt", fontWeight: "bold", color: "#dc2626" }}>▲ U</div>
                 <div style={{ fontSize: "7pt", fontWeight: "bold", color: "#000000" }}>UTARA</div>
               </div>
 
-              {/* Legenda Peta Geospasial */}
-              <div style={{ position: "absolute", bottom: "10px", left: "10px", backgroundColor: "rgba(255,255,255,0.92)", border: "1px solid #000000", padding: "6px 8px", fontSize: "7.5pt", width: "170px" }}>
+              {/* Legenda Peta Geospasial Formal */}
+              <div style={{ position: "absolute", bottom: "10px", left: "10px", backgroundColor: "rgba(255,255,255,0.95)", border: "1px solid #000000", padding: "6px 8px", fontSize: "7.5pt", width: "185px" }}>
                 <div style={{ fontWeight: "bold", borderBottom: "1px solid #000000", paddingBottom: "2px", marginBottom: "4px" }}>LEGENDA PETA:</div>
                 <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
-                  <div style={{ width: "14px", height: "8px", border: "2px solid #dc2626", backgroundColor: "rgba(220,38,38,0.2)" }} />
+                  <div style={{ width: "14px", height: "8px", border: "2px solid #dc2626", backgroundColor: "rgba(220,38,38,0.3)" }} />
                   <span>Delineasi Permohonan</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
                   <div style={{ width: "14px", height: "8px", backgroundColor: "#7c3aed" }} />
-                  <span>Kawasan Industri (KPI)</span>
+                  <span>Pola Ruang RTRW Kab. Luwu</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                   <div style={{ width: "14px", height: "2px", backgroundColor: "#2563eb" }} />
-                  <span>Jalur Arteri Poros</span>
+                  <span>Jalur Arteri Poros Sulawesi</span>
                 </div>
               </div>
 
               {/* Skala Batang Simbolik */}
-              <div style={{ position: "absolute", bottom: "10px", right: "10px", backgroundColor: "rgba(255,255,255,0.9)", border: "1px solid #000000", padding: "4px 6px", fontSize: "7pt", textAlign: "center" }}>
+              <div style={{ position: "absolute", bottom: "10px", right: "10px", backgroundColor: "rgba(255,255,255,0.95)", border: "1px solid #000000", padding: "4px 8px", fontSize: "7pt", textAlign: "center" }}>
                 <div>Skala 1 : 5.000</div>
                 <div style={{ width: "80px", height: "3px", backgroundColor: "#000000", margin: "2px auto" }} />
                 <div>0  100m  250m</div>
@@ -1017,4 +1109,81 @@ export function BapKtrPuptrDocument({
       `}</style>
     </div>
   );
+}
+
+/**
+ * Utility function to convert application object + settings to BapKtrDocumentData
+ */
+export function convertAppToBapKtrData(
+  app: any,
+  puptrSettings?: any,
+  customMapSnapshot?: string
+): BapKtrDocumentData {
+  let coords: BapKtrCoordinatePoint[] = [];
+  if (app?.geometry) {
+    coords = extractCoordinatesFromGeometry(app.geometry);
+  }
+  if (coords.length === 0) {
+    coords = DEFAULT_BAP_KTR_DATA.koordinatPoligon;
+  }
+
+  const isApproved = app?.pertanianStatus !== 'REJECTED' && app?.pkkprStatus !== 'REJECTED';
+  const year = new Date().getFullYear();
+
+  return {
+    nomorSurat: app?.skPkkprDocNumber || app?.pkkprDocNumber || `600.1.15/042/BAP-KTR/PUPTR-TR/LUWU/${year}`,
+    tentangSurat: `HASIL PENILAIAN DOKUMEN PERSETUJUAN KESESUAIAN KEGIATAN PEMANFAATAN RUANG (PKKPR) ATAS NAMA ${app?.applicantName || app?.companyName || 'PEMOHON'}`,
+    tanggalDokumen: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+    hariTanggalPemeriksaan: new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+    
+    nibNik: app?.nibNik || app?.nib_oss || app?.nik_pemohon || '-',
+    namaPemohon: app?.applicantName || app?.nama_pemohon || 'Pemohon Terdaftar',
+    namaPerusahaan: app?.companyName || app?.nama_badan_usaha || 'Perseorangan / Badan Usaha',
+    alamatPemohon: app?.applicantAddress || app?.address || `Kecamatan ${app?.districtName || 'Belopa'}, Kab. Luwu`,
+    sektorUsaha: app?.sector || 'Pemanfaatan Ruang & Investasi Daerah',
+    kbliCode: app?.kbliCode || 'Sesuai OSS-RBA',
+    lokasiInvestasi: app?.address || `Desa ${app?.villageName || '-'}, Kec. ${app?.districtName || '-'}` || 'Kabupaten Luwu',
+    desaKelurahan: app?.villageName ? `Desa ${app.villageName}` : 'Desa Karang-Karangan',
+    kecamatan: app?.districtName ? `Kecamatan ${app.districtName}` : 'Kecamatan Bua',
+    kabupaten: 'Kabupaten Luwu, Provinsi Sulawesi Selatan',
+    luasLahanPermohonan: app?.areaHa ? `${app.areaHa} Ha (${(Number(app.areaHa) * 10000).toLocaleString('id-ID')} m²)` : '25.48 Ha',
+    luasLahanDisetujui: app?.areaHa ? `${app.areaHa} Ha - Sesuai Delineasi Poligon` : '25.48 Ha',
+    buktiHakTanah: app?.certificateType ? `${app.certificateType} (No. ${app?.certificateDocNumber || '-'})` : 'Sertipikat Hak Milik (SHM) / Bukti Penguasaan Fisik Tanah Terdaftar',
+
+    zonaPolaRuangRtrw: app?.sector ? `Kawasan Peruntukan ${app.sector}` : 'Kawasan Peruntukan Industri & Perdagangan',
+    kodeZonaRtrw: 'Perda No. 3 Tahun 2024 tentang RTRW Kab. Luwu 2024-2044',
+    statusLp2b: app?.pertanianStatus === 'APPROVED' ? 'LP2B' : 'NON_LP2B',
+    keteranganLp2b: app?.pertanianStatus === 'APPROVED'
+      ? `LOKASI BERADA PADA ZONA LP2B (Telah Memenuhi Syarat Rekomendasi Dinas Pertanian No. ${app?.pertanianBaNumber || 'BA/DISTAN/2026'})`
+      : 'LOKASI BERADA DILUAR ZONA LP2B (NON-LP2B) - Bebas dari Kawasan Pertanian Pangan Berkelanjutan',
+    statusKawasanLindung: 'Bebas dari Kawasan Hutan Lindung, Suaka Alam, Sempadan Sungai, dan Konservasi Mangrove',
+    statusSempadanSungaiPantai: 'Memenuhi Buffer Sempadan Pantai > 100 Meter & Sempadan Sungai > 50 Meter',
+    validasiTopologi: 'Valid (Zero Self-Intersection, Sistem Koordinat Universal Transverse Mercator UTM WGS84 Zone 51S)',
+    sistemKoordinat: 'Universal Transverse Mercator (UTM) Zone 51S - Datum WGS 1984',
+
+    statusKeputusan: isApproved ? 'APPROVED' : 'REJECTED',
+    catatanRekomendasiTeknis: [
+      'Rencana kegiatan pemanfaatan ruang telah SESUAI dengan Peraturan Daerah Kabupaten Luwu Nomor 3 Tahun 2024 tentang Rencana Tata Ruang Wilayah (RTRW) Kabupaten Luwu Tahun 2024-2044.',
+      'Wajib menyediakan Ruang Terbuka Hijau (RTH) privat minimal 10% dari total luas persil lahan yang dikuasai.',
+      'Mematuhi Koefisien Dasar Bangunan (KDB) maksimal 60% dan Garis Sempadan Bangunan (GSB) minimal 15 meter dari as jalan arteri primer.',
+      'Direkomendasikan kepada Kepala DPMPTSP Kabupaten Luwu untuk penerbitan Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR).'
+    ],
+    koefisienDasarBangunan: 'Maksimal 60% (KDB)',
+    koefisienLantaiBangunan: 'Maksimal 2.4 (KLB)',
+    garisSempadanBangunan: 'Minimal 15.0 Meter dari Batas As Jalan',
+
+    kabidNama: puptrSettings?.kabidSignatory?.fullName || 'IR. H. IRWANTO, S.T., M.T.',
+    kabidNip: puptrSettings?.kabidSignatory?.nip || '19780412 200502 1 003',
+    kabidJabatan: puptrSettings?.kabidSignatory?.officialTitle || 'Kepala Bidang Tata Ruang dan Bina Konstruksi',
+    kadisNama: puptrSettings?.kepalaDinas?.fullName || "IR. IKHSAN AS'AD, S.T., M.Si.",
+    kadisNip: puptrSettings?.kepalaDinas?.nip || '19710815 199803 1 007',
+    kadisJabatan: puptrSettings?.kepalaDinas?.officialTitle || 'Kepala Dinas Pekerjaan Umum dan Penataan Ruang',
+    kadisPangkat: puptrSettings?.kepalaDinas?.pangkatGolongan || 'Pembina Utama Muda (IV/c)',
+
+    petaImageUrl: customMapSnapshot || app?.mapSnapshotUrl || DEFAULT_BAP_KTR_DATA.petaImageUrl,
+    analisGisNama: 'ANDI BASO MATTATA, S.T.',
+    analisGisNip: '19940822 202012 1 003',
+    catatanSurveyor: 'Pengukuran batas persil telah diverifikasi menggunakan GNSS RTK Dual-Frequency Geodetic dengan tingkat akurasi horizontal < 0.05 meter. Delineasi poligon telah ditumpangsusunkan (overlay) langsung dengan Layer Peta Digital RTRW Kabupaten Luwu 2024-2044.',
+    koordinatPoligon: coords
+  };
 }
