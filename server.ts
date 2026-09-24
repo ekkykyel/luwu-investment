@@ -3741,12 +3741,47 @@ app.post("/api/auth/login", async (req, res) => {
   }
 
   if (authError || !authData?.user) {
-
     const lowerEmail = username.toLowerCase().trim();
-    if (lowerEmail === "superadmin@luwu.go.id" && password === "SuperAdmin123!") {
+    if ((lowerEmail === "superadmin@luwu.go.id" || lowerEmail === "superadmin") && (password === "SuperAdmin123!" || password === "Operator123!")) {
       mappedRole = "Super Admin";
       userEmail = "superadmin@luwu.go.id";
       userId = "offline-super-admin-uuid-00001";
+    } else if ((lowerEmail === "puptr@luwukab.go.id" || lowerEmail === "adminpuptr@luwukab.go.id" || lowerEmail === "puptr@luwu.go.id" || lowerEmail === "adminpuptr") && (password === "Puptr123!" || password === "Operator123!")) {
+      mappedRole = "Admin PUPTR";
+      userEmail = "puptr@luwukab.go.id";
+      userId = "offline-puptr-uuid-00003";
+    } else if ((lowerEmail === "pertanian@luwukab.go.id" || lowerEmail === "adminpertanian@luwukab.go.id" || lowerEmail === "pertanian@luwu.go.id" || lowerEmail === "adminpertanian") && (password === "Pertanian123!" || password === "Operator123!")) {
+      mappedRole = "Admin Pertanian";
+      userEmail = "pertanian@luwukab.go.id";
+      userId = "offline-pertanian-uuid-00004";
+    } else if ((lowerEmail === "dalakluwu@gmail.com" || lowerEmail === "admindalak@luwukab.go.id" || lowerEmail === "dalak@luwukab.go.id" || lowerEmail === "admindalak") && (password === "Dalak123!" || password === "Operator123!")) {
+      mappedRole = "Admin Dalak";
+      userEmail = "dalakluwu@gmail.com";
+      userId = "offline-dalak-uuid-00005";
+    } else if ((lowerEmail === "promosiluwu@gmail.com" || lowerEmail === "adminpromosi@luwukab.go.id" || lowerEmail === "promosi@luwukab.go.id" || lowerEmail === "adminpromosi") && (password === "Promosi123!" || password === "Operator123!")) {
+      mappedRole = "Admin Promosi";
+      userEmail = "promosiluwu@gmail.com";
+      userId = "offline-promosi-uuid-00006";
+    } else if ((lowerEmail === "dataluwu@gmail.com" || lowerEmail === "admindata@luwukab.go.id" || lowerEmail === "data@luwukab.go.id" || lowerEmail === "admindata") && (password === "Data123!" || password === "Operator123!")) {
+      mappedRole = "Admin Data";
+      userEmail = "dataluwu@gmail.com";
+      userId = "offline-data-uuid-00007";
+    } else if ((lowerEmail === "dpmptspluwu@gmail.com" || lowerEmail === "adminoss@luwukab.go.id" || lowerEmail === "oss@luwukab.go.id" || lowerEmail === "adminoss") && (password === "Oss123!" || password === "Operator123!")) {
+      mappedRole = "Admin OSS";
+      userEmail = "dpmptspluwu@gmail.com";
+      userId = "offline-oss-uuid-00008";
+    } else if ((lowerEmail === "adminmpp@luwukab.go.id" || lowerEmail === "mpp@luwukab.go.id" || lowerEmail === "adminmpp") && (password === "Mpp123!" || password === "Operator123!")) {
+      mappedRole = "Admin MPP";
+      userEmail = "adminmpp@luwukab.go.id";
+      userId = "offline-mpp-uuid-00009";
+    } else if ((lowerEmail === "investor@luwu.go.id" || lowerEmail === "investor") && (password === "Investor123!" || password === "Operator123!")) {
+      mappedRole = "Investor";
+      userEmail = "investor@luwu.go.id";
+      userId = "offline-investor-uuid-00010";
+    } else if ((lowerEmail === "masyarakat@luwu.go.id" || lowerEmail === "masyarakat") && (password === "Masyarakat123!" || password === "Operator123!")) {
+      mappedRole = "Masyarakat";
+      userEmail = "masyarakat@luwu.go.id";
+      userId = "offline-masyarakat-uuid-00011";
     } else if (lowerEmail === "operator@luwu.go.id" && password === "Operator123!") {
       mappedRole = "Operator";
       userEmail = "operator@luwu.go.id";
@@ -3758,25 +3793,33 @@ app.post("/api/auth/login", async (req, res) => {
       });
     }
   } else {
-    // 2. Map role based on user_metadata and profiles
-    const userMetadataRole = authData.user.user_metadata?.role || "Jabatan Pelaksana";
+    // 2. Map role based on user_metadata, profiles, and official email patterns
+    const userMetadataRole = authData.user.user_metadata?.role || "";
     const { data: profile } = await supabase.from('profiles').select('role').eq('id', authData.user.id).single();
     dbRole = profile?.role || userMetadataRole;
-    
+    const userEmailLower = (authData.user.email || "").toLowerCase().trim();
+
     // Normalize to frontend expected roles
-    if (dbRole === 'superadmin' || dbRole === 'SUPER_ADMIN' || dbRole === 'Super Admin') {
+    const norm = (dbRole || "").toLowerCase().replace(/[\s_-]+/g, "");
+    if (norm === 'superadmin' || norm === 'super' || userEmailLower.includes("superadmin")) {
       mappedRole = "Super Admin";
-    } else if (dbRole === 'admin_dalak' || dbRole === 'Admin Dalak') {
+    } else if (norm === 'admin_puptr' || norm === 'adminpuptr' || norm === 'puptr' || userEmailLower.includes("puptr") || userEmailLower.includes("tataruang")) {
+      mappedRole = "Admin PUPTR";
+    } else if (norm === 'admin_pertanian' || norm === 'adminpertanian' || norm === 'pertanian' || userEmailLower.includes("pertanian") || userEmailLower.includes("distan")) {
+      mappedRole = "Admin Pertanian";
+    } else if (norm === 'admin_dalak' || norm === 'admindalak' || norm === 'dalak' || userEmailLower.includes("dalak")) {
       mappedRole = "Admin Dalak";
-    } else if (dbRole === 'admin_oss' || dbRole === 'Admin OSS') {
+    } else if (norm === 'admin_oss' || norm === 'adminoss' || norm === 'oss' || norm === 'pelayanan' || userEmailLower.includes("dpmptsp") || userEmailLower.includes("oss")) {
       mappedRole = "Admin OSS";
-    } else if (dbRole === 'admin_promosi' || dbRole === 'Admin Promosi') {
+    } else if (norm === 'admin_promosi' || norm === 'adminpromosi' || norm === 'promosi' || userEmailLower.includes("promosi")) {
       mappedRole = "Admin Promosi";
-    } else if (dbRole === 'admin_data' || dbRole === 'Admin Data') {
+    } else if (norm === 'admin_data' || norm === 'admindata' || norm === 'data' || userEmailLower.includes("dataluwu")) {
       mappedRole = "Admin Data";
-    } else if (dbRole === 'investor' || dbRole === 'Investor') {
+    } else if (norm === 'admin_mpp' || norm === 'adminmpp' || norm === 'mpp' || userEmailLower.includes("mpp")) {
+      mappedRole = "Admin MPP";
+    } else if (norm === 'investor') {
       mappedRole = "Investor";
-    } else if (dbRole === 'masyarakat' || dbRole === 'Masyarakat') {
+    } else if (norm === 'masyarakat') {
       mappedRole = "Masyarakat";
     } else {
       mappedRole = "Operator";

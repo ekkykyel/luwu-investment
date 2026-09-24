@@ -1,6 +1,6 @@
 import { requestSmartFullscreen } from "../utils/fullscreen";
 import React, { useState, useEffect } from "react";
-import { X, Shield, Lock, User, ArrowRight, Map, Globe, Database, Cpu, CheckCircle2, Eye, EyeOff, AlertCircle, Sparkles, UserCheck } from "lucide-react";
+import { X, Shield, Lock, User, ArrowRight, Map, Globe, Database, Cpu, CheckCircle2, Eye, EyeOff, AlertCircle, Sparkles, UserCheck, Building2, Trees, HeartHandshake, Briefcase, FileCheck } from "lucide-react";
 import { Role } from "../types";
 import { LuwuLogo } from "./LuwuLogo";
 import { supabase } from "../lib/supabaseClient";
@@ -11,13 +11,83 @@ interface LoginFormProps {
   onClose: () => void;
 }
 
+const ROLE_PRESETS = [
+  { 
+    role: Role.ADMIN_PUPTR, 
+    roleKey: "admin_puptr",
+    label: "Admin PUPTR", 
+    email: "puptr@luwukab.go.id", 
+    pass: "Puptr123!",
+    icon: Building2, 
+    badge: "Tata Ruang & GIS",
+    targetUrl: "/dashboard?tab=verifikasi_pkkpr"
+  },
+  { 
+    role: Role.ADMIN_PERTANIAN, 
+    roleKey: "admin_pertanian",
+    label: "Admin Pertanian", 
+    email: "pertanian@luwukab.go.id", 
+    pass: "Pertanian123!",
+    icon: Trees, 
+    badge: "Lahan LP2B",
+    targetUrl: "/dashboard?tab=verifikasi_pertanian"
+  },
+  { 
+    role: Role.INVESTOR, 
+    roleKey: "investor",
+    label: "Investor", 
+    email: "investor@luwu.go.id", 
+    pass: "Investor123!",
+    icon: Briefcase, 
+    badge: "Portal Investor & ROI",
+    targetUrl: "/investor-dashboard"
+  },
+  { 
+    role: Role.PUBLIC_USER, 
+    roleKey: "masyarakat",
+    label: "Masyarakat", 
+    email: "masyarakat@luwu.go.id", 
+    pass: "Masyarakat123!",
+    icon: HeartHandshake, 
+    badge: "Permohonan Warga & SKM",
+    targetUrl: "/masyarakat-dashboard"
+  },
+  { 
+    role: Role.ADMIN_DALAK, 
+    roleKey: "admin_dalak",
+    label: "Admin Dalak", 
+    email: "dalakluwu@gmail.com", 
+    pass: "Dalak123!",
+    icon: FileCheck, 
+    badge: "Pengawasan & Mediasi",
+    targetUrl: "/dashboard?tab=pengaduan"
+  },
+  { 
+    role: Role.SUPER_ADMIN, 
+    roleKey: "superadmin",
+    label: "Super Admin", 
+    email: "superadmin@luwu.go.id", 
+    pass: "SuperAdmin123!",
+    icon: Shield, 
+    badge: "Akses Penuh Semua Bidang",
+    targetUrl: "/dashboard?tab=overview"
+  }
+];
+
 export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
-  const [selectedRole, setSelectedRole] = useState<Role>(Role.OPERATOR);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [selectedRole, setSelectedRole] = useState<Role>(Role.ADMIN_PUPTR);
+  const [username, setUsername] = useState("puptr@luwukab.go.id");
+  const [password, setPassword] = useState("Puptr123!");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  const handleSelectPreset = (preset: typeof ROLE_PRESETS[0]) => {
+    setSelectedRole(preset.role);
+    setUsername(preset.email);
+    setPassword(preset.pass);
+    setErrorMsg("");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,9 +110,16 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
         setIsLoading(false);
         return;
       }
+
+      // Map backend role to roleKey and token
+      const currentRoleObj = ROLE_PRESETS.find(p => p.role === selectedRole || p.email.toLowerCase() === username.trim().toLowerCase());
+      const effectiveRoleKey = currentRoleObj?.roleKey || (data.role ? String(data.role).toLowerCase().replace(/[\s-]+/g, "_") : "admin_puptr");
+
       if (data.token) {
         localStorage.setItem("luwu_session_token", data.token);
       }
+      localStorage.setItem("luwu_user_role", effectiveRoleKey);
+      localStorage.setItem("luwu_user_email", username.trim().toLowerCase());
       
       // Explicitly set the session on the frontend client if provided
       if (data.session) {
@@ -55,7 +132,14 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
         document.cookie = `sb-access-token=${data.session.access_token}; path=/; max-age=86400; SameSite=None; Secure`;
       }
 
+      const targetUrl = currentRoleObj?.targetUrl || (effectiveRoleKey === "masyarakat" ? "/masyarakat-dashboard" : effectiveRoleKey === "investor" ? "/investor-dashboard" : "/dashboard");
+      
       onLogin(data.role as Role || selectedRole);
+      
+      // Navigate to respective dashboard
+      setTimeout(() => {
+        window.location.replace(targetUrl);
+      }, 300);
     } catch (err) {
       setErrorMsg("Gagal terhubung ke server autentikasi. Pastikan koneksi internet stabil.");
     } finally {
@@ -66,8 +150,8 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
   return (
     <div className="fixed inset-0 z-[100] flex flex-col lg:flex-row bg-slate-950 text-slate-100 overflow-hidden font-sans animate-fade-in">
       
-      {/* LEFT COLUMN - 60% (Desktop Showcase) */}
-      <div className="hidden lg:flex lg:w-[60%] relative flex-col justify-between p-12 overflow-hidden border-r border-slate-800">
+      {/* LEFT COLUMN - 55% (Desktop Showcase) */}
+      <div className="hidden lg:flex lg:w-[55%] relative flex-col justify-between p-12 overflow-hidden border-r border-slate-800">
         
         {/* Background Map & Grid Overlay */}
         <div 
@@ -76,7 +160,7 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
         />
         <div className="absolute inset-0 z-0 bg-slate-950/85 backdrop-blur-[2px]" />
         
-        {/* Animated Grid / Spacial Network Lines */}
+        {/* Animated Grid / Spatial Network Lines */}
         <div className="absolute inset-0 z-0 opacity-10" style={{
           backgroundImage: `linear-gradient(rgba(16, 185, 129, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(16, 185, 129, 0.2) 1px, transparent 1px)`,
           backgroundSize: '40px 40px'
@@ -85,13 +169,6 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0 w-full h-full opacity-30 pointer-events-none flex justify-center items-center">
             <div className="w-[600px] h-[600px] border border-emerald-500/30 rounded-full animate-[ping_4s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
             <div className="absolute w-[400px] h-[400px] border border-emerald-500/20 rounded-full animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
-            
-            {/* Animated network lines SVG */}
-            <svg className="absolute inset-0 w-full h-full rotate-45 opacity-50" viewBox="0 0 100 100" preserveAspectRatio="none">
-               <line x1="20" y1="20" x2="80" y2="80" stroke="rgba(16,185,129,0.2)" strokeWidth="0.2" className="animate-pulse" />
-               <line x1="80" y1="20" x2="20" y2="80" stroke="rgba(16,185,129,0.2)" strokeWidth="0.2" className="animate-pulse" style={{ animationDelay: '1s' }} />
-               <circle cx="50" cy="50" r="1" fill="#10b981" className="animate-ping" />
-            </svg>
         </div>
 
         {/* Top Header Left */}
@@ -104,7 +181,7 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
               PORTAL INVESTASI LUWU
             </h1>
             <p className="text-xs font-mono tracking-wider font-semibold text-slate-400">
-              Smart Spatial Intelligence Platform
+              Smart Spatial Intelligence & E-Office Platform
             </p>
           </div>
         </div>
@@ -113,40 +190,40 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
         <div className="relative z-10 max-w-2xl mt-auto mb-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 mb-6 backdrop-blur-md">
             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-slate-300">System Online</span>
+            <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-slate-300">Multi-Role RBAC Active</span>
           </div>
-          <h2 className="text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.15] mb-6 drop-shadow-2xl">
-            Government Investment & <br className="hidden md:block" />
+          <h2 className="text-4xl lg:text-5xl font-black text-white tracking-tight leading-[1.15] mb-4 drop-shadow-2xl">
+            Sistem Terpadu Lintas OPD & <br />
             <span className="text-emerald-400">
-              Geospatial Analytics System
+              Dashboard Spesifik Peran
             </span>
           </h2>
-          <p className="text-lg text-slate-300 leading-relaxed font-normal max-w-xl">
-            Sistem Informasi Geospasial Enterprise Kabupaten Luwu. Dirancang untuk memfasilitasi pengambilan keputusan strategis, analisis spasial presisi tinggi, dan pemetaan investasi komprehensif.
+          <p className="text-base text-slate-300 leading-relaxed font-normal max-w-xl">
+            Akses langsung menuju dashboard sesuai kewenangan: Dinas PUPTR (Tata Ruang & GIS), Dinas Pertanian (Lahan LP2B), DPMPTSP (OSS & Dalak), Investor, dan Layanan Publik Masyarakat.
           </p>
         </div>
 
         {/* Bottom Realtime Stats */}
-        <div className="relative z-10 grid grid-cols-4 gap-6 mt-8 border-t border-slate-800 pt-8 backdrop-blur-sm rounded-3xl">
+        <div className="relative z-10 grid grid-cols-4 gap-4 mt-6 border-t border-slate-800 pt-6 backdrop-blur-sm rounded-3xl">
           {[
             { icon: <Database className="h-5 w-5 text-emerald-400"/>, label: "Sektor Unggulan", value: "12" },
             { icon: <Map className="h-5 w-5 text-emerald-400"/>, label: "Zona Investasi", value: "40" },
             { icon: <Globe className="h-5 w-5 text-emerald-400"/>, label: "Layer Spasial", value: "142" },
             { icon: <Cpu className="h-5 w-5 text-emerald-500"/>, label: "Akurasi AI", value: "98%" },
           ].map((stat, idx) => (
-            <div key={idx} className="flex flex-col gap-2">
+            <div key={idx} className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
                 {stat.icon}
-                <span className="text-3xl font-black text-white">{stat.value}</span>
+                <span className="text-2xl font-black text-white">{stat.value}</span>
               </div>
-              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">{stat.label}</span>
+              <span className="text-[9px] font-mono text-slate-400 uppercase tracking-widest">{stat.label}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* RIGHT COLUMN - 40% (Mobile/Android Optimized Gateway) */}
-      <div className="w-full lg:w-[40%] flex flex-col relative justify-between items-center bg-slate-950 p-4 sm:p-8 min-h-[100dvh] overflow-y-auto custom-scrollbar">
+      {/* RIGHT COLUMN - 45% (Login Gateway & Role Presets) */}
+      <div className="w-full lg:w-[45%] flex flex-col relative justify-between items-center bg-slate-950 p-4 sm:p-8 min-h-[100dvh] overflow-y-auto custom-scrollbar">
         
         {/* Background ambient glow for right column */}
         <div className="absolute top-0 right-0 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-emerald-600/10 rounded-full blur-[100px] pointer-events-none" />
@@ -161,53 +238,48 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
         </button>
 
         {/* Center Card Content Container */}
-        <div className="w-full max-w-[390px] sm:max-w-[420px] flex flex-col my-auto relative z-10 pt-6 pb-4">
+        <div className="w-full max-w-[440px] flex flex-col my-auto relative z-10 pt-4 pb-4">
           
           {/* Header & Logo */}
-          <div className="mb-4 sm:mb-6 text-center">
-            <div className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-slate-900/90 rounded-2xl flex items-center justify-center mb-3 shadow-xl border border-emerald-500/30 relative group backdrop-blur-md">
-              <LuwuLogo size="md" />
+          <div className="mb-4 text-center">
+            <div className="mx-auto w-12 h-12 sm:w-14 sm:h-14 bg-slate-900/90 rounded-2xl flex items-center justify-center mb-2 shadow-xl border border-emerald-500/30 relative group backdrop-blur-md">
+              <LuwuLogo size="sm" />
             </div>
-            <h3 className="text-2xl sm:text-3xl font-sans font-black text-white mb-1 tracking-tight">Secure Gateway</h3>
-            <p className="text-xs sm:text-sm text-slate-400 font-medium">
-              Portal Investasi Luwu Enterprise Access
+            <h3 className="text-xl sm:text-2xl font-sans font-black text-white mb-0.5 tracking-tight">Login Portal Peran</h3>
+            <p className="text-xs text-slate-400 font-medium">
+              Pilih peran Anda untuk masuk langsung ke dashboard terkait
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="bg-slate-900/80 backdrop-blur-xl border border-slate-800/90 p-5 sm:p-7 rounded-3xl shadow-2xl shadow-black">
+          <form onSubmit={handleSubmit} className="bg-slate-900/80 backdrop-blur-xl border border-slate-800/90 p-4 sm:p-6 rounded-3xl shadow-2xl shadow-black">
             
-            {/* SEGMENTED ROLE SELECTION */}
-            <div className="grid grid-cols-2 p-1 bg-slate-950/90 rounded-2xl mb-5 border border-slate-800 gap-1 shadow-inner">
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedRole(Role.OPERATOR);
-                  setErrorMsg("");
-                }}
-                className={`flex items-center justify-center gap-1.5 py-2.5 px-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-all active:scale-95 cursor-pointer ${
-                  selectedRole === Role.OPERATOR 
-                    ? "bg-slate-800/90 text-emerald-400 border border-emerald-500/30 shadow-md" 
-                    : "text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                <UserCheck className="w-3.5 h-3.5" />
-                <span>Operator</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedRole(Role.SUPER_ADMIN);
-                  setErrorMsg("");
-                }}
-                className={`flex items-center justify-center gap-1.5 py-2.5 px-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-all active:scale-95 cursor-pointer ${
-                  selectedRole === Role.SUPER_ADMIN 
-                    ? "bg-slate-800/90 text-amber-300 border border-amber-500/30 shadow-md" 
-                    : "text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                <Shield className="w-3.5 h-3.5 text-amber-400" />
-                <span>Super Admin</span>
-              </button>
+            {/* MULTI-ROLE SELECTOR TILES */}
+            <div className="mb-4">
+              <label className="block text-[10px] font-mono font-bold text-slate-300 uppercase tracking-widest mb-1.5 ml-1">
+                Pilih Peran / OPD:
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 p-1 bg-slate-950/90 rounded-2xl border border-slate-800 shadow-inner">
+                {ROLE_PRESETS.map((preset) => {
+                  const Icon = preset.icon;
+                  const isSelected = selectedRole === preset.role;
+                  return (
+                    <button
+                      key={preset.roleKey}
+                      type="button"
+                      onClick={() => handleSelectPreset(preset)}
+                      className={`flex flex-col items-center justify-center p-2 rounded-xl text-center transition-all active:scale-95 cursor-pointer border ${
+                        isSelected 
+                          ? "bg-emerald-600/20 text-emerald-300 border-emerald-500/60 shadow-md scale-[1.02]" 
+                          : "bg-slate-900/40 text-slate-400 border-transparent hover:text-slate-200 hover:bg-slate-800/60"
+                      }`}
+                    >
+                      <Icon className={`w-4 h-4 mb-1 ${isSelected ? "text-emerald-400" : "text-slate-400"}`} />
+                      <span className="text-[11px] font-bold leading-tight block">{preset.label}</span>
+                      <span className="text-[8.5px] opacity-75 font-mono truncate max-w-full block">{preset.badge}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Error Message Alert */}
@@ -218,11 +290,11 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
               </div>
             )}
 
-            {/* Form Fields with Android-Friendly Keyboard Attributes */}
-            <div className="space-y-3.5 mb-5">
+            {/* Form Fields */}
+            <div className="space-y-3 mb-4">
               <div>
-                <label htmlFor="login-username" className="block text-[10px] font-mono font-bold text-slate-300 uppercase tracking-widest mb-1.5 ml-1">
-                  Email / Username
+                <label htmlFor="login-username" className="block text-[10px] font-mono font-bold text-slate-300 uppercase tracking-widest mb-1 ml-1">
+                  Email / Akun Dinas
                 </label>
                 <div className="relative group">
                   <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-emerald-400 transition-colors pointer-events-none" />
@@ -237,15 +309,15 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
                     autoComplete="username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="nama@luwu.go.id"
-                    className="w-full bg-slate-950/70 border border-slate-700/80 text-white placeholder:text-slate-500 rounded-xl pl-10 pr-3.5 py-2.5 sm:py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-xs sm:text-sm font-medium"
+                    placeholder="nama@luwukab.go.id"
+                    className="w-full bg-slate-950/70 border border-slate-700/80 text-white placeholder:text-slate-500 rounded-xl pl-10 pr-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-xs sm:text-sm font-medium"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="login-password" className="block text-[10px] font-mono font-bold text-slate-300 uppercase tracking-widest mb-1.5 ml-1">
-                  Password
+                <label htmlFor="login-password" className="block text-[10px] font-mono font-bold text-slate-300 uppercase tracking-widest mb-1 ml-1">
+                  Kata Sandi
                 </label>
                 <div className="relative group">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-emerald-400 transition-colors pointer-events-none" />
@@ -259,12 +331,12 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="w-full bg-slate-950/70 border border-slate-700/80 text-white placeholder:text-slate-500 rounded-xl pl-10 pr-10 py-2.5 sm:py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-xs sm:text-sm font-medium"
+                    className="w-full bg-slate-950/70 border border-slate-700/80 text-white placeholder:text-slate-500 rounded-xl pl-10 pr-10 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-xs sm:text-sm font-medium"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors p-1"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors p-1 cursor-pointer"
                     title={showPassword ? "Sembunyikan password" : "Lihat password"}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -273,20 +345,20 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
               </div>
             </div>
 
-            {/* Ergonomic 48px Submit Button */}
+            {/* Ergonomic Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full min-h-[48px] bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 active:scale-[0.98] text-white rounded-xl py-3 px-4 font-bold uppercase tracking-wider text-xs shadow-lg shadow-emerald-950/40 transition-all flex items-center justify-center gap-2 group cursor-pointer border border-emerald-400/20 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full min-h-[46px] bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 active:scale-[0.98] text-white rounded-xl py-2.5 px-4 font-bold uppercase tracking-wider text-xs shadow-lg shadow-emerald-950/40 transition-all flex items-center justify-center gap-2 group cursor-pointer border border-emerald-400/20 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Memverifikasi Akses...</span>
+                  <span>Memverifikasi Akses Role...</span>
                 </>
               ) : (
                 <>
-                  <span>Masuk ke Dashboard</span>
+                  <span>Masuk ke Dashboard {ROLE_PRESETS.find(p => p.role === selectedRole)?.label || "Role"}</span>
                   <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </>
               )}
@@ -294,12 +366,12 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
           </form>
 
           {/* Micro Security Pills */}
-          <div className="mt-4 grid grid-cols-2 gap-2">
+          <div className="mt-3 grid grid-cols-2 gap-2">
             {[
               "SSL 256-Bit Secured", 
-              "Audit Trail Active",
-              "Role-Based Access Control",
-              "Spatial Data Protected"
+              "Pertek PUPTR Ready",
+              "BAP Pertanian LP2B",
+              "Role-Based Access Control"
             ].map((badge, idx) => (
               <div key={idx} className="flex items-center gap-1.5 text-slate-400 text-[10px] font-mono tracking-tight bg-slate-900/40 border border-slate-800/60 py-1 px-2 rounded-lg">
                 <CheckCircle2 className="h-3 w-3 text-emerald-400 shrink-0" />
@@ -309,12 +381,12 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
           </div>
 
           {/* Footer Signature */}
-          <div className="mt-4 sm:mt-6 text-center">
+          <div className="mt-3 text-center">
              <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
                 PEMERINTAH KABUPATEN LUWU
              </h4>
              <p className="text-[9px] text-slate-500 font-mono">
-               Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu (DPMPTSP)
+               Sistem Informasi Spasial & Pelayanan Perizinan Terpadu
              </p>
           </div>
 

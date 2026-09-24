@@ -683,19 +683,28 @@ export default function App() {
 
   const isAdminRole = useCallback((role?: Role | string) => {
     if (!role) return false;
+    const r = String(role).toLowerCase().replace(/[\s-]+/g, "_");
     return (
+      r === "superadmin" ||
+      r === "super_admin" ||
+      r === "operator" ||
+      r === "admin_dalak" ||
+      r === "admin_oss" ||
+      r === "admin_promosi" ||
+      r === "admin_data" ||
+      r === "admin_puptr" ||
+      r === "admin_pertanian" ||
+      r === "admin_mpp" ||
+      r === "admin_gis" ||
       role === Role.SUPER_ADMIN ||
       role === Role.OPERATOR ||
       role === Role.ADMIN_DALAK ||
       role === Role.ADMIN_OSS ||
       role === Role.ADMIN_PROMOSI ||
       role === Role.ADMIN_DATA ||
-      role === "superadmin" ||
-      role === "operator" ||
-      role === "admin_dalak" ||
-      role === "admin_oss" ||
-      role === "admin_promosi" ||
-      role === "admin_data"
+      role === Role.ADMIN_PUPTR ||
+      role === Role.ADMIN_PERTANIAN ||
+      role === Role.ADMIN_MPP
     );
   }, []);
 
@@ -1085,8 +1094,8 @@ export default function App() {
 
   useEffect(() => {
     if (activeProfile?.role) {
-      const roleStr = String(activeProfile.role).toLowerCase();
-      if (roleStr === 'superadmin') {
+      const roleStr = String(activeProfile.role).toLowerCase().replace(/[\s-]+/g, "_");
+      if (roleStr === 'superadmin' || roleStr === 'super_admin') {
         setCurrentRole(Role.SUPER_ADMIN);
       } else if (roleStr === 'operator') {
         setCurrentRole(Role.OPERATOR);
@@ -1098,8 +1107,16 @@ export default function App() {
         setCurrentRole(Role.ADMIN_PROMOSI);
       } else if (roleStr === 'admin_data') {
         setCurrentRole(Role.ADMIN_DATA);
+      } else if (roleStr === 'admin_puptr' || roleStr === 'admin_gis') {
+        setCurrentRole(Role.ADMIN_PUPTR);
+      } else if (roleStr === 'admin_pertanian') {
+        setCurrentRole(Role.ADMIN_PERTANIAN);
+      } else if (roleStr === 'admin_mpp') {
+        setCurrentRole(Role.ADMIN_MPP);
       } else if (roleStr === 'investor') {
         setCurrentRole(Role.INVESTOR);
+      } else if (roleStr === 'masyarakat') {
+        setCurrentRole(Role.PUBLIC_USER);
       }
     }
   }, [activeProfile]);
@@ -5062,7 +5079,7 @@ export default function App() {
       return <LoadingScreen />;
     }
 
-    const isSuperAdmin = 
+    const isAdminOPD = 
       sessionEmail.includes("superadmin") ||
       effectiveRole === "superadmin" ||
       effectiveRole === "super_admin" ||
@@ -5071,32 +5088,37 @@ export default function App() {
       rawStoredRole === "superadmin" ||
       rawStoredRole === "super_admin" ||
       currentRole === Role.SUPER_ADMIN ||
+      effectiveRole === "admin_puptr" ||
+      effectiveRole === "admin_pertanian" ||
       effectiveRole === "admin_promosi" ||
       effectiveRole === "admin_dalak" ||
       effectiveRole === "admin_data" ||
-      effectiveRole === "admin_oss";
+      effectiveRole === "admin_oss" ||
+      effectiveRole === "admin_gis" ||
+      isAdminRole(effectiveRole) ||
+      isAdminRole(currentRole);
 
     const isAdminMpp = 
-      sessionEmail.includes("operator") ||
+      sessionEmail.includes("mpp") ||
       effectiveRole === "admin_mpp" ||
       effectiveRole === "operator_mpp" ||
-      effectiveRole === "operator" ||
-      rawStoredRole === "admin_mpp" ||
-      rawStoredRole === "operator";
+      rawStoredRole === "admin_mpp";
 
-    if (isSuperAdmin) {
+    if (isAdminMpp) {
+      return (
+        <Suspense fallback={<LoadingScreen />}>
+          <AdminLayout />
+        </Suspense>
+      );
+    }
+
+    if (isAdminOPD) {
       return (
         <DataContext.Provider value={{ investments, setInvestments, districts, setDistricts, villages, setVillages, spatialLayers, setSpatialLayers, rtrwZoning, setRtrwZoning, incentivePolicies, setIncentivePolicies, supplyChainMatrix, setSupplyChainMatrix, executiveMetrics, setExecutiveMetrics, refreshData: fetchAllData, isLoading: isStatsLoading, isSpatialLiveSyncEnabled, setIsSpatialLiveSyncEnabled, liveSyncStatus, loiCount: investorLoiCount }}>
           <Suspense fallback={<LoadingScreen />}>
             <AdminPortalDashboard />
           </Suspense>
         </DataContext.Provider>
-      );
-    } else if (isAdminMpp) {
-      return (
-        <Suspense fallback={<LoadingScreen />}>
-          <AdminLayout />
-        </Suspense>
       );
     }
 

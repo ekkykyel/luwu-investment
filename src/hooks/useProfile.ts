@@ -90,18 +90,35 @@ export function useProfile() {
 
         const userEmail = (user.email || '').toLowerCase().trim();
         const OFFICIAL_EMAIL_ROLE_MAP: Record<string, string> = {
+          'puptr@luwukab.go.id': 'admin_puptr',
+          'adminpuptr@luwukab.go.id': 'admin_puptr',
+          'puptr@luwu.go.id': 'admin_puptr',
+          'tataruangluwu@gmail.com': 'admin_puptr',
+          'pertanian@luwukab.go.id': 'admin_pertanian',
+          'adminpertanian@luwukab.go.id': 'admin_pertanian',
+          'pertanian@luwu.go.id': 'admin_pertanian',
+          'distanluwu@gmail.com': 'admin_pertanian',
           'dalakluwu@gmail.com': 'admin_dalak',
           'admindalak@luwukab.go.id': 'admin_dalak',
           'dalak@luwukab.go.id': 'admin_dalak',
           'dalak@luwu.go.id': 'admin_dalak',
           'dataluwu@gmail.com': 'admin_data',
           'admindata@luwukab.go.id': 'admin_data',
+          'data@luwukab.go.id': 'admin_data',
+          'data@luwu.go.id': 'admin_data',
           'promosiluwu@gmail.com': 'admin_promosi',
           'adminpromosi@luwukab.go.id': 'admin_promosi',
+          'promosi@luwukab.go.id': 'admin_promosi',
+          'promosi@luwu.go.id': 'admin_promosi',
           'dpmptspluwu@gmail.com': 'admin_oss',
           'adminoss@luwukab.go.id': 'admin_oss',
+          'oss@luwukab.go.id': 'admin_oss',
+          'oss@luwu.go.id': 'admin_oss',
           'adminmpp@luwukab.go.id': 'admin_mpp',
-          'superadmin@luwu.go.id': 'superadmin'
+          'mppluwu@gmail.com': 'admin_mpp',
+          'mpp@luwukab.go.id': 'admin_mpp',
+          'superadmin@luwu.go.id': 'superadmin',
+          'superadmin@luwukab.go.id': 'superadmin'
         };
 
         const mappedRole = OFFICIAL_EMAIL_ROLE_MAP[userEmail];
@@ -113,7 +130,9 @@ export function useProfile() {
             await supabase.from('profiles').upsert({
               id: effectiveUser.id,
               role: mappedRole,
-              full_name: mappedRole === 'admin_dalak' ? 'Bidang Pengendalian Pelaksanaan & Pengawasan'
+              full_name: mappedRole === 'admin_puptr' ? 'Admin Dinas PUPTR (Tata Ruang & Studio GIS)'
+                       : mappedRole === 'admin_pertanian' ? 'Admin Dinas Pertanian (Lahan LP2B)'
+                       : mappedRole === 'admin_dalak' ? 'Bidang Pengendalian Pelaksanaan & Pengawasan'
                        : mappedRole === 'admin_data' ? 'Bidang Perencanaan, Pengembangan Iklim & Data'
                        : mappedRole === 'admin_promosi' ? 'Bidang Promosi & Penanaman Modal'
                        : mappedRole === 'admin_mpp' ? 'Admin MPP (Pengelola Mal Pelayanan Publik)'

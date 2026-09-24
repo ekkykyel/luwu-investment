@@ -671,6 +671,22 @@ export default function InvestorLogin() {
         setTimeout(() => {
           if (activeRole === 'investor') {
             window.location.replace('/investor-dashboard');
+          } else if (activeRole === 'masyarakat') {
+            window.location.replace('/masyarakat-dashboard');
+          } else if (activeRole === 'admin_puptr') {
+            window.location.replace('/dashboard?tab=verifikasi_pkkpr');
+          } else if (activeRole === 'admin_pertanian') {
+            window.location.replace('/dashboard?tab=verifikasi_pertanian');
+          } else if (activeRole === 'admin_oss') {
+            window.location.replace('/dashboard?tab=overview_perizinan');
+          } else if (activeRole === 'admin_dalak') {
+            window.location.replace('/dashboard?tab=pengaduan');
+          } else if (activeRole === 'admin_promosi') {
+            window.location.replace('/dashboard?tab=loi_verify');
+          } else if (activeRole === 'admin_data') {
+            window.location.replace('/dashboard?tab=spatial_analytics');
+          } else if (activeRole === 'admin_mpp') {
+            window.location.replace('/admin/beranda');
           } else {
             window.location.replace('/dashboard');
           }

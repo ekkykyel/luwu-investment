@@ -136,6 +136,13 @@ export default function AdminPortalDashboard() {
   const [activeTab, setActiveTab] = useState<string>('overview');
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(location.search || window.location.search);
+    const tabParam = searchParams.get('tab');
+    if (tabParam) {
+      setActiveTab(tabParam);
+      return;
+    }
+
     const path = (location.pathname || window.location.pathname).toLowerCase();
     if (path.includes('operator_workspace') || path.includes('operator-workspace')) {
       if (isOperatorWorkspaceRole(userRole)) {
@@ -153,13 +160,14 @@ export default function AdminPortalDashboard() {
     else if (path.includes('potential') || path.includes('potensi')) setActiveTab('manage_potential');
     else if (path.includes('site-selection') || path.includes('site_selection')) setActiveTab('site-selection');
     else if (path.includes('testimonials') || path.includes('testimoni')) setActiveTab('testimonials');
-    else if (path.includes('verifikasi_pkkpr') || path.includes('pkkpr')) setActiveTab('verifikasi_pkkpr');
+    else if (path.includes('verifikasi_pkkpr') || path.includes('puptr')) setActiveTab('verifikasi_pkkpr');
+    else if (path.includes('verifikasi_pertanian') || path.includes('pertanian')) setActiveTab('verifikasi_pertanian');
     else if (path.includes('realisasi_nib') || path.includes('nib')) setActiveTab('realisasi_nib');
     else if (path.includes('spatial_analytics') || path.includes('analytics')) setActiveTab('spatial_analytics');
     else if (path.includes('gis_spatial') || path.includes('gis')) setActiveTab('gis_spatial');
     else if (path.includes('overview_perizinan') || path.includes('perizinan')) setActiveTab('overview_perizinan');
     else if (path.includes('overview')) setActiveTab('overview');
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [expandedTickets, setExpandedTickets] = useState<Record<string, boolean>>({});
 
