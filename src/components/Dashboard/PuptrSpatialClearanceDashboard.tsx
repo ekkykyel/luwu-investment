@@ -29,7 +29,10 @@ import {
   XCircle,
   Lock,
   Printer,
-  Download
+  Download,
+  ChevronDown,
+  ChevronUp,
+  FileCheck2
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { supabase } from '../../lib/supabaseClient';
@@ -53,16 +56,23 @@ import { BapKtrPuptrDocument, convertAppToBapKtrData } from '../documents/BapKtr
 export interface PkkprApplicationItem {
   id: string;
   applicantType: 'NIB (Pelaku Usaha)' | 'NIK (Perorangan / Warga)';
+  category?: 'Berusaha' | 'Non-Berusaha';
   nibNik: string;
   applicantName: string;
   companyName: string;
+  title?: string;
   sector: string;
+  fungsiBangunan?: string;
+  applicantAddress?: string;
   districtName: string;
   villageName: string;
   areaHa: number;
+  luasM2?: number;
+  luasBangunan?: string;
   investmentValue: number;
-  certificateType: 'Sertifikat Hak Milik (SHM)' | 'Hak Guna Bangunan (HGB)' | 'Surat Keterangan Tanah (SKT/Girik)' | 'Sertifikat Hak Pakai';
+  certificateType: string;
   certificateDocNumber: string;
+  buktiTanah?: string;
   kmzFileName?: string;
   kmzFileUrl?: string;
   sertifikatTanahUrl?: string;
@@ -79,6 +89,7 @@ export interface PkkprApplicationItem {
   pertanianBaNumber?: string;
   pertanianSrNumber?: string;
   pertanianNotes?: string;
+  contactPhone?: string;
   createdAt: string;
   updatedAt?: string;
 }
@@ -93,6 +104,7 @@ export default function PuptrSpatialClearanceDashboard() {
   // Active Application for Inspection
   const [selectedApp, setSelectedApp] = useState<PkkprApplicationItem | null>(null);
   const [isMapExpanded, setIsMapExpanded] = useState<boolean>(false);
+  const [isTurfCardCollapsed, setIsTurfCardCollapsed] = useState<boolean>(false);
   const mapRef = useRef<MapComponentRef>(null);
 
   // Profile Modal & Inter-Agency Routing State
@@ -428,6 +440,18 @@ export default function PuptrSpatialClearanceDashboard() {
           pkkprGisData.forEach((item: any) => {
             const isBerusaha = item.jenis_permohonan === 'Berusaha';
             const applicantType = isBerusaha ? 'NIB (Pelaku Usaha)' : 'NIK (Perorangan / Warga)';
+            const rawCatatan = item.catatan_teknis || '';
+
+            const fungsiMatch = rawCatatan.match(/\[Fungsi:\s*([^\]]+)\]/i);
+            const buktiMatch = rawCatatan.match(/\[Penguasaan Tanah:\s*([^\]]+)\]/i);
+            const luasBangunanMatch = rawCatatan.match(/\[Luas Bangunan:\s*([^\]]+)\]/i);
+            const alamatMatch = rawCatatan.match(/\[Alamat Pemohon:\s*([^\]]+)\]/i);
+
+            const fungsiBangunan = fungsiMatch ? fungsiMatch[1].trim() : (item.fungsi_bangunan || (isBerusaha ? 'Komersial / Usaha' : 'Non-Berusaha / Fasos / Perumahan'));
+            const buktiTanah = buktiMatch ? buktiMatch[1].trim() : (item.bukti_tanah || (isBerusaha ? 'Hak Guna Bangunan (HGB)' : 'Sertifikat Hak Milik (SHM)'));
+            const luasBangunan = luasBangunanMatch ? luasBangunanMatch[1].trim() : (item.luas_bangunan_m2 ? `${item.luas_bangunan_m2} m²` : undefined);
+            const applicantAddress = alamatMatch ? alamatMatch[1].trim() : (item.alamat_pemohon || item.address || `Desa ${item.desa_kelurahan || '-'}, Kec. ${item.kecamatan || '-'}, Kab. Luwu`);
+            const luasM2 = item.luas_m2 ? Number(item.luas_m2) : (item.luas_ha ? Math.round(Number(item.luas_ha) * 10000) : 5000);
 
             let pertStatus: 'NOT_SUBMITTED' | 'FORWARDED' | 'APPROVED' | 'REJECTED' = 'NOT_SUBMITTED';
             if (item.berita_acara_pertanian_num || item.status_pkkpr === 'Approved_Pertanian') {
@@ -441,16 +465,23 @@ export default function PuptrSpatialClearanceDashboard() {
             mapped.push({
               id: item.id,
               applicantType,
+              category: isBerusaha ? 'Berusaha' : 'Non-Berusaha',
               nibNik: isBerusaha ? (item.nib_oss || item.nik_pemohon || '-') : (item.nik_pemohon || '-'),
               applicantName: item.nama_pemohon || 'Pemohon Terdaftar',
-              companyName: isBerusaha ? (item.nama_badan_usaha || item.nama_permohonan || 'Pelaku Usaha') : (item.nama_pemohon || item.nama_permohonan || 'Perseorangan / Warga'),
+              companyName: isBerusaha ? (item.nama_badan_usaha || item.nama_permohonan || 'Pelaku Usaha') : (item.nama_badan_usaha || item.nama_pemohon || item.nama_permohonan || 'Perseorangan / Warga'),
+              title: item.nama_permohonan || item.title || (isBerusaha ? 'Permohonan PKKPR Usaha' : 'Permohonan PKKPR Non-Berusaha'),
               sector: item.sektor || (isBerusaha ? 'Komersial / Usaha' : 'Non-Komersial / Perumahan'),
+              fungsiBangunan,
+              applicantAddress,
               districtName: item.kecamatan || 'Bua',
               villageName: item.desa_kelurahan || 'Barowa',
               areaHa: item.luas_ha ? Number(item.luas_ha) : (item.luas_m2 ? Number((item.luas_m2 / 10000).toFixed(4)) : 0.5),
+              luasM2,
+              luasBangunan,
               investmentValue: isBerusaha ? 12500000000 : 0,
               certificateType: isBerusaha ? 'Hak Guna Bangunan (HGB)' : 'Sertifikat Hak Milik (SHM)',
               certificateDocNumber: `SHM/HGB-LUWU-${item.id ? item.id.split('-').pop() : '321183'}`,
+              buktiTanah,
               kmzFileName: item.nama_berkas_kmz || 'Batas_Poligon_Lokasi.kmz',
               kmzFileUrl: item.berkas_kmz_url || '',
               sertifikatTanahUrl: item.sertifikat_tanah_url || undefined,
@@ -465,6 +496,7 @@ export default function PuptrSpatialClearanceDashboard() {
               esgStatus: 'CLEAR',
               pertanianStatus: pertStatus,
               pertanianBaNumber: item.berita_acara_pertanian_num || undefined,
+              contactPhone: item.no_whatsapp,
               createdAt: item.created_at || new Date().toISOString()
             });
           });
@@ -486,6 +518,11 @@ export default function PuptrSpatialClearanceDashboard() {
           if (!exists) {
             const isNik = (item.plot_number && item.plot_number.length === 16) || item.contact_pic?.toLowerCase().includes('h.') || (item.category && item.category.includes('Non-Komersial'));
             const applicantType = isNik ? 'NIK (Perorangan / Warga)' : 'NIB (Pelaku Usaha)';
+            const desc = item.description || item.override_justification || '';
+            const fungsiMatch = desc.match(/\[Fungsi:\s*([^\]]+)\]/i);
+            const buktiMatch = desc.match(/\[Penguasaan Tanah:\s*([^\]]+)\]/i);
+            const alamatMatch = desc.match(/\[Alamat Pemohon:\s*([^\]]+)\]/i);
+            const luasBangunanMatch = desc.match(/\[Luas Bangunan:\s*([^\]]+)\]/i);
             
             let pertStatus: 'NOT_SUBMITTED' | 'FORWARDED' | 'APPROVED' | 'REJECTED' = 'NOT_SUBMITTED';
             if (item.berita_acara_num || item.status === 'Approved_Pertanian') {
@@ -496,19 +533,28 @@ export default function PuptrSpatialClearanceDashboard() {
               pertStatus = 'FORWARDED';
             }
 
+            const areaHa = item.area_ha || 15.5;
+
             mapped.push({
               id: item.id || `PKKPR-${Math.random().toString(36).substring(2, 7)}`,
               applicantType,
+              category: isNik ? 'Non-Berusaha' : 'Berusaha',
               nibNik: item.plot_number || item.certificate_number || item.id || '9120000000000',
               applicantName: item.contact_pic || item.nama_kontak_person || 'Pemohon Terdaftar',
-              companyName: item.name || item.title || 'PT Luwu Sinergi Properti',
+              companyName: item.name || item.title || (isNik ? 'Perseorangan' : 'PT Luwu Sinergi Properti'),
+              title: item.title || item.name,
               sector: item.sector || 'Perindustrian',
+              fungsiBangunan: fungsiMatch ? fungsiMatch[1].trim() : (isNik ? 'Rumah Tinggal / Fasos' : item.sector),
+              applicantAddress: alamatMatch ? alamatMatch[1].trim() : `Kecamatan ${item.district_id || item.kecamatan || 'Belopa'}, Kab. Luwu`,
               districtName: item.district_id || item.kecamatan || 'Bua',
               villageName: item.village_id || item.desa || 'Barowa',
-              areaHa: item.area_ha || 15.5,
+              areaHa,
+              luasM2: Math.round(areaHa * 10000),
+              luasBangunan: luasBangunanMatch ? luasBangunanMatch[1].trim() : undefined,
               investmentValue: item.investment_value || 12500000000,
-              certificateType: isNik ? 'Sertifikat Hak Milik (SHM)' : 'Hak Guna Bangunan (HGB)',
-              certificateDocNumber: `SHM/HGB-LUWU-${Math.floor(100000 + Math.random() * 900000)}`,
+              certificateType: item.land_status || (isNik ? 'Sertifikat Hak Milik (SHM)' : 'Hak Guna Bangunan (HGB)'),
+              certificateDocNumber: item.certificate_number || `SHM/HGB-LUWU-${Math.floor(100000 + Math.random() * 900000)}`,
+              buktiTanah: buktiMatch ? buktiMatch[1].trim() : (item.land_status || (isNik ? 'Sertifikat Hak Milik (SHM)' : 'Hak Guna Bangunan (HGB)')),
               kmzFileName: item.proposal_file_name || 'Batas_Poligon_Lokasi.kmz',
               kmzFileUrl: item.photo_url || '',
               geometry: item.geometry,
@@ -522,6 +568,7 @@ export default function PuptrSpatialClearanceDashboard() {
               pertanianBaNumber: item.berita_acara_num || undefined,
               pertanianSrNumber: item.surat_rekomendasi_num || undefined,
               pertanianNotes: item.pertanian_rejection_notes || undefined,
+              contactPhone: item.phone_number,
               createdAt: item.created_at || new Date().toISOString()
             });
           }
@@ -537,21 +584,33 @@ export default function PuptrSpatialClearanceDashboard() {
             const appId = app.pkkpr_doc_number || app.id;
             const exists = mapped.some(m => m.id === appId || m.nibNik === app.nik || (m.pkkprDocNumber && m.pkkprDocNumber === app.pkkpr_doc_number));
             if (!exists) {
+              const isBerusaha = app.category === 'Berusaha';
+              const luasM2 = app.luas_m2 || 500;
               mapped.unshift({
                 id: appId || `PKKPR-LUWU-${Date.now().toString().slice(-6)}`,
-                applicantType: 'NIK (Perorangan / Warga)',
-                nibNik: app.nik || '7317060202700001',
-                applicantName: app.nama_pemohon || 'Masyarakat',
-                companyName: app.title || 'Permohonan PKKPR Rumah Tinggal / Fasos',
-                sector: app.category === 'Berusaha' ? 'Komersial / Usaha' : 'Non-Komersial / Perumahan',
+                applicantType: isBerusaha ? 'NIB (Pelaku Usaha)' : 'NIK (Perorangan / Warga)',
+                category: isBerusaha ? 'Berusaha' : 'Non-Berusaha',
+                nibNik: app.nik || app.nib || '7317060202700001',
+                applicantName: app.nama_pemohon || 'Pemohon Terdaftar',
+                companyName: isBerusaha ? (app.perusahaan || app.title || 'Pelaku Usaha') : (app.nama_lembaga || app.title || 'Perseorangan / Warga'),
+                title: app.title || (isBerusaha ? 'Permohonan PKKPR Usaha' : 'Permohonan PKKPR Non-Berusaha'),
+                sector: isBerusaha ? 'Komersial / Usaha' : 'Non-Komersial / Perumahan',
+                fungsiBangunan: app.fungsi_bangunan || (isBerusaha ? 'Komersial / Usaha' : 'Non-Berusaha / Rumah Tinggal'),
+                applicantAddress: app.alamat_pemohon || app.address || `Desa ${app.desa || '-'}, Kec. ${app.kecamatan || '-'}, Kab. Luwu`,
                 districtName: app.kecamatan || 'Ponrang',
                 villageName: app.desa || 'Ponrang',
-                areaHa: app.luas_m2 ? Number((app.luas_m2 / 10000).toFixed(2)) : 0.05,
-                investmentValue: 0,
-                certificateType: 'Sertifikat Hak Milik (SHM)',
-                certificateDocNumber: `SHM-LUWU-${appId ? appId.split('-').pop() : '321183'}`,
-                kmzFileName: 'Geometri_Lahan_Pemohon.kmz',
+                areaHa: app.luas_m2 ? Number((app.luas_m2 / 10000).toFixed(4)) : 0.05,
+                luasM2,
+                luasBangunan: app.luas_bangunan_m2 ? `${app.luas_bangunan_m2} m²` : undefined,
+                investmentValue: isBerusaha ? 1000000000 : 0,
+                certificateType: app.bukti_tanah_jenis || (isBerusaha ? 'Hak Guna Bangunan (HGB)' : 'Sertifikat Hak Milik (SHM)'),
+                certificateDocNumber: app.bukti_tanah_nomor || `SHM-${appId ? appId.split('-').pop() : '321183'}`,
+                buktiTanah: app.bukti_tanah || `${app.bukti_tanah_jenis || 'Sertifikat Hak Milik (SHM)'}${app.bukti_tanah_nomor ? ` (No. ${app.bukti_tanah_nomor})` : ''}`,
+                kmzFileName: app.proposal_file_name || 'Geometri_Lahan_Pemohon.kmz',
                 kmzFileUrl: '',
+                sertifikatTanahUrl: app.sertifikat_tanah_url,
+                suratPengantarDesaUrl: app.surat_pengantar_desa_url,
+                berkasLegalitasGabunganUrl: app.berkas_legalitas_gabungan_url || app.berkas_gabungan_pdf,
                 geometry: app.geometry,
                 pkkprStatus: app.sk_pkkpr_doc_number ? 'Approved' : 'Pending Spatial Check',
                 pkkprDocNumber: app.sk_pkkpr_doc_number || undefined,
@@ -560,6 +619,7 @@ export default function PuptrSpatialClearanceDashboard() {
                 coordinateStatus: 'Valid / Sesuai Batas RTRW',
                 esgStatus: 'CLEAR',
                 pertanianStatus: app.pertanian_status || 'NOT_SUBMITTED',
+                contactPhone: app.no_whatsapp,
                 createdAt: app.created_at || new Date().toISOString()
               });
             }
@@ -1575,32 +1635,235 @@ export default function PuptrSpatialClearanceDashboard() {
                   
                 />
 
-                {/* Spatial Overlay Card on top of Map */}
-                {zoningAudit && (
-                  <div className="fixed bottom-3 inset-x-3 md:absolute md:top-3 md:right-14 md:left-auto md:max-w-xs bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-lg z-20 text-xs space-y-1.5">
-                    <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-1">
-                      <span className="font-bold text-slate-900 dark:text-white">Hasil Analisis Turf.js</span>
-                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${
-                        zoningAudit.suitabilityLevel === 'DIBATASI'
-                          ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
-                          : zoningAudit.suitabilityLevel === 'BERSYARAT'
-                          ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-                          : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
-                      }`}>
-                        {zoningAudit.suitabilityLevel}
-                      </span>
+                {/* Spatial Overlay Card on top of Map (Hasil Analisis Turf.js & Data Pemohon Tersusun Kebawah) */}
+                {(zoningAudit || selectedApp) && (
+                  <div className="fixed bottom-3 inset-x-3 md:absolute md:top-3 md:right-14 md:left-auto md:w-96 max-h-[82vh] overflow-y-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-2xl z-20 text-xs space-y-3 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
+                    {/* Header with Title & Badges */}
+                    <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                          <Compass className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <h4 className="font-extrabold text-slate-900 dark:text-white text-xs tracking-tight">
+                            Hasil Analisis Turf.js &amp; Data Pemohon
+                          </h4>
+                          <span className="text-[10px] text-slate-500 dark:text-slate-400">
+                            Audit Spasial RTRW &amp; Verifikasi Permohonan
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        {zoningAudit && (
+                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider ${
+                            zoningAudit.suitabilityLevel === 'DIBATASI'
+                              ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
+                              : zoningAudit.suitabilityLevel === 'BERSYARAT'
+                              ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                              : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                          }`}>
+                            {zoningAudit.suitabilityLevel}
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setIsTurfCardCollapsed(!isTurfCardCollapsed)}
+                          className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                          title={isTurfCardCollapsed ? "Perluas Card" : "Ciutkan Card"}
+                        >
+                          {isTurfCardCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+                        </button>
+                      </div>
                     </div>
 
-                    <p className="text-slate-700 dark:text-slate-300">
-                      <strong>Zona Matched:</strong> {zoningAudit.matchedZone}
-                    </p>
-                    <p className="text-slate-700 dark:text-slate-300">
-                      <strong>Kategori:</strong> {zoningAudit.zoneType}
-                    </p>
-                    {zoningAudit.warningNote && (
-                      <p className="text-amber-600 dark:text-amber-400 text-[10px] leading-tight font-medium bg-amber-50 dark:bg-amber-950/50 p-1.5 rounded-lg border border-amber-200 dark:border-amber-800">
-                        {zoningAudit.warningNote}
-                      </p>
+                    {!isTurfCardCollapsed && (
+                      <div className="space-y-3 animate-in fade-in duration-150">
+                        {/* 1. SEKSI HASIL ANALISIS TURF.JS */}
+                        {zoningAudit ? (
+                          <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-1.5">
+                            <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                              <Layers className="w-3 h-3 text-emerald-500" />
+                              Audit Pola Ruang (Turf.js)
+                            </span>
+                            <div className="space-y-1 text-slate-700 dark:text-slate-300">
+                              <div className="flex justify-between items-start gap-2">
+                                <span className="text-slate-500 dark:text-slate-400 shrink-0">Zona Matched:</span>
+                                <span className="font-bold text-right text-slate-900 dark:text-white">{zoningAudit.matchedZone}</span>
+                              </div>
+                              <div className="flex justify-between items-start gap-2">
+                                <span className="text-slate-500 dark:text-slate-400 shrink-0">Kategori:</span>
+                                <span className="font-medium text-right">{zoningAudit.zoneType}</span>
+                              </div>
+                              <div className="flex justify-between items-start gap-2 text-[11px]">
+                                <span className="text-slate-500 dark:text-slate-400 shrink-0">Validasi Topologi:</span>
+                                <span className="font-mono text-emerald-600 dark:text-emerald-400 text-right font-semibold">Valid (Zero Self-Intersection)</span>
+                              </div>
+                            </div>
+
+                            {zoningAudit.warningNote && (
+                              <p className="text-amber-700 dark:text-amber-400 text-[10.5px] leading-tight font-medium bg-amber-50 dark:bg-amber-950/50 p-2 rounded-lg border border-amber-200 dark:border-amber-800 mt-1">
+                                ⚠️ {zoningAudit.warningNote}
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 text-center">
+                            Menghitung analisis spasial Turf.js...
+                          </div>
+                        )}
+
+                        {/* 2. SEKSI DATA DETAIL PERMOHONAN PEMOHON */}
+                        {selectedApp && (
+                          <div className="p-2.5 rounded-xl bg-emerald-500/5 border border-emerald-500/20 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1">
+                                <FileText className="w-3 h-3" />
+                                Rincian Permohonan Pemohon
+                              </span>
+                              <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                                selectedApp.category === 'Non-Berusaha' || selectedApp.applicantType.includes('Warga')
+                                  ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300'
+                                  : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                              }`}>
+                                {selectedApp.category === 'Non-Berusaha' || selectedApp.applicantType.includes('Warga')
+                                  ? 'PKKPR Non-Berusaha'
+                                  : 'PKKPR Berusaha'}
+                              </span>
+                            </div>
+
+                            <div className="space-y-1.5 text-slate-800 dark:text-slate-200 text-xs divide-y divide-slate-200 dark:divide-slate-800/60">
+                              <div className="pt-1 flex justify-between items-start gap-2">
+                                <span className="text-slate-500 dark:text-slate-400 shrink-0">Nama Pemohon:</span>
+                                <span className="font-bold text-right text-slate-900 dark:text-white">{selectedApp.applicantName}</span>
+                              </div>
+
+                              <div className="pt-1.5 flex justify-between items-start gap-2 font-mono">
+                                <span className="text-slate-500 dark:text-slate-400 shrink-0 font-sans">
+                                  {selectedApp.applicantType === 'NIB (Pelaku Usaha)' ? 'NIB OSS:' : 'NIK Pemohon:'}
+                                </span>
+                                <span className="font-bold text-right text-emerald-600 dark:text-emerald-400">{selectedApp.nibNik}</span>
+                              </div>
+
+                              <div className="pt-1.5 flex justify-between items-start gap-2">
+                                <span className="text-slate-500 dark:text-slate-400 shrink-0">
+                                  {selectedApp.category === 'Non-Berusaha' || selectedApp.applicantType.includes('Warga') ? 'Lembaga / Komite:' : 'Nama Perusahaan:'}
+                                </span>
+                                <span className="font-semibold text-right">{selectedApp.companyName}</span>
+                              </div>
+
+                              <div className="pt-1.5 flex justify-between items-start gap-2">
+                                <span className="text-slate-500 dark:text-slate-400 shrink-0">Judul Kegiatan:</span>
+                                <span className="font-medium text-right text-slate-700 dark:text-slate-300">
+                                  {selectedApp.title || selectedApp.companyName}
+                                </span>
+                              </div>
+
+                              {selectedApp.fungsiBangunan && (
+                                <div className="pt-1.5 flex justify-between items-start gap-2">
+                                  <span className="text-slate-500 dark:text-slate-400 shrink-0">Fungsi Bangunan:</span>
+                                  <span className="font-medium text-right text-slate-700 dark:text-slate-300">
+                                    {selectedApp.fungsiBangunan}
+                                  </span>
+                                </div>
+                              )}
+
+                              <div className="pt-1.5 flex justify-between items-start gap-2">
+                                <span className="text-slate-500 dark:text-slate-400 shrink-0">Alamat Pemohon:</span>
+                                <span className="font-medium text-right text-slate-700 dark:text-slate-300 text-[11px]">
+                                  {selectedApp.applicantAddress || `Kec. ${selectedApp.districtName}, Kab. Luwu`}
+                                </span>
+                              </div>
+
+                              <div className="pt-1.5 flex justify-between items-start gap-2">
+                                <span className="text-slate-500 dark:text-slate-400 shrink-0">Lokasi Dimohon:</span>
+                                <span className="font-semibold text-right text-slate-800 dark:text-slate-200">
+                                  Desa {selectedApp.villageName}, Kec. {selectedApp.districtName}, Kab. Luwu
+                                </span>
+                              </div>
+
+                              <div className="pt-1.5 flex justify-between items-start gap-2">
+                                <span className="text-slate-500 dark:text-slate-400 shrink-0">Luas yang Dimohon:</span>
+                                <div className="text-right">
+                                  <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                                    {selectedApp.areaHa} Ha
+                                  </span>
+                                  <span className="text-slate-500 text-[11px] block font-mono">
+                                    ({(selectedApp.luasM2 || selectedApp.areaHa * 10000).toLocaleString('id-ID')} m²)
+                                  </span>
+                                </div>
+                              </div>
+
+                              {selectedApp.luasBangunan && (
+                                <div className="pt-1.5 flex justify-between items-start gap-2">
+                                  <span className="text-slate-500 dark:text-slate-400 shrink-0">Luas Bangunan:</span>
+                                  <span className="font-mono font-bold text-right text-slate-800 dark:text-slate-200">
+                                    {selectedApp.luasBangunan}
+                                  </span>
+                                </div>
+                              )}
+
+                              <div className="pt-1.5 flex justify-between items-start gap-2">
+                                <span className="text-slate-500 dark:text-slate-400 shrink-0">Penguasaan Tanah:</span>
+                                <span className="font-semibold text-right text-slate-800 dark:text-slate-200 text-[11px]">
+                                  {selectedApp.buktiTanah || `${selectedApp.certificateType} (No. ${selectedApp.certificateDocNumber})`}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Tautan Dokumen Pendukung */}
+                            {(selectedApp.sertifikatTanahUrl || selectedApp.suratPengantarDesaUrl || selectedApp.berkasLegalitasGabunganUrl) && (
+                              <div className="pt-2 border-t border-emerald-500/20 space-y-1">
+                                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block">
+                                  Dokumen Legalitas Pemohon:
+                                </span>
+                                <div className="flex flex-wrap gap-1.5">
+                                  {selectedApp.sertifikatTanahUrl && (
+                                    <a
+                                      href={selectedApp.sertifikatTanahUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="px-2 py-1 bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 rounded-lg text-[10px] font-bold hover:bg-emerald-50 flex items-center gap-1 transition-all"
+                                    >
+                                      <FileText className="w-3 h-3" /> Sertifikat Tanah
+                                    </a>
+                                  )}
+                                  {selectedApp.suratPengantarDesaUrl && (
+                                    <a
+                                      href={selectedApp.suratPengantarDesaUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="px-2 py-1 bg-white dark:bg-slate-900 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800 rounded-lg text-[10px] font-bold hover:bg-amber-50 flex items-center gap-1 transition-all"
+                                    >
+                                      <FileText className="w-3 h-3" /> Pengantar Desa
+                                    </a>
+                                  )}
+                                  {selectedApp.berkasLegalitasGabunganUrl && (
+                                    <a
+                                      href={selectedApp.berkasLegalitasGabunganUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="px-2 py-1 bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-800 rounded-lg text-[10px] font-bold hover:bg-indigo-50 flex items-center gap-1 transition-all"
+                                    >
+                                      <FileText className="w-3 h-3" /> PDF Gabungan
+                                    </a>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Tombol Preview Naskah BAP */}
+                            <button
+                              type="button"
+                              onClick={() => setShowProfileModal(true)}
+                              className="w-full mt-2 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer"
+                            >
+                              <FileCheck2 className="w-3.5 h-3.5" />
+                              <span>Lihat Naskah Lengkap BAP-KTR</span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
                 )}

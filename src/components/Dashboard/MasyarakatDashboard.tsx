@@ -1593,13 +1593,22 @@ export default function MasyarakatDashboard({
       };
 
       try {
+        const formattedCatatanTeknis = [
+          pkkprFungsiBangunan ? `[Fungsi: ${pkkprFungsiBangunan}]` : (pkkprCategory === "Berusaha" ? `[Fungsi: Komersial / Usaha ${pkkprKbli || ''}]` : ''),
+          pkkprBuktiTanahJenis ? `[Penguasaan Tanah: ${pkkprBuktiTanahJenis}${pkkprBuktiTanahNomor ? ` No. ${pkkprBuktiTanahNomor}` : ''}]` : '',
+          pkkprLuasBangunan ? `[Luas Bangunan: ${pkkprLuasBangunan} m²]` : '',
+          `[Alamat Pemohon: ${(hydratedProfile as any).address || (pkkprDesa && pkkprKecamatan ? `Desa ${pkkprDesa}, Kec. ${pkkprKecamatan}, Kab. Luwu` : 'Kabupaten Luwu')}]`,
+          `[Lokasi Dimohon: Desa ${pkkprDesa}, Kec. ${pkkprKecamatan}, Kab. Luwu]`,
+          "Dalam proses analisis spasial tata ruang PUPTR."
+        ].filter(Boolean).join(" ");
+
         // 1. Insert into gis_pkkpr table (Primary PostGIS Spatial Table)
         await supabase.from("gis_pkkpr").insert({
           id: docNumber,
           jenis_permohonan: pkkprCategory, // 'Berusaha' | 'Non-Berusaha'
           nama_permohonan: pkkprTitle || (pkkprCategory === "Berusaha" ? "Permohonan PKKPR Usaha/Komersial" : "Permohonan PKKPR Rumah Tinggal / Fasos"),
           nib_oss: pkkprCategory === "Berusaha" ? (pkkprNib || null) : null,
-          nama_badan_usaha: pkkprCategory === "Berusaha" ? (pkkprPerusahaan || null) : null,
+          nama_badan_usaha: pkkprCategory === "Berusaha" ? (pkkprPerusahaan || null) : (pkkprNamaLembaga || null),
           nama_pemohon: finalNama,
           nik_pemohon: finalNik,
           no_whatsapp: kontak || null,
@@ -1616,7 +1625,7 @@ export default function MasyarakatDashboard({
           pertek_puptr_num: null,
           berita_acara_pertanian_num: null,
           sk_pkkpr_num: null,
-          catatan_teknis: "Dalam proses analisis spasial tata ruang PUPTR.",
+          catatan_teknis: formattedCatatanTeknis,
           user_id: user?.id || null,
           created_by: user?.id || null,
           created_at: new Date().toISOString(),
@@ -1632,7 +1641,7 @@ export default function MasyarakatDashboard({
           title: `[PKKPR ${pkkprCategory}] ${pkkprTitle}`,
           name: pkkprCategory === "Berusaha" ? (pkkprPerusahaan || pkkprTitle) : (pkkprTitle || "Permohonan PKKPR Rumah Tinggal / Fasos"),
           category: pkkprCategory === "Berusaha" ? "Komersial / Usaha" : "Non-Komersial / Perseorangan",
-          perusahaan: pkkprCategory === "Berusaha" ? pkkprPerusahaan || "Pelaku Usaha" : "Perseorangan",
+          perusahaan: pkkprCategory === "Berusaha" ? (pkkprPerusahaan || "Pelaku Usaha") : (pkkprNamaLembaga || "Perseorangan"),
           contact_pic: finalNama,
           nama_kontak_person: finalNama,
           plot_number: finalNik,
@@ -1641,11 +1650,14 @@ export default function MasyarakatDashboard({
           district_id: pkkprKecamatan,
           desa: pkkprDesa,
           village_id: pkkprDesa,
-          area_ha: pkkprLuasM2 ? Number((pkkprLuasM2 / 10000).toFixed(2)) : 0.05,
+          area_ha: pkkprLuasM2 ? Number((pkkprLuasM2 / 10000).toFixed(4)) : 0.05,
           proposal_file_name: "Batas_Poligon_Lokasi.kmz",
           geometry: pkkprGeometry,
           status: "Pending Spatial Check",
           pkkpr_doc_number: null,
+          land_status: pkkprBuktiTanahJenis || "Sertifikat Hak Milik (SHM)",
+          certificate_number: pkkprBuktiTanahNomor || `SHM-${docNumber}`,
+          description: formattedCatatanTeknis,
           user_id: user?.id || null,
           created_by: user?.id || null,
           created_at: new Date().toISOString()

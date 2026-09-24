@@ -507,20 +507,63 @@ export default function InvestorPortalDashboard() {
 
       let insertErr = null;
       try {
+        const areaHaVal = Number((pkkprLuasM2 / 10000).toFixed(4));
+        const formattedCatatan = [
+          `[Fungsi: Kegiatan Komersial / Industri ${pkkprSektor}]`,
+          `[Penguasaan Tanah: Hak Guna Bangunan (HGB)]`,
+          `[Alamat Pemohon: ${(hydratedCorporateProfile as any).alamatPerusahaan || 'Kabupaten Luwu'}]`,
+          `[Lokasi Dimohon: Desa ${pkkprDesa}, Kec. ${pkkprKecamatan}, Kab. Luwu]`,
+          `[Nilai Investasi: Rp ${(parseFloat(pkkprNilaiInvestasi) || 0).toLocaleString('id-ID')}]`,
+          "Dalam proses analisis spasial tata ruang PUPTR."
+        ].join(' ');
+
+        // 1. Insert into gis_pkkpr so PUPTR & Pertanian dashboards see corporate applications immediately
+        await supabase.from("gis_pkkpr").insert({
+          id: trackingCode,
+          jenis_permohonan: "Berusaha",
+          nama_permohonan: pkkprJudulProyek,
+          nib_oss: hydratedCorporateProfile.nib,
+          nama_badan_usaha: hydratedCorporateProfile.namaPerusahaan,
+          nama_pemohon: hydratedCorporateProfile.namaPenanggungJawab,
+          nik_pemohon: hydratedCorporateProfile.nib,
+          no_whatsapp: (hydratedCorporateProfile as any).telepon || null,
+          sektor: pkkprSektor,
+          kecamatan: pkkprKecamatan,
+          desa_kelurahan: pkkprDesa,
+          luas_m2: pkkprLuasM2,
+          luas_ha: areaHaVal,
+          geometry_json: pkkprGeometry,
+          status_pkkpr: "Pending Spatial Check",
+          catatan_teknis: formattedCatatan,
+          user_id: user?.id || null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        });
+
+        // 2. Insert into investments table
         const { error } = await supabase.from("investments").insert({
+          id: trackingCode,
           name: pkkprJudulProyek,
+          title: `[PKKPR Berusaha] ${pkkprJudulProyek}`,
           sector: pkkprSektor,
           kecamatan: pkkprKecamatan,
-          area_ha: Number((pkkprLuasM2 / 10000).toFixed(2)),
+          district_id: pkkprKecamatan,
+          desa: pkkprDesa,
+          village_id: pkkprDesa,
+          area_ha: areaHaVal,
           investment_value: parseFloat(pkkprNilaiInvestasi) || 0,
-          status: "Prospektif",
+          status: "Pending Spatial Check",
           geometry: pkkprGeometry,
           nib: hydratedCorporateProfile.nib,
+          contact_pic: hydratedCorporateProfile.namaPenanggungJawab,
+          land_status: "Hak Guna Bangunan (HGB)",
+          certificate_number: `HGB-${trackingCode}`,
+          description: formattedCatatan,
           esg_environmental_risk: pkkprEsgAnalysis?.esgRiskStatus || "CLEAR"
         });
         if (error) insertErr = error;
 
-        // Catat juga ke investment_interests
+        // 3. Catat juga ke investment_interests
         await supabase.from("investment_interests").insert({
           investor_name: hydratedCorporateProfile.namaPenanggungJawab,
           company_name: hydratedCorporateProfile.namaPerusahaan,

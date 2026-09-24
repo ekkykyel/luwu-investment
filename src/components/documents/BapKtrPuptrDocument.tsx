@@ -229,7 +229,7 @@ export const DEFAULT_BAP_NON_BERUSAHA_DATA: BapKtrDocumentData = {
   luasBangunanRencana: "480 m² (1 Lantai)",
 
   nomorSurat: "600.1.15/089/BAP-PKKPR-NB/PUPTR-TR/LUWU/2026",
-  tentangSurat: "HASIL PENILAIAN PERSETUJUAN KESESUAIAN KEGIATAN PEMANFAATAN RUANG (PKKPR) NON-BERUSAHA PEMBANGUNAN GEREJA KABUPATEN LUWU",
+  tentangSurat: "HASIL PENILAIAN PERSETUJUAN KESESUAIAN KEGIATAN PEMANFAATAN RUANG (PKKPR) NON-BERUSAHA PEMBANGUNAN SARANA PERIBADATAN / RUMAH IBADAH KABUPATEN LUWU",
   tanggalDokumen: "24 September 2026",
   hariTanggalPemeriksaan: "Rabu, 24 September 2026",
 
@@ -1045,24 +1045,12 @@ export function BapKtrPuptrDocument({
                       <div style={{ fontSize: "10pt", fontWeight: "bold" }}>Mengetahui / Menyetujui,</div>
                       <div style={{ fontSize: "10pt", fontWeight: "bold", textTransform: "uppercase" }}>{data.kabidJabatan}</div>
                       
-                      {/* Badge TTE Elektronik BSrE (Kotak kosong untuk stempel/TTE, keterangan BSrE di bawah) */}
+                      {/* Kolom tanda tangan kosong (Menunggu integrasi BSrE, tanda tangan basah & cap dinas resmi) */}
                       <div style={{ 
-                        margin: "10px auto", 
+                        margin: "12px auto", 
                         width: "175px", 
-                        height: "65px",
-                        border: "1px dashed #166534", 
-                        backgroundColor: "#f0fdf4", 
-                        color: "#166534", 
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "flex-end",
-                        padding: "4px 6px",
-                        boxSizing: "border-box"
-                      }}>
-                        <div style={{ fontSize: "7pt", color: "#15803d", textAlign: "center", lineHeight: 1.2 }}>
-                          Sertifikasi Balai Sertifikasi Elektronik (BSrE) BSSN
-                        </div>
-                      </div>
+                        height: "65px"
+                      }} />
 
                       <div style={{ fontSize: "10.5pt", fontWeight: "bold", textDecoration: "underline" }}>{data.kabidNama}</div>
                       <div style={{ fontSize: "9.5pt", color: "#000000" }}>NIP. {data.kabidNip}</div>
@@ -1073,24 +1061,12 @@ export function BapKtrPuptrDocument({
                       <div style={{ fontSize: "10pt", fontWeight: "bold" }}>Mengesahkan,</div>
                       <div style={{ fontSize: "10pt", fontWeight: "bold", textTransform: "uppercase" }}>{data.kadisJabatan} KABUPATEN LUWU</div>
                       
-                      {/* Badge TTE Elektronik BSrE (Kotak kosong untuk stempel/TTE, keterangan BSrE di bawah) */}
+                      {/* Kolom tanda tangan kosong (Menunggu integrasi BSrE, tanda tangan basah & cap dinas resmi) */}
                       <div style={{ 
-                        margin: "10px auto", 
+                        margin: "12px auto", 
                         width: "175px", 
-                        height: "65px",
-                        border: "1px dashed #166534", 
-                        backgroundColor: "#f0fdf4", 
-                        color: "#166534", 
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "flex-end",
-                        padding: "4px 6px",
-                        boxSizing: "border-box"
-                      }}>
-                        <div style={{ fontSize: "7pt", color: "#15803d", textAlign: "center", lineHeight: 1.2 }}>
-                          Sertifikasi Balai Sertifikasi Elektronik (BSrE) BSSN
-                        </div>
-                      </div>
+                        height: "65px"
+                      }} />
 
                       <div style={{ fontSize: "10.5pt", fontWeight: "bold", textDecoration: "underline" }}>{data.kadisNama}</div>
                       <div style={{ fontSize: "9.5pt", color: "#000000" }}>Pangkat: {data.kadisPangkat}</div>
@@ -1416,10 +1392,16 @@ export function convertAppToBapKtrData(
   const isApproved = app?.pertanianStatus !== 'REJECTED' && app?.pkkprStatus !== 'REJECTED' && app?.status !== 'REJECTED';
 
   const defaultTitle = isNonBerusaha
-    ? (app?.title || app?.nama_permohonan || "Pembangunan Sarana Ibadah (Gereja)")
+    ? (app?.title || app?.nama_permohonan || "Pembangunan Sarana Non-Berusaha")
     : (app?.title || app?.nama_permohonan || "Permohonan Investasi & Pemanfaatan Ruang");
 
-  const fungsiBangunan = app?.fungsi_bangunan || app?.fungsi || (isNonBerusaha ? (app?.title || "Pembangunan Sarana Ibadah (Gereja)") : (app?.sector || "Industri & Komersial"));
+  const fungsiBangunan = app?.fungsi_bangunan || app?.fungsi || (isNonBerusaha ? (app?.title || "Pembangunan Sarana Non-Berusaha") : (app?.sector || "Industri & Komersial"));
+
+  const rawKegiatan = app?.fungsi_bangunan || app?.fungsi || app?.title || app?.nama_permohonan || (isNonBerusaha ? "Sarana Non-Berusaha" : "Kegiatan Usaha / Komersial");
+  const upperKegiatan = String(rawKegiatan).toUpperCase().trim();
+  const cleanFungsiWithPembangunan = upperKegiatan.startsWith("PEMBANGUNAN")
+    ? upperKegiatan
+    : `PEMBANGUNAN ${upperKegiatan}`;
 
   const namaLembaga = app?.nama_lembaga || app?.perusahaan || app?.companyName || (isNonBerusaha ? (app?.nama_organisasi || app?.title || "Panitia Pembangunan / Perseorangan") : "PT / Badan Usaha");
 
@@ -1431,34 +1413,36 @@ export function convertAppToBapKtrData(
     jenisPermohonan,
     fungsiBangunan,
     namaLembagaOrganisasi: namaLembaga,
-    luasBangunanRencana: app?.luas_bangunan_m2 ? `${app.luas_bangunan_m2} m²` : (isNonBerusaha ? "450 m²" : "1.200 m²"),
+    luasBangunanRencana: app?.luas_bangunan_m2 ? `${app.luas_bangunan_m2} m²` : (app?.luasBangunan ? `${app.luasBangunan}` : (isNonBerusaha ? "450 m²" : "1.200 m²")),
 
     nomorSurat: app?.skPkkprDocNumber || app?.pkkprDocNumber || app?.pkkpr_doc_number || (
       isNonBerusaha
         ? `600.1.15/089/BAP-PKKPR-NB/PUPTR-TR/LUWU/${year}`
         : `600.1.15/042/BAP-PKKPR-B/PUPTR-TR/LUWU/${year}`
     ),
-    tentangSurat: isNonBerusaha
-      ? `HASIL PENILAIAN PERSETUJUAN KESESUAIAN KEGIATAN PEMANFAATAN RUANG (PKKPR) NON-BERUSAHA ${fungsiBangunan.toUpperCase()} KABUPATEN LUWU`
-      : `HASIL PENILAIAN DOKUMEN PERSETUJUAN KESESUAIAN KEGIATAN PEMANFAATAN RUANG (PKKPR) BERUSAHA ATAS NAMA ${app?.applicantName || app?.companyName || app?.nama_pemohon || 'PEMOHON'}`,
+    tentangSurat: app?.tentangSurat || app?.tentang_surat || (
+      isNonBerusaha
+        ? `HASIL PENILAIAN PERSETUJUAN KESESUAIAN KEGIATAN PEMANFAATAN RUANG (PKKPR) NON-BERUSAHA ${cleanFungsiWithPembangunan} KABUPATEN LUWU`
+        : `HASIL PENILAIAN DOKUMEN PERSETUJUAN KESESUAIAN KEGIATAN PEMANFAATAN RUANG (PKKPR) BERUSAHA ATAS NAMA ${(app?.applicantName || app?.companyName || app?.nama_pemohon || 'PEMOHON').toUpperCase()}`
+    ),
     tanggalDokumen: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
     hariTanggalPemeriksaan: new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
     
-    nibNik: isNonBerusaha
-      ? (app?.nik || app?.nik_pemohon || app?.plot_number || '7317011909890001')
-      : (app?.nib ? `${app.nib} / ${app.nik || app.nik_pemohon || '-'}` : (app?.nibNik || app?.nib_oss || '0220108392182 / 7317011909890001')),
-    namaPemohon: app?.applicantName || app?.nama_pemohon || app?.contact_pic || (isNonBerusaha ? 'Pdt. Markus Sampe, S.Th.' : 'Ir. Muhammad Arsyad Al-Fatih, M.T.'),
+    nibNik: app?.nibNik || (isNonBerusaha
+      ? (app?.nik || app?.nik_pemohon || app?.plot_number || '-')
+      : (app?.nib ? `${app.nib} / ${app.nik || app.nik_pemohon || '-'}` : (app?.nib_oss || app?.plot_number || '-'))),
+    namaPemohon: app?.applicantName || app?.nama_pemohon || app?.contact_pic || (isNonBerusaha ? 'Pemohon Terdaftar' : 'Pelaku Usaha Pemohon'),
     namaPerusahaan: namaLembaga,
-    alamatPemohon: app?.applicantAddress || app?.address || app?.alamat || `Kecamatan ${app?.kecamatan || app?.districtName || 'Belopa'}, Kab. Luwu`,
-    sektorUsaha: isNonBerusaha ? (fungsiBangunan || "Sarana Sosial & Keagamaan (Rumah Ibadah Gereja)") : (app?.sector || "Industri Pengolahan & Komersial"),
-    kbliCode: isNonBerusaha ? "Non-KBLI (Kegiatan Non-Berusaha / Sarana Peribadatan)" : (app?.kbliCode || "10732 (Industri Pengolahan)"),
-    lokasiInvestasi: app?.address || `Desa ${app?.desa || app?.villageName || '-'}, Kec. ${app?.kecamatan || app?.districtName || '-'}` || 'Kabupaten Luwu',
-    desaKelurahan: app?.desa || app?.villageName ? `Desa ${app?.desa || app?.villageName}` : 'Desa Karang-Karangan',
-    kecamatan: app?.kecamatan || app?.districtName ? `Kecamatan ${app?.kecamatan || app?.districtName}` : 'Kecamatan Bua',
+    alamatPemohon: app?.applicantAddress || app?.address || app?.alamat || (app?.kecamatan ? `Kecamatan ${app.kecamatan}, Kab. Luwu` : 'Kabupaten Luwu, Provinsi Sulawesi Selatan'),
+    sektorUsaha: isNonBerusaha ? (fungsiBangunan || "Sarana Non-Berusaha") : (app?.sector || "Industri Pengolahan & Komersial"),
+    kbliCode: isNonBerusaha ? "Non-KBLI (Kegiatan Non-Berusaha)" : (app?.kbliCode || "KBLI Terdaftar OSS"),
+    lokasiInvestasi: app?.lokasi_dimohon || app?.address || (app?.desa && app?.kecamatan ? `Desa ${app.desa}, Kec. ${app.kecamatan}, Kab. Luwu` : (app?.villageName && app?.districtName ? `Desa ${app.villageName}, Kec. ${app.districtName}, Kab. Luwu` : 'Kabupaten Luwu')),
+    desaKelurahan: app?.desa || app?.desa_kelurahan || app?.villageName ? `Desa ${app?.desa || app?.desa_kelurahan || app?.villageName}` : (app?.villageName || '-'),
+    kecamatan: app?.kecamatan || app?.districtName ? `Kecamatan ${app?.kecamatan || app?.districtName}` : (app?.districtName || '-'),
     kabupaten: 'Kabupaten Luwu, Provinsi Sulawesi Selatan',
     luasLahanPermohonan: formattedLuas,
     luasLahanDisetujui: `${formattedLuas} - Sesuai Delineasi Poligon`,
-    buktiHakTanah: app?.bukti_tanah || (app?.certificateType ? `${app.certificateType} (No. ${app?.certificateDocNumber || '-'})` : (isNonBerusaha ? 'Sertipikat Hak Milik (SHM) / Surat Keterangan Hibah Tempat Ibadah' : 'Sertipikat Hak Milik (SHM) No. 00412 & Surat Keterangan Penguasaan Fisik Tanah')),
+    buktiHakTanah: app?.bukti_tanah || app?.buktiTanah || (app?.certificateType ? `${app.certificateType} (No. ${app?.certificateDocNumber || '-'})` : (isNonBerusaha ? 'Sertipikat Hak Milik (SHM) / Surat Penguasaan Fisik Tanah' : 'Hak Guna Bangunan (HGB) / SHM')),
 
     zonaPolaRuangRtrw: isNonBerusaha 
       ? 'Kawasan Permukiman Perdesaan & Fasilitas Pelayanan Umum (Sarana Peribadatan)' 
