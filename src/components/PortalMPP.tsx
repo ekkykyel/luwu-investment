@@ -38,7 +38,6 @@ import { MppServiceDetailModal, ServiceDetailItem } from './mpp/MppServiceDetail
 import { MppServicesWorkflowCarousel } from './mpp/MppServicesWorkflowCarousel';
 import { MppNewsCatalogModal } from './mpp/MppNewsCatalogModal';
 import { MppMagattiGallerySlideshow } from './mpp/MppMagattiGallerySlideshow';
-import { AntiCorruptionBanner } from './mpp/AntiCorruptionBanner';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
@@ -829,7 +828,6 @@ export default function PortalMPP() {
         const { data: testimonials } = await supabase
           .from('investor_testimonials')
           .select('*')
-          .eq('is_active', true)
           .order('created_at', { ascending: false });
 
         const mappedTestimonials = (testimonials || []).map((t: any) => ({
@@ -6041,11 +6039,6 @@ export default function PortalMPP() {
                   </ul>
                 </div>
               </div>
-            </div>
-
-            {/* Banner Komitmen Zona Integritas Anti-Korupsi di Footer */}
-            <div className="mt-10 sm:mt-12">
-              <AntiCorruptionBanner isDark={isDark} />
             </div>
 
             {/* Bottom Symmetrical Copyright Bar */}
