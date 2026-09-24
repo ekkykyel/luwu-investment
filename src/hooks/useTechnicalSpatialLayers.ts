@@ -216,13 +216,10 @@ export function useTechnicalSpatialLayers(initialOverrides?: Record<string, bool
     try {
       const data = await fetchGeoJsonLayer(cfg.url, cfg.id);
       if (isMountedRef.current) {
-        setGeoJsonData(prev => ({ ...prev, [cfg.id]: data || { type: 'FeatureCollection', features: [] } }));
+        setGeoJsonData(prev => ({ ...prev, [cfg.id]: data }));
       }
     } catch (e) {
       console.warn(`Error loading layer ${cfg.id}:`, e);
-      if (isMountedRef.current) {
-        setGeoJsonData(prev => ({ ...prev, [cfg.id]: { type: 'FeatureCollection', features: [] } }));
-      }
     } finally {
       if (isMountedRef.current) {
         setLoadingLayers(prev => ({ ...prev, [cfg.id]: false }));
@@ -233,11 +230,11 @@ export function useTechnicalSpatialLayers(initialOverrides?: Record<string, bool
   // Effect to automatically load active layers
   useEffect(() => {
     TECHNICAL_LAYERS_CONFIG.forEach(cfg => {
-      if (activeStates[cfg.id] && !geoJsonData[cfg.id] && !loadingLayers[cfg.id]) {
+      if (activeStates[cfg.id] && !geoJsonData[cfg.id]) {
         loadLayerData(cfg);
       }
     });
-  }, [activeStates, geoJsonData, loadingLayers, loadLayerData]);
+  }, [activeStates, geoJsonData, loadLayerData]);
 
   // Toggle specific layer
   const toggleLayer = useCallback((layerId: string) => {

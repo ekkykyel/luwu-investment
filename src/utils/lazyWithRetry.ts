@@ -1,17 +1,8 @@
 import React from 'react';
 
-function isReactComponent(val: any, keyName?: string): boolean {
+function isReactComponent(val: any): boolean {
   if (!val) return false;
-  if (typeof val === 'function') {
-    // If a key name is provided and it's not 'default', verify PascalCase (React Component naming convention)
-    if (keyName && keyName !== 'default') {
-      const firstChar = keyName.charAt(0);
-      if (firstChar !== firstChar.toUpperCase() || firstChar === firstChar.toLowerCase()) {
-        return false;
-      }
-    }
-    return true;
-  }
+  if (typeof val === 'function') return true;
   if (typeof val === 'object' && (val.$$typeof || typeof val.render === 'function')) return true;
   return false;
 }
@@ -45,7 +36,7 @@ export function lazyWithRetry<T extends React.ComponentType<any>>(
           }
           if (typeof module === 'object') {
             for (const key of Object.keys(module)) {
-              if (isReactComponent(module[key], key)) {
+              if (isReactComponent(module[key])) {
                 return { default: module[key] };
               }
             }

@@ -28,7 +28,6 @@ import { Investment, District } from "../types";
 import { formatRupiah, formatRupiahSingkat, formatNumber } from "../lib/formatters";
 import { SECTOR_COLORS, LUWU_INFRASTRUCTURE_NODES, calculateHaversineDistanceKm } from "../lib/constants";
 import { useTranslation } from "react-i18next";
-import { LuwuLogo } from "./LuwuLogo";
 
 export interface IproPitchDeckModalProps {
   isOpen: boolean;
@@ -148,16 +147,16 @@ export default function IproPitchDeckModal({
 
   return (
     <div 
-      className="fixed inset-0 z-[9999] flex items-start sm:items-center justify-center p-0 sm:p-4 bg-slate-950/85 backdrop-blur-md overflow-hidden"
+      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/85 backdrop-blur-md overflow-hidden"
       onClick={onClose}
     >
       <motion.div
-        initial={{ opacity: 0, y: 50 }}
+        initial={{ opacity: 0, y: 150 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 50 }}
+        exit={{ opacity: 0, y: 150 }}
         transition={{ type: "spring", damping: 25, stiffness: 350 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-4xl bg-white text-slate-900 rounded-none sm:rounded-3xl shadow-2xl overflow-hidden my-0 sm:my-auto border-0 sm:border border-slate-200 h-[100dvh] sm:h-auto sm:max-h-[92vh] flex flex-col transition-all"
+        className="w-full max-w-4xl bg-white text-slate-900 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden my-0 sm:my-auto border border-slate-200 h-[95vh] sm:h-auto sm:max-h-[92vh] flex flex-col transition-all"
       >
         {/* Mobile Drag Bar Indicator */}
         <div className="w-12 h-1.5 rounded-full mx-auto mt-3 mb-1.5 sm:hidden shrink-0 bg-slate-300" />
@@ -206,9 +205,11 @@ export default function IproPitchDeckModal({
           {/* HEADER KOP RESMI - Desain Premium */}
           <div className="border-b-[3px] border-slate-900 pb-4 flex flex-col sm:flex-row items-start justify-between gap-4">
             <div className="flex items-center gap-4">
-              {/* Logo Resmi Pemkab Luwu */}
-              <div className="w-14 h-14 rounded-2xl bg-slate-900 flex items-center justify-center shrink-0 shadow-md ring-4 ring-emerald-500/10 p-1.5 border border-slate-800">
-                <LuwuLogo size="md" className="w-10 h-12 object-contain" />
+              {/* Elegant Emblem Seal Monogram */}
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-950 to-emerald-800 flex flex-col items-center justify-center text-white shrink-0 relative shadow-md ring-4 ring-emerald-500/10">
+                <span className="font-sans font-extrabold text-xl leading-none tracking-tight">LW</span>
+                <span className="text-[7px] font-mono font-bold tracking-widest text-[#F3C01E] uppercase mt-0.5">Luwu</span>
+                <div className="absolute inset-0.5 rounded-xl border border-white/20 pointer-events-none"></div>
               </div>
               <div>
                 <span className="text-[10px] font-mono uppercase tracking-widest text-slate-500 font-extrabold block">

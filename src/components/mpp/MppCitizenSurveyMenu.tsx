@@ -20,7 +20,6 @@ interface MppCitizenSurveyMenuProps {
   defaultAgency?: string;
   isDarkMode?: boolean;
   isLoggedIn?: boolean;
-  isInModal?: boolean;
   onSubmitted?: (survey: MppSurveyItem) => void;
 }
 
@@ -207,30 +206,10 @@ const getRatingOptions = (lang: string) => {
   const isZh = lang.startsWith('zh');
 
   return [
-    { 
-      value: 1, 
-      label: isZh ? '不符合 / 较差' : isEn ? 'Dissatisfied / Poor' : 'Tidak Sesuai / Buruk',
-      primary: isZh ? '不符合' : isEn ? 'Dissatisfied' : 'Tidak Sesuai',
-      secondary: isZh ? '较差 (Skala 1)' : isEn ? 'Poor (Scale 1)' : 'Buruk (Skala 1)'
-    },
-    { 
-      value: 2, 
-      label: isZh ? '基本符合 / 一般' : isEn ? 'Fair / Average' : 'Kurang Sesuai / Cukup',
-      primary: isZh ? '基本符合' : isEn ? 'Fair' : 'Kurang Sesuai',
-      secondary: isZh ? '一般 (Skala 2)' : isEn ? 'Average (Scale 2)' : 'Cukup (Skala 2)'
-    },
-    { 
-      value: 3, 
-      label: isZh ? '符合 / 良好' : isEn ? 'Satisfied / Good' : 'Sesuai / Baik',
-      primary: isZh ? '符合' : isEn ? 'Satisfied' : 'Sesuai',
-      secondary: isZh ? '良好 (Skala 3)' : isEn ? 'Good (Scale 3)' : 'Baik (Skala 3)'
-    },
-    { 
-      value: 4, 
-      label: isZh ? '非常符合 / 卓越' : isEn ? 'Highly Satisfied / Excellent' : 'Sangat Sesuai / Prima',
-      primary: isZh ? '非常符合' : isEn ? 'Highly Satisfied' : 'Sangat Sesuai',
-      secondary: isZh ? '卓越 (Skala 4)' : isEn ? 'Excellent (Scale 4)' : 'Prima (Skala 4)'
-    }
+    { value: 1, label: isZh ? '不符合 / 较差' : isEn ? 'Dissatisfied / Poor' : 'Tidak Sesuai / Buruk' },
+    { value: 2, label: isZh ? '基本符合 / 一般' : isEn ? 'Fair / Average' : 'Kurang Sesuai / Cukup' },
+    { value: 3, label: isZh ? '符合 / 良好' : isEn ? 'Satisfied / Good' : 'Sesuai / Baik' },
+    { value: 4, label: isZh ? '非常符合 / 卓越' : isEn ? 'Highly Satisfied / Excellent' : 'Sangat Sesuai / Prima' }
   ];
 };
 
@@ -253,7 +232,6 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
   defaultAgency = MPP_AGENCIES_DEFAULT[0],
   isDarkMode = false,
   isLoggedIn = false,
-  isInModal = false,
   onSubmitted
 }) => {
   const { t, i18n } = useTranslation();
@@ -502,34 +480,26 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
   };
 
   return (
-    <div className={`w-full max-w-full mx-auto transition-all ${
-      isInModal 
-        ? 'p-0 bg-transparent border-0 shadow-none' 
-        : `rounded-2xl sm:rounded-3xl border p-3 sm:p-6 md:p-8 backdrop-blur-md shadow-xl ${
-            isDarkMode ? 'bg-slate-900/70 border-slate-800' : 'bg-white border-slate-200'
-          }`
-    } ${
-      isDarkMode ? 'text-white' : 'text-slate-900'
+    <div className={`rounded-3xl border p-4 sm:p-8 backdrop-blur-md shadow-xl transition-all ${
+      isDarkMode ? 'bg-slate-900/70 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
     }`}>
       {/* Header Banner */}
-      <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 ${
-        isInModal ? 'pb-3 sm:pb-4 border-b border-slate-100 dark:border-slate-800/80' : 'pb-6 border-b border-slate-200 dark:border-slate-800'
-      }`}>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 flex-wrap">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-sans inline-flex items-center gap-1">
-              <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> PermenPAN-RB No. 14 / 2017
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800">
+        <div>
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <span className="px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-sans inline-flex items-center gap-1.5">
+              <Award className="w-3.5 h-3.5" /> PermenPAN-RB No. 14 / 2017
             </span>
-            <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
               {userType === 'investor' 
                 ? (isZh ? '投资者与企业满意度调查' : isEn ? 'Investor & Business Survey' : 'SKM Pelaku Usaha & Investor') 
                 : (isZh ? '鲁乌县居民满意度调查' : isEn ? 'Luwu Citizen Survey' : 'SKM Warga Kabupaten Luwu')}
             </span>
           </div>
-          <h2 className="text-lg sm:text-2xl font-bold font-sans tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-bold font-sans tracking-tight">
             {isZh ? '公众满意度调查 (SKM)' : isEn ? 'Public Satisfaction Survey (SKM)' : 'Survei Kepuasan Masyarakat (SKM)'}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 sm:mt-1 max-w-2xl leading-relaxed font-normal">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl leading-relaxed font-normal">
             {isZh 
               ? '协助我们在 Simpurusiang 公共服务中心打造卓越且问责的政务服务。您的评价将自动同步至 MPP 门户网站的“满意度调查”专区。' 
               : isEn 
@@ -539,25 +509,25 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
         </div>
 
         {/* Live Score Widget */}
-        <div className="px-3.5 py-2.5 sm:px-5 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-500/15 border border-emerald-500/30 flex items-center justify-between sm:justify-start gap-3 sm:gap-4 shrink-0">
+        <div className="px-5 py-4 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-500/15 border border-emerald-500/30 flex items-center gap-4 shrink-0">
           <div>
-            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-sans block">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-sans block">
               {isZh ? '您的评分指数' : isEn ? 'Your Score Index' : 'Indeks Penilaian Anda'}
             </span>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 font-sans">
+              <span className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 font-sans">
                 {liveAveragePercent}%
               </span>
-              <span className="text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 font-sans">
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 font-sans">
                 {predikat.split(' ')[0]}
               </span>
             </div>
-            <span className="text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 font-medium block">
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block">
               {isZh ? '已评估 9 项要素' : isEn ? '9 Elements Evaluated' : '9 Unsur Terpenuhi'}
             </span>
           </div>
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/30 shrink-0">
-            <ThumbsUp className="w-5 h-5 sm:w-6 sm:h-6" />
+          <div className="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30">
+            <ThumbsUp className="w-6 h-6" />
           </div>
         </div>
       </div>
@@ -742,14 +712,12 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
 
           {/* SECTION 3: Jenis Layanan yang Diurus (DROPDOWN DINAMIS SESUAI INSTANSI) */}
           <div className="space-y-2 sm:col-span-2">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 font-sans">
-                {isZh ? '申办的服务事项 (可选)' : isEn ? 'Service Type Managed (Optional)' : 'Jenis Layanan yang Diurus (Opsional)'}
-              </label>
-              <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 font-sans flex items-center justify-between">
+              <span>{isZh ? '申办的服务事项 (可选)' : isEn ? 'Service Type Managed (Optional)' : 'Jenis Layanan yang Diurus (Opsional)'}</span>
+              <span className="text-[11px] font-normal text-emerald-600 dark:text-emerald-400">
                 {isZh ? '• 选项已根据所选部门自动更新' : isEn ? '• Options auto-filtered by selected agency' : '• Pilihan disesuaikan dengan instansi terpilih'}
               </span>
-            </div>
+            </label>
             
             <select
               value={layanan}
@@ -776,50 +744,51 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
         </div>
 
         {/* SECTION 4: 9 Indikator SKM PermenPAN-RB */}
-        <div className="space-y-4 sm:space-y-6 pt-5 border-t border-slate-200 dark:border-slate-800">
+        <div className="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-800">
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <h3 className="text-sm sm:text-base font-bold font-sans flex items-center gap-2 text-slate-900 dark:text-white">
-              <Award className="w-5 h-5 text-emerald-500" />
+            <h3 className="text-sm sm:text-base font-bold font-sans flex items-center gap-2">
+              <Award className="w-4 h-4 text-emerald-500" />
               {isZh ? '9项公共服务标准评估' : isEn ? 'Evaluation of 9 Public Service Standards' : 'Penilaian 9 Unsur Standar Pelayanan Publik'}
             </h3>
-            <span className="text-[11px] font-mono font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-700">
+            <span className="text-[11px] font-mono text-slate-500 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">
               {isZh ? '1 - 4 级评分' : isEn ? 'Scale 1 - 4' : 'Skala 1 - 4'}
             </span>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:gap-5">
+          <div className="grid grid-cols-1 gap-4">
             {skmQuestions.map((q) => {
               const currentVal = ratings[q.id] || 4;
               const Icon = q.icon;
               return (
                 <div
                   key={q.id}
-                  className={`p-4 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl border transition-all shadow-xs ${
-                    isDarkMode ? 'bg-slate-800/40 border-slate-800/90 hover:border-slate-700' : 'bg-slate-50/80 border-slate-200/90 hover:border-slate-300'
+                  className={`p-4 rounded-2xl border transition-all ${
+                    isDarkMode ? 'bg-slate-800/40 border-slate-800' : 'bg-slate-50/70 border-slate-200'
                   }`}
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-4">
-                    <div className="flex items-start gap-3">
-                      <div className={`p-2.5 rounded-2xl bg-emerald-500/10 ${q.color} shrink-0 mt-0.5 shadow-xs`}>
-                        <Icon className="w-5 h-5" />
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-3">
+                    <div className="flex items-start gap-2.5">
+                      <div className={`p-2 rounded-xl bg-emerald-500/10 ${q.color} shrink-0 mt-0.5`}>
+                        <Icon className="w-4 h-4" />
                       </div>
-                      <div className="space-y-1">
-                        <h4 className="text-sm sm:text-base font-bold font-sans text-slate-900 dark:text-white">
+                      <div>
+                        <h4 className="text-xs sm:text-sm font-bold font-sans text-slate-900 dark:text-white">
                           {q.title}
                         </h4>
-                        <p className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 leading-relaxed">
+                        {/* PERTANYAAN AWALAN DENGAN WAKTU KONTRAS TINGGI SANGAT JELAS DIBACA */}
+                        <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 mt-1 leading-snug">
                           {q.question}
                         </p>
                       </div>
                     </div>
 
-                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono self-start sm:self-auto px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 shrink-0">
+                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono self-end sm:self-start px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 shrink-0">
                       {isZh ? '得分' : isEn ? 'Score' : 'Nilai'}: {currentVal} / 4
                     </span>
                   </div>
 
-                  {/* 4 Pilihan Tombol Respon Simetris & Berimbang */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                  {/* 4 Pilihan Tombol (HAPUS UCAPAN '1 Bintang, 2 Bintang...' DIBAGIAN ATASNYA) */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                     {ratingOptions.map((opt) => {
                       const isSelected = currentVal === opt.value;
                       return (
@@ -827,33 +796,25 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
                           key={opt.value}
                           type="button"
                           onClick={() => handleRatingChange(q.id, opt.value)}
-                          className={`min-h-[52px] sm:min-h-[64px] py-2 px-2.5 sm:py-2.5 sm:px-3.5 rounded-xl sm:rounded-2xl border text-left transition-all flex flex-col justify-between cursor-pointer relative overflow-hidden ${
+                          className={`min-h-[46px] py-2.5 px-3 rounded-xl border text-left transition-all flex flex-col justify-center cursor-pointer ${
                             isSelected
-                              ? 'bg-emerald-500 text-white border-emerald-500 shadow-md shadow-emerald-500/25 font-bold ring-2 ring-emerald-400/40'
+                              ? 'bg-emerald-500 text-white border-emerald-500 shadow-md shadow-emerald-500/20 font-bold ring-2 ring-emerald-400/40'
                               : isDarkMode
-                              ? 'bg-slate-800/90 border-slate-700/80 text-slate-300 hover:border-slate-600 hover:bg-slate-800'
-                              : 'bg-white border-slate-200/90 text-slate-700 hover:border-emerald-300 hover:bg-slate-50/60 shadow-2xs'
+                              ? 'bg-slate-800 border-slate-700/80 text-slate-300 hover:border-slate-600'
+                              : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
                           }`}
                         >
-                          <div className="flex items-center justify-between w-full mb-1">
-                            <span className={`text-[9px] sm:text-[11px] font-mono font-bold px-1.5 sm:px-2 py-0.5 rounded-md ${
-                              isSelected 
-                                ? 'bg-white/20 text-white' 
-                                : 'bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300'
-                            }`}>
-                              Skala {opt.value}
+                          <div className="flex items-center justify-between w-full">
+                            <span className={`text-xs sm:text-sm font-bold leading-snug ${isSelected ? 'text-white' : 'text-slate-800 dark:text-slate-100'}`}>
+                              {opt.label}
                             </span>
                             {isSelected ? (
-                              <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white shrink-0" />
-                            ) : null}
-                          </div>
-                          <div className="w-full min-w-0">
-                            <div className={`text-[11px] sm:text-xs md:text-sm font-bold leading-tight line-clamp-1 ${isSelected ? 'text-white' : 'text-slate-900 dark:text-white'}`}>
-                              {opt.primary}
-                            </div>
-                            <div className={`text-[9px] sm:text-[10px] md:text-[11px] font-medium leading-tight mt-0.5 line-clamp-1 ${isSelected ? 'text-emerald-100' : 'text-slate-500 dark:text-slate-400'}`}>
-                              {opt.secondary}
-                            </div>
+                              <CheckCircle2 className="w-4 h-4 text-white shrink-0 ml-1" />
+                            ) : (
+                              <span className="text-[10px] font-mono font-extrabold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 shrink-0 ml-1">
+                                {opt.value}
+                              </span>
+                            )}
                           </div>
                         </button>
                       );

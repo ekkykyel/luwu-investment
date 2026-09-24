@@ -5680,40 +5680,20 @@ app.get("/api/testimonials", async (req, res) => {
       }
     }
     
-    // Deduplicate DB records by author + message
-    const seen = new Set<string>();
-    const deduplicatedDb: any[] = [];
-    for (const item of dbTestimonials) {
-      const key = `${(item.company_name || item.investor_name || '').trim().toLowerCase()}::${(item.message || '').trim().toLowerCase()}`;
-      if (!seen.has(key)) {
-        seen.add(key);
-        deduplicatedDb.push(item);
-      }
-    }
-
-    // Merge verified local items that are not in DB and not duplicate
-    const merged = [...deduplicatedDb];
+    // Merge verified local items that are not in DB
+    const dbIds = new Set(dbTestimonials.map((x: any) => String(x.id)));
+    const merged = [...dbTestimonials];
     for (const local of localTestimonials) {
-      const key = `${(local.company_name || local.investor_name || '').trim().toLowerCase()}::${(local.message || '').trim().toLowerCase()}`;
-      if (local.is_verified && !seen.has(key)) {
-        seen.add(key);
+      if (local.is_verified && !dbIds.has(String(local.id))) {
         merged.push(local);
       }
     }
     merged.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
     return res.json(merged);
   } catch (error: any) {
-    const seen = new Set<string>();
-    const safeLocal = localTestimonials.filter(t => {
-      if (!t.is_verified) return false;
-      const key = `${(t.company_name || '').trim().toLowerCase()}::${(t.message || '').trim().toLowerCase()}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-    return res.json(safeLocal);
+    return res.json(localTestimonials.filter(t => t.is_verified));
   }
 });
 
@@ -5738,6 +5718,10 @@ app.post("/api/testimonials", async (req, res) => {
       created_at: new Date().toISOString()
     };
 
+    // Store in local memory store first to guarantee zero loss
+    localTestimonials.unshift(newTestimonial);
+    if (localTestimonials.length > 50) localTestimonials.pop();
+
     let dbData: any = null;
     if (!SUPABASE_URL.includes("placeholder.supabase.co")) {
       try {
@@ -5756,23 +5740,12 @@ app.post("/api/testimonials", async (req, res) => {
 
         if (error) {
           console.warn("Notice: Supabase insert into investor_testimonials restricted by RLS policy, cached locally:", error.message || error);
-          localTestimonials.unshift(newTestimonial);
-          if (localTestimonials.length > 50) localTestimonials.pop();
         } else if (data && data.length > 0) {
           dbData = data;
-          // Clear any duplicate from localTestimonials since it is now safely in Supabase
-          localTestimonials = localTestimonials.filter(t => 
-            t.message?.trim().toLowerCase() !== newTestimonial.message.trim().toLowerCase()
-          );
         }
       } catch (err: any) {
         console.warn("Notice: DB insert testimonial error, cached locally:", err?.message || err);
-        localTestimonials.unshift(newTestimonial);
-        if (localTestimonials.length > 50) localTestimonials.pop();
       }
-    } else {
-      localTestimonials.unshift(newTestimonial);
-      if (localTestimonials.length > 50) localTestimonials.pop();
     }
 
     return res.json({ success: true, data: dbData || [newTestimonial] });

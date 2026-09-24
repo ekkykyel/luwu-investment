@@ -17,16 +17,9 @@ function getAudioContext(): AudioContext {
  * Play authentic 4-tone airport announcement chime (Ding-Dong / Changi & Garuda airport style)
  */
 export function playAirportChime(): Promise<void> {
-  return new Promise(async (resolve) => {
+  return new Promise((resolve) => {
     try {
       const ctx = getAudioContext();
-      if (ctx.state === 'suspended') {
-        try {
-          await ctx.resume();
-        } catch (e) {
-          console.warn('AudioContext resume error:', e);
-        }
-      }
       const now = ctx.currentTime;
 
       // 4 Chime Frequencies (F4, A4, C5, G4) - Classic airport boarding tone

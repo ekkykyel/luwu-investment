@@ -550,16 +550,21 @@ export const PetugasGeraiLoginModal: React.FC<PetugasGeraiLoginModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
       <div 
-        className={`w-full h-full sm:h-auto sm:max-w-md rounded-none sm:rounded-3xl shadow-2xl border-0 sm:border flex flex-col max-h-full sm:max-h-[92vh] overflow-hidden transition-all ${
+        className={`w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl border flex flex-col max-h-[92vh] overflow-hidden transition-all ${
           isDarkMode 
             ? 'bg-slate-900 text-white border-slate-800' 
             : 'bg-white text-slate-900 border-slate-200'
         }`}
       >
+        {/* Android Top Handle bar (Mobile visual indicator) */}
+        <div className="sm:hidden w-full flex justify-center pt-3 pb-1">
+          <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" />
+        </div>
+
         {/* Modal Header */}
-        <div className="p-5 sm:p-6 pb-3 pt-[calc(env(safe-area-inset-top,0px)+12px)] sm:pt-6 flex items-start justify-between border-b border-inherit">
+        <div className="p-5 sm:p-6 pb-3 flex items-start justify-between border-b border-inherit">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 flex items-center justify-center shrink-0 shadow-inner">
               <Building2 className="w-6 h-6" />

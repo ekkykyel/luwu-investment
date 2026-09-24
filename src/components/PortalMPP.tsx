@@ -38,6 +38,7 @@ import { MppServiceDetailModal, ServiceDetailItem } from './mpp/MppServiceDetail
 import { MppServicesWorkflowCarousel } from './mpp/MppServicesWorkflowCarousel';
 import { MppNewsCatalogModal } from './mpp/MppNewsCatalogModal';
 import { MppMagattiGallerySlideshow } from './mpp/MppMagattiGallerySlideshow';
+import { AntiCorruptionBanner } from './mpp/AntiCorruptionBanner';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
@@ -60,7 +61,7 @@ import { PetugasGeraiLoginModal } from './mpp/PetugasGeraiLoginModal';
 import { FoOfficerLoginModal } from './mpp/FoOfficerLoginModal';
 import { MppAirportKioskModal } from './MppAirportKioskModal';
 import { MppCommandPalette } from './mpp/MppCommandPalette';
-import { PkkprTechnicalRecommendationModal, PkkprRecommendationData } from './mpp/PkkprTechnicalRecommendationModal';
+import { MppQuickJumpDock } from './mpp/MppQuickJumpDock';
 import { LUWU_LOGO_BASE64 } from '../lib/logoBase64';
 import { supabase } from '../lib/supabaseClient';
 import { 
@@ -502,21 +503,7 @@ export default function PortalMPP() {
   }, []);
 
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
-  const [aiInitialQuery, setAiInitialQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleOpenAiModal = (e: any) => {
-      setIsAiModalOpen(true);
-      if (e?.detail?.query) {
-        setAiInitialQuery(e.detail.query);
-      } else {
-        setAiInitialQuery('');
-      }
-    };
-    window.addEventListener('open-mpp-ai-modal', handleOpenAiModal);
-    return () => window.removeEventListener('open-mpp-ai-modal', handleOpenAiModal);
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -602,7 +589,6 @@ export default function PortalMPP() {
     session?: string;
     name?: string;
     nik?: string;
-    phone?: string;
   } | null>(null);
 
   // --- State Fase 2 (Fitur 4 & Fitur 5) ---
@@ -631,8 +617,6 @@ export default function PortalMPP() {
   });
   const [isSurveySubmitted, setIsSurveySubmitted] = useState(false);
   const [activeAlurModal, setActiveAlurModal] = useState<'pbg' | 'mpp' | 'pkkpr' | null>(null);
-  const [isPkkprModalOpen, setIsPkkprModalOpen] = useState(false);
-  const [pkkprInitialData, setPkkprInitialData] = useState<Partial<PkkprRecommendationData> | undefined>(undefined);
 
   // --- State Fase 4 (Fitur 8: Interactive Virtual Helpdesk & Fitur 9: Interactive FAQ Accordion) ---
   const [isHelpdeskModalOpen, setIsHelpdeskModalOpen] = useState(false);
@@ -842,6 +826,7 @@ export default function PortalMPP() {
         const { data: testimonials } = await supabase
           .from('investor_testimonials')
           .select('*')
+          .eq('is_active', true)
           .order('created_at', { ascending: false });
 
         const mappedTestimonials = (testimonials || []).map((t: any) => ({
@@ -854,13 +839,7 @@ export default function PortalMPP() {
           tanggal: t.created_at ? new Date(t.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Terbaru'
         }));
 
-        const allReviews = [...feedbackReviews, ...mappedTestimonials];
-        const uniqueReviews = allReviews.filter((item, index, self) =>
-          index === self.findIndex((r) => 
-            (r.teks || '').trim().toLowerCase() === (item.teks || '').trim().toLowerCase()
-          )
-        );
-        setCommunityReviews(uniqueReviews);
+        setCommunityReviews([...feedbackReviews, ...mappedTestimonials]);
         setIsReviewsLoading(false);
       }
     } catch (err) {
@@ -1471,20 +1450,6 @@ export default function PortalMPP() {
     }
   }, []);
 
-  // Listener untuk membuka modal Rekomendasi Teknis PKKPR Dinas PUPTR
-  useEffect(() => {
-    const handleOpenPkkpr = (e: Event) => {
-      const customEv = e as CustomEvent<Partial<PkkprRecommendationData> | undefined>;
-      if (customEv.detail) {
-        setPkkprInitialData(customEv.detail);
-      }
-      setIsPkkprModalOpen(true);
-    };
-
-    window.addEventListener('open-pkkpr-recommendation', handleOpenPkkpr);
-    return () => window.removeEventListener('open-pkkpr-recommendation', handleOpenPkkpr);
-  }, []);
-
   // Realtime Listener untuk status antrean (jika tiket aktif)
   useEffect(() => {
     if (!activeTicket || !activeTicket.number) return;
@@ -1773,19 +1738,19 @@ export default function PortalMPP() {
         <InclusivityAccessibilityBar isDark={isDark} />
 
         {/* Header - Android First & Ultra Responsive */}
-        <header className="bg-white/90 dark:bg-[#0B1120]/90 backdrop-blur-md border-b border-slate-200/70 dark:border-slate-800/70 shadow-xs sticky top-0 z-50 transition-all duration-300">
-          <div className={`flex justify-between items-center w-full px-2.5 sm:px-4 md:px-8 lg:px-16 max-w-[1440px] mx-auto transition-all duration-300 ${isScrolled ? "py-1.5 sm:py-2" : "py-2 sm:py-3 md:py-4"}`}>
+        <header className="bg-white/80 dark:bg-[#0B1120]/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm sticky top-0 z-30 transition-all duration-300">
+          <div className={`flex justify-between items-center w-full px-2 md:px-8 lg:px-16 max-w-[1440px] mx-auto transition-all duration-300 ${isScrolled ? "py-2" : "py-2.5 sm:py-3 md:py-4"}`}>
             
             {/* Branding Logo & Title - Lambang Kabupaten Luwu & MPP Simpurusiang */}
             <div 
-              className="flex items-center gap-2 sm:gap-3.5 shrink-0 group cursor-pointer select-none"
+              className="flex items-center gap-2.5 sm:gap-3.5 shrink-0 group cursor-pointer"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
-              <div className="p-1 sm:p-2 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-600/10 to-emerald-600/10 shrink-0 border border-blue-500/20 dark:border-emerald-500/30 group-hover:shadow-[0_0_18px_rgba(0,255,153,0.3)] group-hover:scale-105 transition-all duration-300">
+              <div className="p-1 sm:p-2 rounded-[12px] bg-gradient-to-br from-blue-600/10 to-emerald-600/10 shrink-0 border border-blue-500/20 dark:border-emerald-500/30 group-hover:shadow-[0_0_18px_rgba(0,255,153,0.3)] group-hover:scale-105 transition-all duration-300">
                 <img 
                   src={LUWU_LOGO_BASE64}
                   alt="Lambang Resmi Kabupaten Luwu" 
-                  className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 object-contain drop-shadow-md" 
+                  className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 object-contain drop-shadow-md" 
                   referrerPolicy="no-referrer"
                   onError={(e) => {
                     e.currentTarget.onerror = null;
@@ -1794,16 +1759,16 @@ export default function PortalMPP() {
                   }}
                 />
               </div>
-              <div className="flex flex-col shrink min-w-0">
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <span className="text-sm xs:text-base sm:text-lg md:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight font-sans truncate">
+              <div className="flex flex-col shrink-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-base sm:text-lg md:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight font-sans whitespace-nowrap">
                     MPP Simpurusiang
                   </span>
-                  <span className="hidden xl:inline-flex items-center gap-1 text-[9px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/15 dark:bg-emerald-500/20 border border-emerald-500/30 px-2.5 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap shadow-xs">
+                  <span className="hidden xl:inline-flex items-center gap-1 text-[9px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/25 px-2.5 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap shadow-xs">
                     {t("mppPortal.nav.topBadge", "Layanan Unggul")}
                   </span>
                 </div>
-                <span className="hidden sm:block text-[10px] sm:text-xs text-emerald-800 dark:text-emerald-400 font-semibold tracking-wide whitespace-nowrap font-sans">
+                <span className="hidden sm:block text-[10px] sm:text-xs text-emerald-700 dark:text-emerald-400 font-medium tracking-wide whitespace-nowrap font-sans">
                   {t("mppPortal.nav.govName")}
                 </span>
               </div>
@@ -1811,70 +1776,16 @@ export default function PortalMPP() {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-5 xl:gap-7">
-              <a 
-                className="text-emerald-700 dark:text-emerald-400 border-b-2 border-emerald-600 dark:border-emerald-400 pb-0.5 font-sans text-sm font-semibold hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer" 
-                href="#hero"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                {t("mppPortal.nav.beranda")}
-              </a>
-              <a 
-                className="text-slate-700 dark:text-slate-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer" 
-                href="#layanan"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('layanan')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                {t("mppPortal.nav.layanan")}
-              </a>
-              <a 
-                className="text-slate-700 dark:text-slate-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer" 
-                href="#instansi"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('instansi')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                {t("mppPortal.nav.instansi")}
-              </a>
-              <a 
-                className="text-slate-700 dark:text-slate-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer" 
-                href="#fasilitas"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('fasilitas')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                {t("mppPortal.nav.fasilitas")}
-              </a>
-              <a 
-                className="text-slate-700 dark:text-slate-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer" 
-                href="#umkm"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('umkm')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                {t("mppPortal.nav.umkm", "Katalog UMKM")}
-              </a>
-              <a 
-                className="text-slate-700 dark:text-slate-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer" 
-                href="#statistik"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('statistik')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                {t("mppPortal.nav.statistik")}
-              </a>
+              <a className="text-emerald-700 dark:text-emerald-400 border-b-2 border-emerald-600 dark:border-emerald-400 pb-0.5 font-sans text-sm font-semibold hover:text-slate-900 dark:hover:text-white transition-colors" href="#hero">{t("mppPortal.nav.beranda")}</a>
+              <a className="text-slate-600 dark:text-slate-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors" href="#layanan">{t("mppPortal.nav.layanan")}</a>
+              <a className="text-slate-600 dark:text-slate-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors" href="#instansi">{t("mppPortal.nav.instansi")}</a>
+              <a className="text-slate-600 dark:text-slate-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors" href="#fasilitas">{t("mppPortal.nav.fasilitas")}</a>
+              <a className="text-slate-600 dark:text-slate-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors" href="#umkm">{t("mppPortal.nav.umkm", "Katalog UMKM")}</a>
+              <a className="text-slate-600 dark:text-slate-300 font-sans text-sm font-semibold hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors" href="#statistik">{t("mppPortal.nav.statistik")}</a>
             </nav>
 
-            {/* Header Right Actions - Compact & Non-Clipping on Mobile */}
-            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            {/* Header Right Actions */}
+            <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
               {/* Command Center FO Access */}
               <button
                 type="button"
@@ -1902,39 +1813,42 @@ export default function PortalMPP() {
                   }
                   setIsOperatorLoginOpen(true);
                 }}
-                className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-all cursor-pointer"
+                className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-all cursor-pointer"
                 title="Akses Petugas Gerai & Operator Tenant"
               >
                 <Building2 className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                 <span>Petugas Gerai</span>
               </button>
 
-              <div className="shrink-0 relative">
-                <LanguageToggle />
-              </div>
-              <div className="shrink-0 relative">
-                <ThemeToggle />
-              </div>
+              <LanguageToggle />
+              <ThemeToggle />
 
               {/* Ramah Inklusif & Disabilitas Utility Button */}
               <button
                 type="button"
                 onClick={() => window.dispatchEvent(new CustomEvent('toggle-mpp-accessibility'))}
-                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-white/10 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-all shadow-sm active:scale-95 cursor-pointer shrink-0 flex items-center justify-center"
+                className="flex w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-900/5 dark:bg-white/5 border border-slate-900/10 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 items-center justify-center transition-all active:scale-95 cursor-pointer"
                 title="Layanan Ramah Inklusif & Disabilitas (Pusat Bantuan & Alat Bantu)"
                 aria-label="Layanan Ramah Inklusif & Disabilitas"
               >
-                <Accessibility size={18} className="text-emerald-600 dark:text-emerald-400" />
+                <Accessibility className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               </button>
 
               <button 
                 type="button" 
                 onClick={() => setIsAiModalOpen(true)}
-                className="hidden sm:flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-3 py-1.5 rounded-xl text-xs font-semibold font-sans transition-all active:scale-95 shadow-xs cursor-pointer shrink-0"
+                className="hidden sm:flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-3 py-1.5 rounded-xl text-xs font-semibold font-sans transition-all active:scale-95 shadow-xs cursor-pointer"
                 title={t("mppPortal.tooltips.openAi")}
               >
                 <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 <span>{t("mppPortal.nav.asistenAi")}</span>
+              </button>
+              <button 
+                type="button" 
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-900/5 dark:bg-white/5 border border-slate-900/10 dark:border-white/10 text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:text-white flex items-center justify-center transition-colors active:scale-95"
+                title={t("mppPortal.tooltips.notifications")}
+              >
+                <Bell className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -1942,7 +1856,7 @@ export default function PortalMPP() {
 
         {/* --- FASE 1: STICKY ACTIVE TICKET STATUS BAR (FITUR 3) --- */}
         {activeTicket && !isTicketBarDismissed && (
-          <div className={`sticky top-[58px] sm:top-[68px] z-30 w-full backdrop-blur-xl border-b text-white shadow-lg transition-all animate-fadeIn ${
+          <div className={`sticky top-[58px] sm:top-[68px] z-20 w-full backdrop-blur-xl border-b text-white shadow-lg transition-all animate-fadeIn ${
             activeTicket.status === 'dipanggil'
               ? 'bg-gradient-to-r from-amber-950/95 via-slate-900/95 to-amber-950/95 border-amber-400/80 shadow-amber-500/20'
               : 'bg-emerald-950/95 dark:bg-slate-900/95 border-emerald-500/30'
@@ -2016,7 +1930,7 @@ export default function PortalMPP() {
 
         {/* --- FASE 1: STICKY QUICK-NAV (FITUR 2) --- */}
         {showQuickNav && (
-          <div className="sticky top-[58px] sm:top-[68px] z-20 w-full bg-white/90 dark:bg-[#001424]/90 backdrop-blur-2xl border-b border-emerald-500/20 shadow-md transition-all">
+          <div className="sticky top-[58px] sm:top-[68px] z-30 w-full bg-white/90 dark:bg-[#001424]/90 backdrop-blur-2xl border-b border-emerald-500/20 shadow-md transition-all">
             <div className="relative max-w-[1440px] mx-auto">
               {/* Fade Gradient Masking Right */}
               <div className="pointer-events-none absolute top-0 right-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-white dark:from-[#001424] to-transparent z-10" />
@@ -2102,25 +2016,8 @@ export default function PortalMPP() {
         <main className="w-full max-w-[1440px] mx-auto px-3.5 sm:px-4 md:px-8 lg:px-16 pt-2 sm:pt-3 pb-28 sm:pb-32 md:py-12 flex flex-col gap-0 overflow-x-clip">
           
           {/* Hero Section */}
-          <section id="hero" className="flex flex-col items-center text-center relative pt-2 sm:pt-6 md:pt-10 pb-8 md:pb-14 scroll-mt-24">
+          <section id="hero" className="flex flex-col items-center text-center relative pt-1 sm:pt-4 md:pt-8 pb-5 md:pb-12 scroll-mt-24">
             <div id="beranda" className="absolute -top-24 left-0 w-0 h-0 pointer-events-none" />
-
-            {/* Ambient Radial Mesh Glow (Atmospheric Depth for Executive GovTech) */}
-            <div className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-[95vw] max-w-[1100px] h-[480px] bg-gradient-to-b from-emerald-500/15 via-teal-500/10 to-transparent blur-3xl -z-10 rounded-full" />
-            <div className="pointer-events-none absolute top-10 left-1/2 -translate-x-1/2 w-[70vw] max-w-[800px] h-[300px] bg-gradient-to-r from-blue-500/10 via-emerald-500/10 to-teal-500/10 blur-2xl -z-10 rounded-full" />
-
-            {/* Architectural Blueprint Dot Pattern (Transparent Governance) */}
-            <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:28px_28px] opacity-[0.08] dark:opacity-[0.12] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_35%,#000_70%,transparent_100%)]" />
-
-            {/* Subtle Watermark Lambang Luwu (Authentic Civic Identity) */}
-            <div className="pointer-events-none absolute top-4 left-1/2 -translate-x-1/2 opacity-[0.03] dark:opacity-[0.04] -z-10 select-none">
-              <img 
-                src={LUWU_LOGO_BASE64} 
-                alt="" 
-                className="w-72 h-72 sm:w-96 sm:h-96 object-contain filter grayscale" 
-              />
-            </div>
-
             {/* Staggered Reveal Container */}
             <motion.div 
               className="flex flex-col items-center w-full max-w-4xl"
@@ -2131,68 +2028,54 @@ export default function PortalMPP() {
                 visible: {
                   opacity: 1,
                   transition: {
-                    staggerChildren: 0.18,
+                    staggerChildren: 0.2,
                     delayChildren: 0.05,
                   },
                 },
               }}
             >
-              {/* Accreditation Kicker - Single Responsive Executive GovTech Pill (No Awkward Break on Android) */}
+              {/* Accreditation Badge - Standar KemenPAN-RB & SPBE */}
               <motion.div
                 variants={{
-                  hidden: { opacity: 0, y: 15 },
+                  hidden: { opacity: 0, y: 20 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
                 }}
-                className="mb-3 sm:mb-4.5 inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/25 dark:border-emerald-500/35 shadow-xs"
+                className="animate-float"
               >
-                <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-emerald-800 dark:text-emerald-300 font-mono shrink-0">
-                  PEMKAB LUWU
-                </span>
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                <span className="text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300 font-sans whitespace-nowrap">
-                  {t("mppPortal.hero.award", "Inovasi Pelayanan Publik Terintegrasi")}
-                </span>
+                <div className="inline-flex items-center gap-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md text-slate-700 dark:text-slate-300 font-sans text-[10px] sm:text-xs font-semibold px-3.5 py-1.5 rounded-full mb-3 sm:mb-4 border border-slate-200 dark:border-slate-800 shadow-xs">
+                  <SonarRadarPulse color="emerald" size={8} />
+                  <span className="font-bold text-emerald-800 dark:text-emerald-400">PEMKAB LUWU</span>
+                  <span className="text-slate-300 dark:text-slate-700">•</span>
+                  <span className="text-slate-600 dark:text-slate-300 truncate max-w-[200px] sm:max-w-none">{t("mppPortal.hero.award", "Inovasi Pelayanan Publik Terintegrasi")}</span>
+                </div>
               </motion.div>
               
-              {/* Judul: Transformasi Digital Menuju Luwu Unggul - Tipografi Hirarki Elegan & Ambient Backlight */}
+              {/* Judul: Transformasi Digital - Tipografi Institusional Kuat */}
               <motion.h1 
                 variants={{
                   hidden: { opacity: 0, y: 25 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.35 } },
                 }}
-                className="text-center text-slate-900 dark:text-white mb-2 sm:mb-4 max-w-5xl mx-auto tracking-tight font-sans relative"
+                className="text-[28px] xs:text-[32px] sm:text-4xl md:text-5xl lg:text-6xl font-black text-center text-slate-900 dark:text-white mb-2.5 sm:mb-3.5 max-w-4xl leading-[1.15] sm:leading-tight tracking-tight font-sans text-balance"
               >
-                {/* Subtle Ambient Radial Backlight Glow */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-emerald-500/10 dark:bg-emerald-500/15 blur-3xl rounded-full pointer-events-none -z-10" />
-
-                {/* Line 1: "Transformasi Digital" - Ukuran Font Lebih Besar & Dominan */}
-                <span className="block text-[34px] xs:text-[40px] sm:text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white leading-[1.05] tracking-tight mb-1 font-['Plus_Jakarta_Sans',sans-serif]">
-                  {t("mppPortal.hero.titleMain", "Transformasi Digital")}
-                </span>
-
-                {/* Line 2: "Menuju Luwu Unggul" - Ukuran Sedikit Lebih Kecil Dengan Gradien & Pendaran Glow */}
-                <span className="block text-[24px] xs:text-[30px] sm:text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.12] tracking-tight font-['Plus_Jakarta_Sans',sans-serif]">
-                  <span className="text-slate-800 dark:text-slate-200">
-                    {t("mppPortal.hero.titlePrefix", "Menuju")}{" "}
-                  </span>
-                  <span className="bg-gradient-to-r from-teal-500 via-emerald-500 to-cyan-500 dark:from-teal-400 dark:via-emerald-300 dark:to-cyan-300 bg-clip-text text-transparent drop-shadow-[0_4px_25px_rgba(16,185,129,0.3)]">
-                    {t("mppPortal.hero.titleHighlight", "Luwu Unggul")}
-                  </span>
+                {t("mppPortal.hero.titlePrefix", "Transformasi Digital Menuju")}{" "}
+                <span className="bg-gradient-to-r from-teal-500 to-blue-600 bg-clip-text text-transparent font-black">
+                  {t("mppPortal.hero.titleHighlight", "Luwu Unggul")}
                 </span>
               </motion.h1>
               
-              {/* Sub-judul - Jelas, Padat & Terbaca dengan Kontras Tinggi */}
+              {/* Sub-judul - Jelas, Padat & Terbaca */}
               <motion.p 
                 variants={{
                   hidden: { opacity: 0, y: 20 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.35 } },
                 }}
-                className="text-[13px] xs:text-sm sm:text-base text-slate-700 dark:text-slate-200 max-w-2xl mx-auto leading-relaxed text-center font-sans px-2 mb-4.5 sm:mb-7 text-balance font-medium"
+                className="text-[13px] xs:text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed text-center font-sans px-2 mb-5 sm:mb-7 text-balance font-normal"
               >
                 {t("mppPortal.hero.subtitle", "Pusat pelayanan publik terintegrasi Kabupaten Luwu. Menghubungkan 19 instansi pemerintah, BUMN, dan swasta dalam satu pintu yang cepat, transparan, dan nyaman.")}
               </motion.p>
 
-              {/* Smart Search Bar "Tabe'" - Executive GovTech Glass Design */}
+              {/* Smart Search Bar "Tabe'" - Diposisikan Strategis Di Atas Fold (Android 48px+ Touch Target & Voice Search) */}
               <motion.div 
                 variants={{
                   hidden: { opacity: 0, y: 20 },
@@ -2202,16 +2085,15 @@ export default function PortalMPP() {
               >
                 <div 
                   onClick={() => setIsCommandPaletteOpen(true)}
-                  className="glass-crystal glass-card-interactive relative min-h-[48px] h-12 sm:h-14 flex items-center bg-white/80 dark:bg-slate-900/75 backdrop-blur-2xl border border-white/60 dark:border-white/10 shadow-[0_10px_35px_rgba(0,0,0,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.5)] rounded-2xl px-3 sm:px-4 hover:border-emerald-500/80 dark:hover:border-emerald-400/80 hover:ring-2 hover:ring-emerald-500/20 transition-all cursor-pointer group"
+                  className="relative min-h-[48px] h-12 sm:h-14 flex items-center bg-white dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm rounded-2xl p-1 sm:p-2 hover:border-emerald-500/60 dark:hover:border-emerald-500/50 transition-all cursor-pointer group"
                 >
-                  <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors shrink-0">
+                  <div className="pl-2 sm:pl-3 pr-1 text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5 shrink-0">
                     <Search className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400" />
-                    <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 font-sans tracking-wide">
+                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/80 px-2 sm:px-2.5 py-0.5 rounded-lg border border-emerald-200 dark:border-emerald-800/60 font-sans">
                       Tabe'
                     </span>
-                    <span className="text-slate-300 dark:text-slate-700 font-light">|</span>
                   </div>
-                  <div className="w-full h-full flex items-center text-slate-600 dark:text-slate-300 text-xs sm:text-sm md:text-base px-2 truncate font-sans select-none font-medium">
+                  <div className="w-full h-full flex items-center text-slate-400 dark:text-slate-400 text-xs sm:text-sm md:text-base px-2 py-1 truncate font-sans select-none">
                     <span>{t("mppPortal.search.placeholderShort", "Cari layanan publik...")}</span>
                   </div>
                   
@@ -2224,13 +2106,13 @@ export default function PortalMPP() {
                     }}
                     title="Pencarian Suara & Asisten Suara AI"
                     aria-label="Pencarian Suara & Asisten Suara AI"
-                    className="min-h-[40px] min-w-[36px] p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors mr-1 cursor-pointer shrink-0 flex items-center justify-center"
+                    className="min-h-[44px] min-w-[40px] p-2 sm:p-2.5 rounded-xl text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors mr-0.5 sm:mr-1 cursor-pointer shrink-0 flex items-center justify-center active:scale-95"
                   >
-                    <Mic className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-emerald-600 dark:text-emerald-400" />
+                    <Mic className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                   </button>
 
-                  <div className="hidden sm:flex items-center mr-2">
-                    <kbd className="px-2 py-0.5 text-[10px] font-mono font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                  <div className="hidden sm:flex items-center gap-1.5 mr-2">
+                    <kbd className="px-2 py-1 text-[10px] font-mono font-bold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 shadow-xs">
                       Ctrl + K
                     </kbd>
                   </div>
@@ -2240,22 +2122,22 @@ export default function PortalMPP() {
                       e.stopPropagation();
                       setIsCommandPaletteOpen(true);
                     }}
-                    className="h-9 sm:h-10 min-h-[36px] bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-500 text-white text-xs sm:text-sm font-bold px-4 sm:px-5 rounded-xl transition-all shrink-0 font-sans cursor-pointer flex items-center justify-center shadow-md shadow-emerald-600/25 active:scale-95"
+                    className="h-9 sm:h-10 min-h-[38px] sm:min-h-[40px] bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-[11.5px] sm:text-sm font-semibold tracking-wide px-3 sm:px-6 rounded-xl transition-all shrink-0 font-sans cursor-pointer flex items-center justify-center shadow-xs"
                   >
                     <span className="hidden sm:inline">{t("mppPortal.search.button", "Cari Layanan")}</span>
                     <span className="sm:hidden">{t("mppPortal.search.buttonMobile", "Cari")}</span>
                   </MagneticButton>
                 </div>
 
-                {/* Quick Service Recommendation (Clean Typography Links, Zero-Pill) */}
-                <div className="flex items-center justify-center flex-wrap gap-x-3 gap-y-1.5 mt-3 text-xs">
-                  <span className="text-slate-700 dark:text-slate-300 font-bold">{t("mppPortal.search.popularTitle", "Layanan Populer:")}</span>
+                {/* Quick Service Recommendation Chips */}
+                <div className="flex items-center justify-center flex-wrap gap-1.5 sm:gap-2 mt-2.5 sm:mt-3 text-[11px] sm:text-xs">
+                  <span className="text-slate-600 dark:text-slate-300 font-medium">{t("mppPortal.search.popularTitle", "Layanan Populer:")}</span>
                   {[
-                    { label: t("mppPortal.search.chipDukcapil", "Dukcapil & KTP"), id: "dukcapil" },
-                    { label: t("mppPortal.search.chipNIB", "Izin Usaha NIB"), id: "oss" },
-                    { label: t("mppPortal.search.chipAntrean", "Antrean Online"), id: "antrean" },
-                    { label: t("mppPortal.search.chipBPJS", "BPJS Kesehatan"), id: "bpjs" },
-                    { label: t("mppPortal.search.chipPBB", "Pajak PBB"), id: "bapenda" },
+                    { label: t("mppPortal.search.chipDukcapil", "Dukcapil & KTP"), query: "KTP", id: "dukcapil" },
+                    { label: t("mppPortal.search.chipNIB", "Izin Usaha NIB"), query: "NIB", id: "oss" },
+                    { label: t("mppPortal.search.chipAntrean", "Antrean Online"), query: "Antrean", id: "antrean" },
+                    { label: t("mppPortal.search.chipBPJS", "BPJS Kesehatan"), query: "BPJS", id: "bpjs" },
+                    { label: t("mppPortal.search.chipPBB", "Pajak PBB"), query: "PBB", id: "bapenda" },
                   ].map((chip) => (
                     <button
                       key={chip.id}
@@ -2267,7 +2149,7 @@ export default function PortalMPP() {
                           setIsCommandPaletteOpen(true);
                         }
                       }}
-                      className="text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 font-semibold transition-colors cursor-pointer select-none underline-offset-4 hover:underline"
+                      className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 border border-slate-200 dark:border-slate-700/70 text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 font-medium transition-colors cursor-pointer select-none active:scale-95"
                     >
                       {chip.label}
                     </button>
@@ -2275,141 +2157,147 @@ export default function PortalMPP() {
                 </div>
               </motion.div>
 
-              {/* Quick Action Ribbon - Executive Bento Glass Cards with Thematic Accents */}
+              {/* Quick Action Bento Grid - Responsive Symmetrical 3-Columns across Android and Desktop */}
               <motion.div 
                 variants={{
                   hidden: { opacity: 0, y: 15 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
                 }}
-                className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-4 w-full max-w-4xl px-1 sm:px-2 mb-6 sm:mb-8"
+                className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-4 lg:gap-6 w-full max-w-4xl px-1 sm:px-2 mb-5 sm:mb-8 py-2"
               >
                 {activePersona === 'investor' ? (
                   <>
-                    <div
+                    <TiltCard
+                      maxTilt={8}
+                      scaleOnHover={1.03}
+                      glareOpacity={0.15}
+                      wrapperClassName="w-full h-full"
                       onClick={() => document.getElementById('investor-vip')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="glass-crystal glass-card-interactive relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/80 dark:bg-slate-900/75 backdrop-blur-xl border border-white/60 dark:border-white/10 hover:border-amber-500/80 dark:hover:border-amber-400/80 shadow-[0_8px_25px_rgba(0,0,0,0.05)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.45)] hover:shadow-xl hover:shadow-amber-500/20 hover:-translate-y-0.5"
+                      className="w-full h-full min-h-[76px] sm:min-h-[88px] bg-white dark:bg-slate-900 border border-amber-500/30 dark:border-amber-500/20 shadow-xs hover:border-amber-500/60 rounded-xl sm:rounded-2xl p-2 xs:p-2.5 sm:p-5 flex flex-col items-center justify-center gap-1.5 sm:gap-2 group transition-all cursor-pointer"
                     >
-                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-400" />
-                      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/25 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                        <Sparkles className="w-5 h-5" />
+                      <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-12 sm:h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-amber-700 dark:text-amber-400 group-hover:scale-105 transition-transform">
+                        <Sparkles className="w-4 h-4 sm:w-6 sm:h-6" />
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <span className="block font-sans text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white tracking-tight leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">
+                      <div className="flex flex-col items-center text-center">
+                        <span className="font-sans text-[10.5px] xs:text-xs sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                           {t("mppPortal.quickActions.vipDesk", "VIP Investor Desk")}
                         </span>
-                        <span className="block text-[11px] text-slate-700 dark:text-slate-300 font-medium truncate mt-0.5">
-                          {t("mppPortal.quickActions.vipDeskDesc", "Liaison Officer & Fasilitasi")}
-                        </span>
+                        <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">{t("mppPortal.quickActions.vipDeskDesc", "Liaison Officer & Fasilitasi")}</span>
                       </div>
-                    </div>
+                    </TiltCard>
 
-                    <div
+                    <TiltCard
+                      maxTilt={8}
+                      scaleOnHover={1.03}
+                      glareOpacity={0.15}
+                      wrapperClassName="w-full h-full"
                       onClick={() => document.getElementById('peta-spasial')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="glass-crystal glass-card-interactive relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/80 dark:bg-slate-900/75 backdrop-blur-xl border border-white/60 dark:border-white/10 hover:border-blue-500/80 dark:hover:border-blue-400/80 shadow-[0_8px_25px_rgba(0,0,0,0.05)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.45)] hover:shadow-xl hover:shadow-blue-500/20 hover:-translate-y-0.5"
+                      className="w-full h-full min-h-[76px] sm:min-h-[88px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-blue-500/60 rounded-xl sm:rounded-2xl p-2 xs:p-2.5 sm:p-5 flex flex-col items-center justify-center gap-1.5 sm:gap-2 group transition-all cursor-pointer"
                     >
-                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-500" />
-                      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/25 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                        <MapPin className="w-5 h-5" />
+                      <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-12 sm:h-12 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/60 flex items-center justify-center text-blue-700 dark:text-blue-400 group-hover:scale-105 transition-transform">
+                        <MapPin className="w-4 h-4 sm:w-6 sm:h-6" />
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <span className="block font-sans text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white tracking-tight leading-snug group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">
+                      <div className="flex flex-col items-center text-center">
+                        <span className="font-sans text-[10.5px] xs:text-xs sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                           {t("mppPortal.quickActions.petaSpasial", "Peta Spasial RDTR")}
                         </span>
-                        <span className="block text-[11px] text-slate-700 dark:text-slate-300 font-medium truncate mt-0.5">
-                          {t("mppPortal.quickActions.petaSpasialDesc", "WebGIS Zonasi & Potensi")}
-                        </span>
+                        <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">{t("mppPortal.quickActions.petaSpasialDesc", "WebGIS Zonasi & Potensi")}</span>
                       </div>
-                    </div>
+                    </TiltCard>
 
-                    <div
+                    <TiltCard
+                      maxTilt={8}
+                      scaleOnHover={1.03}
+                      glareOpacity={0.15}
+                      wrapperClassName="w-full h-full"
                       onClick={() => document.getElementById('syarat-dokumen')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="glass-crystal glass-card-interactive relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/80 dark:bg-slate-900/75 backdrop-blur-xl border border-white/60 dark:border-white/10 hover:border-emerald-500/80 dark:hover:border-emerald-400/80 shadow-[0_8px_25px_rgba(0,0,0,0.05)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.45)] hover:shadow-xl hover:shadow-emerald-500/20 hover:-translate-y-0.5"
+                      className="w-full h-full min-h-[76px] sm:min-h-[88px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-emerald-500/60 rounded-xl sm:rounded-2xl p-2 xs:p-2.5 sm:p-5 flex flex-col items-center justify-center gap-1.5 sm:gap-2 group transition-all cursor-pointer"
                     >
-                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-400" />
-                      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                        <Briefcase className="w-5 h-5" />
+                      <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:scale-105 transition-transform">
+                        <Briefcase className="w-4 h-4 sm:w-6 sm:h-6" />
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <span className="block font-sans text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white tracking-tight leading-snug group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                      <div className="flex flex-col items-center text-center">
+                        <span className="font-sans text-[10.5px] xs:text-xs sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                           {t("mppPortal.quickActions.izinOss", "Izin Usaha OSS")}
                         </span>
-                        <span className="block text-[11px] text-slate-700 dark:text-slate-300 font-medium truncate mt-0.5">
-                          {t("mppPortal.quickActions.izinOssDesc", "Syarat NIB, PBG & SLF")}
-                        </span>
+                        <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">{t("mppPortal.quickActions.izinOssDesc", "Syarat NIB, PBG & SLF")}</span>
                       </div>
-                    </div>
+                    </TiltCard>
                   </>
                 ) : (
                   <>
-                    <div
+                    <TiltCard
+                      maxTilt={8}
+                      scaleOnHover={1.03}
+                      glareOpacity={0.15}
+                      wrapperClassName="w-full h-full"
                       onClick={() => setIsQueueBookingOpen(true)}
-                      className="glass-crystal glass-card-interactive relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/80 dark:bg-slate-900/75 backdrop-blur-xl border border-white/60 dark:border-white/10 hover:border-emerald-500/80 dark:hover:border-emerald-400/80 shadow-[0_8px_25px_rgba(0,0,0,0.05)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.45)] hover:shadow-xl hover:shadow-emerald-500/20 hover:-translate-y-0.5"
+                      className="w-full h-full min-h-[76px] sm:min-h-[88px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-emerald-500/60 rounded-xl sm:rounded-2xl p-2 xs:p-2.5 sm:p-5 flex flex-col items-center justify-center gap-1.5 sm:gap-2 group transition-all cursor-pointer"
                     >
-                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-400" />
-                      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                        <Ticket className="w-5 h-5" />
+                      <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:scale-105 transition-transform">
+                        <Ticket className="w-4 h-4 sm:w-6 sm:h-6" />
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <span className="block font-sans text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white tracking-tight leading-snug group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                      <div className="flex flex-col items-center text-center">
+                        <span className="font-sans text-[10.5px] xs:text-xs sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                           {t("mppPortal.quickActions.antrean")}
                         </span>
-                        <span className="block text-[11px] text-slate-700 dark:text-slate-300 font-medium truncate mt-0.5">
-                          {t("mppPortal.quickActions.antreanDesc")}
-                        </span>
+                        <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">{t("mppPortal.quickActions.antreanDesc")}</span>
                       </div>
-                    </div>
+                    </TiltCard>
 
-                    <div
+                    <TiltCard
+                      maxTilt={8}
+                      scaleOnHover={1.03}
+                      glareOpacity={0.15}
+                      wrapperClassName="w-full h-full"
                       onClick={() => document.getElementById('tracking-berkas')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="glass-crystal glass-card-interactive relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/80 dark:bg-slate-900/75 backdrop-blur-xl border border-white/60 dark:border-white/10 hover:border-blue-500/80 dark:hover:border-blue-400/80 shadow-[0_8px_25px_rgba(0,0,0,0.05)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.45)] hover:shadow-xl hover:shadow-blue-500/20 hover:-translate-y-0.5"
+                      className="w-full h-full min-h-[76px] sm:min-h-[88px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-blue-500/60 rounded-xl sm:rounded-2xl p-2 xs:p-2.5 sm:p-5 flex flex-col items-center justify-center gap-1.5 sm:gap-2 group transition-all cursor-pointer"
                     >
-                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-500" />
-                      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/25 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                        <SearchCheck className="w-5 h-5" />
+                      <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-12 sm:h-12 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/60 flex items-center justify-center text-blue-700 dark:text-blue-400 group-hover:scale-105 transition-transform">
+                        <SearchCheck className="w-4 h-4 sm:w-6 sm:h-6" />
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <span className="block font-sans text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white tracking-tight leading-snug group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">
+                      <div className="flex flex-col items-center text-center">
+                        <span className="font-sans text-[10.5px] xs:text-xs sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                           {t("mppPortal.quickActions.cekStatus")}
                         </span>
-                        <span className="block text-[11px] text-slate-700 dark:text-slate-300 font-medium truncate mt-0.5">
-                          {t("mppPortal.quickActions.cekStatusDesc")}
-                        </span>
+                        <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">{t("mppPortal.quickActions.cekStatusDesc")}</span>
                       </div>
-                    </div>
+                    </TiltCard>
 
-                    <div
+                    <TiltCard
+                      maxTilt={8}
+                      scaleOnHover={1.03}
+                      glareOpacity={0.15}
+                      wrapperClassName="w-full h-full"
                       onClick={() => {
                         setAirportKioskInitialMode('citizen');
                         setIsAirportKioskOpen(true);
                       }}
-                      className="glass-crystal glass-card-interactive relative overflow-hidden rounded-2xl p-3 sm:p-4 flex items-center gap-3 group transition-all duration-300 cursor-pointer text-left bg-white/80 dark:bg-slate-900/75 backdrop-blur-xl border border-white/60 dark:border-white/10 hover:border-amber-500/80 dark:hover:border-amber-400/80 shadow-[0_8px_25px_rgba(0,0,0,0.05)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.45)] hover:shadow-xl hover:shadow-amber-500/20 hover:-translate-y-0.5"
+                      className="w-full h-full min-h-[76px] sm:min-h-[88px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-amber-500/60 rounded-xl sm:rounded-2xl p-2 xs:p-2.5 sm:p-5 flex flex-col items-center justify-center gap-1.5 sm:gap-2 group transition-all cursor-pointer"
                     >
-                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-400" />
-                      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/25 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                        <Pointer className="w-5 h-5" />
+                      <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-12 sm:h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-amber-700 dark:text-amber-400 group-hover:scale-105 transition-transform">
+                        <Pointer className="w-4 h-4 sm:w-6 sm:h-6" />
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <span className="block font-sans text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white tracking-tight leading-snug group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">
+                      <div className="flex flex-col items-center text-center">
+                        <span className="font-sans text-[10.5px] xs:text-xs sm:text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                           {t("mppPortal.quickActions.mandiri")}
                         </span>
-                        <span className="block text-[11px] text-slate-700 dark:text-slate-300 font-medium truncate mt-0.5">
-                          {t("mppPortal.quickActions.mandiriDesc")}
-                        </span>
+                        <span className="hidden sm:inline-block text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-normal mt-1">{t("mppPortal.quickActions.mandiriDesc")}</span>
                       </div>
-                    </div>
+                    </TiltCard>
                   </>
                 )}
               </motion.div>
 
-              {/* Persona Switcher (Clean Segmented Tabs & Unboxed Helper Text) */}
+              {/* Persona Switcher (Segmented Control) & Konteks Layanan */}
               <motion.div
                 variants={{
                   hidden: { opacity: 0, y: 15 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
                 }}
-                className="w-full flex flex-col items-center gap-2.5"
+                className="w-full flex flex-col items-center gap-3"
               >
-                <div className="rounded-xl bg-slate-100/90 dark:bg-slate-900/70 p-1 flex items-center justify-center gap-1 border border-slate-200/70 dark:border-slate-800/80">
+                <div className="rounded-full bg-slate-100 dark:bg-slate-800/80 p-1 flex flex-wrap items-center justify-center gap-1 w-fit mx-auto border border-slate-200 dark:border-slate-700">
                   {[
                     { id: "warga", label: t("mppPortal.persona.warga", "Masyarakat"), icon: User },
                     { id: "investor", label: t("mppPortal.persona.investor", "Investor & Bisnis"), icon: Briefcase },
@@ -2422,55 +2310,68 @@ export default function PortalMPP() {
                         key={p.id}
                         type="button"
                         onClick={() => setActivePersona(p.id as 'warga' | 'investor' | 'semua')}
-                        className={`relative px-3.5 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                        className={`relative px-4 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                           isActive 
-                            ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs border border-slate-200/50 dark:border-slate-700/60 font-semibold" 
-                            : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+                            ? "bg-emerald-600 text-white shadow-xs" 
+                            : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                         }`}
                       >
-                        <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`} />
+                        <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`} />
                         <span>{p.label}</span>
                       </button>
                     );
                   })}
                 </div>
 
-                {/* Unboxed Quiet Context Line */}
-                <div className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 text-center max-w-xl">
+                {/* Indikator Konteks Persona Aktif */}
+                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100/80 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 text-[11px] text-slate-600 dark:text-slate-300 max-w-xl text-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
                   {activePersona === 'warga' && (
-                    <span>Antrean langsung, persyaratan berkas kependudukan & gerai instansi layanan publik.</span>
+                    <span>
+                      <strong className="text-emerald-700 dark:text-emerald-400 font-semibold">{t("mppPortal.persona.wargaTag", "Mode Warga:")}</strong> {t("mppPortal.persona.wargaDesc", "Antrean Langsung, Persyaratan Berkas, & Gerai Instansi.")}
+                    </span>
                   )}
                   {activePersona === 'investor' && (
-                    <span>VIP Investor Desk, konsultasi tata ruang, peta spasial RDTR, & perizinan OSS-RBA.</span>
+                    <span>
+                      <strong className="text-emerald-700 dark:text-emerald-400 font-semibold">{t("mppPortal.persona.investorTag", "Mode Investor:")}</strong> {t("mppPortal.persona.investorDesc", "VIP Investor Desk, Peta Spasial RDTR, & OSS-RBA.")}
+                    </span>
                   )}
                   {activePersona === 'semua' && (
-                    <span>Seluruh modul layanan masyarakat, investasi, fasilitasi bisnis & regulasi daerah.</span>
+                    <span>
+                      <strong className="text-emerald-700 dark:text-emerald-400 font-semibold">{t("mppPortal.persona.semuaTag", "Semua Layanan:")}</strong> {t("mppPortal.persona.semuaDesc", "Seluruh modul gerai publik, investasi & regulasi.")}
+                    </span>
                   )}
                 </div>
 
-                {/* Video Tour & Discreet Institutional Link */}
-                <div className="mt-3 flex flex-wrap items-center justify-center gap-3 sm:gap-5 text-xs text-slate-500 dark:text-slate-400">
-                  <a
-                    href="#publikasi-berita"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      document.getElementById('publikasi-berita')?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    className="inline-flex items-center gap-1.5 font-medium hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
-                  >
-                    <Play className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 fill-emerald-600 dark:fill-emerald-400" />
-                    <span>{t("mppPortal.hero.videoTour", "Video Profil MPP Simpurusiang")}</span>
-                  </a>
-                  <span className="hidden sm:inline text-slate-300 dark:text-slate-700">·</span>
+                {/* Video Tour Quick Link with Pulse Border */}
+                <a
+                  href="#publikasi-berita"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('publikasi-berita')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/90 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 shadow-xs hover:shadow-md transition-all mt-1 group cursor-pointer"
+                >
+                  <span className="relative flex items-center justify-center">
+                    <span className="absolute -inset-1 rounded-full animate-pulse-border bg-teal-500/40 pointer-events-none" />
+                    <span className="w-5 h-5 rounded-full bg-gradient-to-r from-teal-500 to-blue-600 text-white flex items-center justify-center shadow-xs group-hover:scale-110 transition-transform">
+                      <Play className="w-2.5 h-2.5 ml-0.5 fill-current" />
+                    </span>
+                  </span>
+                  <span>{t("mppPortal.hero.videoTour", "Video Profil Pelayanan MPP Simpurusiang")}</span>
+                </a>
+
+                {/* Akses Petugas Gerai (Discreet Institutional Link) */}
+                <div className="mt-2 flex flex-wrap items-center justify-center gap-4">
                   <button
                     type="button"
                     onClick={handleFoAccess}
-                    className="inline-flex items-center gap-1.5 hover:text-rose-600 dark:hover:text-rose-400 font-medium transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1.5 text-xs text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 font-semibold transition-colors cursor-pointer select-none bg-rose-50 dark:bg-rose-950/40 px-3 py-1 rounded-full border border-rose-200 dark:border-rose-800/50"
                   >
-                    <BellRing className="w-3.5 h-3.5 text-rose-500" />
-                    <span>Command Center FO</span>
+                    <BellRing className="w-3.5 h-3.5 animate-pulse" />
+                    <span>Command Center Front Office (FO)</span>
                   </button>
-                  <span className="hidden sm:inline text-slate-300 dark:text-slate-700">·</span>
+
                   <button
                     type="button"
                     onClick={() => {
@@ -2486,10 +2387,10 @@ export default function PortalMPP() {
                       }
                       setIsOperatorLoginOpen(true);
                     }}
-                    className="inline-flex items-center gap-1.5 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1.5 text-xs text-slate-600 hover:text-emerald-700 dark:text-slate-300 dark:hover:text-emerald-400 transition-colors cursor-pointer select-none"
                   >
-                    <Building2 className="w-3.5 h-3.5 text-slate-400" />
-                    <span>{t("mppPortal.hero.officerPortal", "Portal Petugas Gerai")}</span>
+                    <Building2 className="w-3.5 h-3.5" />
+                    <span>{t("mppPortal.hero.officerPortal", "Portal Masuk Petugas Gerai & Operator Tenant")}</span>
                   </button>
                 </div>
               </motion.div>
@@ -2512,9 +2413,12 @@ export default function PortalMPP() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 font-sans mb-2"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-500/10 dark:bg-emerald-400/10 border border-emerald-500/25 dark:border-emerald-400/25 mb-3 shadow-xs"
               >
-                {t("mppPortal.motto.badge")}
+                <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-300 font-sans">
+                  {t("mppPortal.motto.badge")}
+                </span>
               </motion.div>
               <motion.h2 
                 initial={{ opacity: 0, y: 30 }}
@@ -2529,23 +2433,23 @@ export default function PortalMPP() {
                 </span>
               </motion.h2>
               
-              {/* Motto Tagline - Clean Typographic Sequence (Zero-Pill) */}
+              {/* Motto Tagline Pill Indicators */}
               <motion.div 
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="mt-3.5 mb-3 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400"
+                className="mt-3.5 mb-3 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300"
               >
-                <span className="text-slate-900 dark:text-slate-200 font-semibold">Murah</span>
-                <span className="text-slate-300 dark:text-slate-700">·</span>
-                <span className="text-slate-900 dark:text-slate-200 font-semibold">Gampang</span>
-                <span className="text-slate-300 dark:text-slate-700">·</span>
-                <span className="text-slate-900 dark:text-slate-200 font-semibold">Cepat</span>
-                <span className="text-slate-300 dark:text-slate-700">·</span>
-                <span className="text-slate-900 dark:text-slate-200 font-semibold">Tepat</span>
-                <span className="text-slate-300 dark:text-slate-700">·</span>
-                <span className="text-slate-900 dark:text-slate-200 font-semibold">Inovatif</span>
+                <span className="px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/70 dark:border-emerald-500/30">Murah</span>
+                <span className="text-slate-300 dark:text-slate-700 font-bold">•</span>
+                <span className="px-2.5 py-0.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200/70 dark:border-teal-500/30">Gampang</span>
+                <span className="text-slate-300 dark:text-slate-700 font-bold">•</span>
+                <span className="px-2.5 py-0.5 rounded-lg bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 border border-cyan-200/70 dark:border-cyan-500/30">Cepat</span>
+                <span className="text-slate-300 dark:text-slate-700 font-bold">•</span>
+                <span className="px-2.5 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/70 dark:border-blue-500/30">Tepat</span>
+                <span className="text-slate-300 dark:text-slate-700 font-bold">•</span>
+                <span className="px-2.5 py-0.5 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/70 dark:border-amber-500/30">Inovatif</span>
               </motion.div>
 
               {/* Polished Subtle Divider */}
@@ -2816,18 +2720,16 @@ export default function PortalMPP() {
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
-              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-800 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/15 border border-emerald-500/25 px-3.5 py-1 rounded-full shadow-xs">
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                 {t("mppPortal.instansi.badge")}
               </span>
-              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight font-sans mt-1 text-balance">
-                <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-400 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent">
-                  {t("mppPortal.instansi.title")}
-                </span>
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans mt-1 text-balance">
+                {t("mppPortal.instansi.title")}
               </h2>
-              <p className="text-xs sm:text-sm md:text-base text-slate-700 dark:text-slate-300 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-5 text-center text-balance font-medium">
+              <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-5 text-center text-balance">
                 {t("mppPortal.instansi.desc")}
               </p>
-              <div className="w-12 sm:w-16 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full mx-auto mt-2 mb-2"></div>
+              <div className="w-12 sm:w-16 h-1 bg-emerald-500 rounded-full mx-auto mt-2 mb-2"></div>
             </div>
 
             {/* Kontainer Slider (Touch-First Native Snap Scroll with Peek Effect & Fade Gradient Masking) */}
@@ -2847,59 +2749,51 @@ export default function PortalMPP() {
                 {(liveAgencies || [])?.map((rawItem, index) => {
                   const item = getLocalizedAgency(rawItem, i18n.language);
                   return (
-                    <motion.div
+                    <TiltCard
                       key={rawItem.nama || index}
-                      initial={{ opacity: 0, y: 25 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.4) }}
-                      className="shrink-0 snap-center"
+                      tabIndex={0}
+                      role="button"
+                      maxTilt={8}
+                      scaleOnHover={1.03}
+                      glareOpacity={0.15}
+                      onClick={() => setSelectedAgencyDetail(rawItem)}
+                      className="w-[78vw] xs:w-[280px] sm:w-[320px] shrink-0 snap-center bg-white/85 dark:bg-slate-800/50 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 shadow-lg shadow-emerald-950/5 dark:shadow-emerald-950/20 rounded-3xl p-4 sm:p-6 md:p-8 flex flex-col items-center text-center justify-between group cursor-pointer hover:border-emerald-500/80 hover:shadow-xl hover:shadow-emerald-500/15 transition-all relative overflow-hidden"
                     >
-                      <TiltCard
-                        tabIndex={0}
-                        role="button"
-                        maxTilt={8}
-                        scaleOnHover={1.03}
-                        glareOpacity={0.15}
-                        onClick={() => setSelectedAgencyDetail(rawItem)}
-                        className="w-[78vw] xs:w-[280px] sm:w-[320px] glass-crystal glass-card-interactive bg-white/80 dark:bg-slate-800/60 backdrop-blur-2xl border border-white/65 dark:border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.45)] rounded-3xl p-4 sm:p-6 md:p-8 flex flex-col items-center text-center justify-between group cursor-pointer hover:border-emerald-500/80 hover:shadow-2xl hover:shadow-emerald-500/20 transition-all relative overflow-hidden h-full"
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-emerald-500/0 to-emerald-500/5 group-hover:to-emerald-500/10 transition-colors pointer-events-none" />
-                        <div className="flex flex-col items-center text-center w-full relative z-10">
-                          {/* Logo Instansi Terpusat */}
-                          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-3.5 group-hover:scale-110 group-hover:rotate-[-2deg] transition-transform duration-300 overflow-hidden shadow-inner">
-                            <img 
-                              src={item.logo} 
-                              alt={item.nama}
-                              referrerPolicy="no-referrer"
-                              className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-110"
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = FALLBACK_IMAGE_URL;
-                                e.currentTarget.style.backgroundColor = '#10b981';
-                              }}
-                            />
-                          </div>
-                          
-                          {/* Nama Instansi Terpusat */}
-                          <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white mb-1.5 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors line-clamp-1 w-full font-sans text-center">
-                            {item.nama}
-                          </h3>
-                          
-                          {/* Detail Layanan Terpusat */}
-                          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium leading-normal line-clamp-2 mb-3.5 w-full text-center">
-                            {item.layanan}
-                          </p>
+                      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-emerald-500/0 to-emerald-500/5 group-hover:to-emerald-500/10 transition-colors pointer-events-none" />
+                      <div className="flex flex-col items-center text-center w-full relative z-10">
+                        {/* Logo Instansi Terpusat */}
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-3.5 group-hover:scale-110 group-hover:rotate-[-2deg] transition-transform duration-300 overflow-hidden shadow-inner">
+                          <img 
+                            src={item.logo} 
+                            alt={item.nama}
+                            referrerPolicy="no-referrer"
+                            className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-110"
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = FALLBACK_IMAGE_URL;
+                              e.currentTarget.style.backgroundColor = '#10b981';
+                            }}
+                          />
                         </div>
+                        
+                        {/* Nama Instansi Terpusat */}
+                        <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white mb-1.5 group-hover:text-emerald-500 transition-colors line-clamp-1 w-full font-sans text-center">
+                          {item.nama}
+                        </h3>
+                        
+                        {/* Detail Layanan Terpusat */}
+                        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-normal line-clamp-2 mb-3.5 w-full text-center">
+                          {item.layanan}
+                        </p>
+                      </div>
 
-                        <div className="w-full pt-3 border-t border-slate-200/80 dark:border-white/10 flex items-center justify-center relative z-10">
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border border-emerald-500/20 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300 shadow-xs">
-                            <span>{t("mppPortal.instansi.activeStatus")}</span>
-                            <ChevronRight className="w-3.5 h-3.5 opacity-70 group-hover:translate-x-1 group-hover:opacity-100 transition-transform" />
-                          </span>
-                        </div>
-                      </TiltCard>
-                    </motion.div>
+                      <div className="w-full pt-3 border-t border-slate-100 dark:border-white/10 flex items-center justify-center relative z-10">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300">
+                          <span>{t("mppPortal.instansi.activeStatus")}</span>
+                          <ChevronRight className="w-3.5 h-3.5 opacity-70 group-hover:translate-x-1 group-hover:opacity-100 transition-transform" />
+                        </span>
+                      </div>
+                    </TiltCard>
                   );
                 })}
               </div>
@@ -2919,44 +2813,44 @@ export default function PortalMPP() {
             </div>
           </motion.section>
 
-          {/* Stats Section with High-Contrast Typography & Colorful Counters */}
+          {/* Stats Section */}
           <motion.section 
-            initial={{ opacity: 0, y: 35, scale: 0.98 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }} 
-            transition={{ duration: 0.45, ease: "easeOut" }} 
+            initial={{ opacity: 0, y: 40, scale: 0.96, filter: "blur(8px)" }}
+            whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }} 
+            transition={{ duration: 0.35, ease: "easeOut" }} 
             viewport={{ once: true, amount: 0.1 }} 
             className="w-full max-w-6xl mx-auto py-8 sm:py-14 md:py-20 px-0.5 sm:px-5 md:px-8"
           >
             <SpotlightCard 
-              spotlightColor={isDark ? "rgba(16, 185, 129, 0.2)" : "rgba(16, 185, 129, 0.15)"}
-              className="w-full glass-crystal backdrop-blur-2xl shadow-2xl shadow-slate-200/50 dark:shadow-emerald-950/30 border border-white/65 dark:border-white/10 rounded-3xl p-3 sm:p-6 md:p-10 relative overflow-hidden transition-all duration-300"
+              spotlightColor={isDark ? "rgba(16, 185, 129, 0.16)" : "rgba(16, 185, 129, 0.12)"}
+              className="w-full bg-white/80 dark:bg-slate-800/40 backdrop-blur-xl shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 border border-slate-100 dark:border-white/5 rounded-3xl p-3 sm:p-6 md:p-10 relative overflow-hidden transition-all duration-300"
             >
               <div className="hidden dark:block absolute inset-0 bg-gradient-to-br from-emerald-950/20 to-transparent pointer-events-none"></div>
               
               <div className="grid grid-cols-3 gap-1.5 sm:gap-6 lg:gap-8 relative z-10 text-center items-center">
                 <div className="flex flex-col items-center justify-center gap-1 sm:gap-2.5 py-1.5 sm:py-2">
-                  <span className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-extrabold font-mono text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-500 dark:from-emerald-400 dark:to-teal-300 tracking-tight dark:drop-shadow-[0_0_25px_rgba(0,255,153,0.6)]">
+                  <span className="text-xl xs:text-2xl sm:text-4xl md:text-5xl font-extrabold font-mono text-emerald-500 tracking-tight dark:drop-shadow-[0_0_25px_rgba(0,255,153,0.6)]">
                     <StatCounter target={Number(skmScoreAverage) || 0} isDecimal={true} />
                   </span>
-                  <span className="font-sans text-[10px] xs:text-[11px] sm:text-xs md:text-sm text-slate-800 dark:text-slate-200 leading-tight uppercase tracking-wider font-bold line-clamp-2">
+                  <span className="font-sans text-[9px] xs:text-[10px] sm:text-xs md:text-sm text-slate-500 dark:text-slate-300 leading-tight uppercase tracking-wider font-semibold line-clamp-2">
                     {t("mppPortal.stats.ikm")}
                   </span>
                 </div>
 
-                <div className="flex flex-col items-center justify-center gap-1 sm:gap-2.5 border-x border-slate-200 dark:border-white/10 py-1.5 sm:py-2 px-1">
-                  <span className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-extrabold font-mono text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-orange-500 to-amber-500 dark:from-amber-400 dark:to-yellow-300 tracking-tight dark:drop-shadow-[0_0_25px_rgba(255,215,0,0.4)]">
+                <div className="flex flex-col items-center justify-center gap-1 sm:gap-2.5 border-x border-gray-200/80 dark:border-white/10 py-1.5 sm:py-2 px-1">
+                  <span className="text-xl xs:text-2xl sm:text-4xl md:text-5xl font-extrabold font-mono text-amber-500 dark:text-[#FFD700] tracking-tight dark:drop-shadow-[0_0_25px_rgba(255,215,0,0.4)]">
                     <StatCounter target={liveAgencies.length} />
                   </span>
-                  <span className="font-sans text-[10px] xs:text-[11px] sm:text-xs md:text-sm text-slate-800 dark:text-slate-200 leading-tight uppercase tracking-wider font-bold line-clamp-2">
+                  <span className="font-sans text-[9px] xs:text-[10px] sm:text-xs md:text-sm text-slate-500 dark:text-slate-300 leading-tight uppercase tracking-wider font-semibold line-clamp-2">
                     {t("mppPortal.stats.agencies")}
                   </span>
                 </div>
 
                 <div className="flex flex-col items-center justify-center gap-1 sm:gap-2.5 py-1.5 sm:py-2">
-                  <span className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-extrabold font-mono text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 dark:from-blue-400 dark:to-sky-300 tracking-tight dark:drop-shadow-[0_0_25px_rgba(255,255,255,0.4)]">
+                  <span className="text-xl xs:text-2xl sm:text-4xl md:text-5xl font-extrabold font-mono text-slate-800 dark:text-white tracking-tight dark:drop-shadow-[0_0_25px_rgba(255,255,255,0.4)]">
                     <StatCounter target={queueMetrics.totalVisitors} />
                   </span>
-                  <span className="font-sans text-[10px] xs:text-[11px] sm:text-xs md:text-sm text-slate-800 dark:text-slate-200 leading-tight uppercase tracking-wider font-bold line-clamp-2">
+                  <span className="font-sans text-[9px] xs:text-[10px] sm:text-xs md:text-sm text-slate-500 dark:text-slate-300 leading-tight uppercase tracking-wider font-semibold line-clamp-2">
                     {t("mppPortal.stats.visitors")}
                   </span>
                 </div>
@@ -3100,7 +2994,7 @@ export default function PortalMPP() {
                           onClick={() => {
                             setSelectedServiceDetail(service as any);
                           }}
-                          className="w-full h-full glass-crystal glass-card-interactive bg-white/80 dark:bg-slate-900/70 backdrop-blur-2xl border border-white/60 dark:border-white/10 rounded-3xl overflow-hidden group shadow-[0_12px_36px_rgba(0,0,0,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.45)] transition-all duration-300 hover:shadow-2xl hover:border-teal-500/40 flex flex-col justify-between cursor-pointer relative min-h-[440px]"
+                          className="w-full h-full bg-gradient-to-b from-white/95 via-white/85 to-slate-50/90 dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-950/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-3xl overflow-hidden group shadow-xl shadow-slate-950/5 dark:shadow-emerald-950/20 transition-all duration-300 hover:shadow-2xl hover:border-teal-500/30 flex flex-col justify-between cursor-pointer relative min-h-[440px]"
                         >
                           {/* Subtle Ambient Gradient Highlight */}
                           <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.04] via-transparent to-teal-500/[0.03] dark:from-emerald-400/[0.06] dark:to-transparent pointer-events-none" />
@@ -3149,7 +3043,7 @@ export default function PortalMPP() {
                               <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-2 tracking-tight group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors font-sans text-left">
                                 {service.title}
                               </h3>
-                              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium leading-relaxed text-left line-clamp-3">
+                              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-300 leading-relaxed text-left line-clamp-3">
                                 {service.description}
                               </p>
                             </div>
@@ -3427,10 +3321,10 @@ export default function PortalMPP() {
                     <div className="mb-4 sm:mb-6 text-left">
                       {/* Sub-label & Lokasi */}
                       <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-3">
-                        <span className="text-[10px] sm:text-[11px] font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/25 font-mono shadow-xs">
+                        <span className="text-[10px] sm:text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 font-mono">
                           MPP Simpurusiang Kab. Luwu
                         </span>
-                        <span className="text-[10px] sm:text-[11px] font-semibold text-slate-700 dark:text-slate-300 font-sans">
+                        <span className="text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400 font-sans">
                           • {activeFacility.subtitle}
                         </span>
                       </div>
@@ -3441,20 +3335,20 @@ export default function PortalMPP() {
                       </h3>
 
                       {/* Deskripsi Lengkap */}
-                      <p className="text-xs sm:text-sm md:text-base text-slate-700 dark:text-slate-200 leading-relaxed break-words font-medium">
+                      <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 leading-relaxed break-words font-normal">
                         {activeFacility.description}
                       </p>
                     </div>
 
                     {/* Spesifikasi & Fasilitas Pendukung */}
-                    <div className="pt-4 sm:pt-5 border-t border-slate-200/80 dark:border-white/10">
-                      <h4 className="text-[11px] sm:text-xs uppercase tracking-widest text-slate-700 dark:text-slate-300 font-bold mb-3 flex items-center gap-1.5 font-sans">
+                    <div className="pt-4 sm:pt-5 border-t border-slate-200/70 dark:border-white/10">
+                      <h4 className="text-[11px] sm:text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400 font-bold mb-3 flex items-center gap-1.5 font-sans">
                         <Sparkles className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
                         {t("mppPortal.fasilitas.specsTitle")}
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4">
                         {(activeFacility?.features || [])?.map((feature, idx) => (
-                          <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm text-slate-800 dark:text-slate-100 text-left font-medium">
+                          <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm text-slate-700 dark:text-slate-200 text-left font-normal">
                             <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                             <span className="break-words">{feature}</span>
                           </div>
@@ -4308,6 +4202,60 @@ export default function PortalMPP() {
               }}
               isDark={isDark}
             />
+
+            {/* Fitur 6: Modal Interaktif Survey Kepuasan Masyarakat (SKM) - PermenPAN-RB No. 14/2017 */}
+            {isSurveyModalOpen && (
+              <div 
+                className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm"
+                onClick={() => setIsSurveyModalOpen(false)}
+              >
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.92, y: 25, filter: "blur(6px)" }}
+                  animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, scale: 0.94, y: 20, filter: "blur(4px)" }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className="w-full max-w-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl overflow-y-auto max-h-[92vh]"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Header Modal */}
+                  <div className="flex items-start justify-between pb-4 border-b border-slate-100 dark:border-white/10 mb-4">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono">
+                          SKM Luwu Digital
+                        </span>
+                        <span className="text-[10px] sm:text-[11px] text-slate-400 font-medium">PermenPAN-RB No. 14/2017</span>
+                      </div>
+                      <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white font-sans mt-1.5">
+                        {t("mppPortal.survey.modalTitle")}
+                      </h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-normal">
+                        {t("mppPortal.survey.modalSubtitle", "Survei resmi 9 unsur pelayanan publik MPP Simpurusiang terintegrasi langsung ke database daerah")}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsSurveyModalOpen(false)}
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                      aria-label="Close"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  {/* Formulir SKM Komprehensif MppCitizenSurveyMenu */}
+                  <MppCitizenSurveyMenu 
+                    isDarkMode={isDark}
+                    onSubmitted={() => {
+                      setIsSurveySubmitted(true);
+                      setTimeout(() => {
+                        setIsSurveyModalOpen(false);
+                      }, 1800);
+                    }}
+                  />
+                </motion.div>
+              </div>
+            )}
           </motion.section>
 
           {/* Seksi Layanan Pengaduan */}
@@ -5849,12 +5797,8 @@ export default function PortalMPP() {
                   <ul className="flex flex-col gap-1 sm:gap-1.5">
                     <li>
                       <a 
-                        className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200 cursor-pointer" 
+                        className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200" 
                         href="#hero"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' });
-                        }}
                       >
                         <span className="truncate">{t("mppPortal.footer.beranda")}</span>
                         <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
@@ -5862,12 +5806,8 @@ export default function PortalMPP() {
                     </li>
                     <li>
                       <a 
-                        className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200 cursor-pointer" 
+                        className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200" 
                         href="#layanan"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          document.getElementById('layanan')?.scrollIntoView({ behavior: 'smooth' });
-                        }}
                       >
                         <span className="truncate">{t("mppPortal.footer.daftarLayanan")}</span>
                         <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
@@ -5875,12 +5815,8 @@ export default function PortalMPP() {
                     </li>
                     <li>
                       <a 
-                        className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200 cursor-pointer" 
+                        className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200" 
                         href="#instansi"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          document.getElementById('instansi')?.scrollIntoView({ behavior: 'smooth' });
-                        }}
                       >
                         <span className="truncate">{t("mppPortal.instansi.title")}</span>
                         <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
@@ -5888,12 +5824,8 @@ export default function PortalMPP() {
                     </li>
                     <li>
                       <a 
-                        className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200 cursor-pointer" 
+                        className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200" 
                         href="#maklumat-pelayanan-sla"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          document.getElementById('maklumat-pelayanan-sla')?.scrollIntoView({ behavior: 'smooth' });
-                        }}
                       >
                         <span className="truncate">Maklumat &amp; SLA</span>
                         <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
@@ -5901,12 +5833,8 @@ export default function PortalMPP() {
                     </li>
                     <li>
                       <a 
-                        className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200 cursor-pointer" 
+                        className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200" 
                         href="#statistik"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          document.getElementById('statistik')?.scrollIntoView({ behavior: 'smooth' });
-                        }}
                       >
                         <span className="truncate">{t("mppPortal.statistik.title")}</span>
                         <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
@@ -6060,10 +5988,17 @@ export default function PortalMPP() {
               </div>
             </div>
 
+            {/* Banner Komitmen Zona Integritas Anti-Korupsi di Footer */}
+            <div className="mt-10 sm:mt-12">
+              <AntiCorruptionBanner isDark={isDark} />
+            </div>
+
             {/* Bottom Symmetrical Copyright Bar */}
-            <div className="mt-8 pt-6 pb-[calc(env(safe-area-inset-bottom,0px)+72px)] md:pb-0 border-t border-slate-200/80 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              <div className="flex items-center gap-2 text-center md:text-left font-mono">
-                <span>{t("mppPortal.footer.copyright", "@2026 Luwu Wanua Mappatuo Naewai Alena. All Rights Reserved.")}</span>
+            <div className="mt-8 pt-6 border-t border-slate-200/80 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              <div className="flex items-center gap-2 text-center md:text-left">
+                <span>© {new Date().getFullYear()} MPP Simpurusiang Kabupaten Luwu.</span>
+                <span className="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
+                <span className="hidden sm:inline">{t("mppPortal.footer.integratedServiceDot", "Pelayanan Publik Terintegrasi.")}</span>
               </div>
               <div className="flex items-center gap-2 text-center md:text-right font-medium text-slate-600 dark:text-slate-300">
                 <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
@@ -6073,74 +6008,50 @@ export default function PortalMPP() {
           </motion.div>
         </footer>
 
-        {/* Android Native-Style Bottom Navigation Bar (High Contrast Civic GovTech Design) */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0B1120]/95 backdrop-blur-xl border-t border-slate-200/90 dark:border-slate-800/90 px-2 py-1.5 flex items-center justify-around shadow-[0_-4px_25px_rgba(0,0,0,0.06)] dark:shadow-[0_-4px_25px_rgba(0,0,0,0.5)] pb-[calc(env(safe-area-inset-bottom,0px)+8px)]">
-          <button 
-            type="button"
-            onClick={() => {
-              const el = document.getElementById('hero');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-              else window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="flex flex-col items-center justify-center gap-1 text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 active:text-emerald-700 min-h-[44px] min-w-[48px] transition-colors cursor-pointer"
-          >
-            <Home className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
-            <span className="text-[10px] font-bold font-sans">{t("mppPortal.nav.beranda")}</span>
-          </button>
+        {/* Android Native-Style Bottom Navigation Dock */}
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 px-3 py-1.5 flex items-center justify-around shadow-xl pb-[calc(env(safe-area-inset-bottom,0px)+6px)]">
+          <a href="#hero" className="flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 active:text-emerald-600 min-h-[48px] min-w-[50px] transition-colors">
+            <Home className="w-5 h-5" />
+            <span className="text-[10px] font-medium font-sans">{t("mppPortal.nav.beranda")}</span>
+          </a>
 
-          <button 
-            type="button"
-            onClick={() => {
-              const el = document.getElementById('layanan');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="flex flex-col items-center justify-center gap-1 text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 active:text-emerald-700 min-h-[44px] min-w-[48px] transition-colors cursor-pointer"
-          >
+          <a href="#layanan" className="flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 active:text-emerald-600 min-h-[48px] min-w-[50px] transition-colors">
             <LayoutGrid className="w-5 h-5" />
-            <span className="text-[10px] font-bold font-sans">{t("mppPortal.nav.layanan")}</span>
-          </button>
+            <span className="text-[10px] font-medium font-sans">{t("mppPortal.nav.layanan")}</span>
+          </a>
 
-          {/* Integrated Flush Center Action: Asisten MPP */}
-          <button 
-            type="button"
-            onClick={() => {
-              window.dispatchEvent(new CustomEvent('open-mpp-voice-assistant'));
-            }}
-            className="flex flex-col items-center justify-center gap-1 text-emerald-800 dark:text-emerald-300 min-h-[44px] min-w-[48px] transition-colors cursor-pointer"
-            title="Asisten MPP - Tanya Suara Layanan & Persyaratan"
-            aria-label="Asisten MPP Tanya Suara"
-          >
-            <div className="w-7 h-7 rounded-xl bg-emerald-500/20 dark:bg-emerald-500/25 flex items-center justify-center text-emerald-800 dark:text-emerald-300 border border-emerald-500/30">
-              <Mic className="w-4 h-4" />
-            </div>
-            <span className="text-[10px] font-extrabold font-sans">
+          {/* Elevated Center Action: Asisten MPP (Tanya Suara) */}
+          <div className="relative -top-3 flex flex-col items-center">
+            <motion.button 
+              whileTap={{ scale: 0.92 }}
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent('open-mpp-voice-assistant'));
+              }}
+              className="relative z-10 w-12 h-12 rounded-full bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-950/40 border-2 border-white dark:border-slate-900 transition-transform cursor-pointer group"
+              title="Asisten MPP - Tanya Suara Layanan & Persyaratan"
+              aria-label="Asisten MPP Tanya Suara"
+            >
+              <Mic className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              {/* Sparkle subtle badge */}
+              <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border border-white dark:border-slate-900"></span>
+              </span>
+            </motion.button>
+            <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 font-sans mt-0.5 tracking-tight whitespace-nowrap">
               {t("mppPortal.nav.asistenAi", "Asisten MPP")}
             </span>
-          </button>
+          </div>
 
-          <button 
-            type="button"
-            onClick={() => {
-              const el = document.getElementById('instansi');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="flex flex-col items-center justify-center gap-1 text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 active:text-emerald-700 min-h-[44px] min-w-[48px] transition-colors cursor-pointer"
-          >
+          <a href="#instansi" className="flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 active:text-emerald-600 min-h-[48px] min-w-[50px] transition-colors">
             <Building2 className="w-5 h-5" />
-            <span className="text-[10px] font-bold font-sans">{t("mppPortal.nav.instansi")}</span>
-          </button>
+            <span className="text-[10px] font-medium font-sans">{t("mppPortal.nav.instansi")}</span>
+          </a>
 
-          <button 
-            type="button"
-            onClick={() => {
-              const el = document.getElementById('fasilitas');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="flex flex-col items-center justify-center gap-1 text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 active:text-emerald-700 min-h-[44px] min-w-[48px] transition-colors cursor-pointer"
-          >
+          <a href="#fasilitas" className="flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 active:text-emerald-600 min-h-[48px] min-w-[50px] transition-colors">
             <Armchair className="w-5 h-5" />
-            <span className="text-[10px] font-bold font-sans">{t("mppPortal.nav.fasilitas")}</span>
-          </button>
+            <span className="text-[10px] font-medium font-sans">{t("mppPortal.nav.fasilitas")}</span>
+          </a>
         </nav>
 
         {/* Fitur 8: Interactive Virtual Helpdesk Modal */}
@@ -7253,7 +7164,7 @@ export default function PortalMPP() {
               initial={{ opacity: 0, y: 50, x: "-50%" }}
               animate={{ opacity: 1, y: 0, x: "-50%" }}
               exit={{ opacity: 0, y: 50, x: "-50%" }}
-              className={`fixed bottom-[calc(env(safe-area-inset-bottom,0px)+72px)] md:bottom-6 left-1/2 z-40 w-[90%] max-w-sm backdrop-blur-md text-white shadow-2xl rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between border pr-10 gap-3 sm:gap-0 transition-all ${
+              className={`fixed bottom-6 left-1/2 z-40 w-[90%] max-w-sm backdrop-blur-md text-white shadow-2xl rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between border pr-10 gap-3 sm:gap-0 transition-all ${
                 activeTicket.status === 'dipanggil'
                   ? 'bg-gradient-to-r from-amber-600 via-amber-500 to-amber-700 border-amber-300 ring-4 ring-amber-400/80 shadow-[0_0_35px_rgba(245,158,11,0.6)] animate-pulse'
                   : activeTicket.status === 'selesai_langsung'
@@ -7371,7 +7282,7 @@ export default function PortalMPP() {
         />
 
         {/* AI Modal */}
-        <MppVisionModal isOpen={isAiModalOpen} onClose={() => setIsAiModalOpen(false)} initialQuery={aiInitialQuery} />
+        <MppVisionModal isOpen={isAiModalOpen} onClose={() => setIsAiModalOpen(false)} />
 
         {/* Airport Self-Service Kiosk Modal */}
         <MppAirportKioskModal
@@ -7452,69 +7363,6 @@ export default function PortalMPP() {
           isDark={isDark}
         />
 
-        {/* Fitur 6: Modal Interaktif Survey Kepuasan Masyarakat (SKM) - PermenPAN-RB No. 14/2017 */}
-        <AnimatePresence>
-          {isSurveyModalOpen && (
-            <div 
-              className="fixed inset-0 z-[120] flex items-center justify-center p-0 sm:p-4 md:p-6 bg-black/80 backdrop-blur-md overflow-hidden"
-              onClick={() => setIsSurveyModalOpen(false)}
-            >
-              <motion.div
-                initial={{ opacity: 0, scale: 0.96, y: 15 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.96, y: 15 }}
-                transition={{ duration: 0.22, ease: "easeOut" }}
-                className="w-full h-full sm:h-auto sm:max-h-[92vh] max-w-5xl xl:max-w-6xl bg-white dark:bg-slate-900 border-0 sm:border border-slate-200 dark:border-white/10 rounded-none sm:rounded-3xl p-3.5 sm:p-6 md:p-8 shadow-2xl overflow-y-auto flex flex-col"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Header Modal */}
-                <div className="flex items-start justify-between pb-3 sm:pb-4 border-b border-slate-100 dark:border-white/10 mb-3 sm:mb-4 shrink-0">
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono">
-                        SKM Luwu Digital
-                      </span>
-                      <span className="text-[10px] sm:text-[11px] text-slate-400 font-medium">PermenPAN-RB No. 14/2017</span>
-                    </div>
-                    <h3 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white font-sans mt-1">
-                      {t("mppPortal.survey.modalTitle")}
-                    </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-normal">
-                      {t("mppPortal.survey.modalSubtitle", "Survei resmi 9 unsur pelayanan publik MPP Simpurusiang terintegrasi langsung ke database daerah")}
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setIsSurveyModalOpen(false)}
-                    className="min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer shrink-0 ml-2"
-                    aria-label="Close"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-
-                {/* Formulir SKM Komprehensif MppCitizenSurveyMenu */}
-                <div className="flex-1 overflow-y-auto pr-0 sm:pr-1 w-full">
-                  <MppCitizenSurveyMenu 
-                    isInModal={true}
-                    isDarkMode={isDark}
-                    defaultName={activeTicket?.name || generatedTicket?.name || ''}
-                    defaultNik={activeTicket?.nik || ''}
-                    defaultPhone={activeTicket?.phone || ''}
-                    defaultAgency={activeTicket?.agency || generatedTicket?.agency || surveyForm.instansi || ''}
-                    onSubmitted={() => {
-                      setIsSurveySubmitted(true);
-                      setTimeout(() => {
-                        setIsSurveyModalOpen(false);
-                      }, 1800);
-                    }}
-                  />
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
-
         {/* Universal GovTech Command Palette (Ctrl + K) - Inovasi GovTech 3 */}
         <MppCommandPalette
           isOpen={isCommandPaletteOpen}
@@ -7534,15 +7382,10 @@ export default function PortalMPP() {
           onOpenServicesCatalog={() => setIsServicesMatrixOpen(true)}
         />
 
-        {/* Modal Rekomendasi Teknis PKKPR Dinas PUPTR / Berita Acara Forum Penataan Ruang */}
-        <PkkprTechnicalRecommendationModal
-          isOpen={isPkkprModalOpen}
-          onClose={() => {
-            setIsPkkprModalOpen(false);
-            setPkkprInitialData(undefined);
-          }}
-          isDark={isDark}
-          initialData={pkkprInitialData}
+        {/* Sticky Quick-Navigation Floating Dock Bar - Inovasi GovTech 3 */}
+        <MppQuickJumpDock
+          onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+          activePersona={activePersona}
         />
       </div>
     </div>

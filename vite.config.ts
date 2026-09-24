@@ -18,17 +18,6 @@ export default defineConfig(() => {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
-              if (
-                id.includes('react') || 
-                id.includes('react-dom') || 
-                id.includes('scheduler') || 
-                id.includes('react-router') || 
-                id.includes('react-i18next') || 
-                id.includes('motion') || 
-                id.includes('framer-motion')
-              ) {
-                return 'vendor-react';
-              }
               if (id.includes('maplibre-gl') || id.includes('mapbox-gl')) {
                 return 'vendor-maplibre';
               }
@@ -54,16 +43,13 @@ export default defineConfig(() => {
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
-        devOptions: {
-          enabled: false,
-        },
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png'],
         workbox: {
           cleanupOutdatedCaches: true, // WAJIB ADA: Membersihkan cache lama mencegah error IDB
           clientsClaim: true,
           skipWaiting: true,
           maximumFileSizeToCacheInBytes: 5242880, // 5 MiB to accommodate the large index chunk
-          navigateFallbackDenylist: [/^\/api/, /#.*/],
+          navigateFallbackDenylist: [/^\/api/],
         },
         manifest: {
           name: 'Portal Investasi Luwu',
@@ -98,7 +84,6 @@ export default defineConfig(() => {
       include: [
         'react',
         'react-dom',
-        'react-router',
         'react-router-dom',
         '@supabase/supabase-js',
         'lucide-react',
@@ -109,24 +94,15 @@ export default defineConfig(() => {
         'react-i18next',
         'i18next-browser-languagedetector',
         'motion',
-        'motion/react',
-        'axios',
-        'browser-image-compression',
+        'motion/react'
       ],
     },
     server: {
       host: '0.0.0.0',
       port: 3000,
-      hmr: false,
-      warmup: {
-        clientFiles: [
-          './src/main.tsx',
-          './src/App.tsx',
-          './src/components/LandingPage.tsx',
-          './src/components/PortalMPP.tsx',
-          './src/components/mpp/AntiCorruptionBanner.tsx',
-        ],
-      },
+      hmr: process.env.NODE_ENV === 'development' ? {
+        clientPort: 443
+      } : false,
     },
   };
 });

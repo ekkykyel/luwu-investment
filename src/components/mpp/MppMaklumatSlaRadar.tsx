@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   ShieldCheck, Clock, Award, CheckCircle2, Zap, 
   FileCheck, AlertTriangle, ArrowRight, Sparkles, 
-  Building2, Scale, HeartHandshake, Eye, Info,
-  AlertCircle, PhoneCall, ExternalLink, X, FileText, Megaphone
+  Building2, Scale, HeartHandshake, Eye, Info
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { AntiCorruptionBanner } from './AntiCorruptionBanner';
@@ -125,7 +124,6 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
 
   const [activeCategory, setActiveCategory] = useState<string>('semua');
   const [isMaklumatExpanded, setIsMaklumatExpanded] = useState<boolean>(false);
-  const [isIntegrityModalOpen, setIsIntegrityModalOpen] = useState<boolean>(false);
 
   const localizedSlaData = SLA_DATA.map(item => {
     if (isEn) {
@@ -312,126 +310,10 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
         </div>
       </div>
 
-      {/* Zona Integritas WBK/WBBM Auto-Cycling Responsive Horizontal Slider */}
-      <AntiCorruptionBanner isDark={isDark} className="mb-10" />
-
-      {/* Modal Interactive WBK / WBBM */}
-      <AnimatePresence>
-        {isIntegrityModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className={`w-full max-w-2xl p-6 sm:p-8 rounded-3xl border shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto ${
-                isDark 
-                  ? 'bg-slate-900 border-slate-800 text-white shadow-black' 
-                  : 'bg-white border-slate-200 text-slate-900'
-              }`}
-            >
-              {/* Close Button */}
-              <button
-                type="button"
-                onClick={() => setIsIntegrityModalOpen(false)}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-500/10 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              {/* Header */}
-              <div className="flex items-center gap-3.5 mb-6 pb-4 border-b border-slate-200/80 dark:border-slate-800">
-                <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-7 h-7" />
-                </div>
-                <div>
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 mb-1">
-                    <span>Komitmen Resmi Pemkab Luwu</span>
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-black tracking-tight">
-                    Zona Integritas WBK & WBBM MPP Simpurusiang
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Wilayah Bebas dari Korupsi (WBK) & Wilayah Birokrasi Bersih dan Melayani (WBBM)
-                  </p>
-                </div>
-              </div>
-
-              {/* 3 Core Pillars */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-                <div className={`p-4 rounded-2xl border ${isDark ? 'bg-slate-800/60 border-slate-700/80' : 'bg-slate-50 border-slate-200/80'}`}>
-                  <div className="w-8 h-8 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center mb-2.5 font-bold">
-                    <Scale className="w-4 h-4" />
-                  </div>
-                  <h4 className="text-xs font-bold mb-1">Stop Gratifikasi</h4>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                    Petugas dilarang keras menerima uang, hadiah, atau imbalan (Pasal 12B UU Tipikor).
-                  </p>
-                </div>
-
-                <div className={`p-4 rounded-2xl border ${isDark ? 'bg-slate-800/60 border-slate-700/80' : 'bg-slate-50 border-slate-200/80'}`}>
-                  <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-2.5 font-bold">
-                    <Megaphone className="w-4 h-4" />
-                  </div>
-                  <h4 className="text-xs font-bold mb-1">WBS Online (Anonim)</h4>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                    Sistem Pengaduan Whistleblowing terlindungi 100% untuk kerahasiaan identitas pelapor.
-                  </p>
-                </div>
-
-                <div className={`p-4 rounded-2xl border ${isDark ? 'bg-slate-800/60 border-slate-700/80' : 'bg-slate-50 border-slate-200/80'}`}>
-                  <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2.5 font-bold">
-                    <HeartHandshake className="w-4 h-4" />
-                  </div>
-                  <h4 className="text-xs font-bold mb-1">Saber Pungli WA</h4>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                    Respon cepat penindakan indikasi pungli via Satgas Saber Pungli Kab. Luwu.
-                  </p>
-                </div>
-              </div>
-
-              {/* Notice Warning */}
-              <div className="p-3.5 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-700 dark:text-red-300 text-xs font-medium mb-6 leading-relaxed flex items-start gap-2.5">
-                <AlertCircle className="w-5 h-5 shrink-0 text-red-500 mt-0.5" />
-                <div>
-                  <strong className="block font-bold mb-0.5">PERINGATAN RESMI:</strong>
-                  Seluruh retribusi layanan MPP Simpurusiang disetor resmi melalui Bank BPD Sulselbar. Jika Anda menemukan indikasi pungli atau permintaan imbalan oleh oknum, segera laporkan melalui saluran WBS!
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-2 border-t border-slate-200/80 dark:border-slate-800">
-                <a
-                  href="https://www.lapor.go.id"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-700 transition-all shadow-md"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  <span>Lapor via WBS Online</span>
-                </a>
-
-                <a
-                  href="https://wa.me/628114201234?text=Halo%20Satgas%20Saber%20Pungli%20Kabupaten%20Luwu,%20saya%20ingin%20melaporkan%20indikasi%20pungli"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 transition-all"
-                >
-                  <PhoneCall className="w-4 h-4 text-emerald-500" />
-                  <span>Saber Pungli WA</span>
-                </a>
-
-                <button
-                  type="button"
-                  onClick={() => setIsIntegrityModalOpen(false)}
-                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 cursor-pointer"
-                >
-                  Tutup
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      {/* Spanduk & Komitmen Zona Integritas Anti-Korupsi, Stop Gratifikasi, Stop Pungli */}
+      <div className="mb-10">
+        <AntiCorruptionBanner isDark={isDark} />
+      </div>
 
       {/* 2. SLA Radar (Standar Waktu Nyata Matrix) */}
       <div className="space-y-6">
@@ -474,136 +356,91 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
           </div>
         </div>
 
-        {/* SLA Grid Cards with Staggered Slide-Up and Vibrant Category Styling */}
+        {/* SLA Grid Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredSla.map((item, idx) => {
-            const categoryThemes: Record<string, { badge: string; bar: string; icon: string; borderHover: string }> = {
-              perizinan: {
-                badge: 'bg-sky-500/15 text-sky-800 dark:text-sky-300 border-sky-500/30',
-                bar: 'from-sky-500 via-blue-500 to-indigo-500',
-                icon: 'text-sky-500',
-                borderHover: 'hover:border-sky-500/60'
-              },
-              kependudukan: {
-                badge: 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border-emerald-500/30',
-                bar: 'from-emerald-500 via-teal-400 to-emerald-300',
-                icon: 'text-emerald-500',
-                borderHover: 'hover:border-emerald-500/60'
-              },
-              perpajakan: {
-                badge: 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30',
-                bar: 'from-amber-500 via-orange-400 to-yellow-400',
-                icon: 'text-amber-500',
-                borderHover: 'hover:border-amber-500/60'
-              },
-              agraria: {
-                badge: 'bg-violet-500/15 text-violet-800 dark:text-violet-300 border-violet-500/30',
-                bar: 'from-violet-500 via-purple-400 to-indigo-400',
-                icon: 'text-violet-500',
-                borderHover: 'hover:border-violet-500/60'
-              },
-              kesehatan: {
-                badge: 'bg-rose-500/15 text-rose-800 dark:text-rose-300 border-rose-500/30',
-                bar: 'from-rose-500 via-pink-400 to-rose-300',
-                icon: 'text-rose-500',
-                borderHover: 'hover:border-rose-500/60'
-              },
-            };
-
-            const theme = categoryThemes[item.category] || categoryThemes.perizinan;
-
-            return (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 25 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: idx * 0.05 }}
-                whileHover={{ y: -3, transition: { duration: 0.2 } }}
-                className={`p-4 sm:p-5 rounded-2xl border transition-all flex flex-col justify-between space-y-3 relative group shadow-sm ${theme.borderHover} ${
-                  isDark 
-                    ? 'bg-slate-900/90 border-slate-800 shadow-lg' 
-                    : 'bg-white border-slate-200/90 shadow-md shadow-slate-200/50'
-                }`}
-              >
-                <div>
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md border font-mono ${theme.badge}`}>
-                      {item.agencyName}
-                    </span>
-                    <span className="text-[10px] font-extrabold text-slate-700 dark:text-slate-300 flex items-center gap-1 font-mono">
-                      <Sparkles className="w-3 h-3 text-amber-500" />
-                      {item.complianceRate}% On-Time
-                    </span>
-                  </div>
-
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2 font-sans mb-1 leading-snug">
-                    {item.serviceName}
-                  </h4>
-
-                  <p className="text-[11px] text-slate-700 dark:text-slate-300 flex items-center gap-1.5 font-medium">
-                    <Award className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
-                    <span className="truncate">{item.productType}</span>
-                  </p>
-                </div>
-
-                {/* SLA Target vs Actual Visualizer */}
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-700 dark:text-slate-300 flex items-center gap-1 font-medium">
-                      <Clock className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                      {isEn ? 'Target SLA Limit:' : isZh ? '法定时效上限:' : 'Target Batas SLA:'}
-                    </span>
-                    <strong className="text-slate-900 dark:text-slate-100 font-mono font-bold">
-                      {item.targetSla}
-                    </strong>
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-700 dark:text-slate-300 flex items-center gap-1 font-medium">
-                      <Zap className="w-3.5 h-3.5 text-amber-500" />
-                      {isEn ? 'Avg Realization:' : isZh ? '实际平均耗时:' : 'Realisasi Rata-rata:'}
-                    </span>
-                    <span className="font-mono font-extrabold text-emerald-700 dark:text-emerald-400">
-                      {item.actualAvgMinutes >= 480 
-                        ? `${(item.actualAvgMinutes / 480).toFixed(1)} ${isEn ? 'Work Days' : isZh ? '个工作日' : 'Hari Kerja'}` 
-                        : `${item.actualAvgMinutes} ${isEn ? 'Mins' : isZh ? '分钟' : 'Menit'}`}
-                    </span>
-                  </div>
-
-                  {/* Multi-color Progress bar of SLA performance */}
-                  <div className="w-full bg-slate-200/80 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${Math.min(100, (item.actualAvgMinutes / item.targetMinutes) * 100)}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.8, delay: 0.1 + idx * 0.05, ease: "easeOut" }}
-                      className={`bg-gradient-to-r ${theme.bar} h-full rounded-full`}
-                    />
-                  </div>
-                </div>
-
-                {/* Cost & Action Footer */}
-                <div className="flex items-center justify-between pt-2 border-t border-slate-200/80 dark:border-slate-800/80 text-[11px] gap-2">
-                  <span className="font-extrabold text-emerald-800 dark:text-emerald-300 truncate">
-                    {item.cost}
+          {filteredSla.map(item => (
+            <div
+              key={item.id}
+              className={`p-4 sm:p-5 rounded-2xl border transition-all flex flex-col justify-between space-y-3 relative group ${
+                isDark 
+                  ? 'bg-slate-900/90 border-slate-800 hover:border-emerald-500/40 shadow-lg' 
+                  : 'bg-white border-slate-200 hover:border-emerald-500/40 shadow-md shadow-slate-200/50'
+              }`}
+            >
+              <div>
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono">
+                    {item.agencyName}
                   </span>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const el = document.getElementById('layanan') || document.getElementById('instansi');
-                      el?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    className="font-bold text-slate-800 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1 cursor-pointer transition-colors shrink-0 min-h-[34px] px-1 active:scale-95"
-                  >
-                    <span className="whitespace-nowrap">{isEn ? 'View Requirements' : isZh ? '查看前置条件' : 'Cek Syarat'}</span>
-                    <ArrowRight className="w-3.5 h-3.5 shrink-0" />
-                  </button>
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1 font-mono">
+                    <Sparkles className="w-3 h-3 text-amber-400" />
+                    {item.complianceRate}% On-Time
+                  </span>
                 </div>
-              </motion.div>
-            );
-          })}
+
+                <h4 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2 font-sans mb-1">
+                  {item.serviceName}
+                </h4>
+
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                  <Award className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                  <span className="truncate">{item.productType}</span>
+                </p>
+              </div>
+
+              {/* SLA Target vs Actual Visualizer */}
+              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5 text-emerald-500" />
+                    {isEn ? 'Target SLA Limit:' : isZh ? '法定时效上限:' : 'Target Batas SLA:'}
+                  </span>
+                  <strong className="text-slate-800 dark:text-slate-200 font-mono font-bold">
+                    {item.targetSla}
+                  </strong>
+                </div>
+
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                    <Zap className="w-3.5 h-3.5 text-amber-500" />
+                    {isEn ? 'Avg Realization:' : isZh ? '实际平均耗时:' : 'Realisasi Rata-rata:'}
+                  </span>
+                  <span className="font-mono font-extrabold text-emerald-600 dark:text-emerald-400">
+                    {item.actualAvgMinutes >= 480 
+                      ? `${(item.actualAvgMinutes / 480).toFixed(1)} ${isEn ? 'Work Days' : isZh ? '个工作日' : 'Hari Kerja'}` 
+                      : `${item.actualAvgMinutes} ${isEn ? 'Mins' : isZh ? '分钟' : 'Menit'}`}
+                  </span>
+                </div>
+
+                {/* Progress bar of SLA performance */}
+                <div className="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                  <div 
+                    className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500"
+                    style={{ width: `${Math.min(100, (item.actualAvgMinutes / item.targetMinutes) * 100)}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Cost & Action Footer */}
+              <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/80 text-[11px] gap-2">
+                <span className="font-bold text-emerald-700 dark:text-emerald-300 truncate">
+                  {item.cost}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById('layanan') || document.getElementById('instansi');
+                    el?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="font-bold text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1 cursor-pointer transition-colors shrink-0 min-h-[34px] px-1 active:scale-95"
+                >
+                  <span className="whitespace-nowrap">{isEn ? 'View Requirements' : isZh ? '查看前置条件' : 'Cek Syarat'}</span>
+                  <ArrowRight className="w-3.5 h-3.5 shrink-0" />
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

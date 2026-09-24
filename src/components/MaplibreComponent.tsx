@@ -488,12 +488,6 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
         drawRef.current.draw.trash();
       }
     },
-    toggle3D: () => {
-      handleToggle3D();
-    },
-    resetView: () => {
-      handleResetView();
-    },
     toggleMeasure: () => {
       setIsMeasuring(!isMeasuring);
       if (isMeasuring) {
@@ -784,62 +778,6 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
   const spatialLayersDistrictCacheRef = useRef<Record<string, any>>({});
   const desaDistrictCacheRef = useRef<Record<string, any>>({});
   const prevRoadsFeaturesRef = useRef<any>(null);
-
-  // Diagnostics: Track Pointer and Touch Events on Touch/Android devices to detect overlay obstruction
-  useEffect(() => {
-    const handlePointerDiagnostic = (e: PointerEvent | TouchEvent) => {
-      const isTouchEvent = ('pointerType' in e && e.pointerType === 'touch') || e.type.startsWith('touch');
-      const clientX = 'clientX' in e ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-      const clientY = 'clientY' in e ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
-
-      const targetEl = e.target as HTMLElement | null;
-      const topEl = (clientX && clientY && typeof document !== 'undefined')
-        ? (document.elementFromPoint(clientX, clientY) as HTMLElement | null)
-        : null;
-
-      const formatEl = (el: HTMLElement | null) => {
-        if (!el) return 'null';
-        const tag = el.tagName.toLowerCase();
-        const id = el.id ? `#${el.id}` : '';
-        const classes = el.className && typeof el.className === 'string'
-          ? `.${el.className.trim().split(/\s+/).slice(0, 2).join('.')}`
-          : '';
-        return `<${tag}${id}${classes}>`;
-      };
-
-      const isObstructed = !!(targetEl && topEl && targetEl !== topEl && !targetEl.contains(topEl) && !topEl.contains(targetEl));
-
-      if (isTouchEvent) {
-        const logData = {
-          event: e.type,
-          pointerType: (e as any).pointerType || 'touch',
-          pos: { x: Math.round(clientX), y: Math.round(clientY) },
-          target: formatEl(targetEl),
-          topElementAtPoint: formatEl(topEl),
-          isObstructed,
-          isAndroidMode: typeof document !== 'undefined' && document.documentElement.classList.contains('android-fullscreen-mode')
-        };
-
-        if (isObstructed) {
-          console.warn('[TouchDiagnostics: OBSTRUCTED TOUCH DETECTED]', logData);
-        } else {
-          console.debug('[TouchDiagnostics: Touch Event]', logData);
-        }
-
-        if (typeof window !== 'undefined') {
-          (window as any).__LUWU_LATEST_TOUCH__ = logData;
-        }
-      }
-    };
-
-    window.addEventListener('pointerdown', handlePointerDiagnostic, { passive: true });
-    window.addEventListener('touchstart', handlePointerDiagnostic, { passive: true });
-
-    return () => {
-      window.removeEventListener('pointerdown', handlePointerDiagnostic);
-      window.removeEventListener('touchstart', handlePointerDiagnostic);
-    };
-  }, []);
 
   // Extract Kecamatan GeoJSON directly so other layer toggles don't invalidate district polygon reference
   const kecLayerGeoJSON = useMemo(() => {
@@ -3185,23 +3123,24 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
         return {
           version: 8,
           sources: {
-            "osm-tiles": {
+            "carto-voyager": {
               type: "raster" as const,
               tiles: [
-                "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                "https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
+                "https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
+                "https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
+                "https://d.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png"
               ],
               tileSize: 256,
-              maxzoom: 19,
-              attribution: '© OpenStreetMap contributors'
+              maxzoom: 20,
+              attribution: '© OpenStreetMap contributors © CARTO'
             }
           },
           layers: [
             {
-              id: "osm-tiles-layer",
+              id: "carto-voyager-layer",
               type: "raster" as const,
-              source: "osm-tiles"
+              source: "carto-voyager"
             }
           ]
         };
@@ -3428,7 +3367,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
       </div>
 
       {/* Modern Custom Zoom Controls */}
-      <div className="absolute right-3 sm:right-4 top-[160px] md:top-auto md:bottom-28 z-[45] flex flex-col gap-2 font-sans select-none pointer-events-auto animate-in fade-in slide-in-from-right-4 duration-300">
+      <div className="absolute right-3 sm:right-4 bottom-32 md:bottom-28 z-[70] flex flex-col gap-2 font-sans select-none pointer-events-auto animate-in fade-in slide-in-from-right-4 duration-300">
         <div className="bg-white/70 dark:bg-slate-900/80 backdrop-blur-xl border border-white/40 dark:border-slate-800/60 shadow-[0_8px_32px_rgba(0,0,0,0.25)] rounded-2xl p-1.5 flex flex-col items-center gap-1.5 w-11">
           <button
             onClick={handleZoomIn}
@@ -3464,17 +3403,119 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
           </button>
         </div>
       </div>
+      {/* UNIFIED MAP CONTROLS (Android-First Mobile Quick Bar & Desktop Bar) */}
+      
+      {/* Mobile Floating Quick Bar (Ultra Compact Glass Capsule) */}
+      <div className="md:hidden fixed bottom-[70px] left-1/2 -translate-x-1/2 z-[60] pointer-events-auto flex items-center select-none">
+        {/* Mobile Basemap Selector Popover */}
+        <AnimatePresence>
+          {showBasemapSheet && (
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              transition={{ duration: 0.15 }}
+              className="absolute bottom-12 left-0 w-48 bg-slate-900/95 border border-slate-700/80 backdrop-blur-xl rounded-2xl shadow-2xl p-1.5 flex flex-col gap-1 z-[75]"
+            >
+              <div className="px-2 py-1 text-[9px] font-mono font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
+                {t('mapControls.baseMap', 'Pilihan Basemap')}
+              </div>
+              {[
+                { id: "osm", label: "OSM Standard", icon: "🗺️" },
+                { id: "light", label: "Minimalis Light", icon: "⚪" },
+                { id: "dark", label: "Dark Engine", icon: "⚫" },
+                { id: "satellite", label: "Citra Satelit", icon: "🛰️" }
+              ].map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setLocalMapMode(item.id as any);
+                    setShowBasemapSheet(false);
+                  }}
+                  className={`flex items-center gap-2 px-2.5 py-2 text-xs font-semibold rounded-xl transition-all ${
+                    localMapMode === item.id
+                      ? "bg-emerald-600 text-white font-bold shadow-sm"
+                      : "text-slate-200 hover:bg-slate-800"
+                  }`}
+                >
+                  <span className="text-sm">{item.icon}</span>
+                  <span>{item.label}</span>
+                </button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      {/* Unified Floating Basemap & Tactical Map Bar (Fully responsive on Mobile/Android & Desktop) */}
-      <div className="flex absolute bottom-[68px] md:bottom-3.5 left-1/2 -translate-x-1/2 z-[40] font-sans select-none items-center pointer-events-none w-auto max-w-[98vw] md:max-w-[95%] px-1">
-        <div className="pointer-events-auto bg-slate-900/90 dark:bg-slate-900/95 text-white backdrop-blur-2xl border border-slate-700/80 shadow-[0_8px_32px_rgba(0,0,0,0.55)] rounded-2xl p-1 sm:p-1.5 flex items-center gap-1 sm:gap-2 overflow-x-auto max-w-full custom-scrollbar scrollbar-none ring-1 ring-white/10">
-          <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 shrink-0">
-            <Layers className="h-3.5 w-3.5 text-emerald-400" />
-            <span className="text-[9px] sm:text-[10px] font-mono font-bold tracking-wider uppercase text-slate-300 whitespace-nowrap">
-              {t('mapControls.baseMap')}
+        <div className="bg-slate-900/90 dark:bg-slate-900/95 text-white backdrop-blur-xl border border-slate-700/80 shadow-[0_8px_30px_rgba(0,0,0,0.5)] rounded-2xl flex items-center divide-x divide-slate-800 px-1 py-0.5">
+          <button
+            onClick={() => setShowBasemapSheet(!showBasemapSheet)}
+            className={`flex items-center gap-1.5 px-3 py-2 text-[11px] font-bold transition-all rounded-xl cursor-pointer ${
+              showBasemapSheet ? "bg-emerald-600 text-white shadow-xs" : "text-emerald-400 hover:text-white"
+            }`}
+            title="Pilih Tipe Peta Spasial"
+          >
+            <Layers className="h-3.5 w-3.5" />
+            <span className="font-mono text-[10px] uppercase">
+              {localMapMode === "osm" ? "OSM" : localMapMode === "light" ? "Light" : localMapMode === "dark" ? "Dark" : "Satelit"}
             </span>
+            <ChevronDown className="h-3 w-3 opacity-70" />
+          </button>
+
+          <button
+            onClick={handleToggle3D}
+            className={`flex items-center gap-1 px-2.5 py-2 text-[11px] font-bold transition-colors cursor-pointer ${
+              viewState.pitch > 20 ? "text-indigo-400 bg-indigo-950/50" : "text-slate-300 hover:text-white"
+            }`}
+            title="Toggle 2D/3D View"
+          >
+            <Box className="h-3.5 w-3.5" />
+            <span className="font-mono text-[10px]">3D</span>
+          </button>
+
+          <button
+            onClick={() => setIsAutoFollowEnabled(!isAutoFollowEnabled)}
+            className={`flex items-center gap-1 px-2.5 py-2 text-[11px] font-bold transition-colors cursor-pointer ${
+              isAutoFollowEnabled ? "text-blue-400 bg-blue-950/50" : "text-slate-300 hover:text-white"
+            }`}
+            title={t('mapControls.autoFollow', 'Auto-Follow Selected Project')}
+          >
+            <LocateFixed className="h-3.5 w-3.5" />
+            <span className="font-mono text-[10px]">Ikuti</span>
+          </button>
+
+          {(props.activeWorkspace === "INVESTOR" || !props.activeWorkspace) && (
+            <button
+              onClick={handleForceSync}
+              disabled={isForceSyncing}
+              className={`flex items-center gap-1 px-2.5 py-2 text-[11px] font-bold transition-colors cursor-pointer ${
+                isForceSyncing ? "text-emerald-300 bg-emerald-950/60" : "text-emerald-400 hover:text-white"
+              }`}
+              title="Force Sync Database"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${isForceSyncing ? "animate-spin text-emerald-300" : ""}`} />
+              <span className="font-mono text-[10px]">Sync</span>
+            </button>
+          )}
+
+          <button
+            onClick={handleResetView}
+            className="flex items-center gap-1 px-2.5 py-2 text-[11px] font-bold text-slate-300 hover:text-emerald-400 transition-colors cursor-pointer"
+            title={t('map.reset_view', 'Reset View')}
+          >
+            <Home className="h-3.5 w-3.5 text-emerald-400" />
+            <span className="font-mono text-[10px]">Reset</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Desktop Floating Bar (Single unified, ultra-compact glass capsule) */}
+      <div className="hidden md:flex absolute bottom-3.5 left-1/2 -translate-x-1/2 z-[40] font-sans select-none items-center pointer-events-none w-auto max-w-[95%]">
+        <div className="pointer-events-auto bg-slate-900/85 dark:bg-slate-900/90 text-white backdrop-blur-xl border border-slate-700/80 shadow-[0_8px_32px_rgba(0,0,0,0.45)] rounded-2xl p-1 flex items-center gap-2">
+          <div className="flex items-center gap-1.5 px-2 shrink-0">
+            <Layers className="h-3.5 w-3.5 text-emerald-400" />
+            <span className="text-[10px] font-mono font-bold tracking-wider uppercase text-slate-300">{t('mapControls.baseMap')}</span>
           </div>
-          <div className="flex bg-slate-800/90 p-0.5 rounded-xl border border-slate-700/60 shrink-0">
+          <div className="flex bg-slate-800/90 p-0.5 rounded-xl border border-slate-700/60">
             {[
               { id: "osm", label: "OSM", tooltip: t('mapControls.osmTooltip', 'Peta kaya Point of Interest (POI)') },
               { id: "light", label: "Minimalis", tooltip: t('mapControls.minAdminTooltip', 'Peta bersih Esri Light Gray') },
@@ -3485,7 +3526,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
                 key={item.id}
                 title={item.tooltip}
                 onClick={() => setLocalMapMode(item.id as any)}
-                className={`px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
+                className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                   localMapMode === item.id
                     ? "bg-emerald-600 text-white shadow-xs font-bold"
                     : "text-slate-300 hover:text-white hover:bg-slate-700/50"
@@ -3501,7 +3542,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
           <div className="flex items-center gap-1 shrink-0">
             <button
               onClick={handleToggle3D}
-              className={`flex items-center gap-1 px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs font-semibold rounded-lg transition-colors cursor-pointer active:scale-95 whitespace-nowrap ${
+              className={`flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
                 viewState.pitch > 20 ? 'bg-indigo-600 text-white font-bold' : 'text-slate-300 hover:text-white hover:bg-slate-800'
               }`}
               title="Toggle 2D/3D View"
@@ -3511,7 +3552,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
             </button>
             <button
               onClick={handleResetView}
-              className="flex items-center gap-1 px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs font-semibold rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-800 transition-colors cursor-pointer active:scale-95 whitespace-nowrap"
+              className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-800 transition-colors cursor-pointer"
               title={t('map.reset_view', 'Reset View')}
             >
               <Home className="h-3.5 w-3.5 text-emerald-400" />
@@ -3524,7 +3565,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
                 <button
                   onClick={handleForceSync}
                   disabled={isForceSyncing}
-                  className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs font-bold rounded-lg transition-all cursor-pointer active:scale-95 whitespace-nowrap ${
+                  className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
                     isForceSyncing
                       ? "bg-emerald-500/30 text-emerald-300 border border-emerald-500/50 animate-pulse"
                       : "text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/60"

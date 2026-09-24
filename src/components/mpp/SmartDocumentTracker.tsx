@@ -66,35 +66,6 @@ export function SmartDocumentTracker({ isDark = false }: { isDark?: boolean }) {
     setIsLoading(true);
     setHasSearched(true);
     try {
-      const qClean = query.trim().toUpperCase();
-
-      // Cek apakah pencarian merujuk ke Berita Acara PKKPR PUPTR / Pemohon Ermon Ambing
-      if (
-        qClean.includes('120') || 
-        qClean.includes('FPR') || 
-        qClean.includes('PKKPR') || 
-        qClean.includes('ERMON') || 
-        qClean.includes('PONGSAMELUNG') || 
-        qClean.includes('LAMASI') || 
-        qClean.includes('GEREJA')
-      ) {
-        setSearchResult({
-          regNumber: '120/BA-FPR/NB/IX/2026',
-          applicantName: 'ERMON AMBING',
-          serviceType: 'Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR) Non Berusaha',
-          agency: 'Dinas Pekerjaan Umum & Tata Ruang / DPMPTSP',
-          submittedAt: '08 September 2026',
-          estimatedCompletion: '08 September 2026',
-          currentStep: 4,
-          statusText: 'Rekomendasi Teknis FPR Selesai (TTE Kepala Dinas)',
-          isCompleted: true,
-          tteSigned: true,
-          notes: 'Rekomendasi Forum Penataan Ruang disetujui (KDB Max 60-80%, GSB Min 7m, SHM No. 488). Berita Acara resmi telah ditransmisikan ke DPMPTSP sebagai landasan cetak izin PKKPR final.'
-        });
-        setIsLoading(false);
-        return;
-      }
-
       let { data, error } = await supabase
         .from('mpp_document_tracking')
         .select(`
@@ -253,21 +224,10 @@ export function SmartDocumentTracker({ isDark = false }: { isDark?: boolean }) {
           </button>
         </form>
 
-        {/* Tracking Format Helper & Quick Demo Chips */}
+        {/* Tracking Format Helper */}
         <div className="flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap mt-3.5 sm:mt-4 text-[11px] sm:text-xs text-slate-500">
-          <span>{isEn ? 'Format / Sample:' : isZh ? '单号格式 / 示例:' : 'Format / Contoh Pencarian:'}</span>
-          <button
-            type="button"
-            onClick={() => {
-              setSearchQuery('120/BA-FPR/NB/IX/2026');
-              fetchTracking('120/BA-FPR/NB/IX/2026');
-            }}
-            className="px-2.5 py-0.5 rounded-lg border font-mono font-bold text-[10px] sm:text-[11px] bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-500/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors cursor-pointer flex items-center gap-1"
-          >
-            <FileText className="w-3 h-3" />
-            <span>120/BA-FPR/NB/IX/2026 (PKKPR Gereja Lamasi)</span>
-          </button>
-          <span className="px-2 py-0.5 rounded-md border font-mono font-bold text-[10px] sm:text-[11px] bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-300 dark:border-slate-700">
+          <span>{isEn ? 'Format:' : isZh ? '格式:' : 'Format Nomor Resi:'}</span>
+          <span className="px-2 py-0.5 rounded-md border font-mono font-bold text-[10px] sm:text-[11px] bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 border-emerald-500/30">
             TRK-XXXXXXXX
           </span>
           <span className="text-slate-400 text-[10px] sm:text-[11px]">{isEn ? '(On your ticket receipt)' : isZh ? '(见排队小票)' : '(Tercetak pada struk tiket antrean)'}</span>
@@ -383,20 +343,7 @@ export function SmartDocumentTracker({ isDark = false }: { isDark?: boolean }) {
                 {searchResult.notes}
               </div>
 
-              <div className="flex items-center gap-2 shrink-0 flex-wrap sm:flex-nowrap">
-                {(searchResult.regNumber.includes('FPR') || searchResult.serviceType.includes('PKKPR') || searchResult.agency.includes('PUPTR')) && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      window.dispatchEvent(new CustomEvent('open-pkkpr-recommendation'));
-                    }}
-                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition-all cursor-pointer"
-                  >
-                    <FileText className="w-3.5 h-3.5" />
-                    <span>Buka BA Rekomendasi PUPTR (4 Hal)</span>
-                  </button>
-                )}
-
+              <div className="flex items-center gap-2 shrink-0">
                 <button
                   type="button"
                   onClick={() => window.print()}

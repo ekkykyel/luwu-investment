@@ -2547,7 +2547,7 @@ export function InvestmentDetailModal({
                 </div>
 
                 {/* AUTO-PHOTO SLIDER SECTION WITH LAZY LOADING & PROGRESSIVE PLACEHOLDER */}
-                <div className={`rounded-xl overflow-hidden relative shadow-md border ${isDarkMode ? "border-slate-700 bg-slate-900/50" : "border-slate-200 bg-slate-100"} w-full min-h-[220px] sm:min-h-[280px] md:min-h-[320px] aspect-[16/9] shrink-0 z-10 group flex flex-col justify-center items-center`}>
+                <div className={`rounded-lg overflow-hidden relative shadow-sm border ${isDarkMode ? "border-slate-700 bg-slate-900/50" : "border-slate-200 bg-slate-100"} w-full min-h-[250px] sm:min-h-[300px] aspect-video shrink-0 z-10 group flex flex-col justify-center items-center`}>
                   {sliderPhotos.length > 0 ? (
                     <>
                       {sliderPhotos.map((photoUrl, idx) => {
@@ -2566,7 +2566,7 @@ export function InvestmentDetailModal({
                                 alt={`Investment Photo ${idx + 1}`}
                                 loading={isCurrent ? "eager" : "lazy"}
                                 containerClassName="w-full h-full relative overflow-hidden"
-                                className="w-full h-full object-cover investment-detail-photo"
+                                className="w-full h-full object-cover"
                                 fallbackIcon={<Layers className="w-8 h-8 text-slate-600 dark:text-slate-400 opacity-60" />}
                               />
                             )}
