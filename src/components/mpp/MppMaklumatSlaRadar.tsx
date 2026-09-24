@@ -356,91 +356,136 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
           </div>
         </div>
 
-        {/* SLA Grid Cards */}
+        {/* SLA Grid Cards with Staggered Slide-Up and Vibrant Category Styling */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredSla.map(item => (
-            <div
-              key={item.id}
-              className={`p-4 sm:p-5 rounded-2xl border transition-all flex flex-col justify-between space-y-3 relative group ${
-                isDark 
-                  ? 'bg-slate-900/90 border-slate-800 hover:border-emerald-500/40 shadow-lg' 
-                  : 'bg-white border-slate-200 hover:border-emerald-500/40 shadow-md shadow-slate-200/50'
-              }`}
-            >
-              <div>
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono">
-                    {item.agencyName}
-                  </span>
-                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1 font-mono">
-                    <Sparkles className="w-3 h-3 text-amber-400" />
-                    {item.complianceRate}% On-Time
-                  </span>
+          {filteredSla.map((item, idx) => {
+            const categoryThemes: Record<string, { badge: string; bar: string; icon: string; borderHover: string }> = {
+              perizinan: {
+                badge: 'bg-sky-500/15 text-sky-800 dark:text-sky-300 border-sky-500/30',
+                bar: 'from-sky-500 via-blue-500 to-indigo-500',
+                icon: 'text-sky-500',
+                borderHover: 'hover:border-sky-500/60'
+              },
+              kependudukan: {
+                badge: 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border-emerald-500/30',
+                bar: 'from-emerald-500 via-teal-400 to-emerald-300',
+                icon: 'text-emerald-500',
+                borderHover: 'hover:border-emerald-500/60'
+              },
+              perpajakan: {
+                badge: 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30',
+                bar: 'from-amber-500 via-orange-400 to-yellow-400',
+                icon: 'text-amber-500',
+                borderHover: 'hover:border-amber-500/60'
+              },
+              agraria: {
+                badge: 'bg-violet-500/15 text-violet-800 dark:text-violet-300 border-violet-500/30',
+                bar: 'from-violet-500 via-purple-400 to-indigo-400',
+                icon: 'text-violet-500',
+                borderHover: 'hover:border-violet-500/60'
+              },
+              kesehatan: {
+                badge: 'bg-rose-500/15 text-rose-800 dark:text-rose-300 border-rose-500/30',
+                bar: 'from-rose-500 via-pink-400 to-rose-300',
+                icon: 'text-rose-500',
+                borderHover: 'hover:border-rose-500/60'
+              },
+            };
+
+            const theme = categoryThemes[item.category] || categoryThemes.perizinan;
+
+            return (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, delay: idx * 0.05 }}
+                whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                className={`p-4 sm:p-5 rounded-2xl border transition-all flex flex-col justify-between space-y-3 relative group shadow-sm ${theme.borderHover} ${
+                  isDark 
+                    ? 'bg-slate-900/90 border-slate-800 shadow-lg' 
+                    : 'bg-white border-slate-200/90 shadow-md shadow-slate-200/50'
+                }`}
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md border font-mono ${theme.badge}`}>
+                      {item.agencyName}
+                    </span>
+                    <span className="text-[10px] font-extrabold text-slate-700 dark:text-slate-300 flex items-center gap-1 font-mono">
+                      <Sparkles className="w-3 h-3 text-amber-500" />
+                      {item.complianceRate}% On-Time
+                    </span>
+                  </div>
+
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2 font-sans mb-1 leading-snug">
+                    {item.serviceName}
+                  </h4>
+
+                  <p className="text-[11px] text-slate-700 dark:text-slate-300 flex items-center gap-1.5 font-medium">
+                    <Award className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                    <span className="truncate">{item.productType}</span>
+                  </p>
                 </div>
 
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2 font-sans mb-1">
-                  {item.serviceName}
-                </h4>
+                {/* SLA Target vs Actual Visualizer */}
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-slate-700 dark:text-slate-300 flex items-center gap-1 font-medium">
+                      <Clock className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                      {isEn ? 'Target SLA Limit:' : isZh ? '法定时效上限:' : 'Target Batas SLA:'}
+                    </span>
+                    <strong className="text-slate-900 dark:text-slate-100 font-mono font-bold">
+                      {item.targetSla}
+                    </strong>
+                  </div>
 
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                  <Award className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                  <span className="truncate">{item.productType}</span>
-                </p>
-              </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-slate-700 dark:text-slate-300 flex items-center gap-1 font-medium">
+                      <Zap className="w-3.5 h-3.5 text-amber-500" />
+                      {isEn ? 'Avg Realization:' : isZh ? '实际平均耗时:' : 'Realisasi Rata-rata:'}
+                    </span>
+                    <span className="font-mono font-extrabold text-emerald-700 dark:text-emerald-400">
+                      {item.actualAvgMinutes >= 480 
+                        ? `${(item.actualAvgMinutes / 480).toFixed(1)} ${isEn ? 'Work Days' : isZh ? '个工作日' : 'Hari Kerja'}` 
+                        : `${item.actualAvgMinutes} ${isEn ? 'Mins' : isZh ? '分钟' : 'Menit'}`}
+                    </span>
+                  </div>
 
-              {/* SLA Target vs Actual Visualizer */}
-              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5 text-emerald-500" />
-                    {isEn ? 'Target SLA Limit:' : isZh ? '法定时效上限:' : 'Target Batas SLA:'}
-                  </span>
-                  <strong className="text-slate-800 dark:text-slate-200 font-mono font-bold">
-                    {item.targetSla}
-                  </strong>
+                  {/* Multi-color Progress bar of SLA performance */}
+                  <div className="w-full bg-slate-200/80 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      whileInView={{ width: `${Math.min(100, (item.actualAvgMinutes / item.targetMinutes) * 100)}%` }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.8, delay: 0.1 + idx * 0.05, ease: "easeOut" }}
+                      className={`bg-gradient-to-r ${theme.bar} h-full rounded-full`}
+                    />
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                    <Zap className="w-3.5 h-3.5 text-amber-500" />
-                    {isEn ? 'Avg Realization:' : isZh ? '实际平均耗时:' : 'Realisasi Rata-rata:'}
+                {/* Cost & Action Footer */}
+                <div className="flex items-center justify-between pt-2 border-t border-slate-200/80 dark:border-slate-800/80 text-[11px] gap-2">
+                  <span className="font-extrabold text-emerald-800 dark:text-emerald-300 truncate">
+                    {item.cost}
                   </span>
-                  <span className="font-mono font-extrabold text-emerald-600 dark:text-emerald-400">
-                    {item.actualAvgMinutes >= 480 
-                      ? `${(item.actualAvgMinutes / 480).toFixed(1)} ${isEn ? 'Work Days' : isZh ? '个工作日' : 'Hari Kerja'}` 
-                      : `${item.actualAvgMinutes} ${isEn ? 'Mins' : isZh ? '分钟' : 'Menit'}`}
-                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const el = document.getElementById('layanan') || document.getElementById('instansi');
+                      el?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="font-bold text-slate-800 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1 cursor-pointer transition-colors shrink-0 min-h-[34px] px-1 active:scale-95"
+                  >
+                    <span className="whitespace-nowrap">{isEn ? 'View Requirements' : isZh ? '查看前置条件' : 'Cek Syarat'}</span>
+                    <ArrowRight className="w-3.5 h-3.5 shrink-0" />
+                  </button>
                 </div>
-
-                {/* Progress bar of SLA performance */}
-                <div className="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                  <div 
-                    className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500"
-                    style={{ width: `${Math.min(100, (item.actualAvgMinutes / item.targetMinutes) * 100)}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Cost & Action Footer */}
-              <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/80 text-[11px] gap-2">
-                <span className="font-bold text-emerald-700 dark:text-emerald-300 truncate">
-                  {item.cost}
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    const el = document.getElementById('layanan') || document.getElementById('instansi');
-                    el?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="font-bold text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1 cursor-pointer transition-colors shrink-0 min-h-[34px] px-1 active:scale-95"
-                >
-                  <span className="whitespace-nowrap">{isEn ? 'View Requirements' : isZh ? '查看前置条件' : 'Cek Syarat'}</span>
-                  <ArrowRight className="w-3.5 h-3.5 shrink-0" />
-                </button>
-              </div>
-            </div>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
