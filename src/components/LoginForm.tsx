@@ -115,11 +115,37 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
       const currentRoleObj = ROLE_PRESETS.find(p => p.role === selectedRole || p.email.toLowerCase() === username.trim().toLowerCase());
       const effectiveRoleKey = currentRoleObj?.roleKey || (data.role ? String(data.role).toLowerCase().replace(/[\s-]+/g, "_") : "admin_puptr");
 
+      // Invalidate old session profile cache to prevent stale role override
+      sessionStorage.removeItem("luwu_cached_profile_data");
+
+      if (effectiveRoleKey !== 'masyarakat') {
+        // Clean up lingering citizen OTP keys when logging in as an OPD admin or investor
+        try {
+          for (let i = localStorage.length - 1; i >= 0; i--) {
+            const key = localStorage.key(i);
+            if (key && (key.startsWith('mpp_verified_otp_') || key.startsWith('mpp_citizen_name_'))) {
+              localStorage.removeItem(key);
+            }
+          }
+        } catch (e) {}
+      }
+
       if (data.token) {
         localStorage.setItem("luwu_session_token", data.token);
       }
       localStorage.setItem("luwu_user_role", effectiveRoleKey);
       localStorage.setItem("luwu_user_email", username.trim().toLowerCase());
+
+      // Warm up fresh profile cache immediately
+      const initialProfile = {
+        id: data.user?.id || (effectiveRoleKey === 'masyarakat' ? 'citizen-user' : 'admin-user'),
+        email: username.trim().toLowerCase(),
+        role: effectiveRoleKey,
+        full_name: currentRoleObj?.label || 'Pengguna Terverifikasi',
+      };
+      try {
+        sessionStorage.setItem("luwu_cached_profile_data", JSON.stringify(initialProfile));
+      } catch (e) {}
       
       // Explicitly set the session on the frontend client if provided
       if (data.session) {

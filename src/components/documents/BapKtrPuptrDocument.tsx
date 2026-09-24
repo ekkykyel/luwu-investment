@@ -33,6 +33,13 @@ export interface BapKtrCoordinatePoint {
 }
 
 export interface BapKtrDocumentData {
+  // Tipe Permohonan: Berusaha vs Non-Berusaha
+  jenisPermohonan?: "Berusaha" | "Non-Berusaha";
+  kategoriNonBerusaha?: string;
+  fungsiBangunan?: string;
+  namaLembagaOrganisasi?: string;
+  luasBangunanRencana?: string;
+
   // Nomor & Identitas Surat
   nomorSurat: string;
   tentangSurat: string;
@@ -143,8 +150,13 @@ export function extractCoordinatesFromGeometry(geometry: any): BapKtrCoordinateP
 }
 
 export const DEFAULT_BAP_KTR_DATA: BapKtrDocumentData = {
-  nomorSurat: "600.1.15/042/BAP-KTR/PUPTR-TR/LUWU/2026",
-  tentangSurat: "HASIL PENILAIAN DOKUMEN PERSETUJUAN KESESUAIAN KEGIATAN PEMANFAATAN RUANG (PKKPR) KABUPATEN LUWU",
+  jenisPermohonan: "Berusaha",
+  fungsiBangunan: "Industri Pengolahan Kakao Terpadu & Pergudangan Modern",
+  namaLembagaOrganisasi: "PT. LUWU AGRO INDUSTRI NUSANTARA",
+  luasBangunanRencana: "12.500 m²",
+
+  nomorSurat: "600.1.15/042/BAP-PKKPR-B/PUPTR-TR/LUWU/2026",
+  tentangSurat: "HASIL PENILAIAN DOKUMEN PERSETUJUAN KESESUAIAN KEGIATAN PEMANFAATAN RUANG (PKKPR) BERUSAHA KABUPATEN LUWU",
   tanggalDokumen: "24 September 2026",
   hariTanggalPemeriksaan: "Rabu, 24 September 2026",
 
@@ -203,6 +215,77 @@ export const DEFAULT_BAP_KTR_DATA: BapKtrDocumentData = {
     { id: 4, pointName: "P.04", latitudeDms: "2° 58' 25.10\" LS", longitudeDms: "120° 18' 48.90\" BT", latitudeDd: -2.973639, longitudeDd: 120.313583, description: "Patok Sudut Timur Laut (Batas Kawasan Industri)" },
     { id: 5, pointName: "P.05", latitudeDms: "2° 58' 36.70\" LS", longitudeDms: "120° 18' 54.20\" BT", latitudeDd: -2.976861, longitudeDd: 120.315056, description: "Patok Sudut Tenggara (Zona Logistik)" },
     { id: 6, pointName: "P.06", latitudeDms: "2° 58' 45.90\" LS", longitudeDms: "120° 18' 40.50\" BT", latitudeDd: -2.979417, longitudeDd: 120.311250, description: "Patok Sudut Selatan (Kembali ke Perimeter Awal)" }
+  ]
+};
+
+/**
+ * Default Sample Data for BAP-PKKPR Non-Berusaha (e.g. Pembangunan Gereja / Rumah Ibadah)
+ */
+export const DEFAULT_BAP_NON_BERUSAHA_DATA: BapKtrDocumentData = {
+  jenisPermohonan: "Non-Berusaha",
+  kategoriNonBerusaha: "Sarana Peribadatan / Rumah Ibadah (Gereja)",
+  fungsiBangunan: "Pembangunan Rumah Ibadah (Gereja)",
+  namaLembagaOrganisasi: "Panitia Pembangunan Gereja Toraja Jemaat Ranteballa",
+  luasBangunanRencana: "480 m² (1 Lantai)",
+
+  nomorSurat: "600.1.15/089/BAP-PKKPR-NB/PUPTR-TR/LUWU/2026",
+  tentangSurat: "HASIL PENILAIAN PERSETUJUAN KESESUAIAN KEGIATAN PEMANFAATAN RUANG (PKKPR) NON-BERUSAHA PEMBANGUNAN GEREJA KABUPATEN LUWU",
+  tanggalDokumen: "24 September 2026",
+  hariTanggalPemeriksaan: "Rabu, 24 September 2026",
+
+  nibNik: "7317011909890001",
+  namaPemohon: "Pdt. Markus Sampe, S.Th.",
+  namaPerusahaan: "Panitia Pembangunan Gereja Toraja Jemaat Ranteballa",
+  alamatPemohon: "Dusun Ranteballa, Desa Ranteballa, Kec. Latimojong, Kab. Luwu",
+  sektorUsaha: "Sarana Sosial, Budaya & Peribadatan (Pembangunan Gereja)",
+  kbliCode: "Non-KBLI (Kegiatan Non-Berusaha / Sarana Peribadatan)",
+  lokasiInvestasi: "Jl. Poros Ranteballa KM 3, Wilayah Permukiman Perdesaan",
+  desaKelurahan: "Desa Ranteballa",
+  kecamatan: "Kecamatan Latimojong",
+  kabupaten: "Kabupaten Luwu, Provinsi Sulawesi Selatan",
+  luasLahanPermohonan: "2.450 m² (0,245 Hektar)",
+  luasLahanDisetujui: "2.450 m² (0,245 Hektar) - Sesuai Delineasi Poligon",
+  buktiHakTanah: "Sertipikat Hak Milik (SHM) No. 00214/Ranteballa & Surat Keterangan Hibah Tanah Tempat Ibadah",
+
+  zonaPolaRuangRtrw: "Kawasan Permukiman Perdesaan & Fasilitas Pelayanan Umum (Sarana Peribadatan)",
+  kodeZonaRtrw: "SPU-02 / Perda No. 3 Tahun 2024 tentang RTRW Kab. Luwu 2024-2044",
+  statusLp2b: "NON_LP2B",
+  keteranganLp2b: "LOKASI BERADA DILUAR ZONA LP2B (NON-LP2B) - Bebas dari Kawasan Pertanian Pangan Berkelanjutan",
+  statusKawasanLindung: "Bebas dari Kawasan Hutan Lindung, Suaka Alam, Sempadan Sungai, dan Kawasan Rawan Bencana Tinggi",
+  statusSempadanSungaiPantai: "Memenuhi Jarak Bebas Sempadan Sungai > 50 Meter",
+  validasiTopologi: "Valid (Zero Self-Intersection, Zero Sliver Polygons, Seamless Boundary Conformance WGS84 UTM Zone 51S)",
+  sistemKoordinat: "Universal Transverse Mercator (UTM) Zone 51S - Datum WGS 1984",
+
+  statusKeputusan: "APPROVED",
+  catatanRekomendasiTeknis: [
+    "Rencana pemanfaatan ruang untuk fungsi sarana peribadatan (Gereja) telah SESUAI dengan Peraturan Daerah Kabupaten Luwu No. 3 Tahun 2024 tentang Rencana Tata Ruang Wilayah (RTRW) Kabupaten Luwu Tahun 2024-2044.",
+    "Pemohon diwajibkan menyediakan area resapan air dan penghijauan pekarangan minimal 20% dari total luas persil lahan yang dikuasai.",
+    "Wajib mematuhi Koefisien Dasar Bangunan (KDB) maksimal 60% dan Garis Sempadan Bangunan (GSB) minimal 7.5 meter dari as jalan lingkungan serta menyediakan area parkir jemaat yang memadai.",
+    "Berita Acara ini diterbitkan sebagai Rekomendasi Teknis Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR) Non-Berusaha dari Dinas PUPTR Kabupaten Luwu untuk persyaratan permohonan Persetujuan Bangunan Gedung (PBG) dan bukti legalitas penataan ruang."
+  ],
+  koefisienDasarBangunan: "Maksimal 60% (KDB)",
+  koefisienLantaiBangunan: "Maksimal 2.0 (KLB)",
+  garisSempadanBangunan: "Minimal 7.5 Meter dari Batas As Jalan",
+
+  kabidNama: "IR. H. IRWANTO, S.T., M.T.",
+  kabidNip: "19780412 200502 1 003",
+  kabidJabatan: "Kepala Bidang Tata Ruang dan Bina Konstruksi",
+
+  kadisNama: "IR. IKHSAN AS'AD, S.T., M.Si.",
+  kadisNip: "19710815 199803 1 007",
+  kadisJabatan: "Kepala Dinas Pekerjaan Umum dan Penataan Ruang",
+  kadisPangkat: "Pembina Utama Muda (IV/c)",
+
+  petaImageUrl: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80",
+  analisGisNama: "ANDI BASO MATTATA, S.T.",
+  analisGisNip: "19940822 202012 1 003",
+  catatanSurveyor: "Pengukuran batas persil telah diverifikasi menggunakan GNSS RTK Geodetic dengan delineasi poligon lahan telah ditumpangsusunkan langsung pada Layer Peta Digital RTRW Kabupaten Luwu 2024-2044.",
+
+  koordinatPoligon: [
+    { id: 1, pointName: "P.01", latitudeDms: "3° 18' 12.10\" LS", longitudeDms: "120° 09' 14.20\" BT", latitudeDd: -3.303361, longitudeDd: 120.153944, description: "Patok Batas Sudut Depan (Akses Jalan Gereja)" },
+    { id: 2, pointName: "P.02", latitudeDms: "3° 18' 10.45\" LS", longitudeDms: "120° 09' 17.80\" BT", latitudeDd: -3.302903, longitudeDd: 120.154944, description: "Patok Batas Sisi Barat Lahan Gereja" },
+    { id: 3, pointName: "P.03", latitudeDms: "3° 18' 08.20\" LS", longitudeDms: "120° 09' 16.30\" BT", latitudeDd: -3.302278, longitudeDd: 120.154528, description: "Patok Sudut Utara (Batas Lahan Warga)" },
+    { id: 4, pointName: "P.04", latitudeDms: "3° 18' 09.80\" LS", longitudeDms: "120° 09' 12.70\" BT", latitudeDd: -3.302722, longitudeDd: 120.153528, description: "Patok Sudut Timur Lahan Gereja" }
   ]
 };
 
@@ -416,17 +499,86 @@ export function BapKtrPuptrDocument({
           {/* Quick Dynamic Variable Editor Form */}
           {isEditMode && (
             <div className="mt-4 p-4 bg-[#f8fafc] border border-[#cbd5e1] rounded-xl text-xs space-y-3">
-              <div className="font-bold text-[#0f172a] text-sm flex items-center gap-2">
-                <Edit3 size={15} className="text-[#166534]" />
-                <span>Editor Variabel Dinamis Dokumen (Integrasi E-Office)</span>
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#cbd5e1] pb-2">
+                <div className="font-bold text-[#0f172a] text-sm flex items-center gap-2">
+                  <Edit3 size={15} className="text-[#166534]" />
+                  <span>Editor Variabel Dinamis Dokumen BAP-PKKPR</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#475569] font-bold">Preset Naskah:</span>
+                  <button
+                    type="button"
+                    onClick={() => setData({ ...DEFAULT_BAP_KTR_DATA, petaImageUrl: data.petaImageUrl })}
+                    className={`px-2.5 py-1 rounded-lg font-bold border transition-all cursor-pointer ${
+                      data.jenisPermohonan === "Berusaha"
+                        ? "bg-[#166534] text-white border-[#166534]"
+                        : "bg-white text-[#334155] border-[#cbd5e1] hover:bg-[#f1f5f9]"
+                    }`}
+                  >
+                    PKKPR Berusaha (Komersial)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setData({ ...DEFAULT_BAP_NON_BERUSAHA_DATA, petaImageUrl: data.petaImageUrl })}
+                    className={`px-2.5 py-1 rounded-lg font-bold border transition-all cursor-pointer ${
+                      data.jenisPermohonan === "Non-Berusaha"
+                        ? "bg-[#4338ca] text-white border-[#4338ca]"
+                        : "bg-white text-[#334155] border-[#cbd5e1] hover:bg-[#f1f5f9]"
+                    }`}
+                  >
+                    PKKPR Non-Berusaha (Gereja/Sosial)
+                  </button>
+                </div>
               </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-[#475569] font-bold mb-1">Nomor Surat BAP-KTR:</label>
+                  <label className="block text-[#475569] font-bold mb-1">Jenis Naskah PKKPR:</label>
+                  <select
+                    value={data.jenisPermohonan || "Berusaha"}
+                    onChange={(e) => {
+                      const newType = e.target.value as "Berusaha" | "Non-Berusaha";
+                      if (newType === "Non-Berusaha") {
+                        setData(prev => ({
+                          ...prev,
+                          jenisPermohonan: "Non-Berusaha",
+                          nomorSurat: prev.nomorSurat.replace("BAP-PKKPR-B", "BAP-PKKPR-NB").replace("BAP-KTR", "BAP-PKKPR-NB"),
+                          fungsiBangunan: prev.fungsiBangunan || "Pembangunan Rumah Ibadah (Gereja)"
+                        }));
+                      } else {
+                        setData(prev => ({
+                          ...prev,
+                          jenisPermohonan: "Berusaha",
+                          nomorSurat: prev.nomorSurat.replace("BAP-PKKPR-NB", "BAP-PKKPR-B"),
+                        }));
+                      }
+                    }}
+                    className="w-full px-2.5 py-1.5 bg-white border border-[#cbd5e1] rounded-lg text-[#0f172a] font-bold"
+                  >
+                    <option value="Berusaha">PKKPR Berusaha (Komersial / OSS-RBA)</option>
+                    <option value="Non-Berusaha">PKKPR Non-Berusaha (Rumah Ibadah Gereja / Rumah Tinggal / Fasos)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[#475569] font-bold mb-1">Nomor Surat BAP:</label>
                   <input
                     type="text"
                     value={data.nomorSurat}
                     onChange={(e) => setData({ ...data, nomorSurat: e.target.value })}
+                    className="w-full px-2.5 py-1.5 bg-white border border-[#cbd5e1] rounded-lg text-[#0f172a]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[#475569] font-bold mb-1">
+                    {data.jenisPermohonan === "Non-Berusaha" ? "Fungsi Bangunan / Kegiatan:" : "Sektor Usaha & KBLI:"}
+                  </label>
+                  <input
+                    type="text"
+                    value={data.jenisPermohonan === "Non-Berusaha" ? (data.fungsiBangunan || "") : data.sektorUsaha}
+                    onChange={(e) => data.jenisPermohonan === "Non-Berusaha" 
+                      ? setData({ ...data, fungsiBangunan: e.target.value })
+                      : setData({ ...data, sektorUsaha: e.target.value })
+                    }
                     className="w-full px-2.5 py-1.5 bg-white border border-[#cbd5e1] rounded-lg text-[#0f172a]"
                   />
                 </div>
@@ -440,11 +592,24 @@ export function BapKtrPuptrDocument({
                   />
                 </div>
                 <div>
-                  <label className="block text-[#475569] font-bold mb-1">Nama Perusahaan / Usaha:</label>
+                  <label className="block text-[#475569] font-bold mb-1">
+                    {data.jenisPermohonan === "Non-Berusaha" ? "Nama Lembaga / Panitia / Komite:" : "Nama Perusahaan / PT / CV:"}
+                  </label>
                   <input
                     type="text"
-                    value={data.namaPerusahaan}
-                    onChange={(e) => setData({ ...data, namaPerusahaan: e.target.value })}
+                    value={data.jenisPermohonan === "Non-Berusaha" ? (data.namaLembagaOrganisasi || data.namaPerusahaan) : data.namaPerusahaan}
+                    onChange={(e) => setData({ ...data, namaPerusahaan: e.target.value, namaLembagaOrganisasi: e.target.value })}
+                    className="w-full px-2.5 py-1.5 bg-white border border-[#cbd5e1] rounded-lg text-[#0f172a]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[#475569] font-bold mb-1">
+                    {data.jenisPermohonan === "Non-Berusaha" ? "NIK Pemohon (16-Digit):" : "NIB / NIK Pemohon:"}
+                  </label>
+                  <input
+                    type="text"
+                    value={data.nibNik}
+                    onChange={(e) => setData({ ...data, nibNik: e.target.value })}
                     className="w-full px-2.5 py-1.5 bg-white border border-[#cbd5e1] rounded-lg text-[#0f172a]"
                   />
                 </div>
@@ -458,24 +623,6 @@ export function BapKtrPuptrDocument({
                   />
                 </div>
                 <div>
-                  <label className="block text-[#475569] font-bold mb-1">NIB / NIK Pemohon:</label>
-                  <input
-                    type="text"
-                    value={data.nibNik}
-                    onChange={(e) => setData({ ...data, nibNik: e.target.value })}
-                    className="w-full px-2.5 py-1.5 bg-white border border-[#cbd5e1] rounded-lg text-[#0f172a]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[#475569] font-bold mb-1">Sektor Usaha & KBLI:</label>
-                  <input
-                    type="text"
-                    value={data.sektorUsaha}
-                    onChange={(e) => setData({ ...data, sektorUsaha: e.target.value })}
-                    className="w-full px-2.5 py-1.5 bg-white border border-[#cbd5e1] rounded-lg text-[#0f172a]"
-                  />
-                </div>
-                <div>
                   <label className="block text-[#475569] font-bold mb-1">Luas Lahan Permohonan:</label>
                   <input
                     type="text"
@@ -485,11 +632,11 @@ export function BapKtrPuptrDocument({
                   />
                 </div>
                 <div>
-                  <label className="block text-[#475569] font-bold mb-1">Lokasi Investasi:</label>
+                  <label className="block text-[#475569] font-bold mb-1">Bukti Hak Atas Tanah:</label>
                   <input
                     type="text"
-                    value={data.lokasiInvestasi}
-                    onChange={(e) => setData({ ...data, lokasiInvestasi: e.target.value })}
+                    value={data.buktiHakTanah}
+                    onChange={(e) => setData({ ...data, buktiHakTanah: e.target.value })}
                     className="w-full px-2.5 py-1.5 bg-white border border-[#cbd5e1] rounded-lg text-[#0f172a]"
                   />
                 </div>
@@ -593,7 +740,9 @@ export function BapKtrPuptrDocument({
             {/* B. JUDUL DOKUMEN */}
             <div style={{ textAlign: "center", marginBottom: "14px" }}>
               <div style={{ fontSize: "13pt", fontWeight: "bold", textDecoration: "underline", textTransform: "uppercase", letterSpacing: "0.5px", lineHeight: 1.25 }}>
-                BERITA ACARA PEMERIKSAAN KESESUAIAN TATA RUANG (BAP-KTR)
+                {data.jenisPermohonan === "Non-Berusaha"
+                  ? "BERITA ACARA PEMERIKSAAN KESESUAIAN KEGIATAN PEMANFAATAN RUANG (BAP-PKKPR) NON-BERUSAHA"
+                  : "BERITA ACARA PEMERIKSAAN KESESUAIAN TATA RUANG (BAP-KTR)"}
               </div>
               <div style={{ fontSize: "11pt", fontWeight: "bold", marginTop: "4px" }}>
                 Nomor : {data.nomorSurat}
@@ -605,62 +754,129 @@ export function BapKtrPuptrDocument({
 
             {/* C. PARAGRAF PEMBUKA */}
             <div style={{ textAlign: "justify", fontSize: "10.5pt", lineHeight: 1.5, marginBottom: "12px" }}>
-              Pada hari ini, <b>{data.hariTanggalPemeriksaan}</b>, bertempat di Kantor Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Luwu, Tim Teknis Pemeriksaan Kesesuaian Tata Ruang telah melakukan audit dan kajian teknis spasial terhadap permohonan Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR) berdasarkan ketentuan Undang-Undang Nomor 6 Tahun 2023 tentang Penetapan Perpu Cipta Kerja dan Peraturan Daerah Kabupaten Luwu Nomor 3 Tahun 2024 tentang Rencana Tata Ruang Wilayah (RTRW) Kabupaten Luwu Tahun 2024-2044, dengan rincian data pemohon sebagai berikut:
+              {data.jenisPermohonan === "Non-Berusaha" ? (
+                <>
+                  Pada hari ini, <b>{data.hariTanggalPemeriksaan}</b>, bertempat di Kantor Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Luwu, Tim Teknis Pemeriksaan Kesesuaian Tata Ruang telah melakukan audit dan kajian teknis spasial terhadap permohonan <b>Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR) Non-Berusaha</b> untuk {data.fungsiBangunan || data.tentangSurat || 'kegiatan non-komersial / sosial keagamaan'} berdasarkan ketentuan <b>Peraturan Pemerintah Nomor 21 Tahun 2021</b> tentang Penyelenggaraan Penataan Ruang, <b>Peraturan Menteri ATR/BPN Nomor 13 Tahun 2021</b> tentang Pelaksanaan Kesesuaian Kegiatan Pemanfaatan Ruang dan Sinkronisasi Program Pemanfaatan Ruang, serta <b>Peraturan Daerah Kabupaten Luwu Nomor 3 Tahun 2024</b> tentang Rencana Tata Ruang Wilayah (RTRW) Kabupaten Luwu Tahun 2024-2044, dengan rincian data permohonan sebagai berikut:
+                </>
+              ) : (
+                <>
+                  Pada hari ini, <b>{data.hariTanggalPemeriksaan}</b>, bertempat di Kantor Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Luwu, Tim Teknis Pemeriksaan Kesesuaian Tata Ruang telah melakukan audit dan kajian teknis spasial terhadap permohonan Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR) berdasarkan ketentuan Undang-Undang Nomor 6 Tahun 2023 tentang Penetapan Perpu Cipta Kerja dan Peraturan Daerah Kabupaten Luwu Nomor 3 Tahun 2024 tentang Rencana Tata Ruang Wilayah (RTRW) Kabupaten Luwu Tahun 2024-2044, dengan rincian data pemohon sebagai berikut:
+                </>
+              )}
             </div>
 
-            {/* TABEL DATA PEMOHON */}
+            {/* TABEL DATA PEMOHON (Dinamis: Berusaha vs Non-Berusaha) */}
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "10pt", marginBottom: "14px", lineHeight: 1.4 }}>
               <tbody>
-                <tr>
-                  <td style={{ width: "22px", verticalAlign: "top", padding: "3px 0" }}>1.</td>
-                  <td style={{ width: "230px", verticalAlign: "top", padding: "3px 0" }}>Nomor Induk Berusaha (NIB) / NIK</td>
-                  <td style={{ width: "14px", verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.nibNik}</td>
-                </tr>
-                <tr>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>2.</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>Nama Pemohon / Penanggung Jawab</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.namaPemohon}</td>
-                </tr>
-                <tr>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>3.</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>Nama Perusahaan / Badan Usaha</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.namaPerusahaan}</td>
-                </tr>
-                <tr>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>4.</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>Alamat Pemohon</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>{data.alamatPemohon}</td>
-                </tr>
-                <tr>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>5.</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>Rencana Kegiatan / Sektor Usaha</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>{data.sektorUsaha} (KBLI: {data.kbliCode})</td>
-                </tr>
-                <tr>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>6.</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>Lokasi Rencana Investasi</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>
-                    {data.lokasiInvestasi}, {data.desaKelurahan}, {data.kecamatan}, {data.kabupaten}
-                  </td>
-                </tr>
-                <tr>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>7.</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>Luas Lahan Permohonan</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.luasLahanPermohonan}</td>
-                </tr>
-                <tr>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>8.</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>Bukti Penguasaan Hak Atas Tanah</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                  <td style={{ verticalAlign: "top", padding: "3px 0" }}>{data.buktiHakTanah}</td>
-                </tr>
+                {data.jenisPermohonan === "Non-Berusaha" ? (
+                  <>
+                    <tr>
+                      <td style={{ width: "22px", verticalAlign: "top", padding: "3px 0" }}>1.</td>
+                      <td style={{ width: "230px", verticalAlign: "top", padding: "3px 0" }}>Nomor Induk Kependudukan (NIK)</td>
+                      <td style={{ width: "14px", verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.nibNik}</td>
+                    </tr>
+                    <tr>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>2.</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Nama Pemohon / Ketua Panitia</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.namaPemohon}</td>
+                    </tr>
+                    <tr>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>3.</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Nama Lembaga / Panitia Pembangunan</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.namaLembagaOrganisasi || data.namaPerusahaan || "Perseorangan / Panitia Pembangunan"}</td>
+                    </tr>
+                    <tr>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>4.</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Alamat Pemohon / Domisili</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>{data.alamatPemohon}</td>
+                    </tr>
+                    <tr>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>5.</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Rencana Kegiatan / Fungsi Bangunan</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.fungsiBangunan || data.sektorUsaha || "Pembangunan Sarana Ibadah (Gereja)"}</td>
+                    </tr>
+                    <tr>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>6.</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Lokasi Rencana Pembangunan</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>
+                        {data.lokasiInvestasi}, {data.desaKelurahan}, {data.kecamatan}, {data.kabupaten}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>7.</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Luas Lahan & Rencana Bangunan</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>
+                        Lahan: {data.luasLahanPermohonan} {data.luasBangunanRencana ? `| Rencana Bangunan: ${data.luasBangunanRencana}` : ""}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>8.</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Bukti Penguasaan Hak Atas Tanah</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>{data.buktiHakTanah}</td>
+                    </tr>
+                  </>
+                ) : (
+                  <>
+                    <tr>
+                      <td style={{ width: "22px", verticalAlign: "top", padding: "3px 0" }}>1.</td>
+                      <td style={{ width: "230px", verticalAlign: "top", padding: "3px 0" }}>Nomor Induk Berusaha (NIB) / NIK</td>
+                      <td style={{ width: "14px", verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.nibNik}</td>
+                    </tr>
+                    <tr>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>2.</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Nama Pemohon / Penanggung Jawab</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.namaPemohon}</td>
+                    </tr>
+                    <tr>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>3.</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Nama Perusahaan / Badan Usaha</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.namaPerusahaan}</td>
+                    </tr>
+                    <tr>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>4.</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Alamat Pemohon</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>{data.alamatPemohon}</td>
+                    </tr>
+                    <tr>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>5.</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Rencana Kegiatan / Sektor Usaha</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>{data.sektorUsaha} (KBLI: {data.kbliCode})</td>
+                    </tr>
+                    <tr>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>6.</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Lokasi Rencana Investasi</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>
+                        {data.lokasiInvestasi}, {data.desaKelurahan}, {data.kecamatan}, {data.kabupaten}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>7.</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Luas Lahan Permohonan</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.luasLahanPermohonan}</td>
+                    </tr>
+                    <tr>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>8.</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Bukti Penguasaan Hak Atas Tanah</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>{data.buktiHakTanah}</td>
+                    </tr>
+                  </>
+                )}
               </tbody>
             </table>
 
@@ -746,7 +962,11 @@ export function BapKtrPuptrDocument({
                 KESIMPULAN AUDIT TEKNIS SPASIAL:
               </div>
               <div style={{ fontSize: "12pt", fontWeight: "bold", textTransform: "uppercase", marginTop: "2px", color: "#166534" }}>
-                DINYATAKAN : {data.statusKeputusan === "APPROVED" ? "MEMENUHI KESESUAIAN TATA RUANG (APPROVED)" : data.statusKeputusan}
+                DINYATAKAN : {data.statusKeputusan === "APPROVED" 
+                  ? (data.jenisPermohonan === "Non-Berusaha" 
+                      ? "MEMENUHI KESESUAIAN TATA RUANG (NON-BERUSAHA)" 
+                      : "MEMENUHI KESESUAIAN TATA RUANG (BERUSAHA)")
+                  : data.statusKeputusan}
               </div>
               <div style={{ fontSize: "9.5pt", marginTop: "3px", color: "#15803d" }}>
                 Luas Lahan Disetujui: <b>{data.luasLahanDisetujui}</b>
@@ -754,7 +974,15 @@ export function BapKtrPuptrDocument({
             </div>
 
             <div style={{ fontSize: "10.5pt", lineHeight: 1.5, textAlign: "justify", marginBottom: "8px" }}>
-              Sehubungan dengan kesimpulan audit tersebut di atas, Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Luwu memberikan <b>Rekomendasi Teknis</b> kepada Dinas Penanaman Modal dan PTSP Kabupaten Luwu dengan ketentuan teknis bangunan sebagai berikut:
+              {data.jenisPermohonan === "Non-Berusaha" ? (
+                <>
+                  Sehubungan dengan kesimpulan audit tersebut di atas, Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Luwu memberikan <b>Rekomendasi Teknis Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR) Non-Berusaha</b> untuk {data.fungsiBangunan || 'kegiatan non-komersial/sosial keagamaan'} dengan ketentuan teknis bangunan sebagai berikut:
+                </>
+              ) : (
+                <>
+                  Sehubungan dengan kesimpulan audit tersebut di atas, Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Luwu memberikan <b>Rekomendasi Teknis</b> kepada Dinas Penanaman Modal dan PTSP Kabupaten Luwu dengan ketentuan teknis bangunan sebagai berikut:
+                </>
+              )}
             </div>
 
             {/* Tabel Ketentuan Teknis Ruang & Bangunan */}
@@ -774,7 +1002,9 @@ export function BapKtrPuptrDocument({
                 </tr>
                 <tr>
                   <td style={{ border: "1px solid #000000", padding: "5px 8px", fontWeight: "bold" }}>Kewajiban Ruang Terbuka Hijau (RTH)</td>
-                  <td style={{ border: "1px solid #000000", padding: "5px 8px" }}>Minimal 10% dari luas persil efektif</td>
+                  <td style={{ border: "1px solid #000000", padding: "5px 8px" }}>
+                    {data.jenisPermohonan === "Non-Berusaha" ? "Minimal 20% area resapan air & pekarangan" : "Minimal 10% dari luas persil efektif"}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -788,7 +1018,15 @@ export function BapKtrPuptrDocument({
             </ol>
 
             <div style={{ fontSize: "10.5pt", lineHeight: 1.5, textAlign: "justify", marginBottom: "16px" }}>
-              Demikian Berita Acara Pemeriksaan Kesesuaian Tata Ruang (BAP-KTR) ini dibuat dengan sebenar-benarnya untuk dipergunakan sebagai dasar pertimbangan teknis penerbitan Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR) oleh Pejabat yang Berwenang.
+              {data.jenisPermohonan === "Non-Berusaha" ? (
+                <>
+                  Demikian Berita Acara Pemeriksaan Kesesuaian Kegiatan Pemanfaatan Ruang (BAP-PKKPR) Non-Berusaha ini dibuat dengan sebenar-benarnya untuk dipergunakan sebagai dasar pertimbangan teknis penerbitan perizinan pemanfaatan ruang dan persyaratan teknis Persetujuan Bangunan Gedung (PBG) oleh Pejabat yang Berwenang.
+                </>
+              ) : (
+                <>
+                  Demikian Berita Acara Pemeriksaan Kesesuaian Tata Ruang (BAP-KTR) ini dibuat dengan sebenar-benarnya untuk dipergunakan sebagai dasar pertimbangan teknis penerbitan Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR) oleh Pejabat yang Berwenang.
+                </>
+              )}
             </div>
 
             {/* F. BLOK TANDA TANGAN GANDA (DUAL SIGNATURES) */}
@@ -1167,30 +1405,64 @@ export function convertAppToBapKtrData(
     coords = DEFAULT_BAP_KTR_DATA.koordinatPoligon;
   }
 
-  const isApproved = app?.pertanianStatus !== 'REJECTED' && app?.pkkprStatus !== 'REJECTED';
+  // Detect whether application is Non-Berusaha (e.g. Rumah Ibadah, Gereja, Rumah Tinggal, Fasos)
+  const isNonBerusaha = 
+    app?.category === "Non-Berusaha" || 
+    app?.jenis_permohonan === "Non-Berusaha" || 
+    (!app?.nib && !app?.nib_oss && !app?.nama_badan_usaha && !app?.perusahaan);
+
+  const jenisPermohonan = isNonBerusaha ? "Non-Berusaha" : "Berusaha";
   const year = new Date().getFullYear();
+  const isApproved = app?.pertanianStatus !== 'REJECTED' && app?.pkkprStatus !== 'REJECTED' && app?.status !== 'REJECTED';
+
+  const defaultTitle = isNonBerusaha
+    ? (app?.title || app?.nama_permohonan || "Pembangunan Sarana Ibadah (Gereja)")
+    : (app?.title || app?.nama_permohonan || "Permohonan Investasi & Pemanfaatan Ruang");
+
+  const fungsiBangunan = app?.fungsi_bangunan || app?.fungsi || (isNonBerusaha ? (app?.title || "Pembangunan Sarana Ibadah (Gereja)") : (app?.sector || "Industri & Komersial"));
+
+  const namaLembaga = app?.nama_lembaga || app?.perusahaan || app?.companyName || (isNonBerusaha ? (app?.nama_organisasi || app?.title || "Panitia Pembangunan / Perseorangan") : "PT / Badan Usaha");
+
+  const luasM2Val = Number(app?.luas_m2 || (app?.areaHa ? Number(app.areaHa) * 10000 : 1000));
+  const luasHaStr = (luasM2Val / 10000).toFixed(2);
+  const formattedLuas = `${luasM2Val.toLocaleString('id-ID')} m² (${luasHaStr} Ha)`;
 
   return {
-    nomorSurat: app?.skPkkprDocNumber || app?.pkkprDocNumber || `600.1.15/042/BAP-KTR/PUPTR-TR/LUWU/${year}`,
-    tentangSurat: `HASIL PENILAIAN DOKUMEN PERSETUJUAN KESESUAIAN KEGIATAN PEMANFAATAN RUANG (PKKPR) ATAS NAMA ${app?.applicantName || app?.companyName || 'PEMOHON'}`,
+    jenisPermohonan,
+    fungsiBangunan,
+    namaLembagaOrganisasi: namaLembaga,
+    luasBangunanRencana: app?.luas_bangunan_m2 ? `${app.luas_bangunan_m2} m²` : (isNonBerusaha ? "450 m²" : "1.200 m²"),
+
+    nomorSurat: app?.skPkkprDocNumber || app?.pkkprDocNumber || app?.pkkpr_doc_number || (
+      isNonBerusaha
+        ? `600.1.15/089/BAP-PKKPR-NB/PUPTR-TR/LUWU/${year}`
+        : `600.1.15/042/BAP-PKKPR-B/PUPTR-TR/LUWU/${year}`
+    ),
+    tentangSurat: isNonBerusaha
+      ? `HASIL PENILAIAN PERSETUJUAN KESESUAIAN KEGIATAN PEMANFAATAN RUANG (PKKPR) NON-BERUSAHA ${fungsiBangunan.toUpperCase()} KABUPATEN LUWU`
+      : `HASIL PENILAIAN DOKUMEN PERSETUJUAN KESESUAIAN KEGIATAN PEMANFAATAN RUANG (PKKPR) BERUSAHA ATAS NAMA ${app?.applicantName || app?.companyName || app?.nama_pemohon || 'PEMOHON'}`,
     tanggalDokumen: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
     hariTanggalPemeriksaan: new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
     
-    nibNik: app?.nibNik || app?.nib_oss || app?.nik_pemohon || '-',
-    namaPemohon: app?.applicantName || app?.nama_pemohon || 'Pemohon Terdaftar',
-    namaPerusahaan: app?.companyName || app?.nama_badan_usaha || 'Perseorangan / Badan Usaha',
-    alamatPemohon: app?.applicantAddress || app?.address || `Kecamatan ${app?.districtName || 'Belopa'}, Kab. Luwu`,
-    sektorUsaha: app?.sector || 'Pemanfaatan Ruang & Investasi Daerah',
-    kbliCode: app?.kbliCode || 'Sesuai OSS-RBA',
-    lokasiInvestasi: app?.address || `Desa ${app?.villageName || '-'}, Kec. ${app?.districtName || '-'}` || 'Kabupaten Luwu',
-    desaKelurahan: app?.villageName ? `Desa ${app.villageName}` : 'Desa Karang-Karangan',
-    kecamatan: app?.districtName ? `Kecamatan ${app.districtName}` : 'Kecamatan Bua',
+    nibNik: isNonBerusaha
+      ? (app?.nik || app?.nik_pemohon || app?.plot_number || '7317011909890001')
+      : (app?.nib ? `${app.nib} / ${app.nik || app.nik_pemohon || '-'}` : (app?.nibNik || app?.nib_oss || '0220108392182 / 7317011909890001')),
+    namaPemohon: app?.applicantName || app?.nama_pemohon || app?.contact_pic || (isNonBerusaha ? 'Pdt. Markus Sampe, S.Th.' : 'Ir. Muhammad Arsyad Al-Fatih, M.T.'),
+    namaPerusahaan: namaLembaga,
+    alamatPemohon: app?.applicantAddress || app?.address || app?.alamat || `Kecamatan ${app?.kecamatan || app?.districtName || 'Belopa'}, Kab. Luwu`,
+    sektorUsaha: isNonBerusaha ? (fungsiBangunan || "Sarana Sosial & Keagamaan (Rumah Ibadah Gereja)") : (app?.sector || "Industri Pengolahan & Komersial"),
+    kbliCode: isNonBerusaha ? "Non-KBLI (Kegiatan Non-Berusaha / Sarana Peribadatan)" : (app?.kbliCode || "10732 (Industri Pengolahan)"),
+    lokasiInvestasi: app?.address || `Desa ${app?.desa || app?.villageName || '-'}, Kec. ${app?.kecamatan || app?.districtName || '-'}` || 'Kabupaten Luwu',
+    desaKelurahan: app?.desa || app?.villageName ? `Desa ${app?.desa || app?.villageName}` : 'Desa Karang-Karangan',
+    kecamatan: app?.kecamatan || app?.districtName ? `Kecamatan ${app?.kecamatan || app?.districtName}` : 'Kecamatan Bua',
     kabupaten: 'Kabupaten Luwu, Provinsi Sulawesi Selatan',
-    luasLahanPermohonan: app?.areaHa ? `${app.areaHa} Ha (${(Number(app.areaHa) * 10000).toLocaleString('id-ID')} m²)` : '25.48 Ha',
-    luasLahanDisetujui: app?.areaHa ? `${app.areaHa} Ha - Sesuai Delineasi Poligon` : '25.48 Ha',
-    buktiHakTanah: app?.certificateType ? `${app.certificateType} (No. ${app?.certificateDocNumber || '-'})` : 'Sertipikat Hak Milik (SHM) / Bukti Penguasaan Fisik Tanah Terdaftar',
+    luasLahanPermohonan: formattedLuas,
+    luasLahanDisetujui: `${formattedLuas} - Sesuai Delineasi Poligon`,
+    buktiHakTanah: app?.bukti_tanah || (app?.certificateType ? `${app.certificateType} (No. ${app?.certificateDocNumber || '-'})` : (isNonBerusaha ? 'Sertipikat Hak Milik (SHM) / Surat Keterangan Hibah Tempat Ibadah' : 'Sertipikat Hak Milik (SHM) No. 00412 & Surat Keterangan Penguasaan Fisik Tanah')),
 
-    zonaPolaRuangRtrw: app?.sector ? `Kawasan Peruntukan ${app.sector}` : 'Kawasan Peruntukan Industri & Perdagangan',
+    zonaPolaRuangRtrw: isNonBerusaha 
+      ? 'Kawasan Permukiman Perdesaan & Fasilitas Pelayanan Umum (Sarana Peribadatan)' 
+      : (app?.sector ? `Kawasan Peruntukan ${app.sector}` : 'Kawasan Peruntukan Industri & Perdagangan'),
     kodeZonaRtrw: 'Perda No. 3 Tahun 2024 tentang RTRW Kab. Luwu 2024-2044',
     statusLp2b: app?.pertanianStatus === 'APPROVED' ? 'LP2B' : 'NON_LP2B',
     keteranganLp2b: app?.pertanianStatus === 'APPROVED'
@@ -1202,15 +1474,20 @@ export function convertAppToBapKtrData(
     sistemKoordinat: 'Universal Transverse Mercator (UTM) Zone 51S - Datum WGS 1984',
 
     statusKeputusan: isApproved ? 'APPROVED' : 'REJECTED',
-    catatanRekomendasiTeknis: [
+    catatanRekomendasiTeknis: isNonBerusaha ? [
+      `Rencana kegiatan pemanfaatan ruang untuk ${fungsiBangunan} telah SESUAI dengan Peraturan Daerah Kabupaten Luwu Nomor 3 Tahun 2024 tentang Rencana Tata Ruang Wilayah (RTRW) Kabupaten Luwu Tahun 2024-2044.`,
+      'Pemohon diwajibkan menyediakan area resapan air dan penghijauan pekarangan minimal 20% dari total luas persil lahan yang dikuasai.',
+      'Wajib mematuhi Koefisien Dasar Bangunan (KDB) maksimal 60% dan Garis Sempadan Bangunan (GSB) minimal 7.5 meter dari as jalan lingkungan serta menyediakan area parkir jemaat yang aman.',
+      'Berita Acara ini diterbitkan sebagai Rekomendasi Teknis Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR) Non-Berusaha dari Dinas PUPTR Kabupaten Luwu untuk persyaratan permohonan Persetujuan Bangunan Gedung (PBG) dan bukti legalitas penataan ruang.'
+    ] : [
       'Rencana kegiatan pemanfaatan ruang telah SESUAI dengan Peraturan Daerah Kabupaten Luwu Nomor 3 Tahun 2024 tentang Rencana Tata Ruang Wilayah (RTRW) Kabupaten Luwu Tahun 2024-2044.',
       'Wajib menyediakan Ruang Terbuka Hijau (RTH) privat minimal 10% dari total luas persil lahan yang dikuasai.',
       'Mematuhi Koefisien Dasar Bangunan (KDB) maksimal 60% dan Garis Sempadan Bangunan (GSB) minimal 15 meter dari as jalan arteri primer.',
-      'Direkomendasikan kepada Kepala DPMPTSP Kabupaten Luwu untuk penerbitan Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR).'
+      'Direkomendasikan kepada Kepala DPMPTSP Kabupaten Luwu untuk penerbitan Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR) Berusaha melalui sistem OSS-RBA.'
     ],
-    koefisienDasarBangunan: 'Maksimal 60% (KDB)',
-    koefisienLantaiBangunan: 'Maksimal 2.4 (KLB)',
-    garisSempadanBangunan: 'Minimal 15.0 Meter dari Batas As Jalan',
+    koefisienDasarBangunan: isNonBerusaha ? 'Maksimal 60% (KDB)' : 'Maksimal 60% (KDB)',
+    koefisienLantaiBangunan: isNonBerusaha ? 'Maksimal 2.0 (KLB)' : 'Maksimal 2.4 (KLB)',
+    garisSempadanBangunan: isNonBerusaha ? 'Minimal 7.5 Meter dari Batas As Jalan' : 'Minimal 15.0 Meter dari Batas As Jalan',
 
     kabidNama: puptrSettings?.kabidSignatory?.fullName || 'IR. H. IRWANTO, S.T., M.T.',
     kabidNip: puptrSettings?.kabidSignatory?.nip || '19780412 200502 1 003',
@@ -1220,7 +1497,7 @@ export function convertAppToBapKtrData(
     kadisJabatan: puptrSettings?.kepalaDinas?.officialTitle || 'Kepala Dinas Pekerjaan Umum dan Penataan Ruang',
     kadisPangkat: puptrSettings?.kepalaDinas?.pangkatGolongan || 'Pembina Utama Muda (IV/c)',
 
-    petaImageUrl: customMapSnapshot || app?.mapSnapshotUrl || DEFAULT_BAP_KTR_DATA.petaImageUrl,
+    petaImageUrl: customMapSnapshot || app?.mapSnapshotUrl || (isNonBerusaha ? DEFAULT_BAP_NON_BERUSAHA_DATA.petaImageUrl : DEFAULT_BAP_KTR_DATA.petaImageUrl),
     analisGisNama: 'ANDI BASO MATTATA, S.T.',
     analisGisNip: '19940822 202012 1 003',
     catatanSurveyor: 'Pengukuran batas persil telah diverifikasi menggunakan GNSS RTK Dual-Frequency Geodetic dengan tingkat akurasi horizontal < 0.05 meter. Delineasi poligon telah ditumpangsusunkan (overlay) langsung dengan Layer Peta Digital RTRW Kabupaten Luwu 2024-2044.',

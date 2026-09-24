@@ -4999,7 +4999,31 @@ export default function App() {
 
   if (currentPath === "/masyarakat-dashboard" || currentPath === "/masyarakat" || currentPath === "/portal-masyarakat") {
     const rawStoredRole = typeof window !== "undefined" ? (localStorage.getItem("luwu_user_role") || "").toLowerCase().trim() : "";
-    const effectiveRole = (activeProfile?.role || rawStoredRole).toLowerCase().replace(/[\s-]+/g, "_");
+    const rawStoredEmail = typeof window !== "undefined" ? (localStorage.getItem("luwu_user_email") || "").toLowerCase().trim() : "";
+    const sessionEmail = (activeProfile?.email || rawStoredEmail).toLowerCase().trim();
+
+    // If an Admin OPD or Superadmin lands on citizen dashboard, redirect them to their official OPD admin dashboard
+    const isExplicitAdmin = 
+      rawStoredRole.includes("admin") || 
+      rawStoredRole.includes("super") || 
+      sessionEmail.includes("puptr") || 
+      sessionEmail.includes("pertanian") || 
+      sessionEmail.includes("dalak") ||
+      sessionEmail.includes("promosi") ||
+      sessionEmail.includes("data@") ||
+      sessionEmail.includes("oss@");
+
+    if (isExplicitAdmin) {
+      const tabTarget = rawStoredRole === "admin_pertanian" || sessionEmail.includes("pertanian") 
+        ? "/dashboard?tab=verifikasi_pertanian" 
+        : rawStoredRole === "admin_puptr" || sessionEmail.includes("puptr") 
+        ? "/dashboard?tab=verifikasi_pkkpr" 
+        : "/dashboard";
+      window.location.replace(tabTarget);
+      return null;
+    }
+
+    let effectiveRole = (activeProfile?.role || rawStoredRole).toLowerCase().replace(/[\s-]+/g, "_");
 
     // Check if user has verified citizen session from Kiosk or MPP OTP
     let hasOtpSession = false;
@@ -5057,15 +5081,30 @@ export default function App() {
     currentPath.startsWith("/portal-admin")
   ) {
     const rawStoredRole = typeof window !== "undefined" ? (localStorage.getItem("luwu_user_role") || "").toLowerCase().trim() : "";
-    const sessionEmail = (activeProfile?.email || "").toLowerCase().trim();
-    const effectiveRole = (activeProfile?.role || rawStoredRole).toLowerCase().replace(/[\s-]+/g, "_");
+    const rawStoredEmail = typeof window !== "undefined" ? (localStorage.getItem("luwu_user_email") || "").toLowerCase().trim() : "";
+    const sessionEmail = (activeProfile?.email || rawStoredEmail).toLowerCase().trim();
 
-    if (effectiveRole === "masyarakat") {
+    // Robust role resolution preventing stale activeProfile.role from overriding authenticated OPD Admin role
+    let effectiveRole = (activeProfile?.role || rawStoredRole).toLowerCase().replace(/[\s-]+/g, "_");
+    if (rawStoredRole && (rawStoredRole.includes("admin") || rawStoredRole.includes("super"))) {
+      effectiveRole = rawStoredRole;
+    }
+    if (sessionEmail.includes("puptr@") || sessionEmail.includes("tataruangluwu")) {
+      effectiveRole = "admin_puptr";
+    } else if (sessionEmail.includes("pertanian@") || sessionEmail.includes("distanluwu")) {
+      effectiveRole = "admin_pertanian";
+    } else if (sessionEmail.includes("dalak")) {
+      effectiveRole = "admin_dalak";
+    } else if (sessionEmail.includes("superadmin")) {
+      effectiveRole = "superadmin";
+    }
+
+    if (effectiveRole === "masyarakat" && !rawStoredRole.includes("admin") && !rawStoredRole.includes("super")) {
       window.location.replace("/masyarakat-dashboard");
       return null;
     }
 
-    if (effectiveRole === "investor") {
+    if (effectiveRole === "investor" && !rawStoredRole.includes("admin") && !rawStoredRole.includes("super")) {
       return (
         <DataContext.Provider value={{ investments, setInvestments, districts, setDistricts, villages, setVillages, spatialLayers, setSpatialLayers, rtrwZoning, setRtrwZoning, incentivePolicies, setIncentivePolicies, supplyChainMatrix, setSupplyChainMatrix, executiveMetrics, setExecutiveMetrics, refreshData: fetchAllData, isLoading: isStatsLoading, isSpatialLiveSyncEnabled, setIsSpatialLiveSyncEnabled, liveSyncStatus, loiCount: investorLoiCount }}>
           <Suspense fallback={<LoadingScreen />}>

@@ -8,11 +8,22 @@ const PROFILE_CACHE_KEY = 'luwu_cached_profile_data';
 
 export function useProfile() {
   const [profile, setProfileState] = useState<any>(() => {
-    if (memoryCachedProfile) return memoryCachedProfile;
+    const rawRole = typeof window !== 'undefined' ? localStorage.getItem('luwu_user_role') : null;
+    if (memoryCachedProfile) {
+      if (rawRole && memoryCachedProfile.role && memoryCachedProfile.role !== rawRole) {
+        memoryCachedProfile = null;
+      } else {
+        return memoryCachedProfile;
+      }
+    }
     try {
       const stored = sessionStorage.getItem(PROFILE_CACHE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
+        if (rawRole && parsed.role && parsed.role !== rawRole) {
+          sessionStorage.removeItem(PROFILE_CACHE_KEY);
+          return null;
+        }
         memoryCachedProfile = parsed;
         return parsed;
       }
@@ -186,7 +197,18 @@ export function useProfile() {
           email: localEmail || (localRole === 'masyarakat' ? `warga_${localNik || 'user'}@luwukab.go.id` : ''),
           role: localRole,
           nik: localNik || citizenData.nik || "",
-          full_name: localName || citizenData.full_name || (localRole === 'masyarakat' ? 'Warga Kab. Luwu' : localRole === 'admin_dalak' ? 'Bidang Pengendalian Pelaksanaan & Pengawasan' : 'Administrator'),
+          full_name: localName || citizenData.full_name || (
+            localRole === 'masyarakat' ? 'Warga Kab. Luwu' :
+            localRole === 'admin_puptr' ? 'Admin Dinas PUPTR (Tata Ruang & Studio GIS)' :
+            localRole === 'admin_pertanian' ? 'Admin Dinas Pertanian (Lahan LP2B)' :
+            localRole === 'admin_dalak' ? 'Bidang Pengendalian Pelaksanaan & Pengawasan' :
+            localRole === 'admin_promosi' ? 'Bidang Promosi & Penanaman Modal' :
+            localRole === 'admin_data' ? 'Bidang Perencanaan, Pengembangan Iklim & Data' :
+            localRole === 'admin_oss' ? 'Bidang Penyelenggaraan Pelayanan Perizinan' :
+            localRole === 'superadmin' ? 'Super Administrator' :
+            localRole === 'investor' ? 'Investor' :
+            'Administrator'
+          ),
           phone: citizenData.phone_number || citizenData.phone || "",
           whatsapp: citizenData.phone_number || citizenData.whatsapp || "",
           no_whatsapp: citizenData.phone_number || citizenData.no_whatsapp || "",

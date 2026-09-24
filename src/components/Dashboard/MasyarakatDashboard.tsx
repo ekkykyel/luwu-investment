@@ -25,6 +25,7 @@ import { MppOtpVerificationGuard } from "../mpp/MppOtpVerificationGuard";
 import { getKecamatanLabel, getDesaLabel, getKecamatanId, getDesaId } from "../../utils/gisHelpers";
 import { isSameDistrict, normalizeDistrictName } from "../../utils/geoUtils";
 import { generateMergedPkkprPdf, readFileAsDataUrl, uploadPkkprDocumentToStorage } from "../../utils/pkkprDocumentMerger";
+import { BapKtrPuptrDocument, convertAppToBapKtrData } from "../documents/BapKtrPuptrDocument";
 
 interface MasyarakatDashboardProps {
   isDarkMode: boolean;
@@ -539,6 +540,18 @@ export default function MasyarakatDashboard({
   const [pkkprEsgAnalysis, setPkkprEsgAnalysis] = useState<any>(null);
   const [isSubmittingPkkpr, setIsSubmittingPkkpr] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  // Extended Form States for Berusaha vs Non-Berusaha
+  const [pkkprFungsiBangunan, setPkkprFungsiBangunan] = useState("Sarana Peribadatan / Rumah Ibadah (Gereja)");
+  const [pkkprNamaLembaga, setPkkprNamaLembaga] = useState("Panitia Pembangunan Gereja Toraja");
+  const [pkkprLuasBangunan, setPkkprLuasBangunan] = useState<number | string>(480);
+  const [pkkprBuktiTanahJenis, setPkkprBuktiTanahJenis] = useState("Sertipikat Hak Milik (SHM) / Surat Hibah Tempat Ibadah");
+  const [pkkprBuktiTanahNomor, setPkkprBuktiTanahNomor] = useState("00214/Latimojong");
+  const [pkkprKbli, setPkkprKbli] = useState("10732");
+
+  // BAP Document Preview Modal State
+  const [isBapDocumentModalOpen, setIsBapDocumentModalOpen] = useState(false);
+  const [selectedBapPreviewApp, setSelectedBapPreviewApp] = useState<any>(null);
 
   // Document Upload States (Sertifikat, Surat Pengantar Desa, Surat Bebas Sengketa)
   const [fileSertifikat, setFileSertifikat] = useState<File | null>(null);
@@ -1199,35 +1212,74 @@ export default function MasyarakatDashboard({
       if (stored) {
         try { localApps = JSON.parse(stored); } catch (e) {}
       } else {
-        // Default seed society submission (PKKPR-LUWU-321183) for instant verification
-        const defaultApp = {
-          id: "PKKPR-LUWU-321183",
-          pkkpr_doc_number: "PKKPR-LUWU-321183",
-          category: "Non-Berusaha",
-          title: "Permohonan PKKPR Rumah Tinggal / Fasos",
-          nama_pemohon: "Masyarakat",
-          nik: "7317060202700001",
-          no_whatsapp: "081234567890",
-          kecamatan: "Ponrang",
-          desa: "Ponrang",
-          luas_m2: 500,
-          geometry: {
-            type: "FeatureCollection",
-            features: [{
-              type: "Feature",
-              geometry: {
-                type: "Polygon",
-                coordinates: [[[120.28, -3.18], [120.29, -3.18], [120.29, -3.19], [120.28, -3.19], [120.28, -3.18]]]
-              },
-              properties: {}
-            }]
+        // Default seed society submissions (Non-Berusaha Church & Berusaha Factory) for instant preview
+        const seedApps = [
+          {
+            id: "PKKPR-LUWU-892101",
+            pkkpr_doc_number: "600.1.15/089/BAP-PKKPR-NB/PUPTR-TR/LUWU/2026",
+            category: "Non-Berusaha",
+            jenis_permohonan: "Non-Berusaha",
+            title: "Pembangunan Gereja Toraja Jemaat Ranteballa",
+            fungsi_bangunan: "Pembangunan Rumah Ibadah (Gereja)",
+            nama_lembaga: "Panitia Pembangunan Gereja Toraja Jemaat Ranteballa",
+            nama_pemohon: "Pdt. Markus Sampe, S.Th.",
+            nik: "7317011909890001",
+            no_whatsapp: "081234567890",
+            kecamatan: "Latimojong",
+            desa: "Ranteballa",
+            luas_m2: 2450,
+            luas_bangunan_m2: 480,
+            bukti_tanah: "Sertipikat Hak Milik (SHM) No. 00214 & Surat Hibah Tanah Tempat Ibadah",
+            geometry: {
+              type: "FeatureCollection",
+              features: [{
+                type: "Feature",
+                geometry: {
+                  type: "Polygon",
+                  coordinates: [[[120.1539, -3.3033], [120.1549, -3.3029], [120.1545, -3.3022], [120.1535, -3.3027], [120.1539, -3.3033]]]
+                },
+                properties: {}
+              }]
+            },
+            status: "APPROVED",
+            pkkpr_status: "Diterbitkan BAP-PKKPR Non-Berusaha Dinas PUPTR",
+            created_at: new Date(Date.now() - 86400000 * 2).toISOString()
           },
-          status: "PENDING",
-          pkkpr_status: "Menunggu Verifikasi Spasial PUPTR",
-          created_at: new Date().toISOString()
-        };
-        localStorage.setItem("luwu_pkkpr_my_apps", JSON.stringify([defaultApp]));
-        localApps = [defaultApp];
+          {
+            id: "PKKPR-LUWU-321183",
+            pkkpr_doc_number: "600.1.15/042/BAP-PKKPR-B/PUPTR-TR/LUWU/2026",
+            category: "Berusaha",
+            jenis_permohonan: "Berusaha",
+            title: "Industri Pengolahan Kakao Terpadu & Pergudangan Modern",
+            nama_badan_usaha: "PT. LUWU AGRO INDUSTRI NUSANTARA",
+            perusahaan: "PT. LUWU AGRO INDUSTRI NUSANTARA",
+            nib: "0220108392182",
+            nama_pemohon: "Ir. Muhammad Arsyad Al-Fatih, M.T.",
+            nik: "7317011909890001",
+            no_whatsapp: "081234567890",
+            kecamatan: "Bua",
+            desa: "Karang-Karangan",
+            luas_m2: 254800,
+            luas_bangunan_m2: 12500,
+            bukti_tanah: "Sertipikat Hak Milik (SHM) No. 00412 & Surat Keterangan Penguasaan Fisik Tanah",
+            geometry: {
+              type: "FeatureCollection",
+              features: [{
+                type: "Feature",
+                geometry: {
+                  type: "Polygon",
+                  coordinates: [[[120.3067, -2.9783], [120.3089, -2.9773], [120.3098, -2.9749], [120.3135, -2.9736], [120.3067, -2.9783]]]
+                },
+                properties: {}
+              }]
+            },
+            status: "APPROVED",
+            pkkpr_status: "Diterbitkan BAP-KTR / PKKPR Berusaha DPUPTR",
+            created_at: new Date(Date.now() - 86400000 * 5).toISOString()
+          }
+        ];
+        localStorage.setItem("luwu_pkkpr_my_apps", JSON.stringify(seedApps));
+        localApps = seedApps;
       }
 
       let user: any = null;
@@ -1268,7 +1320,6 @@ export default function MasyarakatDashboard({
 
   const openSpatialPkkprForm = async (category: "Berusaha" | "Non-Berusaha") => {
     setPkkprCategory(category);
-    setPkkprTitle(category === "Berusaha" ? "Permohonan PKKPR Usaha/Komersial" : "Permohonan PKKPR Rumah Tinggal / Fasos");
     
     // Auto-Hydrate Profile dynamically from public.profiles
     const freshProf = await fetchAndHydrateMasyarakatProfile();
@@ -1280,6 +1331,23 @@ export default function MasyarakatDashboard({
     
     const hNama = freshProf?.nama || hydratedProfile.nama || activeProfile?.full_name || nama || "";
     const hNik = freshProf?.nik || hydratedProfile.nik || activeProfile?.nik || userNik || "";
+
+    if (category === "Non-Berusaha") {
+      setPkkprTitle("Pembangunan Gereja Toraja Jemaat Belopa");
+      setPkkprFungsiBangunan("Sarana Peribadatan / Rumah Ibadah (Gereja)");
+      setPkkprNamaLembaga("Panitia Pembangunan Gereja Toraja Jemaat Belopa");
+      setPkkprLuasBangunan(480);
+      setPkkprBuktiTanahJenis("Sertipikat Hak Milik (SHM) / Surat Keterangan Hibah Tempat Ibadah");
+      setPkkprBuktiTanahNomor("00214/Latimojong");
+    } else {
+      setPkkprTitle("Industri Pengolahan Kakao Terpadu & Pergudangan Modern");
+      setPkkprFungsiBangunan("Industri Pengolahan & Pergudangan Modern");
+      setPkkprNamaLembaga(hPerusahaan || "PT. LUWU AGRO INDUSTRI NUSANTARA");
+      setPkkprKbli("10732");
+      setPkkprLuasBangunan(12500);
+      setPkkprBuktiTanahJenis("Sertipikat Hak Milik (SHM) / HGB");
+      setPkkprBuktiTanahNomor("00412/Karang-Karangan");
+    }
 
     if (hNama && !["masyarakat", "masyarakat publik", "offline-user", "masyarakat pemohon"].includes(hNama.toLowerCase())) {
       setPkkprNamaPemohon(hNama);
@@ -2565,10 +2633,34 @@ export default function MasyarakatDashboard({
                         <span>{app.created_at ? new Date(app.created_at).toLocaleDateString("id-ID") : "-"}</span>
                       </div>
                     </div>
-                    <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+                    <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
                       <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">
                         {app.pkkpr_status || app.status || "Menunggu Verifikasi PUPTR"}
                       </span>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedBapPreviewApp(app);
+                            setIsBapDocumentModalOpen(true);
+                          }}
+                          className="px-2.5 py-1.5 rounded-xl text-[11px] font-extrabold bg-[#166534] hover:bg-[#15803d] text-white flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
+                        >
+                          <FileCheck className="w-3.5 h-3.5 text-emerald-200" />
+                          <span>Lihat Naskah BAP</span>
+                        </button>
+                        {app.berkas_gabungan_pdf && (
+                          <a
+                            href={app.berkas_gabungan_pdf}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="px-2 py-1.5 rounded-xl text-[11px] font-bold bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all flex items-center gap-1"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>PDF</span>
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -3748,66 +3840,199 @@ export default function MasyarakatDashboard({
                     required
                     value={pkkprTitle}
                     onChange={(e) => setPkkprTitle(e.target.value)}
-                    placeholder={pkkprCategory === "Berusaha" ? "Contoh: Pembangunan Toko Modern & Gudang Semen" : "Contoh: Pembangunan Rumah Tinggal Keluarga"}
+                    placeholder={pkkprCategory === "Berusaha" ? "Contoh: Industri Pengolahan Kakao Terpadu & Pergudangan Modern" : "Contoh: Pembangunan Gereja Toraja Jemaat Belopa"}
                     className={`w-full px-4 py-3 rounded-xl border text-sm font-semibold transition-all ${
                       isDarkMode ? "bg-slate-950 border-slate-800 text-white focus:border-emerald-500" : "bg-slate-50 border-slate-200 text-slate-900 focus:border-emerald-500"
                     }`}
                   />
                 </div>
 
+                {/* Conditional Fields for PKKPR Non-Berusaha (Tempat Ibadah / Rumah / Fasos) */}
+                {pkkprCategory === "Non-Berusaha" && (
+                  <div className="space-y-4 p-4 rounded-2xl bg-indigo-500/5 border border-indigo-500/20">
+                    <div className="flex items-center gap-2 text-indigo-700 dark:text-indigo-400 font-extrabold text-xs">
+                      <Home className="w-4 h-4" />
+                      <span>Rincian Kegiatan Non-Berusaha (Sosial / Keagamaan / Perorangan)</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+                          Fungsi Bangunan / Jenis Kegiatan <span className="text-rose-500">*</span>
+                        </label>
+                        <select
+                          required
+                          value={pkkprFungsiBangunan}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setPkkprFungsiBangunan(val);
+                            if (val.includes("Gereja")) {
+                              setPkkprTitle("Pembangunan Gereja Toraja Jemaat Belopa");
+                              setPkkprNamaLembaga("Panitia Pembangunan Gereja Toraja Jemaat Belopa");
+                            } else if (val.includes("Masjid")) {
+                              setPkkprTitle("Pembangunan Masjid Jami' Al-Ikhlas");
+                              setPkkprNamaLembaga("Panitia Pembangunan Masjid Jami'");
+                            } else if (val.includes("Rumah Tinggal")) {
+                              setPkkprTitle("Pembangunan Rumah Tinggal Keluarga");
+                              setPkkprNamaLembaga("Perseorangan");
+                            }
+                          }}
+                          className={`w-full px-4 py-3 rounded-xl border text-sm font-bold transition-all ${
+                            isDarkMode ? "bg-slate-950 border-slate-800 text-white focus:border-indigo-500" : "bg-white border-slate-200 text-slate-900 focus:border-indigo-500"
+                          }`}
+                        >
+                          <option value="Sarana Peribadatan / Rumah Ibadah (Gereja)">Sarana Peribadatan / Rumah Ibadah (Gereja)</option>
+                          <option value="Sarana Peribadatan / Rumah Ibadah (Masjid / Musholla)">Sarana Peribadatan / Rumah Ibadah (Masjid / Musholla)</option>
+                          <option value="Pembangunan Rumah Tinggal Pribadi / Keluarga">Pembangunan Rumah Tinggal Pribadi / Keluarga</option>
+                          <option value="Fasilitas Sosial / Yayasan / Lembaga Keagamaan">Fasilitas Sosial / Yayasan / Lembaga Keagamaan</option>
+                          <option value="Fasilitas Umum & Sarana Lingkungan Masyarakat">Fasilitas Umum & Sarana Lingkungan Masyarakat</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+                          Nama Lembaga / Panitia Pembangunan / Komite <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={pkkprNamaLembaga}
+                          onChange={(e) => setPkkprNamaLembaga(e.target.value)}
+                          placeholder="Contoh: Panitia Pembangunan Gereja Toraja Jemaat Belopa"
+                          className={`w-full px-4 py-3 rounded-xl border text-sm font-semibold transition-all ${
+                            isDarkMode ? "bg-slate-950 border-slate-800 text-white focus:border-indigo-500" : "bg-white border-slate-200 text-slate-900 focus:border-indigo-500"
+                          }`}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+                          Rencana Luas Lantai Bangunan (m²) <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="number"
+                          required
+                          min={1}
+                          value={pkkprLuasBangunan}
+                          onChange={(e) => setPkkprLuasBangunan(e.target.value)}
+                          placeholder="Contoh: 480"
+                          className={`w-full px-4 py-3 rounded-xl border text-sm font-mono font-bold transition-all ${
+                            isDarkMode ? "bg-slate-950 border-slate-800 text-white focus:border-indigo-500" : "bg-white border-slate-200 text-slate-900 focus:border-indigo-500"
+                          }`}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+                          Bukti Penguasaan Hak Atas Tanah <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={pkkprBuktiTanahJenis}
+                          onChange={(e) => setPkkprBuktiTanahJenis(e.target.value)}
+                          placeholder="Contoh: SHM No. 00214 / Surat Hibah Tanah Tempat Ibadah"
+                          className={`w-full px-4 py-3 rounded-xl border text-sm font-semibold transition-all ${
+                            isDarkMode ? "bg-slate-950 border-slate-800 text-white focus:border-indigo-500" : "bg-white border-slate-200 text-slate-900 focus:border-indigo-500"
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Conditional Fields for PKKPR Berusaha (Auto-Hydrated & Locked) */}
                 {pkkprCategory === "Berusaha" && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                          NIB (13 Digit OSS) <span className="text-rose-500">*</span>
-                        </label>
-                        {hydratedProfile.nib && (
-                          <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold font-mono bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                            <Lock className="w-3 h-3" /> OSS Terverifikasi
-                          </span>
-                        )}
-                      </div>
-                      <input
-                        type="text"
-                        required
-                        readOnly={!!hydratedProfile.nib}
-                        maxLength={13}
-                        value={pkkprNib}
-                        onChange={(e) => setPkkprNib(e.target.value.replace(/\D/g, ''))}
-                        placeholder="Contoh: 1234567890123"
-                        className={`w-full px-4 py-3 rounded-xl border text-sm font-mono font-bold transition-all ${
-                          hydratedProfile.nib
-                            ? "bg-slate-100 dark:bg-slate-950/80 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 cursor-not-allowed opacity-90"
-                            : isDarkMode ? "bg-slate-950 border-slate-800 text-white focus:border-emerald-500" : "bg-slate-50 border-slate-200 text-slate-900 focus:border-emerald-500"
-                        }`}
-                      />
+                  <div className="space-y-4 p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
+                    <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-extrabold text-xs">
+                      <Building2 className="w-4 h-4" />
+                      <span>Rincian Usaha Komersial (Integrasi OSS-RBA & KBLI)</span>
                     </div>
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                          Nama Badan Usaha / PT / CV <span className="text-rose-500">*</span>
-                        </label>
-                        {hydratedProfile.perusahaan && (
-                          <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold font-mono bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                            <Lock className="w-3 h-3" /> Terkunci Profil
-                          </span>
-                        )}
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                            NIB (13 Digit OSS) <span className="text-rose-500">*</span>
+                          </label>
+                          {hydratedProfile.nib && (
+                            <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold font-mono bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                              <Lock className="w-3 h-3" /> OSS Terverifikasi
+                            </span>
+                          )}
+                        </div>
+                        <input
+                          type="text"
+                          required
+                          readOnly={!!hydratedProfile.nib}
+                          maxLength={13}
+                          value={pkkprNib}
+                          onChange={(e) => setPkkprNib(e.target.value.replace(/\D/g, ''))}
+                          placeholder="Contoh: 1234567890123"
+                          className={`w-full px-4 py-3 rounded-xl border text-sm font-mono font-bold transition-all ${
+                            hydratedProfile.nib
+                              ? "bg-slate-100 dark:bg-slate-950/80 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 cursor-not-allowed opacity-90"
+                              : isDarkMode ? "bg-slate-950 border-slate-800 text-white focus:border-emerald-500" : "bg-slate-50 border-slate-200 text-slate-900 focus:border-emerald-500"
+                          }`}
+                        />
                       </div>
-                      <input
-                        type="text"
-                        required
-                        readOnly={!!hydratedProfile.perusahaan}
-                        value={pkkprPerusahaan}
-                        onChange={(e) => setPkkprPerusahaan(e.target.value)}
-                        placeholder="Contoh: PT Luwu Sawit Mandiri"
-                        className={`w-full px-4 py-3 rounded-xl border text-sm font-semibold transition-all ${
-                          hydratedProfile.perusahaan
-                            ? "bg-slate-100 dark:bg-slate-950/80 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 cursor-not-allowed opacity-90"
-                            : isDarkMode ? "bg-slate-950 border-slate-800 text-white focus:border-emerald-500" : "bg-slate-50 border-slate-200 text-slate-900 focus:border-emerald-500"
-                        }`}
-                      />
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                            Nama Badan Usaha / PT / CV <span className="text-rose-500">*</span>
+                          </label>
+                          {hydratedProfile.perusahaan && (
+                            <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold font-mono bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                              <Lock className="w-3 h-3" /> Terkunci Profil
+                            </span>
+                          )}
+                        </div>
+                        <input
+                          type="text"
+                          required
+                          readOnly={!!hydratedProfile.perusahaan}
+                          value={pkkprPerusahaan}
+                          onChange={(e) => setPkkprPerusahaan(e.target.value)}
+                          placeholder="Contoh: PT Luwu Sawit Mandiri"
+                          className={`w-full px-4 py-3 rounded-xl border text-sm font-semibold transition-all ${
+                            hydratedProfile.perusahaan
+                              ? "bg-slate-100 dark:bg-slate-950/80 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 cursor-not-allowed opacity-90"
+                              : isDarkMode ? "bg-slate-950 border-slate-800 text-white focus:border-emerald-500" : "bg-slate-50 border-slate-200 text-slate-900 focus:border-emerald-500"
+                          }`}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+                          Kode KBLI (OSS-RBA 5 Digit) <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={pkkprKbli}
+                          onChange={(e) => setPkkprKbli(e.target.value)}
+                          placeholder="Contoh: 10732 (Industri Pengolahan)"
+                          className={`w-full px-4 py-3 rounded-xl border text-sm font-mono font-bold transition-all ${
+                            isDarkMode ? "bg-slate-950 border-slate-800 text-white focus:border-emerald-500" : "bg-white border-slate-200 text-slate-900 focus:border-emerald-500"
+                          }`}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+                          Bukti Penguasaan Hak Atas Tanah <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={pkkprBuktiTanahJenis}
+                          onChange={(e) => setPkkprBuktiTanahJenis(e.target.value)}
+                          placeholder="Contoh: Sertipikat Hak Milik (SHM) No. 00412"
+                          className={`w-full px-4 py-3 rounded-xl border text-sm font-semibold transition-all ${
+                            isDarkMode ? "bg-slate-950 border-slate-800 text-white focus:border-emerald-500" : "bg-white border-slate-200 text-slate-900 focus:border-emerald-500"
+                          }`}
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
@@ -4381,32 +4606,69 @@ export default function MasyarakatDashboard({
                 </div>
 
                 {/* Submit Action Buttons */}
-                <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end gap-3">
+                <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
                   <button
                     type="button"
-                    onClick={() => setIsPkkprModalOpen(false)}
-                    className="px-5 py-3 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all cursor-pointer"
+                    onClick={() => {
+                      const isVerifiedNama = !!hydratedProfile.nama && !["masyarakat", "masyarakat publik", "offline-user", "masyarakat pemohon"].includes(hydratedProfile.nama.toLowerCase());
+                      const isVerifiedNik = /^\d{16}$/.test(hydratedProfile.nik);
+                      const finalNama = isVerifiedNama ? hydratedProfile.nama : (pkkprNamaPemohon || "Pemohon Terdaftar");
+                      const finalNik = isVerifiedNik ? hydratedProfile.nik : (pkkprNikPemohon || "7317011909890001");
+
+                      const draftApp = {
+                        category: pkkprCategory,
+                        jenis_permohonan: pkkprCategory,
+                        title: pkkprTitle || (pkkprCategory === "Non-Berusaha" ? "Pembangunan Gereja Toraja Jemaat Belopa" : "Permohonan Investasi & Pemanfaatan Ruang"),
+                        fungsi_bangunan: pkkprCategory === "Non-Berusaha" ? pkkprFungsiBangunan : "Kegiatan Komersial / Industri",
+                        nama_lembaga: pkkprCategory === "Non-Berusaha" ? (pkkprNamaLembaga || "Panitia Pembangunan Gereja Toraja Jemaat Belopa") : (pkkprPerusahaan || "PT. LUWU AGRO INDUSTRI"),
+                        perusahaan: pkkprCategory === "Berusaha" ? pkkprPerusahaan : (pkkprNamaLembaga || "Panitia Pembangunan / Perseorangan"),
+                        nama_pemohon: finalNama,
+                        nik: finalNik,
+                        nib: pkkprCategory === "Berusaha" ? pkkprNib : null,
+                        kecamatan: pkkprKecamatan || "Latimojong",
+                        desa: pkkprDesa || "Ranteballa",
+                        luas_m2: pkkprLuasM2 || (pkkprCategory === "Non-Berusaha" ? 2450 : 254800),
+                        luas_bangunan_m2: pkkprLuasBangunan,
+                        bukti_tanah: `${pkkprBuktiTanahJenis} ${pkkprBuktiTanahNomor ? `(No. ${pkkprBuktiTanahNomor})` : ''}`,
+                        geometry: pkkprGeometry,
+                        created_at: new Date().toISOString()
+                      };
+                      setSelectedBapPreviewApp(draftApp);
+                      setIsBapDocumentModalOpen(true);
+                    }}
+                    className="px-4 py-2.5 rounded-xl text-xs font-bold border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 flex items-center gap-2 transition-all cursor-pointer shadow-sm"
                   >
-                    Batal
+                    <FileCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                    <span>Pratinjau Draf Naskah BAP-PKKPR ({pkkprCategory})</span>
                   </button>
 
-                  <button
-                    type="submit"
-                    disabled={isSubmittingPkkpr}
-                    className="px-6 py-3 rounded-xl text-xs font-extrabold bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-500/20 transition-all cursor-pointer flex items-center gap-2"
-                  >
-                    {isSubmittingPkkpr ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>Mengirim Berkas PKKPR...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Send className="w-4 h-4" />
-                        <span>Kirim Permohonan PKKPR {pkkprCategory}</span>
-                      </>
-                    )}
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setIsPkkprModalOpen(false)}
+                      className="px-5 py-3 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all cursor-pointer"
+                    >
+                      Batal
+                    </button>
+
+                    <button
+                      type="submit"
+                      disabled={isSubmittingPkkpr}
+                      className="px-6 py-3 rounded-xl text-xs font-extrabold bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-500/20 transition-all cursor-pointer flex items-center gap-2"
+                    >
+                      {isSubmittingPkkpr ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Mengirim Berkas PKKPR...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4" />
+                          <span>Kirim Permohonan PKKPR {pkkprCategory}</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </form>
             </motion.div>
@@ -4474,6 +4736,44 @@ export default function MasyarakatDashboard({
                     timer: 2000,
                   });
                 }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+      {/* MODAL PRATINJAU NASKAH RESMI BAP-PKKPR DINAS PUPTR KABUPATEN LUWU */}
+      {isBapDocumentModalOpen && selectedBapPreviewApp && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex flex-col p-2 sm:p-6 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-2xl max-w-5xl mx-auto w-full border border-slate-200 dark:border-slate-700 my-auto flex flex-col">
+            <div className="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400">
+                  <FileCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="font-extrabold text-sm sm:text-base block">
+                    Naskah Resmi BAP-PKKPR Dinas PUPTR Kabupaten Luwu
+                  </span>
+                  <span className="text-[11px] text-slate-400 font-mono">
+                    {selectedBapPreviewApp.category === "Non-Berusaha" || selectedBapPreviewApp.jenis_permohonan === "Non-Berusaha"
+                      ? "Format Non-Berusaha (Sarana Peribadatan Gereja / Masjid / Sosial / Rumah Tinggal)"
+                      : "Format Berusaha (Komersial / OSS-RBA Terintegrasi)"}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsBapDocumentModalOpen(false)}
+                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="max-h-[85vh] overflow-y-auto custom-scrollbar p-2 sm:p-4 bg-[#f1f5f9]">
+              <BapKtrPuptrDocument
+                initialData={convertAppToBapKtrData(selectedBapPreviewApp)}
+                onClose={() => setIsBapDocumentModalOpen(false)}
+                showEditorToolbar={true}
               />
             </div>
           </div>
