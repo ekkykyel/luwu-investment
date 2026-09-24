@@ -34,11 +34,11 @@ interface SmartMatrixFilterPanelProps {
 }
 
 const POPULAR_PRESETS = [
-  { label: "🌿 Kakao Organik", term: "Kakao", sector: "Perkebunan" },
-  { label: "⚡ Industri Smelter", term: "", sector: "Pertambangan" },
-  { label: "🐟 Rumput Laut", term: "", sector: "Perikanan" },
-  { label: "☕ Kopi Latimojong", term: "Kopi", sector: "Perkebunan" },
-  { label: "🌾 Padi & Agro", term: "", sector: "Pertanian" },
+  { label: "🌿 Perkebunan Kakao", term: "Kakao", sector: "Perkebunan" },
+  { label: "⚡ Pertambangan & Smelter", term: "", sector: "Pertambangan" },
+  { label: "🐟 Perikanan & Kelautan", term: "", sector: "Perikanan" },
+  { label: "☕ Perkebunan Kopi", term: "Kopi", sector: "Perkebunan" },
+  { label: "🌾 Pertanian & Tanaman Pangan", term: "", sector: "Pertanian" },
 ];
 
 export default function SmartMatrixFilterPanel({
