@@ -9,6 +9,7 @@ import { supabase } from "../lib/supabaseClient";
 interface MppVisionModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialQuery?: string;
 }
 
 interface Message {
@@ -18,7 +19,7 @@ interface Message {
   time: string;
 }
 
-export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose }) => {
+export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose, initialQuery }) => {
   const { t, i18n } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -26,6 +27,7 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose 
   const [typedWelcome, setTypedWelcome] = useState("");
   const [knowledgeDocs, setKnowledgeDocs] = useState<KnowledgeDocMeta[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const hasHandledInitialQuery = useRef(false);
 
   const welcomeText = t(
     "mppVision.welcome",
@@ -72,12 +74,13 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose 
     }
   }, [isOpen, onClose]);
 
-  // Typing Effect for Initial Welcome Message
+  // Typing Effect for Initial Welcome Message & Auto-send initialQuery if provided
   useEffect(() => {
     if (!isOpen) {
       setTypedWelcome("");
       setMessages([]);
       setInputValue("");
+      hasHandledInitialQuery.current = false;
       return;
     }
 
@@ -91,8 +94,15 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose 
       }
     }, 25);
 
+    if (initialQuery && !hasHandledInitialQuery.current) {
+      hasHandledInitialQuery.current = true;
+      setTimeout(() => {
+        handleSendMessage(initialQuery);
+      }, 300);
+    }
+
     return () => clearInterval(interval);
-  }, [isOpen]);
+  }, [isOpen, initialQuery]);
 
   // Auto scroll to bottom when new messages arrive
   useEffect(() => {

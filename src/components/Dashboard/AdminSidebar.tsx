@@ -18,7 +18,10 @@ import {
   ArrowUpRight,
   Workflow,
   Settings,
-  FileCheck2
+  FileCheck2,
+  Wheat,
+  Compass,
+  Printer
 } from 'lucide-react';
 import { LuwuLogo } from '../LuwuLogo.js';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -84,8 +87,11 @@ export const getMenusByRole = (role: string): MenuGroup[] => {
       group: 'Perizinan & OSS',
       items: [
         { id: 'pkkpr_sync_monitor', name: 'Monitoring Proses Bisnis PKKPR', icon: Workflow },
+        { id: 'oss_pkkpr_issuance', name: 'Pencetakan & SK PKKPR', icon: Printer },
         { id: 'verifikasi_pkkpr', name: 'Verifikasi PKKPR & Tata Ruang', icon: ShieldCheck },
+        { id: 'puptr_spatial_catalog', name: 'Katalog Pola Ruang RTRW & RDTR', icon: Compass },
         { id: 'verifikasi_pertanian', name: 'Rekomendasi Lahan Pertanian (LP2B)', icon: ShieldCheck },
+        { id: 'pertanian_lp2b_catalog', name: 'Katalog Lahan LP2B & Irigasi', icon: Wheat },
         { id: 'realisasi_nib', name: 'Realisasi NIB (OSS-RBA)', icon: CheckCircle2 },
         { id: 'puptr_archive', name: 'Arsip Pertek PUPTR', icon: FileCheck2 },
         { id: 'pertanian_archive', name: 'Arsip BAP Pertanian', icon: FileCheck2 },
@@ -132,9 +138,9 @@ export const getMenusByRole = (role: string): MenuGroup[] => {
   const allowedIdsByRole: Record<string, string[]> = {
     admin_promosi: ['overview', 'investor_pipeline', 'operator_workspace', 'loi_verify', 'manage_potential', 'site-selection', 'testimonials'],
     admin_dalak: ['overview', 'investor_pipeline', 'pengaduan', 'pengawasan', 'fasilitasi', 'laporan'],
-    admin_puptr: ['overview', 'investor_pipeline', 'pkkpr_sync_monitor', 'verifikasi_pkkpr', 'gis_spatial', 'spatial_analytics', 'puptr_archive', 'puptr_settings'],
-    admin_pertanian: ['overview', 'investor_pipeline', 'pkkpr_sync_monitor', 'verifikasi_pertanian', 'gis_spatial', 'spatial_analytics', 'pertanian_archive', 'pertanian_settings'],
-    admin_oss: ['overview_perizinan', 'investor_pipeline', 'pkkpr_sync_monitor', 'realisasi_nib', 'spatial_analytics', 'oss_sk_archive', 'oss_settings'],
+    admin_puptr: ['overview', 'verifikasi_pkkpr', 'puptr_spatial_catalog', 'pkkpr_sync_monitor', 'gis_spatial', 'spatial_analytics', 'puptr_archive', 'puptr_settings'],
+    admin_pertanian: ['overview', 'verifikasi_pertanian', 'pertanian_lp2b_catalog', 'pkkpr_sync_monitor', 'gis_spatial', 'spatial_analytics', 'pertanian_archive', 'pertanian_settings'],
+    admin_oss: ['overview_perizinan', 'oss_pkkpr_issuance', 'investor_pipeline', 'pkkpr_sync_monitor', 'realisasi_nib', 'spatial_analytics', 'oss_sk_archive', 'oss_settings'],
     admin_data: ['overview', 'investor_pipeline', 'pkkpr_sync_monitor', 'spatial_analytics', 'gis_spatial', 'simulation'],
   };
 

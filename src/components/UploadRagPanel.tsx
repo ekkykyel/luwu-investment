@@ -847,6 +847,19 @@ export default function UploadRagPanel({ isDarkMode }: UploadRagPanelProps) {
               </div>
               <p className="text-xs text-slate-700 dark:text-slate-300">{statusMessage}</p>
 
+              {/* Glowing Shimmer Progress Bar for Regulatory Document Indexing */}
+              {uploadStatus === "UPLOADING" && (
+                <div className="w-full space-y-1.5 my-1">
+                  <div className="flex justify-between items-center text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">
+                    <span>MENGEKSTRAKSI & MEMBENTUK VEKTOR REGULASI...</span>
+                    <span className="animate-pulse">1536-DIM</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden relative border border-emerald-500/30">
+                    <div className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-400 w-full rounded-full shimmer-bar-glow" />
+                  </div>
+                </div>
+              )}
+
               {logs.length > 0 && (
                 <div className="flex flex-col gap-1.5 max-h-36 overflow-y-auto pt-2 border-t border-slate-200 dark:border-slate-800/80">
                   {logs.map((log, idx) => (

@@ -147,7 +147,8 @@ export default function PkkprBusinessProcessMonitorDashboard() {
 
             // Derive Bagian Pencetakan Status
             let printStat: 'PENDING_CLEARANCE' | 'READY_TO_PRINT' | 'PRINTED_ISSUED' = 'PENDING_CLEARANCE';
-            if (item.sk_pkkpr_num || item.status_pkkpr === 'Published') {
+            const isActuallyIssued = item.status_pkkpr === 'Published' || (Boolean(item.sk_pkkpr_num) && item.sk_pkkpr_num.includes('DPMPTSP'));
+            if (isActuallyIssued) {
               printStat = 'PRINTED_ISSUED';
             } else if (puptrStat === 'APPROVED' && (pertStat === 'APPROVED' || pertStat === 'NOT_REQUIRED')) {
               printStat = 'READY_TO_PRINT';
@@ -490,21 +491,27 @@ export default function PkkprBusinessProcessMonitorDashboard() {
     try {
       const year = new Date().getFullYear();
       const randomSeq = Math.floor(100 + Math.random() * 900);
-      const generatedSkNum = item.skPkkprDocNumber || `503/PKKPR-FINAL/DPMPTSP-LUWU/${year}/${randomSeq}`;
+      const generatedSkNum = item.skPkkprDocNumber || `503/SK-PKKPR/DPMPTSP-LW/${year}/${randomSeq}`;
 
-      const { error } = await supabase
-        .from('investments')
-        .update({
-          status: 'Published',
-          sk_pkkpr_doc_number: generatedSkNum,
-          pkkpr_doc_number: generatedSkNum,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', item.id);
-
-      if (error) {
-        console.warn('Supabase print update warning:', error);
-      }
+      await Promise.all([
+        supabase
+          .from('gis_pkkpr')
+          .update({
+            sk_pkkpr_num: generatedSkNum,
+            status_pkkpr: 'Published',
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', item.id),
+        supabase
+          .from('investments')
+          .update({
+            status: 'Published',
+            sk_pkkpr_doc_number: generatedSkNum,
+            pkkpr_doc_number: generatedSkNum,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', item.id)
+      ]);
 
       setItems(prev => prev.map(i => {
         if (i.id === item.id) {

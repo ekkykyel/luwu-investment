@@ -435,10 +435,12 @@ export default function PertanianOverview({
                       <td className="p-3 text-right">
                         <button
                           onClick={() => {
-                            setSelectedCommodityKec(inv.id);
+                            if (onSelectInvestment && inv?.id) {
+                              onSelectInvestment(String(inv.id));
+                            }
                             onNavigateTab('verifikasi_pertanian');
                           }}
-                          className="px-3 py-1 bg-amber-500/10 hover:bg-amber-500 text-amber-700 dark:text-amber-300 hover:text-slate-950 font-bold rounded-lg transition text-[11px] inline-flex items-center gap-1"
+                          className="px-3 py-1 bg-amber-500/10 hover:bg-amber-500 text-amber-700 dark:text-amber-300 hover:text-slate-950 font-bold rounded-lg transition text-[11px] inline-flex items-center gap-1 cursor-pointer"
                         >
                           <span>Telaah BAP</span>
                           <ArrowUpRight size={12} />

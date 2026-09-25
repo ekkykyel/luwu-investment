@@ -134,17 +134,22 @@ export function PDFKajianUploader({
         type="button"
         onClick={() => fileInputRef.current?.click()}
         disabled={uploading}
-        className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-purple-300 rounded-xl text-purple-600 hover:bg-purple-50 hover:border-purple-400 transition-all text-sm font-medium disabled:opacity-50"
+        className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-emerald-300 dark:border-emerald-700/60 rounded-xl text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-all text-sm font-medium disabled:opacity-80 relative overflow-hidden"
       >
         {uploading ? (
-          <>
-            <Loader2 size={18} className="animate-spin" />
-            <span>Mengupload & Memproses PDF...</span>
-          </>
+          <div className="w-full flex flex-col items-center gap-1.5 py-0.5">
+            <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+              <Loader2 size={16} className="animate-spin text-emerald-500" />
+              <span>Mengupload & Memproses Dokumen Regulasi / Kajian (PDF)...</span>
+            </div>
+            <div className="w-full h-1.5 rounded-full bg-emerald-100 dark:bg-emerald-950 overflow-hidden relative border border-emerald-500/30">
+              <div className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-400 w-full rounded-full shimmer-bar-glow" />
+            </div>
+          </div>
         ) : (
           <>
             <FileText size={18} />
-            <span>Pilih File PDF Kajian</span>
+            <span>Pilih File PDF Kajian / Regulasi</span>
           </>
         )}
       </button>

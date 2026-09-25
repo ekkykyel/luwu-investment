@@ -6421,6 +6421,63 @@ app.post("/api/v1/pkkpr/approve-alih-fungsi", async (req, res) => {
 
     console.log(`[approve-alih-fungsi] Memproses Dynamic Spatial Difference untuk permohonan_id: ${permohonan_id}`);
 
+    const baNum = berita_acara_num || `BA-LP2B/DISTAN-LUWU/2026/${Math.floor(100 + Math.random() * 900)}`;
+    const srNum = surat_rekomendasi_num || `503/REK-DISTAN/LUWU/2026/${Math.floor(100 + Math.random() * 900)}`;
+    const noteText = notes || 'Rekomendasi alih fungsi disetujui dengan Dynamic Spatial Difference LP2B.';
+
+    // Try executing native PostGIS Stored Function if present in database
+    try {
+      const { data: rpcRes, error: rpcErr } = await supabase.rpc('execute_lp2b_spatial_difference', {
+        p_permohonan_id: permohonan_id,
+        p_ba_num: baNum,
+        p_sr_num: srNum,
+        p_notes: noteText
+      });
+
+      if (!rpcErr && rpcRes && rpcRes.success) {
+        console.log(`[approve-alih-fungsi] Sukses via PostGIS RPC execute_lp2b_spatial_difference:`, rpcRes);
+        // Refresh local cache / in-memory layer
+        const { data: latestSawah } = await supabase.from('gis_sawah').select('*');
+        if (latestSawah && latestSawah.length > 0) {
+          const freshGeoJson = {
+            type: "FeatureCollection",
+            features: latestSawah.map(r => ({
+              id: r.id,
+              dbId: r.id,
+              type: 'Feature',
+              geometry: r.geom || r.geometry,
+              properties: {
+                id: r.id,
+                name: r.name || 'Sawah LP2B',
+                description: r.description,
+                luas_m2: r.luas_m2
+              }
+            })).filter(f => f.geometry)
+          };
+          const sawahIdx = spatialLayers.findIndex(l => l.id === "layer_sawah");
+          if (sawahIdx !== -1) {
+            spatialLayers[sawahIdx].geojson = freshGeoJson;
+          }
+          cache["gis_sawah_geojson"] = {
+            data: freshGeoJson,
+            timestamp: Date.now()
+          };
+          return res.json({
+            success: true,
+            source: 'postgis_rpc',
+            message: "Dynamic Spatial Difference LP2B berhasil dieksekusi via PostGIS Stored Procedure.",
+            permohonan_id,
+            berita_acara_num: baNum,
+            surat_rekomendasi_num: srNum,
+            updated_features_count: rpcRes.cut_polygons_count || 1,
+            updated_sawah_geojson: freshGeoJson
+          });
+        }
+      }
+    } catch (rpcCatchErr) {
+      console.warn('[approve-alih-fungsi] PostGIS RPC not available, continuing with resilient engine:', rpcCatchErr);
+    }
+
     // 1. Fetch application record from gis_pkkpr or investments
     let permohonanGeom: any = null;
     let appRecord: any = null;
@@ -6569,10 +6626,6 @@ app.post("/api/v1/pkkpr/approve-alih-fungsi", async (req, res) => {
     };
 
     // 5. Update permohonan status in gis_pkkpr and investments
-    const baNum = berita_acara_num || `BA-LP2B/DISTAN-LUWU/2026/${Math.floor(100 + Math.random() * 900)}`;
-    const srNum = surat_rekomendasi_num || `503/REK-DISTAN/LUWU/2026/${Math.floor(100 + Math.random() * 900)}`;
-    const noteText = notes || 'Rekomendasi alih fungsi disetujui dengan Dynamic Spatial Difference LP2B.';
-
     const updatePayloadGis = {
       status_pkkpr: 'Approved_Pertanian',
       berita_acara_pertanian_num: baNum,

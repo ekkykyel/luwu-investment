@@ -99,6 +99,7 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
               item.sk_pkkpr_num ||
               item.status_pkkpr === 'Approved' ||
               item.status_pkkpr === 'Approved_PUPTR' ||
+              item.status_pkkpr === 'Forwarded_To_OSS' ||
               item.status_pkkpr === 'Published'
             );
 
@@ -111,27 +112,39 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
               pertStatus = 'FORWARDED';
             }
 
+            // Distinguish DPMPTSP final SK from PUPTR pertek
+            const isDpmptspSkIssued = Boolean(
+              item.status_pkkpr === 'Published' ||
+              (item.sk_pkkpr_num && item.sk_pkkpr_num.includes('DPMPTSP'))
+            );
+
+            // Extract valid pertek number (from pertek_puptr_num or legacy sk_pkkpr_num if it had PUPTR)
+            const resolvedPertekNum =
+              item.pertek_puptr_num ||
+              (item.sk_pkkpr_num?.includes('PUPTR') ? item.sk_pkkpr_num : undefined) ||
+              (item.status_pkkpr === 'Approved' || item.status_pkkpr === 'Approved_PUPTR' ? `503/PERTEK-PUPTR/LUWU/${item.id}` : undefined);
+
             records.push({
               id: item.id,
               applicantType: isBerusaha ? 'NIB (Pelaku Usaha)' : 'NIK (Perorangan / Warga)',
               nibNik: isBerusaha ? (item.nib_oss || item.nik_pemohon || '-') : (item.nik_pemohon || '-'),
               applicantName: item.nama_pemohon || 'Pemohon Terdaftar',
-              companyName: isBerusaha ? (item.nama_badan_usaha || item.nama_permohonan || 'Pelaku Usaha') : (item.nama_pemohon || 'Perseorangan / Warga'),
+              companyName: isBerusaha ? (item.nama_badan_usaha || item.nama_permohonan || 'Pelaku Usaha') : (item.nama_badan_usaha || item.nama_pemohon || item.nama_permohonan || 'Perseorangan / Warga'),
               sector: item.sektor || (isBerusaha ? 'Komersial / Usaha' : 'Non-Komersial / Rumah Tinggal'),
               districtName: item.kecamatan || 'Kecamatan Luwu',
               villageName: item.desa_kelurahan || 'Desa/Kelurahan',
               areaHa: item.luas_ha ? Number(item.luas_ha) : (item.luas_m2 ? Number((item.luas_m2 / 10000).toFixed(4)) : 0.5),
-              pertekPuptrNum: item.pertek_puptr_num || (item.sk_pkkpr_num ? `503/PERTEK-PUPTR/LUWU/${item.id}` : undefined),
+              pertekPuptrNum: resolvedPertekNum,
               pertekDate: item.updated_at || item.created_at,
               technicalNotes: item.catatan_teknis || 'Sesuai Rencana Tata Ruang Wilayah (RTRW) Kabupaten Luwu.',
               pertanianStatus: pertStatus,
               pertanianBaNumber: item.berita_acara_pertanian_num || undefined,
-              skPkkprNum: item.sk_pkkpr_num || undefined,
+              skPkkprNum: isDpmptspSkIssued ? item.sk_pkkpr_num : undefined,
               statusPkkpr: item.status_pkkpr || 'Pending Spatial Check',
               createdAt: item.created_at || new Date().toISOString(),
               updatedAt: item.updated_at || item.created_at || new Date().toISOString(),
-              isTteSigned: Boolean(item.sk_pkkpr_num || item.status_pkkpr === 'Published'),
-              publishedToApplicant: item.status_pkkpr === 'Published',
+              isTteSigned: isDpmptspSkIssued,
+              publishedToApplicant: isDpmptspSkIssued,
               geometry: item.geometry_json || item.geom
             });
           });
@@ -150,7 +163,8 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
         if (!invErr && invData && invData.length > 0) {
           invData.forEach((item: any) => {
             if (!records.some(r => r.id === item.id)) {
-              const isApproved = item.status === 'Approved' || item.status === 'Published';
+              const isApproved = item.status === 'Approved' || item.status === 'Approved_PUPTR' || Boolean(item.pkkpr_doc_number);
+              const isPublished = item.status === 'Published' && Boolean(item.sk_pkkpr_doc_number);
               records.push({
                 id: item.id,
                 applicantType: 'NIB (Pelaku Usaha)',
@@ -164,18 +178,62 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
                 pertekPuptrNum: item.pkkpr_doc_number || `503/PERTEK-PUPTR/LUWU/${item.id.slice(0, 6)}`,
                 technicalNotes: item.override_justification || 'Kesesuaian Ruang PUPTR Terverifikasi.',
                 pertanianStatus: 'APPROVED',
-                skPkkprNum: item.sk_pkkpr_doc_number || (item.status === 'Published' ? `503/SK-PKKPR/DPMPTSP-LW/${item.id.slice(0, 6)}` : undefined),
-                statusPkkpr: item.status === 'Published' ? 'Published' : (isApproved ? 'Approved' : 'Pending'),
+                skPkkprNum: isPublished ? item.sk_pkkpr_doc_number : undefined,
+                statusPkkpr: isPublished ? 'Published' : (isApproved ? 'Approved_PUPTR' : 'Pending'),
                 createdAt: item.created_at || new Date().toISOString(),
                 updatedAt: item.updated_at || new Date().toISOString(),
-                isTteSigned: item.status === 'Published',
-                publishedToApplicant: item.status === 'Published'
+                isTteSigned: isPublished,
+                publishedToApplicant: isPublished
               });
             }
           });
         }
       } catch (e) {
         console.warn('Error fetching investments for OSS:', e);
+      }
+
+      // 3. Merge local applications from Masyarakat portal
+      try {
+        const localAppsRaw = localStorage.getItem("luwu_pkkpr_my_apps");
+        if (localAppsRaw) {
+          const localApps = JSON.parse(localAppsRaw);
+          localApps.forEach((app: any) => {
+            const appId = app.pkkpr_doc_number || app.id;
+            const exists = records.some(m => m.id === appId || m.nibNik === app.nik);
+            if (!exists) {
+              const isBerusaha = app.category === 'Berusaha';
+              const isPuptrDone = Boolean(app.pertek_puptr_num || app.pkkpr_status === 'Approved_PUPTR' || app.pkkpr_status === 'Approved');
+              const isPublished = Boolean(app.sk_pkkpr_doc_number || app.status === 'Published');
+              if (isPuptrDone || isPublished) {
+                records.unshift({
+                  id: appId || `PKKPR-LUWU-${Date.now().toString().slice(-6)}`,
+                  applicantType: isBerusaha ? 'NIB (Pelaku Usaha)' : 'NIK (Perorangan / Warga)',
+                  nibNik: app.nik || app.nib || '7317060202700001',
+                  applicantName: app.nama_pemohon || 'Pemohon Terdaftar',
+                  companyName: isBerusaha ? (app.perusahaan || app.title || 'Pelaku Usaha') : (app.nama_lembaga || app.title || 'Perseorangan / Warga'),
+                  sector: isBerusaha ? 'Komersial / Usaha' : 'Non-Komersial / Perumahan',
+                  districtName: app.kecamatan || 'Ponrang',
+                  villageName: app.desa || 'Ponrang',
+                  areaHa: app.luas_m2 ? Number((app.luas_m2 / 10000).toFixed(4)) : 0.05,
+                  pertekPuptrNum: app.pertek_puptr_num || `503/PERTEK-PUPTR/LUWU/${Date.now().toString().slice(-4)}`,
+                  pertekDate: app.created_at || new Date().toISOString(),
+                  technicalNotes: app.catatan_teknis || 'Permohonan dari Portal Layanan Perizinan PKKPR Publik.',
+                  pertanianStatus: app.pertanian_status === 'APPROVED' ? 'APPROVED' : 'NOT_REQUIRED',
+                  pertanianBaNumber: app.berita_acara_pertanian_num || undefined,
+                  skPkkprNum: app.sk_pkkpr_doc_number || undefined,
+                  statusPkkpr: isPublished ? 'Published' : 'Approved_PUPTR',
+                  createdAt: app.created_at || new Date().toISOString(),
+                  updatedAt: app.created_at || new Date().toISOString(),
+                  isTteSigned: isPublished,
+                  publishedToApplicant: isPublished,
+                  geometry: app.geometry
+                });
+              }
+            }
+          });
+        }
+      } catch (e) {
+        console.warn('Local apps merge error in OSS:', e);
       }
 
       setItems(records);
@@ -189,12 +247,19 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchQueue();
+    const handleUpdate = () => fetchQueue();
+    window.addEventListener('luwu_cross_opd_notifications_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('luwu_cross_opd_notifications_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
   }, []);
 
   // Filter queues: Ready to issue vs Already published
   const readyQueue = useMemo(() => {
     return items.filter(item => {
-      // Has PERTEK or PUPTR approval, but not yet published to applicant
+      // Has PERTEK or PUPTR approval, but not yet published by DPMPTSP
       const isPuptrApproved = Boolean(
         item.pertekPuptrNum ||
         item.statusPkkpr === 'Approved' ||
@@ -207,7 +272,7 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
   }, [items]);
 
   const publishedArchive = useMemo(() => {
-    return items.filter(item => item.publishedToApplicant || Boolean(item.skPkkprNum));
+    return items.filter(item => item.publishedToApplicant || (Boolean(item.skPkkprNum) && item.skPkkprNum.includes('DPMPTSP')));
   }, [items]);
 
   // Handle opening the Issuance & TTE modal

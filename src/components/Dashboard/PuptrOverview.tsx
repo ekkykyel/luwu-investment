@@ -118,7 +118,7 @@ export default function PuptrOverview({
 
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
-              onClick={() => onNavigateTab('verifikasi_puptr')}
+              onClick={() => onNavigateTab('verifikasi_pkkpr')}
               className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition flex items-center gap-2 shadow-lg shadow-indigo-950/30 cursor-pointer active:scale-95"
             >
               <FileCheck size={15} />
@@ -343,8 +343,8 @@ export default function PuptrOverview({
               />
             </div>
             <button
-              onClick={() => onNavigateTab('verifikasi_puptr')}
-              className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shrink-0 flex items-center gap-1"
+              onClick={() => onNavigateTab('verifikasi_pkkpr')}
+              className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition shrink-0 flex items-center gap-1 cursor-pointer"
             >
               <span>Semua Berkas</span>
               <ChevronRight size={14} />
@@ -419,9 +419,12 @@ export default function PuptrOverview({
                       <td className="p-3 text-right">
                         <button
                           onClick={() => {
-                            onNavigateTab('verifikasi_puptr');
+                            if (onSelectInvestment && inv?.id) {
+                              onSelectInvestment(String(inv.id));
+                            }
+                            onNavigateTab('verifikasi_pkkpr');
                           }}
-                          className="px-3 py-1 bg-indigo-500/10 hover:bg-indigo-600 text-indigo-700 dark:text-indigo-300 hover:text-white font-bold rounded-lg transition text-[11px] inline-flex items-center gap-1"
+                          className="px-3 py-1 bg-indigo-500/10 hover:bg-indigo-600 text-indigo-700 dark:text-indigo-300 hover:text-white font-bold rounded-lg transition text-[11px] inline-flex items-center gap-1 cursor-pointer"
                         >
                           <span>Kaji Spasial</span>
                           <ArrowUpRight size={12} />

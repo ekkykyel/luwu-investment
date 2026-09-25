@@ -328,18 +328,15 @@ export function SmartRequirementAssistant({ isDark = false }: { isDark?: boolean
 
   const handleAskAi = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!aiQuestion.trim()) return;
-    setIsAiLoading(true);
-    setTimeout(() => {
-      setAiAnswer(
-        isEn
-          ? `Based on official regulations and service standards of ${selectedReq.agency}, "${selectedReq.title}" applications are processed transparently. ${aiQuestion.toLowerCase().includes('fee') || aiQuestion.toLowerCase().includes('cost') ? 'All fees are strictly per official regulation with zero illegal levies.' : 'Please ensure physical documents are brought for verification at ' + selectedReq.loket + '.'}`
-          : isZh
-            ? `根据 ${selectedReq.agency} 的官方行政法规与服务标准，"${selectedReq.title}" 的申请均公开透明办理。${aiQuestion.includes('费') || aiQuestion.includes('钱') ? '所有费用均严格按官方规费收取，绝无任何违规收费。' : '请确保前往 ' + selectedReq.loket + ' 窗口核验时携带纸质原件。'}`
-            : `Berdasarkan regulasi resmi dan standar operasional pelayanan ${selectedReq.agency}, permohonan "${selectedReq.title}" diproses secara transparan. ${aiQuestion.includes('biaya') ? 'Seluruh biaya resmi sesuai perda tanpa retribusi liar.' : 'Pastikan dokumen fisik dibawa saat verifikasi di ' + selectedReq.loket + '.'}`
-      );
-      setIsAiLoading(false);
-    }, 1200);
+    const query = aiQuestion.trim();
+    if (!query) {
+      window.dispatchEvent(new CustomEvent('open-mpp-ai-modal', { detail: `Syarat dan alur layanan ${selectedReq.title}` }));
+      return;
+    }
+    
+    // Open full interactive Asisten Digital Ta' modal with the user's question
+    window.dispatchEvent(new CustomEvent('open-mpp-ai-modal', { detail: query }));
+    setAiQuestion('');
   };
 
   return (
@@ -460,9 +457,19 @@ export function SmartRequirementAssistant({ isDark = false }: { isDark?: boolean
             <div className="flex items-center justify-between">
               <div className={`flex items-center gap-2 text-xs font-bold font-sans ${isDark ? 'text-emerald-400' : 'text-emerald-700'}`}>
                 <Bot className="w-4 h-4 text-emerald-500" />
-                <span>{t("mppPortal.smartRequirement.aiAssistantTitle", "Tanya AI Asisten Syarat Layanan")}</span>
+                <span>Asisten Digital Ta'</span>
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-bold">
+                  24/7 AI
+                </span>
               </div>
-              <Sparkles className="w-4 h-4 text-amber-500" />
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent('open-mpp-ai-modal', { detail: `Halo Asisten Digital Ta', saya ingin berkonsultasi mengenai syarat ${selectedReq.title}` }))}
+                className="text-[10px] font-bold text-amber-500 hover:text-amber-400 flex items-center gap-1 cursor-pointer transition-colors"
+              >
+                <span>Konsultasi Langsung</span>
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              </button>
             </div>
 
             <form onSubmit={handleAskAi} className="relative">

@@ -106,7 +106,7 @@ export function MppFoHelpTriggerButton({
           whileHover={{ scale: 1.06 }}
           whileTap={{ scale: 0.94 }}
           onClick={() => setIsOpen(true)}
-          className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm rounded-full shadow-2xl shadow-rose-900/50 border-2 border-rose-400/50 backdrop-blur-md transition-all ${className}`}
+          className={`fixed bottom-[calc(env(safe-area-inset-bottom,0px)+72px)] md:bottom-6 right-4 sm:right-6 z-50 flex items-center gap-3 px-5 py-3.5 bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm rounded-full shadow-2xl shadow-rose-900/50 border-2 border-rose-400/50 backdrop-blur-md transition-all ${className}`}
         >
           <BellRing className="w-5 h-5 animate-pulse text-amber-200" />
           <span>Panggil Front Office</span>

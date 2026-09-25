@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Building2, 
   CheckCircle2, 
@@ -10,15 +10,27 @@ import {
   TrendingUp, 
   MapPin, 
   UserCheck, 
-  AlertTriangle,
-  Zap,
-  Briefcase,
-  Layers,
-  ChevronRight,
-  Sparkles,
-  Search,
-  Filter
+  AlertTriangle, 
+  Zap, 
+  Briefcase, 
+  Layers, 
+  ChevronRight, 
+  Sparkles, 
+  Search, 
+  Filter,
+  RefreshCw
 } from 'lucide-react';
+import { supabase } from '../../lib/supabase.js';
+
+interface PipelineProject {
+  code: string;
+  investor: string;
+  sektor: string;
+  nilai: string;
+  currentStage: number;
+  statusText: string;
+  updatedAt: string;
+}
 
 interface WorkflowStage {
   id: string;
@@ -124,40 +136,111 @@ const WORKFLOW_STAGES: WorkflowStage[] = [
   }
 ];
 
-const SAMPLE_PROJECTS = [
-  {
-    code: 'INV-2026-001',
-    investor: 'PT Sulawesi Agro Industri',
-    sektor: 'Industri Rumput Laut Terpadu (Larompong)',
-    nilai: 'Rp 45,0 Miliar',
-    currentStage: 3,
-    statusText: 'Proses Verification PKKPR Studio GIS PUPTR',
-    updatedAt: '21 Sep 2026, 14:30 WITA'
-  },
-  {
-    code: 'INV-2026-002',
-    investor: 'CV Latimojong Coffee Estate',
-    sektor: 'Agrowisata & Pengolahan Kopi (Bastem)',
-    nilai: 'Rp 18,5 Miliar',
-    currentStage: 2,
-    statusText: 'Kajian Neraca Komoditas & Pasokan Air Hydrology',
-    updatedAt: '21 Sep 2026, 11:15 WITA'
-  },
-  {
-    code: 'INV-2026-003',
-    investor: 'PT Luwu Smelter Mineral',
-    sektor: 'Hilirisasi Logam & Smelter (Kawasan Bua)',
-    nilai: 'Rp 280,0 Miliar',
-    currentStage: 4,
-    statusText: 'Pendampingan Konstruksi & Verifikasi LKPM Q3',
-    updatedAt: '20 Sep 2026, 16:45 WITA'
-  }
-];
-
 export const InvestorPipelineWorkflowView: React.FC = () => {
   const [selectedStage, setSelectedStage] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [activeProject, setActiveProject] = useState(SAMPLE_PROJECTS[0]);
+  const [projects, setProjects] = useState<PipelineProject[]>([]);
+  const [activeProject, setActiveProject] = useState<PipelineProject | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const fetchRealPipeline = async () => {
+    setLoading(true);
+    try {
+      const items: PipelineProject[] = [];
+
+      // 1. Fetch from loi_tickets (Live incoming investor requests)
+      try {
+        const { data: tickets, error: ticketErr } = await supabase
+          .from('loi_tickets')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (!ticketErr && tickets && tickets.length > 0) {
+          tickets.forEach((t: any) => {
+            const st = String(t.status || '').toLowerCase();
+            let currentStage = 1;
+            if (st.includes('kajian') || st.includes('data') || st.includes('site visit')) {
+              currentStage = 2;
+            } else if (st.includes('oss') || st.includes('pkkpr') || st.includes('mediasi')) {
+              currentStage = 3;
+            } else if (st.includes('terbit') || st.includes('realisasi') || st.includes('selesai') || st.includes('dalak') || st.includes('lkpm')) {
+              currentStage = 4;
+            }
+
+            const formatVal = t.nilai_investasi
+              ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(t.nilai_investasi)
+              : 'Belum ditentukan';
+
+            items.push({
+              code: `LOI-${String(t.id).slice(0, 8).toUpperCase()}`,
+              investor: t.company_name || t.investor_name || 'Pelaku Usaha',
+              sektor: t.potensi_name || 'Investasi Umum Kab. Luwu',
+              nilai: formatVal,
+              currentStage,
+              statusText: t.status || 'Menunggu Verifikasi Tahap 1',
+              updatedAt: t.created_at ? new Date(t.created_at).toLocaleDateString('id-ID') : '-'
+            });
+          });
+        }
+      } catch (err) {
+        console.warn('Pipeline fetch loi_tickets notice:', err);
+      }
+
+      // 2. Fetch from investments table if available
+      try {
+        const { data: invs, error: invErr } = await supabase
+          .from('investments')
+          .select('*')
+          .order('updated_at', { ascending: false });
+
+        if (!invErr && invs && invs.length > 0) {
+          invs.forEach((inv: any) => {
+            const code = `INV-${String(inv.id).slice(0, 8).toUpperCase()}`;
+            if (!items.some(it => it.code === code)) {
+              const st = String(inv.status || '').toLowerCase();
+              let currentStage = 1;
+              if (st.includes('kajian') || st.includes('analisis') || st.includes('data')) {
+                currentStage = 2;
+              } else if (st.includes('pkkpr') || st.includes('oss') || st.includes('approved_puptr')) {
+                currentStage = 3;
+              } else if (st.includes('approved') || st.includes('published') || st.includes('terbit') || st.includes('selesai')) {
+                currentStage = 4;
+              }
+
+              items.push({
+                code,
+                investor: inv.name || inv.contact_pic || 'Investor Terdaftar',
+                sektor: `${inv.sector || 'Sektor Potensial'} (${inv.district || inv.kecamatan || 'Kabupaten Luwu'})`,
+                nilai: inv.investmentValue ? `Rp ${(Number(inv.investmentValue) / 1000000000).toFixed(1)} Miliar` : 'Tersedia',
+                currentStage,
+                statusText: inv.status || 'Dalam Proses Pipeline',
+                updatedAt: inv.updated_at ? new Date(inv.updated_at).toLocaleDateString('id-ID') : '-'
+              });
+            }
+          });
+        }
+      } catch (err) {
+        console.warn('Pipeline fetch investments notice:', err);
+      }
+
+      setProjects(items);
+      if (items.length > 0) {
+        setActiveProject(items[0]);
+      } else {
+        setActiveProject(null);
+      }
+    } catch (e) {
+      console.error('Error fetching real pipeline data:', e);
+      setProjects([]);
+      setActiveProject(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRealPipeline();
+  }, []);
 
   const activeStageData = WORKFLOW_STAGES.find(s => s.stageNumber === selectedStage) || WORKFLOW_STAGES[0];
 
@@ -377,117 +460,135 @@ export const InvestorPipelineWorkflowView: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Sample Projects List */}
-          <div className="space-y-3">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
-              Pilih Sampel Proyek Minat
-            </span>
-            {SAMPLE_PROJECTS.filter(p => 
-              p.investor.toLowerCase().includes(searchQuery.toLowerCase()) || 
-              p.code.toLowerCase().includes(searchQuery.toLowerCase())
-            ).map((proj) => (
-              <div
-                key={proj.code}
-                onClick={() => setActiveProject(proj)}
-                className={`cursor-pointer rounded-xl p-4 border transition-all duration-200 space-y-2 ${
-                  activeProject.code === proj.code
-                    ? 'bg-slate-900 text-white border-slate-800 shadow-md ring-2 ring-emerald-500/20'
-                    : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white hover:border-slate-300'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold text-emerald-400">
-                    {proj.code}
-                  </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-700 text-slate-200">
-                    Tahap {proj.currentStage} dari 4
-                  </span>
-                </div>
-                <h4 className="text-xs font-bold leading-snug">{proj.investor}</h4>
-                <div className="text-[11px] opacity-80 space-y-1">
-                  <p>📍 {proj.sektor}</p>
-                  <p>💰 Estimasi: <span className="font-semibold">{proj.nilai}</span></p>
-                </div>
-              </div>
-            ))}
+        {loading ? (
+          <div className="py-16 text-center text-slate-500 flex flex-col items-center justify-center gap-2">
+            <RefreshCw className="w-6 h-6 animate-spin text-emerald-500" />
+            <p className="text-xs">Memuat berkas permohonan investasi dari database...</p>
           </div>
-
-          {/* Active Project Progress & Pipeline Tracker */}
-          <div className="lg:col-span-2 bg-slate-50 dark:bg-slate-800/30 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
-              <div>
-                <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                  {activeProject.code}
-                </span>
-                <h3 className="text-base font-extrabold text-slate-900 dark:text-white">
-                  {activeProject.investor}
-                </h3>
-              </div>
-              <div className="text-left sm:text-right">
-                <span className="text-xs text-slate-400 block">Nilai Komitmen</span>
-                <span className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">
-                  {activeProject.nilai}
-                </span>
-              </div>
-            </div>
-
-            {/* Stepper Bar */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400">
-                <span>Status Progres Pengawalan</span>
-                <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                  {(activeProject.currentStage / 4) * 100}% Selesai
-                </span>
-              </div>
-              <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
-                <div 
-                  className="bg-emerald-500 h-full rounded-full transition-all duration-500"
-                  style={{ width: `${(activeProject.currentStage / 4) * 100}%` }}
-                />
-              </div>
-            </div>
-
-            {/* Stage Progress Nodes */}
-            <div className="grid grid-cols-4 gap-2 pt-2">
-              {WORKFLOW_STAGES.map((s) => {
-                const isPassed = s.stageNumber <= activeProject.currentStage;
-                const isCurrent = s.stageNumber === activeProject.currentStage;
-
-                return (
-                  <div key={s.id} className="text-center space-y-1">
-                    <div className={`mx-auto w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border transition-all ${
-                      isCurrent 
-                        ? 'bg-emerald-500 text-white border-emerald-400 shadow-md ring-4 ring-emerald-500/20'
-                        : isPassed
-                          ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
-                          : 'bg-slate-200 dark:bg-slate-700 text-slate-400 border-transparent'
-                    }`}>
-                      {isPassed ? '✓' : s.stageNumber}
-                    </div>
-                    <span className="text-[10px] font-semibold text-slate-600 dark:text-slate-300 block line-clamp-1">
-                      {s.bidangName.split('Bidang ')[1] || s.bidangName}
+        ) : projects.length === 0 ? (
+          <div className="p-12 text-center text-slate-500 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/50 dark:bg-slate-900/30 space-y-2">
+            <Briefcase className="w-10 h-10 text-slate-400 mx-auto" />
+            <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">Belum Ada Berkas Minat Investasi (LoI)</h3>
+            <p className="text-xs text-slate-500 max-w-md mx-auto">
+              Seluruh permohonan minat baru dari investor yang masuk melalui portal LoI akan otomatis muncul dalam alur pipeline 4 Bidang ini.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Real Projects List */}
+            <div className="space-y-3">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+                Daftar Permohonan Investasi Aktif ({projects.length})
+              </span>
+              {projects.filter(p => 
+                p.investor.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                p.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                p.sektor.toLowerCase().includes(searchQuery.toLowerCase())
+              ).map((proj) => (
+                <div
+                  key={proj.code}
+                  onClick={() => setActiveProject(proj)}
+                  className={`cursor-pointer rounded-xl p-4 border transition-all duration-200 space-y-2 ${
+                    activeProject?.code === proj.code
+                      ? 'bg-slate-900 text-white border-slate-800 shadow-md ring-2 ring-emerald-500/20'
+                      : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white hover:border-slate-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-mono font-bold text-emerald-400">
+                      {proj.code}
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-700 text-slate-200">
+                      Tahap {proj.currentStage} dari 4
                     </span>
                   </div>
-                );
-              })}
+                  <h4 className="text-xs font-bold leading-snug">{proj.investor}</h4>
+                  <div className="text-[11px] opacity-80 space-y-1">
+                    <p>📍 {proj.sektor}</p>
+                    <p>💰 Komitmen: <span className="font-semibold">{proj.nilai}</span></p>
+                  </div>
+                </div>
+              ))}
             </div>
 
-            {/* Current Active Status Card */}
-            <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2 shadow-sm">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
-                Posisi Berkas & Tindak Lanjut Terkini
-              </span>
-              <p className="text-xs font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-                <Clock className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>{activeProject.statusText}</span>
-              </p>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                Terakhir diperbarui: {activeProject.updatedAt} oleh Admin Bidang Terkait.
-              </p>
-            </div>
+            {/* Active Project Progress & Pipeline Tracker */}
+            {activeProject && (
+              <div className="lg:col-span-2 bg-slate-50 dark:bg-slate-800/30 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+                  <div>
+                    <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                      {activeProject.code}
+                    </span>
+                    <h3 className="text-base font-extrabold text-slate-900 dark:text-white">
+                      {activeProject.investor}
+                    </h3>
+                  </div>
+                  <div className="text-left sm:text-right">
+                    <span className="text-xs text-slate-400 block">Nilai Komitmen</span>
+                    <span className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">
+                      {activeProject.nilai}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Stepper Bar */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    <span>Status Progres Pengawalan</span>
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                      {(activeProject.currentStage / 4) * 100}% Selesai
+                    </span>
+                  </div>
+                  <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-emerald-500 h-full rounded-full transition-all duration-500"
+                      style={{ width: `${(activeProject.currentStage / 4) * 100}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Stage Progress Nodes */}
+                <div className="grid grid-cols-4 gap-2 pt-2">
+                  {WORKFLOW_STAGES.map((s) => {
+                    const isPassed = s.stageNumber <= activeProject.currentStage;
+                    const isCurrent = s.stageNumber === activeProject.currentStage;
+
+                    return (
+                      <div key={s.id} className="text-center space-y-1">
+                        <div className={`mx-auto w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border transition-all ${
+                          isCurrent 
+                            ? 'bg-emerald-500 text-white border-emerald-400 shadow-md ring-4 ring-emerald-500/20'
+                            : isPassed
+                              ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                              : 'bg-slate-200 dark:bg-slate-700 text-slate-400 border-transparent'
+                        }`}>
+                          {isPassed ? '✓' : s.stageNumber}
+                        </div>
+                        <span className="text-[10px] font-semibold text-slate-600 dark:text-slate-300 block line-clamp-1">
+                          {s.bidangName.split('Bidang ')[1] || s.bidangName}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Current Active Status Card */}
+                <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2 shadow-sm">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                    Posisi Berkas & Tindak Lanjut Terkini
+                  </span>
+                  <p className="text-xs font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span>{activeProject.statusText}</span>
+                  </p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Terakhir diperbarui: {activeProject.updatedAt} oleh Admin Bidang Terkait.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

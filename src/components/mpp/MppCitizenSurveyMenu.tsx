@@ -12,6 +12,7 @@ import { submitMppSurvey, MppSurveyItem } from '../../services/mppFeedbackServic
 import { LOCALIZED_AGENCIES } from '../../data/mppAgenciesData';
 
 interface MppCitizenSurveyMenuProps {
+  isInModal?: boolean;
   userType?: 'masyarakat' | 'investor';
   defaultName?: string;
   defaultNik?: string;

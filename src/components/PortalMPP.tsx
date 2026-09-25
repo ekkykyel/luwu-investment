@@ -503,6 +503,7 @@ export default function PortalMPP() {
   }, []);
 
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [aiModalQuery, setAiModalQuery] = useState<string | undefined>(undefined);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -1473,6 +1474,22 @@ export default function PortalMPP() {
     return () => window.removeEventListener('open-pkkpr-recommendation', handleOpenPkkpr);
   }, []);
 
+  // Listener untuk membuka MppVisionModal (Asisten Digital Ta') dengan query opsional
+  useEffect(() => {
+    const handleOpenAiModal = (e: Event) => {
+      const customEv = e as CustomEvent<string | undefined>;
+      if (customEv.detail) {
+        setAiModalQuery(customEv.detail);
+      } else {
+        setAiModalQuery(undefined);
+      }
+      setIsAiModalOpen(true);
+    };
+
+    window.addEventListener('open-mpp-ai-modal', handleOpenAiModal);
+    return () => window.removeEventListener('open-mpp-ai-modal', handleOpenAiModal);
+  }, []);
+
   // Realtime Listener untuk status antrean (jika tiket aktif)
   useEffect(() => {
     if (!activeTicket || !activeTicket.number) return;
@@ -1904,15 +1921,15 @@ export default function PortalMPP() {
                 <ThemeToggle />
               </div>
 
-              {/* Ramah Inklusif & Disabilitas Utility Button */}
+              {/* Ramah Inklusif & Disabilitas Utility Button (Enlarged for High Accessibility) */}
               <button
                 type="button"
                 onClick={() => window.dispatchEvent(new CustomEvent('toggle-mpp-accessibility'))}
-                className="flex w-7 h-7 xs:w-8 xs:h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-slate-900/5 dark:bg-white/5 border border-slate-900/10 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 items-center justify-center transition-all active:scale-95 cursor-pointer shrink-0"
+                className="flex w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/30 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 hover:text-emerald-600 dark:hover:text-emerald-200 hover:bg-emerald-100 dark:hover:bg-emerald-950/60 items-center justify-center transition-all active:scale-95 cursor-pointer shrink-0 shadow-xs"
                 title="Layanan Ramah Inklusif & Disabilitas (Pusat Bantuan & Alat Bantu)"
                 aria-label="Layanan Ramah Inklusif & Disabilitas"
               >
-                <Accessibility className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 dark:text-emerald-400" />
+                <Accessibility className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400" />
               </button>
 
               <button 
@@ -1923,14 +1940,6 @@ export default function PortalMPP() {
               >
                 <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 <span>{t("mppPortal.nav.asistenAi")}</span>
-              </button>
-              
-              <button 
-                type="button" 
-                className="w-7 h-7 xs:w-8 xs:h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-slate-900/5 dark:bg-white/5 border border-slate-900/10 dark:border-white/10 text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:text-white flex items-center justify-center transition-colors active:scale-95 shrink-0"
-                title={t("mppPortal.tooltips.notifications")}
-              >
-                <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </button>
             </div>
           </div>
@@ -6043,11 +6052,6 @@ export default function PortalMPP() {
               </div>
             </div>
 
-            {/* Banner Komitmen Zona Integritas Anti-Korupsi di Footer */}
-            <div className="mt-10 sm:mt-12">
-              <AntiCorruptionBanner isDark={isDark} />
-            </div>
-
             {/* Bottom Symmetrical Copyright Bar */}
             <div className="mt-8 pt-6 border-t border-slate-200/80 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
               <div className="flex items-center gap-2 text-center md:text-left">
@@ -7243,7 +7247,7 @@ export default function PortalMPP() {
               initial={{ opacity: 0, y: 50, x: "-50%" }}
               animate={{ opacity: 1, y: 0, x: "-50%" }}
               exit={{ opacity: 0, y: 50, x: "-50%" }}
-              className={`fixed bottom-6 left-1/2 z-40 w-[90%] max-w-sm backdrop-blur-md text-white shadow-2xl rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between border pr-10 gap-3 sm:gap-0 transition-all ${
+              className={`fixed bottom-[calc(env(safe-area-inset-bottom,0px)+72px)] md:bottom-6 left-1/2 z-40 w-[90%] max-w-sm backdrop-blur-md text-white shadow-2xl rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between border pr-10 gap-3 sm:gap-0 transition-all ${
                 activeTicket.status === 'dipanggil'
                   ? 'bg-gradient-to-r from-amber-600 via-amber-500 to-amber-700 border-amber-300 ring-4 ring-amber-400/80 shadow-[0_0_35px_rgba(245,158,11,0.6)] animate-pulse'
                   : activeTicket.status === 'selesai_langsung'
@@ -7361,7 +7365,7 @@ export default function PortalMPP() {
         />
 
         {/* AI Modal */}
-        <MppVisionModal isOpen={isAiModalOpen} onClose={() => setIsAiModalOpen(false)} />
+        <MppVisionModal isOpen={isAiModalOpen} onClose={() => setIsAiModalOpen(false)} initialQuery={aiModalQuery} />
 
         {/* Airport Self-Service Kiosk Modal */}
         <MppAirportKioskModal

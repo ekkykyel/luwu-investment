@@ -476,6 +476,12 @@ export default function App() {
   });
   const [isProfileMinimized, setIsProfileMinimized] = useState(false);
   const { isAndroid } = useDeviceAutomation();
+  const location = useLocation();
+
+  // Otomatis scroll ke posisi paling atas layar saat berganti halaman/rute
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [location.pathname, location.search]);
 
   // Fullscreen & PWA states
   const [isFullscreen, setIsFullscreen] = useState(false);

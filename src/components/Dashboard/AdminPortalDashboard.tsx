@@ -40,7 +40,7 @@ import {
   AlertCircle,
   Zap,
   Filter
-, Users, Plus, PlusCircle, Globe, Info, CheckCircle, Database, Download, FileDown, Settings, BarChart3, BookOpen, Scale, Lightbulb, FileCheck, BookDown} from 'lucide-react';
+, Users, Plus, PlusCircle, Globe, Info, CheckCircle, Database, Download, FileDown, Settings, BarChart3, BookOpen, Scale, Lightbulb, FileCheck, BookDown, Printer} from 'lucide-react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid, ReferenceLine, Legend } from 'recharts';
 import Swal from 'sweetalert2';
 import { supabase } from '../../lib/supabaseClient.js';
@@ -53,11 +53,14 @@ import OpdSettingsView from './OpdSettingsView';
 import PuptrArchiveView from './PuptrArchiveView';
 import PertanianArchiveView from './PertanianArchiveView';
 import OssSkArchiveView from './OssSkArchiveView';
+import { OssPkkprIssuanceDashboard } from './OssPkkprIssuanceDashboard';
 import PuptrSpatialClearanceDashboard from './PuptrSpatialClearanceDashboard';
 import PertanianLandClearanceDashboard from './PertanianLandClearanceDashboard';
 import PkkprBusinessProcessMonitorDashboard from './PkkprBusinessProcessMonitorDashboard';
 import InvestorPipelineWorkflowView from './InvestorPipelineWorkflowView';
 import PertanianOverview from './PertanianOverview';
+import { PertanianLp2bCatalogView } from './PertanianLp2bCatalogView';
+import { PuptrSpatialCatalogView } from './PuptrSpatialCatalogView';
 import PuptrOverview from './PuptrOverview';
 import { LuwuLogo } from '../LuwuLogo.js';
 import { CrossOpdNotificationBell } from '../CrossOpdNotificationBell';
@@ -1570,8 +1573,11 @@ export default function AdminPortalDashboard() {
             <span className="text-slate-800 dark:text-slate-200">/</span>
             <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">
               {activeTab === 'overview_perizinan' ? 'Overview Perizinan'
+                : activeTab === 'oss_pkkpr_issuance' ? 'Penerbitan & Pencetakan SK PKKPR (DPMPTSP/OSS)'
                 : activeTab === 'verifikasi_pkkpr' ? 'Verifikasi PKKPR & Tata Ruang (Dinas PUPTR)'
+                : activeTab === 'puptr_spatial_catalog' ? 'Katalog Pola Ruang RTRW & RDTR (Dinas PUPTR)'
                 : activeTab === 'verifikasi_pertanian' ? 'Rekomendasi Lahan Pertanian / LP2B (Dinas Pertanian)'
+                : activeTab === 'pertanian_lp2b_catalog' ? 'Katalog Lahan Pertanian LP2B & Irigasi (Dinas Pertanian)'
                 : activeTab === 'pkkpr_sync_monitor' ? 'Monitoring Alur & SLA PKKPR'
                 : activeTab === 'realisasi_nib' ? 'Realisasi NIB & Penerbitan SK (OSS-RBA)'
                 : activeTab === 'site-selection' ? 'Rekomendasi Lokasi AI'
@@ -1764,6 +1770,34 @@ export default function AdminPortalDashboard() {
                   <div className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 mt-1 line-clamp-1">Status OSS-RBA</div>
                   <div className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1 hidden sm:block">Sistem terhubung aktif.</div>
                 </div>
+              </div>
+
+              {/* Meja Kerja Khusus Pencetakan & Penerbitan SK PKKPR Final (Pertek PUPTR & BAP Pertanian) */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-teal-900/90 via-slate-900/95 to-emerald-950/90 border border-teal-500/30 text-white shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="p-1.5 rounded-lg bg-teal-500/20 text-teal-400">
+                      <Printer size={16} />
+                    </span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-teal-400 font-mono">
+                      Layanan Cetak SK PKKPR DPMPTSP & TTE BSRE
+                    </span>
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-white">
+                    Antrean Penerbitan &amp; Pencetakan SK Izin PKKPR
+                  </h3>
+                  <p className="text-xs text-slate-300 max-w-xl">
+                    Permohonan PKKPR yang telah disetujui Pertek Ruang oleh Dinas PUPTR dan BAP oleh Dinas Pertanian langsung masuk ke meja kerja ini untuk penyematan TTE Digital dan pencetakan SK PKKPR Final.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setActiveTab('oss_pkkpr_issuance')}
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-400 hover:to-emerald-500 text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shrink-0"
+                >
+                  <Printer size={15} />
+                  <span>Buka Antrean Cetak PKKPR</span>
+                  <ChevronRight size={15} />
+                </button>
               </div>
 
               {/* Main Content: The Verification Queue (Dual-View: Mobile Card List + Desktop Table) */}
@@ -3588,12 +3622,18 @@ export default function AdminPortalDashboard() {
           </div>
         ) : activeTab === 'investor_pipeline' ? (
           <InvestorPipelineWorkflowView />
+        ) : (activeTab === 'oss_pkkpr_issuance' || activeTab === 'penerbitan_sk_pkkpr' || activeTab === 'cetak_pkkpr') ? (
+          <OssPkkprIssuanceDashboard />
         ) : (activeTab === 'pkkpr_sync_monitor' || activeTab === 'pkkpr_monitoring' || activeTab === 'pkkpr_business_process') ? (
           <PkkprBusinessProcessMonitorDashboard />
         ) : (activeTab === 'verifikasi_pkkpr' || activeTab === 'puptr_spatial_clearance') ? (
           <PuptrSpatialClearanceDashboard />
+        ) : activeTab === 'puptr_spatial_catalog' ? (
+          <PuptrSpatialCatalogView />
         ) : (activeTab === 'verifikasi_pertanian' || activeTab === 'admin_pertanian') ? (
           <PertanianLandClearanceDashboard />
+        ) : activeTab === 'pertanian_lp2b_catalog' ? (
+          <PertanianLp2bCatalogView />
         ) : activeTab === 'realisasi_nib' ? (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header */}

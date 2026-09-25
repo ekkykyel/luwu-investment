@@ -1117,7 +1117,7 @@ html.android-fullscreen-mode .android-full-bleed {
 }
 
 /* =========================================================================
-   6. ULTRA-POLISHED MICRO-ANIMATIONS: SHIMMER SWEEP
+   6. ULTRA-POLISHED MICRO-ANIMATIONS: SHIMMER SWEEP & PROGRESS BAR GLOW
    ========================================================================= */
 @keyframes shimmer-sweep {
   0% {
@@ -1131,6 +1131,118 @@ html.android-fullscreen-mode .android-full-bleed {
 .animate-shimmer-sweep {
   animation: shimmer-sweep 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
+
+@keyframes shimmer-progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.animate-shimmer-progress {
+  animation: shimmer-progress 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.shimmer-bar-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-bar-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 25%,
+    rgba(52, 211, 153, 0.75) 50%,
+    rgba(251, 191, 36, 0.75) 65%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: shimmer-progress 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* =========================================================================
+   7. ANDROID FULLSCREEN ACTIVE CLICK & MODAL VIEWPORT FIT
+   Memastikan saat tombol aktif diklik di Landing Page atau Portal MPP,
+   tampilan modal, sheet, panel, dan navigasi target memenuhi layar Android
+   secara presisi dari ujung ke ujung tanpa terpotong.
+   ========================================================================= */
+html {
+  scroll-behavior: smooth;
+}
+
+section,
+div[id],
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
+@media (max-width: 768px) {
+  section,
+  div[id],
+  section[id] {
+    scroll-margin-top: 4.25rem;
+  }
+
+  /* Modal Backdrop & Container: Memenuhi 100% Layar HP Android */
+  html.android-fullscreen-mode div[class*="fixed inset-0"][class*="z-50"],
+  html.android-fullscreen-mode div[class*="fixed inset-0"][class*="z-[120]"],
+  html.android-fullscreen-mode div[class*="fixed inset-0"][class*="z-40"],
+  div[class*="fixed inset-0"][class*="z-50"],
+  div[class*="fixed inset-0"][class*="z-[120]"] {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: 100dvh !important;
+    inset: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Modal Card: Stretch to full Android viewport */
+  html.android-fullscreen-mode div[class*="fixed inset-0"] > div[class*="rounded-"],
+  html.android-fullscreen-mode div[class*="fixed inset-0"] > div[class*="max-w-"],
+  html.android-fullscreen-mode div[class*="fixed inset-0"] > div[class*="bg-white"],
+  html.android-fullscreen-mode div[class*="fixed inset-0"] > div[class*="bg-slate-900"],
+  div[class*="fixed inset-0"] > div[class*="rounded-3xl"],
+  div[class*="fixed inset-0"] > div[class*="rounded-2xl"],
+  div[class*="fixed inset-0"] > div[class*="max-w-4xl"],
+  div[class*="fixed inset-0"] > div[class*="max-w-5xl"],
+  div[class*="fixed inset-0"] > div[class*="max-w-6xl"],
+  div[class*="fixed inset-0"] > div[class*="max-w-3xl"],
+  div[class*="fixed inset-0"] > div[class*="max-w-2xl"],
+  div[class*="fixed inset-0"] > div[class*="max-w-xl"],
+  div[class*="fixed inset-0"] > div[class*="max-w-lg"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 100dvh !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: max(12px, env(safe-area-inset-top, 12px)) max(10px, env(safe-area-inset-right, 10px)) max(16px, env(safe-area-inset-bottom, 16px)) max(10px, env(safe-area-inset-left, 10px)) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+  }
+
+  /* Inner scrollable area inside Android modals */
+  html.android-fullscreen-mode div[class*="fixed inset-0"] [class*="overflow-y-auto"],
+  div[class*="fixed inset-0"] [class*="overflow-y-auto"] {
+    flex: 1 1 auto !important;
+    height: 100% !important;
+    max-height: 100% !important;
+  }
+}
+
 
 
 

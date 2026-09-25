@@ -27,6 +27,24 @@ export function isAndroidDevice(): boolean {
   return /android/i.test(ua);
 }
 
+/**
+ * Smart helper to scroll any target section or action result into the top of the Android viewport cleanly
+ */
+export function scrollElementIntoAndroidView(elementOrId: string | HTMLElement, offset: number = 72) {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+  const el = typeof elementOrId === "string" ? document.getElementById(elementOrId) : elementOrId;
+  if (!el) return;
+
+  const rect = el.getBoundingClientRect();
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const targetTop = rect.top + scrollTop - offset;
+
+  window.scrollTo({
+    top: Math.max(0, targetTop),
+    behavior: "smooth"
+  });
+}
+
 export function useDeviceAutomation() {
   const [isAndroid, setIsAndroid] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
@@ -49,6 +67,37 @@ export function useDeviceAutomation() {
       }
     }
 
+    // Delegated click listener untuk memastikan setiap tombol navigasi/anchor pada Android
+    // menempatkan hasil klik tepat pada posisi paling atas layar penuh
+    const handleGlobalAndroidClick = (e: MouseEvent) => {
+      if (!isMob && window.innerWidth > 768) return;
+
+      const target = (e.target as HTMLElement)?.closest("a, button, [role='button'], [data-scroll-target]");
+      if (!target) return;
+
+      // Handle anchor links
+      const href = target.getAttribute("href");
+      if (href && href.startsWith("#") && href.length > 1) {
+        const targetId = href.substring(1);
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          e.preventDefault();
+          scrollElementIntoAndroidView(targetEl, 70);
+        }
+      }
+
+      // Handle custom data-scroll-target
+      const scrollTargetId = target.getAttribute("data-scroll-target");
+      if (scrollTargetId) {
+        const targetEl = document.getElementById(scrollTargetId);
+        if (targetEl) {
+          scrollElementIntoAndroidView(targetEl, 70);
+        }
+      }
+    };
+
+    window.addEventListener("click", handleGlobalAndroidClick, { passive: false });
+
     const handleResize = () => {
       const currentMob = isMobileOrAndroidDevice();
       const currentAndr = isAndroidDevice();
@@ -66,8 +115,9 @@ export function useDeviceAutomation() {
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("click", handleGlobalAndroidClick);
     };
   }, []);
 
-  return { isAndroid, isMobile };
+  return { isAndroid, isMobile, scrollElementIntoAndroidView };
 }

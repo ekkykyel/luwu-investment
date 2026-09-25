@@ -2,6 +2,8 @@ import React, { useRef, useState, useEffect } from "react";
 import jsPDF from "jspdf";
 import { safeHtml2Canvas } from "../../lib/html2canvasShim";
 import { OFFICIAL_LUWU_LOGO_URL } from "../LuwuLogo";
+import { getOpdSettings, saveOpdSettings } from "../../utils/opdSettingsStorage";
+import { supabase } from "../../lib/supabaseClient";
 import { 
   Printer, 
   Download, 
@@ -74,11 +76,12 @@ export interface BapKtrDocumentData {
   // Keputusan & Rekomendasi
   statusKeputusan: "APPROVED" | "APPROVED_WITH_CONDITIONS" | "REJECTED";
   catatanRekomendasiTeknis: string[];
+  rejectionReason?: string;
   koefisienDasarBangunan: string;
   koefisienLantaiBangunan: string;
   garisSempadanBangunan: string;
 
-  // Pejabat Penandatangan (Dual Signatures)
+  // Pejabat Penandatangan (Dual Signatures & Tim Teknis)
   kabidNama: string;
   kabidNip: string;
   kabidJabatan: string;
@@ -86,11 +89,15 @@ export interface BapKtrDocumentData {
   kadisNip: string;
   kadisJabatan: string;
   kadisPangkat: string;
+  kasiNama?: string;
+  kasiNip?: string;
+  kasiJabatan?: string;
 
   // Map & Spatial Attachment
   petaImageUrl?: string;
   analisGisNama?: string;
   analisGisNip?: string;
+  analisGisJabatan?: string;
   catatanSurveyor?: string;
   koordinatPoligon: BapKtrCoordinatePoint[];
 }
@@ -203,9 +210,14 @@ export const DEFAULT_BAP_KTR_DATA: BapKtrDocumentData = {
   kadisJabatan: "Kepala Dinas Pekerjaan Umum dan Penataan Ruang",
   kadisPangkat: "Pembina Utama Muda (IV/c)",
 
+  kasiNama: "SYAHRUL RAMADHAN, S.T.",
+  kasiNip: "19880210 201101 1 007",
+  kasiJabatan: "Kepala Seksi Pengawasan Ruang",
+
   petaImageUrl: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80",
   analisGisNama: "ANDI BASO MATTATA, S.T.",
   analisGisNip: "19940822 202012 1 003",
+  analisGisJabatan: "Analis Spasial & Pemetaan GIS",
   catatanSurveyor: "Pengukuran batas persil telah diverifikasi menggunakan GNSS RTK Dual-Frequency Geodetic dengan tingkat akurasi horizontal < 0.05 meter. Delineasi poligon telah ditumpangsusunkan (overlay) langsung dengan Layer Peta Digital RTRW Kabupaten Luwu 2024-2044.",
 
   koordinatPoligon: [
@@ -276,9 +288,14 @@ export const DEFAULT_BAP_NON_BERUSAHA_DATA: BapKtrDocumentData = {
   kadisJabatan: "Kepala Dinas Pekerjaan Umum dan Penataan Ruang",
   kadisPangkat: "Pembina Utama Muda (IV/c)",
 
+  kasiNama: "SYAHRUL RAMADHAN, S.T.",
+  kasiNip: "19880210 201101 1 007",
+  kasiJabatan: "Kepala Seksi Pengawasan Ruang",
+
   petaImageUrl: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80",
   analisGisNama: "ANDI BASO MATTATA, S.T.",
   analisGisNip: "19940822 202012 1 003",
+  analisGisJabatan: "Analis Spasial & Pemetaan GIS",
   catatanSurveyor: "Pengukuran batas persil telah diverifikasi menggunakan GNSS RTK Geodetic dengan delineasi poligon lahan telah ditumpangsusunkan langsung pada Layer Peta Digital RTRW Kabupaten Luwu 2024-2044.",
 
   koordinatPoligon: [
@@ -289,18 +306,88 @@ export const DEFAULT_BAP_NON_BERUSAHA_DATA: BapKtrDocumentData = {
   ]
 };
 
+export const DEFAULT_BAP_REJECTED_DATA: BapKtrDocumentData = {
+  jenisPermohonan: "Berusaha",
+  nomorSurat: "600/082/BA-TOLAK-KTR/DPUPTR-LW/2026",
+  tentangSurat: "HASIL PENILAIAN PENOLAKAN KESESUAIAN TATA RUANG (BAP-TOLAK KTR) KABUPATEN LUWU",
+  tanggalDokumen: "25 September 2026",
+  hariTanggalPemeriksaan: "Kamis, 25 September 2026",
+
+  nibNik: "0220108920194",
+  namaPemohon: "BAMBANG SUDIBYO",
+  namaPerusahaan: "PT. LUWU KENCANA MAKMUR",
+  alamatPemohon: "Jl. Poros Bua - Palopo No. 88, Kab. Luwu",
+  sektorUsaha: "Industri Pengolahan / Pergudangan Komersial",
+  kbliCode: "52101 (Pergudangan dan Penyimpanan)",
+  lokasiInvestasi: "Bantaran Sungai Suso & Kawasan Lindung, Kab. Luwu",
+  desaKelurahan: "Desa Noling",
+  kecamatan: "Kecamatan Bua Ponrang",
+  kabupaten: "Kabupaten Luwu, Provinsi Sulawesi Selatan",
+  luasLahanPermohonan: "125.000 m² (12,50 Hektar)",
+  luasLahanDisetujui: "0 m² (Permohonan Ditolak / 0,00 Hektar)",
+  buktiHakTanah: "Sertifikat Hak Milik (SHM)",
+
+  zonaPolaRuangRtrw: "Kawasan Lindung Sempadan Sungai & Kawasan Resapan Air",
+  kodeZonaRtrw: "KL-SS / Perda No. 3 Tahun 2024 tentang RTRW Kab. Luwu 2024-2044",
+  statusLp2b: "LP2B",
+  keteranganLp2b: "LOKASI BERSINGGUNGAN PENUH DENGAN ZONA LP2B IRIGASI TEKNIS AKTIF & SEMPADAN SUNGAI MUTLAK",
+  statusKawasanLindung: "BERADA DALAM KAWASAN LINDUNG SEMPADAN SUNGAI UTAMA (Dilarang Pembangunan Permanen)",
+  statusSempadanSungaiPantai: "MELANGGAR SEMPADAN SUNGAI (Persil Berada Dalam Radius < 50 Meter dari Palung Sungai)",
+  validasiTopologi: "Inkonsistensi Spasial Berat (Overlap Kawasan Lindung & Kawasan Rawan Bencana Banjir Bandang)",
+  sistemKoordinat: "Universal Transverse Mercator (UTM) Zone 51S - Datum WGS 1984",
+
+  statusKeputusan: "REJECTED",
+  rejectionReason: "Rencana kegiatan pemanfaatan ruang bertentangan secara mendasar dengan Alokasi Pola Ruang Peraturan Daerah Kabupaten Luwu Nomor 3 Tahun 2024 tentang RTRW Kabupaten Luwu Tahun 2024-2044 karena berada di dalam Zona Lindung Sempadan Sungai, memutus jaringan sempadan tata air, dan berada pada zona rawan bencana banjir bandang tinggi.",
+  catatanRekomendasiTeknis: [
+    "Berdasarkan hasil analisis spasial SIG, lokasi permohonan berada pada Kawasan Lindung Sempadan Sungai (DAS Sungai Utama) yang secara hukum dilarang untuk didirikan bangunan industri dan pergudangan.",
+    "Rencana pemanfaatan ruang TIDAK SESUAI dengan Peraturan Daerah Kabupaten Luwu Nomor 3 Tahun 2024 tentang Rencana Tata Ruang Wilayah (RTRW) Kabupaten Luwu Tahun 2024-2044.",
+    "Persil melanggar Garis Sempadan Sungai (kurang dari 50 meter dari tepi palung sungai) yang melanggar Permen PUPR No. 28/PRT/M/2015.",
+    "Dinas PUPTR Kabupaten Luwu MENETAPKAN PENOLAKAN PERMOHONAN KESESUAIAN TATA RUANG dan merekomendasikan kepada Kepala DPMPTSP Kabupaten Luwu untuk TIDAK MENERBITKAN Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR)."
+  ],
+  koefisienDasarBangunan: "0% (Zona Lindung Bebas Bangunan)",
+  koefisienLantaiBangunan: "0",
+  garisSempadanBangunan: "Zona Lindung Mutlak",
+
+  kabidNama: "IR. H. IRWANTO, S.T., M.T.",
+  kabidNip: "19780412 200502 1 003",
+  kabidJabatan: "Kepala Bidang Tata Ruang dan Bina Konstruksi",
+
+  kadisNama: "IR. IKHSAN AS'AD, S.T., M.Si.",
+  kadisNip: "19710815 199803 1 007",
+  kadisJabatan: "Kepala Dinas Pekerjaan Umum dan Penataan Ruang",
+  kadisPangkat: "Pembina Utama Muda (IV/c)",
+
+  kasiNama: "SYAHRUL RAMADHAN, S.T.",
+  kasiNip: "19880210 201101 1 007",
+  kasiJabatan: "Kepala Seksi Pengawasan Ruang",
+
+  petaImageUrl: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80",
+  analisGisNama: "ANDI BASO MATTATA, S.T.",
+  analisGisNip: "19940822 202012 1 003",
+  analisGisJabatan: "Analis Spasial & Pemetaan GIS",
+  catatanSurveyor: "Peta overlay menunjukkan lokasi berada dalam sempadan sungai aktif dan zona rawan bencana banjir bandang.",
+
+  koordinatPoligon: [
+    { id: 1, pointName: "P.01", latitudeDms: "2° 58' 42.12\" LS", longitudeDms: "120° 18' 24.35\" BT", latitudeDd: -2.978367, longitudeDd: 120.306764, description: "Patok Sudut Sempadan Sungai" },
+    { id: 2, pointName: "P.02", latitudeDms: "2° 58' 38.45\" LS", longitudeDms: "120° 18' 32.18\" BT", latitudeDd: -2.977347, longitudeDd: 120.308939, description: "Patok Sisi Sempadan Saluran" },
+    { id: 3, pointName: "P.03", latitudeDms: "2° 58' 29.80\" LS", longitudeDms: "120° 18' 35.60\" BT", latitudeDd: -2.974944, longitudeDd: 120.309889, description: "Patok Sudut Bantaran Sungai" }
+  ]
+};
+
 export interface BapKtrPuptrDocumentProps {
   initialData?: Partial<BapKtrDocumentData>;
   mapSnapshot?: string | null;
   onClose?: () => void;
   showEditorToolbar?: boolean;
+  onSaveData?: (updatedData: BapKtrDocumentData) => void | Promise<void>;
 }
 
 export function BapKtrPuptrDocument({
   initialData,
   mapSnapshot,
   onClose,
-  showEditorToolbar = true
+  showEditorToolbar = true,
+  onSaveData
 }: BapKtrPuptrDocumentProps) {
   const [data, setData] = useState<BapKtrDocumentData>({
     ...DEFAULT_BAP_KTR_DATA,
@@ -322,7 +409,100 @@ export function BapKtrPuptrDocument({
   const [activeTab, setActiveTab] = useState<"all" | "page1" | "page2" | "page3" | "page4">("all");
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
   const documentContainerRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * Helper to format point 6 location cleanly without repeating district/regency names
+   */
+  const getFormattedLokasiRencana = () => {
+    const lokasi = (data.lokasiInvestasi || "").trim();
+    const desa = (data.desaKelurahan || "").trim();
+    const kec = (data.kecamatan || "").trim();
+    const kab = (data.kabupaten || "Kabupaten Luwu").trim();
+
+    if (!lokasi) return `${desa}, ${kec}, ${kab}`;
+    const lokasiLower = lokasi.toLowerCase();
+    const desaLower = desa.toLowerCase();
+    const kecLower = kec.toLowerCase();
+
+    // If lokasi already has the village or district name, don't duplicate
+    if ((desaLower && lokasiLower.includes(desaLower)) || (kecLower && lokasiLower.includes(kecLower))) {
+      if (lokasiLower.includes("kabupaten") || lokasiLower.includes("kab.")) {
+        return lokasi;
+      }
+      return `${lokasi}, ${kab}`;
+    }
+    return `${lokasi}, ${desa}, ${kec}, ${kab}`;
+  };
+
+  /**
+   * Handler to save edited BAP-PKKPR variables and officials to database
+   */
+  const handleSaveToDatabase = async () => {
+    setIsSaving(true);
+    setSaveSuccessMsg(null);
+    try {
+      // 1. Cache in LocalStorage
+      localStorage.setItem("BAP_KTR_SETTINGS_PERSIST", JSON.stringify(data));
+
+      // 2. Sync OPD Officials Settings for PUPTR
+      try {
+        const currentOpd = getOpdSettings("puptr");
+        saveOpdSettings("puptr", {
+          ...currentOpd,
+          kepalaDinas: {
+            ...currentOpd.kepalaDinas,
+            fullName: data.kadisNama,
+            nip: data.kadisNip,
+            pangkatGolongan: data.kadisPangkat,
+            officialTitle: data.kadisJabatan
+          },
+          kabidSignatory: {
+            ...currentOpd.kabidSignatory,
+            fullName: data.kabidNama,
+            nip: data.kabidNip,
+            officialTitle: data.kabidJabatan,
+            pangkatGolongan: currentOpd.kabidSignatory?.pangkatGolongan || 'Pembina (IV/a)'
+          }
+        });
+      } catch (opdErr) {
+        console.warn("OPD settings sync warning:", opdErr);
+      }
+
+      // 3. Upsert to Supabase database if connection is active
+      try {
+        if (supabase) {
+          const { error: sbErr } = await supabase.from("opd_settings").upsert({
+            opd_key: "puptr",
+            data_bap_ktr: data,
+            updated_at: new Date().toISOString()
+          }, { onConflict: "opd_key" });
+
+          if (sbErr) {
+            console.warn("Note: Supabase opd_settings upsert note:", sbErr.message);
+          }
+        }
+      } catch (sbException) {
+        console.log("Supabase db write fallback to local persistence:", sbException);
+      }
+
+      // 4. Invoke parent callback if provided
+      if (onSaveData) {
+        await onSaveData(data);
+      }
+
+      setSaveSuccessMsg("Data BAP-PKKPR & Pejabat Penandatangan berhasil disimpan ke Database!");
+      setTimeout(() => setSaveSuccessMsg(null), 4000);
+    } catch (err: any) {
+      console.error("Error saving BAP data to database:", err);
+      setSaveSuccessMsg("Error: Gagal menyimpan data ke database (" + (err?.message || "Koneksi terputus") + ")");
+      setTimeout(() => setSaveSuccessMsg(null), 5000);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   /**
    * Safe Native Print Handler
@@ -333,13 +513,18 @@ export function BapKtrPuptrDocument({
 
   /**
    * Safe High-Resolution jsPDF + html2canvas Export
-   * Free from oklab / oklch errors due to strict HEX/RGB inline styles
+   * Uses an unconstrained off-screen render container to guarantee 100% pixel-perfect match with modal preview
    */
   const handleDownloadPdf = async () => {
     if (!documentContainerRef.current) return;
     setIsGeneratingPdf(true);
 
     try {
+      // Ensure web fonts are completely loaded before capturing
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
+
       const pageElements = documentContainerRef.current.querySelectorAll<HTMLElement>(".bap-ktr-print-page");
       if (!pageElements || pageElements.length === 0) {
         throw new Error("Halaman dokumen tidak ditemukan");
@@ -352,19 +537,49 @@ export function BapKtrPuptrDocument({
         compress: true
       });
 
+      // Create an offscreen wrapper mounted to document.body
+      // This isolates the document from modal scrollbars, transforms, and reactive scaling
+      const offscreenContainer = document.createElement("div");
+      offscreenContainer.style.position = "fixed";
+      offscreenContainer.style.left = "-9999px";
+      offscreenContainer.style.top = "0";
+      offscreenContainer.style.width = "210mm";
+      offscreenContainer.style.zIndex = "-9999";
+      offscreenContainer.style.backgroundColor = "#ffffff";
+      document.body.appendChild(offscreenContainer);
+
       for (let i = 0; i < pageElements.length; i++) {
-        const pageEl = pageElements[i];
-        
-        const canvas = await safeHtml2Canvas(pageEl, {
-          scale: 2.5, // Crisp 300 DPI output
+        const originalPage = pageElements[i];
+
+        // Clone page into pristine off-screen container
+        const clonedPage = originalPage.cloneNode(true) as HTMLElement;
+        clonedPage.style.margin = "0";
+        clonedPage.style.boxShadow = "none";
+        clonedPage.style.transform = "none";
+        clonedPage.style.width = "210mm";
+        clonedPage.style.minHeight = "297mm";
+        clonedPage.style.height = "297mm";
+
+        offscreenContainer.appendChild(clonedPage);
+
+        // Render with html2canvas locked to exact A4 pixel dimensions (794px x 1123px at 96 DPI)
+        const canvas = await safeHtml2Canvas(clonedPage, {
+          scale: 3, // Ultra-crisp 300 DPI text quality
           useCORS: true,
           allowTaint: true,
           backgroundColor: "#ffffff",
           logging: false,
-          imageTimeout: 15000
+          imageTimeout: 15000,
+          windowWidth: 794,  // Lock to exact 210mm width
+          windowHeight: 1123, // Lock to exact 297mm height
+          scrollX: 0,
+          scrollY: 0
         });
 
-        const imgData = canvas.toDataURL("image/jpeg", 0.95);
+        // Clean up cloned DOM node
+        offscreenContainer.removeChild(clonedPage);
+
+        const imgData = canvas.toDataURL("image/jpeg", 0.98);
         const pdfWidth = 210; // A4 width in mm
         const pdfHeight = 297; // A4 height in mm
 
@@ -373,6 +588,11 @@ export function BapKtrPuptrDocument({
         }
 
         pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight, undefined, "FAST");
+      }
+
+      // Remove offscreen container
+      if (document.body.contains(offscreenContainer)) {
+        document.body.removeChild(offscreenContainer);
       }
 
       const cleanDocNumber = data.nomorSurat.replace(/[^a-zA-Z0-9_-]/g, "_");
@@ -438,6 +658,16 @@ export function BapKtrPuptrDocument({
                 <span>{isGeneratingPdf ? "Menyiapkan PDF..." : "Download PDF Resmi"}</span>
               </button>
 
+              <button
+                type="button"
+                disabled={isSaving}
+                onClick={handleSaveToDatabase}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-[#2563eb] hover:bg-[#1d4ed8] text-white flex items-center gap-1.5 shadow-md transition-all cursor-pointer disabled:opacity-50"
+              >
+                <CheckCircle2 size={14} />
+                <span>{isSaving ? "Menyimpan..." : "Simpan Ke Database"}</span>
+              </button>
+
               {onClose && (
                 <button
                   type="button"
@@ -450,6 +680,13 @@ export function BapKtrPuptrDocument({
               )}
             </div>
           </div>
+
+          {saveSuccessMsg && (
+            <div className="mt-3 p-3 bg-emerald-500/15 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 rounded-xl text-xs font-bold flex items-center gap-2 animate-in fade-in duration-200">
+              <CheckCircle2 size={16} className="shrink-0 text-emerald-600" />
+              <span>{saveSuccessMsg}</span>
+            </div>
+          )}
 
           {/* Quick Page Navigator */}
           <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[#e2e8f0] overflow-x-auto text-xs">
@@ -510,23 +747,34 @@ export function BapKtrPuptrDocument({
                     type="button"
                     onClick={() => setData({ ...DEFAULT_BAP_KTR_DATA, petaImageUrl: data.petaImageUrl })}
                     className={`px-2.5 py-1 rounded-lg font-bold border transition-all cursor-pointer ${
-                      data.jenisPermohonan === "Berusaha"
+                      data.statusKeputusan !== "REJECTED" && data.jenisPermohonan === "Berusaha"
                         ? "bg-[#166534] text-white border-[#166534]"
                         : "bg-white text-[#334155] border-[#cbd5e1] hover:bg-[#f1f5f9]"
                     }`}
                   >
-                    PKKPR Berusaha (Komersial)
+                    BAP Persetujuan (Berusaha)
                   </button>
                   <button
                     type="button"
                     onClick={() => setData({ ...DEFAULT_BAP_NON_BERUSAHA_DATA, petaImageUrl: data.petaImageUrl })}
                     className={`px-2.5 py-1 rounded-lg font-bold border transition-all cursor-pointer ${
-                      data.jenisPermohonan === "Non-Berusaha"
+                      data.statusKeputusan !== "REJECTED" && data.jenisPermohonan === "Non-Berusaha"
                         ? "bg-[#4338ca] text-white border-[#4338ca]"
                         : "bg-white text-[#334155] border-[#cbd5e1] hover:bg-[#f1f5f9]"
                     }`}
                   >
-                    PKKPR Non-Berusaha (Gereja/Sosial)
+                    BAP Persetujuan (Non-Berusaha)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setData({ ...DEFAULT_BAP_REJECTED_DATA, petaImageUrl: data.petaImageUrl })}
+                    className={`px-2.5 py-1 rounded-lg font-bold border transition-all cursor-pointer ${
+                      data.statusKeputusan === "REJECTED"
+                        ? "bg-[#b91c1c] text-white border-[#b91c1c]"
+                        : "bg-white text-[#b91c1c] border-[#fca5a5] hover:bg-[#fef2f2]"
+                    }`}
+                  >
+                    BAP Penolakan (Ditolak)
                   </button>
                 </div>
               </div>
@@ -614,11 +862,20 @@ export function BapKtrPuptrDocument({
                   />
                 </div>
                 <div>
-                  <label className="block text-[#475569] font-bold mb-1">Alamat Pemohon:</label>
+                  <label className="block text-[#475569] font-bold mb-1">Alamat Pemohon / Domisili:</label>
                   <input
                     type="text"
                     value={data.alamatPemohon}
                     onChange={(e) => setData({ ...data, alamatPemohon: e.target.value })}
+                    className="w-full px-2.5 py-1.5 bg-white border border-[#cbd5e1] rounded-lg text-[#0f172a]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[#475569] font-bold mb-1">Lokasi Pembangunan / Investasi:</label>
+                  <input
+                    type="text"
+                    value={data.lokasiInvestasi}
+                    onChange={(e) => setData({ ...data, lokasiInvestasi: e.target.value })}
                     className="w-full px-2.5 py-1.5 bg-white border border-[#cbd5e1] rounded-lg text-[#0f172a]"
                   />
                 </div>
@@ -633,12 +890,23 @@ export function BapKtrPuptrDocument({
                 </div>
                 <div>
                   <label className="block text-[#475569] font-bold mb-1">Bukti Hak Atas Tanah:</label>
-                  <input
-                    type="text"
+                  <select
                     value={data.buktiHakTanah}
                     onChange={(e) => setData({ ...data, buktiHakTanah: e.target.value })}
-                    className="w-full px-2.5 py-1.5 bg-white border border-[#cbd5e1] rounded-lg text-[#0f172a]"
-                  />
+                    className="w-full px-2.5 py-1.5 bg-white border border-[#cbd5e1] rounded-lg text-[#0f172a] font-medium cursor-pointer"
+                  >
+                    <option value="Sertifikat Hak Milik (SHM)">Sertifikat Hak Milik (SHM)</option>
+                    <option value="Sertifikat Hak Guna Bangunan (SHGB)">Sertifikat Hak Guna Bangunan (SHGB)</option>
+                    <option value="Sertifikat Hak Pakai (SHP)">Sertifikat Hak Pakai (SHP)</option>
+                    <option value="Sertifikat Hak Guna Usaha (SHGU)">Sertifikat Hak Guna Usaha (SHGU)</option>
+                    <option value="Sertifikat Hak Wakaf / Akta Ikrar Wakaf (AIW)">Sertifikat Hak Wakaf / Akta Ikrar Wakaf (AIW)</option>
+                    <option value="Surat Keterangan Tanah (SKT) / Garapan Desa">Surat Keterangan Tanah (SKT) / Garapan Desa</option>
+                    <option value="Akta Jual Beli (AJB) / Akta Hibah Notaris / PPAT">Akta Jual Beli (AJB) / Akta Hibah Notaris/PPAT</option>
+                    <option value="Surat Pelepasan Hak Adat / Masyarakat Hukum Adat">Surat Pelepasan Hak Adat / Pelepasan Adat</option>
+                    {!["Sertifikat Hak Milik (SHM)", "Sertifikat Hak Guna Bangunan (SHGB)", "Sertifikat Hak Pakai (SHP)", "Sertifikat Hak Guna Usaha (SHGU)", "Sertifikat Hak Wakaf / Akta Ikrar Wakaf (AIW)", "Surat Keterangan Tanah (SKT) / Garapan Desa", "Akta Jual Beli (AJB) / Akta Hibah Notaris / PPAT", "Surat Pelepasan Hak Adat / Masyarakat Hukum Adat"].includes(data.buktiHakTanah) && (
+                      <option value={data.buktiHakTanah}>{data.buktiHakTanah} (Kustom)</option>
+                    )}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-[#475569] font-bold mb-1">Kecamatan:</label>
@@ -662,14 +930,244 @@ export function BapKtrPuptrDocument({
                   <label className="block text-[#475569] font-bold mb-1">Status Keputusan Rekomendasi:</label>
                   <select
                     value={data.statusKeputusan}
-                    onChange={(e) => setData({ ...data, statusKeputusan: e.target.value as any })}
-                    className="w-full px-2.5 py-1.5 bg-white border border-[#cbd5e1] rounded-lg text-[#0f172a]"
+                    onChange={(e) => {
+                      const newStatus = e.target.value as any;
+                      setData(prev => ({
+                        ...prev,
+                        statusKeputusan: newStatus,
+                        nomorSurat: newStatus === "REJECTED" 
+                          ? prev.nomorSurat.replace("BAP-KTR", "BA-TOLAK-KTR").replace("BAP-PKKPR-B", "BA-TOLAK-KTR")
+                          : prev.nomorSurat.replace("BA-TOLAK-KTR", "BAP-PKKPR-B")
+                      }));
+                    }}
+                    className={`w-full px-2.5 py-1.5 bg-white border rounded-lg font-bold ${
+                      data.statusKeputusan === "REJECTED" 
+                        ? "border-[#b91c1c] text-[#b91c1c]" 
+                        : "border-[#cbd5e1] text-[#0f172a]"
+                    }`}
                   >
                     <option value="APPROVED">MEMENUHI KESESUAIAN TATA RUANG (APPROVED)</option>
                     <option value="APPROVED_WITH_CONDITIONS">DISETUJUI DENGAN PERSYARATAN KHUSUS</option>
                     <option value="REJECTED">TIDAK MEMENUHI KESESUAIAN TATA RUANG (DITOLAK)</option>
                   </select>
                 </div>
+              </div>
+
+              {/* SEKSI KHUSUS ALASAN PENOLAKAN PUPTR */}
+              {data.statusKeputusan === "REJECTED" && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl space-y-2">
+                  <div className="flex items-center justify-between text-red-800 font-bold text-[11px] uppercase">
+                    <span className="flex items-center gap-1.5">
+                      <AlertCircle size={14} className="text-red-600" />
+                      <span>Alasan &amp; Dasar Pertimbangan Penolakan Tata Ruang (BAP-TOLAK KTR)</span>
+                    </span>
+                    <span className="text-[10px] text-red-600 font-normal">Wajib Diisi untuk Dokumen BAP Penolakan</span>
+                  </div>
+
+                  <div>
+                    <label className="block text-[#475569] font-bold text-[10px] mb-1">Pilih Alasan Standar Penolakan Tata Ruang:</label>
+                    <select
+                      value={data.rejectionReason || ""}
+                      onChange={(e) => setData({ ...data, rejectionReason: e.target.value })}
+                      className="w-full px-2.5 py-1.5 bg-white border border-red-300 rounded-lg text-red-900 font-semibold cursor-pointer text-xs"
+                    >
+                      <option value="Rencana kegiatan pemanfaatan ruang bertentangan secara mendasar dengan Alokasi Pola Ruang Peraturan Daerah Kabupaten Luwu Nomor 3 Tahun 2024 tentang RTRW Kabupaten Luwu Tahun 2024-2044 karena berada di dalam Zona Lindung Sempadan Sungai, memutus jaringan sempadan tata air, dan berada pada zona rawan bencana banjir bandang tinggi.">
+                        1. Melanggar Pola Ruang RTRW / Zona Lindung Sempadan Sungai
+                      </option>
+                      <option value="Persil berada pada Kawasan Rawan Bencana (KRB) Tinggi dengan risiko likuifaksi atau tanah longsor aktif yang membahayakan keselamatan publik.">
+                        2. Kawasan Rawan Bencana (KRB) Tinggi / Bahaya Geologis
+                      </option>
+                      <option value="Tidak memenuhi ketentuan intensitas pemanfaatan ruang (KDB, KLB, dan Koefisien Daerah Hijau) serta tidak menyediakan buffer sempadan jalan arteri.">
+                        3. Pelanggaran Intensitas Ruang &amp; Koefisien Dasar Bangunan
+                      </option>
+                      <option value="Dokumen kepemilikan tanah tumpang tindih dengan aset milik Pemerintah Daerah / Kawasan Hutan Negara.">
+                        4. Tumpang Tindih Aset Daerah / Kawasan Hutan
+                      </option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[#475569] font-bold text-[10px] mb-1">Rincian Narasi Alasan Penolakan PUPTR (Dapat Diedit):</label>
+                    <textarea
+                      rows={2}
+                      value={data.rejectionReason || ""}
+                      onChange={(e) => setData({ ...data, rejectionReason: e.target.value })}
+                      placeholder="Tuliskan uraian pertimbangan teknis penolakan kesesuaian tata ruang..."
+                      className="w-full px-2.5 py-1.5 bg-white border border-red-300 rounded-lg text-red-900 text-xs font-medium"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* SEKSI 2: PEJABAT PENANDATANGAN & TIM TEKNIS BAP-PKKPR */}
+              <div className="pt-2">
+                <div className="font-bold text-[#1e293b] mb-2 uppercase text-[11px] tracking-wide border-b border-slate-200 pb-1 flex items-center justify-between">
+                  <span>2. Pejabat Penandatangan & Tim Teknis Dinas PUPTR</span>
+                  <span className="text-[10px] text-[#0284c7] font-normal">Sesuai Struktur Resmi DPUPTR Luwu</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-white p-3 border border-[#cbd5e1] rounded-xl">
+                  {/* A. Kepala Dinas */}
+                  <div className="space-y-2 p-2.5 bg-[#f8fafc] border border-slate-200 rounded-lg">
+                    <div className="font-bold text-[#0f172a] text-[11px] border-b pb-1 text-emerald-800">
+                      a. Kepala Dinas PUPTR
+                    </div>
+                    <div>
+                      <label className="block text-[#475569] font-semibold text-[10px] mb-0.5">Nama Lengkap & Gelar:</label>
+                      <input
+                        type="text"
+                        value={data.kadisNama}
+                        onChange={(e) => setData({ ...data, kadisNama: e.target.value })}
+                        className="w-full px-2 py-1 bg-white border border-[#cbd5e1] rounded text-[#0f172a] font-medium"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#475569] font-semibold text-[10px] mb-0.5">NIP Kadis:</label>
+                      <input
+                        type="text"
+                        value={data.kadisNip}
+                        onChange={(e) => setData({ ...data, kadisNip: e.target.value })}
+                        className="w-full px-2 py-1 bg-white border border-[#cbd5e1] rounded text-[#0f172a]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#475569] font-semibold text-[10px] mb-0.5">Pangkat / Golongan:</label>
+                      <input
+                        type="text"
+                        value={data.kadisPangkat}
+                        onChange={(e) => setData({ ...data, kadisPangkat: e.target.value })}
+                        className="w-full px-2 py-1 bg-white border border-[#cbd5e1] rounded text-[#0f172a]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#475569] font-semibold text-[10px] mb-0.5">Jabatan Resmi:</label>
+                      <input
+                        type="text"
+                        value={data.kadisJabatan}
+                        onChange={(e) => setData({ ...data, kadisJabatan: e.target.value })}
+                        className="w-full px-2 py-1 bg-white border border-[#cbd5e1] rounded text-[#0f172a]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* B. Kepala Bidang Tata Ruang */}
+                  <div className="space-y-2 p-2.5 bg-[#f8fafc] border border-slate-200 rounded-lg">
+                    <div className="font-bold text-[#0f172a] text-[11px] border-b pb-1 text-emerald-800">
+                      b. Kabid Tata Ruang
+                    </div>
+                    <div>
+                      <label className="block text-[#475569] font-semibold text-[10px] mb-0.5">Nama Lengkap & Gelar:</label>
+                      <input
+                        type="text"
+                        value={data.kabidNama}
+                        onChange={(e) => setData({ ...data, kabidNama: e.target.value })}
+                        className="w-full px-2 py-1 bg-white border border-[#cbd5e1] rounded text-[#0f172a] font-medium"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#475569] font-semibold text-[10px] mb-0.5">NIP Kabid:</label>
+                      <input
+                        type="text"
+                        value={data.kabidNip}
+                        onChange={(e) => setData({ ...data, kabidNip: e.target.value })}
+                        className="w-full px-2 py-1 bg-white border border-[#cbd5e1] rounded text-[#0f172a]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#475569] font-semibold text-[10px] mb-0.5">Jabatan Kabid:</label>
+                      <input
+                        type="text"
+                        value={data.kabidJabatan}
+                        onChange={(e) => setData({ ...data, kabidJabatan: e.target.value })}
+                        className="w-full px-2 py-1 bg-white border border-[#cbd5e1] rounded text-[#0f172a]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* C. Kepala Seksi Pengawasan Ruang */}
+                  <div className="space-y-2 p-2.5 bg-[#f8fafc] border border-slate-200 rounded-lg">
+                    <div className="font-bold text-[#0f172a] text-[11px] border-b pb-1 text-emerald-800">
+                      c. Kasi Pengawasan Ruang
+                    </div>
+                    <div>
+                      <label className="block text-[#475569] font-semibold text-[10px] mb-0.5">Nama Lengkap & Gelar:</label>
+                      <input
+                        type="text"
+                        value={data.kasiNama || "SYAHRUL RAMADHAN, S.T."}
+                        onChange={(e) => setData({ ...data, kasiNama: e.target.value })}
+                        className="w-full px-2 py-1 bg-white border border-[#cbd5e1] rounded text-[#0f172a] font-medium"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#475569] font-semibold text-[10px] mb-0.5">NIP Kasi:</label>
+                      <input
+                        type="text"
+                        value={data.kasiNip || "19880210 201101 1 007"}
+                        onChange={(e) => setData({ ...data, kasiNip: e.target.value })}
+                        className="w-full px-2 py-1 bg-white border border-[#cbd5e1] rounded text-[#0f172a]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#475569] font-semibold text-[10px] mb-0.5">Jabatan Kasi:</label>
+                      <input
+                        type="text"
+                        value={data.kasiJabatan || "Kepala Seksi Pengawasan Ruang"}
+                        onChange={(e) => setData({ ...data, kasiJabatan: e.target.value })}
+                        className="w-full px-2 py-1 bg-white border border-[#cbd5e1] rounded text-[#0f172a]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* D. Analis Spasial & Pemetaan GIS */}
+                  <div className="space-y-2 p-2.5 bg-[#f8fafc] border border-slate-200 rounded-lg">
+                    <div className="font-bold text-[#0f172a] text-[11px] border-b pb-1 text-emerald-800">
+                      d. Analis Spasial / GIS
+                    </div>
+                    <div>
+                      <label className="block text-[#475569] font-semibold text-[10px] mb-0.5">Nama Analis GIS:</label>
+                      <input
+                        type="text"
+                        value={data.analisGisNama || "ANDI BASO MATTATA, S.T."}
+                        onChange={(e) => setData({ ...data, analisGisNama: e.target.value })}
+                        className="w-full px-2 py-1 bg-white border border-[#cbd5e1] rounded text-[#0f172a] font-medium"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#475569] font-semibold text-[10px] mb-0.5">NIP Analis GIS:</label>
+                      <input
+                        type="text"
+                        value={data.analisGisNip || "19940822 202012 1 003"}
+                        onChange={(e) => setData({ ...data, analisGisNip: e.target.value })}
+                        className="w-full px-2 py-1 bg-white border border-[#cbd5e1] rounded text-[#0f172a]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#475569] font-semibold text-[10px] mb-0.5">Jabatan Analis GIS:</label>
+                      <input
+                        type="text"
+                        value={data.analisGisJabatan || "Analis Spasial & Pemetaan GIS"}
+                        onChange={(e) => setData({ ...data, analisGisJabatan: e.target.value })}
+                        className="w-full px-2 py-1 bg-white border border-[#cbd5e1] rounded text-[#0f172a]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ACTION FOOTER BUTTON FOR EDIT MODE */}
+              <div className="flex items-center justify-between pt-3 border-t border-[#cbd5e1]">
+                <span className="text-[11px] text-[#64748b]">
+                  *Perubahan data variabel & pejabat akan tersimpan ke database & langsung memperbarui naskah resmi BAP.
+                </span>
+                <button
+                  type="button"
+                  disabled={isSaving}
+                  onClick={handleSaveToDatabase}
+                  className="px-5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold text-xs flex items-center gap-2 shadow-lg transition-all cursor-pointer disabled:opacity-50"
+                >
+                  <CheckCircle2 size={16} />
+                  <span>{isSaving ? "Menyimpan ke Database..." : "Simpan Perubahan ke Database"}</span>
+                </button>
               </div>
             </div>
           )}
@@ -679,7 +1177,7 @@ export function BapKtrPuptrDocument({
       {/* 2. PRINTABLE DOCUMENT WRAPPER (A4 Canvas Container) */}
       <div 
         ref={documentContainerRef} 
-        className="bap-ktr-document-container mx-auto flex flex-col items-center gap-8 print:gap-0 print:m-0"
+        className="bap-ktr-document-container BAP-PKKPR-Modal-Container mx-auto flex flex-col items-center gap-6 print:gap-0 print:m-0 p-2 sm:p-4"
         style={{ color: "#000000" }}
       >
         {/* =========================================================================
@@ -687,73 +1185,78 @@ export function BapKtrPuptrDocument({
             ========================================================================= */}
         {(activeTab === "all" || activeTab === "page1") && (
           <div 
-            className="bap-ktr-print-page bg-[#ffffff] text-[#000000] relative box-border shadow-xl print:shadow-none print:border-none"
+            className="bap-ktr-print-page BAP-PKKPR-Modal-Container bg-[#ffffff] text-[#000000] relative box-border shadow-xl print:shadow-none print:border-none"
             style={{
               width: "210mm",
               minHeight: "297mm",
-              paddingLeft: "30mm", // Margin Kiri 3.0 cm
-              paddingTop: "25mm",  // Margin Atas 2.5 cm
-              paddingRight: "25mm", // Margin Kanan 2.5 cm
-              paddingBottom: "25mm", // Margin Bawah 2.5 cm
+              paddingLeft: "20mm",   // Margin Kiri Presisi 2.0 cm (Simetris Sejajar Kanan)
+              paddingTop: "15mm",    // Margin Atas Dinaikkan 1.5 cm
+              paddingRight: "20mm",  // Margin Kanan Presisi 2.0 cm
+              paddingBottom: "18mm", // Margin Bawah 1.8 cm
               boxSizing: "border-box",
               fontFamily: "'Times New Roman', Times, serif",
               fontSize: "10.5pt",
-              lineHeight: 1.45,
+              lineHeight: 1.4,
               pageBreakAfter: "always",
               backgroundColor: "#ffffff",
               color: "#000000"
             }}
           >
-            {/* A. KOP SURAT DINAS PUPTR KABUPATEN LUWU */}
-            <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #000000", paddingBottom: "8px", marginBottom: "2px" }}>
-              {/* Logo Pemkab Luwu (Tinggi ~68px / 18x22mm proporsional sejajar Kop) */}
-              <div style={{ width: "22mm", textAlign: "center", flexShrink: 0, marginRight: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {/* A. KOP SURAT DINAS PUPTR KABUPATEN LUWU (Symmetrical 3-Column Balance) */}
+            <div style={{ display: "flex", alignItems: "center", borderBottom: "3px solid #000000", paddingBottom: "6px", marginBottom: "2px" }}>
+              {/* Logo Pemkab Luwu (Tinggi ~64px / 18x22mm proporsional) */}
+              <div style={{ width: "22mm", textAlign: "center", flexShrink: 0, marginRight: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <img 
                   src={OFFICIAL_LUWU_LOGO_URL} 
                   alt="Logo Kabupaten Luwu" 
-                  style={{ width: "18mm", height: "22mm", maxHeight: "72px", objectFit: "contain", display: "inline-block" }}
+                  style={{ width: "17mm", height: "21mm", maxHeight: "68px", objectFit: "contain", display: "inline-block" }}
                 />
               </div>
 
-              {/* Teks Identitas Instansi */}
+              {/* Teks Identitas Instansi (Centered Relative to Full Margin Width) */}
               <div style={{ flex: 1, textAlign: "center" }}>
-                <div style={{ fontSize: "14pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", color: "#000000", lineHeight: 1.15 }}>
+                <div style={{ fontSize: "13.5pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", color: "#000000", lineHeight: 1.12 }}>
                   PEMERINTAH KABUPATEN LUWU
                 </div>
-                <div style={{ fontSize: "15pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", color: "#000000", marginTop: "2px", lineHeight: 1.15 }}>
+                <div style={{ fontSize: "14.5pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", color: "#000000", marginTop: "1px", lineHeight: 1.12 }}>
                   DINAS PEKERJAAN UMUM DAN PENATAAN RUANG
                 </div>
-                <div style={{ fontSize: "12pt", fontWeight: "bold", textTransform: "uppercase", color: "#000000", marginTop: "2px", lineHeight: 1.15 }}>
+                <div style={{ fontSize: "11.5pt", fontWeight: "bold", textTransform: "uppercase", color: "#000000", marginTop: "1px", lineHeight: 1.12 }}>
                   BIDANG TATA RUANG DAN BINA KONSTRUKSI
                 </div>
-                <div style={{ fontSize: "9.5pt", color: "#000000", marginTop: "3px", lineHeight: 1.25 }}>
+                <div style={{ fontSize: "9pt", color: "#000000", marginTop: "2px", lineHeight: 1.2 }}>
                   Jl. Sungai Pareman No. 81, Kelurahan Sabe, Kec. Belopa Utara, Kab. Luwu Kode Pos : 91994
                 </div>
-                <div style={{ fontSize: "8.5pt", color: "#000000", marginTop: "1px" }}>
+                <div style={{ fontSize: "8pt", color: "#000000", marginTop: "1px" }}>
                   Email: puptr@luwukab.go.id • Website: https://puptr.luwukab.go.id
                 </div>
               </div>
+
+              {/* Balance Right Spacer to guarantee 100% mathematical center */}
+              <div style={{ width: "22mm", flexShrink: 0, marginLeft: "10px" }} />
             </div>
             {/* Double Border Line Accent */}
-            <div style={{ borderBottom: "1px solid #000000", marginBottom: "16px" }} />
+            <div style={{ borderBottom: "1px solid #000000", marginBottom: "10px" }} />
 
             {/* B. JUDUL DOKUMEN */}
-            <div style={{ textAlign: "center", marginBottom: "14px" }}>
-              <div style={{ fontSize: "13pt", fontWeight: "bold", textDecoration: "underline", textTransform: "uppercase", letterSpacing: "0.5px", lineHeight: 1.25 }}>
-                {data.jenisPermohonan === "Non-Berusaha"
+            <div style={{ textAlign: "center", marginBottom: "10px" }}>
+              <div style={{ fontSize: "12.5pt", fontWeight: "bold", textDecoration: "underline", textTransform: "uppercase", letterSpacing: "0.5px", lineHeight: 1.2, color: data.statusKeputusan === "REJECTED" ? "#b91c1c" : "#000000" }}>
+                {data.statusKeputusan === "REJECTED"
+                  ? "BERITA ACARA PENOLAKAN KESESUAIAN TATA RUANG (BAP-TOLAK KTR)"
+                  : data.jenisPermohonan === "Non-Berusaha"
                   ? "BERITA ACARA PEMERIKSAAN KESESUAIAN KEGIATAN PEMANFAATAN RUANG (BAP-PKKPR) NON-BERUSAHA"
                   : "BERITA ACARA PEMERIKSAAN KESESUAIAN TATA RUANG (BAP-KTR)"}
               </div>
-              <div style={{ fontSize: "11pt", fontWeight: "bold", marginTop: "4px" }}>
-                Nomor : {data.nomorSurat}
+              <div style={{ fontSize: "10.5pt", fontWeight: "bold", marginTop: "3px" }}>
+                Nomor: {data.nomorSurat}
               </div>
-              <div style={{ fontSize: "10.5pt", fontWeight: "bold", textTransform: "uppercase", marginTop: "3px", lineHeight: 1.3 }}>
-                Tentang : {data.tentangSurat}
+              <div style={{ fontSize: "10pt", fontWeight: "bold", textTransform: "uppercase", marginTop: "2px", lineHeight: 1.25 }}>
+                Tentang: {data.tentangSurat}
               </div>
             </div>
 
             {/* C. PARAGRAF PEMBUKA */}
-            <div style={{ textAlign: "justify", fontSize: "10.5pt", lineHeight: 1.5, marginBottom: "12px" }}>
+            <div style={{ textAlign: "justify", fontSize: "11pt", lineHeight: 1.4, marginBottom: "8px" }}>
               {data.jenisPermohonan === "Non-Berusaha" ? (
                 <>
                   Pada hari ini, <b>{data.hariTanggalPemeriksaan}</b>, bertempat di Kantor Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Luwu, Tim Teknis Pemeriksaan Kesesuaian Tata Ruang telah melakukan audit dan kajian teknis spasial terhadap permohonan <b>Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR) Non-Berusaha</b> untuk {data.fungsiBangunan || data.tentangSurat || 'kegiatan non-komersial / sosial keagamaan'} berdasarkan ketentuan <b>Peraturan Pemerintah Nomor 21 Tahun 2021</b> tentang Penyelenggaraan Penataan Ruang, <b>Peraturan Menteri ATR/BPN Nomor 13 Tahun 2021</b> tentang Pelaksanaan Kesesuaian Kegiatan Pemanfaatan Ruang dan Sinkronisasi Program Pemanfaatan Ruang, serta <b>Peraturan Daerah Kabupaten Luwu Nomor 3 Tahun 2024</b> tentang Rencana Tata Ruang Wilayah (RTRW) Kabupaten Luwu Tahun 2024-2044, dengan rincian data permohonan sebagai berikut:
@@ -765,115 +1268,121 @@ export function BapKtrPuptrDocument({
               )}
             </div>
 
-            {/* TABEL DATA PEMOHON (Dinamis: Berusaha vs Non-Berusaha) */}
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "10pt", marginBottom: "14px", lineHeight: 1.4 }}>
+            {/* TABEL DATA PEMOHON (Sumbu Kolom Presisi Dengan Fixed Colgroup) */}
+            <table style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", fontSize: "9.5pt", marginBottom: "10px", lineHeight: 1.35 }}>
+              <colgroup>
+                <col style={{ width: "22px" }} />
+                <col style={{ width: "225px" }} />
+                <col style={{ width: "14px" }} />
+                <col style={{ width: "auto" }} />
+              </colgroup>
               <tbody>
                 {data.jenisPermohonan === "Non-Berusaha" ? (
                   <>
                     <tr>
-                      <td style={{ width: "22px", verticalAlign: "top", padding: "3px 0" }}>1.</td>
-                      <td style={{ width: "230px", verticalAlign: "top", padding: "3px 0" }}>Nomor Induk Kependudukan (NIK)</td>
-                      <td style={{ width: "14px", verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.nibNik}</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>1.</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>Nomor Induk Kependudukan (NIK)</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", fontWeight: "bold" }}>{data.nibNik}</td>
                     </tr>
                     <tr>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>2.</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Nama Pemohon / Ketua Panitia</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.namaPemohon}</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>2.</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>Nama Pemohon / Ketua Panitia</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", fontWeight: "bold" }}>{data.namaPemohon}</td>
                     </tr>
                     <tr>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>3.</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Nama Lembaga / Panitia Pembangunan</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.namaLembagaOrganisasi || data.namaPerusahaan || "Perseorangan / Panitia Pembangunan"}</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>3.</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>Nama Lembaga / Panitia Pembangunan</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", fontWeight: "bold" }}>{data.namaLembagaOrganisasi || data.namaPerusahaan || "Perseorangan / Panitia Pembangunan"}</td>
                     </tr>
                     <tr>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>4.</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Alamat Pemohon / Domisili</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>{data.alamatPemohon}</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>4.</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>Alamat Pemohon / Domisili</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>{data.alamatPemohon}</td>
                     </tr>
                     <tr>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>5.</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Rencana Kegiatan / Fungsi Bangunan</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.fungsiBangunan || data.sektorUsaha || "Pembangunan Sarana Ibadah (Gereja)"}</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>5.</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>Rencana Kegiatan / Fungsi Bangunan</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", fontWeight: "bold" }}>{data.fungsiBangunan || data.sektorUsaha || "Pembangunan Sarana Ibadah (Gereja)"}</td>
                     </tr>
                     <tr>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>6.</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Lokasi Rencana Pembangunan</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>
-                        {data.lokasiInvestasi}, {data.desaKelurahan}, {data.kecamatan}, {data.kabupaten}
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>6.</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>Lokasi Rencana Pembangunan</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>
+                        {getFormattedLokasiRencana()}
                       </td>
                     </tr>
                     <tr>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>7.</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Luas Lahan & Rencana Bangunan</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>7.</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>Luas Lahan & Rencana Bangunan</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", fontWeight: "bold" }}>
                         Lahan: {data.luasLahanPermohonan} {data.luasBangunanRencana ? `| Rencana Bangunan: ${data.luasBangunanRencana}` : ""}
                       </td>
                     </tr>
                     <tr>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>8.</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Bukti Penguasaan Hak Atas Tanah</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>{data.buktiHakTanah}</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>8.</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>Bukti Penguasaan Hak Atas Tanah</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>{data.buktiHakTanah}</td>
                     </tr>
                   </>
                 ) : (
                   <>
                     <tr>
-                      <td style={{ width: "22px", verticalAlign: "top", padding: "3px 0" }}>1.</td>
-                      <td style={{ width: "230px", verticalAlign: "top", padding: "3px 0" }}>Nomor Induk Berusaha (NIB) / NIK</td>
-                      <td style={{ width: "14px", verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.nibNik}</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>1.</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>Nomor Induk Berusaha (NIB) / NIK</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", fontWeight: "bold" }}>{data.nibNik}</td>
                     </tr>
                     <tr>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>2.</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Nama Pemohon / Penanggung Jawab</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.namaPemohon}</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>2.</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>Nama Pemohon / Penanggung Jawab</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", fontWeight: "bold" }}>{data.namaPemohon}</td>
                     </tr>
                     <tr>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>3.</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Nama Perusahaan / Badan Usaha</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.namaPerusahaan}</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>3.</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>Nama Perusahaan / Badan Usaha</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", fontWeight: "bold" }}>{data.namaPerusahaan}</td>
                     </tr>
                     <tr>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>4.</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Alamat Pemohon</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>{data.alamatPemohon}</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>4.</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>Alamat Pemohon</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>{data.alamatPemohon}</td>
                     </tr>
                     <tr>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>5.</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Rencana Kegiatan / Sektor Usaha</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>{data.sektorUsaha} (KBLI: {data.kbliCode})</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>5.</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>Rencana Kegiatan / Sektor Usaha</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>{data.sektorUsaha} (KBLI: {data.kbliCode})</td>
                     </tr>
                     <tr>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>6.</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Lokasi Rencana Investasi</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>
-                        {data.lokasiInvestasi}, {data.desaKelurahan}, {data.kecamatan}, {data.kabupaten}
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>6.</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>Lokasi Rencana Investasi</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>
+                        {getFormattedLokasiRencana()}
                       </td>
                     </tr>
                     <tr>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>7.</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Luas Lahan Permohonan</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", fontWeight: "bold" }}>{data.luasLahanPermohonan}</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>7.</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>Luas Lahan Permohonan</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", fontWeight: "bold" }}>{data.luasLahanPermohonan}</td>
                     </tr>
                     <tr>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>8.</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>Bukti Penguasaan Hak Atas Tanah</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0", textAlign: "center" }}>:</td>
-                      <td style={{ verticalAlign: "top", padding: "3px 0" }}>{data.buktiHakTanah}</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>8.</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>Bukti Penguasaan Hak Atas Tanah</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0", textAlign: "center" }}>:</td>
+                      <td style={{ verticalAlign: "top", padding: "2px 0" }}>{data.buktiHakTanah}</td>
                     </tr>
                   </>
                 )}
@@ -881,34 +1390,34 @@ export function BapKtrPuptrDocument({
             </table>
 
             {/* D. SEKSI A: HASIL AUDIT POLA RUANG RTRW KABUPATEN LUWU */}
-            <div style={{ fontSize: "11pt", fontWeight: "bold", textTransform: "uppercase", borderBottom: "1.5px solid #000000", paddingBottom: "3px", marginBottom: "8px" }}>
+            <div style={{ fontSize: "10.5pt", fontWeight: "bold", textTransform: "uppercase", borderBottom: "1.5px solid #000000", paddingBottom: "2px", marginBottom: "6px" }}>
               A. HASIL AUDIT SPASIAL & KESESUAIAN POLA RUANG RTRW
             </div>
 
-            <div style={{ fontSize: "10.5pt", lineHeight: 1.5, textAlign: "justify", marginBottom: "6px" }}>
+            <div style={{ fontSize: "11pt", lineHeight: 1.4, textAlign: "justify", marginBottom: "4px" }}>
               Berdasarkan hasil analisis tumpang susun spasial (spatial overlay analysis) menggunakan Sistem Informasi Geografis (SIG) DPUPTR Luwu pada sistem koordinat <b>{data.sistemKoordinat}</b>, diperoleh hasil audit sebagai berikut:
             </div>
 
-            <ol style={{ margin: "6px 0 0 0", paddingLeft: "20px", fontSize: "10pt", lineHeight: 1.5 }}>
-              <li style={{ marginBottom: "6px" }}>
+            <ol style={{ margin: "4px 0 0 0", paddingLeft: "18px", fontSize: "9.5pt", lineHeight: 1.38 }}>
+              <li style={{ marginBottom: "4px" }}>
                 <b>Kesesuaian Pola Ruang RTRW</b>: Lokasi yang dimohonkan secara mutlak berada di dalam <b>{data.zonaPolaRuangRtrw}</b> ({data.kodeZonaRtrw}), sehingga rencana kegiatan investasi dinilai <b>SELARAS DAN SESUAI</b> dengan peruntukan ruang.
               </li>
-              <li style={{ marginBottom: "6px" }}>
+              <li style={{ marginBottom: "4px" }}>
                 <b>Status Perlindungan Lahan Pertanian (LP2B)</b>: Berdasarkan peta tematik LP2B Dinas Pertanian Kabupaten Luwu, <b>{data.keteranganLp2b}</b>.
               </li>
-              <li style={{ marginBottom: "6px" }}>
+              <li style={{ marginBottom: "4px" }}>
                 <b>Status Kawasan Lindung & Kebencanaan</b>: {data.statusKawasanLindung}, serta tidak berada pada zona rawan bencana tinggi (zona merah likuefaksi/longsor).
               </li>
-              <li style={{ marginBottom: "6px" }}>
+              <li style={{ marginBottom: "4px" }}>
                 <b>Sempadan Sungai & Pantai</b>: {data.statusSempadanSungaiPantai}.
               </li>
-              <li style={{ marginBottom: "6px" }}>
+              <li style={{ marginBottom: "4px" }}>
                 <b>Integritas Geometris Spasial</b>: {data.validasiTopologi}.
               </li>
             </ol>
 
             {/* Footer Hal 1 */}
-            <div style={{ position: "absolute", bottom: "15mm", left: "30mm", right: "25mm", display: "flex", justifyContent: "space-between", fontSize: "8.5pt", color: "#64748b", borderTop: "1px solid #cbd5e1", paddingTop: "4px" }}>
+            <div style={{ position: "absolute", bottom: "10mm", left: "20mm", right: "20mm", display: "flex", justifyContent: "space-between", fontSize: "8pt", color: "#64748b", borderTop: "1px solid #cbd5e1", paddingTop: "3px" }}>
               <span>Berita Acara Pemeriksaan Kesesuaian Tata Ruang (BAP-KTR) DPUPTR Luwu</span>
               <span>Halaman 1 dari 4</span>
             </div>
@@ -920,14 +1429,14 @@ export function BapKtrPuptrDocument({
             ========================================================================= */}
         {(activeTab === "all" || activeTab === "page2") && (
           <div 
-            className="bap-ktr-print-page bg-[#ffffff] text-[#000000] relative box-border shadow-xl print:shadow-none print:border-none"
+            className="bap-ktr-print-page BAP-PKKPR-Modal-Container bg-[#ffffff] text-[#000000] relative box-border shadow-xl print:shadow-none print:border-none"
             style={{
               width: "210mm",
               minHeight: "297mm",
-              paddingLeft: "30mm", // Margin Kiri 3.0 cm
-              paddingTop: "25mm",  // Margin Atas 2.5 cm
-              paddingRight: "25mm", // Margin Kanan 2.5 cm
-              paddingBottom: "25mm", // Margin Bawah 2.5 cm
+              paddingLeft: "20mm",   // Margin Kiri Presisi 2.0 cm
+              paddingTop: "15mm",    // Margin Atas 1.5 cm
+              paddingRight: "20mm",  // Margin Kanan Presisi 2.0 cm
+              paddingBottom: "18mm", // Margin Bawah 1.8 cm
               boxSizing: "border-box",
               fontFamily: "'Times New Roman', Times, serif",
               fontSize: "10.5pt",
@@ -938,71 +1447,88 @@ export function BapKtrPuptrDocument({
             }}
           >
             {/* Header Mini Lampiran Lanjutan */}
-            <div style={{ textAlign: "right", fontSize: "8.5pt", color: "#64748b", borderBottom: "1px solid #cbd5e1", paddingBottom: "4px", marginBottom: "14px" }}>
+            <div style={{ textAlign: "right", fontSize: "8.5pt", color: "#64748b", borderBottom: "1px solid #cbd5e1", paddingBottom: "4px", marginBottom: "12px" }}>
               Dokumen Lanjutan Berita Acara Nomor: {data.nomorSurat}
             </div>
 
             {/* E. SEKSI B: KEPUTUSAN DAN REKOMENDASI TEKNIS */}
             <div style={{ fontSize: "11pt", fontWeight: "bold", textTransform: "uppercase", borderBottom: "1.5px solid #000000", paddingBottom: "3px", marginBottom: "10px" }}>
-              B. KEPUTUSAN DAN REKOMENDASI TEKNIS TATA RUANG
+              {data.statusKeputusan === "REJECTED"
+                ? "B. KEPUTUSAN DAN ALASAN PENOLAKAN KESESUAIAN TATA RUANG"
+                : "B. KEPUTUSAN DAN REKOMENDASI TEKNIS TATA RUANG"}
             </div>
 
             {/* KOTAK HIGHLIGHT KEPUTUSAN FORMAL */}
             <div 
               style={{ 
-                border: "2px solid #166534", 
-                backgroundColor: "#f0fdf4", 
-                color: "#14532d", 
-                padding: "10px 14px", 
+                border: data.statusKeputusan === "REJECTED" ? "2px solid #b91c1c" : "2px solid #166534", 
+                backgroundColor: data.statusKeputusan === "REJECTED" ? "#fef2f2" : "#f0fdf4", 
+                color: data.statusKeputusan === "REJECTED" ? "#991b1b" : "#14532d", 
+                padding: "8px 12px", 
                 textAlign: "center", 
-                marginBottom: "14px"
+                marginBottom: "12px"
               }}
             >
-              <div style={{ fontSize: "10pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+              <div style={{ fontSize: "9.5pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                 KESIMPULAN AUDIT TEKNIS SPASIAL:
               </div>
-              <div style={{ fontSize: "12pt", fontWeight: "bold", textTransform: "uppercase", marginTop: "2px", color: "#166534" }}>
+              <div style={{ fontSize: "11.5pt", fontWeight: "bold", textTransform: "uppercase", marginTop: "2px", color: data.statusKeputusan === "REJECTED" ? "#b91c1c" : "#166534" }}>
                 DINYATAKAN : {data.statusKeputusan === "APPROVED" 
                   ? (data.jenisPermohonan === "Non-Berusaha" 
                       ? "MEMENUHI KESESUAIAN TATA RUANG (NON-BERUSAHA)" 
                       : "MEMENUHI KESESUAIAN TATA RUANG (BERUSAHA)")
-                  : data.statusKeputusan}
+                  : data.statusKeputusan === "APPROVED_WITH_CONDITIONS"
+                  ? "DISETUJUI DENGAN PERSYARATAN KHUSUS TATA RUANG"
+                  : "TIDAK MEMENUHI KESESUAIAN TATA RUANG (DITOLAK / REJECTED)"}
               </div>
-              <div style={{ fontSize: "9.5pt", marginTop: "3px", color: "#15803d" }}>
-                Luas Lahan Disetujui: <b>{data.luasLahanDisetujui}</b>
+              <div style={{ fontSize: "9pt", marginTop: "2px", color: data.statusKeputusan === "REJECTED" ? "#b91c1c" : "#15803d" }}>
+                Luas Lahan Disetujui: <b>{data.statusKeputusan === "REJECTED" ? "0,00 Hektar (Permohonan Ditolak)" : data.luasLahanDisetujui}</b>
               </div>
             </div>
 
-            <div style={{ fontSize: "10.5pt", lineHeight: 1.5, textAlign: "justify", marginBottom: "8px" }}>
-              {data.jenisPermohonan === "Non-Berusaha" ? (
-                <>
-                  Sehubungan dengan kesimpulan audit tersebut di atas, Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Luwu memberikan <b>Rekomendasi Teknis Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR) Non-Berusaha</b> untuk {data.fungsiBangunan || 'kegiatan non-komersial/sosial keagamaan'} dengan ketentuan teknis bangunan sebagai berikut:
-                </>
-              ) : (
-                <>
-                  Sehubungan dengan kesimpulan audit tersebut di atas, Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Luwu memberikan <b>Rekomendasi Teknis</b> kepada Dinas Penanaman Modal dan PTSP Kabupaten Luwu dengan ketentuan teknis bangunan sebagai berikut:
-                </>
-              )}
-            </div>
+            {data.statusKeputusan === "REJECTED" ? (
+              <div className="space-y-2 mb-3">
+                <div style={{ fontSize: "11pt", lineHeight: 1.45, textAlign: "justify" }}>
+                  Sehubungan dengan hasil audit spasial dan telaah pola ruang tersebut di atas, Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Luwu <b>MENETAPKAN PENOLAKAN KESESUAIAN TATA RUANG</b> dan merekomendasikan kepada Dinas Penanaman Modal dan PTSP Kabupaten Luwu untuk <b>TIDAK MENERBITKAN PKKPR</b> pada lokasi tersebut dengan pertimbangan teknis:
+                </div>
+                {data.rejectionReason && (
+                  <div style={{ backgroundColor: "#fff1f2", border: "1px solid #fecdd3", padding: "8px 10px", fontSize: "9.5pt", color: "#9f1239", borderRadius: "4px", lineHeight: 1.35 }}>
+                    <b>Uraian Dasar Hukum &amp; Alasan Penolakan:</b> {data.rejectionReason}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div style={{ fontSize: "11pt", lineHeight: 1.45, textAlign: "justify", marginBottom: "8px" }}>
+                {data.jenisPermohonan === "Non-Berusaha" ? (
+                  <>
+                    Sehubungan dengan kesimpulan audit tersebut di atas, Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Luwu memberikan <b>Rekomendasi Teknis Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR) Non-Berusaha</b> untuk {data.fungsiBangunan || 'kegiatan non-komersial/sosial keagamaan'} dengan ketentuan teknis bangunan sebagai berikut:
+                  </>
+                ) : (
+                  <>
+                    Sehubungan dengan kesimpulan audit tersebut di atas, Dinas Pekerjaan Umum dan Penataan Ruang Kabupaten Luwu memberikan <b>Rekomendasi Teknis</b> kepada Dinas Penanaman Modal dan PTSP Kabupaten Luwu dengan ketentuan teknis bangunan sebagai berikut:
+                  </>
+                )}
+              </div>
+            )}
 
             {/* Tabel Ketentuan Teknis Ruang & Bangunan */}
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "10pt", marginBottom: "12px", border: "1px solid #000000", lineHeight: 1.4 }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "9.5pt", marginBottom: "10px", border: "1px solid #000000", lineHeight: 1.35 }}>
               <tbody>
                 <tr style={{ backgroundColor: "#f8fafc" }}>
-                  <td style={{ border: "1px solid #000000", padding: "5px 8px", fontWeight: "bold", width: "40%" }}>Koefisien Dasar Bangunan (KDB)</td>
-                  <td style={{ border: "1px solid #000000", padding: "5px 8px" }}>{data.koefisienDasarBangunan}</td>
+                  <td style={{ border: "1px solid #000000", padding: "4px 8px", fontWeight: "bold", width: "40%" }}>Koefisien Dasar Bangunan (KDB)</td>
+                  <td style={{ border: "1px solid #000000", padding: "4px 8px" }}>{data.koefisienDasarBangunan}</td>
                 </tr>
                 <tr>
-                  <td style={{ border: "1px solid #000000", padding: "5px 8px", fontWeight: "bold" }}>Koefisien Lantai Bangunan (KLB)</td>
-                  <td style={{ border: "1px solid #000000", padding: "5px 8px" }}>{data.koefisienLantaiBangunan}</td>
+                  <td style={{ border: "1px solid #000000", padding: "4px 8px", fontWeight: "bold" }}>Koefisien Lantai Bangunan (KLB)</td>
+                  <td style={{ border: "1px solid #000000", padding: "4px 8px" }}>{data.koefisienLantaiBangunan}</td>
                 </tr>
                 <tr style={{ backgroundColor: "#f8fafc" }}>
-                  <td style={{ border: "1px solid #000000", padding: "5px 8px", fontWeight: "bold" }}>Garis Sempadan Bangunan (GSB)</td>
-                  <td style={{ border: "1px solid #000000", padding: "5px 8px" }}>{data.garisSempadanBangunan}</td>
+                  <td style={{ border: "1px solid #000000", padding: "4px 8px", fontWeight: "bold" }}>Garis Sempadan Bangunan (GSB)</td>
+                  <td style={{ border: "1px solid #000000", padding: "4px 8px" }}>{data.garisSempadanBangunan}</td>
                 </tr>
                 <tr>
-                  <td style={{ border: "1px solid #000000", padding: "5px 8px", fontWeight: "bold" }}>Kewajiban Ruang Terbuka Hijau (RTH)</td>
-                  <td style={{ border: "1px solid #000000", padding: "5px 8px" }}>
+                  <td style={{ border: "1px solid #000000", padding: "4px 8px", fontWeight: "bold" }}>Kewajiban Ruang Terbuka Hijau (RTH)</td>
+                  <td style={{ border: "1px solid #000000", padding: "4px 8px" }}>
                     {data.jenisPermohonan === "Non-Berusaha" ? "Minimal 20% area resapan air & pekarangan" : "Minimal 10% dari luas persil efektif"}
                   </td>
                 </tr>
@@ -1010,14 +1536,14 @@ export function BapKtrPuptrDocument({
             </table>
 
             {/* Catatan Khusus */}
-            <div style={{ fontSize: "10.5pt", fontWeight: "bold", marginBottom: "4px" }}>Ketentuan dan Syarat Teknis Tambahan:</div>
-            <ol style={{ margin: "0 0 14px 0", paddingLeft: "20px", fontSize: "10pt", lineHeight: 1.45 }}>
+            <div style={{ fontSize: "10pt", fontWeight: "bold", marginBottom: "3px" }}>Ketentuan dan Syarat Teknis Tambahan:</div>
+            <ol style={{ margin: "0 0 12px 0", paddingLeft: "18px", fontSize: "9.5pt", lineHeight: 1.4 }}>
               {data.catatanRekomendasiTeknis.map((item, idx) => (
-                <li key={idx} style={{ marginBottom: "4px" }}>{item}</li>
+                <li key={idx} style={{ marginBottom: "3px" }}>{item}</li>
               ))}
             </ol>
 
-            <div style={{ fontSize: "10.5pt", lineHeight: 1.5, textAlign: "justify", marginBottom: "16px" }}>
+            <div style={{ fontSize: "11pt", lineHeight: 1.45, textAlign: "justify", marginBottom: "14px" }}>
               {data.jenisPermohonan === "Non-Berusaha" ? (
                 <>
                   Demikian Berita Acara Pemeriksaan Kesesuaian Kegiatan Pemanfaatan Ruang (BAP-PKKPR) Non-Berusaha ini dibuat dengan sebenar-benarnya untuk dipergunakan sebagai dasar pertimbangan teknis penerbitan perizinan pemanfaatan ruang dan persyaratan teknis Persetujuan Bangunan Gedung (PBG) oleh Pejabat yang Berwenang.
@@ -1030,47 +1556,55 @@ export function BapKtrPuptrDocument({
             </div>
 
             {/* F. BLOK TANDA TANGAN GANDA (DUAL SIGNATURES) */}
-            <div style={{ width: "100%", marginTop: "8px" }}>
+            <div style={{ width: "100%", marginTop: "6px" }}>
               {/* Tanggal Dokumen */}
-              <div style={{ textAlign: "right", fontSize: "10.5pt", marginBottom: "8px", paddingRight: "10px" }}>
+              <div style={{ textAlign: "right", fontSize: "10pt", marginBottom: "6px", paddingRight: "10px" }}>
                 Belopa, {data.tanggalDokumen}
               </div>
 
-              {/* Grid 2 Kolom Pejabat Penandatangan */}
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "10pt", textAlign: "center" }}>
+              {/* Grid 2 Kolom Pejabat Penandatangan Dengan Row-by-Row Alignment */}
+              <table style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", fontSize: "9.5pt", textAlign: "center" }}>
                 <tbody>
+                  {/* Row 1: Action Header */}
                   <tr>
-                    {/* Kolom Kiri: Kabid Tata Ruang */}
-                    <td style={{ width: "50%", verticalAlign: "top", padding: "0 10px" }}>
-                      <div style={{ fontSize: "10pt", fontWeight: "bold" }}>Mengetahui / Menyetujui,</div>
-                      <div style={{ fontSize: "10pt", fontWeight: "bold", textTransform: "uppercase" }}>{data.kabidJabatan}</div>
-                      
-                      {/* Kolom tanda tangan kosong (Menunggu integrasi BSrE, tanda tangan basah & cap dinas resmi) */}
-                      <div style={{ 
-                        margin: "12px auto", 
-                        width: "175px", 
-                        height: "65px"
-                      }} />
-
-                      <div style={{ fontSize: "10.5pt", fontWeight: "bold", textDecoration: "underline" }}>{data.kabidNama}</div>
-                      <div style={{ fontSize: "9.5pt", color: "#000000" }}>NIP. {data.kabidNip}</div>
+                    <td style={{ width: "50%", verticalAlign: "bottom", padding: "0 10px", fontWeight: "bold" }}>
+                      Mengetahui / Menyetujui,
                     </td>
+                    <td style={{ width: "50%", verticalAlign: "bottom", padding: "0 10px", fontWeight: "bold" }}>
+                      Mengesahkan,
+                    </td>
+                  </tr>
 
-                    {/* Kolom Kanan: Kepala Dinas PUPTR */}
+                  {/* Row 2: Official Position Title (Fixed minHeight for equal vertical baseline) */}
+                  <tr>
+                    <td style={{ width: "50%", verticalAlign: "top", padding: "2px 10px 0 10px", height: "36px" }}>
+                      <div style={{ fontWeight: "bold", textTransform: "uppercase", fontSize: "9pt", lineHeight: 1.2 }}>
+                        {data.kabidJabatan}
+                      </div>
+                    </td>
+                    <td style={{ width: "50%", verticalAlign: "top", padding: "2px 10px 0 10px", height: "36px" }}>
+                      <div style={{ fontWeight: "bold", textTransform: "uppercase", fontSize: "9pt", lineHeight: 1.2 }}>
+                        {data.kadisJabatan} KABUPATEN LUWU
+                      </div>
+                    </td>
+                  </tr>
+
+                  {/* Row 3: Signature Area Spacer */}
+                  <tr>
+                    <td style={{ width: "50%", height: "55px" }} />
+                    <td style={{ width: "50%", height: "55px" }} />
+                  </tr>
+
+                  {/* Row 4: Officer Name, Rank & NIP (Strict Top Vertical Alignment) */}
+                  <tr>
                     <td style={{ width: "50%", verticalAlign: "top", padding: "0 10px" }}>
-                      <div style={{ fontSize: "10pt", fontWeight: "bold" }}>Mengesahkan,</div>
-                      <div style={{ fontSize: "10pt", fontWeight: "bold", textTransform: "uppercase" }}>{data.kadisJabatan} KABUPATEN LUWU</div>
-                      
-                      {/* Kolom tanda tangan kosong (Menunggu integrasi BSrE, tanda tangan basah & cap dinas resmi) */}
-                      <div style={{ 
-                        margin: "12px auto", 
-                        width: "175px", 
-                        height: "65px"
-                      }} />
-
-                      <div style={{ fontSize: "10.5pt", fontWeight: "bold", textDecoration: "underline" }}>{data.kadisNama}</div>
-                      <div style={{ fontSize: "9.5pt", color: "#000000" }}>Pangkat: {data.kadisPangkat}</div>
-                      <div style={{ fontSize: "9.5pt", color: "#000000" }}>NIP. {data.kadisNip}</div>
+                      <div style={{ fontSize: "10pt", fontWeight: "bold", textDecoration: "underline" }}>{data.kabidNama}</div>
+                      <div style={{ fontSize: "9pt", color: "#000000", marginTop: "1px" }}>NIP. {data.kabidNip}</div>
+                    </td>
+                    <td style={{ width: "50%", verticalAlign: "top", padding: "0 10px" }}>
+                      <div style={{ fontSize: "10pt", fontWeight: "bold", textDecoration: "underline" }}>{data.kadisNama}</div>
+                      <div style={{ fontSize: "9pt", color: "#000000", marginTop: "1px" }}>Pangkat: {data.kadisPangkat}</div>
+                      <div style={{ fontSize: "9pt", color: "#000000" }}>NIP. {data.kadisNip}</div>
                     </td>
                   </tr>
                 </tbody>
@@ -1078,7 +1612,7 @@ export function BapKtrPuptrDocument({
             </div>
 
             {/* Footer Hal 2 */}
-            <div style={{ position: "absolute", bottom: "15mm", left: "30mm", right: "25mm", display: "flex", justifyContent: "space-between", fontSize: "8.5pt", color: "#64748b", borderTop: "1px solid #cbd5e1", paddingTop: "4px" }}>
+            <div style={{ position: "absolute", bottom: "10mm", left: "20mm", right: "20mm", display: "flex", justifyContent: "space-between", fontSize: "8pt", color: "#64748b", borderTop: "1px solid #cbd5e1", paddingTop: "3px" }}>
               <span>Berita Acara Pemeriksaan Kesesuaian Tata Ruang (BAP-KTR) DPUPTR Luwu</span>
               <span>Halaman 2 dari 4</span>
             </div>
@@ -1090,14 +1624,14 @@ export function BapKtrPuptrDocument({
             ========================================================================= */}
         {(activeTab === "all" || activeTab === "page3") && (
           <div 
-            className="bap-ktr-print-page bg-[#ffffff] text-[#000000] relative box-border shadow-xl print:shadow-none print:border-none"
+            className="bap-ktr-print-page BAP-PKKPR-Modal-Container bg-[#ffffff] text-[#000000] relative box-border shadow-xl print:shadow-none print:border-none"
             style={{
               width: "210mm",
               minHeight: "297mm",
-              paddingLeft: "30mm", // Margin Kiri 3.0 cm
-              paddingTop: "25mm",  // Margin Atas 2.5 cm
-              paddingRight: "25mm", // Margin Kanan 2.5 cm
-              paddingBottom: "25mm", // Margin Bawah 2.5 cm
+              paddingLeft: "20mm",   // Margin Kiri Presisi 2.0 cm
+              paddingTop: "15mm",    // Margin Atas 1.5 cm
+              paddingRight: "20mm",  // Margin Kanan Presisi 2.0 cm
+              paddingBottom: "18mm", // Margin Bawah 1.8 cm
               boxSizing: "border-box",
               fontFamily: "'Times New Roman', Times, serif",
               fontSize: "10.5pt",
@@ -1108,20 +1642,20 @@ export function BapKtrPuptrDocument({
             }}
           >
             {/* Header Lampiran I */}
-            <div style={{ textAlign: "center", borderBottom: "2px solid #000000", paddingBottom: "6px", marginBottom: "12px" }}>
-              <div style={{ fontSize: "11.5pt", fontWeight: "bold", textTransform: "uppercase" }}>
+            <div style={{ textAlign: "center", borderBottom: "2px solid #000000", paddingBottom: "6px", marginBottom: "10px" }}>
+              <div style={{ fontSize: "11pt", fontWeight: "bold", textTransform: "uppercase" }}>
                 LAMPIRAN I BERITA ACARA PEMERIKSAAN KESESUAIAN TATA RUANG
               </div>
-              <div style={{ fontSize: "10.5pt", fontWeight: "bold", color: "#166534", textTransform: "uppercase", marginTop: "2px" }}>
+              <div style={{ fontSize: "10pt", fontWeight: "bold", color: "#166534", textTransform: "uppercase", marginTop: "2px" }}>
                 PETA DELINEASI GEOSPASIAL & ZONASI POLA RUANG KABUPATEN LUWU
               </div>
-              <div style={{ fontSize: "9.5pt", marginTop: "3px" }}>
+              <div style={{ fontSize: "9pt", marginTop: "2px" }}>
                 Nomor Dokumen: <b>{data.nomorSurat}</b>
               </div>
             </div>
 
             {/* Tabel Ringkasan Lokasi Spasial */}
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "9.5pt", marginBottom: "10px", border: "1px solid #000000", boxSizing: "border-box" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "9pt", marginBottom: "10px", border: "1px solid #000000", boxSizing: "border-box" }}>
               <tbody>
                 <tr style={{ backgroundColor: "#f8fafc" }}>
                   <td style={{ border: "1px solid #000000", padding: "4px 8px", width: "25%", fontWeight: "bold" }}>Nama Pemohon</td>
@@ -1191,9 +1725,9 @@ export function BapKtrPuptrDocument({
             </div>
 
             {/* Catatan Surveyor / Geospasial */}
-            <div style={{ border: "1px solid #000000", padding: "8px 10px", fontSize: "9.5pt", backgroundColor: "#f8fafc", marginBottom: "14px", width: "100%", boxSizing: "border-box" }}>
+            <div style={{ border: "1px solid #000000", padding: "8px 10px", fontSize: "9pt", backgroundColor: "#f8fafc", marginBottom: "12px", width: "100%", boxSizing: "border-box" }}>
               <div style={{ fontWeight: "bold", textTransform: "uppercase", marginBottom: "3px" }}>Catatan Analis SIG & Surveyor Tata Ruang:</div>
-              <div style={{ textAlign: "justify", lineHeight: 1.45 }}>
+              <div style={{ textAlign: "justify", lineHeight: 1.4 }}>
                 {data.catatanSurveyor}
               </div>
             </div>
@@ -1202,15 +1736,15 @@ export function BapKtrPuptrDocument({
             <div style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}>
               <div style={{ width: "220px", textAlign: "center", fontSize: "9.5pt" }}>
                 <div>Belopa, {data.tanggalDokumen}</div>
-                <div style={{ fontWeight: "bold" }}>Analis Spasial & Pemetaan GIS,</div>
+                <div style={{ fontWeight: "bold" }}>{data.analisGisJabatan || "Analis Spasial & Pemetaan GIS"},</div>
                 <div style={{ height: "45px" }} />
-                <div style={{ fontWeight: "bold", textDecoration: "underline" }}>{data.analisGisNama}</div>
-                <div>NIP. {data.analisGisNip}</div>
+                <div style={{ fontWeight: "bold", textDecoration: "underline" }}>{data.analisGisNama || "ANDI BASO MATTATA, S.T."}</div>
+                <div>NIP. {data.analisGisNip || "19940822 202012 1 003"}</div>
               </div>
             </div>
 
             {/* Footer Hal 3 */}
-            <div style={{ position: "absolute", bottom: "15mm", left: "30mm", right: "25mm", display: "flex", justifyContent: "space-between", fontSize: "8.5pt", color: "#64748b", borderTop: "1px solid #cbd5e1", paddingTop: "4px" }}>
+            <div style={{ position: "absolute", bottom: "10mm", left: "20mm", right: "20mm", display: "flex", justifyContent: "space-between", fontSize: "8pt", color: "#64748b", borderTop: "1px solid #cbd5e1", paddingTop: "3px" }}>
               <span>Lampiran I: Peta Delineasi Geospasial • DPUPTR Kabupaten Luwu</span>
               <span>Halaman 3 dari 4</span>
             </div>
@@ -1222,14 +1756,14 @@ export function BapKtrPuptrDocument({
             ========================================================================= */}
         {(activeTab === "all" || activeTab === "page4") && (
           <div 
-            className="bap-ktr-print-page bg-[#ffffff] text-[#000000] relative box-border shadow-xl print:shadow-none print:border-none"
+            className="bap-ktr-print-page BAP-PKKPR-Modal-Container bg-[#ffffff] text-[#000000] relative box-border shadow-xl print:shadow-none print:border-none"
             style={{
               width: "210mm",
               minHeight: "297mm",
-              paddingLeft: "30mm", // Margin Kiri 3.0 cm
-              paddingTop: "25mm",  // Margin Atas 2.5 cm
-              paddingRight: "25mm", // Margin Kanan 2.5 cm
-              paddingBottom: "25mm", // Margin Bawah 2.5 cm
+              paddingLeft: "20mm",   // Margin Kiri Presisi 2.0 cm
+              paddingTop: "15mm",    // Margin Atas 1.5 cm
+              paddingRight: "20mm",  // Margin Kanan Presisi 2.0 cm
+              paddingBottom: "18mm", // Margin Bawah 1.8 cm
               boxSizing: "border-box",
               fontFamily: "'Times New Roman', Times, serif",
               fontSize: "10.5pt",
@@ -1239,51 +1773,51 @@ export function BapKtrPuptrDocument({
             }}
           >
             {/* Header Lampiran II */}
-            <div style={{ textAlign: "center", borderBottom: "2px solid #000000", paddingBottom: "6px", marginBottom: "12px" }}>
-              <div style={{ fontSize: "11.5pt", fontWeight: "bold", textTransform: "uppercase" }}>
+            <div style={{ textAlign: "center", borderBottom: "2px solid #000000", paddingBottom: "6px", marginBottom: "10px" }}>
+              <div style={{ fontSize: "11pt", fontWeight: "bold", textTransform: "uppercase" }}>
                 LAMPIRAN II BERITA ACARA PEMERIKSAAN KESESUAIAN TATA RUANG
               </div>
-              <div style={{ fontSize: "10.5pt", fontWeight: "bold", color: "#166534", textTransform: "uppercase", marginTop: "2px" }}>
+              <div style={{ fontSize: "10pt", fontWeight: "bold", color: "#166534", textTransform: "uppercase", marginTop: "2px" }}>
                 TABEL KOORDINAT GEOGRAFIS TITIK POLIGON LAHAN YANG DIREKOMENDASIKAN DISETUJUI
               </div>
-              <div style={{ fontSize: "9.5pt", marginTop: "3px" }}>
+              <div style={{ fontSize: "9pt", marginTop: "2px" }}>
                 Nomor Dokumen: <b>{data.nomorSurat}</b>
               </div>
             </div>
 
-            <div style={{ fontSize: "10pt", textAlign: "justify", marginBottom: "10px", lineHeight: 1.45 }}>
+            <div style={{ fontSize: "11pt", textAlign: "justify", marginBottom: "8px", lineHeight: 1.4 }}>
               Daftar titik koordinat poligon batas bidang tanah yang dimohonkan dan telah diverifikasi memenuhi kesesuaian ruang sesuai format Standar Sistem Informasi Geografis WGS 1984:
             </div>
 
             {/* TABEL KOORDINAT SOLID COLLAPSE */}
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "9.5pt", border: "1px solid #000000", marginBottom: "16px", boxSizing: "border-box" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "9pt", border: "1px solid #000000", marginBottom: "12px", boxSizing: "border-box" }}>
               <thead>
                 <tr style={{ backgroundColor: "#e2e8f0", textAlign: "center" }}>
-                  <th style={{ border: "1px solid #000000", padding: "6px 4px", width: "35px" }}>NO.</th>
-                  <th style={{ border: "1px solid #000000", padding: "6px 6px", width: "60px" }}>TITIK</th>
-                  <th style={{ border: "1px solid #000000", padding: "6px 8px" }}>GARIS LINTANG (LATITUDE)</th>
-                  <th style={{ border: "1px solid #000000", padding: "6px 8px" }}>GARIS BUJUR (LONGITUDE)</th>
-                  <th style={{ border: "1px solid #000000", padding: "6px 8px" }}>KETERANGAN / POSISI PATOK</th>
+                  <th style={{ border: "1px solid #000000", padding: "5px 4px", width: "35px" }}>NO.</th>
+                  <th style={{ border: "1px solid #000000", padding: "5px 6px", width: "60px" }}>TITIK</th>
+                  <th style={{ border: "1px solid #000000", padding: "5px 8px" }}>GARIS LINTANG (LATITUDE)</th>
+                  <th style={{ border: "1px solid #000000", padding: "5px 8px" }}>GARIS BUJUR (LONGITUDE)</th>
+                  <th style={{ border: "1px solid #000000", padding: "5px 8px" }}>KETERANGAN / POSISI PATOK</th>
                 </tr>
               </thead>
               <tbody>
                 {data.koordinatPoligon.map((pt, idx) => (
                   <tr key={pt.id} style={{ backgroundColor: idx % 2 === 1 ? "#f8fafc" : "#ffffff" }}>
-                    <td style={{ border: "1px solid #000000", padding: "5px 4px", textAlign: "center", fontWeight: "bold" }}>
+                    <td style={{ border: "1px solid #000000", padding: "4px 4px", textAlign: "center", fontWeight: "bold" }}>
                       {idx + 1}
                     </td>
-                    <td style={{ border: "1px solid #000000", padding: "5px 6px", textAlign: "center", fontWeight: "bold", fontFamily: "monospace" }}>
+                    <td style={{ border: "1px solid #000000", padding: "4px 6px", textAlign: "center", fontWeight: "bold", fontFamily: "monospace" }}>
                       {pt.pointName}
                     </td>
-                    <td style={{ border: "1px solid #000000", padding: "5px 8px", fontFamily: "monospace", textAlign: "center" }}>
+                    <td style={{ border: "1px solid #000000", padding: "4px 8px", fontFamily: "monospace", textAlign: "center" }}>
                       {pt.latitudeDms} <br />
                       <span style={{ fontSize: "7.5pt", color: "#64748b" }}>({pt.latitudeDd.toFixed(6)})</span>
                     </td>
-                    <td style={{ border: "1px solid #000000", padding: "5px 8px", fontFamily: "monospace", textAlign: "center" }}>
+                    <td style={{ border: "1px solid #000000", padding: "4px 8px", fontFamily: "monospace", textAlign: "center" }}>
                       {pt.longitudeDms} <br />
                       <span style={{ fontSize: "7.5pt", color: "#64748b" }}>({pt.longitudeDd.toFixed(6)})</span>
                     </td>
-                    <td style={{ border: "1px solid #000000", padding: "5px 8px", fontSize: "9pt" }}>
+                    <td style={{ border: "1px solid #000000", padding: "4px 8px", fontSize: "8.5pt" }}>
                       {pt.description || "-"}
                     </td>
                   </tr>
@@ -1292,35 +1826,65 @@ export function BapKtrPuptrDocument({
             </table>
 
             {/* Keterangan Sistem Geodesi */}
-            <div style={{ border: "1px solid #000000", padding: "6px 10px", fontSize: "9pt", backgroundColor: "#f8fafc", marginBottom: "20px", width: "100%", boxSizing: "border-box" }}>
+            <div style={{ border: "1px solid #000000", padding: "6px 10px", fontSize: "8.5pt", backgroundColor: "#f8fafc", marginBottom: "16px", width: "100%", boxSizing: "border-box" }}>
               <b>Ketentuan Teknis Geospasial:</b>
-              <ul style={{ margin: "2px 0 0 0", paddingLeft: "16px", lineHeight: 1.4 }}>
+              <ul style={{ margin: "2px 0 0 0", paddingLeft: "16px", lineHeight: 1.35 }}>
                 <li>Koordinat titik batas di atas mengikat secara hukum dalam penerbitan PKKPR dan perizinan turunan.</li>
                 <li>Seluruh patok fisik di lapangan wajib dipasang permanen oleh pemohon sesuai koordinat tertera.</li>
               </ul>
             </div>
 
-            {/* Pengesahan Akhir Lampiran II */}
-            <div style={{ width: "100%", display: "flex", justifyContent: "space-between", fontSize: "10pt", marginTop: "10px" }}>
-              <div style={{ width: "45%", textAlign: "center" }}>
-                <div>Mengetahui,</div>
-                <div style={{ fontWeight: "bold" }}>Kepala Seksi Pengawasan Ruang,</div>
-                <div style={{ height: "45px" }} />
-                <div style={{ fontWeight: "bold", textDecoration: "underline" }}>SYAHRUL RAMADHAN, S.T.</div>
-                <div>NIP. 19880210 201101 1 007</div>
+            {/* Pengesahan Akhir Lampiran II (Symmetrical Alignment & Date Header) */}
+            <div style={{ width: "100%", marginTop: "8px" }}>
+              <div style={{ textAlign: "right", fontSize: "9.5pt", marginBottom: "4px", paddingRight: "10px" }}>
+                Belopa, {data.tanggalDokumen}
               </div>
 
-              <div style={{ width: "45%", textAlign: "center" }}>
-                <div>Belopa, {data.tanggalDokumen}</div>
-                <div style={{ fontWeight: "bold", textTransform: "uppercase" }}>{data.kabidJabatan}</div>
-                <div style={{ height: "45px" }} />
-                <div style={{ fontWeight: "bold", textDecoration: "underline" }}>{data.kabidNama}</div>
-                <div>NIP. {data.kabidNip}</div>
-              </div>
+              <table style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", fontSize: "9.5pt", textAlign: "center" }}>
+                <tbody>
+                  <tr>
+                    <td style={{ width: "50%", verticalAlign: "bottom", padding: "0 10px", fontWeight: "bold" }}>
+                      Mengetahui,
+                    </td>
+                    <td style={{ width: "50%", verticalAlign: "bottom", padding: "0 10px", fontWeight: "bold" }}>
+                      Mengesahkan,
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style={{ width: "50%", verticalAlign: "top", padding: "2px 10px 0 10px", height: "30px" }}>
+                      <div style={{ fontWeight: "bold", fontSize: "9pt", lineHeight: 1.2 }}>
+                        {data.kasiJabatan || "Kepala Seksi Pengawasan Ruang"},
+                      </div>
+                    </td>
+                    <td style={{ width: "50%", verticalAlign: "top", padding: "2px 10px 0 10px", height: "30px" }}>
+                      <div style={{ fontWeight: "bold", textTransform: "uppercase", fontSize: "9pt", lineHeight: 1.2 }}>
+                        {data.kabidJabatan}
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style={{ width: "50%", height: "50px" }} />
+                    <td style={{ width: "50%", height: "50px" }} />
+                  </tr>
+
+                  <tr>
+                    <td style={{ width: "50%", verticalAlign: "top", padding: "0 10px" }}>
+                      <div style={{ fontSize: "10pt", fontWeight: "bold", textDecoration: "underline" }}>{data.kasiNama || "SYAHRUL RAMADHAN, S.T."}</div>
+                      <div style={{ fontSize: "9pt", color: "#000000", marginTop: "1px" }}>NIP. {data.kasiNip || "19880210 201101 1 007"}</div>
+                    </td>
+                    <td style={{ width: "50%", verticalAlign: "top", padding: "0 10px" }}>
+                      <div style={{ fontSize: "10pt", fontWeight: "bold", textDecoration: "underline" }}>{data.kabidNama}</div>
+                      <div style={{ fontSize: "9pt", color: "#000000", marginTop: "1px" }}>NIP. {data.kabidNip}</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
 
             {/* Footer Hal 4 */}
-            <div style={{ position: "absolute", bottom: "15mm", left: "30mm", right: "25mm", display: "flex", justifyContent: "space-between", fontSize: "8.5pt", color: "#64748b", borderTop: "1px solid #cbd5e1", paddingTop: "4px" }}>
+            <div style={{ position: "absolute", bottom: "10mm", left: "20mm", right: "20mm", display: "flex", justifyContent: "space-between", fontSize: "8pt", color: "#64748b", borderTop: "1px solid #cbd5e1", paddingTop: "3px" }}>
               <span>Lampiran II: Tabel Koordinat Titik Poligon • DPUPTR Kabupaten Luwu</span>
               <span>Halaman 4 dari 4 (Selesai)</span>
             </div>
@@ -1481,9 +2045,14 @@ export function convertAppToBapKtrData(
     kadisJabatan: puptrSettings?.kepalaDinas?.officialTitle || 'Kepala Dinas Pekerjaan Umum dan Penataan Ruang',
     kadisPangkat: puptrSettings?.kepalaDinas?.pangkatGolongan || 'Pembina Utama Muda (IV/c)',
 
+    kasiNama: 'SYAHRUL RAMADHAN, S.T.',
+    kasiNip: '19880210 201101 1 007',
+    kasiJabatan: 'Kepala Seksi Pengawasan Ruang',
+
     petaImageUrl: customMapSnapshot || app?.mapSnapshotUrl || (isNonBerusaha ? DEFAULT_BAP_NON_BERUSAHA_DATA.petaImageUrl : DEFAULT_BAP_KTR_DATA.petaImageUrl),
     analisGisNama: 'ANDI BASO MATTATA, S.T.',
     analisGisNip: '19940822 202012 1 003',
+    analisGisJabatan: 'Analis Spasial & Pemetaan GIS',
     catatanSurveyor: 'Pengukuran batas persil telah diverifikasi menggunakan GNSS RTK Dual-Frequency Geodetic dengan tingkat akurasi horizontal < 0.05 meter. Delineasi poligon telah ditumpangsusunkan (overlay) langsung dengan Layer Peta Digital RTRW Kabupaten Luwu 2024-2044.',
     koordinatPoligon: coords
   };

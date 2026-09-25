@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ShieldCheck,
@@ -22,6 +22,7 @@ import {
   ChevronRight,
   Clock,
   Eye,
+  EyeOff,
   AlertCircle,
   Wheat,
   Sprout,
@@ -48,7 +49,14 @@ import { LuwuLogo } from '../LuwuLogo';
 import { generateBapPdfFromElement } from '../../utils/bapPdfGenerator';
 import { CrossOpdNotificationBell } from '../CrossOpdNotificationBell';
 import { addCrossOpdNotification } from '../../utils/crossOpdNotificationStore';
-import { getOpdSettings } from '../../utils/opdSettingsStorage';
+import { getOpdSettings, saveOpdSettings } from '../../utils/opdSettingsStorage';
+import { 
+  BapLp2bPertanianDocument, 
+  BapLp2bDocumentData, 
+  extractCoordinatesFromGeometryPertanian,
+  convertAppToBapLp2bData 
+} from '../documents/BapLp2bPertanianDocument';
+import { SmartFormPertanianModal } from './SmartFormPertanianModal';
 
 export interface AgrarianQueueItem {
   id: string;
@@ -216,11 +224,66 @@ export default function PertanianLandClearanceDashboard() {
     };
   }, [selectedApp]);
 
+  // Map Reference & Snapshot State (Matches PUPTR standard)
+  const mapRef = useRef<any>(null);
+  const [mapSnapshot, setMapSnapshot] = useState<string | null>(null);
+
   // Decision Modal States
   const [showApprovalModal, setShowApprovalModal] = useState<boolean>(false);
   const [showRejectionModal, setShowRejectionModal] = useState<boolean>(false);
   const [showDocumentPreview, setShowDocumentPreview] = useState<boolean>(false);
+  const [showSmartFormModal, setShowSmartFormModal] = useState<boolean>(false);
   const [isExportingPdf, setIsExportingPdf] = useState<boolean>(false);
+  const [customBapData, setCustomBapData] = useState<BapLp2bDocumentData | null>(null);
+
+  // Capture current MapLibre canvas snapshot
+  const captureCurrentMapSnapshot = () => {
+    const map = mapRef.current?.getMapInstance?.();
+    if (map) {
+      try {
+        if (map.loaded()) {
+          const snap = map.getCanvas().toDataURL('image/png');
+          if (snap && snap !== 'data:,' && snap.length > 500) {
+            setMapSnapshot(snap);
+            return snap;
+          }
+        }
+      } catch (e) {
+        console.warn('Initial map snapshot error in Pertanian:', e);
+      }
+
+      map.once('idle', () => {
+        try {
+          const snapshot = map.getCanvas().toDataURL('image/png');
+          if (snapshot && snapshot !== 'data:,' && snapshot.length > 500) {
+            setMapSnapshot(snapshot);
+          }
+        } catch (err) {
+          console.warn('Async map idle snapshot error in Pertanian:', err);
+        }
+      });
+    } else {
+      const mapCanvas = document.querySelector('.maplibregl-canvas') as HTMLCanvasElement | null;
+      if (mapCanvas) {
+        try {
+          const snap = mapCanvas.toDataURL('image/png');
+          if (snap && snap.length > 500) {
+            setMapSnapshot(snap);
+            return snap;
+          }
+        } catch (e) {
+          console.warn('Map canvas fallback snapshot error in Pertanian:', e);
+        }
+      }
+    }
+    return null;
+  };
+
+  // Open BAP Document Modal with High-Res Map Canvas Snapshot (Clean static capture)
+  const handleOpenBapModal = () => {
+    captureCurrentMapSnapshot();
+    setShowDocumentPreview(true);
+  };
 
   // Download BAP PDF using jsPDF
   const handleDownloadBapPdf = async () => {
@@ -441,10 +504,29 @@ export default function PertanianLandClearanceDashboard() {
   // Select an application from the queue to inspect in Map Workspace
   const selectAppForReview = (app: AgrarianQueueItem) => {
     setSelectedApp(app);
-    const year = new Date().getFullYear();
-    const seq = Math.floor(100 + Math.random() * 900);
-    setBaDocNum(app.beritaAcaraDocNum || `BA-LP2B/DISTAN-LUWU/${year}/${seq}`);
-    setSrDocNum(app.suratRekomendasiNum || `503/REK-DISTAN/LUWU/${year}/${seq}`);
+    let loadedBap: any = null;
+    try {
+      const perAppRaw = localStorage.getItem(`BAP_LP2B_${app.id}`);
+      if (perAppRaw) {
+        loadedBap = JSON.parse(perAppRaw);
+      }
+    } catch (e) {
+      console.warn("Storage read error:", e);
+    }
+
+    if (loadedBap) {
+      setCustomBapData(loadedBap);
+      if (loadedBap.nomorSurat) setBaDocNum(loadedBap.nomorSurat);
+      if (loadedBap.nomorSuratRekomendasi) setSrDocNum(loadedBap.nomorSuratRekomendasi);
+      if (loadedBap.rasioLahanPengganti) setReplacementLandRatio(loadedBap.rasioLahanPengganti);
+    } else {
+      setCustomBapData(null);
+      const year = new Date().getFullYear();
+      const seq = Math.floor(100 + Math.random() * 900);
+      setBaDocNum(app.beritaAcaraDocNum || `BA-LP2B/DISTAN-LUWU/${year}/${seq}`);
+      setSrDocNum(app.suratRekomendasiNum || `503/REK-DISTAN/LUWU/${year}/${seq}`);
+    }
+
     setStipulationNotes(
       `Pemohon wajib menyediakan Lahan Pengganti LP2B seluas ${app.areaHa} Ha di Wilayah Kec. ${app.districtName} / Kec. Suli dengan fasilitas irigasi teknis setara, serta menjaga kelancaran jaringan irigasi tersier sekitarnya.`
     );
@@ -703,8 +785,8 @@ export default function PertanianLandClearanceDashboard() {
         item.districtName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.villageName.toLowerCase().includes(searchQuery.toLowerCase());
 
-      if (statusFilter === 'ALL') return matchSearch;
-      if (statusFilter === 'PENDING') return matchSearch && item.agriStatus === 'Pending Review';
+      if (statusFilter === 'ALL_HISTORY') return matchSearch;
+      if (statusFilter === 'ALL' || statusFilter === 'PENDING') return matchSearch && item.agriStatus === 'Pending Review';
       if (statusFilter === 'APPROVED') return matchSearch && item.agriStatus === 'Approved';
       if (statusFilter === 'REJECTED') return matchSearch && (item.agriStatus === 'Rejected' || item.agriStatus === 'Requires Revision');
       return matchSearch;
@@ -1061,7 +1143,32 @@ export default function PertanianLandClearanceDashboard() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    captureCurrentMapSnapshot();
+                    setShowSmartFormModal(true);
+                  }}
+                  className="px-3 py-1.5 bg-gradient-to-r from-emerald-600 via-emerald-700 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer hover:scale-105 active:scale-95"
+                  title="Buka Smart Form Rekomendasi Teknis LP2B & Alih Fungsi Lahan"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                  <span>Smart Form LP2B</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsTurfCardCollapsed(prev => !prev)}
+                  className={`px-3 py-1.5 border rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
+                    isTurfCardCollapsed
+                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700 hover:bg-emerald-100'
+                      : 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100'
+                  }`}
+                  title={isTurfCardCollapsed ? "Tampilkan Panel Hasil Analisis & Data Pemohon" : "Sembunyikan Panel (Buka Kanvas Peta Lebih Luas)"}
+                >
+                  {isTurfCardCollapsed ? <Eye className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <EyeOff className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />}
+                  <span>{isTurfCardCollapsed ? "Buka Panel Analisis" : "Tutup Panel Analisis"}</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => setIsMapExpanded(prev => !prev)}
@@ -1086,6 +1193,7 @@ export default function PertanianLandClearanceDashboard() {
 
               <div className={`w-full ${isMapExpanded ? 'min-h-[600px] h-[85vh]' : 'h-[500px] sm:h-[600px] lg:h-[75vh]'} rounded-2xl relative overflow-hidden border border-slate-200 dark:border-slate-800 shadow-inner transition-all duration-300`}>
                 <MapComponent
+                  ref={mapRef}
                   key={selectedApp.id}
                   districts={districts}
                   villages={villages}
@@ -1110,39 +1218,51 @@ export default function PertanianLandClearanceDashboard() {
                 />
 
                 {/* Agrarian Overlay Diagnostic & Applicant Details Box (Hasil Analisis Turf.js & Data Pemohon Tersusun Kebawah) */}
-                <div className="fixed bottom-3 inset-x-3 md:absolute md:top-3 md:right-14 md:left-auto md:w-96 max-h-[82vh] overflow-y-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-2xl z-20 text-xs space-y-3 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
-                  <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
-                    <div className="flex items-center gap-2">
-                      <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                        <Sprout className="w-4 h-4 text-emerald-500" />
+                {isTurfCardCollapsed ? (
+                  <button
+                    type="button"
+                    onClick={() => setIsTurfCardCollapsed(false)}
+                    className="fixed bottom-3 right-3 md:absolute md:top-3 md:right-14 md:bottom-auto bg-slate-900/90 text-white hover:bg-slate-800 backdrop-blur-md border border-emerald-500/50 rounded-2xl px-3.5 py-2 shadow-2xl z-20 text-xs font-bold flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer group"
+                    title="Klik untuk membuka panel Hasil Analisis Turf.js & Data Pemohon"
+                  >
+                    <Sprout className="w-4 h-4 text-emerald-400 group-hover:rotate-45 transition-transform" />
+                    <span>Buka Panel Analisis Turf.js &amp; Data Pemohon</span>
+                    <ChevronDown className="w-4 h-4 text-slate-300" />
+                  </button>
+                ) : (
+                  <div className="fixed bottom-3 inset-x-3 md:absolute md:top-3 md:right-14 md:left-auto md:w-96 max-h-[82vh] overflow-y-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-2xl z-20 text-xs space-y-3 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 animate-in fade-in zoom-in-95 duration-150">
+                    <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                          <Sprout className="w-4 h-4 text-emerald-500" />
+                        </div>
+                        <div>
+                          <h4 className="font-extrabold text-slate-900 dark:text-white text-xs tracking-tight">
+                            Hasil Analisis Turf.js &amp; Data Pemohon
+                          </h4>
+                          <span className="text-[10px] text-slate-500 dark:text-slate-400">
+                            Audit LP2B &amp; Kesesuaian Lahan Pertanian
+                          </span>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-extrabold text-slate-900 dark:text-white text-xs tracking-tight">
-                          Hasil Analisis Turf.js &amp; Data Pemohon
-                        </h4>
-                        <span className="text-[10px] text-slate-500 dark:text-slate-400">
-                          Audit LP2B &amp; Kesesuaian Lahan Pertanian
+
+                      <div className="flex items-center gap-1.5">
+                        <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                          LP2B Intersect
                         </span>
+                        <button
+                          type="button"
+                          onClick={() => setIsTurfCardCollapsed(true)}
+                          className="px-2 py-1 rounded-xl text-[10px] font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors flex items-center gap-1 cursor-pointer shrink-0 border border-slate-200 dark:border-slate-700"
+                          title="Sembunyikan Panel agar kanvas peta lebih luas"
+                        >
+                          <ChevronUp className="w-3.5 h-3.5 text-rose-500" />
+                          <span>Tutup</span>
+                        </button>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1.5">
-                      <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
-                        LP2B Intersect
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setIsTurfCardCollapsed(!isTurfCardCollapsed)}
-                        className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                        title={isTurfCardCollapsed ? "Perluas Card" : "Ciutkan Card"}
-                      >
-                        {isTurfCardCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
-                      </button>
-                    </div>
-                  </div>
-
-                  {!isTurfCardCollapsed && (
-                    <div className="space-y-3 animate-in fade-in duration-150">
+                    <div className="space-y-3">
                       {/* 1. SEKSI AUDIT GEOSPASIAL PERTANIAN & LP2B */}
                       <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-1.5">
                         <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1">
@@ -1302,8 +1422,8 @@ export default function PertanianLandClearanceDashboard() {
                         )}
                       </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -1401,8 +1521,21 @@ export default function PertanianLandClearanceDashboard() {
             {/* Dual Action Path Buttons */}
             <div className="space-y-2.5 pt-4 border-t border-slate-200 dark:border-slate-800">
               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block text-center">
-                Pilih Keputusan Rekomendasi
+                Pilih Keputusan &amp; Rekomendasi Teknis
               </span>
+
+              {/* Smart Form Pertanian Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  captureCurrentMapSnapshot();
+                  setShowSmartFormModal(true);
+                }}
+                className="w-full py-2.5 bg-gradient-to-r from-emerald-700 via-teal-700 to-emerald-800 hover:from-emerald-600 hover:to-teal-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-700/20 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <Sparkles className="w-4 h-4 text-amber-300" />
+                <span>Smart Form Rekomendasi Teknis LP2B &amp; Pertanian</span>
+              </button>
 
               {/* Path A Button: Setujui & Terbit Berita Acara */}
               <button
@@ -1410,7 +1543,7 @@ export default function PertanianLandClearanceDashboard() {
                 onClick={handleOpenApprovalModal}
                 className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 transition-all cursor-pointer"
               >
-                <Sparkles className="w-4 h-4 text-emerald-200" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-200" />
                 <span>PATH A: Setujui &amp; Terbit Berita Acara LP2B 📄</span>
               </button>
 
@@ -1427,11 +1560,11 @@ export default function PertanianLandClearanceDashboard() {
               {/* Document Preview Trigger */}
               <button
                 type="button"
-                onClick={() => setShowDocumentPreview(true)}
-                className="w-full py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold rounded-xl text-xs flex items-center justify-center gap-2 border border-slate-300 dark:border-slate-700 transition cursor-pointer"
+                onClick={handleOpenBapModal}
+                className="w-full py-2.5 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-700 dark:text-indigo-400 border border-indigo-500/30 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition cursor-pointer"
               >
-                <Printer className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span>Lihat / Cetak Berita Acara (BAP Resmi Pertanian)</span>
+                <FileText className="w-4 h-4" />
+                <span>Lihat / Cetak Berita Acara (BAP LP2B) Dinas Pertanian</span>
               </button>
             </div>
           </div>
@@ -1632,340 +1765,113 @@ export default function PertanianLandClearanceDashboard() {
       </AnimatePresence>
 
       {/* ─────────────────────────────────────────────────────────────
-          PRINTABLE DOCUMENT PREVIEW MODAL (OFFICIAL BAP DINAS PERTANIAN)
-          (Page 1: Naskah Resmi BAP LP2B | Page 2: Peta Delineasi Spasial)
+          SMART FORM ENGINE (REKOMENDASI TEKNIS LP2B & ALIH FUNGSI LAHAN)
          ───────────────────────────────────────────────────────────── */}
-      <AnimatePresence>
-        {showDocumentPreview && selectedApp && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200 overflow-y-auto print:p-0 print:bg-white print:static">
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white text-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-8 max-w-4xl w-full shadow-2xl space-y-6 my-auto max-h-[92vh] overflow-y-auto border border-slate-300 print:max-h-none print:overflow-visible print:border-none print:shadow-none print:p-0 print:m-0 print:rounded-none"
-            >
-              {/* Modal Top Controls (Hidden in Print) */}
-              <div className="flex items-center justify-between border-b border-slate-200 pb-3 print:hidden">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 bg-emerald-50 text-emerald-700 rounded-xl">
-                    <FileText className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900">
-                      Berita Acara Pemeriksaan (BAP) LP2B &amp; Kesesuaian Lahan
-                    </h3>
-                    <p className="text-[11px] text-slate-500">
-                      Dokumen Rekomendasi Resmi Dinas Pertanian Kabupaten Luwu &bull; Format Standar OSS / PKKPR
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleDownloadBapPdf}
-                    disabled={isExportingPdf}
-                    className="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm cursor-pointer transition disabled:opacity-50"
-                  >
-                    {isExportingPdf ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                    <span>{isExportingPdf ? 'Mengunduh PDF...' : 'Download PDF (jsPDF)'}</span>
-                  </button>
-                  <button
-                    onClick={() => window.print()}
-                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer transition"
-                  >
-                    <Printer className="w-4 h-4" />
-                    <span>Cetak Direct</span>
-                  </button>
-                  <button
-                    onClick={() => setShowDocumentPreview(false)}
-                    className="p-1.5 text-slate-400 hover:text-slate-700 rounded-xl transition cursor-pointer"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
+      {showSmartFormModal && selectedApp && (
+        <SmartFormPertanianModal
+          isOpen={showSmartFormModal}
+          onClose={() => setShowSmartFormModal(false)}
+          initialData={customBapData || convertAppToBapLp2bData(selectedApp, getOpdSettings('pertanian'), mapSnapshot)}
+          mapSnapshot={mapSnapshot}
+          onCaptureLatestSnapshot={captureCurrentMapSnapshot}
+          onSaveData={async (updated) => {
+            setCustomBapData(updated);
+            if (updated.nomorSurat) setBaDocNum(updated.nomorSurat);
+            if (updated.nomorSuratRekomendasi) setSrDocNum(updated.nomorSuratRekomendasi);
+            if (updated.rasioLahanPengganti) setReplacementLandRatio(updated.rasioLahanPengganti);
 
-              {/* Printable container for jsPDF capture - Standard A4 Format */}
-              <div id="pertanian-bap-printable-document" className="space-y-6 bg-white p-2 rounded-xl max-w-[210mm] mx-auto print:max-w-none print:w-[210mm] print:m-0 print:p-0">
-                {/* ══════════════════════════════════════════════════════════
-                    LEMBAR 1: NASKAH RESMI BERITA ACARA PERTANIAN (LP2B)
-                   ══════════════════════════════════════════════════════════ */}
-              <div className="bap-page-1 border border-slate-200 p-6 sm:p-8 rounded-2xl bg-white space-y-6 print:border-none print:p-0 min-h-[297mm]">
-                {/* Official Kop Surat Dinas Pertanian Luwu */}
-                {(() => {
-                  const agriSettings = getOpdSettings('pertanian');
-                  if (agriSettings.opd.kopSuratUrl) {
-                    return (
-                      <div className="w-full text-center pb-3 border-b-4 border-double border-slate-950 mb-4">
-                        <img 
-                          src={agriSettings.opd.kopSuratUrl} 
-                          alt="Kop Surat Dinas Pertanian" 
-                          className="w-full max-h-28 object-contain mx-auto"
-                        />
-                      </div>
-                    );
-                  }
-                  return (
-                    <div className="flex items-center gap-4 border-b-4 border-double border-slate-900 pb-4">
-                      <div className="shrink-0 flex items-center justify-center">
-                        <LuwuLogo size="xl" className="w-20 h-24 object-contain" />
-                      </div>
-                      <div className="flex-1 text-center space-y-0.5">
-                        <h4 className="text-xs sm:text-sm font-bold tracking-wider uppercase text-slate-800 font-serif">
-                          PEMERINTAH KABUPATEN LUWU
-                        </h4>
-                        <h2 className="text-base sm:text-xl font-black tracking-wide uppercase text-slate-950 font-serif">
-                          {agriSettings.opd.officialName.toUpperCase()}
-                        </h2>
-                        <h5 className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-900 font-serif">
-                          BIDANG PRASARANA, SARANA DAN PERLINDUNGAN LAHAN (LP2B)
-                        </h5>
-                        <p className="text-[10px] text-slate-600 leading-tight">
-                          {agriSettings.opd.address}
-                        </p>
-                        <p className="text-[9.5px] text-slate-500 font-mono">
-                          Email: {agriSettings.opd.email} &bull; Website: {agriSettings.opd.website}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })()}
+            if (selectedApp?.id) {
+              // 1. Simpan ke local cache spesifik ID permohonan
+              try {
+                localStorage.setItem(`BAP_LP2B_${selectedApp.id}`, JSON.stringify(updated));
+              } catch (e) {
+                console.warn('Storage error:', e);
+              }
 
-                {/* Title Header */}
-                <div className="text-center space-y-1">
-                  <h3 className="text-sm sm:text-base font-black uppercase underline decoration-2 underline-offset-4 text-slate-950 font-serif">
-                    BERITA ACARA PEMERIKSAAN KELAYAKAN LAHAN &amp; LP2B (BAP-LP2B)
-                  </h3>
-                  <p className="text-xs font-mono font-bold text-slate-700">
-                    Nomor: {baDocNum || selectedApp.beritaAcaraDocNum || `520/BA-LP2B/DISTAN-LW/${new Date().getFullYear()}/${selectedApp.id.substring(0, 5).toUpperCase()}`}
-                  </p>
-                  <p className="text-[11px] text-slate-600 italic">
-                    Tentang Hasil Penilaian Kelayakan Teknis Agraria &amp; Alih Fungsi Lahan Pertanian Berkelanjutan
-                  </p>
-                </div>
+              // 2. Simpan ke Supabase gis_pkkpr & investments dengan timeout protection
+              try {
+                const updateGis = supabase
+                  .from('gis_pkkpr')
+                  .update({
+                    berita_acara_pertanian_num: updated.nomorSurat,
+                    surat_rekomendasi_pertanian_num: updated.nomorSuratRekomendasi,
+                    catatan_teknis: `[SMART FORM LP2B DISUSUN - ${updated.nomorSurat}]: ${updated.catatanRekomendasiTeknis?.join('; ') || updated.keteranganLp2b || 'Rekomendasi teknis alih fungsi lahan pertanian telah disusun.'}`,
+                    updated_at: new Date().toISOString()
+                  })
+                  .eq('id', selectedApp.id);
 
-                {/* Document Body Text */}
-                <div className="text-xs leading-relaxed space-y-3 font-serif text-slate-800 text-justify">
-                  <p>
-                    Pada hari ini, <span className="font-bold">{new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>, Tim Penilai Kelayakan Teknis Lahan Dinas Pertanian Kabupaten Luwu telah melakukan audit spasial, survei lapangan, dan evaluasi terhadap permohonan rekomendasi alih fungsi lahan / kesesuaian ruang investasi:
-                  </p>
+                const updateInv = supabase
+                  .from('investments')
+                  .update({
+                    berita_acara_num: updated.nomorSurat,
+                    surat_rekomendasi_num: updated.nomorSuratRekomendasi,
+                    replacement_land_ha: updated.luasWajibLahanPenggantiHa || selectedApp.areaHa,
+                    override_justification: `[BAP LP2B ${updated.nomorSurat}]: ${updated.catatanRekomendasiTeknis?.join('; ') || ''}`,
+                    updated_at: new Date().toISOString()
+                  })
+                  .eq('id', selectedApp.id);
 
-                  {/* Data Bound Table */}
-                  <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1.5 text-xs font-sans">
-                    <div className="grid grid-cols-3 gap-2">
-                      <span className="text-slate-500 font-medium">1. Nomor Induk Berusaha (NIB) / NIK:</span>
-                      <span className="col-span-2 font-mono font-bold text-slate-900">{selectedApp.nibNik}</span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <span className="text-slate-500 font-medium">2. Nama Pemohon / Penanggung Jawab:</span>
-                      <span className="col-span-2 font-bold text-slate-900">{selectedApp.applicantName}</span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <span className="text-slate-500 font-medium">3. Nama Perusahaan / Badan Usaha:</span>
-                      <span className="col-span-2 font-bold text-slate-900">{selectedApp.companyName}</span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <span className="text-slate-500 font-medium">4. Rencana Kegiatan Investasi:</span>
-                      <span className="col-span-2 text-slate-900">{selectedApp.sector}</span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <span className="text-slate-500 font-medium">5. Lokasi Rencana Investasi:</span>
-                      <span className="col-span-2 font-semibold text-slate-900">
-                        Desa {selectedApp.villageName}, Kecamatan {selectedApp.districtName}, Kab. Luwu
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <span className="text-slate-500 font-medium">6. Luas Areal Permohonan:</span>
-                      <span className="col-span-2 font-mono font-bold text-emerald-700">{selectedApp.areaHa} Hektar (Ha)</span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <span className="text-slate-500 font-medium">7. Kondisi Eksisting Vegetasi / Lahan:</span>
-                      <span className="col-span-2 text-amber-800 font-semibold">{selectedApp.existingCrop}</span>
-                    </div>
-                  </div>
+                await Promise.race([
+                  Promise.allSettled([updateGis, updateInv]),
+                  new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout sync DB')), 3500))
+                ]);
+              } catch (dbErr) {
+                console.warn('Supabase sync note in onSaveData:', dbErr);
+              }
 
-                  {/* HASIL TELAAH DAN KESIMPULAN */}
-                  <div className="space-y-2">
-                    <h5 className="font-bold text-slate-950 uppercase text-xs">A. DASAR HUKUM &amp; KETENTUAN PERLINDUNGAN LP2B:</h5>
-                    <ol className="list-decimal list-inside space-y-1 pl-1 text-[11.5px] leading-normal text-slate-800">
-                      <li>Undang-Undang Nomor 41 Tahun 2009 tentang Perlindungan Lahan Pertanian Pangan Berkelanjutan.</li>
-                      <li>Peraturan Pemerintah Nomor 1 Tahun 2011 tentang Penetapan dan Alih Fungsi Lahan Pertanian Pangan Berkelanjutan.</li>
-                      <li>Peraturan Daerah Kabupaten Luwu tentang Rencana Tata Ruang Wilayah (RTRW) dan Peta Ketahanan Pangan Daerah.</li>
-                    </ol>
-                  </div>
+              // 3. Update antrean queueList dan selectedApp di memori dashboard
+              setQueueList(prev =>
+                prev.map(item =>
+                  item.id === selectedApp.id
+                    ? {
+                        ...item,
+                        beritaAcaraDocNum: updated.nomorSurat,
+                        suratRekomendasiNum: updated.nomorSuratRekomendasi,
+                        replacementLandHa: updated.luasWajibLahanPenggantiHa || item.replacementLandHa
+                      }
+                    : item
+                )
+              );
 
-                  <div className="space-y-1.5">
-                    <h5 className="font-bold text-slate-950 uppercase text-xs">B. KESIMPULAN &amp; REKOMENDASI KELAYAKAN TEKNIS:</h5>
-                    <div className="p-3 bg-emerald-50 border-l-4 border-emerald-600 rounded-r-xl text-slate-900">
-                      <p className="font-bold text-emerald-900">
-                        DINYATAKAN: DISETUJUI / MEMENUHI SYARAT REKOMENDASI LP2B
-                      </p>
-                      <p className="text-[11px] text-slate-700 mt-0.5">
-                        {stipulationNotes || `Usulan alih fungsi lahan dinyatakan DISETUJUI DENGAN SYARAT dengan kewajiban menyediakan Lahan Pengganti LP2B seluas ${selectedApp.areaHa} Ha (${replacementLandRatio}) serta menjaga keberlanjutan fungsi saluran irigasi pertanian di sekitarnya.`}
-                      </p>
-                    </div>
-                  </div>
+              setSelectedApp(prev =>
+                prev
+                  ? {
+                      ...prev,
+                      beritaAcaraDocNum: updated.nomorSurat,
+                      suratRekomendasiNum: updated.nomorSuratRekomendasi,
+                      replacementLandHa: updated.luasWajibLahanPenggantiHa || prev.replacementLandHa
+                    }
+                  : null
+              );
+            }
+          }}
+          onOpenFullBapPreview={(updated) => {
+            setCustomBapData(updated);
+            setShowSmartFormModal(false);
+            setShowDocumentPreview(true);
+          }}
+        />
+      )}
 
-                  <p className="text-[11px] text-slate-700">
-                    Demikian Berita Acara Pemeriksaan ini dibuat untuk dijadikan bahan pertimbangan dan kelengkapan dokumen teknis bagi Dinas PUPTR dan DPMPTSP Kabupaten Luwu dalam menerbitkan Izin PKKPR.
-                  </p>
-                </div>
-
-                {/* Signature Block */}
-                {(() => {
-                  const agriSet = getOpdSettings('pertanian');
-                  return (
-                    <div className="grid grid-cols-2 text-center text-xs pt-6 font-serif">
-                      <div className="space-y-1">
-                        <p className="text-[10px] text-slate-500">Pemohon / Pelaku Usaha,</p>
-                        <div className="h-16 flex items-center justify-center font-bold text-slate-400 italic">
-                          <span className="font-mono text-[10px] text-slate-700 bg-slate-100 px-2 py-1 rounded border border-slate-300">
-                            [ Tanda Tangan Digital NIB ]
-                          </span>
-                        </div>
-                        <p className="font-bold underline text-slate-950">{selectedApp.applicantName}</p>
-                        <p className="text-[10px] text-slate-500 font-mono">{selectedApp.companyName}</p>
-                      </div>
-
-                      <div className="space-y-1">
-                        <p className="text-[10px] text-slate-500">Belopa, {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                        <p className="font-bold text-slate-900 uppercase">{agriSet.kepalaDinas.officialTitle || 'Kepala Dinas Pertanian Kab. Luwu'}</p>
-                        <div className="h-16 flex items-center justify-center">
-                          <span className="font-mono text-[10px] text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
-                            [ Terverifikasi Stempel BSrE ]
-                          </span>
-                        </div>
-                        <p className="font-bold underline text-slate-950">{agriSet.kepalaDinas.fullName || 'IR. H. JUMADI, M.Si.'}</p>
-                        <p className="text-[10px] text-slate-500 font-mono">NIP. {agriSet.kepalaDinas.nip || '19710324 199603 1 002'}</p>
-                        {agriSet.kepalaDinas.pangkatGolongan && (
-                          <p className="text-[9.5px] text-slate-500 font-sans italic">{agriSet.kepalaDinas.pangkatGolongan}</p>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
-
-              {/* ══════════════════════════════════════════════════════════
-                  LEMBAR 2: LAMPIRAN PETA DELINEASI SPASIAL LP2B
-                 ══════════════════════════════════════════════════════════ */}
-              <div className="bap-page-2 border border-slate-200 p-6 sm:p-8 rounded-2xl bg-white space-y-5 print:border-none print:p-0 print:break-before-page">
-                {/* HEADER LAMPIRAN */}
-                <div className="border-b-2 border-slate-900 pb-3 flex items-center justify-between">
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider font-sans">
-                      LAMPIRAN BERITA ACARA DINAS PERTANIAN
-                    </h4>
-                    <h3 className="text-sm sm:text-base font-black text-slate-950 uppercase font-serif">
-                      PETA DELINEASI SPASIAL LAHAN PERTANIAN (LP2B) &amp; IRIGASI
-                    </h3>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] font-mono text-slate-500">Lembar Ke-2 / Lampiran Spasial</p>
-                    <p className="text-[11px] font-mono font-bold text-emerald-900">
-                      No. Dokumen: {baDocNum || selectedApp.beritaAcaraDocNum || `520/BA-LP2B/DISTAN-LW/${new Date().getFullYear()}`}
-                    </p>
-                  </div>
-                </div>
-
-                {/* INFORMASI KOORDINAT & DELINEASI */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200 text-[11px] font-sans">
-                  <div>
-                    <span className="text-slate-500 block">Kecamatan:</span>
-                    <span className="font-bold text-slate-900">{selectedApp.districtName}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-500 block">Desa / Kelurahan:</span>
-                    <span className="font-bold text-slate-900">{selectedApp.villageName}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-500 block">Luas Usulan:</span>
-                    <span className="font-bold font-mono text-emerald-700">{selectedApp.areaHa} Ha</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-500 block">Rasio Pengganti:</span>
-                    <span className="font-bold font-mono text-emerald-800">{replacementLandRatio}</span>
-                  </div>
-                </div>
-
-                {/* MAP RENDER CONTAINER */}
-                <div className="h-96 w-full rounded-2xl overflow-hidden border-2 border-slate-800 shadow-inner relative bg-slate-100">
-                  <MapComponent
-                    investments={appAsInvestment ? [appAsInvestment] : []}
-                    districts={districts}
-                    villages={villages}
-                    spatialLayers={spatialLayers}
-                    selectedDistrictId={selectedDistrictId}
-                    selectedVillageId={selectedVillageId}
-                    customGeoJson={currentMapGeoJson}
-                  />
-                  {/* Map Overlay Badge */}
-                  <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm border border-slate-300 rounded-xl p-2.5 shadow-lg text-[10px] font-sans space-y-1">
-                    <div className="flex items-center gap-1.5 font-bold text-slate-900">
-                      <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                      <span>Poligon Delineasi Terverifikasi Dinas Pertanian</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-slate-600">
-                      <div className="w-3 h-3 rounded bg-amber-400 border border-amber-600" />
-                      <span>Zona LP2B / Saluran Irigasi Teknis</span>
-                    </div>
-                    <div className="text-[9px] text-slate-400 pt-1 border-t border-slate-200 font-mono">
-                      Data Terverifikasi Agrarian Spatial Luwu
-                    </div>
-                  </div>
-                </div>
-
-                {/* FOOTER PENGESAHAN LAMPIRAN PETA */}
-                <div className="flex items-center justify-between pt-4 border-t border-slate-200 text-xs font-serif">
-                  <div className="text-slate-600 space-y-0.5">
-                    <p className="font-bold text-slate-900">Catatan Tim Penilai Lahan Pertanian:</p>
-                    <p className="text-[10px]">
-                      Peta delineasi telah disinkronkan dengan peta spasial LP2B Kabupaten Luwu dan jaringan irigasi sekunder/tersier.
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-slate-600 text-[11px]">Tim Verifikasi Lapangan Dinas Pertanian</p>
-                    <p className="font-bold underline text-slate-950 mt-4">SEKSI PERLINDUNGAN LAHAN &amp; LP2B</p>
-                  </div>
-                </div>
-              </div>
-              </div>
-
-              {/* Modal Actions */}
-              <div className="flex items-center justify-between pt-4 border-t border-slate-200 font-sans print:hidden">
-                <p className="text-xs text-slate-500">
-                  💡 Dokumen ini terformat siap cetak 2 halaman (A4 Standar Pemerintah Kabupaten Luwu).
-                </p>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowDocumentPreview(false)}
-                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition cursor-pointer"
-                  >
-                    Tutup Preview
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleDownloadBapPdf}
-                    disabled={isExportingPdf}
-                    className="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md transition cursor-pointer disabled:opacity-50"
-                  >
-                    {isExportingPdf ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                    <span>{isExportingPdf ? 'Mengunduh...' : 'Download PDF (jsPDF)'}</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => window.print()}
-                    className="px-5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md transition cursor-pointer"
-                  >
-                    <Printer className="w-4 h-4" />
-                    <span>Cetak Direct</span>
-                  </button>
-                </div>
-              </div>
-            </motion.div>
+      {/* ─────────────────────────────────────────────────────────────
+          OFFICIAL 4-PAGE BAP LP2B DINAS PERTANIAN DOCUMENT (A4 STANDAR NASKAH DINAS)
+         ───────────────────────────────────────────────────────────── */}
+      {showDocumentPreview && selectedApp && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="min-h-screen py-4 px-2 sm:px-4">
+            <BapLp2bPertanianDocument
+              initialData={customBapData || convertAppToBapLp2bData(selectedApp, getOpdSettings('pertanian'), mapSnapshot)}
+              mapSnapshot={mapSnapshot}
+              onClose={() => setShowDocumentPreview(false)}
+              onSaveData={(updated) => {
+                setCustomBapData(updated);
+                if (updated.nomorSurat) setBaDocNum(updated.nomorSurat);
+                if (updated.nomorSuratRekomendasi) setSrDocNum(updated.nomorSuratRekomendasi);
+              }}
+            />
           </div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
     </div>
   );
 }

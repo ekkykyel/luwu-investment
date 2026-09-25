@@ -25,6 +25,7 @@ import {
   Users,
   Clock,
   Eye,
+  EyeOff,
   AlertCircle,
   XCircle,
   Lock,
@@ -488,9 +489,9 @@ export default function PuptrSpatialClearanceDashboard() {
               suratPengantarDesaUrl: item.surat_pengantar_desa_url || undefined,
               berkasLegalitasGabunganUrl: item.berkas_legalitas_gabungan_url || item.berkas_gabungan_pdf || undefined,
               geometry: item.geometry_json || item.geom,
-              pkkprStatus: (item.sk_pkkpr_num || item.status_pkkpr === 'Approved' || item.status_pkkpr === 'Published') ? 'Approved' : (item.status_pkkpr === 'Requires Revision' ? 'Requires Revision' : 'Pending Spatial Check'),
-              pkkprDocNumber: item.sk_pkkpr_num || item.pertek_puptr_num || item.id,
-              skPkkprDocNumber: item.sk_pkkpr_num,
+              pkkprStatus: (item.sk_pkkpr_num || item.pertek_puptr_num || item.status_pkkpr === 'Approved' || item.status_pkkpr === 'Approved_PUPTR' || item.status_pkkpr === 'Published') ? 'Approved' : (item.status_pkkpr === 'Requires Revision' ? 'Requires Revision' : 'Pending Spatial Check'),
+              pkkprDocNumber: item.pertek_puptr_num || item.sk_pkkpr_num || item.id,
+              skPkkprDocNumber: item.sk_pkkpr_num || item.pertek_puptr_num,
               technicalNotes: item.catatan_teknis || 'Sesuai dengan Rencana Tata Ruang Wilayah (RTRW) Kabupaten Luwu.',
               coordinateStatus: 'Valid / Sesuai Batas RTRW',
               esgStatus: 'CLEAR',
@@ -913,16 +914,18 @@ export default function PuptrSpatialClearanceDashboard() {
     try {
       const year = new Date().getFullYear();
       const randomSeq = Math.floor(100 + Math.random() * 900);
-      const generatedDocNum = `503/PKKPR-PUPTR/LUWU/${year}/${randomSeq}`;
+      const generatedDocNum = `503/PERTEK-PUPTR/LUWU/${year}/${randomSeq}`;
 
       // Update both 'gis_pkkpr' and 'investments'
+      // Dinas PUPTR only issues PERTEK Kesesuaian Tata Ruang (pertek_puptr_num).
+      // sk_pkkpr_num remains NULL for DPMPTSP (Admin Perizinan OSS) to issue with digital TTE!
       await Promise.all([
         supabase
           .from('gis_pkkpr')
           .update({
-            sk_pkkpr_num: generatedDocNum,
             pertek_puptr_num: generatedDocNum,
-            status_pkkpr: clearanceDecision === 'Approved' ? 'Approved' : 'Review',
+            sk_pkkpr_num: null,
+            status_pkkpr: clearanceDecision === 'Approved' ? 'Approved_PUPTR' : 'Requires Revision',
             catatan_teknis: technicalNotes,
             updated_at: new Date().toISOString()
           })
@@ -931,8 +934,7 @@ export default function PuptrSpatialClearanceDashboard() {
           .from('investments')
           .update({
             pkkpr_doc_number: generatedDocNum,
-            sk_pkkpr_doc_number: generatedDocNum,
-            status: clearanceDecision === 'Approved' ? 'Published' : 'Review',
+            status: clearanceDecision === 'Approved' ? 'Approved_PUPTR' : 'Review',
             override_justification: technicalNotes,
             esg_risk_status: zoningAudit?.suitabilityLevel === 'DIBATASI' ? 'HIGH_RISK_INTERSECTION' : 'CLEAR',
             updated_at: new Date().toISOString()
@@ -968,31 +970,37 @@ export default function PuptrSpatialClearanceDashboard() {
         fromRole: 'ADMIN_PUPTR',
         type: 'APPROVED_PUPTR',
         title: `Pertek & BAP PUPTR Terbit #${selectedApp.id}`,
-        message: `Dinas PUPTR telah menerbitkan Pertek Kesesuaian Lahan No. ${generatedDocNum} (Melampirkan BAP Pertanian No. ${selectedApp.pertanianBaNumber || 'Terlampir'}). Mohon terbitkan SK Izin PKKPR DPMPTSP Final.`,
+        message: `Dinas PUPTR telah menyetujui Pertimbangan Teknis No. ${generatedDocNum} (BAP Pertanian: ${selectedApp.pertanianBaNumber || 'Bebas LP2B'}). Berkas siap untuk Pencetakan SK Izin PKKPR DPMPTSP & Penyematan TTE.`,
         bapPertanianDocNumber: selectedApp.pertanianBaNumber,
         bapPuptrDocNumber: generatedDocNum
       });
 
+      // Auto-advance selection to next pending item in queue
+      const nextPending = queueList.find(q => q.id !== selectedApp.id && q.pkkprStatus !== 'Approved' && q.pertanianStatus !== 'FORWARDED');
+      if (nextPending) {
+        setTimeout(() => setSelectedApp(nextPending), 1200);
+      }
+
       Swal.fire({
         icon: 'success',
-        title: 'SK PKKPR Resmi Diterbitkan! 🎉',
+        title: 'Pertek Ruang Berhasil Diterbitkan! 🎉',
         html: `
           <div className="text-left text-xs space-y-2 p-3 bg-emerald-50 dark:bg-emerald-950/50 rounded-xl border border-emerald-200 dark:border-emerald-800 font-sans">
-            <p className="text-slate-900 dark:text-emerald-100"><strong>Nomor SK PKKPR:</strong> <code className="font-mono text-emerald-600 dark:text-emerald-300 font-bold">${generatedDocNum}</code></p>
+            <p className="text-slate-900 dark:text-emerald-100"><strong>Nomor Pertek PUPTR:</strong> <code className="font-mono text-emerald-600 dark:text-emerald-300 font-bold">${generatedDocNum}</code></p>
             <p className="text-slate-900 dark:text-emerald-100"><strong>NIB/NIK Pemohon:</strong> ${selectedApp.nibNik}</p>
             <p className="text-slate-900 dark:text-emerald-100"><strong>Status Spasial:</strong> <span className="font-bold text-emerald-600">${clearanceDecision}</span></p>
             <p className="text-slate-600 dark:text-slate-300 text-[11px] pt-1 border-t border-emerald-200 dark:border-emerald-800">
-              ⚡ Data ini sekarang tersinkronisasi secara instan dengan basis data DPMPTSP dan dapat di-auto-hydrate oleh pemohon/investor.
+              ⚡ Permohonan ini telah disetujui dan otomatis diteruskan ke <strong>Antrean Cetak Izin DPMPTSP / OSS</strong> untuk proses TTE Digital dan penerbitan SK PKKPR Final. Berkas kini dikeluarkan dari antrean aktif PUPTR.
             </p>
           </div>
         `,
         confirmButtonColor: '#10b981'
       });
     } catch (err: any) {
-      console.error('Error issuing SK PKKPR:', err);
+      console.error('Error issuing Pertek PUPTR:', err);
       Swal.fire({
         icon: 'error',
-        title: 'Gagal Penerbitan SK PKKPR',
+        title: 'Gagal Penerbitan Pertek',
         text: err.message || 'Terjadi kesalahan sistem.',
         confirmButtonColor: '#ef4444'
       });
@@ -1001,7 +1009,7 @@ export default function PuptrSpatialClearanceDashboard() {
     }
   };
 
-  // Filtered Queue List
+  // Filtered Queue List (Excludes items currently forwarded to Dinas Pertanian from default active PUPTR queue)
   const filteredQueue = useMemo(() => {
     return queueList.filter(item => {
       const matchSearch =
@@ -1010,10 +1018,21 @@ export default function PuptrSpatialClearanceDashboard() {
         item.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.districtName.toLowerCase().includes(searchQuery.toLowerCase());
 
-      if (statusFilter === 'ALL') return matchSearch;
+      // Hide items currently forwarded to Dinas Pertanian from default active PUPTR queue unless explicitly filtering FORWARDED or ALL_HISTORICAL
+      if (item.pertanianStatus === 'FORWARDED' && statusFilter !== 'FORWARDED' && statusFilter !== 'ALL_HISTORICAL') {
+        return false;
+      }
+
+      // Hide APPROVED items from the active pending queue ('ALL' or 'PENDING') so they don't linger in the active queue table!
+      if ((statusFilter === 'ALL' || statusFilter === 'PENDING') && item.pkkprStatus === 'Approved') {
+        return false;
+      }
+
+      if (statusFilter === 'ALL' || statusFilter === 'PENDING') return matchSearch;
       if (statusFilter === 'APPROVED') return matchSearch && item.pkkprStatus === 'Approved';
-      if (statusFilter === 'PENDING') return matchSearch && item.pkkprStatus === 'Pending Spatial Check';
       if (statusFilter === 'REVISION') return matchSearch && item.pkkprStatus === 'Requires Revision';
+      if (statusFilter === 'FORWARDED') return matchSearch && item.pertanianStatus === 'FORWARDED';
+      if (statusFilter === 'ALL_HISTORICAL') return matchSearch;
       return matchSearch;
     });
   }, [queueList, searchQuery, statusFilter]);
@@ -1281,7 +1300,7 @@ export default function PuptrSpatialClearanceDashboard() {
           </div>
 
           <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
-            {['ALL', 'PENDING', 'APPROVED', 'REVISION'].map(st => (
+            {['ALL', 'PENDING', 'APPROVED', 'REVISION', 'FORWARDED', 'ALL_HISTORICAL'].map(st => (
               <button
                 key={st}
                 onClick={() => setStatusFilter(st)}
@@ -1291,7 +1310,7 @@ export default function PuptrSpatialClearanceDashboard() {
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
                 }`}
               >
-                {st === 'ALL' ? 'Semua Status' : st === 'PENDING' ? 'Pending Check' : st === 'APPROVED' ? 'SK Terbit' : 'Revisi'}
+                {st === 'ALL' ? 'Antrean Aktif PUPTR' : st === 'PENDING' ? 'Pending Check' : st === 'APPROVED' ? 'Pertek Disetujui' : st === 'REVISION' ? 'Revisi' : st === 'FORWARDED' ? '🌾 Diteruskan Pertanian' : 'Semua Riwayat'}
               </button>
             ))}
           </div>
@@ -1500,7 +1519,20 @@ export default function PuptrSpatialClearanceDashboard() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsTurfCardCollapsed(prev => !prev)}
+                  className={`px-3 py-1.5 border rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
+                    isTurfCardCollapsed
+                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700 hover:bg-emerald-100'
+                      : 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100'
+                  }`}
+                  title={isTurfCardCollapsed ? "Tampilkan Panel Hasil Analisis & Data Pemohon" : "Sembunyikan Panel (Buka Kanvas Peta Lebih Luas)"}
+                >
+                  {isTurfCardCollapsed ? <Eye className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <EyeOff className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />}
+                  <span>{isTurfCardCollapsed ? "Buka Panel Analisis" : "Tutup Panel Analisis"}</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => setIsMapExpanded(prev => !prev)}
@@ -1637,48 +1669,60 @@ export default function PuptrSpatialClearanceDashboard() {
 
                 {/* Spatial Overlay Card on top of Map (Hasil Analisis Turf.js & Data Pemohon Tersusun Kebawah) */}
                 {(zoningAudit || selectedApp) && (
-                  <div className="fixed bottom-3 inset-x-3 md:absolute md:top-3 md:right-14 md:left-auto md:w-96 max-h-[82vh] overflow-y-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-2xl z-20 text-xs space-y-3 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
-                    {/* Header with Title & Badges */}
-                    <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
-                      <div className="flex items-center gap-2">
-                        <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                          <Compass className="w-4 h-4" />
+                  isTurfCardCollapsed ? (
+                    <button
+                      type="button"
+                      onClick={() => setIsTurfCardCollapsed(false)}
+                      className="fixed bottom-3 right-3 md:absolute md:top-3 md:right-14 md:bottom-auto bg-slate-900/90 text-white hover:bg-slate-800 backdrop-blur-md border border-indigo-500/50 rounded-2xl px-3.5 py-2 shadow-2xl z-20 text-xs font-bold flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer group"
+                      title="Klik untuk membuka panel Hasil Analisis Turf.js & Data Pemohon"
+                    >
+                      <Compass className="w-4 h-4 text-emerald-400 group-hover:rotate-45 transition-transform" />
+                      <span>Buka Panel Analisis Turf.js &amp; Data Pemohon</span>
+                      <ChevronDown className="w-4 h-4 text-slate-300" />
+                    </button>
+                  ) : (
+                    <div className="fixed bottom-3 inset-x-3 md:absolute md:top-3 md:right-14 md:left-auto md:w-96 max-h-[82vh] overflow-y-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-2xl z-20 text-xs space-y-3 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 animate-in fade-in zoom-in-95 duration-150">
+                      {/* Header with Title & Badges */}
+                      <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
+                        <div className="flex items-center gap-2">
+                          <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            <Compass className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <h4 className="font-extrabold text-slate-900 dark:text-white text-xs tracking-tight">
+                              Hasil Analisis Turf.js &amp; Data Pemohon
+                            </h4>
+                            <span className="text-[10px] text-slate-500 dark:text-slate-400">
+                              Audit Spasial RTRW &amp; Verifikasi Permohonan
+                            </span>
+                          </div>
                         </div>
-                        <div>
-                          <h4 className="font-extrabold text-slate-900 dark:text-white text-xs tracking-tight">
-                            Hasil Analisis Turf.js &amp; Data Pemohon
-                          </h4>
-                          <span className="text-[10px] text-slate-500 dark:text-slate-400">
-                            Audit Spasial RTRW &amp; Verifikasi Permohonan
-                          </span>
+
+                        <div className="flex items-center gap-1.5">
+                          {zoningAudit && (
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider ${
+                              zoningAudit.suitabilityLevel === 'DIBATASI'
+                                ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
+                                : zoningAudit.suitabilityLevel === 'BERSYARAT'
+                                ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                                : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                            }`}>
+                              {zoningAudit.suitabilityLevel}
+                            </span>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => setIsTurfCardCollapsed(true)}
+                            className="px-2 py-1 rounded-xl text-[10px] font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors flex items-center gap-1 cursor-pointer shrink-0 border border-slate-200 dark:border-slate-700"
+                            title="Sembunyikan Panel agar kanvas peta lebih luas"
+                          >
+                            <ChevronUp className="w-3.5 h-3.5 text-rose-500" />
+                            <span>Tutup</span>
+                          </button>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-1.5">
-                        {zoningAudit && (
-                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider ${
-                            zoningAudit.suitabilityLevel === 'DIBATASI'
-                              ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
-                              : zoningAudit.suitabilityLevel === 'BERSYARAT'
-                              ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-                              : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
-                          }`}>
-                            {zoningAudit.suitabilityLevel}
-                          </span>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => setIsTurfCardCollapsed(!isTurfCardCollapsed)}
-                          className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                          title={isTurfCardCollapsed ? "Perluas Card" : "Ciutkan Card"}
-                        >
-                          {isTurfCardCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    </div>
-
-                    {!isTurfCardCollapsed && (
-                      <div className="space-y-3 animate-in fade-in duration-150">
+                      <div className="space-y-3">
                         {/* 1. SEKSI HASIL ANALISIS TURF.JS */}
                         {zoningAudit ? (
                           <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-1.5">
@@ -1864,8 +1908,8 @@ export default function PuptrSpatialClearanceDashboard() {
                           </div>
                         )}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )
                 )}
               </div>
             </div>
@@ -2070,16 +2114,6 @@ export default function PuptrSpatialClearanceDashboard() {
               >
                 <FileText className="w-4 h-4" />
                 <span>Lihat / Cetak Berita Acara (BAP) Kesesuaian Ruang PUPTR</span>
-              </button>
-
-              {/* Lacak Alur & SLA Timeline */}
-              <button
-                type="button"
-                onClick={() => setIsTimelineModalOpen(true)}
-                className="w-full py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition cursor-pointer"
-              >
-                <Clock className="w-4 h-4 text-indigo-500" />
-                <span>Lacak Alur &amp; SLA Timeline Lintas OPD ⏱️</span>
               </button>
             </div>
           </div>
@@ -2322,6 +2356,20 @@ export default function PuptrSpatialClearanceDashboard() {
                 mapSnapshot={mapSnapshot}
                 onClose={() => setShowBapModal(false)}
                 showEditorToolbar={true}
+                onSaveData={async (updatedBapData) => {
+                  try {
+                    if (selectedApp?.id && supabase) {
+                      await supabase.from('pkkpr_applications').update({
+                        pkkpr_doc_number: updatedBapData.nomorSurat,
+                        tentang_surat: updatedBapData.tentangSurat,
+                        bukti_tanah: updatedBapData.buktiHakTanah,
+                        updated_at: new Date().toISOString()
+                      }).eq('id', selectedApp.id);
+                    }
+                  } catch (e) {
+                    console.log('Database update note:', e);
+                  }
+                }}
               />
             </motion.div>
           </div>

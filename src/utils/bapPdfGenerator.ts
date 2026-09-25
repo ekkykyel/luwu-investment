@@ -32,15 +32,44 @@ export async function generateBapPdfFromElement(
       throw new Error(`Element target BAP dengan ID '${elementOrId}' tidak ditemukan.`);
     }
 
-    // Render HTML container to high-resolution canvas
-    const canvas = await safeHtml2Canvas(element, {
-      scale: 2, // High DPI clarity
+    // Ensure web fonts are ready before rasterizing
+    if (document.fonts && document.fonts.ready) {
+      await document.fonts.ready;
+    }
+
+    // Create an offscreen wrapper mounted to document.body
+    // Isolates the document from scrollbars, modal scale transforms, and screen width variations
+    const offscreenContainer = document.createElement("div");
+    offscreenContainer.style.position = "fixed";
+    offscreenContainer.style.left = "-9999px";
+    offscreenContainer.style.top = "0";
+    offscreenContainer.style.width = "210mm";
+    offscreenContainer.style.zIndex = "-9999";
+    offscreenContainer.style.backgroundColor = "#ffffff";
+    document.body.appendChild(offscreenContainer);
+
+    // Clone element into pristine offscreen container
+    const clonedElement = element.cloneNode(true) as HTMLElement;
+    clonedElement.style.margin = "0";
+    clonedElement.style.boxShadow = "none";
+    clonedElement.style.transform = "none";
+    clonedElement.style.width = "210mm";
+    offscreenContainer.appendChild(clonedElement);
+
+    // Render HTML container to high-resolution canvas with locked 210mm width (794px at 96dpi)
+    const canvas = await safeHtml2Canvas(clonedElement, {
+      scale: 3, // 300 DPI high clarity
       useCORS: true, // Allow cross-origin images/tiles
       allowTaint: true,
       logging: false,
       backgroundColor: '#ffffff',
-      windowWidth: 1200
+      windowWidth: 794,  // Exact 210mm width in px
+      windowHeight: 1123, // Exact 297mm height in px
+      scrollX: 0,
+      scrollY: 0
     });
+
+    document.body.removeChild(offscreenContainer);
 
     const imgData = canvas.toDataURL('image/jpeg', 0.95);
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileCheck2, Search, Printer, Download, RefreshCw, Filter, CheckCircle2, Building2, MapPin, Calendar, FileText } from 'lucide-react';
+import { FileCheck2, Search, Printer, Download, RefreshCw, Filter, CheckCircle2, Building2, MapPin, Calendar, FileText, Eye, X, QrCode } from 'lucide-react';
 import { supabase } from '../../lib/supabase.js';
 import { getOpdSettings } from '../../utils/opdSettingsStorage.js';
 
@@ -7,6 +7,8 @@ export const PuptrArchiveView: React.FC = () => {
   const [archives, setArchives] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedDoc, setSelectedDoc] = useState<any | null>(null);
+  const [showDocModal, setShowDocModal] = useState<boolean>(false);
   const settings = getOpdSettings('puptr');
 
   const fetchArchives = async () => {
@@ -192,15 +194,30 @@ export const PuptrArchiveView: React.FC = () => {
                       {item.updated_at ? new Date(item.updated_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '2026-09-20'}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <button
-                        onClick={() => {
-                          window.print();
-                        }}
-                        className="px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-600 hover:text-white font-bold text-[11px] transition inline-flex items-center gap-1.5 cursor-pointer"
-                      >
-                        <Printer size={13} />
-                        <span>Cetak Ulang</span>
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedDoc(item);
+                            setShowDocModal(true);
+                          }}
+                          className="px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-600 hover:text-white font-bold text-[11px] transition inline-flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <Eye size={13} />
+                          <span>Lihat Pertek</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedDoc(item);
+                            setShowDocModal(true);
+                          }}
+                          className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[11px] transition inline-flex items-center gap-1.5 cursor-pointer shadow-sm"
+                        >
+                          <Printer size={13} />
+                          <span>Cetak Pertek</span>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -209,6 +226,137 @@ export const PuptrArchiveView: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Official Pertek PUPTR Certificate Modal */}
+      {showDocModal && selectedDoc && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-black/70 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 w-full max-w-4xl max-h-[92vh] overflow-y-auto shadow-2xl p-6 sm:p-8 space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 print:hidden">
+              <span className="text-xs font-bold text-slate-500">Pratinjau Resmi Berita Acara Pertimbangan Teknis Tata Ruang (PUPTR)</span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
+                >
+                  <Printer className="w-4 h-4" />
+                  <span>Cetak / Print PDF</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowDocModal(false)}
+                  className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Official Certificate Paper */}
+            <div className="bg-white text-slate-900 p-8 sm:p-12 rounded-2xl border border-slate-300 shadow-lg font-serif space-y-6 max-w-3xl mx-auto">
+              <div className="flex items-center justify-center gap-4 border-b-4 border-double border-slate-900 pb-4 text-center">
+                <div className="w-16 h-20 flex items-center justify-center">
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/2/29/Lambang_Kabupaten_Luwu.png"
+                    alt="Logo Luwu"
+                    className="w-16 h-auto object-contain"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLElement).style.display = 'none';
+                    }}
+                  />
+                </div>
+                <div className="space-y-0.5">
+                  <h3 className="text-sm sm:text-base font-bold uppercase tracking-wide">
+                    Pemerintah Kabupaten Luwu
+                  </h3>
+                  <h2 className="text-base sm:text-lg font-extrabold uppercase tracking-wide">
+                    {settings.opd.officialName || 'Dinas Pekerjaan Umum dan Penataan Ruang'}
+                  </h2>
+                  <p className="text-[10px] sm:text-xs font-sans text-slate-600">
+                    {settings.opd.address || 'Kompleks Perkantoran Pemkab Luwu, Belopa, Sulawesi Selatan'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-center space-y-1">
+                <h4 className="text-xs font-bold tracking-widest uppercase underline">
+                  BERITA ACARA PERTIMBANGAN TEKNIS KESESUAIAN TATA RUANG
+                </h4>
+                <p className="text-[11px] font-mono font-bold">
+                  NOMOR PERTEK: {selectedDoc.sk_pkkpr_doc_number}
+                </p>
+                <p className="text-xs font-sans italic text-slate-600 pt-1">
+                  OPD REKOMENDATOR: BIDANG PENATAAN RUANG DINAS PUPTR KABUPATEN LUWU
+                </p>
+              </div>
+
+              <div className="text-xs font-sans space-y-3 leading-relaxed text-justify">
+                <p>
+                  Berdasarkan hasil audit spasial visual Studio GIS &amp; Zoning Inspector Dinas PUPTR Kabupaten Luwu terhadap peta rencana detail tata ruang daerah dan Perda Rencana Tata Ruang Wilayah (RTRW) Kabupaten Luwu No. 3 Tahun 2024, dengan ini memberikan Pertimbangan Teknis tata ruang kepada permohonan berikut:
+                </p>
+
+                <table className="w-full text-xs font-sans border-collapse">
+                  <tbody>
+                    <tr className="border-b border-slate-100">
+                      <td className="py-1.5 w-40 font-semibold">Nama Pemohon</td>
+                      <td className="py-1.5">: <strong>{selectedDoc.investor_name}</strong></td>
+                    </tr>
+                    <tr className="border-b border-slate-100">
+                      <td className="py-1.5 font-semibold">Nama Kegiatan / PT</td>
+                      <td className="py-1.5">: <strong>{selectedDoc.title}</strong></td>
+                    </tr>
+                    <tr className="border-b border-slate-100">
+                      <td className="py-1.5 font-semibold">NIB / NIK Pemohon</td>
+                      <td className="py-1.5 font-mono">: {selectedDoc.nib}</td>
+                    </tr>
+                    <tr className="border-b border-slate-100">
+                      <td className="py-1.5 font-semibold">Kecamatan Lokasi</td>
+                      <td className="py-1.5">: {selectedDoc.district}</td>
+                    </tr>
+                    <tr className="border-b border-slate-100">
+                      <td className="py-1.5 font-semibold">Luas Lahan Yang Dikaji</td>
+                      <td className="py-1.5 font-bold font-mono">: {selectedDoc.land_area_ha} Ha</td>
+                    </tr>
+                    <tr>
+                      <td className="py-1.5 font-semibold">Rekomendasi Spasial</td>
+                      <td className="py-1.5 text-emerald-700 font-bold">: DISETUJUI (Sesuai Rencana Tata Ruang Pola Ruang Wilayah)</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <p className="text-[11px] text-slate-600 italic">
+                  Catatan Teknis PUPTR: Sesuai dengan peruntukan ruang zona komersial/industri, KDB maksimal 70%, KLB 2.8, tinggi bangunan maksimal 4 lantai, dengan kewajiban penyediaan RTH minimal 15% dari luas total tapak.
+                </p>
+              </div>
+
+              {/* TTE Signer & QR Section */}
+              <div className="pt-6 border-t border-slate-200 flex items-end justify-between font-sans">
+                <div className="text-center space-y-1">
+                  <div className="p-2 border border-slate-300 rounded-xl bg-slate-50 inline-block">
+                    <QrCode size={64} className="text-slate-800" />
+                  </div>
+                  <div className="text-[9px] font-mono text-slate-500">
+                    TTE Tersertifikasi BSrE BSSN RI
+                  </div>
+                </div>
+
+                <div className="text-center space-y-1">
+                  <p className="text-xs">Ditetapkan di Belopa</p>
+                  <p className="text-xs">Pada tanggal: {new Date(selectedDoc.updated_at || Date.now()).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                  <p className="text-xs font-bold pt-1">{settings.kepalaDinas.officialTitle || 'Kepala Dinas'}</p>
+                  <div className="h-12 flex items-center justify-center">
+                    <span className="font-mono text-xs text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                      [ Ditandatangani Secara Elektronik ]
+                    </span>
+                  </div>
+                  <p className="text-xs font-bold underline">{settings.kepalaDinas.fullName}</p>
+                  <p className="text-[10px] font-mono text-slate-600">NIP. {settings.kepalaDinas.nip}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
