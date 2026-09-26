@@ -858,12 +858,17 @@ export default function PertanianLandClearanceDashboard() {
 
     setIsSubmittingRejection(true);
     try {
+      const year = new Date().getFullYear();
+      const bapRejectDocNum = selectedApp.beritaAcaraDocNum || selectedApp.pertanianBaNumber || `521/${Math.floor(100 + Math.random() * 900)}/BAP-TOLAK-LP2B/DISTAN-LW/${year}`;
+      const timestamp = new Date().toISOString();
+
       const updatePayload = {
         status: 'Rejected_Pertanian',
         pertanian_status: 'REJECTED',
+        berita_acara_num: bapRejectDocNum,
         pertanian_rejection_notes: rejectionReasonInput,
-        override_justification: `[DITOLAK DINAS PERTANIAN]: ${rejectionReasonInput}`,
-        updated_at: new Date().toISOString()
+        override_justification: `[DITOLAK DINAS PERTANIAN - BAP No. ${bapRejectDocNum}]: ${rejectionReasonInput}`,
+        updated_at: timestamp
       };
 
       await Promise.all([
@@ -871,8 +876,10 @@ export default function PertanianLandClearanceDashboard() {
           .from('gis_pkkpr')
           .update({
             status_pkkpr: 'Rejected_Pertanian',
-            catatan_teknis: `[DITOLAK DINAS PERTANIAN]: ${rejectionReasonInput}`,
-            updated_at: new Date().toISOString()
+            berita_acara_pertanian_num: bapRejectDocNum,
+            pertanian_rejection_notes: rejectionReasonInput,
+            catatan_teknis: `[DITOLAK DINAS PERTANIAN - BAP No. ${bapRejectDocNum}]: ${rejectionReasonInput}`,
+            updated_at: timestamp
           })
           .eq('id', selectedApp.id),
         supabase
@@ -889,6 +896,8 @@ export default function PertanianLandClearanceDashboard() {
               ...item,
               agriStatus: 'Rejected',
               pertanianStatus: 'REJECTED',
+              beritaAcaraDocNum: bapRejectDocNum,
+              pertanianBaNumber: bapRejectDocNum,
               rejectionReason: rejectionReasonInput,
               pertanianNotes: rejectionReasonInput
             };
@@ -917,9 +926,11 @@ export default function PertanianLandClearanceDashboard() {
                 ...app,
                 agriStatus: 'Rejected',
                 pertanianStatus: 'REJECTED',
+                beritaAcaraDocNum: bapRejectDocNum,
+                pertanianBaNumber: bapRejectDocNum,
                 rejectionReason: rejectionReasonInput,
                 pertanianNotes: rejectionReasonInput,
-                catatan_teknis: `[DITOLAK DINAS PERTANIAN]: ${rejectionReasonInput}`
+                catatan_teknis: `[DITOLAK DINAS PERTANIAN - BAP No. ${bapRejectDocNum}]: ${rejectionReasonInput}`
               };
             }
             return app;
@@ -938,7 +949,8 @@ export default function PertanianLandClearanceDashboard() {
                 pertanian_status: 'REJECTED',
                 status_pkkpr: 'Rejected_Pertanian',
                 status: 'Rejected_Pertanian',
-                catatan_teknis: `[DITOLAK DINAS PERTANIAN]: ${rejectionReasonInput}`,
+                berita_acara_pertanian_num: bapRejectDocNum,
+                catatan_teknis: `[DITOLAK DINAS PERTANIAN - BAP No. ${bapRejectDocNum}]: ${rejectionReasonInput}`,
                 pertanian_rejection_notes: rejectionReasonInput
               };
             }
@@ -952,14 +964,6 @@ export default function PertanianLandClearanceDashboard() {
 
       setShowRejectionModal(false);
 
-      // Auto-advance inspection focus to next remaining pending review application
-      const remainingPending = queueList.filter(q => q.id !== selectedApp.id && q.agriStatus === 'Pending Review');
-      if (remainingPending.length > 0) {
-        selectAppForReview(remainingPending[0]);
-      } else {
-        setSelectedApp(null);
-      }
-
       // Trigger Cross-OPD Notification to Dinas PUPTR
       addCrossOpdNotification({
         applicationId: selectedApp.id,
@@ -971,24 +975,25 @@ export default function PertanianLandClearanceDashboard() {
         targetRole: 'ADMIN_PUPTR',
         fromRole: 'ADMIN_PERTANIAN',
         type: 'REJECTED_PERTANIAN',
-        title: `Rekomendasi LP2B Ditolak #${selectedApp.id}`,
-        message: `Dinas Pertanian menolak lokasi permohonan ${selectedApp.companyName} karena berada di Zona Terlindung LP2B. Mohon tinjau catatan dan kembalikan ke pemohon.`,
-        notes: rejectionReasonInput
+        title: `BAP Penolakan LP2B Terbit #${selectedApp.id}`,
+        message: `Dinas Pertanian telah menerbitkan BAP Penolakan No. ${bapRejectDocNum} karena lokasi berada di Kawasan LP2B Irigasi Aktif. Mohon dipedomani untuk pengembalian ke pemohon.`,
+        notes: rejectionReasonInput,
+        bapPertanianDocNumber: bapRejectDocNum
       });
 
       Swal.fire({
-        icon: 'info',
-        title: 'Permohonan Dikembalikan / Ditolak ⚠️',
+        icon: 'warning',
+        title: 'BAP Penolakan LP2B Resmi Terbit 📄',
         html: `
-          <div className="text-left text-xs space-y-2 p-3 bg-rose-50 dark:bg-rose-950/50 rounded-xl border border-rose-200 dark:border-rose-800 font-sans">
-            <p className="text-slate-900 dark:text-rose-100"><strong>NIB Pemohon:</strong> ${selectedApp.nibNik}</p>
-            <p className="text-slate-900 dark:text-rose-100"><strong>Catatan Penolakan:</strong> ${rejectionReasonInput}</p>
+          <div class="text-left text-xs space-y-2 p-3 bg-rose-50 dark:bg-rose-950/50 rounded-xl border border-rose-200 dark:border-rose-800 font-sans">
+            <p class="text-slate-900 dark:text-rose-100"><strong>No. BAP Penolakan:</strong> <code class="font-mono text-rose-600 dark:text-rose-300 font-bold">${bapRejectDocNum}</code></p>
+            <p class="text-slate-900 dark:text-rose-100"><strong>Alasan Teknis:</strong> ${rejectionReasonInput}</p>
             <p className="text-slate-600 dark:text-slate-300 text-[11px] pt-1 border-t border-rose-200 dark:border-rose-800">
-              ⚡ Kasus ini dikembalikan ke Dinas PUPTR &amp; Pemohon dengan instruksi revisi deliniasi lahan.
+              ⚡ Dokumen BAP Penolakan ini otomatis terkirim dan menjadi dasar hukum resmi bagi Admin Dinas PUPTR dalam mengembalikan permohonan ke pemohon.
             </p>
           </div>
         `,
-        confirmButtonColor: '#ef4444'
+        confirmButtonColor: '#e11d48'
       });
     } catch (err: any) {
       console.error('Error submitting agrarian rejection:', err);
@@ -1762,17 +1767,33 @@ export default function PertanianLandClearanceDashboard() {
                 Pilih Keputusan &amp; Rekomendasi Teknis
               </span>
 
-              {(selectedApp.pertanianStatus === 'APPROVED' || selectedApp.pertanianStatus === 'REJECTED') ? (
+              {selectedApp.pertanianStatus === 'REJECTED' || selectedApp.agriStatus === 'Rejected' ? (
+                <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/80 border border-rose-300 dark:border-rose-800 text-xs space-y-1.5 font-sans">
+                  <div className="flex items-center gap-2 text-rose-700 dark:text-rose-300 font-extrabold uppercase">
+                    <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+                    <span>⚠️ BAP PENOLAKAN LP2B TELAH DITERBITKAN</span>
+                  </div>
+                  <p className="text-slate-800 dark:text-slate-200">
+                    No. BAP Penolakan: <strong className="font-mono text-rose-600 dark:text-rose-400">{selectedApp.pertanianBaNumber || selectedApp.beritaAcaraDocNum || '521/043/BAP-TOLAK-LP2B/DISTAN-LW/2026'}</strong>
+                  </p>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300 italic bg-white/60 dark:bg-slate-900/60 p-2 rounded-lg border border-rose-200 dark:border-rose-900/60">
+                    "{selectedApp.pertanianNotes || selectedApp.rejectionReason || 'Lokasi berada di kawasan LP2B produktif/sawah irigasi teknis aktif.'}"
+                  </p>
+                  <p className="text-[10px] text-slate-500 pt-1 border-t border-rose-200 dark:border-rose-800/60">
+                    🔒 Berkas telah ditolak dan diteruskan kembali ke Petugas Dinas PUPTR beserta dokumen BAP Penolakan resmi.
+                  </p>
+                </div>
+              ) : (selectedApp.pertanianStatus === 'APPROVED' || selectedApp.agriStatus === 'Approved') ? (
                 <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-xs space-y-1 font-sans">
                   <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 font-extrabold uppercase">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>✓ BAP PERTANIAN TELAH DITERBITKAN ({selectedApp.pertanianStatus})</span>
+                    <span>✓ BAP PERSETUJUAN PERTANIAN TELAH DITERBITKAN</span>
                   </div>
                   <p className="text-slate-800 dark:text-slate-200">
-                    No. Berita Acara: <strong className="font-mono text-emerald-600 dark:text-emerald-400">{selectedApp.pertanianBaNumber || 'BA/DISTAN/2026'}</strong>
+                    No. Berita Acara: <strong className="font-mono text-emerald-600 dark:text-emerald-400">{selectedApp.pertanianBaNumber || selectedApp.beritaAcaraDocNum || '520.1/042/BA-LP2B/DISTAN-LW/2026'}</strong>
                   </p>
                   <p className="text-[11px] text-slate-500 pt-1 border-t border-emerald-200 dark:border-emerald-800/60">
-                    🔒 Rekomendasi alih fungsi lahan telah diproses dan dikembalikan ke Dinas PUPTR. Tombol keputusan telah dinonaktifkan.
+                    🔒 Rekomendasi alih fungsi lahan telah disetujui dan dikembalikan ke Dinas PUPTR.
                   </p>
                 </div>
               ) : (
@@ -1816,10 +1837,18 @@ export default function PertanianLandClearanceDashboard() {
               <button
                 type="button"
                 onClick={handleOpenBapModal}
-                className="w-full py-2.5 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-700 dark:text-indigo-400 border border-indigo-500/30 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition cursor-pointer"
+                className={`w-full py-2.5 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition cursor-pointer ${
+                  selectedApp.pertanianStatus === 'REJECTED' || selectedApp.agriStatus === 'Rejected'
+                    ? 'bg-rose-600/10 hover:bg-rose-600/20 text-rose-700 dark:text-rose-400 border border-rose-500/30'
+                    : 'bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-700 dark:text-indigo-400 border border-indigo-500/30'
+                }`}
               >
                 <FileText className="w-4 h-4" />
-                <span>Lihat / Cetak Berita Acara (BAP LP2B) Dinas Pertanian</span>
+                <span>
+                  {selectedApp.pertanianStatus === 'REJECTED' || selectedApp.agriStatus === 'Rejected'
+                    ? 'Lihat / Cetak BAP Penolakan LP2B Dinas Pertanian 📄'
+                    : 'Lihat / Cetak Berita Acara (BAP LP2B) Dinas Pertanian 📄'}
+                </span>
               </button>
             </div>
           </div>

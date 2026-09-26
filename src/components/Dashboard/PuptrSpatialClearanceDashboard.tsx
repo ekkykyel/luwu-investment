@@ -67,6 +67,10 @@ import { generateBapPdfFromElement } from '../../utils/bapPdfGenerator';
 import { CrossOpdNotificationBell } from '../CrossOpdNotificationBell';
 import { addCrossOpdNotification } from '../../utils/crossOpdNotificationStore';
 import { BapKtrPuptrDocument, convertAppToBapKtrData } from '../documents/BapKtrPuptrDocument';
+import { 
+  BapLp2bPertanianDocument, 
+  convertAppToBapLp2bData 
+} from '../documents/BapLp2bPertanianDocument';
 
 export interface PkkprApplicationItem {
   id: string;
@@ -263,6 +267,8 @@ export default function PuptrSpatialClearanceDashboard() {
   const [isGisToastDismissed, setIsGisToastDismissed] = useState<boolean>(false);
   const [showConflictResolutionModal, setShowConflictResolutionModal] = useState<boolean>(false);
   const [hasLocalOverride, setHasLocalOverride] = useState<boolean>(false);
+  const [showPertanianBapPreview, setShowPertanianBapPreview] = useState<boolean>(false);
+  const [selectedPertanianBapApp, setSelectedPertanianBapApp] = useState<any>(null);
 
   // Automated Turf.js Spatial Conflict Audit for all restricted layers (Sawah/LP2B, Lahan Basah, Mangrove, Tambak, Hutan Lindung, Sungai, Jalan)
   const spatialConflictAudit = useMemo<SpatialConflictEvaluation>(() => {
@@ -2601,6 +2607,19 @@ export default function PuptrSpatialClearanceDashboard() {
                   <p className="text-[11px] text-slate-600 dark:text-slate-300 italic bg-white/60 dark:bg-slate-900/60 p-2 rounded-lg border border-rose-200 dark:border-rose-900/60">
                     "{selectedApp.technicalNotes || selectedApp.pertanianNotes || 'Menunggu pemohon memperbaiki deliniasi koordinat/dokumen persyaratan.'}"
                   </p>
+                  {selectedApp.pertanianBaNumber && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedPertanianBapApp(selectedApp);
+                        setShowPertanianBapPreview(true);
+                      }}
+                      className="w-full py-2 bg-rose-100 hover:bg-rose-200 dark:bg-rose-900/40 text-rose-800 dark:text-rose-200 border border-rose-300 dark:border-rose-800 rounded-xl font-bold text-[11px] flex items-center justify-center gap-1.5 transition cursor-pointer"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-rose-600" />
+                      <span>Lihat Dokumen BAP Penolakan Pertanian (No. {selectedApp.pertanianBaNumber}) 📄</span>
+                    </button>
+                  )}
                   <p className="text-[10px] text-slate-500 pt-1 border-t border-rose-200 dark:border-rose-800/60">
                     ℹ️ Permohonan ini telah dikeluarkan dari antrean tugas aktif Petugas PUPTR dan sedang menunggu perbaikan oleh pemohon.
                   </p>
@@ -2674,19 +2693,54 @@ export default function PuptrSpatialClearanceDashboard() {
                   </div>
                 </div>
               ) : selectedApp.pertanianStatus === 'REJECTED' ? (
-                <button
-                  type="button"
-                  disabled={isIssuingSk}
-                  onClick={handleReturnToApplicant}
-                  className="w-full py-3 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-rose-600/20 transition-all cursor-pointer"
-                >
-                  {isIssuingSk ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <XCircle className="w-4 h-4 text-rose-200" />
-                  )}
-                  <span>Kembalikan ke Pemohon (Ditolak Berdasarkan BAP Pertanian) ↩️</span>
-                </button>
+                <>
+                  {/* BAP Penolakan Dinas Pertanian Warning Banner */}
+                  <div className="p-3.5 bg-rose-50 dark:bg-rose-950/60 border-2 border-rose-400/80 dark:border-rose-800 rounded-2xl space-y-2 font-sans shadow-sm">
+                    <div className="flex items-center justify-between text-rose-800 dark:text-rose-300 font-black text-xs uppercase tracking-wide">
+                      <span className="flex items-center gap-1.5">
+                        <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+                        <span>Dasar Penolakan: BAP Dinas Pertanian</span>
+                      </span>
+                      <span className="font-mono text-[10px] bg-rose-200/80 dark:bg-rose-900 px-2 py-0.5 rounded-full border border-rose-300 dark:border-rose-700">
+                        {selectedApp.pertanianBaNumber || '521/043/BAP-TOLAK-LP2B/DISTAN-LW/2026'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-800 dark:text-slate-200 font-medium">
+                      Rekomendasi alih fungsi lahan <strong className="text-rose-600 dark:text-rose-400">DITOLAK</strong> oleh Dinas Pertanian karena persil berada di Zona LP2B Sawah Irigasi Aktif (UU 41/2009).
+                    </p>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 italic bg-white/70 dark:bg-slate-900/70 p-2 rounded-xl border border-rose-200 dark:border-rose-900">
+                      "{selectedApp.pertanianNotes || 'Lokasi berada di kawasan LP2B produktif/sawah irigasi teknis aktif.'}"
+                    </p>
+                  </div>
+
+                  {/* Button 1: Return to Applicant based on BAP Pertanian */}
+                  <button
+                    type="button"
+                    disabled={isIssuingSk}
+                    onClick={handleReturnToApplicant}
+                    className="w-full py-3 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-rose-600/20 transition-all cursor-pointer"
+                  >
+                    {isIssuingSk ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <XCircle className="w-4 h-4 text-rose-200" />
+                    )}
+                    <span>Kembalikan ke Pemohon (Ditolak Berdasarkan BAP Pertanian) ↩️</span>
+                  </button>
+
+                  {/* Button 2: View / Print BAP Penolakan Dinas Pertanian */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedPertanianBapApp(selectedApp);
+                      setShowPertanianBapPreview(true);
+                    }}
+                    className="w-full py-2.5 bg-rose-100 dark:bg-rose-950/60 hover:bg-rose-200 dark:hover:bg-rose-900 text-rose-800 dark:text-rose-200 border border-rose-300 dark:border-rose-800 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition cursor-pointer"
+                  >
+                    <FileText className="w-4 h-4 text-rose-600" />
+                    <span>Lihat / Cetak BAP Penolakan Dinas Pertanian 📄</span>
+                  </button>
+                </>
               ) : selectedApp.pertanianStatus === 'FORWARDED' ? (
                 <button
                   type="button"
@@ -3059,6 +3113,19 @@ export default function PuptrSpatialClearanceDashboard() {
                 skPkkprNum: selectedApp.skPkkprDocNumber,
                 isTteSigned: Boolean(selectedApp.skPkkprDocNumber)
               }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Official BAP Dinas Pertanian Modal Preview (Penolakan / Persetujuan LP2B) */}
+      {showPertanianBapPreview && selectedPertanianBapApp && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="min-h-screen py-4 px-2 sm:px-4">
+            <BapLp2bPertanianDocument
+              initialData={convertAppToBapLp2bData(selectedPertanianBapApp, getOpdSettings('pertanian'), mapSnapshot)}
+              mapSnapshot={mapSnapshot}
+              onClose={() => setShowPertanianBapPreview(false)}
             />
           </div>
         </div>

@@ -26,6 +26,7 @@ import { getKecamatanLabel, getDesaLabel, getKecamatanId, getDesaId } from "../.
 import { isSameDistrict, normalizeDistrictName } from "../../utils/geoUtils";
 import { generateMergedPkkprPdf, readFileAsDataUrl, uploadPkkprDocumentToStorage } from "../../utils/pkkprDocumentMerger";
 import { BapKtrPuptrDocument, convertAppToBapKtrData } from "../documents/BapKtrPuptrDocument";
+import { BapLp2bPertanianDocument, convertAppToBapLp2bData } from "../documents/BapLp2bPertanianDocument";
 
 interface MasyarakatDashboardProps {
   isDarkMode: boolean;
@@ -552,6 +553,8 @@ export default function MasyarakatDashboard({
   // BAP Document Preview Modal State
   const [isBapDocumentModalOpen, setIsBapDocumentModalOpen] = useState(false);
   const [selectedBapPreviewApp, setSelectedBapPreviewApp] = useState<any>(null);
+  const [isPertanianBapModalOpen, setIsPertanianBapModalOpen] = useState(false);
+  const [selectedPertanianBapApp, setSelectedPertanianBapApp] = useState<any>(null);
 
   // Document Upload States (Sertifikat, Surat Pengantar Desa, Surat Bebas Sengketa)
   const [fileSertifikat, setFileSertifikat] = useState<File | null>(null);
@@ -2645,33 +2648,77 @@ export default function MasyarakatDashboard({
                         <span>{app.created_at ? new Date(app.created_at).toLocaleDateString("id-ID") : "-"}</span>
                       </div>
                     </div>
-                    <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
-                      <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">
-                        {app.pkkpr_status || app.status || "Menunggu Verifikasi PUPTR"}
-                      </span>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSelectedBapPreviewApp(app);
-                            setIsBapDocumentModalOpen(true);
-                          }}
-                          className="px-2.5 py-1.5 rounded-xl text-[11px] font-extrabold bg-[#166534] hover:bg-[#15803d] text-white flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
-                        >
-                          <FileCheck className="w-3.5 h-3.5 text-emerald-200" />
-                          <span>Lihat Naskah BAP</span>
-                        </button>
-                        {app.berkas_gabungan_pdf && (
-                          <a
-                            href={app.berkas_gabungan_pdf}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="px-2 py-1.5 rounded-xl text-[11px] font-bold bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all flex items-center gap-1"
+                    <div className="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2 text-xs">
+                      {/* Technical Notes / BAP Rejection Notice if application is returned */}
+                      {(app.status_pkkpr === 'Requires Revision' || app.status === 'Requires Revision' || app.pertanian_status === 'REJECTED' || app.pertanian_rejection_notes) && (
+                        <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-900 space-y-1">
+                          <div className="flex items-center justify-between text-[11px] font-bold text-rose-700 dark:text-rose-300">
+                            <span>⚠️ Catatan Pengembalian / Revisi:</span>
+                            {app.berita_acara_pertanian_num && (
+                              <span className="font-mono text-[10px] bg-rose-200/60 dark:bg-rose-900/60 px-1.5 py-0.5 rounded">
+                                BAP No. {app.berita_acara_pertanian_num}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-slate-700 dark:text-slate-300 italic">
+                            "{app.catatan_teknis || app.pertanian_rejection_notes || 'Silakan perbaiki deliniasi koordinat/dokumen sesuai instruksi teknis.'}"
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                          app.status_pkkpr === 'Requires Revision' || app.status === 'Requires Revision'
+                            ? 'text-rose-700 dark:text-rose-300 bg-rose-500/10 border border-rose-500/30'
+                            : 'text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20'
+                        }`}>
+                          {app.pkkpr_status || app.status || "Menunggu Verifikasi PUPTR"}
+                        </span>
+                        <div className="flex items-center gap-1.5">
+                          {/* Button 1: BAP Penolakan / Persetujuan LP2B Pertanian (if available) */}
+                          {(app.berita_acara_pertanian_num || app.pertanian_status === 'REJECTED' || app.pertanian_status === 'APPROVED') && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedPertanianBapApp(app);
+                                setIsPertanianBapModalOpen(true);
+                              }}
+                              className={`px-2.5 py-1.5 rounded-xl text-[11px] font-extrabold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer ${
+                                app.pertanian_status === 'REJECTED' || app.status_pkkpr === 'Requires Revision'
+                                  ? 'bg-rose-600 hover:bg-rose-500 text-white'
+                                  : 'bg-emerald-700 hover:bg-emerald-600 text-white'
+                              }`}
+                            >
+                              <FileText className="w-3.5 h-3.5" />
+                              <span>{app.pertanian_status === 'REJECTED' ? 'BAP Penolakan Pertanian' : 'BAP LP2B Pertanian'}</span>
+                            </button>
+                          )}
+
+                          {/* Button 2: BAP Tata Ruang PUPTR */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedBapPreviewApp(app);
+                              setIsBapDocumentModalOpen(true);
+                            }}
+                            className="px-2.5 py-1.5 rounded-xl text-[11px] font-extrabold bg-[#166534] hover:bg-[#15803d] text-white flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
                           >
-                            <Eye className="w-3.5 h-3.5" />
-                            <span>PDF</span>
-                          </a>
-                        )}
+                            <FileCheck className="w-3.5 h-3.5 text-emerald-200" />
+                            <span>BAP PUPTR</span>
+                          </button>
+
+                          {app.berkas_gabungan_pdf && (
+                            <a
+                              href={app.berkas_gabungan_pdf}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="px-2 py-1.5 rounded-xl text-[11px] font-bold bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all flex items-center gap-1"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>PDF</span>
+                            </a>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -4786,6 +4833,44 @@ export default function MasyarakatDashboard({
                 initialData={convertAppToBapKtrData(selectedBapPreviewApp)}
                 onClose={() => setIsBapDocumentModalOpen(false)}
                 showEditorToolbar={true}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL PRATINJAU NASKAH RESMI BAP PENOLAKAN / PERSETUJUAN LP2B DINAS PERTANIAN */}
+      {isPertanianBapModalOpen && selectedPertanianBapApp && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex flex-col p-2 sm:p-6 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-2xl max-w-5xl mx-auto w-full border border-slate-200 dark:border-slate-700 my-auto flex flex-col">
+            <div className="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+              <div className="flex items-center gap-2.5">
+                <div className={`p-2 rounded-xl ${selectedPertanianBapApp.pertanian_status === 'REJECTED' || selectedPertanianBapApp.status_pkkpr === 'Requires Revision' ? 'bg-rose-500/20 text-rose-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="font-extrabold text-sm sm:text-base block">
+                    {selectedPertanianBapApp.pertanian_status === 'REJECTED' || selectedPertanianBapApp.status_pkkpr === 'Requires Revision'
+                      ? 'Naskah Resmi BAP Penolakan Rekomendasi LP2B Dinas Pertanian'
+                      : 'Naskah Resmi BAP Rekomendasi LP2B Dinas Pertanian'}
+                  </span>
+                  <span className="text-[11px] text-slate-400 font-mono">
+                    Nomor Dokumen: {selectedPertanianBapApp.berita_acara_pertanian_num || selectedPertanianBapApp.pertanian_ba_num || '521/043/BAP-TOLAK-LP2B/DISTAN-LW/2026'}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsPertanianBapModalOpen(false)}
+                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="max-h-[85vh] overflow-y-auto custom-scrollbar p-2 sm:p-4 bg-[#f1f5f9]">
+              <BapLp2bPertanianDocument
+                initialData={convertAppToBapLp2bData(selectedPertanianBapApp)}
+                onClose={() => setIsPertanianBapModalOpen(false)}
               />
             </div>
           </div>
