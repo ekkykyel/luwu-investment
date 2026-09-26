@@ -456,11 +456,11 @@ export default function PuptrSpatialClearanceDashboard() {
             const luasM2 = item.luas_m2 ? Number(item.luas_m2) : (item.luas_ha ? Math.round(Number(item.luas_ha) * 10000) : 5000);
 
             let pertStatus: 'NOT_SUBMITTED' | 'FORWARDED' | 'APPROVED' | 'REJECTED' = 'NOT_SUBMITTED';
-            if (item.berita_acara_pertanian_num || item.status_pkkpr === 'Approved_Pertanian') {
+            if (item.berita_acara_pertanian_num || item.status_pkkpr === 'Approved_Pertanian' || item.pertanian_status === 'APPROVED') {
               pertStatus = 'APPROVED';
-            } else if (item.status_pkkpr === 'Rejected_Pertanian') {
+            } else if (item.status_pkkpr === 'Rejected_Pertanian' || item.pertanian_status === 'REJECTED') {
               pertStatus = 'REJECTED';
-            } else if (item.status_pkkpr === 'Forwarded_To_Pertanian') {
+            } else if (item.status_pkkpr === 'Forwarded_To_Pertanian' || item.pertanian_status === 'FORWARDED') {
               pertStatus = 'FORWARDED';
             }
 
@@ -527,11 +527,11 @@ export default function PuptrSpatialClearanceDashboard() {
             const luasBangunanMatch = desc.match(/\[Luas Bangunan:\s*([^\]]+)\]/i);
             
             let pertStatus: 'NOT_SUBMITTED' | 'FORWARDED' | 'APPROVED' | 'REJECTED' = 'NOT_SUBMITTED';
-            if (item.berita_acara_num || item.status === 'Approved_Pertanian') {
+            if (item.berita_acara_num || item.status === 'Approved_Pertanian' || item.pertanian_status === 'APPROVED') {
               pertStatus = 'APPROVED';
-            } else if (item.status === 'Rejected_Pertanian' || item.pertanian_rejection_notes) {
+            } else if (item.status === 'Rejected_Pertanian' || item.pertanian_rejection_notes || item.pertanian_status === 'REJECTED') {
               pertStatus = 'REJECTED';
-            } else if (item.status === 'Forwarded_To_Pertanian' || (item.override_justification && item.override_justification.includes('PERTANIAN'))) {
+            } else if (item.status === 'Forwarded_To_Pertanian' || item.pertanian_status === 'FORWARDED' || (item.override_justification && item.override_justification.includes('PERTANIAN'))) {
               pertStatus = 'FORWARDED';
             }
 
@@ -620,7 +620,7 @@ export default function PuptrSpatialClearanceDashboard() {
                 technicalNotes: 'Permohonan dari Portal Layanan Perizinan PKKPR Publik.',
                 coordinateStatus: 'Valid / Sesuai Batas RTRW',
                 esgStatus: 'CLEAR',
-                pertanianStatus: app.pertanian_status || 'NOT_SUBMITTED',
+                pertanianStatus: (app.pertanian_status || app.status_pkkpr === 'Forwarded_To_Pertanian' || app.status === 'Forwarded_To_Pertanian') ? 'FORWARDED' : 'NOT_SUBMITTED',
                 contactPhone: app.no_whatsapp,
                 createdAt: app.created_at || new Date().toISOString()
               });
@@ -633,9 +633,20 @@ export default function PuptrSpatialClearanceDashboard() {
 
       setQueueList(mapped);
 
-      // Auto-select first item for inspection if none selected
+      // Auto-select first active pending item for inspection (excluding forwarded to Pertanian or approved items)
       if (mapped.length > 0) {
-        setSelectedApp(prev => prev ? (mapped.find(m => m.id === prev.id) || mapped[0]) : mapped[0]);
+        setSelectedApp(prev => {
+          if (!prev) {
+            const active = mapped.find(m => m.pertanianStatus !== 'FORWARDED' && m.pkkprStatus !== 'Approved');
+            return active || mapped[0];
+          }
+          const updatedPrev = mapped.find(m => m.id === prev.id);
+          if (updatedPrev && updatedPrev.pertanianStatus !== 'FORWARDED' && updatedPrev.pkkprStatus !== 'Approved') {
+            return updatedPrev;
+          }
+          const nextPending = mapped.find(m => m.pertanianStatus !== 'FORWARDED' && m.pkkprStatus !== 'Approved');
+          return nextPending || null;
+        });
       }
     } catch (err) {
       console.error('Failed to load PKKPR queue:', err);
@@ -694,6 +705,7 @@ export default function PuptrSpatialClearanceDashboard() {
           .from('gis_pkkpr')
           .update({
             status_pkkpr: 'Forwarded_To_Pertanian',
+            pertanian_status: 'FORWARDED',
             catatan_teknis: `[PERMOHONAN DITERUSKAN KE DINAS PERTANIAN]: ${forwardingJustification}`,
             updated_at: new Date().toISOString()
           })
@@ -702,11 +714,35 @@ export default function PuptrSpatialClearanceDashboard() {
           .from('investments')
           .update({
             status: 'Forwarded_To_Pertanian',
+            pertanian_status: 'FORWARDED',
             override_justification: `[PERMOHONAN DITERUSKAN KE DINAS PERTANIAN]: ${forwardingJustification}`,
             updated_at: new Date().toISOString()
           })
           .eq('id', selectedApp.id)
       ]);
+
+      // Update local storage luwu_pkkpr_my_apps
+      const localAppsRaw = localStorage.getItem("luwu_pkkpr_my_apps");
+      if (localAppsRaw) {
+        try {
+          const localApps = JSON.parse(localAppsRaw);
+          const updatedLocalApps = localApps.map((app: any) => {
+            if (app.id === selectedApp.id || app.pkkpr_doc_number === selectedApp.id || app.nik === selectedApp.nibNik) {
+              return {
+                ...app,
+                pertanian_status: 'FORWARDED',
+                status_pkkpr: 'Forwarded_To_Pertanian',
+                status: 'Forwarded_To_Pertanian',
+                catatan_teknis: forwardingJustification
+              };
+            }
+            return app;
+          });
+          localStorage.setItem("luwu_pkkpr_my_apps", JSON.stringify(updatedLocalApps));
+        } catch (e) {
+          console.warn('Storage update error:', e);
+        }
+      }
 
       // Lock spatial file in local state and auto-remove from active queue view
       setQueueList(prev =>
