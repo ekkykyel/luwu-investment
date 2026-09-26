@@ -1564,6 +1564,285 @@ export function evaluateSpatialConflictsTurf(
   };
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 📐 AUDIT KALKULASI AREA & SRID PROJECTION DEVIATION SYSTEM
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface AreaCalculationResult {
+  srid: number;
+  projectionName: string;
+  areaSqm: number;
+  areaHa: number;
+  perimeterMeters?: number;
+  scaleDistortionFactor?: number;
+}
+
+export interface PolygonAreaAuditComparison {
+  pkkprArea: AreaCalculationResult;
+  investmentArea: AreaCalculationResult;
+  utm51sPkkprArea: AreaCalculationResult;
+  utm51sInvestmentArea: AreaCalculationResult;
+  deltaSqm: number;
+  deltaHa: number;
+  percentageDeviation: number;
+  ratioPkkprToInvestment: number;
+  sridDeviations: {
+    geodesicVsUtmSrid32751DiffSqm: number;
+    scaleDistortionPercent: number;
+    centralMeridianOffsetDeg: number;
+  };
+  auditNotes: string[];
+}
+
+/**
+ * Projects a WGS84 [Longitude, Latitude] coordinate to UTM Zone 51S (EPSG:32751) [Easting X, Northing Y] in meters.
+ */
+export function projectWgs84ToUtm51s(lon: number, lat: number): [number, number] {
+  const rad = Math.PI / 180;
+  const a = 6378137.0; // WGS84 semi-major axis
+  const f = 1 / 298.257223563; // WGS84 flattening
+  const b = a * (1 - f);
+  const e2 = (a * a - b * b) / (a * a);
+  const e2Prime = (a * a - b * b) / (b * b);
+  const k0 = 0.9996;
+  const lon0 = 123.0; // Central Meridian for UTM Zone 51S (120°E to 126°E)
+
+  const phi = lat * rad;
+  const lambda = lon * rad;
+  const lambda0 = lon0 * rad;
+
+  const N = a / Math.sqrt(1 - e2 * Math.sin(phi) * Math.sin(phi));
+  const T = Math.tan(phi) * Math.tan(phi);
+  const C = e2Prime * Math.cos(phi) * Math.cos(phi);
+  const A = (lambda - lambda0) * Math.cos(phi);
+
+  const M = a * (
+    (1 - e2/4 - 3*e2*e2/64 - 5*e2*e2*e2/256) * phi -
+    (3*e2/8 + 3*e2*e2/32 + 45*e2*e2*e2/1024) * Math.sin(2*phi) +
+    (15*e2*e2/256 + 45*e2*e2*e2/1024) * Math.sin(4*phi) -
+    (35*e2*e2*e2/3072) * Math.sin(6*phi)
+  );
+
+  const x = k0 * N * (
+    A +
+    (1 - T + C) * Math.pow(A, 3) / 6 +
+    (5 - 18 * T + T * T + 72 * C - 58 * e2Prime) * Math.pow(A, 5) / 120
+  ) + 500000; // False Easting
+
+  let y = k0 * (
+    M +
+    N * Math.tan(phi) * (
+      A * A / 2 +
+      (5 - T + 9 * C + 4 * C * C) * Math.pow(A, 4) / 24 +
+      (61 - 58 * T + T * T + 600 * C - 330 * e2Prime) * Math.pow(A, 6) / 720
+    )
+  );
+
+  // Southern Hemisphere false northing
+  if (lat < 0) {
+    y += 10000000;
+  }
+
+  return [x, y];
+}
+
+/**
+ * Calculates planar area using Shoelace formula on projected [X, Y] coordinates in meters.
+ */
+export function calculatePlanarShoelaceArea(ringCoords: [number, number][]): number {
+  if (!ringCoords || ringCoords.length < 3) return 0;
+  let sum = 0;
+  const n = ringCoords.length;
+  for (let i = 0; i < n; i++) {
+    const [x1, y1] = ringCoords[i];
+    const [x2, y2] = ringCoords[(i + 1) % n];
+    sum += (x1 * y2) - (x2 * y1);
+  }
+  return Math.abs(sum) / 2;
+}
+
+/**
+ * Calculates polygon area across SRID projections (SRID 4326 Geodesic vs SRID 32751 UTM Zone 51S Planar)
+ * with complete diagnostic scale factors and perimeter calculation.
+ */
+export function calculateArea(
+  inputGeometry: GeoJSON.Geometry | GeoJSON.Feature | any,
+  requestedSrid: number = 4326
+): AreaCalculationResult {
+  try {
+    let feature: Feature<Polygon | MultiPolygon>;
+    if (inputGeometry.type === 'Feature') {
+      feature = inputGeometry as Feature<Polygon | MultiPolygon>;
+    } else if (inputGeometry.type === 'Polygon' || inputGeometry.type === 'MultiPolygon') {
+      feature = turf.feature(inputGeometry) as Feature<Polygon | MultiPolygon>;
+    } else if (Array.isArray(inputGeometry)) {
+      feature = turf.polygon(inputGeometry) as Feature<Polygon>;
+    } else {
+      throw new Error('Invalid geometry structure for area calculation');
+    }
+
+    // 1. Geodesic Area on WGS84 Ellipsoid (SRID 4326) using Turf.js
+    const areaSqmWgs84 = turf.area(feature);
+    const areaHaWgs84 = Number((areaSqmWgs84 / 10000).toFixed(4));
+    const perimeterMeters = turf.length(feature, { units: 'kilometers' }) * 1000;
+
+    if (requestedSrid === 4326) {
+      return {
+        srid: 4326,
+        projectionName: 'WGS84 Geodesic Ellipsoidal Area (SRID 4326)',
+        areaSqm: Number(areaSqmWgs84.toFixed(2)),
+        areaHa: areaHaWgs84,
+        perimeterMeters: Number(perimeterMeters.toFixed(2)),
+        scaleDistortionFactor: 1.0000
+      };
+    }
+
+    // 2. UTM Zone 51S Planar Area (SRID 32751)
+    let totalUtmAreaSqm = 0;
+    const geom = feature.geometry;
+
+    if (geom.type === 'Polygon') {
+      const outerRing = geom.coordinates[0];
+      const utmRing = outerRing.map(pt => projectWgs84ToUtm51s(pt[0], pt[1]));
+      totalUtmAreaSqm = calculatePlanarShoelaceArea(utmRing);
+
+      for (let h = 1; h < geom.coordinates.length; h++) {
+        const holeRing = geom.coordinates[h].map(pt => projectWgs84ToUtm51s(pt[0], pt[1]));
+        totalUtmAreaSqm -= calculatePlanarShoelaceArea(holeRing);
+      }
+    } else if (geom.type === 'MultiPolygon') {
+      for (const polyCoords of geom.coordinates) {
+        const outerRing = polyCoords[0];
+        const utmRing = outerRing.map(pt => projectWgs84ToUtm51s(pt[0], pt[1]));
+        let polyArea = calculatePlanarShoelaceArea(utmRing);
+        for (let h = 1; h < polyCoords.length; h++) {
+          const holeRing = polyCoords[h].map(pt => projectWgs84ToUtm51s(pt[0], pt[1]));
+          polyArea -= calculatePlanarShoelaceArea(holeRing);
+        }
+        totalUtmAreaSqm += polyArea;
+      }
+    }
+
+    const scaleDistortion = areaSqmWgs84 > 0 ? (totalUtmAreaSqm / areaSqmWgs84) : 1.0;
+
+    if (requestedSrid === 32751) {
+      return {
+        srid: 32751,
+        projectionName: 'UTM Zone 51S Planar Projected Area (SRID 32751)',
+        areaSqm: Number(totalUtmAreaSqm.toFixed(2)),
+        areaHa: Number((totalUtmAreaSqm / 10000).toFixed(4)),
+        perimeterMeters: Number(perimeterMeters.toFixed(2)),
+        scaleDistortionFactor: Number(scaleDistortion.toFixed(6))
+      };
+    }
+
+    return {
+      srid: requestedSrid,
+      projectionName: `Custom SRID ${requestedSrid}`,
+      areaSqm: Number(areaSqmWgs84.toFixed(2)),
+      areaHa: areaHaWgs84,
+      perimeterMeters: Number(perimeterMeters.toFixed(2)),
+      scaleDistortionFactor: 1.0
+    };
+  } catch (err) {
+    console.error('[calculateArea] Area computation failed:', err);
+    return {
+      srid: requestedSrid,
+      projectionName: 'Error Fallback',
+      areaSqm: 0,
+      areaHa: 0,
+      perimeterMeters: 0,
+      scaleDistortionFactor: 1.0
+    };
+  }
+}
+
+/**
+ * Audits and compares area calculation between PKKPR Polygon geometry and Investment Application polygon geometry.
+ * Emits rich debugging logs identifying SRID coordinate projection deviations, scale distortion, and area discrepancies.
+ */
+export function auditAreaComparison(
+  pkkprGeometry: any,
+  investmentGeometry: any,
+  options?: { labelPkkpr?: string; labelInvestment?: string }
+): PolygonAreaAuditComparison {
+  const labelPkkpr = options?.labelPkkpr || 'Dokumen BAP PKKPR (Delineasi Utuh SHM/Persil PUPTR)';
+  const labelInvestment = options?.labelInvestment || 'Permohonan Tapak Investasi (Building Footprint)';
+
+  // Calculate Geodesic Area (SRID 4326)
+  const pkkprGeodesic = calculateArea(pkkprGeometry, 4326);
+  const investmentGeodesic = calculateArea(investmentGeometry, 4326);
+
+  // Calculate Planar Area in UTM Zone 51S (SRID 32751)
+  const pkkprUtm = calculateArea(pkkprGeometry, 32751);
+  const investmentUtm = calculateArea(investmentGeometry, 32751);
+
+  // Differences
+  const deltaSqm = Number((pkkprGeodesic.areaSqm - investmentGeodesic.areaSqm).toFixed(2));
+  const deltaHa = Number((pkkprGeodesic.areaHa - investmentGeodesic.areaHa).toFixed(4));
+  const ratioPkkprToInvestment = investmentGeodesic.areaSqm > 0
+    ? Number((pkkprGeodesic.areaSqm / investmentGeodesic.areaSqm).toFixed(2))
+    : 1.0;
+  const percentageDeviation = investmentGeodesic.areaSqm > 0
+    ? Number(((deltaSqm / investmentGeodesic.areaSqm) * 100).toFixed(2))
+    : 0;
+
+  // SRID Deviation
+  const geodesicVsUtmSrid32751DiffSqm = Number((pkkprGeodesic.areaSqm - pkkprUtm.areaSqm).toFixed(2));
+  const scaleDistortionPercent = Number(((pkkprUtm.scaleDistortionFactor - 1) * 100).toFixed(4));
+
+  const auditNotes: string[] = [
+    `1. POLIGON PKKPR (${pkkprGeodesic.areaHa} Ha / ${pkkprGeodesic.areaSqm.toLocaleString()} m²) merepresentasikan cakupan Delineasi Utuh Persil SHM / KDH / Buffer GSB.`,
+    `2. POLIGON INVESTASI (${investmentGeodesic.areaHa} Ha / ${investmentGeodesic.areaSqm.toLocaleString()} m²) merepresentasikan Tapak Fisik Bangunan (Building Footprint).`,
+    `3. DEVIASI LUASAN: Poligon PKKPR ${ratioPkkprToInvestment}x lebih luas (+${percentageDeviation}% / +${deltaHa} Ha) dibandingkan poligon tapak awal.`,
+    `4. PROYEKSI SRID: Selisih antara Geodesic (SRID 4326) dan Planar UTM 51S (SRID 32751) adalah ${geodesicVsUtmSrid32751DiffSqm} m² (Faktor Distorsi Skala: ${pkkprUtm.scaleDistortionFactor}).`,
+    `5. LOKASI GEOGRAFIS: Luwu berada di Latitude -3.27°, Longitude ~120.30° E (UTM 51S Central Meridian 123.0° E, Offset -2.70°).`
+  ];
+
+  // 📝 RICH DEBUGGING CONSOLE LOGS FOR SPATIAL AUDIT TRAIL
+  console.group('%c📐 [SPATIAL AUDIT LOG] AUDIT KALKULASI AREA & SRID DEVIATION ANALYSIS', 'color: #10b981; font-weight: bold; font-size: 13px;');
+  console.log(`%c📌 Target 1: ${labelPkkpr}`, 'color: #3b82f6; font-weight: bold;');
+  console.log(`   • WGS84 Geodesic (SRID 4326): ${pkkprGeodesic.areaSqm.toLocaleString()} m² (${pkkprGeodesic.areaHa} Ha)`);
+  console.log(`   • UTM 51S Planar (SRID 32751): ${pkkprUtm.areaSqm.toLocaleString()} m² (${pkkprUtm.areaHa} Ha)`);
+  console.log(`   • Keliling (Perimeter): ${pkkprGeodesic.perimeterMeters?.toLocaleString()} meter`);
+
+  console.log(`%c📌 Target 2: ${labelInvestment}`, 'color: #f59e0b; font-weight: bold;');
+  console.log(`   • WGS84 Geodesic (SRID 4326): ${investmentGeodesic.areaSqm.toLocaleString()} m² (${investmentGeodesic.areaHa} Ha)`);
+  console.log(`   • UTM 51S Planar (SRID 32751): ${investmentUtm.areaSqm.toLocaleString()} m² (${investmentUtm.areaHa} Ha)`);
+  console.log(`   • Keliling (Perimeter): ${investmentGeodesic.perimeterMeters?.toLocaleString()} meter`);
+
+  console.group('%c📊 COMPARED RESULTS & DEVIATION METRICS', 'color: #8b5cf6; font-weight: bold;');
+  console.log(`   • Selisih Luasan (Delta): +${deltaSqm.toLocaleString()} m² (+${deltaHa} Ha)`);
+  console.log(`   • Deviasi Persentase: +${percentageDeviation}%`);
+  console.log(`   • Rasio Skala Area: PKKPR = ${ratioPkkprToInvestment} x Tapak Investasi`);
+  console.log(`   • Selisih Proyeksi SRID 4326 vs SRID 32751: ${geodesicVsUtmSrid32751DiffSqm} m²`);
+  console.log(`   • Scale Distortion Factor (UTM 51S k0): ${pkkprUtm.scaleDistortionFactor} (${scaleDistortionPercent}% distortion)`);
+  console.groupEnd();
+
+  console.group('%c🔍 CATATAN AUDIT TEKNIS TATA RUANG', 'color: #10b981; font-weight: bold;');
+  auditNotes.forEach(note => console.log(`   ${note}`));
+  console.groupEnd();
+
+  console.groupEnd();
+
+  return {
+    pkkprArea: pkkprGeodesic,
+    investmentArea: investmentGeodesic,
+    utm51sPkkprArea: pkkprUtm,
+    utm51sInvestmentArea: investmentUtm,
+    deltaSqm,
+    deltaHa,
+    percentageDeviation,
+    ratioPkkprToInvestment,
+    sridDeviations: {
+      geodesicVsUtmSrid32751DiffSqm,
+      scaleDistortionPercent,
+      centralMeridianOffsetDeg: -2.70
+    },
+    auditNotes
+  };
+}
+
 
 
 
