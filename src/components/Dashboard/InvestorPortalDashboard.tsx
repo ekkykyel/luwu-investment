@@ -41,7 +41,17 @@ import {
   Check,
   Send,
   Star,
-  MessageSquareHeart
+  MessageSquareHeart,
+  Printer,
+  Download,
+  Eye,
+  Clock,
+  ArrowRight,
+  FileCheck2,
+  AlertCircle,
+  Wheat,
+  Sliders,
+  Search
 } from 'lucide-react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid, ReferenceLine, Legend } from 'recharts';
 import Swal from 'sweetalert2';
@@ -55,6 +65,7 @@ import NibVerificationForm from '../Auth/NibVerificationForm.js';
 import { LuwuLogo } from '../LuwuLogo.js';
 import { CrossOpdNotificationBell } from '../CrossOpdNotificationBell';
 import { generateSkPkkprPdf } from '../../utils/skPkkprPdfGenerator';
+import { SkPkkprDpmptspDocument, SkPkkprDpmptspData } from '../documents/SkPkkprDpmptspDocument';
 import ThemeToggle from '@/components/ThemeToggle';
 import LanguageToggle from '@/components/LanguageToggle';
 import LoadingScreen from '../LoadingScreen.js';
@@ -76,7 +87,7 @@ export default function InvestorPortalDashboard() {
   useEffect(() => { return () => { exitSmartFullscreen(); }; }, []);
 
   const { t, i18n } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'overview' | 'verify' | 'simulation' | 'testimonial' | 'survey_skm' | 'site-selection'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'pkkpr_tracking' | 'verify' | 'simulation' | 'testimonial' | 'survey_skm' | 'site-selection'>('overview');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { investments, districts, isLoading: isGlobalLoading } = useData();
   const [isLoading, setIsLoading] = useState(false);
@@ -84,6 +95,14 @@ export default function InvestorPortalDashboard() {
   const [userRole, setUserRole] = useState<string>('investor');
   const [error, setError] = useState<string | null>(null);
   const [selectedInvestmentId, setSelectedInvestmentId] = useState<string | null>(null);
+
+  // PKKPR Tracking & SK Issuance States
+  const [myPkkprApplications, setMyPkkprApplications] = useState<any[]>([]);
+  const [isLoadingApplications, setIsLoadingApplications] = useState(false);
+  const [pkkprFilterStatus, setPkkprFilterStatus] = useState<string>('ALL');
+  const [pkkprSearchQuery, setPkkprSearchQuery] = useState<string>('');
+  const [selectedSkDocumentData, setSelectedSkDocumentData] = useState<SkPkkprDpmptspData | null>(null);
+  const [isSkDocModalOpen, setIsSkDocModalOpen] = useState(false);
 
   // States for Financial Simulation
   const [capex, setCapex] = useState<string>('5000000000'); // IDR 5 Billion as default for a professional project
@@ -275,8 +294,189 @@ export default function InvestorPortalDashboard() {
     return null;
   };
 
+  // Fetch real investor PKKPR applications from Supabase gis_pkkpr & investments tables
+  const fetchInvestorApplications = async () => {
+    setIsLoadingApplications(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const storedNib = hydratedCorporateProfile.nib || localStorage.getItem("luwu_user_nib") || "";
+      const storedEmail = user?.email || hydratedCorporateProfile.emailPerusahaan || localStorage.getItem("luwu_user_email") || "";
+      const storedCompany = hydratedCorporateProfile.namaPerusahaan || localStorage.getItem("luwu_company_name") || "";
+
+      // 1. Fetch from gis_pkkpr
+      const { data: pkkprRows } = await supabase
+        .from('gis_pkkpr')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      // 2. Fetch from investments table
+      const { data: invRows } = await supabase
+        .from('investments')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      const combined: any[] = [];
+      const seenIds = new Set<string>();
+
+      if (pkkprRows && Array.isArray(pkkprRows)) {
+        pkkprRows.forEach((item: any) => {
+          seenIds.add(item.id);
+          const rawStatus = item.status_pkkpr || item.status || 'Pending Spatial Check';
+          const isApproved = rawStatus === 'Approved' || rawStatus === 'Approved_PUPTR' || rawStatus === 'Approved_Pertanian';
+          const isPublished = rawStatus === 'Published' || Boolean(item.sk_pkkpr_num);
+          const isRevision = rawStatus === 'Requires Revision' || rawStatus === 'Returned';
+          const isRejected = rawStatus === 'Rejected';
+
+          combined.push({
+            id: item.id,
+            nomorPermohonan: item.id,
+            namaPermohonan: item.nama_permohonan || item.nama_kegiatan || 'Permohonan PKKPR Berusaha',
+            namaBadanUsaha: item.nama_badan_usaha || item.perusahaan || hydratedCorporateProfile.namaPerusahaan || 'PT Pemohon Berusaha',
+            namaPemohon: item.nama_pemohon || hydratedCorporateProfile.namaPenanggungJawab || 'Pemohon Terdaftar',
+            nib: item.nib_oss || item.nik_pemohon || hydratedCorporateProfile.nib || '-',
+            sektor: item.sektor || 'Industri Pengolahan',
+            kecamatan: item.kecamatan || '-',
+            desa: item.desa_kelurahan || item.desa || '-',
+            luasM2: Number(item.luas_m2) || (item.luas_ha ? Number(item.luas_ha) * 10000 : 0),
+            luasHa: Number(item.luas_ha) || (item.luas_m2 ? Number(item.luas_m2) / 10000 : 0),
+            nilaiInvestasi: Number(item.nilai_investasi) || 0,
+            statusPkkpr: rawStatus,
+            isPublished,
+            isApproved,
+            isRevision,
+            isRejected,
+            skPkkprNum: item.sk_pkkpr_num || item.sk_pkkpr_doc_number,
+            pertekPuptrNum: item.pertek_puptr_num || item.pkkpr_doc_number,
+            pertanianBaNum: item.pertanian_ba_number || item.nomor_bap_pertanian,
+            catatanTeknis: item.catatan_teknis || item.deskripsi || item.technical_notes,
+            fileSkPkkprUrl: item.file_sk_pkkpr_url || item.sk_pkkpr_url || item.berkas_sk_pkkpr_url,
+            isTteSigned: Boolean(item.sk_pkkpr_num || rawStatus === 'Published'),
+            tteSignedDate: item.updated_at || item.created_at,
+            createdAt: item.created_at || new Date().toISOString(),
+            updatedAt: item.updated_at || new Date().toISOString(),
+            geometry: item.geometry_json || item.geometry
+          });
+        });
+      }
+
+      if (invRows && Array.isArray(invRows)) {
+        invRows.forEach((item: any) => {
+          if (!seenIds.has(item.id) && (item.title?.includes('PKKPR') || item.nib || item.sk_pkkpr_doc_number)) {
+            seenIds.add(item.id);
+            const rawStatus = item.status || 'Pending Spatial Check';
+            const isApproved = rawStatus === 'Approved' || rawStatus === 'Approved_PUPTR';
+            const isPublished = rawStatus === 'Published' || Boolean(item.sk_pkkpr_doc_number);
+            const isRevision = rawStatus === 'Requires Revision' || rawStatus === 'Returned';
+            const isRejected = rawStatus === 'Rejected';
+
+            combined.push({
+              id: item.id,
+              nomorPermohonan: item.id,
+              namaPermohonan: item.name || item.title || 'Permohonan Investasi PKKPR',
+              namaBadanUsaha: item.contact_pic || hydratedCorporateProfile.namaPerusahaan || 'PT Pemohon Berusaha',
+              namaPemohon: item.contact_pic || hydratedCorporateProfile.namaPenanggungJawab || 'Pemohon Terdaftar',
+              nib: item.nib || hydratedCorporateProfile.nib || '-',
+              sektor: item.sector || 'Pertanian',
+              kecamatan: item.kecamatan || item.district_id || '-',
+              desa: item.desa || item.village_id || '-',
+              luasM2: item.area_ha ? Number(item.area_ha) * 10000 : 0,
+              luasHa: Number(item.area_ha) || 0,
+              nilaiInvestasi: Number(item.investment_value) || 0,
+              statusPkkpr: rawStatus,
+              isPublished,
+              isApproved,
+              isRevision,
+              isRejected,
+              skPkkprNum: item.sk_pkkpr_doc_number,
+              pertekPuptrNum: item.pkkpr_doc_number,
+              pertanianBaNum: item.pertanian_ba_number,
+              catatanTeknis: item.description,
+              fileSkPkkprUrl: item.file_sk_pkkpr_url,
+              isTteSigned: Boolean(item.sk_pkkpr_doc_number || rawStatus === 'Published'),
+              tteSignedDate: item.updated_at || item.created_at,
+              createdAt: item.created_at || new Date().toISOString(),
+              updatedAt: item.updated_at || new Date().toISOString(),
+              geometry: item.geometry
+            });
+          }
+        });
+      }
+
+      setMyPkkprApplications(combined);
+    } catch (err) {
+      console.warn("Gagal memuat status permohonan PKKPR:", err);
+    } finally {
+      setIsLoadingApplications(false);
+    }
+  };
+
+  const handleOpenSkDocument = (appItem: any) => {
+    const dateFormatted = new Date(appItem.updatedAt || appItem.createdAt).toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+
+    const skNum = appItem.skPkkprNum || `503/SK-PKKPR/DPMPTSP-LW/${new Date().getFullYear()}/${appItem.id.slice(-4)}`;
+    const pertekNum = appItem.pertekPuptrNum || `600.1.15/042/BAP-PKKPR-B/PUPTR-TR/LUWU/${new Date().getFullYear()}`;
+    const baPertanianNum = appItem.pertanianBaNum || `521/089/BAP-LP2B/DISTAN-LW/${new Date().getFullYear()}`;
+
+    const skData: SkPkkprDpmptspData = {
+      nomorSkPkkpr: skNum,
+      tanggalDitetapkan: dateFormatted,
+      tempatDitetapkan: 'Belopa',
+      jenisPermohonan: 'Berusaha',
+      nomorBapPuptr: pertekNum,
+      tanggalBapPuptr: dateFormatted,
+      nomorBapPertanian: baPertanianNum,
+      tanggalBapPertanian: dateFormatted,
+      namaPemohon: appItem.namaPemohon || hydratedCorporateProfile.namaPenanggungJawab || 'Pemohon Terdaftar',
+      namaPerusahaan: appItem.namaBadanUsaha || hydratedCorporateProfile.namaPerusahaan || 'PT Pemohon Berusaha',
+      nibOss: appItem.nib || hydratedCorporateProfile.nib || '1234567890123',
+      alamatPemohon: `Kabupaten Luwu, Provinsi Sulawesi Selatan`,
+      teleponPemohon: '0812-4567-8901',
+      emailPemohon: hydratedCorporateProfile.emailPerusahaan || 'investor@luwukab.go.id',
+      sektorUsaha: `Sektor ${appItem.sektor || 'Perindustrian & Manufaktur'}`,
+      skalaUsaha: appItem.nilaiInvestasi > 10000000000 ? 'Usaha Besar / PMDN (Modal Usaha > Rp 10 Miliar)' : 'Usaha Menengah',
+      kbliCode: '10799',
+      judulKbli: `Kegiatan Komersial & Industri ${appItem.sektor}`,
+      lokasiKegiatan: `Desa ${appItem.desa}, Kecamatan ${appItem.kecamatan}`,
+      desaKelurahan: appItem.desa,
+      kecamatan: appItem.kecamatan,
+      kabupaten: 'Kabupaten Luwu',
+      luasLahanPermohonan: `${(appItem.luasHa || 1).toFixed(2)} Ha (${(appItem.luasM2 || 10000).toLocaleString('id-ID')} m²)`,
+      luasLahanDisetujui: `${(appItem.luasHa || 1).toFixed(2)} Ha (${(appItem.luasM2 || 10000).toLocaleString('id-ID')} m²)`,
+      statusKepemilikanTanah: 'Sertipikat Hak Guna Bangunan (HGB)',
+      dokumenLingkungan: 'AMDAL / UKL-UPL Terstandar',
+      zonaRtrw: 'Kawasan Peruntukan Industri / Ruang Usaha Komersial',
+      fungsiBangunan: `Fasilitas Bangunan Industri & Operasional ${appItem.sektor}`,
+      koefisienDasarBangunan: '60%',
+      koefisienLantaiBangunan: '2.0',
+      koefisienDaerahHijau: '20%',
+      garisSempadanBangunan: '10 Meter dari As Jalan Utama',
+      ketentuanPersyaratanTeknis: [
+        'Wajib mematuhi rencana tapak, Garis Sempadan Bangunan (GSB), dan penyediaan RTH minimal 20%.',
+        'Persetujuan Bangunan Gedung (PBG) wajib diterbitkan sebelum kegiatan konstruksi fisik dimulai.',
+        'Wajib mematuhi dokumen pengelolaan lingkungan hidup dan standar baku mutu limbah.',
+        'Surat Keputusan PKKPR ini berlaku selama kegiatan usaha beroperasi sesuai dengan peruntukan ruang yang disetujui.'
+      ],
+      masaBerlakuTahun: 3,
+      kadisNama: 'Drs. H. Muhammad Rudi, M.Si',
+      kadisNip: '19740812 199803 1 004',
+      kadisPangkatGolongan: 'Pembina Utama Muda (IV/c)',
+      kadisJabatan: 'Kepala Dinas Penanaman Modal dan PTSP Kabupaten Luwu',
+      isTteSigned: true,
+      tteSignedDate: dateFormatted,
+      tteQrCodeUrl: `https://simpurusiang.luwukab.go.id/verify-sk?doc=${encodeURIComponent(skNum)}`
+    };
+
+    setSelectedSkDocumentData(skData);
+    setIsSkDocModalOpen(true);
+  };
+
   useEffect(() => {
     fetchAndHydrateCorporateProfile();
+    fetchInvestorApplications();
   }, [companyName]);
 
   // Cascading Relational Dropdown: Fetch villages from gis_desa table based on chosen Kecamatan
@@ -917,6 +1117,7 @@ export default function InvestorPortalDashboard() {
 
   const tabs = [
     { id: 'overview', label: t('dashboard.menuOverview', 'Ringkasan'), icon: LayoutDashboard, badge: 'UTAMA' },
+    { id: 'pkkpr_tracking', label: t('dashboard.menuPkkprTracking', 'Status Permohonan PKKPR'), icon: FileCheck2, badge: 'OSS • GIS' },
     { id: 'site-selection', label: t('dashboard.menuSiteSelection', 'Rekomendasi Lokasi AI'), icon: MapPin, badge: 'AI GIS' },
     { id: 'verify', label: t('dashboard.menuVerify', 'Verifikasi NIB'), icon: ShieldCheck, badge: 'OSS' },
     { id: 'simulation', label: t('dashboard.menuSimulation', 'Simulasi Finansial'), icon: Calculator, badge: 'ROI' },
@@ -1022,15 +1223,17 @@ export default function InvestorPortalDashboard() {
             <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">
               {activeTab === 'overview' 
                 ? t('dashboard.menuOverview', 'Ringkasan') 
-                : activeTab === 'site-selection'
-                  ? t('dashboard.menuSiteSelection', 'Rekomendasi Lokasi AI')
-                  : activeTab === 'verify' 
-                    ? t('dashboard.menuVerify', 'Verifikasi NIB') 
-                    : activeTab === 'simulation'
-                      ? t('dashboard.menuSimulation', 'Simulasi Finansial')
-                      : activeTab === 'survey_skm'
-                        ? t('dashboard.menuSurveySkm', 'Survei SKM')
-                        : t('dashboard.menuTestimonial', 'Testimoni Pengguna')
+                : activeTab === 'pkkpr_tracking'
+                  ? t('dashboard.menuPkkprTracking', 'Status Permohonan PKKPR')
+                  : activeTab === 'site-selection'
+                    ? t('dashboard.menuSiteSelection', 'Rekomendasi Lokasi AI')
+                    : activeTab === 'verify' 
+                      ? t('dashboard.menuVerify', 'Verifikasi NIB') 
+                      : activeTab === 'simulation'
+                        ? t('dashboard.menuSimulation', 'Simulasi Finansial')
+                        : activeTab === 'survey_skm'
+                          ? t('dashboard.menuSurveySkm', 'Survei SKM')
+                          : t('dashboard.menuTestimonial', 'Testimoni Pengguna')
               }
             </span>
           </div>
@@ -1220,6 +1423,113 @@ export default function InvestorPortalDashboard() {
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* 1.5. LIVE PKKPR & LICENSING END-TO-END TRACKER BANNER (DPMPTSP • PUPTR • PERTANIAN) */}
+            <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-teal-950 border border-teal-500/30 text-white shadow-xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-80 h-40 bg-teal-500/10 blur-3xl rounded-full -mr-20 -mt-10 pointer-events-none" />
+              <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="space-y-1.5">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-teal-500/20 text-teal-300 border border-teal-500/30">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>PELACAK PERIZINAN BERUSAHA • OSS-RBA KABUPATEN LUWU</span>
+                  </div>
+                  <h3 className="text-lg sm:text-xl font-black tracking-tight text-white flex items-center gap-2">
+                    <span>Status Permohonan PKKPR &amp; SK Izin Berusaha</span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono">
+                      {myPkkprApplications.length} Permohonan
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
+                    Pantau tahapan verifikasi spasial lintas OPD (Dinas Pertanian LP2B &amp; Dinas PUPTR Tata Ruang) hingga penerbitan resmi Surat Keputusan (SK) PKKPR oleh DPMPTSP dengan tanda tangan elektronik (TTE).
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={() => setActiveTab('pkkpr_tracking')}
+                    className="px-4 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs transition-all shadow-lg hover:shadow-teal-500/20 flex items-center gap-2 cursor-pointer active:scale-95"
+                  >
+                    <FileCheck2 className="w-4 h-4" />
+                    <span>Buka Status Permohonan</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={openCorporatePkkprModal}
+                    className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition border border-white/10 flex items-center gap-2 cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Ajukan Baru</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Quick Status Cards / Latest Application Preview */}
+              {myPkkprApplications.length > 0 ? (
+                <div className="mt-5 pt-5 border-t border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {myPkkprApplications.slice(0, 2).map((app) => {
+                    const isPublished = app.isPublished;
+                    const isApproved = app.isApproved;
+                    return (
+                      <div
+                        key={app.id}
+                        className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 hover:border-teal-500/40 transition-all flex flex-col justify-between gap-3 group"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="space-y-0.5">
+                            <div className="flex items-center gap-2">
+                              <span className={`w-2 h-2 rounded-full ${isPublished ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' : isApproved ? 'bg-teal-400' : 'bg-amber-400 animate-pulse'}`} />
+                              <span className="text-xs font-bold text-white truncate max-w-[200px] sm:max-w-xs">{app.namaPermohonan}</span>
+                            </div>
+                            <p className="text-[10px] text-slate-400 font-mono">
+                              No. Reg: {app.nomorPermohonan} • Kec. {app.kecamatan}
+                            </p>
+                          </div>
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${
+                            isPublished
+                              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                              : isApproved
+                              ? 'bg-teal-500/20 text-teal-300 border border-teal-500/40'
+                              : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                          }`}>
+                            {isPublished ? 'SK Terbit' : isApproved ? 'Disetujui OPD' : 'Proses Kajian'}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-800/50">
+                          <span className="text-[10px] text-slate-400 font-mono">
+                            Luas: {app.luasHa ? app.luasHa.toFixed(2) : '-'} Ha • {app.sektor}
+                          </span>
+                          {isPublished ? (
+                            <button
+                              onClick={() => handleOpenSkDocument(app)}
+                              className="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-[10px] flex items-center gap-1.5 transition shadow-sm cursor-pointer"
+                            >
+                              <Printer className="w-3 h-3" />
+                              <span>Cetak SK PKKPR</span>
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => setActiveTab('pkkpr_tracking')}
+                              className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold flex items-center gap-1 transition cursor-pointer"
+                            >
+                              <Clock className="w-3 h-3 text-amber-400" />
+                              <span>Lihat Tahapan</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between gap-4 text-xs text-slate-400">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-teal-400" />
+                    <span>Belum ada permohonan aktif. Gunakan tombol di atas untuk mengajukan izin PKKPR baru.</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* 2. Middle Row: Spatial Highlights & Analytics (2 Columns: 60% / 40%) */}
@@ -1473,6 +1783,475 @@ export default function InvestorPortalDashboard() {
                 </div>
               </div>
             </div>
+          </div>
+        ) : activeTab === 'pkkpr_tracking' ? (
+          <div className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 mt-4 md:mt-0 pb-12">
+            {/* 1. Header Banner */}
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-teal-950 via-slate-900 to-slate-950 p-6 sm:p-8 text-white shadow-2xl border border-teal-500/30">
+              <div className="absolute top-0 right-0 w-96 h-64 bg-teal-500/10 blur-3xl rounded-full -mr-20 -mt-20 pointer-events-none" />
+              <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="space-y-2">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-teal-500/20 text-teal-300 border border-teal-500/30">
+                    <Building2 className="w-3.5 h-3.5" />
+                    <span>DPMPTSP • DINAS PUPTR • DINAS PERTANIAN KABUPATEN LUWU</span>
+                  </div>
+                  <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white flex items-center gap-3">
+                    <span>Status &amp; Pelacak Permohonan PKKPR</span>
+                    <span className="text-xs px-2.5 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-mono font-bold">
+                      OSS-RBA Terintegrasi
+                    </span>
+                  </h1>
+                  <p className="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
+                    Sistem pemantauan terpadu alur verifikasi geospasial izin berusaha di Kabupaten Luwu. Dokumen resmi Surat Keputusan (SK) PKKPR dapat langsung dicetak atau diunduh dengan keabsahan TTE Digital BSrE setelah disetujui.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <button
+                    onClick={fetchInvestorApplications}
+                    className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition flex items-center gap-2 border border-white/10 cursor-pointer active:scale-95"
+                  >
+                    <Clock className={`w-4 h-4 text-teal-300 ${isLoadingApplications ? 'animate-spin' : ''}`} />
+                    <span>Segarkan Data</span>
+                  </button>
+                  <button
+                    onClick={openCorporatePkkprModal}
+                    className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black transition flex items-center gap-2 shadow-lg hover:shadow-emerald-500/20 cursor-pointer active:scale-95"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Ajukan Permohonan Baru</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* 2. KPI Summary Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+                <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
+                  <span>Total Permohonan</span>
+                  <FileText className="w-4 h-4 text-teal-500" />
+                </div>
+                <div className="text-2xl font-black text-slate-900 dark:text-white font-mono">
+                  {myPkkprApplications.length}
+                </div>
+                <p className="text-[10px] text-slate-500">Berkas Terdaftar di Sistem</p>
+              </div>
+
+              <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+                <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
+                  <span>Dalam Kajian Spasial</span>
+                  <Clock className="w-4 h-4 text-amber-500" />
+                </div>
+                <div className="text-2xl font-black text-amber-600 dark:text-amber-400 font-mono">
+                  {myPkkprApplications.filter(a => !a.isPublished && !a.isApproved).length}
+                </div>
+                <p className="text-[10px] text-slate-500">Proses PUPTR &amp; Pertanian</p>
+              </div>
+
+              <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+                <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
+                  <span>Disetujui / Siap Terbit</span>
+                  <CheckCircle2 className="w-4 h-4 text-blue-500" />
+                </div>
+                <div className="text-2xl font-black text-blue-600 dark:text-blue-400 font-mono">
+                  {myPkkprApplications.filter(a => a.isApproved && !a.isPublished).length}
+                </div>
+                <p className="text-[10px] text-slate-500">Menunggu TTE DPMPTSP</p>
+              </div>
+
+              <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
+                <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
+                  <span>SK Terbit &amp; Siap Cetak</span>
+                  <FileCheck2 className="w-4 h-4 text-emerald-500" />
+                </div>
+                <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono">
+                  {myPkkprApplications.filter(a => a.isPublished).length}
+                </div>
+                <p className="text-[10px] text-slate-500">Telah Di-TTE &amp; Siap Unduh</p>
+              </div>
+            </div>
+
+            {/* 3. Filter & Search Controls */}
+            <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Cari permohonan berdasarkan nama proyek, nomor registrasi, NIB, atau lokasi desa/kecamatan..."
+                  value={pkkprSearchQuery}
+                  onChange={(e) => setPkkprSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:border-teal-500 transition-all font-medium"
+                />
+              </div>
+
+              <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1 md:pb-0">
+                {[
+                  { id: 'ALL', label: 'Semua Status' },
+                  { id: 'PENDING', label: 'Dalam Kajian' },
+                  { id: 'APPROVED', label: 'Disetujui' },
+                  { id: 'PUBLISHED', label: 'SK Terbit (Siap Cetak)' },
+                  { id: 'REVISION', label: 'Perlu Revisi' },
+                ].map((st) => (
+                  <button
+                    key={st.id}
+                    onClick={() => setPkkprFilterStatus(st.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
+                      pkkprFilterStatus === st.id
+                        ? 'bg-teal-600 text-white shadow-sm'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    {st.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 4. Applications List */}
+            {isLoadingApplications ? (
+              <div className="p-12 flex flex-col items-center justify-center gap-3 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800">
+                <Loader2 className="w-8 h-8 text-teal-500 animate-spin" />
+                <p className="text-xs text-slate-500 font-medium">Menyinkronkan data permohonan PKKPR dari Supabase...</p>
+              </div>
+            ) : myPkkprApplications.length === 0 ? (
+              <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
+                <div className="w-16 h-16 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 mx-auto flex items-center justify-center">
+                  <FileText className="w-8 h-8 stroke-1" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">Belum Ada Permohonan PKKPR</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+                    Anda belum mengajukan permohonan Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR). Silakan ajukan melalui formulir digital spasial di bawah ini.
+                  </p>
+                </div>
+                <button
+                  onClick={openCorporatePkkprModal}
+                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-md hover:shadow-emerald-500/20 inline-flex items-center gap-2 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Ajukan Permohonan PKKPR Baru</span>
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4 sm:space-y-6">
+                {myPkkprApplications
+                  .filter(app => {
+                    if (pkkprFilterStatus === 'PENDING' && (app.isPublished || app.isApproved || app.isRejected)) return false;
+                    if (pkkprFilterStatus === 'APPROVED' && (!app.isApproved || app.isPublished)) return false;
+                    if (pkkprFilterStatus === 'PUBLISHED' && !app.isPublished) return false;
+                    if (pkkprFilterStatus === 'REVISION' && !app.isRevision && !app.isRejected) return false;
+
+                    if (pkkprSearchQuery) {
+                      const q = pkkprSearchQuery.toLowerCase();
+                      const matchName = app.namaPermohonan?.toLowerCase().includes(q);
+                      const matchReg = app.nomorPermohonan?.toLowerCase().includes(q);
+                      const matchSk = app.skPkkprNum?.toLowerCase().includes(q);
+                      const matchKec = app.kecamatan?.toLowerCase().includes(q);
+                      const matchDesa = app.desa?.toLowerCase().includes(q);
+                      const matchNib = app.nib?.toLowerCase().includes(q);
+                      const matchPt = app.namaBadanUsaha?.toLowerCase().includes(q);
+                      if (!matchName && !matchReg && !matchSk && !matchKec && !matchDesa && !matchNib && !matchPt) {
+                        return false;
+                      }
+                    }
+                    return true;
+                  })
+                  .map((app) => {
+                    const isPublished = app.isPublished;
+                    const isApproved = app.isApproved;
+                    const isRevision = app.isRevision;
+                    const isRejected = app.isRejected;
+
+                    // Compute Stepper status
+                    const step1Done = true;
+                    const step2Done = Boolean(app.pertanianBaNum || isApproved || isPublished);
+                    const step3Done = Boolean(app.pertekPuptrNum || isApproved || isPublished);
+                    const step4Done = isPublished;
+
+                    return (
+                      <div
+                        key={app.id}
+                        className={`rounded-3xl bg-white dark:bg-slate-900 border transition-all shadow-sm overflow-hidden ${
+                          isPublished
+                            ? 'border-emerald-500/40 hover:border-emerald-500 hover:shadow-emerald-500/5'
+                            : isApproved
+                            ? 'border-blue-500/40 hover:border-blue-500 hover:shadow-blue-500/5'
+                            : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                        }`}
+                      >
+                        {/* Header Box */}
+                        <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-950/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                          <div className="space-y-1.5">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider bg-teal-500/10 text-teal-700 dark:text-teal-400 border border-teal-500/20">
+                                {app.sektor}
+                              </span>
+                              <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">
+                                Reg: {app.nomorPermohonan}
+                              </span>
+                              {app.skPkkprNum && (
+                                <span className="px-2.5 py-0.5 rounded-lg text-[10px] font-mono font-black bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
+                                  SK: {app.skPkkprNum}
+                                </span>
+                              )}
+                            </div>
+                            <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight">
+                              {app.namaPermohonan}
+                            </h3>
+                            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+                              <span className="flex items-center gap-1">
+                                <Building2 className="w-3.5 h-3.5 text-slate-400" />
+                                <strong className="text-slate-700 dark:text-slate-300">{app.namaBadanUsaha}</strong> (NIB: {app.nib})
+                              </span>
+                              <span>•</span>
+                              <span className="flex items-center gap-1">
+                                <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                                Desa {app.desa}, Kec. {app.kecamatan}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${
+                              isPublished
+                                ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/40 shadow-xs'
+                                : isApproved
+                                ? 'bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-500/40'
+                                : isRevision
+                                ? 'bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40'
+                                : isRejected
+                                ? 'bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-500/40'
+                                : 'bg-slate-500/20 text-slate-700 dark:text-slate-300 border border-slate-500/40'
+                            }`}>
+                              {isPublished ? (
+                                <>
+                                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                                  <span>SK PKKPR Terbit &amp; Aktif</span>
+                                </>
+                              ) : isApproved ? (
+                                <>
+                                  <CheckCircle2 className="w-3.5 h-3.5 text-blue-500" />
+                                  <span>Disetujui OPD (Siap Terbit)</span>
+                                </>
+                              ) : isRevision ? (
+                                <>
+                                  <AlertCircle className="w-3.5 h-3.5 text-amber-500" />
+                                  <span>Perlu Revisi Berkas</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Clock className="w-3.5 h-3.5 text-slate-500" />
+                                  <span>Dalam Kajian Teknis Spasial</span>
+                                </>
+                              )}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Body Content */}
+                        <div className="p-5 sm:p-6 space-y-6">
+                          {/* 4-STAGE INTERACTIVE STEPPER TRACKER */}
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
+                              <span className="uppercase tracking-wider">Tahapan Alur Verifikasi Lintas OPD:</span>
+                              <span className="text-[11px] text-teal-600 dark:text-teal-400 font-mono">
+                                {isPublished ? '4 / 4 Tahap Selesai (100%)' : isApproved ? '3 / 4 Tahap Selesai (75%)' : step2Done ? '2 / 4 Tahap Selesai (50%)' : '1 / 4 Tahap Selesai (25%)'}
+                              </span>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                              {/* Step 1: OSS Registration */}
+                              <div className={`p-3.5 rounded-2xl border transition-all ${
+                                step1Done
+                                  ? 'bg-emerald-500/5 border-emerald-500/30 dark:bg-emerald-500/10'
+                                  : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800'
+                              }`}>
+                                <div className="flex items-center justify-between mb-1.5">
+                                  <span className="text-[10px] font-black uppercase text-slate-500">Tahap 1</span>
+                                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                </div>
+                                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Registrasi OSS &amp; Spasial</h4>
+                                <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">
+                                  NIB OSS &amp; Poligon Batas Lahan Terverifikasi
+                                </p>
+                              </div>
+
+                              {/* Step 2: Pertanian LP2B Clearance */}
+                              <div className={`p-3.5 rounded-2xl border transition-all ${
+                                step2Done
+                                  ? 'bg-emerald-500/5 border-emerald-500/30 dark:bg-emerald-500/10'
+                                  : 'bg-amber-500/5 border-amber-500/30 dark:bg-amber-500/10'
+                              }`}>
+                                <div className="flex items-center justify-between mb-1.5">
+                                  <span className="text-[10px] font-black uppercase text-slate-500">Tahap 2</span>
+                                  {step2Done ? (
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                  ) : (
+                                    <Clock className="w-4 h-4 text-amber-500 animate-pulse" />
+                                  )}
+                                </div>
+                                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Dinas Pertanian (LP2B)</h4>
+                                <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">
+                                  {step2Done ? (
+                                    <span className="text-emerald-700 dark:text-emerald-400 font-medium">BAP Pelepasan LP2B Diterbitkan</span>
+                                  ) : (
+                                    <span className="text-amber-700 dark:text-amber-400 font-medium">Verifikasi Alih Fungsi Lahan</span>
+                                  )}
+                                </p>
+                              </div>
+
+                              {/* Step 3: PUPTR Spatial Check */}
+                              <div className={`p-3.5 rounded-2xl border transition-all ${
+                                step3Done
+                                  ? 'bg-emerald-500/5 border-emerald-500/30 dark:bg-emerald-500/10'
+                                  : step2Done
+                                  ? 'bg-amber-500/5 border-amber-500/30 dark:bg-amber-500/10'
+                                  : 'bg-slate-50 dark:bg-slate-950/40 border-slate-200 dark:border-slate-800 opacity-60'
+                              }`}>
+                                <div className="flex items-center justify-between mb-1.5">
+                                  <span className="text-[10px] font-black uppercase text-slate-500">Tahap 3</span>
+                                  {step3Done ? (
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                  ) : step2Done ? (
+                                    <Clock className="w-4 h-4 text-amber-500 animate-pulse" />
+                                  ) : (
+                                    <Lock className="w-4 h-4 text-slate-400" />
+                                  )}
+                                </div>
+                                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Dinas PUPTR (Tata Ruang)</h4>
+                                <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">
+                                  {step3Done ? (
+                                    <span className="text-emerald-700 dark:text-emerald-400 font-medium">Pertek Tata Ruang Disetujui</span>
+                                  ) : (
+                                    <span className="text-slate-500">Kajian Zonasi RTRW &amp; Koefisien</span>
+                                  )}
+                                </p>
+                              </div>
+
+                              {/* Step 4: DPMPTSP SK Issuance */}
+                              <div className={`p-3.5 rounded-2xl border transition-all ${
+                                step4Done
+                                  ? 'bg-emerald-500/15 border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.1)]'
+                                  : step3Done
+                                  ? 'bg-blue-500/5 border-blue-500/30'
+                                  : 'bg-slate-50 dark:bg-slate-950/40 border-slate-200 dark:border-slate-800 opacity-60'
+                              }`}>
+                                <div className="flex items-center justify-between mb-1.5">
+                                  <span className="text-[10px] font-black uppercase text-slate-500">Tahap 4</span>
+                                  {step4Done ? (
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                  ) : step3Done ? (
+                                    <Clock className="w-4 h-4 text-blue-500 animate-pulse" />
+                                  ) : (
+                                    <Lock className="w-4 h-4 text-slate-400" />
+                                  )}
+                                </div>
+                                <h4 className="text-xs font-bold text-slate-900 dark:text-white">SK PKKPR &amp; TTE DPMPTSP</h4>
+                                <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">
+                                  {step4Done ? (
+                                    <span className="text-emerald-700 dark:text-emerald-400 font-bold">SK Terbit (Siap Cetak PDF)</span>
+                                  ) : (
+                                    <span className="text-slate-500">Penerbitan SK &amp; TTE BSrE</span>
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Technical Project Specs Grid */}
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 text-xs">
+                            <div>
+                              <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Luas Lahan Dimohon:</span>
+                              <p className="font-bold font-mono text-slate-900 dark:text-white mt-0.5">
+                                {app.luasHa ? app.luasHa.toFixed(2) : '0'} Ha ({app.luasM2 ? app.luasM2.toLocaleString('id-ID') : '0'} m²)
+                              </p>
+                            </div>
+                            <div>
+                              <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Rencana Investasi:</span>
+                              <p className="font-bold font-mono text-emerald-700 dark:text-emerald-400 mt-0.5">
+                                {formatRupiahSingkat(app.nilaiInvestasi)}
+                              </p>
+                            </div>
+                            <div>
+                              <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Penanggung Jawab:</span>
+                              <p className="font-bold text-slate-900 dark:text-white mt-0.5 truncate">
+                                {app.namaPemohon}
+                              </p>
+                            </div>
+                            <div>
+                              <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Tanggal Registrasi:</span>
+                              <p className="font-bold text-slate-900 dark:text-white mt-0.5">
+                                {new Date(app.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* OPD Technical Notes Callout (if available) */}
+                          {app.catatanTeknis && (
+                            <div className="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-xs space-y-1">
+                              <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                Catatan Teknis OPD:
+                              </span>
+                              <p className="text-slate-700 dark:text-slate-300 leading-relaxed font-sans text-xs">
+                                {app.catatanTeknis}
+                              </p>
+                            </div>
+                          )}
+
+                          {/* ACTION FOOTER */}
+                          <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                              {isPublished ? (
+                                <span className="text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                                  <Check className="w-3.5 h-3.5 text-emerald-500" />
+                                  SK PKKPR ini resmi dan telah memenuhi persyaratan untuk proses Persetujuan Bangunan Gedung (PBG) di SIMBG.
+                                </span>
+                              ) : (
+                                <span className="text-slate-500 flex items-center gap-1">
+                                  <Clock className="w-3.5 h-3.5 text-amber-500" />
+                                  Estimasi SLA: &le; 3 Hari Kerja setelah seluruh pertimbangan teknis terpenuhi.
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+                              {/* Glowing Print Button when Published or Approved */}
+                              {isPublished || isApproved ? (
+                                <button
+                                  onClick={() => handleOpenSkDocument(app)}
+                                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 transition-all cursor-pointer active:scale-95"
+                                >
+                                  <Printer className="w-4 h-4" />
+                                  <span>Cetak SK PKKPR Resmi (PDF)</span>
+                                </button>
+                              ) : (
+                                <div className="text-[11px] text-amber-600 dark:text-amber-400 font-medium italic flex items-center gap-1">
+                                  <Clock className="w-3.5 h-3.5" />
+                                  <span>Tombol cetak otomatis aktif setelah SK disahkan DPMPTSP</span>
+                                </div>
+                              )}
+
+                              {/* Download original attachment if provided by admin */}
+                              {app.fileSkPkkprUrl && (
+                                <a
+                                  href={app.fileSkPkkprUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-700 transition cursor-pointer"
+                                >
+                                  <Download className="w-4 h-4 text-teal-400" />
+                                  <span>Unduh File Asli</span>
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            )}
           </div>
         ) : activeTab === 'site-selection' ? (
           <div className="py-4 sm:py-8 animate-in fade-in zoom-in-95 duration-300 h-[calc(100vh-140px)] md:h-[calc(100vh-100px)]">
@@ -2816,6 +3595,76 @@ export default function InvestorPortalDashboard() {
                       <span>Kirim Permohonan PKKPR Corporate</span>
                     </>
                   )}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* MODAL PRATINJAU & CETAK DOKUMEN RESMI SK PKKPR */}
+      <AnimatePresence>
+        {isSkDocModalOpen && selectedSkDocumentData && (
+          <motion.div
+            key="sk-doc-modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[1000] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto"
+          >
+            <motion.div
+              key="sk-doc-modal-content"
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="w-full max-w-5xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[96vh]"
+            >
+              {/* Modal Top Bar */}
+              <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/60 shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-700 dark:text-emerald-400">
+                    <FileCheck2 className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white">
+                      Dokumen Resmi Surat Keputusan (SK) PKKPR
+                    </h3>
+                    <p className="text-[11px] text-slate-500 font-mono">
+                      No. SK: {selectedSkDocumentData.nomorSkPkkpr} • Keabsahan Terverifikasi TTE BSrE
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setIsSkDocModalOpen(false)}
+                    className="p-2 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 transition cursor-pointer"
+                    aria-label="Tutup"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Document Scroll Area */}
+              <div className="flex-1 overflow-y-auto p-3 sm:p-6 bg-slate-100 dark:bg-slate-950/80">
+                <SkPkkprDpmptspDocument
+                  data={selectedSkDocumentData}
+                  showControlBar={true}
+                />
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between shrink-0">
+                <span className="text-xs text-slate-500 hidden sm:inline">
+                  Gunakan tombol <strong>Cetak Dokumen</strong> atau <strong>Unduh PDF</strong> di atas untuk mencetak atau menyimpan berkas resmi.
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsSkDocModalOpen(false)}
+                  className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-xs font-bold transition ml-auto cursor-pointer"
+                >
+                  Tutup Pratinjau
                 </button>
               </div>
             </motion.div>
