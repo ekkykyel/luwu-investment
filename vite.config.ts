@@ -74,8 +74,6 @@ export default defineConfig(() => {
     resolve: {
       dedupe: ['react', 'react-dom', 'react-router', 'react-router-dom', 'react-i18next', 'motion', 'framer-motion'],
       alias: {
-        'react': path.resolve(__dirname, './node_modules/react'),
-        'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
         '@': path.resolve(__dirname, './src'),
         '@turf/turf': path.resolve(__dirname, './src/utils/turf-shim.ts'),
       },
@@ -83,7 +81,11 @@ export default defineConfig(() => {
     optimizeDeps: {
       include: [
         'react',
+        'react/jsx-runtime',
+        'react/jsx-dev-runtime',
         'react-dom',
+        'react-dom/client',
+        'react-router',
         'react-router-dom',
         '@supabase/supabase-js',
         'lucide-react',
