@@ -827,11 +827,16 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
     return geojson;
   }, [props.selectedDistrictId, props.districts, kecLayerGeoJSON]);
 
-  // Helper to extract the precise polygon for clipping (selected village or falling back to selected district) kawan!
+  // Helper to extract the precise polygon for clipping based on selected district or village kawan!
   const getSelectedClipPolygon = useCallback(() => {
     let clipPolygon: any = null;
 
-    if (props.selectedVillageId) {
+    // Prefer clipping to the entire selected district for comprehensive territorial context kawan
+    if (props.selectedDistrictId) {
+      clipPolygon = getSelectedDistrictPolygon();
+    }
+
+    if (!clipPolygon && props.selectedVillageId) {
       const layer = props.spatialLayers.find(l => l.id === "layer_desa");
       if (layer && layer.geojson) {
         const normalized = normalizeGeoJSON(layer.geojson);
@@ -850,10 +855,6 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
           });
         }
       }
-    }
-
-    if (!clipPolygon && props.selectedDistrictId) {
-      clipPolygon = getSelectedDistrictPolygon();
     }
 
     if (clipPolygon && clipPolygon.type === 'FeatureCollection' && clipPolygon.features && clipPolygon.features.length > 0) {
@@ -2045,12 +2046,12 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
   }, [roadsGeoJSON, props.selectedDistrictId, props.selectedVillageId, props.districts, props.villages, props.spatialLayers, getSelectedDistrictPolygon]);
 
 
-  // Filter Layer Kustom (seperti layer tambak, mangrove, dan potensi) Berdasarkan Wilayah Terpilih Kawan!
+  // Filter Layer Kustom (seperti layer sawah, tambak, mangrove, tutupan lahan, dan zonasi RTRW) Berdasarkan Wilayah Terpilih Kawan!
   const dynamicSpatialLayersGeoJSON = useMemo(() => {
     const result: Record<string, any> = {};
     props.spatialLayers.forEach(layer => {
-      // Skip sistem layer yang sudah ditangani khusus
-      if (["layer_kecamatan", "layer_jalan", "layer_zonasi", "layer_desa"].includes(layer.id)) return;
+      // Skip sistem layer batas kecamatan, jalan, dan batas desa yang ditangani terpisah
+      if (["layer_kecamatan", "layer_jalan", "layer_desa"].includes(layer.id)) return;
       if (!layer.isActive || !layer.geojson) return;
       
       const cacheKey = `${layer.id}_${layer.geojson.features?.length || 0}_${props.selectedDistrictId || 'all'}_${props.selectedVillageId || 'all'}`;
@@ -4266,7 +4267,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
         {/* 2. Dynamic DB Spatial layers overlay */}
         {(() => {
           // BATCHING THEMATIC OVERLAYS: Combine standard thematic layers into a single Source
-          const excludedIds = ["layer_kecamatan", "layer_jalan", "layer_zonasi", "layer_land_use_zoning", "layer_desa", "layer_potensi"];
+          const excludedIds = ["layer_kecamatan", "layer_jalan", "layer_desa", "layer_potensi"];
           const thematicLayers = props.spatialLayers.filter(l => !excludedIds.includes(l.id));
           const customLayers = props.spatialLayers.filter(l => l.id === "layer_potensi");
 
@@ -4302,7 +4303,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
           return (
             <>
               {thematicLayers.length > 0 && batchedFeatures.length > 0 && (
-                <Source id="batched-thematic-source" type="geojson" data={batchedSourceData as any} generateId={true} tolerance={0.3} buffer={64} maxzoom={14} cluster={false}>
+                <Source id="batched-thematic-source" type="geojson" data={batchedSourceData as any} generateId={true} tolerance={0} buffer={128} maxzoom={22} cluster={false}>
                   {thematicLayers.map(layer => {
                     const targetOpacity = typeof layer.opacity === 'number' && !isNaN(layer.opacity) ? layer.opacity : 0.50;
                     const isAct = layer.isActive;
@@ -4555,7 +4556,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
           </>
         )}
 
-        {/* 5.2 ACTIVE SELECTED INVESTMENT COORDINATE RIPPLE PULSE BEACON */}
+        {/* 5.2 ACTIVE SELECTED INVESTMENT COORDINATE PINPOINT (COMPACT, TRANSLUCENT, SLEEK GIS INDICATOR) */}
         {selectedInvestments.map((inv) => {
           const coords = getCoordinates(inv);
           if (!coords) return null;
@@ -4586,92 +4587,60 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
                   }
                 }}
               >
-                {/* Sonar Radar Wave 1 (Wave 1: immediate expansion via ripplePulseExpand) */}
+                {/* Subtle Translucent Sonar Wave (Compact 36px) */}
                 <div 
-                  className="absolute w-32 h-32 rounded-full pointer-events-none animate-ripple-pulse-1"
+                  className="absolute w-10 h-10 rounded-full pointer-events-none opacity-40 animate-ping"
                   style={{
-                    backgroundColor: theme.glow,
-                    border: `2px solid ${theme.primary}`
-                  }}
-                />
-                {/* Sonar Radar Wave 2 (Wave 2: +0.7s delayed wave via ripplePulseExpand) */}
-                <div 
-                  className="absolute w-32 h-32 rounded-full pointer-events-none animate-ripple-pulse-2"
-                  style={{
-                    backgroundColor: theme.glow,
-                    border: `2px solid ${theme.primary}`
-                  }}
-                />
-                {/* Sonar Radar Wave 3 (Wave 3: +1.4s delayed wave via ripplePulseExpand) */}
-                <div 
-                  className="absolute w-32 h-32 rounded-full pointer-events-none animate-ripple-pulse-3"
-                  style={{
-                    backgroundColor: theme.glow,
-                    border: `2px solid ${theme.primary}`
+                    backgroundColor: `${theme.primary}20`,
+                    border: `1px solid ${theme.primary}`
                   }}
                 />
 
-                {/* Direct ripplePulseExpand Outer Wave for high-contrast active radar effect */}
+                {/* Delicate Target Reticle Ring */}
                 <div 
-                  className="absolute w-28 h-28 rounded-full pointer-events-none animate-ripple-pulse-expand"
+                  className="absolute w-7 h-7 rounded-full pointer-events-none"
                   style={{
-                    border: `1.5px dashed ${theme.primary}`,
-                    boxShadow: `0 0 16px ${theme.glow}`
+                    border: `1px dashed ${theme.primary}80`,
+                    boxShadow: `0 0 8px ${theme.glow}`
                   }}
                 />
 
-                {/* Ambient Radiant Glow Aura */}
+                {/* Sleek Compact Glassmorphic Pin Center (24px) */}
                 <div 
-                  className="absolute w-16 h-16 rounded-full blur-md opacity-75 animate-pulse pointer-events-none"
+                  className="relative z-10 w-6 h-6 rounded-full bg-slate-950/75 backdrop-blur-sm border shadow-lg flex items-center justify-center transition-all duration-200 transform group-hover:scale-115"
                   style={{
-                    backgroundColor: theme.primary
-                  }}
-                />
-
-                {/* Crosshair Scanner Target Rings */}
-                <div 
-                  className="absolute w-12 h-12 rounded-full border border-white/60 dark:border-slate-900/60 pointer-events-none animate-spin" 
-                  style={{ animationDuration: '8s' }} 
-                />
-
-                {/* Central Glowing Core Jewel Pin */}
-                <div 
-                  className="relative z-10 w-10 h-10 rounded-full bg-gradient-to-br from-white via-slate-50 to-slate-200 dark:from-slate-800 dark:to-slate-950 border-2 shadow-2xl flex items-center justify-center transition-all duration-300 transform group-hover:scale-125 animate-beacon-glow"
-                  style={{
-                    borderColor: theme.primary,
-                    boxShadow: `0 0 24px ${theme.primary}, inset 0 0 10px ${theme.glow}`
+                    borderColor: `${theme.primary}95`,
+                    boxShadow: `0 0 10px ${theme.glow}`
                   }}
                 >
-                  <span className="text-lg select-none leading-none drop-shadow-md">
-                    {getIconForData(inv.subSector || '', inv.sector || '', '')}
-                  </span>
+                  {/* Delicate Minimalist Center Dot / Crosshair Core */}
                   <div 
-                    className="absolute -bottom-1 w-2.5 h-2.5 rounded-full ring-2 ring-white dark:ring-slate-900"
+                    className="w-2.5 h-2.5 rounded-full ring-1 ring-white/50"
                     style={{ backgroundColor: theme.primary }}
                   />
                 </div>
 
-                {/* Floating Information Pill Label Above Coordinates */}
+                {/* Compact Floating Label Above Coordinates */}
                 <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.88 }}
+                  initial={{ opacity: 0, y: 6, scale: 0.92 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ type: "spring", stiffness: 450, damping: 25 }}
-                  className="absolute -top-14 left-1/2 -translate-x-1/2 whitespace-nowrap z-30 px-3.5 py-1.5 rounded-2xl bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur-xl border shadow-2xl flex items-center gap-2.5 pointer-events-none"
+                  className="absolute -top-11 left-1/2 -translate-x-1/2 whitespace-nowrap z-30 px-2.5 py-1 rounded-xl bg-slate-950/85 backdrop-blur-md border border-white/10 shadow-xl flex items-center gap-2 pointer-events-none"
                   style={{
-                    borderColor: `${theme.primary}90`,
-                    boxShadow: `0 12px 30px -5px rgba(0,0,0,0.6), 0 0 20px ${theme.glow}`
+                    borderColor: `${theme.primary}50`,
+                    boxShadow: `0 8px 20px -4px rgba(0,0,0,0.5), 0 0 12px ${theme.glow}`
                   }}
                 >
-                  <span className="w-2.5 h-2.5 rounded-full animate-ping" style={{ backgroundColor: theme.primary }} />
-                  <div className="flex flex-col text-left">
-                    <span className="text-xs font-extrabold text-white font-sora truncate max-w-[200px]">
-                      {inv.name || 'Potensi Investasi'}
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: theme.primary }} />
+                  <div className="flex flex-col text-left leading-tight">
+                    <span className="text-[11px] font-bold text-white font-sora truncate max-w-[180px]">
+                      {inv.name || 'Lokasi Permohonan'}
                     </span>
-                    <span className="text-[10px] text-slate-300 font-medium flex items-center gap-1">
-                      <span className="text-emerald-400 font-semibold">{inv.sector || 'Investasi'}</span>
+                    <span className="text-[9px] text-slate-400 font-medium flex items-center gap-1">
+                      <span className="text-emerald-400">{inv.sector || 'Investasi'}</span>
                       {districtName && (
                         <>
-                          <span className="text-slate-500">•</span>
+                          <span className="text-slate-600">•</span>
                           <span>{districtName}</span>
                         </>
                       )}
@@ -4803,7 +4772,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
                 'text-halo-width': 1
               }}
             />
-            {/* Unclustered Marker - Premium Transparent Ring with Halo */}
+            {/* Unclustered Marker - Sleek Compact Semi-Transparent Ring with Subtle Halo */}
             <Layer
               id="investments-layer-halo"
               type="circle"
@@ -4819,19 +4788,19 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
                   "Pariwisata", "#ec4899",
                   "#475569" // Fallback
                 ],
-                "circle-radius": 20,
-                "circle-blur": 1.2,
-                "circle-opacity": 0.45
+                "circle-radius": 10,
+                "circle-blur": 0.8,
+                "circle-opacity": 0.25
               }}
             />
-            {/* Unclustered Marker Icon Emojis */}
+            {/* Unclustered Marker Icon Emojis - Compact & Clean */}
             <Layer
               id="investments-layer-symbol"
               type="symbol"
               filter={['!', ['has', 'point_count']]}
               layout={{
                 'text-field': ['get', 'iconEmoji'],
-                'text-size': 16,
+                'text-size': 9,
                 'text-allow-overlap': true,
                 'text-ignore-placement': true,
                 'text-justify': 'center',
@@ -4843,9 +4812,9 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
               type="circle"
               filter={['!', ['has', 'point_count']]}
               paint={{
-                "circle-color": "rgba(255, 255, 255, 0.2)",
-                "circle-radius": 18,
-                "circle-stroke-width": 3.5,
+                "circle-color": "rgba(15, 23, 42, 0.40)",
+                "circle-radius": 8,
+                "circle-stroke-width": 1.2,
                 "circle-stroke-color": [
                   "match",
                   ["get", "sector"],
