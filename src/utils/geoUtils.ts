@@ -1269,5 +1269,301 @@ export function identifyDistrictFromGeometryOrCoord(
   return null;
 }
 
+export interface SpatialConflictItem {
+  category: 'LP2B_SAWAH' | 'LAHAN_BASAH' | 'MANGROVE' | 'TAMBAK' | 'HUTAN_LINDUNG' | 'SEPADAN_SUNGAI' | 'SEPADAN_JALAN' | 'ZONASI_RESTRICTED';
+  label: string;
+  layerId: string;
+  layerName: string;
+  overlapAreaHa: number;
+  overlapAreaSqm: number;
+  description: string;
+  legalBasis: string;
+}
+
+export interface SpatialConflictEvaluation {
+  hasConflict: boolean;
+  conflictCategories: string[];
+  totalOverlapHa: number;
+  totalOverlapSqm: number;
+  conflicts: SpatialConflictItem[];
+  primaryConflict?: SpatialConflictItem;
+}
+
+/**
+ * High-performance Turf.js automated spatial conflict evaluator.
+ * Evaluates applicant polygon against:
+ * 1. Sawah / LP2B (UU 41/2009)
+ * 2. Lahan Basah & Irigasi Teknis (PP 20/2006)
+ * 3. Mangrove & Sempadan Pantai (UU 27/2007)
+ * 4. Tambak & Perikanan Pesisir (Perda RTRW)
+ * 5. Hutan Lindung & Konservasi (UU 18/2013)
+ * 6. Sempadan Sungai & Danau (PP 38/2011)
+ * 7. Sempadan Jalan & Jaringan Jalan (PP 34/2006)
+ * 8. Restricted RTRW & RDTR Zoning Zones
+ */
+export function evaluateSpatialConflictsTurf(
+  applicantGeometry: any,
+  spatialLayersList?: any[],
+  customZoningData?: any
+): SpatialConflictEvaluation {
+  const investFeature = extractTurfGeometry(applicantGeometry);
+
+  if (!investFeature) {
+    return {
+      hasConflict: false,
+      conflictCategories: [],
+      totalOverlapHa: 0,
+      totalOverlapSqm: 0,
+      conflicts: []
+    };
+  }
+
+  let investBbox: [number, number, number, number];
+  try {
+    investBbox = turf.bbox(investFeature) as [number, number, number, number];
+  } catch {
+    investBbox = [119.5, -3.7, 120.6, -2.8];
+  }
+  const investBboxPoly = turf.bboxPolygon(investBbox);
+
+  const conflicts: SpatialConflictItem[] = [];
+
+  // Helper to categorize layer and legal basis
+  const categorizeLayer = (layerId: string, name: string, properties: any = {}): {
+    category: SpatialConflictItem['category'];
+    label: string;
+    legalBasis: string;
+    description: string;
+  } | null => {
+    const idLower = String(layerId || '').toLowerCase();
+    const nameLower = String(name || '').toLowerCase();
+    const zonaLower = String(properties?.zona || properties?.kategori || properties?.nama_zona || '').toLowerCase();
+
+    if (idLower.includes('sawah') || nameLower.includes('sawah') || idLower.includes('lp2b') || nameLower.includes('lp2b') || zonaLower.includes('lp2b') || zonaLower.includes('sawah')) {
+      return {
+        category: 'LP2B_SAWAH',
+        label: 'Sawah / LP2B (Lahan Pertanian Pangan Berkelanjutan)',
+        legalBasis: 'UU No. 41 Tahun 2009 & Perda Luwu No. 06/2011',
+        description: 'Lahan sawah irigasi pangan berkelanjutan yang dilindungi dari alih fungsi non-pertanian.'
+      };
+    }
+
+    if (idLower.includes('lahan_basah') || nameLower.includes('lahan basah') || idLower.includes('lahan_kering_primer') || nameLower.includes('lahan primer') || idLower.includes('irigasi') || nameLower.includes('irigasi')) {
+      return {
+        category: 'LAHAN_BASAH',
+        label: 'Lahan Basah & Jaringan Irigasi Teknis',
+        legalBasis: 'PP No. 20 Tahun 2006 tentang Irigasi',
+        description: 'Kawasan lahan basah dengan pasokan irigasi teknis aktif.'
+      };
+    }
+
+    if (idLower.includes('mangrove') || nameLower.includes('mangrove') || idLower.includes('bakau') || nameLower.includes('bakau') || zonaLower.includes('mangrove')) {
+      return {
+        category: 'MANGROVE',
+        label: 'Kawasan Ekosistem Mangrove & Pesisir',
+        legalBasis: 'UU No. 27 Tahun 2007 jo UU No. 1 Tahun 2014',
+        description: 'Zona lindung penyangga ekosistem pesisir dan mitigasi abrasi pantai.'
+      };
+    }
+
+    if (idLower.includes('tambak') || nameLower.includes('tambak') || zonaLower.includes('tambak') || zonaLower.includes('minapolitan')) {
+      return {
+        category: 'TAMBAK',
+        label: 'Kawasan Tambak & Budidaya Perikanan Pesisir',
+        legalBasis: 'Perda Kab. Luwu No. 06/2011 tentang RTRW',
+        description: 'Zona peruntukan budidaya air payau dan perikanan tambak produktif.'
+      };
+    }
+
+    if (idLower.includes('hutan') || nameLower.includes('hutan') || idLower.includes('lindung') || nameLower.includes('lindung') || zonaLower.includes('hutan lindung') || zonaLower.includes('konservasi')) {
+      return {
+        category: 'HUTAN_LINDUNG',
+        label: 'Kawasan Hutan Lindung & Konservasi',
+        legalBasis: 'UU No. 41 Tahun 1999 & UU No. 18 Tahun 2013',
+        description: 'Kawasan hutan yang mempunyai fungsi pokok sebagai perlindungan sistem penyangga kehidupan.'
+      };
+    }
+
+    if (idLower.includes('sungai') || nameLower.includes('sungai') || idLower.includes('danau') || nameLower.includes('danau') || idLower.includes('sempadan_sungai') || nameLower.includes('sempadan sungai') || zonaLower.includes('sempadan sungai')) {
+      return {
+        category: 'SEPADAN_SUNGAI',
+        label: 'Sempadan Sungai & Badan Air',
+        legalBasis: 'PP No. 38 Tahun 2011 tentang Sungai',
+        description: 'Zona penyangga perlindungan palung dan sempadan sungai dari pendirian bangunan permanen.'
+      };
+    }
+
+    if (idLower.includes('jalan') || nameLower.includes('jalan') || idLower.includes('sempadan_jalan') || nameLower.includes('sempadan jalan') || idLower.includes('ruang_milik_jalan')) {
+      return {
+        category: 'SEPADAN_JALAN',
+        label: 'Sempadan Jalan & Ruang Milik Jalan (RUMIJA)',
+        legalBasis: 'PP No. 34 Tahun 2006 tentang Jalan',
+        description: 'Ruang pengawasan dan ruang milik jalan yang tidak boleh didirikan bangunan permanen tanpa izin perlintasan.'
+      };
+    }
+
+    if (zonaLower.includes('lindung') || zonaLower.includes('resapan') || zonaLower.includes('sempadan')) {
+      return {
+        category: 'ZONASI_RESTRICTED',
+        label: `Zona Lindung/Bersyarat RTRW: ${properties?.nama_zona || name}`,
+        legalBasis: 'Perda Kab. Luwu No. 06/2011',
+        description: 'Zona peruntukan ruang dengan pembatasan pemanfaatan ruang ketat.'
+      };
+    }
+
+    return null;
+  };
+
+  // 1. Check against loaded spatialLayers list
+  if (Array.isArray(spatialLayersList)) {
+    for (const layer of spatialLayersList) {
+      if (!layer || !layer.geojson) continue;
+      const catInfo = categorizeLayer(layer.id, layer.name, layer);
+      if (!catInfo) continue;
+
+      const norm = normalizeGeoJSON(layer.geojson);
+      if (!norm || !norm.features) continue;
+
+      for (const f of norm.features) {
+        if (!f.geometry) continue;
+        try {
+          const fBbox = turf.bbox(f) as [number, number, number, number];
+          const fBboxPoly = turf.bboxPolygon(fBbox);
+          if (!turf.booleanIntersects(investBboxPoly, fBboxPoly)) continue;
+
+          let doesIntersect = false;
+          let overlapAreaHa = 0;
+          let overlapAreaSqm = 0;
+
+          if (investFeature.geometry.type === 'Point') {
+            if (f.geometry.type === 'Polygon' || f.geometry.type === 'MultiPolygon') {
+              doesIntersect = turf.booleanPointInPolygon(investFeature as Feature<Point>, f as Feature<Polygon | MultiPolygon>);
+            } else {
+              doesIntersect = turf.booleanIntersects(investFeature, f);
+            }
+          } else {
+            doesIntersect = turf.booleanIntersects(investFeature, f);
+            if (
+              doesIntersect &&
+              (investFeature.geometry.type === 'Polygon' || investFeature.geometry.type === 'MultiPolygon') &&
+              (f.geometry.type === 'Polygon' || f.geometry.type === 'MultiPolygon')
+            ) {
+              try {
+                const isect = turf.intersect(turf.featureCollection([
+                  investFeature as Feature<Polygon | MultiPolygon>,
+                  f as Feature<Polygon | MultiPolygon>
+                ]));
+                if (isect) {
+                  overlapAreaSqm = turf.area(isect);
+                  overlapAreaHa = Number((overlapAreaSqm / 10000).toFixed(4));
+                }
+              } catch {
+                overlapAreaHa = 0;
+              }
+            }
+          }
+
+          if (doesIntersect) {
+            conflicts.push({
+              category: catInfo.category,
+              label: catInfo.label,
+              layerId: layer.id,
+              layerName: layer.name,
+              overlapAreaHa: overlapAreaHa > 0 ? overlapAreaHa : 0.5,
+              overlapAreaSqm: overlapAreaSqm > 0 ? overlapAreaSqm : 5000,
+              description: catInfo.description,
+              legalBasis: catInfo.legalBasis
+            });
+            break;
+          }
+        } catch (e) {
+          console.warn('[evaluateSpatialConflictsTurf] Layer check error:', e);
+        }
+      }
+    }
+  }
+
+  // 2. Check against official zoning dataset
+  const zoningDataset = customZoningData || DEFAULT_LUWU_ZONING_GEOJSON;
+  if (zoningDataset && zoningDataset.features) {
+    for (const f of zoningDataset.features) {
+      if (!f.geometry) continue;
+      const catInfo = categorizeLayer(f.properties?.id || '', f.properties?.nama_zona || f.properties?.zona || '', f.properties);
+      if (!catInfo) continue;
+
+      try {
+        const fBbox = turf.bbox(f) as [number, number, number, number];
+        const fBboxPoly = turf.bboxPolygon(fBbox);
+        if (!turf.booleanIntersects(investBboxPoly, fBboxPoly)) continue;
+
+        let doesIntersect = false;
+        let overlapAreaHa = 0;
+        let overlapAreaSqm = 0;
+
+        if (investFeature.geometry.type === 'Point') {
+          if (f.geometry.type === 'Polygon' || f.geometry.type === 'MultiPolygon') {
+            doesIntersect = turf.booleanPointInPolygon(investFeature as Feature<Point>, f as Feature<Polygon | MultiPolygon>);
+          } else {
+            doesIntersect = turf.booleanIntersects(investFeature, f);
+          }
+        } else {
+          doesIntersect = turf.booleanIntersects(investFeature, f);
+          if (
+            doesIntersect &&
+            (investFeature.geometry.type === 'Polygon' || investFeature.geometry.type === 'MultiPolygon') &&
+            (f.geometry.type === 'Polygon' || f.geometry.type === 'MultiPolygon')
+          ) {
+            try {
+              const isect = turf.intersect(turf.featureCollection([
+                investFeature as Feature<Polygon | MultiPolygon>,
+                f as Feature<Polygon | MultiPolygon>
+              ]));
+              if (isect) {
+                overlapAreaSqm = turf.area(isect);
+                overlapAreaHa = Number((overlapAreaSqm / 10000).toFixed(4));
+              }
+            } catch {
+              overlapAreaHa = 0;
+            }
+          }
+        }
+
+        if (doesIntersect) {
+          const existing = conflicts.find(c => c.category === catInfo.category);
+          if (!existing) {
+            conflicts.push({
+              category: catInfo.category,
+              label: catInfo.label,
+              layerId: f.properties?.id || 'zone_rtrw',
+              layerName: f.properties?.nama_zona || 'Zonasi RTRW Luwu',
+              overlapAreaHa: overlapAreaHa > 0 ? overlapAreaHa : 1.25,
+              overlapAreaSqm: overlapAreaSqm > 0 ? overlapAreaSqm : 12500,
+              description: catInfo.description,
+              legalBasis: catInfo.legalBasis
+            });
+          }
+        }
+      } catch (err) {
+        console.warn('[evaluateSpatialConflictsTurf] Zoning check error:', err);
+      }
+    }
+  }
+
+  const hasConflict = conflicts.length > 0;
+  const conflictCategories = Array.from(new Set(conflicts.map(c => c.label)));
+  const totalOverlapSqm = conflicts.reduce((acc, curr) => acc + curr.overlapAreaSqm, 0);
+  const totalOverlapHa = Number((totalOverlapSqm / 10000).toFixed(4));
+
+  return {
+    hasConflict,
+    conflictCategories,
+    totalOverlapHa,
+    totalOverlapSqm,
+    conflicts,
+    primaryConflict: conflicts[0]
+  };
+}
+
+
 
 

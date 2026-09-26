@@ -561,9 +561,24 @@ export default function PertanianLandClearanceDashboard() {
     window.addEventListener('luwu_cross_opd_notifications_updated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
 
+    // Supabase Realtime Channel Subscription for instant reactive updates from PUPTR
+    const liveChannel = supabase
+      .channel('luwu-spatial-cross-opd')
+      .on('broadcast', { event: 'PKKPR_FORWARDED_PERTANIAN' }, () => {
+        fetchAgrarianQueue();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'gis_pkkpr' }, () => {
+        fetchAgrarianQueue();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'investments' }, () => {
+        fetchAgrarianQueue();
+      })
+      .subscribe();
+
     return () => {
       window.removeEventListener('luwu_cross_opd_notifications_updated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
+      supabase.removeChannel(liveChannel);
     };
   }, []);
 

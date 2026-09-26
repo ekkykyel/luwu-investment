@@ -40,7 +40,18 @@ import Swal from 'sweetalert2';
 import { supabase } from '../../lib/supabaseClient';
 import { parseKmlKmzFile, ParsedKmzResult } from '../../utils/kmlKmzParser';
 import { detectAdministrativeLocation } from '../../utils/spatialLookup';
-import { checkPkkprSpatialZoning, PkkprZoningResult, calculateBoundingBox, normalizeDistrictName, findDistrictMatch, isSameDistrict, identifyDistrictFromGeometryOrCoord, normalizeName } from '../../utils/geoUtils';
+import { 
+  checkPkkprSpatialZoning, 
+  PkkprZoningResult, 
+  calculateBoundingBox, 
+  normalizeDistrictName, 
+  findDistrictMatch, 
+  isSameDistrict, 
+  identifyDistrictFromGeometryOrCoord, 
+  normalizeName,
+  evaluateSpatialConflictsTurf,
+  SpatialConflictEvaluation
+} from '../../utils/geoUtils';
 import MapComponent, { MapComponentRef } from '../MaplibreComponent';
 import OrientationPrompt from '../OrientationPrompt';
 import { getOpdSettings } from '../../utils/opdSettingsStorage';
@@ -50,6 +61,7 @@ import { Investment } from '../../types';
 import { useData } from '../../contexts/DataContext';
 import { PkkprSlaTimelineTracker } from './PkkprSlaTimelineTracker';
 import { ConflictResolutionToolModal } from '../GIS/ConflictResolutionToolModal';
+import { getSpatialOverrides } from '../../utils/spatialOverridesService';
 import { LuwuLogo } from '../LuwuLogo';
 import { generateBapPdfFromElement } from '../../utils/bapPdfGenerator';
 import { CrossOpdNotificationBell } from '../CrossOpdNotificationBell';
@@ -92,6 +104,8 @@ export interface PkkprApplicationItem {
   pertanianBaNumber?: string;
   pertanianSrNumber?: string;
   pertanianNotes?: string;
+  overrideJustification?: string;
+  isOverridden?: boolean;
   contactPhone?: string;
   createdAt: string;
   updatedAt?: string;
@@ -248,6 +262,48 @@ export default function PuptrSpatialClearanceDashboard() {
   const [isTimelineModalOpen, setIsTimelineModalOpen] = useState<boolean>(false);
   const [isGisToastDismissed, setIsGisToastDismissed] = useState<boolean>(false);
   const [showConflictResolutionModal, setShowConflictResolutionModal] = useState<boolean>(false);
+  const [hasLocalOverride, setHasLocalOverride] = useState<boolean>(false);
+
+  // Automated Turf.js Spatial Conflict Audit for all restricted layers (Sawah/LP2B, Lahan Basah, Mangrove, Tambak, Hutan Lindung, Sungai, Jalan)
+  const spatialConflictAudit = useMemo<SpatialConflictEvaluation>(() => {
+    if (!selectedApp?.geometry) {
+      return {
+        hasConflict: false,
+        conflictCategories: [],
+        totalOverlapHa: 0,
+        totalOverlapSqm: 0,
+        conflicts: []
+      };
+    }
+    return evaluateSpatialConflictsTurf(selectedApp.geometry, spatialLayers, rtrwZoning);
+  }, [selectedApp?.geometry, spatialLayers, rtrwZoning]);
+
+  // Load override history for selected application
+  useEffect(() => {
+    if (selectedApp?.id) {
+      getSpatialOverrides(selectedApp.id).then(res => {
+        setHasLocalOverride(res.length > 0);
+      });
+    } else {
+      setHasLocalOverride(false);
+    }
+  }, [selectedApp?.id]);
+
+  const isOverridden = Boolean(
+    hasLocalOverride ||
+    (selectedApp?.overrideJustification && selectedApp.overrideJustification.trim().length > 0) ||
+    (selectedApp?.technicalNotes && selectedApp.technicalNotes.includes('[SPATIAL OVERRIDE'))
+  );
+
+  const isPertanianApproved = Boolean(
+    selectedApp?.pertanianStatus === 'APPROVED' ||
+    selectedApp?.pertanianBaNumber
+  );
+
+  // Hard Lockdown: If Turf.js identifies any spatial conflict AND neither override nor Pertanian approval exists
+  const isConflictLocked = Boolean(
+    spatialConflictAudit.hasConflict && !isOverridden && !isPertanianApproved
+  );
 
   // Return application to applicant (rejected or needs revision, optionally incorporating BAP Pertanian notes)
   const handleReturnToApplicant = async () => {
@@ -695,9 +751,30 @@ export default function PuptrSpatialClearanceDashboard() {
     window.addEventListener('luwu_cross_opd_notifications_updated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
 
+    // Supabase Realtime Channel Subscription for reactive cross-OPD sync
+    const liveChannel = supabase
+      .channel('luwu-spatial-cross-opd')
+      .on('broadcast', { event: 'PKKPR_FORWARDED_PERTANIAN' }, () => {
+        fetchQueue();
+      })
+      .on('broadcast', { event: 'PERTANIAN_BAP_ISSUED' }, () => {
+        fetchQueue();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'gis_pkkpr' }, () => {
+        fetchQueue();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'investments' }, () => {
+        fetchQueue();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'spatial_overrides' }, () => {
+        fetchQueue();
+      })
+      .subscribe();
+
     return () => {
       window.removeEventListener('luwu_cross_opd_notifications_updated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
+      supabase.removeChannel(liveChannel);
     };
   }, []);
 
@@ -759,12 +836,13 @@ export default function PuptrSpatialClearanceDashboard() {
         console.warn('localStorage registry error:', e);
       }
 
-      // 2. Safe Supabase Updates
+      // 2. Safe Supabase Updates with status PENDING_PERTANIAN
       try {
         await supabase
           .from('gis_pkkpr')
           .update({
-            status_pkkpr: 'Forwarded_To_Pertanian',
+            status_pkkpr: 'PENDING_PERTANIAN',
+            pertanian_status: 'FORWARDED',
             catatan_teknis: `[PERMOHONAN DITERUSKAN KE DINAS PERTANIAN]: ${forwardingJustification}`,
             updated_at: new Date().toISOString()
           })
@@ -777,13 +855,31 @@ export default function PuptrSpatialClearanceDashboard() {
         await supabase
           .from('investments')
           .update({
-            status: 'Forwarded_To_Pertanian',
+            status: 'PENDING_PERTANIAN',
             override_justification: `[PERMOHONAN DITERUSKAN KE DINAS PERTANIAN]: ${forwardingJustification}`,
             updated_at: new Date().toISOString()
           })
           .or(`id.eq.${targetApp.id},plot_number.eq.${targetApp.nibNik},certificate_number.eq.${targetApp.nibNik}`);
       } catch (e) {
         console.warn('investments update note:', e);
+      }
+
+      // 2b. Supabase Realtime Channel Broadcast for Instant Agriculture Dashboard Sync
+      try {
+        const liveChannel = supabase.channel('luwu-spatial-cross-opd');
+        await liveChannel.send({
+          type: 'broadcast',
+          event: 'PKKPR_FORWARDED_PERTANIAN',
+          payload: {
+            applicationId: targetApp.id,
+            nibNik: targetApp.nibNik,
+            companyName: targetApp.companyName,
+            status: 'PENDING_PERTANIAN',
+            forwardedAt: new Date().toISOString()
+          }
+        });
+      } catch (broadErr) {
+        console.warn('Realtime channel broadcast info:', broadErr);
       }
 
       // 3. Update local storage luwu_pkkpr_my_apps
@@ -1657,10 +1753,10 @@ export default function PuptrSpatialClearanceDashboard() {
             </div>
 
             {/* AUTOMATED ENVIRONMENTAL FLAG BANNER (LP2B & LAHAN BASAH) & ROUTING TRIGGER */}
-            {(activeStates['layer_sawah'] || activeStates['layer_lahan_kering_primer'] || zoningAudit?.suitabilityLevel === 'DIBATASI' || selectedApp.pertanianStatus !== 'NOT_SUBMITTED') && (
+            {(spatialConflictAudit.hasConflict || activeStates['layer_sawah'] || activeStates['layer_lahan_kering_primer'] || zoningAudit?.suitabilityLevel === 'DIBATASI' || selectedApp.pertanianStatus !== 'NOT_SUBMITTED') && (
               selectedApp.pertanianStatus === 'APPROVED' || selectedApp.pertanianBaNumber ? (
                 /* BANNER HIJAU SETELAH DISETUJUI DINAS PERTANIAN */
-                <div className="bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-emerald-500/15 border-2 border-emerald-500/50 rounded-2xl p-4 space-y-3 shadow-sm">
+                <div className="bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-emerald-500/15 border-2 border-emerald-500/50 rounded-2xl p-4 space-y-3 shadow-sm font-sans">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-start gap-3">
                       <div className="p-2 bg-emerald-500 text-white rounded-xl font-bold shrink-0 mt-0.5 shadow-md">
@@ -1676,7 +1772,7 @@ export default function PuptrSpatialClearanceDashboard() {
                           </span>
                         </div>
                         <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
-                          Dinas Pertanian Kab. Luwu telah menyetujui rekomendasi pertimbangan alih fungsi lahan untuk pemohon <strong className="font-bold">{selectedApp.applicantName} ({selectedApp.companyName})</strong>. Peringatan tumpang tindih LP2B dihentikan dan berkas siap diproses untuk penerbitan Pertek PUPTR &amp; SK PKKPR DPMPTSP.
+                          Dinas Pertanian Kab. Luwu telah menyetujui rekomendasi pertimbangan alih fungsi lahan untuk pemohon <strong className="font-bold">{selectedApp.applicantName} ({selectedApp.companyName})</strong>. Peringatan tumpang tindih spasial dihentikan dan seluruh tombol proses Pertek PUPTR &amp; SK PKKPR telah aktif.
                         </p>
                       </div>
                     </div>
@@ -1721,8 +1817,8 @@ export default function PuptrSpatialClearanceDashboard() {
                   )}
                 </div>
               ) : (
-                /* BANNER WARNING SEBELUM DISETUJUI PERTANIAN */
-                <div className="bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-amber-500/10 border-2 border-amber-500/40 rounded-2xl p-4 space-y-3">
+                /* BANNER WARNING SEBELUM DISETUJUI PERTANIAN ATAU DI-OVERRIDE */
+                <div className="bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-amber-500/10 border-2 border-amber-500/40 rounded-2xl p-4 space-y-3 font-sans">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-start gap-3">
                       <div className="p-2 bg-amber-500 text-slate-950 rounded-xl font-bold shrink-0 mt-0.5 shadow-md">
@@ -1731,14 +1827,14 @@ export default function PuptrSpatialClearanceDashboard() {
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-black uppercase tracking-wider text-rose-600 dark:text-rose-400">
-                            ⚠️ AUTOMATED ENVIRONMENTAL FLAG: TUMPANG TINDIH LP2B &amp; LAHAN BASAH DETECTED
+                            ⚠️ AUTOMATED ENVIRONMENTAL FLAG: {spatialConflictAudit.conflictCategories.length > 0 ? spatialConflictAudit.conflictCategories.join(' & ') : 'TUMPANG TINDIH LP2B / LAHAN BASAH'} DETECTED
                           </span>
                           <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30">
-                            UU No. 41 / 2009
+                            UU No. 41 / 2009 &amp; PP No. 21 / 2021
                           </span>
                         </div>
                         <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
-                          Poligon lokasi pemohon <strong className="font-bold">{selectedApp.applicantName} ({selectedApp.companyName})</strong> beririsan dengan zona <span className="font-bold text-amber-600 dark:text-amber-400">Lahan Pertanian Pangan Berkelanjutan (LP2B) / Sawah Irigasi Teknis</span>. Sebelum SK PKKPR diterbitkan, berkas WAJIB melalui klarifikasi &amp; Berita Acara Alih Fungsi Lahan dari Dinas Pertanian.
+                          Poligon lokasi pemohon <strong className="font-bold">{selectedApp.applicantName} ({selectedApp.companyName})</strong> beririsan dengan <span className="font-bold text-amber-600 dark:text-amber-400">{spatialConflictAudit.conflictCategories.join(', ') || 'Zona Lahan Pertanian LP2B / Kawasan Lindung'}</span> seluas <strong className="font-mono">{spatialConflictAudit.totalOverlapHa || selectedApp.areaHa} Ha</strong>. Tombol proses (Disetujui, Revisi, Ditolak, Cetak BAP) dikunci sampai terbit BAP Pertanian atau Otorisasi Override Spasial.
                         </p>
                       </div>
                     </div>
@@ -1748,17 +1844,17 @@ export default function PuptrSpatialClearanceDashboard() {
                       <button
                         type="button"
                         onClick={() => setShowConflictResolutionModal(true)}
-                        className="w-full sm:w-auto px-3.5 py-2.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-900 dark:text-amber-200 border border-amber-500/40 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
+                        className="w-full sm:w-auto px-3.5 py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-300 border border-amber-500/40 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer shadow-sm"
                         title="Buka Conflict Resolution Tool untuk mencatat pertimbangan teknis override spasial"
                       >
-                        <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                        <ShieldAlert className="w-4 h-4 text-amber-400" />
                         <span>Override Spasial (BAP Verified)</span>
                       </button>
 
                       {selectedApp.pertanianStatus === 'FORWARDED' ? (
                         <div className="px-3.5 py-2 bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/40 rounded-xl text-xs font-bold flex items-center gap-2">
                           <Clock className="w-4 h-4 animate-spin text-amber-600" />
-                          <span>Dalam Antrean Verifikasi Dinas Pertanian</span>
+                          <span>Dalam Antrean Verifikasi Dinas Pertanian ⏳</span>
                         </div>
                       ) : selectedApp.pertanianStatus === 'REJECTED' ? (
                         <div className="px-3.5 py-2 bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-500/40 rounded-xl text-xs font-bold flex items-center gap-2">
@@ -1772,7 +1868,7 @@ export default function PuptrSpatialClearanceDashboard() {
                           className="w-full sm:w-auto px-4 py-2.5 bg-gradient-to-r from-amber-600 to-emerald-600 hover:from-amber-500 hover:to-emerald-500 text-white text-xs font-bold rounded-xl shadow-md shadow-amber-600/20 flex items-center justify-center gap-2 transition transform active:scale-95 cursor-pointer"
                         >
                           <Send className="w-4 h-4" />
-                          <span>Ajukan Permohonan Perubahan Status Lahan ke Dinas Pertanian</span>
+                          <span>Ajukan Permohonan Perubahan Status Lahan ke Dinas Pertanian 🌾</span>
                         </button>
                       )}
                     </div>
@@ -1842,7 +1938,7 @@ export default function PuptrSpatialClearanceDashboard() {
                         <X className="w-4 h-4" />
                       </button>
                     </div>
-                  ) : (activeStates['layer_sawah'] || activeStates['layer_lahan_kering_primer'] || zoningAudit?.suitabilityLevel === 'DIBATASI') ? (
+                  ) : (spatialConflictAudit.hasConflict || activeStates['layer_sawah'] || activeStates['layer_lahan_kering_primer'] || zoningAudit?.suitabilityLevel === 'DIBATASI') ? (
                     /* TOAST AMBER WARNING: SEMENTARA MENDAPATKAN PERSETUJUAN PERTANIAN */
                     <div className="absolute top-3 left-3 z-30 max-w-sm sm:max-w-md bg-amber-950/90 text-amber-100 backdrop-blur-md border border-amber-500/60 rounded-2xl p-3 shadow-2xl flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top duration-300 font-sans">
                       <div className="flex items-center gap-2.5">
@@ -1851,10 +1947,10 @@ export default function PuptrSpatialClearanceDashboard() {
                         </div>
                         <div className="text-xs">
                           <div className="font-extrabold text-amber-200 uppercase tracking-wider flex items-center gap-1.5">
-                            <span>⚠️ TURF.JS: TUMPANG TINDIH LP2B DETECTED</span>
+                            <span>⚠️ TURF.JS: {spatialConflictAudit.conflictCategories.length > 0 ? spatialConflictAudit.conflictCategories[0] : 'TUMPANG TINDIH SPASIAL'} DETECTED</span>
                           </div>
                           <div className="text-[11px] text-amber-100/90 leading-tight">
-                            Poligon lokasi beririsan Sawah LP2B. Memerlukan BAP Pertimbangan Teknis Pertanian!
+                            Poligon beririsan {spatialConflictAudit.totalOverlapHa ? `${spatialConflictAudit.totalOverlapHa} Ha` : 'kawasan bersyarat'}. Memerlukan BAP Pertanian atau Override Spasial!
                           </div>
                         </div>
                       </div>
@@ -2245,6 +2341,14 @@ export default function PuptrSpatialClearanceDashboard() {
                     </span>
                     <span className="text-[10px] px-2 py-0.5 bg-emerald-600 text-white rounded-md font-mono">LOCKED</span>
                   </div>
+                ) : isConflictLocked ? (
+                  <div className="p-2.5 bg-amber-500/15 border-2 border-amber-500/60 rounded-xl flex items-center justify-between text-xs text-amber-900 dark:text-amber-200 font-bold">
+                    <span className="flex items-center gap-1.5">
+                      <Lock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                      Keputusan Dikunci (Konflik Spasial Aktif)
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 bg-amber-600 text-white rounded-md font-mono">LOCKED</span>
+                  </div>
                 ) : selectedApp.pertanianStatus === 'FORWARDED' ? (
                   <div className="p-2.5 bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 rounded-xl flex items-center justify-between text-xs text-amber-800 dark:text-amber-300 font-bold">
                     <span className="flex items-center gap-1.5">
@@ -2308,6 +2412,61 @@ export default function PuptrSpatialClearanceDashboard() {
                     🔒 Permohonan ini telah diproses dan diteruskan ke Admin DPMPTSP OSS. Tombol pembuatan ulang telah dinonaktifkan.
                   </p>
                 </div>
+              ) : isConflictLocked ? (
+                /* HARD LOCKDOWN PANEL: DISABLING ALL PROCESS BUTTONS EXCEPT FORWARD PERTANIAN & OVERRIDE */
+                <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-500/15 via-rose-500/10 to-amber-500/15 border-2 border-amber-500/60 space-y-3 animate-in fade-in duration-200 shadow-sm font-sans">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-amber-500 text-slate-950 rounded-xl font-bold shrink-0 mt-0.5 shadow-md">
+                      <ShieldAlert className="w-5 h-5" />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-black uppercase tracking-wider text-rose-600 dark:text-rose-400">
+                          🔒 TOMBOL PROSES DIKUNCI OLEH TURF.JS SPATIAL AUDIT
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-500/30">
+                          KONFLIK SPASIAL
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-700 dark:text-slate-200 leading-snug">
+                        Poligon beririsan dengan <strong className="text-amber-800 dark:text-amber-300">{spatialConflictAudit.conflictCategories.join(', ') || 'Zona LP2B / Lindung'}</strong> seluas <strong>{spatialConflictAudit.totalOverlapHa || selectedApp.areaHa} Ha</strong> ({spatialConflictAudit.totalOverlapSqm.toLocaleString('id-ID')} m²).
+                      </p>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                        Seluruh tombol persetujuan, revisi, penolakan, dan cetak BAP dinonaktifkan hingga konflik diselesaikan via salah satu opsi resmi di bawah:
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 2 Authorized Action Buttons */}
+                  <div className="flex flex-col gap-2 pt-1">
+                    {/* 1. Forward to Agriculture */}
+                    {selectedApp.pertanianStatus === 'FORWARDED' ? (
+                      <div className="w-full py-2.5 bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/40 rounded-xl text-xs font-bold flex items-center justify-center gap-2">
+                        <Clock className="w-4 h-4 animate-spin text-amber-600" />
+                        <span>Dalam Antrean Verifikasi Dinas Pertanian ⏳</span>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleOpenForwardPertanianModal}
+                        className="w-full py-3 bg-gradient-to-r from-amber-600 via-emerald-600 to-amber-700 hover:from-amber-500 hover:to-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-600/30 transition transform active:scale-95 cursor-pointer"
+                      >
+                        <Send className="w-4 h-4" />
+                        <span>Ajukan Permohonan Perubahan Status Lahan ke Dinas Pertanian 🌾</span>
+                      </button>
+                    )}
+
+                    {/* 2. Spatial Override */}
+                    <button
+                      type="button"
+                      onClick={() => setShowConflictResolutionModal(true)}
+                      className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-300 border border-amber-500/50 font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm transition cursor-pointer"
+                    >
+                      <ShieldAlert className="w-4 h-4 text-amber-400" />
+                      <span>Otorisasi Override Spasial (BAP Verified Diskresi) 🛡️</span>
+                    </button>
+                  </div>
+                </div>
               ) : selectedApp.pertanianStatus === 'REJECTED' ? (
                 <button
                   type="button"
@@ -2362,17 +2521,19 @@ export default function PuptrSpatialClearanceDashboard() {
               {/* BAP Resmi PUPTR Preview & Print Button */}
               <button
                 type="button"
-                disabled={selectedApp.pertanianStatus === 'FORWARDED'}
+                disabled={isConflictLocked || selectedApp.pertanianStatus === 'FORWARDED'}
                 onClick={handleOpenBapModal}
                 className={`w-full py-2.5 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition ${
-                  selectedApp.pertanianStatus === 'FORWARDED'
-                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
+                  isConflictLocked || selectedApp.pertanianStatus === 'FORWARDED'
+                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-60'
                     : 'bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 cursor-pointer'
                 }`}
               >
                 <FileText className="w-4 h-4" />
                 <span>
-                  {selectedApp.pertanianStatus === 'FORWARDED'
+                  {isConflictLocked
+                    ? 'BAP PUPTR Terkunci (Selesaikan Konflik Spasial Dahulu)'
+                    : selectedApp.pertanianStatus === 'FORWARDED'
                     ? 'BAP PUPTR Belum Dapat Diterbitkan (Menunggu Rekomendasi Pertanian)'
                     : 'Lihat / Cetak Berita Acara (BAP) Kesesuaian Ruang PUPTR'}
                 </span>
