@@ -331,8 +331,8 @@ export default function InvestorPortalDashboard() {
             id: item.id,
             nomorPermohonan: item.id,
             namaPermohonan: item.nama_permohonan || item.nama_kegiatan || 'Permohonan PKKPR Berusaha',
-            namaBadanUsaha: item.nama_badan_usaha || item.perusahaan || hydratedCorporateProfile.namaPerusahaan || 'PT Pemohon Berusaha',
-            namaPemohon: item.nama_pemohon || hydratedCorporateProfile.namaPenanggungJawab || 'Pemohon Terdaftar',
+            namaBadanUsaha: item.nama_badan_usaha || item.perusahaan || (item.category === 'Non-Berusaha' || item.sektor?.includes('Perumahan') || item.nama_permohonan?.includes('Rumah Tinggal') ? 'Pemohon Perorangan (Masyarakat)' : (hydratedCorporateProfile.namaPerusahaan || 'PT Pemohon Berusaha')),
+            namaPemohon: item.nama_pemohon || (item.category === 'Non-Berusaha' ? 'Warga Pemohon' : (hydratedCorporateProfile.namaPenanggungJawab || 'Pemohon Terdaftar')),
             nib: item.nib_oss || item.nik_pemohon || hydratedCorporateProfile.nib || '-',
             sektor: item.sektor || 'Industri Pengolahan',
             kecamatan: item.kecamatan || '-',
@@ -2051,66 +2051,122 @@ export default function InvestorPortalDashboard() {
 
                         {/* Body Content */}
                         <div className="p-5 sm:p-6 space-y-6">
-                          {/* 4-STAGE INTERACTIVE STEPPER TRACKER */}
-                          <div className="space-y-3">
+                          {/* 4-STAGE INTERACTIVE VISUAL PROGRESS BAR & TOOLTIPS */}
+                          <div className="space-y-4">
                             <div className="flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
-                              <span className="uppercase tracking-wider">Tahapan Alur Verifikasi Lintas OPD:</span>
-                              <span className="text-[11px] text-teal-600 dark:text-teal-400 font-mono">
+                              <div className="flex items-center gap-2">
+                                <span className="uppercase tracking-wider">Tahapan Alur Verifikasi Lintas OPD:</span>
+                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 font-medium">
+                                  Arahkan kursor ke kartu tahap untuk detail SOP
+                                </span>
+                              </div>
+                              <span className="text-xs font-mono font-black text-teal-600 dark:text-teal-400 bg-teal-500/10 px-2.5 py-1 rounded-xl border border-teal-500/20">
                                 {isPublished ? '4 / 4 Tahap Selesai (100%)' : isApproved ? '3 / 4 Tahap Selesai (75%)' : step2Done ? '2 / 4 Tahap Selesai (50%)' : '1 / 4 Tahap Selesai (25%)'}
                               </span>
                             </div>
 
+                            {/* Connected Horizontal Progress Line */}
+                            <div className="relative pt-2 pb-1 hidden sm:block">
+                              <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 transition-all duration-700 rounded-full shadow-[0_0_12px_rgba(16,185,129,0.5)]"
+                                  style={{ width: isPublished ? '100%' : isApproved ? '75%' : step2Done ? '50%' : '25%' }}
+                                />
+                              </div>
+                            </div>
+
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                               {/* Step 1: OSS Registration */}
-                              <div className={`p-3.5 rounded-2xl border transition-all ${
+                              <div className={`group relative p-3.5 rounded-2xl border transition-all ${
                                 step1Done
-                                  ? 'bg-emerald-500/5 border-emerald-500/30 dark:bg-emerald-500/10'
+                                  ? 'bg-emerald-500/5 border-emerald-500/30 dark:bg-emerald-500/10 hover:border-emerald-500/60 shadow-xs'
                                   : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800'
                               }`}>
                                 <div className="flex items-center justify-between mb-1.5">
-                                  <span className="text-[10px] font-black uppercase text-slate-500">Tahap 1</span>
+                                  <span className="text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                                    Tahap 1
+                                  </span>
                                   <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                                 </div>
-                                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Registrasi OSS &amp; Spasial</h4>
+                                <h4 className="text-xs font-black text-slate-900 dark:text-white">Registrasi OSS &amp; Spasial</h4>
                                 <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">
                                   NIB OSS &amp; Poligon Batas Lahan Terverifikasi
                                 </p>
+
+                                {/* Tooltip on Hover */}
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-950 text-white rounded-xl shadow-2xl border border-slate-800 text-[11px] opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all z-30 space-y-1">
+                                  <div className="flex items-center justify-between font-bold text-emerald-400 border-b border-slate-800 pb-1">
+                                    <span>Tahap 1: Pengajuan Digital</span>
+                                    <span className="text-[9px] bg-emerald-500/20 px-1.5 py-0.5 rounded">Selesai</span>
+                                  </div>
+                                  <p className="text-slate-300 text-[10px] leading-tight">
+                                    Pemeriksaan NIB berbasis OSS RBA dan penguncian koordinat poligon batas lahan pada peta digital Luwu.
+                                  </p>
+                                  <div className="pt-1 text-[9px] text-slate-400 flex justify-between">
+                                    <span>PIC: DPMPTSP / Helpdesk OSS</span>
+                                    <span>SOP: 1 Hari Kerja</span>
+                                  </div>
+                                </div>
                               </div>
 
                               {/* Step 2: Pertanian LP2B Clearance */}
-                              <div className={`p-3.5 rounded-2xl border transition-all ${
+                              <div className={`group relative p-3.5 rounded-2xl border transition-all ${
                                 step2Done
-                                  ? 'bg-emerald-500/5 border-emerald-500/30 dark:bg-emerald-500/10'
-                                  : 'bg-amber-500/5 border-amber-500/30 dark:bg-amber-500/10'
+                                  ? 'bg-emerald-500/5 border-emerald-500/30 dark:bg-emerald-500/10 hover:border-emerald-500/60 shadow-xs'
+                                  : 'bg-amber-500/5 border-amber-500/30 dark:bg-amber-500/10 hover:border-amber-500/60'
                               }`}>
                                 <div className="flex items-center justify-between mb-1.5">
-                                  <span className="text-[10px] font-black uppercase text-slate-500">Tahap 2</span>
+                                  <span className="text-[10px] font-black uppercase text-slate-500 flex items-center gap-1">
+                                    <span className={`w-2 h-2 rounded-full ${step2Done ? 'bg-emerald-500' : 'bg-amber-500 animate-ping'}`} />
+                                    Tahap 2
+                                  </span>
                                   {step2Done ? (
                                     <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                                   ) : (
                                     <Clock className="w-4 h-4 text-amber-500 animate-pulse" />
                                   )}
                                 </div>
-                                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Dinas Pertanian (LP2B)</h4>
+                                <h4 className="text-xs font-black text-slate-900 dark:text-white">Dinas Pertanian (LP2B)</h4>
                                 <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">
                                   {step2Done ? (
-                                    <span className="text-emerald-700 dark:text-emerald-400 font-medium">BAP Pelepasan LP2B Diterbitkan</span>
+                                    <span className="text-emerald-700 dark:text-emerald-400 font-bold">BAP Pelepasan LP2B Diterbitkan</span>
                                   ) : (
-                                    <span className="text-amber-700 dark:text-amber-400 font-medium">Verifikasi Alih Fungsi Lahan</span>
+                                    <span className="text-amber-700 dark:text-amber-400 font-bold">Verifikasi Alih Fungsi Lahan</span>
                                   )}
                                 </p>
+
+                                {/* Tooltip on Hover */}
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-950 text-white rounded-xl shadow-2xl border border-slate-800 text-[11px] opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all z-30 space-y-1">
+                                  <div className="flex items-center justify-between font-bold text-amber-400 border-b border-slate-800 pb-1">
+                                    <span>Tahap 2: Kajian LP2B</span>
+                                    <span className={`text-[9px] px-1.5 py-0.5 rounded ${step2Done ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}`}>
+                                      {step2Done ? 'Disetujui' : 'Sedang Diproses'}
+                                    </span>
+                                  </div>
+                                  <p className="text-slate-300 text-[10px] leading-tight">
+                                    Validasi apakah poligon lahan bersinggungan dengan zona Lahan Pertanian Pangan Berkelanjutan (LP2B) atau irigasi teknis.
+                                  </p>
+                                  <div className="pt-1 text-[9px] text-slate-400 flex justify-between">
+                                    <span>PIC: Tim Teknis Dinas Pertanian</span>
+                                    <span>SOP: 1 - 2 Hari</span>
+                                  </div>
+                                </div>
                               </div>
 
                               {/* Step 3: PUPTR Spatial Check */}
-                              <div className={`p-3.5 rounded-2xl border transition-all ${
+                              <div className={`group relative p-3.5 rounded-2xl border transition-all ${
                                 step3Done
-                                  ? 'bg-emerald-500/5 border-emerald-500/30 dark:bg-emerald-500/10'
+                                  ? 'bg-emerald-500/5 border-emerald-500/30 dark:bg-emerald-500/10 hover:border-emerald-500/60 shadow-xs'
                                   : step2Done
-                                  ? 'bg-amber-500/5 border-amber-500/30 dark:bg-amber-500/10'
+                                  ? 'bg-amber-500/5 border-amber-500/30 dark:bg-amber-500/10 hover:border-amber-500/60'
                                   : 'bg-slate-50 dark:bg-slate-950/40 border-slate-200 dark:border-slate-800 opacity-60'
                               }`}>
                                 <div className="flex items-center justify-between mb-1.5">
-                                  <span className="text-[10px] font-black uppercase text-slate-500">Tahap 3</span>
+                                  <span className="text-[10px] font-black uppercase text-slate-500 flex items-center gap-1">
+                                    <span className={`w-2 h-2 rounded-full ${step3Done ? 'bg-emerald-500' : step2Done ? 'bg-amber-500' : 'bg-slate-400'}`} />
+                                    Tahap 3
+                                  </span>
                                   {step3Done ? (
                                     <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                                   ) : step2Done ? (
@@ -2119,26 +2175,46 @@ export default function InvestorPortalDashboard() {
                                     <Lock className="w-4 h-4 text-slate-400" />
                                   )}
                                 </div>
-                                <h4 className="text-xs font-bold text-slate-900 dark:text-white">Dinas PUPTR (Tata Ruang)</h4>
+                                <h4 className="text-xs font-black text-slate-900 dark:text-white">Dinas PUPTR (Tata Ruang)</h4>
                                 <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">
                                   {step3Done ? (
-                                    <span className="text-emerald-700 dark:text-emerald-400 font-medium">Pertek Tata Ruang Disetujui</span>
+                                    <span className="text-emerald-700 dark:text-emerald-400 font-bold">Pertek Tata Ruang Disetujui</span>
                                   ) : (
                                     <span className="text-slate-500">Kajian Zonasi RTRW &amp; Koefisien</span>
                                   )}
                                 </p>
+
+                                {/* Tooltip on Hover */}
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-950 text-white rounded-xl shadow-2xl border border-slate-800 text-[11px] opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all z-30 space-y-1">
+                                  <div className="flex items-center justify-between font-bold text-blue-400 border-b border-slate-800 pb-1">
+                                    <span>Tahap 3: Pertimbangan Teknis</span>
+                                    <span className={`text-[9px] px-1.5 py-0.5 rounded ${step3Done ? 'bg-emerald-500/20 text-emerald-300' : 'bg-blue-500/20 text-blue-300'}`}>
+                                      {step3Done ? 'Disetujui' : 'Menunggu Review'}
+                                    </span>
+                                  </div>
+                                  <p className="text-slate-300 text-[10px] leading-tight">
+                                    Penetapan Koefisien Dasar Bangunan (KDB), Garis Sempadan Bangunan (GSB), dan kesesuaian Pola Ruang RTRW Kab. Luwu.
+                                  </p>
+                                  <div className="pt-1 text-[9px] text-slate-400 flex justify-between">
+                                    <span>PIC: Bidang Tata Ruang PUPTR</span>
+                                    <span>SOP: 2 Hari Kerja</span>
+                                  </div>
+                                </div>
                               </div>
 
                               {/* Step 4: DPMPTSP SK Issuance */}
-                              <div className={`p-3.5 rounded-2xl border transition-all ${
+                              <div className={`group relative p-3.5 rounded-2xl border transition-all ${
                                 step4Done
-                                  ? 'bg-emerald-500/15 border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.1)]'
+                                  ? 'bg-emerald-500/15 border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.15)] ring-1 ring-emerald-500/30'
                                   : step3Done
-                                  ? 'bg-blue-500/5 border-blue-500/30'
+                                  ? 'bg-blue-500/5 border-blue-500/30 hover:border-blue-500/60'
                                   : 'bg-slate-50 dark:bg-slate-950/40 border-slate-200 dark:border-slate-800 opacity-60'
                               }`}>
                                 <div className="flex items-center justify-between mb-1.5">
-                                  <span className="text-[10px] font-black uppercase text-slate-500">Tahap 4</span>
+                                  <span className="text-[10px] font-black uppercase text-slate-500 flex items-center gap-1">
+                                    <span className={`w-2 h-2 rounded-full ${step4Done ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                                    Tahap 4
+                                  </span>
                                   {step4Done ? (
                                     <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                                   ) : step3Done ? (
@@ -2147,14 +2223,31 @@ export default function InvestorPortalDashboard() {
                                     <Lock className="w-4 h-4 text-slate-400" />
                                   )}
                                 </div>
-                                <h4 className="text-xs font-bold text-slate-900 dark:text-white">SK PKKPR &amp; TTE DPMPTSP</h4>
+                                <h4 className="text-xs font-black text-slate-900 dark:text-white">SK PKKPR &amp; TTE DPMPTSP</h4>
                                 <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">
                                   {step4Done ? (
-                                    <span className="text-emerald-700 dark:text-emerald-400 font-bold">SK Terbit (Siap Cetak PDF)</span>
+                                    <span className="text-emerald-700 dark:text-emerald-400 font-black">SK Terbit (Siap Cetak PDF)</span>
                                   ) : (
                                     <span className="text-slate-500">Penerbitan SK &amp; TTE BSrE</span>
                                   )}
                                 </p>
+
+                                {/* Tooltip on Hover */}
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-950 text-white rounded-xl shadow-2xl border border-slate-800 text-[11px] opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all z-30 space-y-1">
+                                  <div className="flex items-center justify-between font-bold text-emerald-400 border-b border-slate-800 pb-1">
+                                    <span>Tahap 4: Tanda Tangan Elektronik</span>
+                                    <span className={`text-[9px] px-1.5 py-0.5 rounded ${step4Done ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-700 text-slate-300'}`}>
+                                      {step4Done ? 'SK Terbit' : 'Tahap Akhir'}
+                                    </span>
+                                  </div>
+                                  <p className="text-slate-300 text-[10px] leading-tight">
+                                    Penerbitan Surat Keputusan (SK) PKKPR resmi dengan sertifikat TTE BSrE Badan Siber dan Sandi Negara.
+                                  </p>
+                                  <div className="pt-1 text-[9px] text-slate-400 flex justify-between">
+                                    <span>PIC: Kepala DPMPTSP Luwu</span>
+                                    <span>Status: Dokumen Sah Hukum</span>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
