@@ -135,9 +135,9 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
       ],
       masaBerlakuTahun: 3,
 
-      kadisNama: dpmptspSettings?.headOfDepartment?.name || tteSignerName || 'Drs. H. Muhammad Rudi, M.Si',
-      kadisNip: dpmptspSettings?.headOfDepartment?.nip || tteSignerNip || '19740812 199803 1 004',
-      kadisPangkatGolongan: dpmptspSettings?.headOfDepartment?.rank || 'Pembina Utama Muda (IV/c)',
+      kadisNama: dpmptspSettings?.kepalaDinas?.fullName || tteSignerName || 'Drs. H. Muhammad Rudi, M.Si',
+      kadisNip: dpmptspSettings?.kepalaDinas?.nip || tteSignerNip || '19740812 199803 1 004',
+      kadisPangkatGolongan: dpmptspSettings?.kepalaDinas?.pangkatGolongan || 'Pembina Utama Muda (IV/c)',
       kadisJabatan: 'Kepala Dinas Penanaman Modal dan PTSP Kab. Luwu',
       isTteSigned: isTte !== undefined ? isTte : item.isTteSigned,
       tteSignedDate: dateStr

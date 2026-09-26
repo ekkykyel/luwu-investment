@@ -80,6 +80,10 @@ export interface AgrarianQueueItem {
   existingCrop: string;
   puptrForwardedNotes: string;
   agriStatus: 'Pending Review' | 'Approved' | 'Requires Revision' | 'Rejected';
+  pertanianStatus?: 'NOT_SUBMITTED' | 'FORWARDED' | 'APPROVED' | 'REJECTED';
+  pertanianBaNumber?: string;
+  pertanianSrNumber?: string;
+  pertanianNotes?: string;
   beritaAcaraDocNum?: string;
   suratRekomendasiNum?: string;
   rejectionReason?: string;
