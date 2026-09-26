@@ -24,7 +24,7 @@ import {
   Info
 } from "lucide-react";
 import { BapLp2bDocumentData, DEFAULT_BAP_LP2B_DATA } from "../documents/BapLp2bPertanianDocument";
-import { getEffectiveMapImageUrl } from "../../utils/luwuGisMapGenerator";
+import { getEffectiveMapImageUrl, extractCoordsFromGeometry } from "../../utils/luwuGisMapGenerator";
 import { getOpdSettings, saveOpdSettings } from "../../utils/opdSettingsStorage";
 import { supabase } from "../../lib/supabaseClient";
 import Swal from "sweetalert2";
@@ -48,11 +48,21 @@ export function SmartFormPertanianModal({
   onOpenFullBapPreview,
   onCaptureLatestSnapshot
 }: SmartFormPertanianModalProps) {
-  const [formData, setFormData] = useState<BapLp2bDocumentData>(() => ({
-    ...DEFAULT_BAP_LP2B_DATA,
-    ...(initialData || {}),
-    ...(mapSnapshot ? { petaImageUrl: mapSnapshot } : {})
-  }));
+  const [formData, setFormData] = useState<BapLp2bDocumentData>(() => {
+    const base = {
+      ...DEFAULT_BAP_LP2B_DATA,
+      ...(initialData || {}),
+      ...(mapSnapshot ? { petaImageUrl: mapSnapshot } : {})
+    };
+    const rawGeom = (initialData as any)?.geometry || (initialData as any)?.geometry_json || (initialData as any)?.geom;
+    if (rawGeom) {
+      const vertices = extractCoordsFromGeometry(rawGeom);
+      if (vertices && vertices.length > 0) {
+        base.koordinatPoligon = vertices as any;
+      }
+    }
+    return base;
+  });
 
   const [activeTab, setActiveTab] = useState<"pemohon" | "agraria" | "kompensasi" | "pejabat" | "geospasial">("pemohon");
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -65,11 +75,19 @@ export function SmartFormPertanianModal({
   useEffect(() => {
     if (currentDocKey !== prevDocKeyRef.current) {
       prevDocKeyRef.current = currentDocKey;
-      setFormData({
+      const base = {
         ...DEFAULT_BAP_LP2B_DATA,
         ...(initialData || {}),
         ...(mapSnapshot ? { petaImageUrl: mapSnapshot } : {})
-      });
+      };
+      const rawGeom = (initialData as any)?.geometry || (initialData as any)?.geometry_json || (initialData as any)?.geom;
+      if (rawGeom) {
+        const vertices = extractCoordsFromGeometry(rawGeom);
+        if (vertices && vertices.length > 0) {
+          base.koordinatPoligon = vertices as any;
+        }
+      }
+      setFormData(base);
     } else if (mapSnapshot && mapSnapshot !== formData.petaImageUrl) {
       setFormData(prev => ({ ...prev, petaImageUrl: mapSnapshot }));
     }

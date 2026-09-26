@@ -515,11 +515,11 @@ export function BapKtrPuptrDocument({
 
       // 4. Fast non-blocking background sync to opd_settings
       if (supabase) {
-        supabase.from("opd_settings").upsert({
+        (supabase.from("opd_settings").upsert({
           opd_key: "puptr",
           data_bap_ktr: data,
           updated_at: new Date().toISOString()
-        }, { onConflict: "opd_key" }).then(() => {}).catch((e) => console.log("Background opd_settings sync note:", e));
+        }, { onConflict: "opd_key" }) as unknown as Promise<any>).then(() => {}).catch((e) => console.log("Background opd_settings sync note:", e));
       }
 
       setSaveSuccessMsg("Data BAP-PKKPR & Perubahan Pemohon Berhasil Disimpan ke Database!");

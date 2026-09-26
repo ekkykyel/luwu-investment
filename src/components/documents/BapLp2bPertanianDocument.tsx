@@ -523,11 +523,11 @@ export function BapLp2bPertanianDocument({
 
       // 4. Fast non-blocking background sync to opd_settings
       if (supabase) {
-        supabase.from("opd_settings").upsert({
+        (supabase.from("opd_settings").upsert({
           opd_key: "pertanian",
           data_bap_lp2b: data,
           updated_at: new Date().toISOString()
-        }, { onConflict: "opd_key" }).then(() => {}).catch((e) => console.log("Background opd_settings sync note:", e));
+        }, { onConflict: "opd_key" }) as unknown as Promise<any>).then(() => {}).catch((e) => console.log("Background opd_settings sync note:", e));
       }
 
       setSaveSuccessMsg("Data BAP-LP2B & Perubahan Pemohon Berhasil Disimpan ke Database!");
