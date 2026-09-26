@@ -1901,6 +1901,284 @@ export function calculateAreaWithSRID(
   };
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 🔬 GRANULAR DEBUG PIPELINE LOGGING FOR WKT / GEOJSON DATA INGESTION
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface PipelineGeometryAuditReport {
+  stageName: string;
+  sourceType: 'WKT' | 'EWKT' | 'GeoJSON' | 'CoordArray' | 'PostGISGeom' | 'Unknown';
+  rawWktOrString: string;
+  parsedGeoJSON: GeoJSON.Feature | GeoJSON.Geometry | null;
+  vertexCount: number;
+  isClosedRing: boolean;
+  hasDuplicateVertices: boolean;
+  duplicateVertexCount: number;
+  coordinateOrder: 'LNG_LAT_OK' | 'SWAPPED_LAT_LNG_DETECTED' | 'METRIC_UTM_DETECTED' | 'INVALID';
+  coordinateScalingAnomaly: boolean;
+  luwuGeofenceValid: boolean;
+  bounds: {
+    minLng: number;
+    maxLng: number;
+    minLat: number;
+    maxLat: number;
+    deltaLngDeg: number;
+    deltaLatDeg: number;
+  };
+  sampleCoordinates: {
+    firstPoints: [number, number][];
+    lastPoints: [number, number][];
+  };
+  geodesicAreaM2: number;
+  geodesicAreaHa: number;
+  diagnosticNotes: string[];
+}
+
+/**
+ * Parses Well-Known Text (WKT / EWKT) string into GeoJSON Geometry.
+ * Supports POLYGON, MULTIPOLYGON, POINT, and EWKT prefixes (e.g. SRID=4326;POLYGON(...)).
+ */
+export function parseWktToGeoJSON(wktString: string): GeoJSON.Geometry | null {
+  if (!wktString || typeof wktString !== 'string') return null;
+
+  // Clean EWKT prefix if present (e.g. SRID=4326;POLYGON(...))
+  const cleanWkt = wktString.replace(/^SRID=\d+;/i, '').trim();
+
+  // POLYGON match
+  const polygonMatch = cleanWkt.match(/^POLYGON\s*\(\s*\((.+)\)\s*\)$/i);
+  if (polygonMatch) {
+    const rawRingStr = polygonMatch[1];
+    // Split rings if multi-ring
+    const rings = rawRingStr.split(/\),\s*\(/);
+    const coordinates: [number, number][][] = rings.map(ringStr => {
+      return ringStr
+        .split(',')
+        .map(pairStr => {
+          const parts = pairStr.trim().split(/\s+/).map(Number);
+          return [parts[0], parts[1]] as [number, number];
+        })
+        .filter(pt => !isNaN(pt[0]) && !isNaN(pt[1]));
+    });
+
+    if (coordinates.length > 0 && coordinates[0].length >= 3) {
+      return {
+        type: 'Polygon',
+        coordinates
+      };
+    }
+  }
+
+  // MULTIPOLYGON match
+  const multiPolygonMatch = cleanWkt.match(/^MULTIPOLYGON\s*\(\s*\(\((.+)\)\)\s*\)$/i);
+  if (multiPolygonMatch) {
+    const rawPolysStr = multiPolygonMatch[1];
+    const polyStrings = rawPolysStr.split(/\)\),\s*\(\(/);
+    const coordinates: [number, number][][][] = polyStrings.map(polyStr => {
+      const rings = polyStr.split(/\),\s*\(/);
+      return rings.map(ringStr => {
+        return ringStr
+          .split(',')
+          .map(pairStr => {
+            const parts = pairStr.trim().split(/\s+/).map(Number);
+            return [parts[0], parts[1]] as [number, number];
+          })
+          .filter(pt => !isNaN(pt[0]) && !isNaN(pt[1]));
+      });
+    });
+
+    if (coordinates.length > 0) {
+      return {
+        type: 'MultiPolygon',
+        coordinates
+      };
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Granular pipeline debug logger that inspects WKT/GeoJSON coordinates BEFORE they enter area calculations.
+ * Captures extra vertices, coordinate scaling errors, swapped Lat/Lng, and Luwu spatial geofence validity.
+ */
+export function auditPkkprPipelineGeometry(
+  rawInput: any,
+  stageName: string = 'PKKPR Data Pipeline Ingestion'
+): PipelineGeometryAuditReport {
+  let sourceType: PipelineGeometryAuditReport['sourceType'] = 'Unknown';
+  let rawWktOrString = '';
+  let parsedGeoJSON: GeoJSON.Feature | GeoJSON.Geometry | null = null;
+  let rawCoordinates: [number, number][] = [];
+
+  // 1. Identify and parse input type
+  if (typeof rawInput === 'string') {
+    rawWktOrString = rawInput;
+    if (rawInput.trim().toUpperCase().startsWith('SRID=')) {
+      sourceType = 'EWKT';
+    } else if (rawInput.trim().toUpperCase().startsWith('POLYGON') || rawInput.trim().toUpperCase().startsWith('MULTIPOLYGON')) {
+      sourceType = 'WKT';
+    } else {
+      try {
+        const obj = JSON.parse(rawInput);
+        sourceType = 'GeoJSON';
+        parsedGeoJSON = obj;
+      } catch {
+        sourceType = 'Unknown';
+      }
+    }
+
+    if (sourceType === 'WKT' || sourceType === 'EWKT') {
+      const parsedGeom = parseWktToGeoJSON(rawInput);
+      if (parsedGeom) {
+        parsedGeoJSON = parsedGeom;
+      }
+    }
+  } else if (Array.isArray(rawInput)) {
+    sourceType = 'CoordArray';
+    rawCoordinates = rawInput.map(pt => [Number(pt[0] || pt.lng || pt.longitude), Number(pt[1] || pt.lat || pt.latitude)]);
+    parsedGeoJSON = {
+      type: 'Polygon',
+      coordinates: [rawCoordinates]
+    };
+    rawWktOrString = `POLYGON((${rawCoordinates.map(c => `${c[0]} ${c[1]}`).join(', ')}))`;
+  } else if (rawInput && typeof rawInput === 'object') {
+    sourceType = 'GeoJSON';
+    parsedGeoJSON = rawInput;
+    rawWktOrString = JSON.stringify(rawInput).substring(0, 200) + '...';
+  }
+
+  // 2. Extract coordinate list for vertex analysis
+  if (parsedGeoJSON) {
+    const fc = normalizeGeoJSON(parsedGeoJSON);
+    if (fc.features.length > 0 && fc.features[0].geometry) {
+      const geom = fc.features[0].geometry;
+      if (geom.type === 'Polygon' && geom.coordinates.length > 0) {
+        rawCoordinates = geom.coordinates[0] as [number, number][];
+      } else if (geom.type === 'MultiPolygon' && geom.coordinates.length > 0 && geom.coordinates[0].length > 0) {
+        rawCoordinates = geom.coordinates[0][0] as [number, number][];
+      }
+    }
+  }
+
+  const vertexCount = rawCoordinates.length;
+  const isClosedRing = vertexCount >= 4 &&
+    rawCoordinates[0][0] === rawCoordinates[vertexCount - 1][0] &&
+    rawCoordinates[0][1] === rawCoordinates[vertexCount - 1][1];
+
+  // 3. Duplicate vertex audit
+  let duplicateCount = 0;
+  for (let i = 0; i < vertexCount - 1; i++) {
+    const pt1 = rawCoordinates[i];
+    const pt2 = rawCoordinates[i + 1];
+    if (Math.abs(pt1[0] - pt2[0]) < 0.0000001 && Math.abs(pt1[1] - pt2[1]) < 0.0000001) {
+      duplicateCount++;
+    }
+  }
+
+  // 4. Bounds & Coordinate Order Analysis
+  let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity;
+  let orderResult: PipelineGeometryAuditReport['coordinateOrder'] = 'LNG_LAT_OK';
+  let scalingAnomaly = false;
+
+  for (const [x, y] of rawCoordinates) {
+    if (x < minLng) minLng = x;
+    if (x > maxLng) maxLng = x;
+    if (y < minLat) minLat = y;
+    if (y > maxLat) maxLat = y;
+
+    // Swapped Lat/Lng check: Latitude in South Sulawesi is around -2.0 to -3.8, Longitude 119.5 to 121.5
+    if (x < 0 && y > 100) {
+      orderResult = 'SWAPPED_LAT_LNG_DETECTED';
+    } else if (Math.abs(x) > 180 || Math.abs(y) > 90) {
+      orderResult = 'METRIC_UTM_DETECTED';
+      scalingAnomaly = true;
+    }
+  }
+
+  const deltaLngDeg = maxLng === -Infinity ? 0 : Number((maxLng - minLng).toFixed(6));
+  const deltaLatDeg = maxLat === -Infinity ? 0 : Number((maxLat - minLat).toFixed(6));
+
+  // Luwu Geofence Check (Kabupaten Luwu approx bounds: Lng 119.8 - 121.2, Lat -3.8 - -2.2)
+  const luwuGeofenceValid = orderResult === 'LNG_LAT_OK' &&
+    minLng >= 119.0 && maxLng <= 122.0 &&
+    minLat >= -4.5 && maxLat <= -2.0;
+
+  // 5. Area Calculation before calculation pipeline
+  const areaRes = parsedGeoJSON ? calculateArea(parsedGeoJSON, 4326) : { areaSqm: 0, areaHa: 0 };
+
+  // 6. Diagnostic Notes
+  const diagnosticNotes: string[] = [];
+  diagnosticNotes.push(`• Tipe Sumber Data: ${sourceType}`);
+  diagnosticNotes.push(`• Jumlah Vertices (Titik Sudut): ${vertexCount} titik (Ring Tertutup: ${isClosedRing ? 'YA' : 'TIDAK'})`);
+
+  if (duplicateCount > 0) {
+    diagnosticNotes.push(`⚠️ DITEMUKAN ${duplicateCount} VERTICES DUPLIKAT BERTURUTAN (Segmen mikro tanpa luas).`);
+  }
+
+  if (orderResult === 'SWAPPED_LAT_LNG_DETECTED') {
+    diagnosticNotes.push(`🚨 ANOMALI KOORDINAT TERBALIK: Urutan koordinat terdeteksi [Lat, Lng] bukannya [Lng, Lat].`);
+  } else if (orderResult === 'METRIC_UTM_DETECTED') {
+    diagnosticNotes.push(`⚠️ ANOMALI SKALA: Koordinat berupa nilai metrik UTM (Easting/Northing) dalam meter.`);
+  } else {
+    diagnosticNotes.push(`✓ Urutan Koordinat Standar WGS84 [Longitude, Latitude] Terverifikasi OK.`);
+  }
+
+  if (!luwuGeofenceValid && orderResult === 'LNG_LAT_OK') {
+    diagnosticNotes.push(`⚠️ KOORDINAT DI LUAR GEOFENCE KABUPATEN LUWU (Bounds: ${minLng.toFixed(4)}, ${minLat.toFixed(4)} s/d ${maxLng.toFixed(4)}, ${maxLat.toFixed(4)}).`);
+  } else if (luwuGeofenceValid) {
+    diagnosticNotes.push(`✓ Lokasi Koordinat Berada Sesuai Geofence Wilayah Kabupaten Luwu.`);
+  }
+
+  diagnosticNotes.push(`• Kalkulasi Luas Geodesic WGS84: ${areaRes.areaSqm.toLocaleString()} m² (${areaRes.areaHa} Ha).`);
+
+  // 🔬 GRANULAR CONSOLE GROUP LOGGING
+  console.group(`%c🔬 [PIPELINE DEBUG] ${stageName.toUpperCase()}`, 'color: #ec4899; font-weight: bold; font-size: 13px;');
+  console.log(`%c• Source Input Type: ${sourceType}`, 'color: #3b82f6; font-weight: bold;');
+  console.log(`%c• Raw Input Snippet: ${rawWktOrString.substring(0, 150)}...`, 'color: #64748b;');
+  console.log(`• Total Vertices: ${vertexCount} | Closed Ring: ${isClosedRing} | Duplicates: ${duplicateCount}`);
+  console.log(`• Coordinate Order Status: ${orderResult} | Luwu Geofence Valid: ${luwuGeofenceValid}`);
+  console.log(`• Bounding Box: Lng [${minLng.toFixed(6)} to ${maxLng.toFixed(6)}] (Δ ${deltaLngDeg}°), Lat [${minLat.toFixed(6)} to ${maxLat.toFixed(6)}] (Δ ${deltaLatDeg}°)`);
+  console.log(`• First 3 Vertices:`, rawCoordinates.slice(0, 3));
+  console.log(`• Last 3 Vertices:`, rawCoordinates.slice(-3));
+  console.log(`• Geodesic Area Result: ${areaRes.areaSqm.toLocaleString()} m² (${areaRes.areaHa} Ha)`);
+
+  console.group(`%c📋 PIPELINE DIAGNOSIS SUMMARY`, 'color: #10b981; font-weight: bold;');
+  diagnosticNotes.forEach(note => console.log(`  ${note}`));
+  console.groupEnd();
+
+  console.groupEnd();
+
+  return {
+    stageName,
+    sourceType,
+    rawWktOrString,
+    parsedGeoJSON,
+    vertexCount,
+    isClosedRing,
+    hasDuplicateVertices: duplicateCount > 0,
+    duplicateVertexCount: duplicateCount,
+    coordinateOrder: orderResult,
+    coordinateScalingAnomaly: scalingAnomaly,
+    luwuGeofenceValid,
+    bounds: {
+      minLng: isFinite(minLng) ? minLng : 0,
+      maxLng: isFinite(maxLng) ? maxLng : 0,
+      minLat: isFinite(minLat) ? minLat : 0,
+      maxLat: isFinite(maxLat) ? maxLat : 0,
+      deltaLngDeg,
+      deltaLatDeg
+    },
+    sampleCoordinates: {
+      firstPoints: rawCoordinates.slice(0, 5),
+      lastPoints: rawCoordinates.slice(-5)
+    },
+    geodesicAreaM2: areaRes.areaSqm,
+    geodesicAreaHa: areaRes.areaHa,
+    diagnosticNotes
+  };
+}
+
+
 
 
 
