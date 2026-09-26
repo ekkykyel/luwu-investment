@@ -434,6 +434,17 @@ export default function PuptrSpatialClearanceDashboard() {
     try {
       let mapped: PkkprApplicationItem[] = [];
 
+      // Local persistent registry for forwarded applications to Dinas Pertanian
+      const forwardedRaw = localStorage.getItem('luwu_pkkpr_forwarded_to_pertanian_ids');
+      const forwardedList: string[] = forwardedRaw ? JSON.parse(forwardedRaw) : [];
+      const isLocallyForwarded = (id?: string, nib?: string, docNum?: string, name?: string) => {
+        if (id && forwardedList.includes(id)) return true;
+        if (nib && forwardedList.includes(nib)) return true;
+        if (docNum && forwardedList.includes(docNum)) return true;
+        if (name && forwardedList.includes(name)) return true;
+        return false;
+      };
+
       // 1. Primary Query: Try fetching from gis_pkkpr table
       try {
         const { data: pkkprGisData, error: gisErr } = await supabase
@@ -463,7 +474,12 @@ export default function PuptrSpatialClearanceDashboard() {
               pertStatus = 'APPROVED';
             } else if (item.status_pkkpr === 'Rejected_Pertanian' || item.pertanian_status === 'REJECTED') {
               pertStatus = 'REJECTED';
-            } else if (item.status_pkkpr === 'Forwarded_To_Pertanian' || item.pertanian_status === 'FORWARDED') {
+            } else if (
+              item.status_pkkpr === 'Forwarded_To_Pertanian' ||
+              item.pertanian_status === 'FORWARDED' ||
+              (rawCatatan && rawCatatan.includes('PERTANIAN')) ||
+              isLocallyForwarded(item.id, item.nik_pemohon || item.nib_oss, item.pertek_puptr_num || item.sk_pkkpr_num, item.nama_badan_usaha || item.nama_pemohon)
+            ) {
               pertStatus = 'FORWARDED';
             }
 
@@ -534,7 +550,12 @@ export default function PuptrSpatialClearanceDashboard() {
               pertStatus = 'APPROVED';
             } else if (item.status === 'Rejected_Pertanian' || item.pertanian_rejection_notes || item.pertanian_status === 'REJECTED') {
               pertStatus = 'REJECTED';
-            } else if (item.status === 'Forwarded_To_Pertanian' || item.pertanian_status === 'FORWARDED' || (item.override_justification && item.override_justification.includes('PERTANIAN'))) {
+            } else if (
+              item.status === 'Forwarded_To_Pertanian' ||
+              item.pertanian_status === 'FORWARDED' ||
+              (desc && desc.includes('PERTANIAN')) ||
+              isLocallyForwarded(item.id, item.plot_number || item.certificate_number, item.pkkpr_doc_number, item.name || item.title)
+            ) {
               pertStatus = 'FORWARDED';
             }
 
@@ -591,6 +612,13 @@ export default function PuptrSpatialClearanceDashboard() {
             if (!exists) {
               const isBerusaha = app.category === 'Berusaha';
               const luasM2 = app.luas_m2 || 500;
+              const isAppForwarded = (
+                app.pertanian_status === 'FORWARDED' ||
+                app.status_pkkpr === 'Forwarded_To_Pertanian' ||
+                app.status === 'Forwarded_To_Pertanian' ||
+                (app.catatan_teknis && app.catatan_teknis.includes('PERTANIAN')) ||
+                isLocallyForwarded(appId, app.nik || app.nib, app.pkkpr_doc_number, app.title || app.perusahaan || app.nama_pemohon)
+              );
               mapped.unshift({
                 id: appId || `PKKPR-LUWU-${Date.now().toString().slice(-6)}`,
                 applicantType: isBerusaha ? 'NIB (Pelaku Usaha)' : 'NIK (Perorangan / Warga)',
@@ -623,7 +651,7 @@ export default function PuptrSpatialClearanceDashboard() {
                 technicalNotes: 'Permohonan dari Portal Layanan Perizinan PKKPR Publik.',
                 coordinateStatus: 'Valid / Sesuai Batas RTRW',
                 esgStatus: 'CLEAR',
-                pertanianStatus: (app.pertanian_status || app.status_pkkpr === 'Forwarded_To_Pertanian' || app.status === 'Forwarded_To_Pertanian') ? 'FORWARDED' : 'NOT_SUBMITTED',
+                pertanianStatus: isAppForwarded ? 'FORWARDED' : 'NOT_SUBMITTED',
                 contactPhone: app.no_whatsapp,
                 createdAt: app.created_at || new Date().toISOString()
               });
@@ -639,21 +667,19 @@ export default function PuptrSpatialClearanceDashboard() {
       // Auto-select first active pending item for inspection (excluding forwarded to Pertanian or approved items)
       if (mapped.length > 0) {
         setSelectedApp(prev => {
-          if (!prev) {
-            const active = mapped.find(m => m.pertanianStatus !== 'FORWARDED' && m.pkkprStatus !== 'Approved');
-            return active || mapped[0];
-          }
-          const updatedPrev = mapped.find(m => m.id === prev.id);
-          if (updatedPrev && updatedPrev.pertanianStatus !== 'FORWARDED' && updatedPrev.pkkprStatus !== 'Approved') {
-            return updatedPrev;
-          }
-          const nextPending = mapped.find(m => m.pertanianStatus !== 'FORWARDED' && m.pkkprStatus !== 'Approved');
-          return nextPending || null;
+          const activePending = mapped.filter(m => m.pertanianStatus !== 'FORWARDED' && m.pkkprStatus !== 'Approved');
+          if (activePending.length === 0) return null;
+          if (!prev) return activePending[0];
+          const found = activePending.find(m => m.id === prev.id || m.nibNik === prev.nibNik);
+          return found || activePending[0];
         });
+      } else {
+        setSelectedApp(null);
       }
     } catch (err) {
       console.error('Failed to load PKKPR queue:', err);
       setQueueList([]);
+      setSelectedApp(null);
     } finally {
       setIsLoadingQueue(false);
     }
@@ -700,37 +726,73 @@ export default function PuptrSpatialClearanceDashboard() {
   // Execute Routing Transfer to Dinas Pertanian
   const handleExecuteForwardToPertanian = async () => {
     if (!selectedApp) return;
+    const targetApp = selectedApp;
     setIsForwarding(true);
     try {
-      // Update both 'gis_pkkpr' and 'investments' tables
-      await Promise.all([
-        supabase
+      // 1. Update persistent local storage registry
+      try {
+        const raw = localStorage.getItem('luwu_pkkpr_forwarded_to_pertanian_ids');
+        const list: string[] = raw ? JSON.parse(raw) : [];
+        const identifiers = [targetApp.id, targetApp.nibNik, targetApp.pkkprDocNumber, targetApp.companyName, targetApp.applicantName].filter(Boolean) as string[];
+        identifiers.forEach(id => {
+          if (!list.includes(id)) list.push(id);
+        });
+        localStorage.setItem('luwu_pkkpr_forwarded_to_pertanian_ids', JSON.stringify(list));
+
+        // Also save full application snapshot in forwarded apps data for cross-OPD reading
+        const fAppsRaw = localStorage.getItem('luwu_pkkpr_forwarded_apps_data');
+        const fApps: any[] = fAppsRaw ? JSON.parse(fAppsRaw) : [];
+        const existingIdx = fApps.findIndex(a => a.id === targetApp.id || a.nibNik === targetApp.nibNik);
+        const snapshot = {
+          ...targetApp,
+          pertanianStatus: 'FORWARDED',
+          technicalNotes: forwardingJustification,
+          forwardedAt: new Date().toISOString()
+        };
+        if (existingIdx >= 0) {
+          fApps[existingIdx] = snapshot;
+        } else {
+          fApps.unshift(snapshot);
+        }
+        localStorage.setItem('luwu_pkkpr_forwarded_apps_data', JSON.stringify(fApps));
+      } catch (e) {
+        console.warn('localStorage registry error:', e);
+      }
+
+      // 2. Safe Supabase Updates
+      try {
+        await supabase
           .from('gis_pkkpr')
           .update({
             status_pkkpr: 'Forwarded_To_Pertanian',
-            pertanian_status: 'FORWARDED',
             catatan_teknis: `[PERMOHONAN DITERUSKAN KE DINAS PERTANIAN]: ${forwardingJustification}`,
             updated_at: new Date().toISOString()
           })
-          .eq('id', selectedApp.id),
-        supabase
+          .eq('id', targetApp.id);
+      } catch (e) {
+        console.warn('gis_pkkpr update note:', e);
+      }
+
+      try {
+        await supabase
           .from('investments')
           .update({
             status: 'Forwarded_To_Pertanian',
-            pertanian_status: 'FORWARDED',
             override_justification: `[PERMOHONAN DITERUSKAN KE DINAS PERTANIAN]: ${forwardingJustification}`,
             updated_at: new Date().toISOString()
           })
-          .eq('id', selectedApp.id)
-      ]);
+          .or(`id.eq.${targetApp.id},plot_number.eq.${targetApp.nibNik},certificate_number.eq.${targetApp.nibNik}`);
+      } catch (e) {
+        console.warn('investments update note:', e);
+      }
 
-      // Update local storage luwu_pkkpr_my_apps
+      // 3. Update local storage luwu_pkkpr_my_apps
       const localAppsRaw = localStorage.getItem("luwu_pkkpr_my_apps");
       if (localAppsRaw) {
         try {
           const localApps = JSON.parse(localAppsRaw);
           const updatedLocalApps = localApps.map((app: any) => {
-            if (app.id === selectedApp.id || app.pkkpr_doc_number === selectedApp.id || app.nik === selectedApp.nibNik) {
+            if (app.id === targetApp.id || app.pkkpr_doc_number === targetApp.id || app.nik === targetApp.nibNik) {
               return {
                 ...app,
                 pertanian_status: 'FORWARDED',
@@ -747,23 +809,22 @@ export default function PuptrSpatialClearanceDashboard() {
         }
       }
 
-      // Lock spatial file in local state and auto-remove from active queue view
-      setQueueList(prev =>
-        prev.map(item => {
-          if (item.id === selectedApp.id) {
-            return {
-              ...item,
-              pertanianStatus: 'FORWARDED',
-              technicalNotes: forwardingJustification
-            };
-          }
-          return item;
-        })
-      );
+      // 4. Lock spatial file in local state and auto-remove from active queue view
+      const updatedQueue = queueList.map(item => {
+        if (item.id === targetApp.id || item.nibNik === targetApp.nibNik) {
+          return {
+            ...item,
+            pertanianStatus: 'FORWARDED' as const,
+            technicalNotes: forwardingJustification
+          };
+        }
+        return item;
+      });
+      setQueueList(updatedQueue);
 
-      // Find next pending item that is NOT forwarded and NOT approved
-      const remainingPending = queueList.filter(
-        q => q.id !== selectedApp.id && q.pertanianStatus !== 'FORWARDED' && q.pkkprStatus !== 'Approved'
+      // 5. Advance selectedApp to the next active pending item
+      const remainingPending = updatedQueue.filter(
+        q => q.id !== targetApp.id && q.nibNik !== targetApp.nibNik && q.pertanianStatus !== 'FORWARDED' && q.pkkprStatus !== 'Approved'
       );
 
       if (remainingPending.length > 0) {
@@ -776,19 +837,19 @@ export default function PuptrSpatialClearanceDashboard() {
 
       setShowForwardPertanianModal(false);
 
-      // Trigger Cross-OPD Notification to Dinas Pertanian
+      // 6. Trigger Cross-OPD Notification to Dinas Pertanian
       addCrossOpdNotification({
-        applicationId: selectedApp.id,
-        applicantName: selectedApp.applicantName,
-        companyName: selectedApp.companyName,
-        sector: selectedApp.sector,
-        districtName: selectedApp.districtName,
-        villageName: selectedApp.villageName,
+        applicationId: targetApp.id,
+        applicantName: targetApp.applicantName,
+        companyName: targetApp.companyName,
+        sector: targetApp.sector,
+        districtName: targetApp.districtName,
+        villageName: targetApp.villageName,
         targetRole: 'ADMIN_PERTANIAN',
         fromRole: 'ADMIN_PUPTR',
         type: 'FORWARD_PERTANIAN',
-        title: `Minta Rekomendasi Teknis LP2B #${selectedApp.id}`,
-        message: `Dinas PUPTR meneruskan permohonan ${selectedApp.companyName} (${selectedApp.applicantName}) di Kec. ${selectedApp.districtName} yang terdeteksi di Zona LP2B untuk evaluasi pertimbangan teknis pertanian.`,
+        title: `Minta Rekomendasi Teknis LP2B #${targetApp.id}`,
+        message: `Dinas PUPTR meneruskan permohonan ${targetApp.companyName} (${targetApp.applicantName}) di Kec. ${targetApp.districtName} yang terdeteksi di Zona LP2B untuk evaluasi pertimbangan teknis pertanian.`,
         notes: forwardingJustification
       });
 
@@ -799,9 +860,9 @@ export default function PuptrSpatialClearanceDashboard() {
           <div className="text-left text-xs space-y-2 p-3 bg-emerald-50 dark:bg-emerald-950/50 rounded-xl border border-emerald-200 dark:border-emerald-800 font-sans">
             <p><strong>Status Geometri:</strong> <span className="text-emerald-600 font-bold">LOCKED &amp; TRANSFERRED</span></p>
             <p><strong>Target Instansi:</strong> Dinas Pertanian Kabupaten Luwu (Bidang Prasarana &amp; Lahan)</p>
-            <p><strong>NIB / NIK:</strong> ${selectedApp.nibNik} (${selectedApp.companyName})</p>
+            <p><strong>NIB / NIK:</strong> ${targetApp.nibNik} (${targetApp.companyName})</p>
             <p className="text-[11px] text-slate-500 pt-1 border-t border-emerald-200">
-              ⚡ Antrean permohonan telah muncul di Dashboard Dinas Pertanian secara real-time untuk analisis tingkat kesuburan tanah &amp; pembuatan Berita Acara LP2B.
+              ⚡ Permohonan ini telah dikeluarkan dari Antrean Aktif PUPTR dan langsung masuk ke Antrean Tugas Dinas Pertanian secara real-time.
             </p>
           </div>
         `,

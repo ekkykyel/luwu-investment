@@ -479,6 +479,60 @@ export default function PertanianLandClearanceDashboard() {
         console.warn('investments query info in Pertanian:', err);
       }
 
+      // 3. Merge locally forwarded snapshot items (instant real-time sync across OPD)
+      try {
+        const fAppsRaw = localStorage.getItem('luwu_pkkpr_forwarded_apps_data');
+        if (fAppsRaw) {
+          const fApps: any[] = JSON.parse(fAppsRaw);
+          fApps.forEach((fApp: any) => {
+            const exists = mapped.some(m => m.id === fApp.id || m.nibNik === fApp.nibNik);
+            if (!exists) {
+              const rawDist = fApp.districtName || fApp.districtId || '';
+              const matchedDist = findDistrictMatch(districts, rawDist);
+              const resolvedDistrictName = matchedDist ? matchedDist.name : (rawDist || 'Kabupaten Luwu');
+              const resolvedDistrictId = matchedDist ? matchedDist.id : 'dist_luwu';
+              const resolvedVillageName = fApp.villageName || 'Desa Setempat';
+
+              mapped.unshift({
+                id: fApp.id,
+                category: fApp.category || 'Berusaha',
+                applicantType: fApp.applicantType || 'NIB (Pelaku Usaha)',
+                nibNik: fApp.nibNik || '-',
+                applicantName: fApp.applicantName || 'Pemohon Terdaftar',
+                companyName: fApp.companyName || 'Badan Usaha',
+                title: fApp.title || 'Permohonan Usaha',
+                sector: fApp.sector || 'Pertanian',
+                fungsiBangunan: fApp.fungsiBangunan || 'Bangunan Usaha',
+                applicantAddress: fApp.applicantAddress || `Kec. ${resolvedDistrictName}`,
+                districtId: resolvedDistrictId,
+                districtName: resolvedDistrictName,
+                villageId: undefined,
+                villageName: resolvedVillageName,
+                areaHa: fApp.areaHa || 1.0,
+                luasM2: fApp.luasM2 || Math.round((fApp.areaHa || 1.0) * 10000),
+                luasBangunan: fApp.luasBangunan,
+                buktiTanah: fApp.buktiTanah || 'Sertifikat Hak Milik (SHM)',
+                existingCrop: 'Kawasan Pertanian & Pangan Berkelanjutan (LP2B)',
+                puptrForwardedNotes: fApp.technicalNotes || 'Permohonan diteruskan dari Dinas PUPTR untuk analisis kesesuaian LP2B.',
+                agriStatus: 'Pending Review',
+                beritaAcaraDocNum: fApp.pertanianBaNumber || undefined,
+                suratRekomendasiNum: fApp.pertanianSrNumber || undefined,
+                rejectionReason: undefined,
+                replacementLandHa: fApp.areaHa || 1.0,
+                geometry: fApp.geometry,
+                sertifikatTanahUrl: fApp.sertifikatTanahUrl,
+                suratPengantarDesaUrl: fApp.suratPengantarDesaUrl,
+                berkasLegalitasGabunganUrl: fApp.berkasLegalitasGabunganUrl,
+                contactPhone: fApp.contactPhone,
+                createdAt: fApp.forwardedAt || fApp.createdAt || new Date().toISOString()
+              });
+            }
+          });
+        }
+      } catch (e) {
+        console.warn('Forwarded apps merge note in Pertanian:', e);
+      }
+
       setQueueList(mapped);
 
       if (mapped.length > 0) {
@@ -499,6 +553,18 @@ export default function PertanianLandClearanceDashboard() {
 
   useEffect(() => {
     fetchAgrarianQueue();
+
+    const handleUpdate = () => {
+      fetchAgrarianQueue();
+    };
+
+    window.addEventListener('luwu_cross_opd_notifications_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+
+    return () => {
+      window.removeEventListener('luwu_cross_opd_notifications_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
   }, []);
 
   // Select an application from the queue to inspect in Map Workspace
