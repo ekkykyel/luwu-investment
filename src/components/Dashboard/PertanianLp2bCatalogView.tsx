@@ -102,6 +102,7 @@ export function PertanianLp2bCatalogView() {
   const [spatialComparisons, setSpatialComparisons] = useState<SpatialKecamatanComparison[]>([]);
   const [showSpatialDetailModal, setShowSpatialDetailModal] = useState(false);
   const [spatialFilterType, setSpatialFilterType] = useState<"ALL" | "WARNING" | "NORMAL">("ALL");
+  const [selectedKecamatan, setSelectedKecamatan] = useState<string | null>(null);
 
   // Edit Modal State
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -590,9 +591,18 @@ export function PertanianLp2bCatalogView() {
                   const spatialHa = comp ? comp.luasSpatialHa : (row.luasLp2bAktifHa * 0.809);
                   const pct = comp ? comp.persenSelisih : -19.1;
                   const isWarn = comp ? comp.isSignificantWarning : true;
+                  const isSelected = selectedKecamatan === row.kecamatan;
 
                   return (
-                    <tr key={row.kecamatan} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition">
+                    <tr 
+                      key={row.kecamatan} 
+                      onClick={() => setSelectedKecamatan(isSelected ? null : row.kecamatan)}
+                      className={`group cursor-pointer transition-all duration-300 ease-out border-b border-slate-100 dark:border-slate-800/80 ${
+                        isSelected
+                          ? "bg-emerald-500/15 dark:bg-emerald-950/50 border-l-4 border-l-emerald-500 shadow-sm text-slate-900 dark:text-white font-semibold"
+                          : "hover:bg-emerald-500/10 dark:hover:bg-slate-800/70 hover:border-l-4 hover:border-l-emerald-400/80 border-l-4 border-l-transparent text-slate-700 dark:text-slate-300"
+                      }`}
+                    >
                       <td className="p-3.5 font-bold text-slate-400">{idx + 1}</td>
                       <td className="p-3.5 font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                         <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />

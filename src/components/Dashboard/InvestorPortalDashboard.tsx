@@ -1553,10 +1553,16 @@ export default function InvestorPortalDashboard() {
                     <div className="space-y-4">
                       {stats.topInvestments.map((inv) => {
                         const color = SECTOR_COLORS[inv.sector as SektorInvestasi] || "#64748b";
+                        const isSelected = selectedInvestmentId === inv.id;
                         return (
                           <div 
                             key={inv.id}
-                            className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/60 hover:border-slate-700 transition-all flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 group"
+                            onClick={() => setSelectedInvestmentId(isSelected ? null : inv.id)}
+                            className={`p-4 rounded-xl transition-all duration-300 ease-out cursor-pointer flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 group border ${
+                              isSelected
+                                ? "bg-emerald-500/10 dark:bg-emerald-950/50 border-emerald-500/80 ring-2 ring-emerald-500/20 shadow-lg shadow-emerald-500/10 -translate-y-0.5"
+                                : "bg-slate-50 dark:bg-slate-950/80 border-slate-200 dark:border-slate-800/80 hover:bg-slate-100/90 dark:hover:bg-slate-900 hover:border-emerald-500/50 hover:shadow-md hover:-translate-y-0.5"
+                            }`}
                           >
                             <div className="flex items-center gap-4 truncate">
                               <div className="w-12 h-12 rounded-lg bg-white dark:bg-slate-900 overflow-hidden shrink-0 border border-slate-200 dark:border-slate-800 relative">

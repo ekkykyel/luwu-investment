@@ -4727,13 +4727,17 @@ export default function App() {
                   filteredOperatorInvestments.map((inv: any) => {
                     const distName = districts.find((d: any) => d.id === inv.districtId)?.name || "-";
                     const riskLevel = getRiskLevel(inv);
+                    const isSelected = selectedInvestmentId === inv.id;
                     return (
                       <div
                         key={inv.id}
-                        className={`p-3.5 rounded-2xl border transition-all ${
-                          isDarkMode
-                            ? "bg-slate-800/70 border-slate-700/80"
-                            : "bg-slate-50 border-slate-200"
+                        onClick={() => setSelectedInvestmentId(isSelected ? null : inv.id)}
+                        className={`p-3.5 rounded-2xl border transition-all duration-300 ease-out cursor-pointer ${
+                          isSelected
+                            ? "bg-emerald-500/15 dark:bg-emerald-950/60 border-emerald-500/80 ring-2 ring-emerald-500/30 shadow-lg shadow-emerald-500/10 translate-x-1"
+                            : isDarkMode
+                            ? "bg-slate-800/70 border-slate-700/80 hover:bg-slate-800 hover:border-emerald-500/50 hover:shadow-md hover:translate-x-0.5"
+                            : "bg-slate-50 border-slate-200 hover:bg-emerald-50/30 hover:border-emerald-500/60 hover:shadow-md hover:translate-x-0.5"
                         }`}
                       >
                         <div className="flex items-start justify-between gap-2">

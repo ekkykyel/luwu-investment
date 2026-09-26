@@ -1713,12 +1713,16 @@ export default function InvestorAnalyticsSidebar({
                 </h4>
                 {selectedVillageStats.investments.length > 0 ? (
                   <div className="space-y-2 max-h-56 overflow-y-auto pr-1 dark-scroll">
-                    {selectedVillageStats.investments.map(inv => (
-                      <div key={inv.id} className={`p-3 rounded-lg border transition-all ${
-                        isDarkMode 
-                          ? "bg-slate-900/80 border-slate-800 hover:border-emerald-500/50" 
-                          : "bg-white border-slate-200 hover:border-emerald-500 shadow-xs"
-                      }`}>
+                    {selectedVillageStats.investments.map(inv => {
+                      const isSelected = selectedInvestmentId === inv.id;
+                      return (
+                        <div key={inv.id} className={`p-3 rounded-xl border transition-all duration-300 ease-out cursor-pointer ${
+                          isSelected
+                            ? "bg-emerald-500/15 dark:bg-emerald-950/60 border-emerald-500/80 ring-2 ring-emerald-500/30 shadow-md shadow-emerald-500/10 -translate-y-0.5"
+                            : isDarkMode 
+                              ? "bg-slate-900/80 border-slate-800 hover:bg-slate-850 hover:border-emerald-500/50 hover:shadow-sm hover:-translate-y-0.5" 
+                              : "bg-white border-slate-200 hover:bg-emerald-50/30 hover:border-emerald-500/60 hover:shadow-sm hover:-translate-y-0.5"
+                        }`}>
                         <div className="flex justify-between items-start">
                           <div>
                             <span className={`px-2 py-0.5 rounded text-[10px] font-semibold inline-block mb-1 border ${
@@ -1742,7 +1746,8 @@ export default function InvestorAnalyticsSidebar({
                           <span>Luas: <strong className={`font-mono ${isDarkMode ? "text-white" : "text-slate-900"}`}>{inv.areaHa} Ha</strong></span>
                         </div>
                       </div>
-                    ))}
+                    );
+                  })}
                   </div>
                 ) : (
                   <div className={`p-3 rounded-lg border border-dashed text-center text-xs ${
