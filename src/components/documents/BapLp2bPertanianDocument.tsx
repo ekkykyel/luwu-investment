@@ -4,6 +4,7 @@ import { safeHtml2Canvas } from "../../lib/html2canvasShim";
 import { OFFICIAL_LUWU_LOGO_URL } from "../LuwuLogo";
 import { getOpdSettings, saveOpdSettings } from "../../utils/opdSettingsStorage";
 import { getEffectiveMapImageUrl, generateLuwuGisMapSvgDataUrl } from "../../utils/luwuGisMapGenerator";
+import { formatDistrictName, formatVillageName } from "../../utils/gisHelpers";
 import { supabase } from "../../lib/supabaseClient";
 import { 
   Printer, 
@@ -1762,7 +1763,13 @@ export function convertAppToBapLp2bData(
   const overlapPct = app?.overlapPct || 35;
   const overlapHa = Number((luasHaVal * (overlapPct / 100)).toFixed(2));
 
-  return {
+    const rawDist = app?.kecamatan || app?.districtName || app?.district_id || app?.districtId || app?.id_kecamatan;
+    const rawVil = app?.desa || app?.desa_kelurahan || app?.villageName || app?.village_id || app?.villageId || app?.id_desa;
+
+    const formattedDist = formatDistrictName(rawDist);
+    const formattedVil = formatVillageName(rawVil);
+
+    return {
     jenisPermohonan,
     kategoriPermohonan: app?.category || (isNonBerusaha ? "Non-Berusaha" : "Berusaha"),
     fungsiBangunan,
@@ -1791,12 +1798,12 @@ export function convertAppToBapLp2bData(
       : (app?.nib ? `${app.nib} / ${app.nik || app.nik_pemohon || '-'}` : (app?.nib_oss || app?.plot_number || '-'))),
     namaPemohon: app?.applicantName || app?.nama_pemohon || app?.contact_pic || (isNonBerusaha ? 'Pemohon Terdaftar' : 'Pelaku Usaha Pemohon'),
     namaPerusahaan: namaLembaga,
-    alamatPemohon: app?.applicantAddress || app?.address || app?.alamat || (app?.districtName ? `Kecamatan ${app.districtName}, Kab. Luwu` : 'Kabupaten Luwu, Provinsi Sulawesi Selatan'),
+    alamatPemohon: app?.applicantAddress || app?.address || app?.alamat || `Kecamatan ${formattedDist}, Kab. Luwu`,
     sektorUsaha: isNonBerusaha ? (fungsiBangunan || "Sarana Non-Berusaha") : (app?.sector || "Pertanian & Pengolahan"),
     kbliCode: isNonBerusaha ? "Non-KBLI" : (app?.kbliCode || "10732"),
-    lokasiInvestasi: app?.lokasi_dimohon || app?.address || (app?.villageName && app?.districtName ? `Desa ${app.villageName}, Kec. ${app.districtName}, Kab. Luwu` : 'Kabupaten Luwu'),
-    desaKelurahan: app?.desa || app?.desa_kelurahan || app?.villageName ? `Desa ${app?.desa || app?.desa_kelurahan || app?.villageName}` : (app?.villageName || '-'),
-    kecamatan: app?.kecamatan || app?.districtName ? `Kecamatan ${app?.kecamatan || app?.districtName}` : (app?.districtName || '-'),
+    lokasiInvestasi: app?.lokasi_dimohon || `Desa ${formattedVil}, Kec. ${formattedDist}, Kab. Luwu`,
+    desaKelurahan: `Desa ${formattedVil}`,
+    kecamatan: `Kecamatan ${formattedDist}`,
     kabupaten: 'Kabupaten Luwu, Provinsi Sulawesi Selatan',
     luasLahanPermohonan: formattedLuas,
     luasLahanDisetujui: `${formattedLuas} - Sesuai Delineasi Poligon`,

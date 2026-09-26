@@ -2,6 +2,7 @@ import { LUWU_LOGO_BASE64 } from "@/lib/logoBase64.js";
 import jsPDF from "jspdf";
 import { safeHtml2Canvas, pdfRenderQueue, waitForDomAndIdle } from "../lib/html2canvasShim";
 import { PkkprZoningResult, getPbgRequirements, PbgGatewayInfo } from "../utils/geoUtils";
+import { formatDistrictName, formatVillageName } from "../utils/gisHelpers";
 
 export interface PdfExportData {
   investment: {
@@ -528,17 +529,8 @@ export function buildInvestmentResumeHtml(data: PdfExportData): string {
   const distances = data.spatialDistances || [];
 
   // Sanitize district & village names
-  let districtName = (inv.district || "").trim();
-  if (!districtName || districtName === "-" || districtName.toLowerCase().includes("kabupaten luwu")) {
-    districtName = "Bua Ponrang";
-  }
-  districtName = districtName.replace(/^Kecamatan\s+/i, "").replace(/^Kec\.\s*/i, "").trim();
-
-  let villageName = (inv.village || "").trim();
-  if (!villageName || villageName === "-") {
-    villageName = "Noling";
-  }
-  villageName = villageName.replace(/^Kelurahan\s+/i, "").replace(/^Desa\s+/i, "").trim();
+  const districtName = formatDistrictName(inv.district);
+  const villageName = formatVillageName(inv.village);
 
   // Generate high-resolution map
   const mapImg = data.mapSnapshotBase64 && data.mapSnapshotBase64.length > 2000

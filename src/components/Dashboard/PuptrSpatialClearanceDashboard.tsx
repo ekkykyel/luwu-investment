@@ -62,6 +62,7 @@ import { useData } from '../../contexts/DataContext';
 import { PkkprSlaTimelineTracker } from './PkkprSlaTimelineTracker';
 import { ConflictResolutionToolModal } from '../GIS/ConflictResolutionToolModal';
 import { getSpatialOverrides, recordSpatialOverride } from '../../utils/spatialOverridesService';
+import { formatDistrictName, formatVillageName } from '../../utils/gisHelpers';
 import { LuwuLogo } from '../LuwuLogo';
 import { generateBapPdfFromElement } from '../../utils/bapPdfGenerator';
 import { CrossOpdNotificationBell } from '../CrossOpdNotificationBell';
@@ -790,8 +791,8 @@ export default function PuptrSpatialClearanceDashboard() {
               sector: item.sektor || (isBerusaha ? 'Komersial / Usaha' : 'Non-Komersial / Perumahan'),
               fungsiBangunan,
               applicantAddress,
-              districtName: item.kecamatan || 'Bua',
-              villageName: item.desa_kelurahan || 'Barowa',
+              districtName: formatDistrictName(item.kecamatan || item.district_id || item.districtId),
+              villageName: formatVillageName(item.desa_kelurahan || item.village_id || item.villageId),
               areaHa: item.luas_ha ? Number(item.luas_ha) : (item.luas_m2 ? Number((item.luas_m2 / 10000).toFixed(4)) : 0.5),
               luasM2,
               luasBangunan,
@@ -891,9 +892,9 @@ export default function PuptrSpatialClearanceDashboard() {
               title: item.title || item.name,
               sector: item.sector || 'Perindustrian',
               fungsiBangunan: fungsiMatch ? fungsiMatch[1].trim() : (isNik ? 'Rumah Tinggal / Fasos' : item.sector),
-              applicantAddress: alamatMatch ? alamatMatch[1].trim() : `Kecamatan ${item.district_id || item.kecamatan || 'Belopa'}, Kab. Luwu`,
-              districtName: item.district_id || item.kecamatan || 'Bua',
-              villageName: item.village_id || item.desa || 'Barowa',
+              applicantAddress: alamatMatch ? alamatMatch[1].trim() : `Kecamatan ${formatDistrictName(item.district_id || item.kecamatan)}, Kab. Luwu`,
+              districtName: formatDistrictName(item.district_id || item.kecamatan),
+              villageName: formatVillageName(item.village_id || item.desa),
               areaHa,
               luasM2: Math.round(areaHa * 10000),
               luasBangunan: luasBangunanMatch ? luasBangunanMatch[1].trim() : undefined,
@@ -976,9 +977,9 @@ export default function PuptrSpatialClearanceDashboard() {
                 title: app.title || (isBerusaha ? 'Permohonan PKKPR Usaha' : 'Permohonan PKKPR Non-Berusaha'),
                 sector: isBerusaha ? 'Komersial / Usaha' : 'Non-Komersial / Perumahan',
                 fungsiBangunan: app.fungsi_bangunan || (isBerusaha ? 'Komersial / Usaha' : 'Non-Berusaha / Rumah Tinggal'),
-                applicantAddress: app.alamat_pemohon || app.address || `Desa ${app.desa || '-'}, Kec. ${app.kecamatan || '-'}, Kab. Luwu`,
-                districtName: app.kecamatan || 'Ponrang',
-                villageName: app.desa || 'Ponrang',
+                applicantAddress: app.alamat_pemohon || app.address || `Desa ${formatVillageName(app.desa || app.village_id)}, Kec. ${formatDistrictName(app.kecamatan || app.district_id)}, Kab. Luwu`,
+                districtName: formatDistrictName(app.kecamatan || app.district_id),
+                villageName: formatVillageName(app.desa || app.village_id),
                 areaHa: app.luas_m2 ? Number((app.luas_m2 / 10000).toFixed(4)) : 0.05,
                 luasM2,
                 luasBangunan: app.luas_bangunan_m2 ? `${app.luas_bangunan_m2} m²` : undefined,

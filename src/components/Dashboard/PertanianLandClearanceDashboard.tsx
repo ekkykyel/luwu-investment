@@ -50,6 +50,7 @@ import { generateBapPdfFromElement } from '../../utils/bapPdfGenerator';
 import { CrossOpdNotificationBell } from '../CrossOpdNotificationBell';
 import { addCrossOpdNotification } from '../../utils/crossOpdNotificationStore';
 import { getOpdSettings, saveOpdSettings } from '../../utils/opdSettingsStorage';
+import { formatDistrictName, formatVillageName } from '../../utils/gisHelpers';
 import { 
   BapLp2bPertanianDocument, 
   BapLp2bDocumentData, 
@@ -350,13 +351,12 @@ export default function PertanianLandClearanceDashboard() {
         if (!gisErr && pkkprGisData && pkkprGisData.length > 0) {
           pkkprGisData.forEach((item: any) => {
             const isBerusaha = item.jenis_permohonan === 'Berusaha';
-            const rawDist = item.kecamatan || '';
-            const matchedDist = findDistrictMatch(districts, rawDist);
-            const resolvedDistrictName = matchedDist ? matchedDist.name : (rawDist || 'Kabupaten Luwu');
+            const rawDist = item.kecamatan || item.district_id || item.districtId || '';
+            const resolvedDistrictName = formatDistrictName(rawDist);
             const resolvedDistrictId = matchedDist ? matchedDist.id : 'dist_luwu';
 
-            const rawVil = item.desa_kelurahan || '';
-            const resolvedVillageName = rawVil || '-';
+            const rawVil = item.desa_kelurahan || item.village_id || item.villageId || '';
+            const resolvedVillageName = formatVillageName(rawVil);
 
             const rawCatatan = item.catatan_teknis || '';
             const fungsiMatch = rawCatatan.match(/\[Fungsi:\s*([^\]]+)\]/i);
@@ -434,10 +434,10 @@ export default function PertanianLandClearanceDashboard() {
             if (!mapped.some(m => m.id === item.id)) {
               const isNik = (item.plot_number && item.plot_number.length === 16) || item.contact_pic?.toLowerCase().includes('h.') || (item.category && item.category.includes('Non-Komersial'));
               const rawDist = item.district_id || item.districtId || item.kecamatan || item.id_kecamatan || '';
-              const matchedDist = findDistrictMatch(districts, rawDist);
-              const resolvedDistrictName = matchedDist ? matchedDist.name : (rawDist || 'Kabupaten Luwu');
+              const resolvedDistrictName = formatDistrictName(rawDist);
               const resolvedDistrictId = matchedDist ? matchedDist.id : 'dist_luwu';
               const rawVil = item.village_id || item.villageId || item.desa || item.id_desa || '';
+              const resolvedVillageName = formatVillageName(rawVil);
 
               const desc = item.description || item.override_justification || '';
               const fungsiMatch = desc.match(/\[Fungsi:\s*([^\]]+)\]/i);
@@ -518,11 +518,10 @@ export default function PertanianLandClearanceDashboard() {
               if (fApp.rejectionReason) mapped[existingIndex].rejectionReason = fApp.rejectionReason;
               if (fApp.beritaAcaraDocNum) mapped[existingIndex].beritaAcaraDocNum = fApp.beritaAcaraDocNum;
             } else {
-              const rawDist = fApp.districtName || fApp.districtId || '';
-              const matchedDist = findDistrictMatch(districts, rawDist);
-              const resolvedDistrictName = matchedDist ? matchedDist.name : (rawDist || 'Kabupaten Luwu');
+              const rawDist = fApp.districtName || fApp.districtId || fApp.kecamatan || '';
+              const resolvedDistrictName = formatDistrictName(rawDist);
               const resolvedDistrictId = matchedDist ? matchedDist.id : 'dist_luwu';
-              const resolvedVillageName = fApp.villageName || 'Desa Setempat';
+              const resolvedVillageName = formatVillageName(fApp.villageName || fApp.villageId || fApp.desa);
 
               mapped.unshift({
                 id: fApp.id,

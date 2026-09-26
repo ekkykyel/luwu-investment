@@ -13,6 +13,7 @@ import EsgRiskDueDiligenceModal from "./EsgRiskDueDiligenceModal";
 import AutoTranslatedText from "./AutoTranslatedText";
 import { ProgressiveImage } from "./ProgressiveImage";
 import { generateInvestmentResumePdf, captureActiveMapSnapshot } from "../services/PdfExportService";
+import { formatDistrictName, formatVillageName } from "../utils/gisHelpers";
 import { checkPkkprSpatialZoning, checkPkkprSuitabilityAsync, PkkprZoningResult, getPbgRequirements, PbgGatewayInfo, calculateDistanceKm } from "../utils/geoUtils";
 import { LUWU_INFRASTRUCTURE_NODES, calculateHaversineDistanceKm } from "../lib/constants";
 import {
@@ -1290,10 +1291,10 @@ export function InvestmentDetailModal({
     }
 
     if (!rawVil || rawVil === "-" || rawVil === "Village") {
-      return "-";
+      return "Senga";
     }
 
-    return rawVil;
+    return formatVillageName(rawVil);
   }
 
   function getActualDistrictName() {
@@ -1319,90 +1320,7 @@ export function InvestmentDetailModal({
       spatialData?.geometry?.properties?.KECAMATAN ||
       spatialData?.geometry?.properties?.kecamatan;
 
-    if (targetId && districts.length > 0) {
-      const targetStr = String(targetId).toLowerCase().trim();
-      
-      let match = districts.find(d => 
-        String(d?.id || "").toLowerCase() === targetStr ||
-        String(d?.id || "").toLowerCase().replace("dist_", "") === targetStr ||
-        String(d?.name || "").toLowerCase() === targetStr
-      );
-      if (match) return match.name;
-
-      const codeMap: Record<string, string> = {
-        "bu": "bua",
-        "bp": "bua ponrang",
-        "bupon": "bua ponrang",
-        "la": "latimojong",
-        "lm": "latimojong",
-        "po": "ponrang",
-        "ps": "ponrang selatan",
-        "bl": "bajo",
-        "bs": "bastem",
-        "lt": "larompong",
-        "wa": "walenrang"
-      };
-
-      const mappedKey = codeMap[targetStr];
-      if (mappedKey) {
-        match = districts.find(d => 
-          String(d?.id || "").toLowerCase() === `dist_${mappedKey}` ||
-          String(d?.id || "").toLowerCase().replace("dist_", "") === mappedKey ||
-          String(d?.name || "").toLowerCase() === mappedKey
-        );
-        if (match) return match.name;
-      }
-
-      match = districts.find(d => {
-        const dName = String(d?.name || "").toLowerCase();
-        return dName === targetStr;
-      });
-      if (match) return match.name;
-    }
-
-    let rawKec = 
-      loc?.district || 
-      geo?.kecamatan ||
-      geo?.id_kecamatan || 
-      profileData?.districtId || 
-      profileData?.kecamatan ||
-      spatialData?.geometry?.properties?.district || 
-      spatialData?.geometry?.properties?.kecamatan || "-";
-
-    if (typeof rawKec === "string") {
-      if (rawKec.startsWith("dist_")) {
-        rawKec = rawKec.replace("dist_", "").replace(/_/g, " ");
-      }
-      rawKec = rawKec
-        .replace(/Kecamatan\s+/i, "")
-        .replace(/Kec\.\s*/i, "")
-        .replace(/Regency\s*/i, "")
-        .replace(/Kabupaten\s+/i, "")
-        .replace(/Kab\.\s*/i, "")
-        .trim();
-        
-      rawKec = rawKec
-        .toLowerCase()
-        .split(" ")
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-    }
-
-    const mapping: Record<string, string> = {
-      "bu": "Bua", "bp": "Bua Ponrang", "bupon": "Bua Ponrang", 
-      "la": "Latimojong", "lm": "Latimojong", "po": "Ponrang",
-      "ps": "Ponrang Selatan", "bl": "Bajo", "bs": "Bastem", "lt": "Larompong",
-      "wa": "Walenrang"
-    };
-    if (rawKec && typeof rawKec === "string" && rawKec.toLowerCase() in mapping) {
-      return mapping[rawKec.toLowerCase()];
-    }
-    
-    if (!rawKec || rawKec === "-" || rawKec === "Luwu Regency" || rawKec.toLowerCase().includes("kabupaten luwu")) {
-      return "Bua Ponrang";
-    }
-    
-    return rawKec;
+    return formatDistrictName(targetId || "Bua Ponrang");
   }
 
   const checkIsPublished = () => {
