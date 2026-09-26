@@ -3,6 +3,7 @@ import jsPDF from "jspdf";
 import { safeHtml2Canvas } from "../../lib/html2canvasShim";
 import { OFFICIAL_LUWU_LOGO_URL } from "../LuwuLogo";
 import { getOpdSettings } from "../../utils/opdSettingsStorage";
+import { getEffectiveMapImageUrl } from "../../utils/luwuGisMapGenerator";
 import { 
   Printer, 
   Download, 
@@ -638,23 +639,18 @@ export const SkPkkprDpmptspDocument: React.FC<SkPkkprDpmptspDocumentProps> = ({
 
             {/* Container Peta */}
             <div style={{ width: "100%", height: "135mm", border: "2px solid #000000", borderRadius: "4px", overflow: "hidden", position: "relative", marginBottom: "12px", backgroundColor: "#f8fafc" }}>
-              {data.petaImageUrl ? (
-                <img
-                  src={data.petaImageUrl}
-                  alt="Peta Spasial PKKPR"
-                  style={{ width: "100%", height: "100%", objectFit: "contain" }}
-                />
-              ) : (
-                <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyCenter: "center", padding: "20px", textAlign: "center" }}>
-                  <MapPin style={{ width: "48px", height: "48px", color: "#0d9488", marginBottom: "8px" }} />
-                  <div style={{ fontWeight: "bold", fontSize: "11pt", color: "#0f766e" }}>
-                    PETA SPASIAL PLOTTING ZONASI RTRW
-                  </div>
-                  <div style={{ fontSize: "9pt", color: "#475569", maxWidth: "400px", marginTop: "4px" }}>
-                    Visualisasi spasial poligon lahan seluas {data.luasLahanDisetujui} di Desa/Kel. {data.desaKelurahan}, Kec. {data.kecamatan} terintegrasi GIS Kabupaten Luwu.
-                  </div>
-                </div>
-              )}
+              <img
+                src={getEffectiveMapImageUrl(data.petaImageUrl, null, {
+                  desa: data.desaKelurahan,
+                  kecamatan: data.kecamatan,
+                  pemohon: data.namaPemohon,
+                  perusahaan: data.namaPerusahaan,
+                  luas: data.luasLahanDisetujui,
+                  tipeDoc: 'PKKPR'
+                })}
+                alt="Peta Spasial PKKPR"
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+              />
             </div>
 
             {/* Tabel Koordinat Titik Batas Lahan */}

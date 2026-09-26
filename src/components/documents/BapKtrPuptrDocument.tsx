@@ -3,6 +3,7 @@ import jsPDF from "jspdf";
 import { safeHtml2Canvas } from "../../lib/html2canvasShim";
 import { OFFICIAL_LUWU_LOGO_URL } from "../LuwuLogo";
 import { getOpdSettings, saveOpdSettings } from "../../utils/opdSettingsStorage";
+import { getEffectiveMapImageUrl } from "../../utils/luwuGisMapGenerator";
 import { supabase } from "../../lib/supabaseClient";
 import { 
   Printer, 
@@ -1684,10 +1685,16 @@ export function BapKtrPuptrDocument({
               boxSizing: "border-box"
             }}>
               <img 
-                src={mapSnapshot || data.petaImageUrl || "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80"} 
+                src={getEffectiveMapImageUrl(data.petaImageUrl, mapSnapshot, {
+                  desa: data.desaKelurahan,
+                  kecamatan: data.kecamatan,
+                  pemohon: data.namaPemohon,
+                  perusahaan: data.namaPerusahaan,
+                  luas: data.luasLahanDisetujui,
+                  tipeDoc: 'KTR'
+                })} 
                 alt="Peta Delineasi Geospasial" 
                 style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                crossOrigin="anonymous"
               />
               
               {/* Overlay Grid Simbolik & Garis Delineasi */}
