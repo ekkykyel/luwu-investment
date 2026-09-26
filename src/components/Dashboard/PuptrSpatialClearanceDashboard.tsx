@@ -708,7 +708,7 @@ export default function PuptrSpatialClearanceDashboard() {
           .eq('id', selectedApp.id)
       ]);
 
-      // Lock spatial file in local state
+      // Lock spatial file in local state and auto-remove from active queue view
       setQueueList(prev =>
         prev.map(item => {
           if (item.id === selectedApp.id) {
@@ -722,11 +722,18 @@ export default function PuptrSpatialClearanceDashboard() {
         })
       );
 
-      setSelectedApp(prev => prev ? {
-        ...prev,
-        pertanianStatus: 'FORWARDED',
-        technicalNotes: forwardingJustification
-      } : null);
+      // Find next pending item that is NOT forwarded and NOT approved
+      const remainingPending = queueList.filter(
+        q => q.id !== selectedApp.id && q.pertanianStatus !== 'FORWARDED' && q.pkkprStatus !== 'Approved'
+      );
+
+      if (remainingPending.length > 0) {
+        setSelectedApp(remainingPending[0]);
+        setZoningAudit(checkPkkprSpatialZoning(remainingPending[0].geometry));
+      } else {
+        setSelectedApp(null);
+        setZoningAudit(null);
+      }
 
       setShowForwardPertanianModal(false);
 
@@ -2120,6 +2127,14 @@ export default function PuptrSpatialClearanceDashboard() {
                     </span>
                     <span className="text-[10px] px-2 py-0.5 bg-emerald-600 text-white rounded-md font-mono">LOCKED</span>
                   </div>
+                ) : selectedApp.pertanianStatus === 'FORWARDED' ? (
+                  <div className="p-2.5 bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 rounded-xl flex items-center justify-between text-xs text-amber-800 dark:text-amber-300 font-bold">
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="w-4 h-4 text-amber-600 animate-spin" />
+                      Status: Menunggu Rekomendasi Pertanian
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 bg-amber-600 text-white rounded-md font-mono">LOCKED</span>
+                  </div>
                 ) : (
                   <div className="grid grid-cols-3 gap-2">
                     <button
@@ -2196,7 +2211,7 @@ export default function PuptrSpatialClearanceDashboard() {
                   className="w-full py-3 bg-amber-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 opacity-80 cursor-not-allowed shadow-md"
                 >
                   <Clock className="w-4 h-4 text-amber-200 animate-spin" />
-                  <span>Menunggu Berita Acara Pertanian ⏳</span>
+                  <span>Menunggu Berita Acara Pertanian ⏳ (Penerbitan Pertek Ditangguhkan)</span>
                 </button>
               ) : (
                 <>
@@ -2229,11 +2244,20 @@ export default function PuptrSpatialClearanceDashboard() {
               {/* BAP Resmi PUPTR Preview & Print Button */}
               <button
                 type="button"
+                disabled={selectedApp.pertanianStatus === 'FORWARDED'}
                 onClick={handleOpenBapModal}
-                className="w-full py-2.5 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition cursor-pointer"
+                className={`w-full py-2.5 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition ${
+                  selectedApp.pertanianStatus === 'FORWARDED'
+                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
+                    : 'bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 cursor-pointer'
+                }`}
               >
                 <FileText className="w-4 h-4" />
-                <span>Lihat / Cetak Berita Acara (BAP) Kesesuaian Ruang PUPTR</span>
+                <span>
+                  {selectedApp.pertanianStatus === 'FORWARDED'
+                    ? 'BAP PUPTR Belum Dapat Diterbitkan (Menunggu Rekomendasi Pertanian)'
+                    : 'Lihat / Cetak Berita Acara (BAP) Kesesuaian Ruang PUPTR'}
+                </span>
               </button>
             </div>
           </div>
