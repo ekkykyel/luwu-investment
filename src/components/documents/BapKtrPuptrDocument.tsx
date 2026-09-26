@@ -124,6 +124,21 @@ export function extractCoordinatesFromGeometry(geometry: any): BapKtrCoordinateP
   if (!geometry) return [];
   let ring: [number, number][] = [];
 
+  if (typeof geometry === 'string') {
+    try {
+      geometry = JSON.parse(geometry);
+    } catch {
+      return [];
+    }
+  }
+
+  // Handle FeatureCollection or Feature
+  if (geometry.type === "FeatureCollection" && Array.isArray(geometry.features) && geometry.features[0]) {
+    geometry = geometry.features[0].geometry || geometry.features[0];
+  } else if (geometry.type === "Feature") {
+    geometry = geometry.geometry || geometry;
+  }
+
   if (geometry.type === "Polygon" && Array.isArray(geometry.coordinates) && geometry.coordinates[0]) {
     ring = geometry.coordinates[0];
   } else if (geometry.type === "MultiPolygon" && Array.isArray(geometry.coordinates) && geometry.coordinates[0]?.[0]) {
@@ -147,14 +162,14 @@ export function extractCoordinatesFromGeometry(geometry: any): BapKtrCoordinateP
     ? ring.slice(0, ring.length - 1)
     : ring;
 
-  return points.slice(0, 16).map(([lng, lat], idx) => ({
+  return points.slice(0, 24).map(([lng, lat], idx) => ({
     id: idx + 1,
     pointName: `P.${String(idx + 1).padStart(2, '0')}`,
     latitudeDd: lat,
     longitudeDd: lng,
     latitudeDms: ddToDms(lat, true),
     longitudeDms: ddToDms(lng, false),
-    description: idx === 0 ? "Patok Sudut Awal Batas Persil" : `Patok Batas Poligon Titik ${idx + 1}`
+    description: idx === 0 ? "Patok Sudut Awal Batas Persil" : `Patok Batas Sudut Titik ${idx + 1}`
   }));
 }
 
@@ -1934,8 +1949,15 @@ export function convertAppToBapKtrData(
   customMapSnapshot?: string
 ): BapKtrDocumentData {
   let coords: BapKtrCoordinatePoint[] = [];
-  if (app?.geometry) {
-    coords = extractCoordinatesFromGeometry(app.geometry);
+  const rawGeom = app?.geometry || app?.geometry_json || app?.geom;
+  if (rawGeom) {
+    coords = extractCoordinatesFromGeometry(rawGeom);
+  }
+  if (coords.length === 0 && Array.isArray(app?.koordinat_poligon) && app.koordinat_poligon.length > 0) {
+    coords = app.koordinat_poligon;
+  }
+  if (coords.length === 0 && Array.isArray(app?.koordinatPoligon) && app.koordinatPoligon.length > 0) {
+    coords = app.koordinatPoligon;
   }
   if (coords.length === 0) {
     coords = DEFAULT_BAP_KTR_DATA.koordinatPoligon;

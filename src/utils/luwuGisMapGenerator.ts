@@ -89,6 +89,13 @@ export function extractCoordsFromGeometry(geom: any): LuwuGisCoordinatePoint[] {
     }
   }
 
+  // Handle FeatureCollection or Feature
+  if (geom.type === "FeatureCollection" && Array.isArray(geom.features) && geom.features[0]) {
+    geom = geom.features[0].geometry || geom.features[0];
+  } else if (geom.type === "Feature") {
+    geom = geom.geometry || geom;
+  }
+
   if (geom.type === "Polygon" && Array.isArray(geom.coordinates) && geom.coordinates[0]) {
     ring = geom.coordinates[0];
   } else if (geom.type === "MultiPolygon" && Array.isArray(geom.coordinates) && geom.coordinates[0]?.[0]) {
@@ -118,8 +125,31 @@ export function extractCoordsFromGeometry(geom: any): LuwuGisCoordinatePoint[] {
     longitudeDd: lng,
     latitudeDms: ddToDms(lat, true),
     longitudeDms: ddToDms(lng, false),
-    description: `Titik Patok Batas ${idx + 1}`
+    description: `Titik Patok Sudut Batas ${idx + 1}`
   }));
+}
+
+/**
+ * Hitung Luas Geodesi Poligon (m²) dari deretan titik koordinat WGS84
+ */
+export function calculateGeodesicAreaM2(points: LuwuGisCoordinatePoint[]): number {
+  if (!points || points.length < 3) return 0;
+  const rad = Math.PI / 180;
+  const R = 6378137; // WGS84 Earth Radius
+  let area = 0;
+
+  const len = points.length;
+  for (let i = 0; i < len; i++) {
+    const p1 = points[i];
+    const p2 = points[(i + 1) % len];
+    const lon1 = p1.longitudeDd * rad;
+    const lat1 = p1.latitudeDd * rad;
+    const lon2 = p2.longitudeDd * rad;
+    const lat2 = p2.latitudeDd * rad;
+    area += (lon2 - lon1) * (2 + Math.sin(lat1) + Math.sin(lat2));
+  }
+  area = Math.abs(area * R * R / 2.0);
+  return Math.round(area);
 }
 
 /**
@@ -139,7 +169,7 @@ function prepareSpatialModel(params: LuwuGisMapParams) {
     ? 'PETA DELINEASI GEOSPASIAL LP2B & JARINGAN IRIGASI PERTANIAN'
     : 'PETA PLOTTING ZONASI TATA RUANG (RTRW) & DELINEASI KESESUAIAN RUANG';
 
-  // 1. Ekstraksi Titik Koordinat Poligon Nyata
+  // 1. Ekstraksi Titik Koordinat Poligon Nyata dari Sudut-Sudut Poligon
   let points: LuwuGisCoordinatePoint[] = [];
   if (params.koordinatPoligon && params.koordinatPoligon.length > 0) {
     points = params.koordinatPoligon.filter(p => typeof p.latitudeDd === 'number' && typeof p.longitudeDd === 'number');
@@ -170,27 +200,7 @@ function prepareSpatialModel(params: LuwuGisMapParams) {
     }
   }
 
-  // 2. Hitung Bounding Box Geodetik
-  const lats = points.map(p => p.latitudeDd);
-  const lngs = points.map(p => p.longitudeDd);
-  const minLat = Math.min(...lats);
-  const maxLat = Math.max(...lats);
-  const minLng = Math.min(...lngs);
-  const maxLng = Math.max(...lngs);
-
-  const deltaLng = Math.max(maxLng - minLng, 0.0035);
-  const deltaLat = Math.max(maxLat - minLat, 0.0035);
-
-  const padLng = deltaLng * 0.45;
-  const padLat = deltaLat * 0.45;
-  const bMinLng = minLng - padLng;
-  const bMaxLng = maxLng + padLng;
-  const bMinLat = minLat - padLat;
-  const bMaxLat = maxLat + padLat;
-  const spanLng = bMaxLng - bMinLng;
-  const spanLat = bMaxLat - bMinLat;
-
-  // 3. Dimensi Kanvas Peta (1000 x 650)
+  // 2. Dimensi Kanvas Peta (1000 x 650)
   const mapLeft = 35;
   const mapTop = 68;
   const mapWidth = 930;
@@ -198,7 +208,45 @@ function prepareSpatialModel(params: LuwuGisMapParams) {
   const mapRight = mapLeft + mapWidth;
   const mapBottom = mapTop + mapHeight;
 
-  // Fungsi Proyeksi Geodesi WGS84 -> Koordinat Layar SVG
+  // 3. Hitung Bounding Box Geodetik dengan 1:1 Isotropic Conformal Scale (Anti-Distorsi Lebar)
+  const lats = points.map(p => p.latitudeDd);
+  const lngs = points.map(p => p.longitudeDd);
+  const minLat = Math.min(...lats);
+  const maxLat = Math.max(...lats);
+  const minLng = Math.min(...lngs);
+  const maxLng = Math.max(...lngs);
+
+  const centerLng = (minLng + maxLng) / 2;
+  const centerLat = (minLat + maxLat) / 2;
+
+  // Konversi Derajat ke Meter berdasarkan lintang rata-rata di Luwu (~3° LS)
+  const metersPerDegreeLat = 110574;
+  const metersPerDegreeLng = 111320 * Math.cos(centerLat * Math.PI / 180);
+
+  const rawWidthMeters = Math.max((maxLng - minLng) * metersPerDegreeLng, 120);
+  const rawHeightMeters = Math.max((maxLat - minLat) * metersPerDegreeLat, 120);
+
+  // Berikan padding 45% agar poligon berada nyaman di tengah viewport
+  const paddedWidthMeters = rawWidthMeters * 1.55;
+  const paddedHeightMeters = rawHeightMeters * 1.55;
+
+  // Skala Seragam (Meters per pixel) untuk X dan Y agar proporsi 1:1 persis seperti Live Map
+  const scaleX = paddedWidthMeters / mapWidth;
+  const scaleY = paddedHeightMeters / mapHeight;
+  const metersPerPixel = Math.max(scaleX, scaleY, 0.45);
+
+  const totalSpanMetersX = mapWidth * metersPerPixel;
+  const totalSpanMetersY = mapHeight * metersPerPixel;
+
+  const spanLng = totalSpanMetersX / metersPerDegreeLng;
+  const spanLat = totalSpanMetersY / metersPerDegreeLat;
+
+  const bMinLng = centerLng - spanLng / 2;
+  const bMaxLng = centerLng + spanLng / 2;
+  const bMinLat = centerLat - spanLat / 2;
+  const bMaxLat = centerLat + spanLat / 2;
+
+  // Fungsi Proyeksi Geodesi WGS84 -> Koordinat Layar SVG (1:1 Conformal)
   const projX = (lng: number) => mapLeft + ((lng - bMinLng) / spanLng) * mapWidth;
   const projY = (lat: number) => mapBottom - ((lat - bMinLat) / spanLat) * mapHeight;
 
@@ -206,14 +254,10 @@ function prepareSpatialModel(params: LuwuGisMapParams) {
   const svgPolygonPoints = points.map(p => `${projX(p.longitudeDd).toFixed(1)},${projY(p.latitudeDd).toFixed(1)}`).join(' ');
 
   // Titik tengah persil
-  const centerLng = (minLng + maxLng) / 2;
-  const centerLat = (minLat + maxLat) / 2;
   const centerX = projX(centerLng);
   const centerY = projY(centerLat);
 
   // 4. Perhitungan Skala Metrik Otomatis
-  const groundWidthMeters = haversineMeters(centerLat, bMinLng, centerLat, bMaxLng);
-  const metersPerPixel = groundWidthMeters / mapWidth;
   const barPx = 140;
   const barMetersRaw = barPx * metersPerPixel;
   const barMeters = Math.max(50, Math.round(barMetersRaw / 50) * 50);
