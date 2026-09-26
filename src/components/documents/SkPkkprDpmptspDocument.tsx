@@ -124,29 +124,69 @@ export const SkPkkprDpmptspDocument: React.FC<SkPkkprDpmptspDocumentProps> = ({
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
-        format: "a4"
+        format: "a4",
+        compress: true
       });
+
+      // Create pristine offscreen container mounted to document.body
+      // This isolates rendering from scrollbars, responsive flex/grid compression, and CSS transforms
+      const offscreenContainer = document.createElement("div");
+      offscreenContainer.style.position = "fixed";
+      offscreenContainer.style.left = "-9999px";
+      offscreenContainer.style.top = "0";
+      offscreenContainer.style.width = "210mm";
+      offscreenContainer.style.zIndex = "-9999";
+      offscreenContainer.style.backgroundColor = "#ffffff";
+      document.body.appendChild(offscreenContainer);
 
       const pages = documentContainerRef.current.querySelectorAll(".sk-pkkpr-print-page");
       
       for (let i = 0; i < pages.length; i++) {
         const page = pages[i] as HTMLElement;
-        const canvas = await safeHtml2Canvas(page, {
-          scale: 2,
+
+        // Clone page into pristine off-screen container
+        const clonedPage = page.cloneNode(true) as HTMLElement;
+        clonedPage.style.margin = "0";
+        clonedPage.style.boxShadow = "none";
+        clonedPage.style.transform = "none";
+        clonedPage.style.width = "210mm";
+        clonedPage.style.minHeight = "297mm";
+        clonedPage.style.height = "297mm";
+
+        offscreenContainer.appendChild(clonedPage);
+
+        // Render with html2canvas locked to exact A4 pixel dimensions (794px x 1123px at 96 DPI)
+        const canvas = await safeHtml2Canvas(clonedPage, {
+          scale: 3, // Ultra-crisp 300 DPI text quality
           useCORS: true,
+          allowTaint: true,
+          backgroundColor: "#ffffff",
           logging: false,
-          backgroundColor: "#ffffff"
+          imageTimeout: 15000,
+          windowWidth: 794,  // Lock to exact 210mm width
+          windowHeight: 1123, // Lock to exact 297mm height
+          scrollX: 0,
+          scrollY: 0
         });
 
-        const imgData = canvas.toDataURL("image/jpeg", 0.95);
-        if (i > 0) pdf.addPage();
-        pdf.addImage(imgData, "JPEG", 0, 0, 210, 297);
+        // Clean up cloned DOM node
+        offscreenContainer.removeChild(clonedPage);
+
+        const imgData = canvas.toDataURL("image/jpeg", 0.98);
+        if (i > 0) pdf.addPage("a4", "portrait");
+        pdf.addImage(imgData, "JPEG", 0, 0, 210, 297, undefined, "FAST");
+      }
+
+      // Remove offscreen container
+      if (document.body.contains(offscreenContainer)) {
+        document.body.removeChild(offscreenContainer);
       }
 
       const cleanFileName = `SK-PKKPR_${data.namaPerusahaan.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`;
       pdf.save(cleanFileName);
     } catch (error) {
       console.error("Gagal mengunduh PDF SK PKKPR:", error);
+      alert("Terjadi kendala saat menghasilkan PDF. Silakan gunakan tombol Cetak Dokumen untuk menyimpan sebagai PDF.");
     } finally {
       setIsExportingPdf(false);
     }
