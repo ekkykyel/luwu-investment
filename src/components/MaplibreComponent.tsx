@@ -952,71 +952,388 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
 
   const isDesaLayerActive = desaLayerObj?.isActive !== false;
 
+  // Helper to construct rich thematic layer tooltip HTML
+  const formatThematicLayerTooltip = useCallback((layerId: string, propsData: any) => {
+    let rawDesc = typeof propsData.description === 'string' ? propsData.description : (propsData.description?.value || '');
+    let descLuasMatch = rawDesc.match(/Luas\s*=\s*([0-9.,]+)/i);
+    let descPlMatch = rawDesc.match(/PL\s*=\s*([^<]+)/i);
+
+    let luasNum = 0;
+    if (descLuasMatch && descLuasMatch[1]) {
+      luasNum = parseFloat(descLuasMatch[1].replace(',', '.'));
+    } else if (propsData.Luas || propsData.LUAS || propsData.Shape_Area || propsData.SHAPE_Area || propsData.areaHa) {
+      const raw = propsData.Luas || propsData.LUAS || propsData.Shape_Area || propsData.SHAPE_Area || propsData.areaHa;
+      luasNum = parseFloat(String(raw).replace(/[^0-9.,-]/g, '').replace(',', '.'));
+    }
+
+    const luasFormatted = luasNum > 0 ? `${luasNum.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Ha` : null;
+    const lid = (layerId || '').toLowerCase();
+    const plName = descPlMatch ? descPlMatch[1].trim() : (propsData.PL || propsData.name || propsData.NAMOBJ || propsData.Nama_Ruas || propsData.keterangan || '');
+
+    // 1. Sawah (LP2B)
+    if (lid.includes('sawah')) {
+      return `
+        <div style="padding: 12px 14px; font-family: system-ui, -apple-system, sans-serif; font-size: 11px; border-radius: 14px; background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(16px); color: #f8fafc; border: 1px solid rgba(34, 197, 94, 0.5); box-shadow: 0 16px 24px -4px rgba(0, 0, 0, 0.6), 0 0 16px rgba(34, 197, 94, 0.25); min-width: 210px; max-width: 280px;">
+          <div style="font-weight: 700; font-size: 12px; margin-bottom: 6px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; color: #ffffff;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #22c55e; box-shadow: 0 0 8px #22c55e;"></span>
+              <span>🌾 Sawah (LP2B)</span>
+            </div>
+            <span style="font-size: 9px; padding: 2px 6px; border-radius: 9999px; background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); font-weight: 700;">Lahan Pertanian</span>
+          </div>
+          <div style="color: #cbd5e1; margin-bottom: 3px; display: flex; justify-content: space-between;">
+            <span style="color: #94a3b8;">Tutupan Lahan:</span>
+            <span style="color: #f1f5f9; font-weight: 600;">${plName || 'Sawah Irigasi / Non-Irigasi'}</span>
+          </div>
+          ${luasFormatted ? `
+            <div style="color: #cbd5e1; margin-bottom: 3px; display: flex; justify-content: space-between;">
+              <span style="color: #94a3b8;">Luas Polygon:</span>
+              <span style="color: #4ade80; font-weight: 700; font-family: monospace;">${luasFormatted}</span>
+            </div>
+          ` : ''}
+          <div style="margin-top: 6px; padding-top: 4px; border-top: 1px dashed rgba(255,255,255,0.1); font-size: 10px; color: #86efac; display: flex; align-items: center; gap: 4px;">
+            <span>🛡️ Perlindungan Pangan Berkelanjutan (UU 41/2009)</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // 2. Mangrove
+    if (lid.includes('mangrove')) {
+      return `
+        <div style="padding: 12px 14px; font-family: system-ui, -apple-system, sans-serif; font-size: 11px; border-radius: 14px; background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(16px); color: #f8fafc; border: 1px solid rgba(20, 184, 166, 0.5); box-shadow: 0 16px 24px -4px rgba(0, 0, 0, 0.6), 0 0 16px rgba(20, 184, 166, 0.25); min-width: 210px; max-width: 280px;">
+          <div style="font-weight: 700; font-size: 12px; margin-bottom: 6px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; color: #ffffff;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #14b8a6; box-shadow: 0 0 8px #14b8a6;"></span>
+              <span>🌿 Hutan Mangrove</span>
+            </div>
+            <span style="font-size: 9px; padding: 2px 6px; border-radius: 9999px; background: rgba(20, 184, 166, 0.2); color: #2dd4bf; border: 1px solid rgba(20, 184, 166, 0.4); font-weight: 700;">Konservasi Pesisir</span>
+          </div>
+          <div style="color: #cbd5e1; margin-bottom: 3px; display: flex; justify-content: space-between;">
+            <span style="color: #94a3b8;">Klasifikasi:</span>
+            <span style="color: #f1f5f9; font-weight: 600;">${plName || 'Hutan Mangrove Sekunder'}</span>
+          </div>
+          ${luasFormatted ? `
+            <div style="color: #cbd5e1; margin-bottom: 3px; display: flex; justify-content: space-between;">
+              <span style="color: #94a3b8;">Luas Area:</span>
+              <span style="color: #2dd4bf; font-weight: 700; font-family: monospace;">${luasFormatted}</span>
+            </div>
+          ` : ''}
+          <div style="margin-top: 6px; padding-top: 4px; border-top: 1px dashed rgba(255,255,255,0.1); font-size: 10px; color: #99f6e4; display: flex; align-items: center; gap: 4px;">
+            <span>🌊 Sabuk Hijau & Pelindung Abrasi Pesisir</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // 3. Tambak
+    if (lid.includes('tambak')) {
+      return `
+        <div style="padding: 12px 14px; font-family: system-ui, -apple-system, sans-serif; font-size: 11px; border-radius: 14px; background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(16px); color: #f8fafc; border: 1px solid rgba(14, 165, 233, 0.5); box-shadow: 0 16px 24px -4px rgba(0, 0, 0, 0.6), 0 0 16px rgba(14, 165, 233, 0.25); min-width: 210px; max-width: 280px;">
+          <div style="font-weight: 700; font-size: 12px; margin-bottom: 6px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; color: #ffffff;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #0ea5e9; box-shadow: 0 0 8px #0ea5e9;"></span>
+              <span>🦀 Lahan Tambak</span>
+            </div>
+            <span style="font-size: 9px; padding: 2px 6px; border-radius: 9999px; background: rgba(14, 165, 233, 0.2); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.4); font-weight: 700;">Perikanan Budidaya</span>
+          </div>
+          <div style="color: #cbd5e1; margin-bottom: 3px; display: flex; justify-content: space-between;">
+            <span style="color: #94a3b8;">Pemanfaatan:</span>
+            <span style="color: #f1f5f9; font-weight: 600;">${plName || 'Tambak Air Payau / Pesisir'}</span>
+          </div>
+          ${luasFormatted ? `
+            <div style="color: #cbd5e1; margin-bottom: 3px; display: flex; justify-content: space-between;">
+              <span style="color: #94a3b8;">Luas Lahan:</span>
+              <span style="color: #38bdf8; font-weight: 700; font-family: monospace;">${luasFormatted}</span>
+            </div>
+          ` : ''}
+          <div style="margin-top: 6px; padding-top: 4px; border-top: 1px dashed rgba(255,255,255,0.1); font-size: 10px; color: #bae6fd; display: flex; align-items: center; gap: 4px;">
+            <span>🐟 Zona Budidaya Perikanan Air Payau</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // 4. Lahan Basah
+    if (lid.includes('lahan_basah') || lid.includes('lahanbasah') || lid.includes('wetland')) {
+      return `
+        <div style="padding: 12px 14px; font-family: system-ui, -apple-system, sans-serif; font-size: 11px; border-radius: 14px; background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(16px); color: #f8fafc; border: 1px solid rgba(6, 182, 212, 0.5); box-shadow: 0 16px 24px -4px rgba(0, 0, 0, 0.6), 0 0 16px rgba(6, 182, 212, 0.25); min-width: 210px; max-width: 280px;">
+          <div style="font-weight: 700; font-size: 12px; margin-bottom: 6px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; color: #ffffff;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #06b6d4; box-shadow: 0 0 8px #06b6d4;"></span>
+              <span>💧 Lahan Basah</span>
+            </div>
+            <span style="font-size: 9px; padding: 2px 6px; border-radius: 9999px; background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.4); font-weight: 700;">Tata Air & Rawa</span>
+          </div>
+          <div style="color: #cbd5e1; margin-bottom: 3px; display: flex; justify-content: space-between;">
+            <span style="color: #94a3b8;">Tipe Lahan:</span>
+            <span style="color: #f1f5f9; font-weight: 600;">${plName || 'Ekosistem Lahan Basah / Rawa'}</span>
+          </div>
+          ${luasFormatted ? `
+            <div style="color: #cbd5e1; margin-bottom: 3px; display: flex; justify-content: space-between;">
+              <span style="color: #94a3b8;">Luas Basah:</span>
+              <span style="color: #22d3ee; font-weight: 700; font-family: monospace;">${luasFormatted}</span>
+            </div>
+          ` : ''}
+          <div style="margin-top: 6px; padding-top: 4px; border-top: 1px dashed rgba(255,255,255,0.1); font-size: 10px; color: #a5f3fc; display: flex; align-items: center; gap: 4px;">
+            <span>🏞️ Daerah Resapan & Penahan Banjir Alami</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // 5. Tanah Kering Primer
+    if (lid.includes('primer') || lid.includes('lahankeringprimer')) {
+      return `
+        <div style="padding: 12px 14px; font-family: system-ui, -apple-system, sans-serif; font-size: 11px; border-radius: 14px; background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(16px); color: #f8fafc; border: 1px solid rgba(180, 83, 9, 0.5); box-shadow: 0 16px 24px -4px rgba(0, 0, 0, 0.6), 0 0 16px rgba(180, 83, 9, 0.25); min-width: 210px; max-width: 280px;">
+          <div style="font-weight: 700; font-size: 12px; margin-bottom: 6px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; color: #ffffff;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #b45309; box-shadow: 0 0 8px #b45309;"></span>
+              <span>🌳 Tanah Kering Primer</span>
+            </div>
+            <span style="font-size: 9px; padding: 2px 6px; border-radius: 9999px; background: rgba(180, 83, 9, 0.25); color: #f59e0b; border: 1px solid rgba(180, 83, 9, 0.4); font-weight: 700;">Hutan Alami</span>
+          </div>
+          <div style="color: #cbd5e1; margin-bottom: 3px; display: flex; justify-content: space-between;">
+            <span style="color: #94a3b8;">Tutupan:</span>
+            <span style="color: #f1f5f9; font-weight: 600;">${plName || 'Hutan Lahan Kering Primer'}</span>
+          </div>
+          ${luasFormatted ? `
+            <div style="color: #cbd5e1; margin-bottom: 3px; display: flex; justify-content: space-between;">
+              <span style="color: #94a3b8;">Luas Tutupan:</span>
+              <span style="color: #fbbf24; font-weight: 700; font-family: monospace;">${luasFormatted}</span>
+            </div>
+          ` : ''}
+          <div style="margin-top: 6px; padding-top: 4px; border-top: 1px dashed rgba(255,255,255,0.1); font-size: 10px; color: #fde68a; display: flex; align-items: center; gap: 4px;">
+            <span>🌲 Vegetasi Kerapatan Tinggi & Zona Lindung</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // 6. Tanah Kering Sekunder
+    if (lid.includes('sekunder') || lid.includes('lahankeringsekunder')) {
+      return `
+        <div style="padding: 12px 14px; font-family: system-ui, -apple-system, sans-serif; font-size: 11px; border-radius: 14px; background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(16px); color: #f8fafc; border: 1px solid rgba(245, 158, 11, 0.5); box-shadow: 0 16px 24px -4px rgba(0, 0, 0, 0.6), 0 0 16px rgba(245, 158, 11, 0.25); min-width: 210px; max-width: 280px;">
+          <div style="font-weight: 700; font-size: 12px; margin-bottom: 6px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; color: #ffffff;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #f59e0b; box-shadow: 0 0 8px #f59e0b;"></span>
+              <span>🌱 Tanah Kering Sekunder</span>
+            </div>
+            <span style="font-size: 9px; padding: 2px 6px; border-radius: 9999px; background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); font-weight: 700;">Perkebunan / Belukar</span>
+          </div>
+          <div style="color: #cbd5e1; margin-bottom: 3px; display: flex; justify-content: space-between;">
+            <span style="color: #94a3b8;">Tutupan:</span>
+            <span style="color: #f1f5f9; font-weight: 600;">${plName || 'Hutan Lahan Kering Sekunder'}</span>
+          </div>
+          ${luasFormatted ? `
+            <div style="color: #cbd5e1; margin-bottom: 3px; display: flex; justify-content: space-between;">
+              <span style="color: #94a3b8;">Luas Tutupan:</span>
+              <span style="color: #fbbf24; font-weight: 700; font-family: monospace;">${luasFormatted}</span>
+            </div>
+          ` : ''}
+          <div style="margin-top: 6px; padding-top: 4px; border-top: 1px dashed rgba(255,255,255,0.1); font-size: 10px; color: #fef08a; display: flex; align-items: center; gap: 4px;">
+            <span>🌿 Zona Budidaya Terbatas & Tanaman Perkebunan</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // 7. Zonasi Pemanfaatan Lahan (RTRW / Pola Ruang)
+    if (lid.includes('zonasi') || lid.includes('land_use') || lid.includes('rtrw')) {
+      const polaRuang = propsData.keterangan || propsData.rpluwu2009 || propsData.Kawasan || propsData.NAMOBJ || propsData.POLA_RUANG || propsData.ZONA || 'Zonasi Pola Ruang Wilayah';
+      return `
+        <div style="padding: 12px 14px; font-family: system-ui, -apple-system, sans-serif; font-size: 11px; border-radius: 14px; background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(16px); color: #f8fafc; border: 1px solid rgba(139, 92, 246, 0.5); box-shadow: 0 16px 24px -4px rgba(0, 0, 0, 0.6), 0 0 16px rgba(139, 92, 246, 0.25); min-width: 220px; max-width: 290px;">
+          <div style="font-weight: 700; font-size: 12px; margin-bottom: 6px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; color: #ffffff;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #8b5cf6; box-shadow: 0 0 8px #8b5cf6;"></span>
+              <span>📐 Zonasi Pemanfaatan Lahan</span>
+            </div>
+            <span style="font-size: 9px; padding: 2px 6px; border-radius: 9999px; background: rgba(139, 92, 246, 0.25); color: #c4b5fd; border: 1px solid rgba(139, 92, 246, 0.4); font-weight: 700;">RTRW Luwu</span>
+          </div>
+          <div style="color: #cbd5e1; margin-bottom: 3px; display: flex; justify-content: space-between; gap: 8px;">
+            <span style="color: #94a3b8; shrink-0;">Rencana Ruang:</span>
+            <span style="color: #f1f5f9; font-weight: 600; text-align: right;">${polaRuang}</span>
+          </div>
+          ${luasFormatted ? `
+            <div style="color: #cbd5e1; margin-bottom: 3px; display: flex; justify-content: space-between;">
+              <span style="color: #94a3b8;">Luas Zona:</span>
+              <span style="color: #c4b5fd; font-weight: 700; font-family: monospace;">${luasFormatted}</span>
+            </div>
+          ` : ''}
+          <div style="margin-top: 6px; padding-top: 4px; border-top: 1px dashed rgba(255,255,255,0.1); font-size: 10px; color: #ddd6fe; display: flex; align-items: center; gap: 4px;">
+            <span>🗺️ Pedoman Verifikasi Kesesuaian Tata Ruang (PKKPR)</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // 8. Jalan (Jaringan Jalan)
+    if (lid.includes('jalan') || lid.includes('road')) {
+      const namaRuas = propsData.Nama_Ruas || propsData.nama_jalan || propsData.nama || propsData.name || propsData.NAME || 'Jaringan Jalan';
+      const fungsiJalan = propsData.fungsi_jalan || propsData.kelas_jalan || propsData.kategori || propsData.status_jalan || 'Jalan Kolektor / Arteri';
+      const panjangKm = propsData.panjang_km || propsData.PANJANG || (propsData.length ? `${(parseFloat(propsData.length) / 1000).toFixed(2)} km` : null);
+
+      return `
+        <div style="padding: 12px 14px; font-family: system-ui, -apple-system, sans-serif; font-size: 11px; border-radius: 14px; background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(16px); color: #f8fafc; border: 1px solid rgba(234, 179, 8, 0.5); box-shadow: 0 16px 24px -4px rgba(0, 0, 0, 0.6), 0 0 16px rgba(234, 179, 8, 0.25); min-width: 210px; max-width: 280px;">
+          <div style="font-weight: 700; font-size: 12px; margin-bottom: 6px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; color: #ffffff;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #eab308; box-shadow: 0 0 8px #eab308;"></span>
+              <span>🛣️ Jaringan Jalan</span>
+            </div>
+            <span style="font-size: 9px; padding: 2px 6px; border-radius: 9999px; background: rgba(234, 179, 8, 0.2); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.4); font-weight: 700;">Infrastruktur</span>
+          </div>
+          <div style="color: #cbd5e1; margin-bottom: 3px; display: flex; justify-content: space-between; gap: 6px;">
+            <span style="color: #94a3b8;">Ruas:</span>
+            <span style="color: #f1f5f9; font-weight: 600; text-align: right;">${namaRuas}</span>
+          </div>
+          <div style="color: #cbd5e1; margin-bottom: 3px; display: flex; justify-content: space-between;">
+            <span style="color: #94a3b8;">Fungsi:</span>
+            <span style="color: #fde047; font-weight: 600;">${fungsiJalan}</span>
+          </div>
+          ${panjangKm ? `
+            <div style="color: #cbd5e1; margin-bottom: 3px; display: flex; justify-content: space-between;">
+              <span style="color: #94a3b8;">Panjang:</span>
+              <span style="color: #fef08a; font-weight: 700; font-family: monospace;">${panjangKm}</span>
+            </div>
+          ` : ''}
+          <div style="margin-top: 6px; padding-top: 4px; border-top: 1px dashed rgba(255,255,255,0.1); font-size: 10px; color: #fef9c3; display: flex; align-items: center; gap: 4px;">
+            <span>🚗 Aksesibilitas & Koridor Transportasi Darat</span>
+          </div>
+        </div>
+      `;
+    }
+
+    return null;
+  }, []);
+
+  // Thematic Layer Tooltip Popup Engine (Lahan Basah, Sawah, Mangrove, Tambak, Tanah Kering Primer/Sekunder, Zonasi, Jalan)
   useEffect(() => {
     const map = mapRef.current?.getMap();
     if (!map || !isMapLoaded) return;
 
-    // Create a new maplibregl.Popup
     // @ts-ignore
     const popup = new maplibregl.Popup({
       closeButton: false,
       closeOnClick: false,
-      className: 'village-popup'
+      className: 'thematic-layer-popup',
+      offset: [0, -10]
     });
 
-    const onMouseEnter = (e: any) => {
+    const targetLayerIds = [
+      'spatial-layer-fill-layer_sawah',
+      'spatial-layer-stroke-layer_sawah',
+      'spatial-layer-fill-layer_mangrove',
+      'spatial-layer-stroke-layer_mangrove',
+      'spatial-layer-fill-layer_tambak',
+      'spatial-layer-stroke-layer_tambak',
+      'spatial-layer-fill-layer_lahan_basah',
+      'spatial-layer-stroke-layer_lahan_basah',
+      'spatial-layer-fill-layer_lahan_kering_primer',
+      'spatial-layer-stroke-layer_lahan_kering_primer',
+      'spatial-layer-fill-layer_lahan_kering_sekunder',
+      'spatial-layer-stroke-layer_lahan_kering_sekunder',
+      'spatial-layer-fill-layer_zonasi',
+      'spatial-layer-stroke-layer_zonasi',
+      'spatial-layer-fill-layer_land_use_zoning',
+      'layer-zonasi',
+      'spatial-layer-stroke-layer_jalan',
+      'spatial-layer-fill-layer_jalan',
+      'layer-jalan',
+      'layer-rbi-roads'
+    ];
+
+    let lastHoveredId: string | null = null;
+
+    const handleFeatureHover = (e: any) => {
       map.getCanvas().style.cursor = 'pointer';
-      
       const features = e.features;
       if (features && features.length > 0) {
-        const propsData = features[0].properties || {};
-        const name = propsData.nama_desa || propsData.name || propsData.WADMKD || propsData.NAMOBJ || propsData.nama || propsData.Name || propsData.Nama_Desa || 'Desa';
-        const rawKecName = propsData.kecamatan || propsData.WADMKC || propsData.KECAMATAN || '';
+        const feat = features[0];
+        const layerId = feat.layer?.id || '';
+        const propsData = feat.properties || {};
         
-        const matchedVillage = props.villages?.find(v => v.id === propsData.id || (v.name && v.name.toLowerCase() === name.toLowerCase()));
-
-        let luasRaw = matchedVillage?.areaHa || propsData.LUAS || propsData.luas || propsData.Shape_Area || propsData.SHAPE_Area || propsData.areaHa || 0;
-        let pop = matchedVillage?.population || propsData.population || propsData.Jum_Pdd || propsData.jum_pdd || 0;
-
-        let luasNum = parseFloat(String(luasRaw).replace(/[^0-9.,-]/g, '').replace(',', '.'));
-        let luas = !isNaN(luasNum) ? `${luasNum.toFixed(2)} Ha` : (luasRaw ? `${luasRaw} Ha` : 'N/A');
-
-        const html = `
-          <div style="padding: 14px 16px; font-family: inherit; font-size: 12px; border-radius: 16px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); color: #f8fafc; border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 0 20px rgba(16, 185, 129, 0.15); min-width: 200px;">
-            <div style="font-weight: 700; font-size: 13px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; gap: 6px; color: #ffffff;">
-              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #10b981;"></span>
-              🏡 ${name}
-            </div>
-            ${rawKecName ? `<div style="color: #94a3b8; margin-bottom: 4px; display: flex; justify-content: space-between;"><span>Kecamatan:</span> <span style="color: #e2e8f0; font-weight: 500;">${rawKecName}</span></div>` : ''}
-            <div style="color: #94a3b8; margin-bottom: 4px; display: flex; justify-content: space-between;"><span>Luas Wilayah:</span> <span style="color: #34d399; font-weight: 700; font-family: monospace;">${luas}</span></div>
-            ${pop > 0 ? `<div style="color: #94a3b8; display: flex; justify-content: space-between;"><span>Penduduk:</span> <span style="color: #38bdf8; font-weight: 700; font-family: monospace;">${pop.toLocaleString("id-ID")} Jiwa</span></div>` : ''}
-          </div>
-        `;
-
-        popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
+        const html = formatThematicLayerTooltip(layerId, propsData);
+        if (html) {
+          popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
+          lastHoveredId = layerId;
+        } else {
+          popup.remove();
+        }
       }
     };
 
-    const onMouseMove = (e: any) => {
-      popup.setLngLat(e.lngLat);
+    const handleFeatureMove = (e: any) => {
+      if (popup.isOpen()) {
+        popup.setLngLat(e.lngLat);
+      }
     };
 
-    const onMouseLeave = () => {
+    const handleFeatureLeave = () => {
       map.getCanvas().style.cursor = '';
+      lastHoveredId = null;
       popup.remove();
     };
 
-    map.on('mouseenter', 'spatial-layer-fill-layer_desa', onMouseEnter);
-    map.on('mousemove', 'spatial-layer-fill-layer_desa', onMouseMove);
-    map.on('mouseleave', 'spatial-layer-fill-layer_desa', onMouseLeave);
+    // Attach hover listeners for each existing target layer
+    targetLayerIds.forEach((layerId) => {
+      try {
+        if (map.getLayer(layerId)) {
+          map.on('mouseenter', layerId, handleFeatureHover);
+          map.on('mousemove', layerId, handleFeatureMove);
+          map.on('mouseleave', layerId, handleFeatureLeave);
+        }
+      } catch (e) {
+        // Layer not yet mounted or not applicable
+      }
+    });
+
+    // Touch Support for Android / Mobile screens: tap to display thematic layer tooltip
+    const handleTouchInteraction = (e: any) => {
+      try {
+        const point = e.point;
+        if (!point) return;
+        
+        const activeTargetLayers = targetLayerIds.filter(id => {
+          try { return Boolean(map.getLayer(id)); } catch(e) { return false; }
+        });
+
+        if (activeTargetLayers.length === 0) return;
+
+        const rendered = map.queryRenderedFeatures(point, { layers: activeTargetLayers });
+        if (rendered && rendered.length > 0) {
+          const feat = rendered[0];
+          const layerId = feat.layer?.id || '';
+          const propsData = feat.properties || {};
+          const html = formatThematicLayerTooltip(layerId, propsData);
+          if (html) {
+            popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
+            // On touch device, auto-dismiss after 4.5 seconds if user doesn't tap elsewhere
+            setTimeout(() => {
+              if (popup.isOpen()) popup.remove();
+            }, 4500);
+          }
+        }
+      } catch (e) {
+        // Safe fallback
+      }
+    };
+
+    map.on('click', handleTouchInteraction);
 
     return () => {
-      map.off('mouseenter', 'spatial-layer-fill-layer_desa', onMouseEnter);
-      map.off('mousemove', 'spatial-layer-fill-layer_desa', onMouseMove);
-      map.off('mouseleave', 'spatial-layer-fill-layer_desa', onMouseLeave);
+      targetLayerIds.forEach((layerId) => {
+        try {
+          if (map.getLayer(layerId)) {
+            map.off('mouseenter', layerId, handleFeatureHover);
+            map.off('mousemove', layerId, handleFeatureMove);
+            map.off('mouseleave', layerId, handleFeatureLeave);
+          }
+        } catch (e) {}
+      });
+      map.off('click', handleTouchInteraction);
       popup.remove();
     };
-  }, [isMapLoaded]);
+  }, [isMapLoaded, formatThematicLayerTooltip, props.spatialLayers]);
 
   const isNavControlAddedRef = useRef(false);
   const isScaleControlAddedRef = useRef(false);
