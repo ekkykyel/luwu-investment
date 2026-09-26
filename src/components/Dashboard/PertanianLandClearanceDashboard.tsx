@@ -1524,38 +1524,55 @@ export default function PertanianLandClearanceDashboard() {
                 Pilih Keputusan &amp; Rekomendasi Teknis
               </span>
 
-              {/* Smart Form Pertanian Button */}
-              <button
-                type="button"
-                onClick={() => {
-                  captureCurrentMapSnapshot();
-                  setShowSmartFormModal(true);
-                }}
-                className="w-full py-2.5 bg-gradient-to-r from-emerald-700 via-teal-700 to-emerald-800 hover:from-emerald-600 hover:to-teal-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-700/20 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <Sparkles className="w-4 h-4 text-amber-300" />
-                <span>Smart Form Rekomendasi Teknis LP2B &amp; Pertanian</span>
-              </button>
+              {(selectedApp.pertanianStatus === 'APPROVED' || selectedApp.pertanianStatus === 'REJECTED') ? (
+                <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-xs space-y-1 font-sans">
+                  <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 font-extrabold uppercase">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>✓ BAP PERTANIAN TELAH DITERBITKAN ({selectedApp.pertanianStatus})</span>
+                  </div>
+                  <p className="text-slate-800 dark:text-slate-200">
+                    No. Berita Acara: <strong className="font-mono text-emerald-600 dark:text-emerald-400">{selectedApp.pertanianBaNumber || 'BA/DISTAN/2026'}</strong>
+                  </p>
+                  <p className="text-[11px] text-slate-500 pt-1 border-t border-emerald-200 dark:border-emerald-800/60">
+                    🔒 Rekomendasi alih fungsi lahan telah diproses dan dikembalikan ke Dinas PUPTR. Tombol keputusan telah dinonaktifkan.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  {/* Smart Form Pertanian Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      captureCurrentMapSnapshot();
+                      setShowSmartFormModal(true);
+                    }}
+                    className="w-full py-2.5 bg-gradient-to-r from-emerald-700 via-teal-700 to-emerald-800 hover:from-emerald-600 hover:to-teal-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-700/20 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <Sparkles className="w-4 h-4 text-amber-300" />
+                    <span>Smart Form Rekomendasi Teknis LP2B &amp; Pertanian</span>
+                  </button>
 
-              {/* Path A Button: Setujui & Terbit Berita Acara */}
-              <button
-                type="button"
-                onClick={handleOpenApprovalModal}
-                className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 transition-all cursor-pointer"
-              >
-                <CheckCircle2 className="w-4 h-4 text-emerald-200" />
-                <span>PATH A: Setujui &amp; Terbit Berita Acara LP2B 📄</span>
-              </button>
+                  {/* Path A Button: Setujui & Terbit Berita Acara */}
+                  <button
+                    type="button"
+                    onClick={handleOpenApprovalModal}
+                    className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 transition-all cursor-pointer"
+                  >
+                    <CheckCircle2 className="w-4 h-4 text-emerald-200" />
+                    <span>PATH A: Setujui &amp; Terbit Berita Acara LP2B 📄</span>
+                  </button>
 
-              {/* Path B Button: Kembalikan / Tolak */}
-              <button
-                type="button"
-                onClick={handleOpenRejectionModal}
-                className="w-full py-3 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-rose-600/10 transition-all cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-                <span>PATH B: Kembalikan / Tolak Ke PUPTR ⚠️</span>
-              </button>
+                  {/* Path B Button: Kembalikan / Tolak */}
+                  <button
+                    type="button"
+                    onClick={handleOpenRejectionModal}
+                    className="w-full py-3 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-rose-600/10 transition-all cursor-pointer"
+                  >
+                    <X className="w-4 h-4" />
+                    <span>PATH B: Kembalikan / Tolak Ke PUPTR ⚠️</span>
+                  </button>
+                </>
+              )}
 
               {/* Document Preview Trigger */}
               <button

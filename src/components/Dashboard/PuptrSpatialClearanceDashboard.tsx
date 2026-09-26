@@ -2015,47 +2015,70 @@ export default function PuptrSpatialClearanceDashboard() {
               {/* Decision Selector */}
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-slate-800 dark:text-slate-200">Keputusan Rekomendasi Spasial</label>
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setClearanceDecision('Approved')}
-                    className={`py-2 rounded-xl text-xs font-bold transition border ${
-                      clearanceDecision === 'Approved'
-                        ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
-                    }`}
-                  >
-                    Disetujui
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setClearanceDecision('Requires Revision')}
-                    className={`py-2 rounded-xl text-xs font-bold transition border ${
-                      clearanceDecision === 'Requires Revision'
-                        ? 'bg-amber-600 text-white border-amber-600 shadow-sm'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
-                    }`}
-                  >
-                    Revisi
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setClearanceDecision('Rejected')}
-                    className={`py-2 rounded-xl text-xs font-bold transition border ${
-                      clearanceDecision === 'Rejected'
-                        ? 'bg-rose-600 text-white border-rose-600 shadow-sm'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
-                    }`}
-                  >
-                    Ditolak
-                  </button>
-                </div>
+                {(Boolean(selectedApp.pkkprDocNumber) || Boolean(selectedApp.skPkkprDocNumber) || selectedApp.pkkprStatus === 'Approved' || Boolean(issuedSkNumber)) ? (
+                  <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 rounded-xl flex items-center justify-between text-xs text-emerald-800 dark:text-emerald-300 font-bold">
+                    <span className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      Status: Disetujui (Pertek Terbit)
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 bg-emerald-600 text-white rounded-md font-mono">LOCKED</span>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setClearanceDecision('Approved')}
+                      className={`py-2 rounded-xl text-xs font-bold transition border ${
+                        clearanceDecision === 'Approved'
+                          ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                      }`}
+                    >
+                      Disetujui
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setClearanceDecision('Requires Revision')}
+                      className={`py-2 rounded-xl text-xs font-bold transition border ${
+                        clearanceDecision === 'Requires Revision'
+                          ? 'bg-amber-600 text-white border-amber-600 shadow-sm'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                      }`}
+                    >
+                      Revisi
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setClearanceDecision('Rejected')}
+                      className={`py-2 rounded-xl text-xs font-bold transition border ${
+                        clearanceDecision === 'Rejected'
+                          ? 'bg-rose-600 text-white border-rose-600 shadow-sm'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                      }`}
+                    >
+                      Ditolak
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-2 mt-4">
-              {selectedApp.pertanianStatus === 'REJECTED' ? (
+              {(Boolean(selectedApp.pkkprDocNumber) || Boolean(selectedApp.skPkkprDocNumber) || selectedApp.pkkprStatus === 'Approved' || Boolean(issuedSkNumber)) ? (
+                <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-xs space-y-1 font-sans">
+                  <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 font-extrabold uppercase">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>✓ PERTEK &amp; BAP RUANG TELAH DITERBITKAN</span>
+                  </div>
+                  <p className="text-slate-800 dark:text-slate-200">
+                    No. Pertek PUPTR: <strong className="font-mono text-emerald-600 dark:text-emerald-400">{selectedApp.pkkprDocNumber || selectedApp.skPkkprDocNumber || issuedSkNumber}</strong>
+                  </p>
+                  <p className="text-[11px] text-slate-500 pt-1 border-t border-emerald-200 dark:border-emerald-800/60">
+                    🔒 Permohonan ini telah diproses dan diteruskan ke Admin DPMPTSP OSS. Tombol pembuatan ulang telah dinonaktifkan.
+                  </p>
+                </div>
+              ) : selectedApp.pertanianStatus === 'REJECTED' ? (
                 <button
                   type="button"
                   disabled={isIssuingSk}
@@ -2091,7 +2114,7 @@ export default function PuptrSpatialClearanceDashboard() {
                     ) : (
                       <Sparkles className="w-4 h-4" />
                     )}
-                    <span>Setujui & Terbitkan Rekomendasi Teknis (Pertek PUPTR) ➔ Kirim ke DPMPTSP OSS 🚀</span>
+                    <span>Setujui &amp; Terbitkan Rekomendasi Teknis (Pertek PUPTR) ➔ Kirim ke DPMPTSP OSS 🚀</span>
                   </button>
 
                   <button

@@ -1023,19 +1023,34 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
                 Tutup
               </button>
 
-              <button
-                type="button"
-                disabled={isSubmitting}
-                onClick={handlePublishToApplicant}
-                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 cursor-pointer disabled:opacity-50"
-              >
-                {isSubmitting ? (
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Send className="w-4 h-4" />
-                )}
-                <span>Kirim Izin PKKPR ke Dashboard Pemohon 🚀</span>
-              </button>
+              {(selectedItem?.publishedToApplicant || selectedItem?.statusPkkpr === 'Published') ? (
+                <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-xs space-y-1 font-sans text-left">
+                  <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 font-extrabold uppercase">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>✓ SK IZIN PKKPR TELAH DITERBITKAN &amp; TERARSIP</span>
+                  </div>
+                  <p className="text-slate-800 dark:text-slate-200">
+                    No. SK Official: <strong className="font-mono text-emerald-600 dark:text-emerald-400">{selectedItem.skPkkprNum || generatedSkNumber}</strong>
+                  </p>
+                  <p className="text-[11px] text-slate-500 pt-1 border-t border-emerald-200 dark:border-emerald-800/60">
+                    🔒 Dokumen ini telah terbit dan dikirimkan ke Pemohon. Tombol pengiriman ulang telah dinonaktifkan.
+                  </p>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={handlePublishToApplicant}
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 cursor-pointer disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                  <span>Kirim Izin PKKPR ke Dashboard Pemohon 🚀</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
