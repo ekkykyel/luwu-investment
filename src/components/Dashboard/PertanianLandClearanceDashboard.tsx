@@ -745,9 +745,27 @@ export default function PertanianLandClearanceDashboard() {
         const fRaw = localStorage.getItem('luwu_pkkpr_forwarded_to_pertanian_ids');
         if (fRaw) {
           const fList: string[] = JSON.parse(fRaw);
-          const updatedFList = fList.filter(id => id !== selectedApp.id && id !== selectedApp.nibNik && id !== selectedApp.companyName);
+          const removeIdentifiers = [
+            selectedApp.id,
+            selectedApp.nibNik,
+            selectedApp.companyName,
+            selectedApp.applicantName,
+            selectedApp.pkkprDocNumber,
+            selectedApp.skPkkprDocNumber
+          ].filter(Boolean);
+          const updatedFList = fList.filter(id => !removeIdentifiers.includes(id));
           localStorage.setItem('luwu_pkkpr_forwarded_to_pertanian_ids', JSON.stringify(updatedFList));
         }
+
+        // 1b. Cache BAP LP2B to local storage for instantaneous cross-dashboard activation
+        localStorage.setItem(`BAP_LP2B_${selectedApp.id}`, JSON.stringify({
+          nomorSurat: baDocNum,
+          nomorSuratRekomendasi: srDocNum,
+          status: 'APPROVED',
+          pertanianStatus: 'APPROVED',
+          catatanTeknis: stipulationNotes,
+          savedAt: new Date().toISOString()
+        }));
 
         // 2. Update snapshot in luwu_pkkpr_forwarded_apps_data
         const fAppsRaw = localStorage.getItem('luwu_pkkpr_forwarded_apps_data');
@@ -2085,7 +2103,7 @@ export default function PertanianLandClearanceDashboard() {
                   .from('gis_pkkpr')
                   .update({
                     berita_acara_pertanian_num: updated.nomorSurat,
-                    surat_rekomendasi_pertanian_num: updated.nomorSuratRekomendasi,
+                    status_pkkpr: 'Approved_Pertanian',
                     catatan_teknis: `[SMART FORM LP2B DISUSUN - ${updated.nomorSurat}]: ${updated.catatanRekomendasiTeknis?.join('; ') || updated.keteranganLp2b || 'Rekomendasi teknis alih fungsi lahan pertanian telah disusun.'}`,
                     updated_at: new Date().toISOString()
                   })
@@ -2097,6 +2115,8 @@ export default function PertanianLandClearanceDashboard() {
                     berita_acara_num: updated.nomorSurat,
                     surat_rekomendasi_num: updated.nomorSuratRekomendasi,
                     replacement_land_ha: updated.luasWajibLahanPenggantiHa || selectedApp.areaHa,
+                    status: 'Approved_Pertanian',
+                    pertanian_status: 'APPROVED',
                     override_justification: `[BAP LP2B ${updated.nomorSurat}]: ${updated.catatanRekomendasiTeknis?.join('; ') || ''}`,
                     updated_at: new Date().toISOString()
                   })
@@ -2108,6 +2128,46 @@ export default function PertanianLandClearanceDashboard() {
                 ]);
               } catch (dbErr) {
                 console.warn('Supabase sync note in onSaveData:', dbErr);
+              }
+
+              // 2b. Synchronize persistent localStorage across OPDs
+              try {
+                const fRaw = localStorage.getItem('luwu_pkkpr_forwarded_to_pertanian_ids');
+                if (fRaw) {
+                  const fList: string[] = JSON.parse(fRaw);
+                  const removeIdentifiers = [
+                    selectedApp.id,
+                    selectedApp.nibNik,
+                    selectedApp.companyName,
+                    selectedApp.applicantName,
+                    selectedApp.pkkprDocNumber,
+                    selectedApp.skPkkprDocNumber
+                  ].filter(Boolean);
+                  const updatedFList = fList.filter(id => !removeIdentifiers.includes(id));
+                  localStorage.setItem('luwu_pkkpr_forwarded_to_pertanian_ids', JSON.stringify(updatedFList));
+                }
+
+                const fAppsRaw = localStorage.getItem('luwu_pkkpr_forwarded_apps_data');
+                if (fAppsRaw) {
+                  const fApps: any[] = JSON.parse(fAppsRaw);
+                  const updatedFApps = fApps.map(app => {
+                    if (app.id === selectedApp.id || app.nibNik === selectedApp.nibNik) {
+                      return {
+                        ...app,
+                        agriStatus: 'Approved',
+                        pertanianStatus: 'APPROVED',
+                        beritaAcaraDocNum: updated.nomorSurat,
+                        suratRekomendasiNum: updated.nomorSuratRekomendasi,
+                        pertanianBaNumber: updated.nomorSurat,
+                        pertanianSrNumber: updated.nomorSuratRekomendasi
+                      };
+                    }
+                    return app;
+                  });
+                  localStorage.setItem('luwu_pkkpr_forwarded_apps_data', JSON.stringify(updatedFApps));
+                }
+              } catch (crossSyncErr) {
+                console.warn('Cross sync on onSaveData error:', crossSyncErr);
               }
 
               // 3. Update antrean queueList dan selectedApp di memori dashboard

@@ -61,7 +61,7 @@ import { Investment } from '../../types';
 import { useData } from '../../contexts/DataContext';
 import { PkkprSlaTimelineTracker } from './PkkprSlaTimelineTracker';
 import { ConflictResolutionToolModal } from '../GIS/ConflictResolutionToolModal';
-import { getSpatialOverrides } from '../../utils/spatialOverridesService';
+import { getSpatialOverrides, recordSpatialOverride } from '../../utils/spatialOverridesService';
 import { LuwuLogo } from '../LuwuLogo';
 import { generateBapPdfFromElement } from '../../utils/bapPdfGenerator';
 import { CrossOpdNotificationBell } from '../CrossOpdNotificationBell';
@@ -298,18 +298,118 @@ export default function PuptrSpatialClearanceDashboard() {
   const isOverridden = Boolean(
     hasLocalOverride ||
     (selectedApp?.overrideJustification && selectedApp.overrideJustification.trim().length > 0) ||
-    (selectedApp?.technicalNotes && selectedApp.technicalNotes.includes('[SPATIAL OVERRIDE'))
+    (selectedApp?.technicalNotes && (
+      selectedApp.technicalNotes.includes('[SPATIAL OVERRIDE') ||
+      selectedApp.technicalNotes.includes('OVERRIDE SPASIAL') ||
+      selectedApp.technicalNotes.includes('IZIN PIMPINAN')
+    ))
   );
 
   const isPertanianApproved = Boolean(
     selectedApp?.pertanianStatus === 'APPROVED' ||
-    selectedApp?.pertanianBaNumber
+    Boolean(selectedApp?.pertanianBaNumber) ||
+    selectedApp?.status_pkkpr === 'Approved_Pertanian' ||
+    selectedApp?.status === 'Approved_Pertanian' ||
+    selectedApp?.pkkprStatus === 'Approved_Pertanian' ||
+    (selectedApp?.technicalNotes && (
+      selectedApp.technicalNotes.includes('REKOMENDASI DINAS PERTANIAN TERBIT') ||
+      selectedApp.technicalNotes.includes('BA-LP2B') ||
+      selectedApp.technicalNotes.includes('BAP-LP2B') ||
+      selectedApp.technicalNotes.includes('SMART FORM LP2B DISUSUN')
+    ))
   );
 
   // Hard Lockdown: If Turf.js identifies any spatial conflict AND neither override nor Pertanian approval exists
   const isConflictLocked = Boolean(
     spatialConflictAudit.hasConflict && !isOverridden && !isPertanianApproved
   );
+
+  // Official Pertek Issuance Check: True ONLY if PUPTR has officially generated a Pertek document number in current session or database
+  const isPertekIssued = Boolean(
+    issuedSkNumber ||
+    (selectedApp?.pertekDocNumber && selectedApp.pertekDocNumber.includes('/')) ||
+    (selectedApp?.pkkprDocNumber && !selectedApp.pkkprDocNumber.startsWith('PKKPR-CORP-') && !selectedApp.pkkprDocNumber.startsWith('PKKPR-LUWU-') && selectedApp.pkkprDocNumber !== selectedApp.id && selectedApp.pkkprDocNumber.includes('/')) ||
+    (selectedApp?.skPkkprDocNumber && !selectedApp.skPkkprDocNumber.startsWith('PKKPR-CORP-') && !selectedApp.skPkkprDocNumber.startsWith('PKKPR-LUWU-') && selectedApp.skPkkprDocNumber !== selectedApp.id && selectedApp.skPkkprDocNumber.includes('/')) ||
+    (selectedApp?.pkkprStatus === 'Approved_PUPTR' || selectedApp?.pkkprStatus === 'Published')
+  );
+
+  // Quick Leadership Spatial Override (Override Atas Izin Pimpinan)
+  const handleQuickLeadershipOverride = async () => {
+    if (!selectedApp) return;
+
+    const defaultDocNum = `DISPOSISI/BAP-PUPTR/LUWU/${new Date().getFullYear()}/${selectedApp.id ? selectedApp.id.replace(/[^0-9]/g, '').slice(-4) || '7701' : '7701'}`;
+
+    const { value: formValues } = await Swal.fire({
+      title: 'Otorisasi Override Spasial atas Izin Pimpinan 🛡️',
+      html: `
+        <div class="text-left text-xs space-y-3 font-sans">
+          <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+            Sesuai kesepakatan tata ruang dan diskresi pimpinan daerah / Kepala Dinas, persil pemohon <strong>${selectedApp.companyName}</strong> (${selectedApp.nibNik}) diberikan izin override spasial untuk mengaktifkan seluruh tombol proses (Setujui Pertek, Revisi, Ditolak, Cetak BAP).
+          </p>
+          <div class="space-y-1">
+            <label class="font-bold text-slate-800 dark:text-slate-200">Nomor Surat / Disposisi Izin Pimpinan:</label>
+            <input id="swal-override-doc" class="swal2-input !m-0 !w-full !text-xs !p-2 font-mono" value="${defaultDocNum}" placeholder="Contoh: DISPOSISI/KADIS-PUPTR/2026/04" />
+          </div>
+          <div class="space-y-1">
+            <label class="font-bold text-slate-800 dark:text-slate-200">Catatan Pertimbangan Teknis & Izin Pimpinan:</label>
+            <textarea id="swal-override-notes" rows="3" class="swal2-textarea !m-0 !w-full !text-xs !p-2" placeholder="Catatan pertimbangan teknis override atas persetujuan pimpinan...">Disetujui atas arahan pimpinan dengan pertimbangan kepentingan strategis daerah, pemenuhan komitmen penyerapan tenaga kerja lokal, dan kewajiban mitigasi drainase/LP2B terpadu.</textarea>
+          </div>
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Aktifkan Override & Buka Kunci Proses 🔓',
+      cancelButtonText: 'Batal',
+      confirmButtonColor: '#d97706',
+      preConfirm: () => {
+        const doc = (document.getElementById('swal-override-doc') as HTMLInputElement)?.value;
+        const notes = (document.getElementById('swal-override-notes') as HTMLTextAreaElement)?.value;
+        if (!notes) {
+          Swal.showValidationMessage('Catatan pertimbangan wajib diisi');
+          return false;
+        }
+        return { doc: doc || defaultDocNum, notes };
+      }
+    });
+
+    if (formValues) {
+      const { doc, notes } = formValues;
+      const justif = `[SPATIAL OVERRIDE ATAS IZIN PIMPINAN - Ref: ${doc}]: ${notes}`;
+      
+      await recordSpatialOverride({
+        pkkpr_id: selectedApp.id,
+        conflict_type: 'LP2B_OVERLAP',
+        overlap_area_sqm: Math.round(selectedApp.areaHa * 10000),
+        overlap_area_ha: selectedApp.areaHa,
+        justification: justif,
+        bap_reference_no: doc,
+        overridden_by_name: 'Admin Dinas PUPTR (Izin Pimpinan)'
+      });
+
+      setHasLocalOverride(true);
+      setTechnicalNotes(prev => `${justif}\n\n${prev}`);
+      setSelectedApp((prev: any) => prev ? {
+        ...prev,
+        overrideJustification: justif,
+        pertanianBaNumber: prev.pertanianBaNumber || doc,
+        technicalNotes: `${justif}\n\n${prev.technicalNotes || ''}`
+      } : null);
+
+      setQueueList(prev => prev.map(item => item.id === selectedApp.id ? {
+        ...item,
+        overrideJustification: justif,
+        pertanianBaNumber: item.pertanianBaNumber || doc,
+        technicalNotes: `${justif}\n\n${item.technicalNotes || ''}`
+      } : item));
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Override Spasial Diaktifkan! 🔓',
+        text: 'Seluruh tombol proses (Setujui Pertek, Revisi, Ditolak, Cetak BAP) telah terbuka dan aktif.',
+        confirmButtonColor: '#10b981'
+      });
+    }
+  };
 
   // Return application to applicant (rejected or needs revision, optionally incorporating BAP Pertanian notes)
   const handleReturnToApplicant = async () => {
@@ -647,15 +747,34 @@ export default function PuptrSpatialClearanceDashboard() {
             const luasM2 = item.luas_m2 ? Number(item.luas_m2) : (item.luas_ha ? Math.round(Number(item.luas_ha) * 10000) : 5000);
 
             let pertStatus: 'NOT_SUBMITTED' | 'FORWARDED' | 'APPROVED' | 'REJECTED' = 'NOT_SUBMITTED';
-            if (item.berita_acara_pertanian_num || item.status_pkkpr === 'Approved_Pertanian' || item.pertanian_status === 'APPROVED') {
+            let localBapLp2b: any = null;
+            try {
+              const rawBap = localStorage.getItem(`BAP_LP2B_${item.id}`);
+              if (rawBap) localBapLp2b = JSON.parse(rawBap);
+            } catch (e) {}
+
+            const pertBaNum = item.berita_acara_pertanian_num || localBapLp2b?.nomorSurat || undefined;
+            const isApprovedPert = Boolean(
+              pertBaNum ||
+              item.status_pkkpr === 'Approved_Pertanian' ||
+              item.pertanian_status === 'APPROVED' ||
+              (rawCatatan && (
+                rawCatatan.includes('REKOMENDASI DINAS PERTANIAN TERBIT') ||
+                rawCatatan.includes('BA-LP2B') ||
+                rawCatatan.includes('BAP-LP2B') ||
+                rawCatatan.includes('SMART FORM LP2B DISUSUN')
+              ))
+            );
+
+            if (isApprovedPert) {
               pertStatus = 'APPROVED';
-            } else if (item.status_pkkpr === 'Rejected_Pertanian' || item.pertanian_status === 'REJECTED') {
+            } else if (item.status_pkkpr === 'Rejected_Pertanian' || item.pertanian_status === 'REJECTED' || (rawCatatan && rawCatatan.includes('DITOLAK DINAS PERTANIAN'))) {
               pertStatus = 'REJECTED';
             } else if (
               item.status_pkkpr === 'Forwarded_To_Pertanian' ||
               item.pertanian_status === 'FORWARDED' ||
-              (rawCatatan && rawCatatan.includes('PERTANIAN')) ||
-              isLocallyForwarded(item.id, item.nik_pemohon || item.nib_oss, item.pertek_puptr_num || item.sk_pkkpr_num, item.nama_badan_usaha || item.nama_pemohon)
+              (!isApprovedPert && (rawCatatan && rawCatatan.includes('DITERUSKAN KE DINAS PERTANIAN'))) ||
+              (!isApprovedPert && isLocallyForwarded(item.id, item.nik_pemohon || item.nib_oss, item.pertek_puptr_num || item.sk_pkkpr_num, item.nama_badan_usaha || item.nama_pemohon))
             ) {
               pertStatus = 'FORWARDED';
             }
@@ -686,14 +805,19 @@ export default function PuptrSpatialClearanceDashboard() {
               suratPengantarDesaUrl: item.surat_pengantar_desa_url || undefined,
               berkasLegalitasGabunganUrl: item.berkas_legalitas_gabungan_url || item.berkas_gabungan_pdf || undefined,
               geometry: item.geometry_json || item.geom,
-              pkkprStatus: (item.sk_pkkpr_num || item.pertek_puptr_num || item.status_pkkpr === 'Approved' || item.status_pkkpr === 'Approved_PUPTR' || item.status_pkkpr === 'Published') ? 'Approved' : (item.status_pkkpr === 'Requires Revision' ? 'Requires Revision' : 'Pending Spatial Check'),
-              pkkprDocNumber: item.pertek_puptr_num || item.sk_pkkpr_num || item.id,
-              skPkkprDocNumber: item.sk_pkkpr_num || item.pertek_puptr_num,
+              pkkprStatus: (
+                Boolean(item.pertek_puptr_num && item.pertek_puptr_num !== item.id && !item.pertek_puptr_num.startsWith('PKKPR-CORP-') && item.pertek_puptr_num.includes('/')) ||
+                Boolean(item.sk_pkkpr_num && item.sk_pkkpr_num !== item.id && !item.sk_pkkpr_num.startsWith('PKKPR-CORP-') && item.sk_pkkpr_num.includes('/')) ||
+                item.status_pkkpr === 'Approved_PUPTR' ||
+                item.status_pkkpr === 'Published'
+              ) ? 'Approved' : (item.status_pkkpr === 'Requires Revision' ? 'Requires Revision' : (item.status_pkkpr === 'Rejected' ? 'Rejected' : (item.status_pkkpr === 'Approved_Pertanian' ? 'Pending Spatial Check' : 'Pending Spatial Check'))),
+              pkkprDocNumber: (item.pertek_puptr_num && item.pertek_puptr_num !== item.id && !item.pertek_puptr_num.startsWith('PKKPR-CORP-') && item.pertek_puptr_num.includes('/')) ? item.pertek_puptr_num : undefined,
+              skPkkprDocNumber: (item.sk_pkkpr_num && item.sk_pkkpr_num !== item.id && !item.sk_pkkpr_num.startsWith('PKKPR-CORP-') && item.sk_pkkpr_num.includes('/')) ? item.sk_pkkpr_num : undefined,
               technicalNotes: item.catatan_teknis || 'Sesuai dengan Rencana Tata Ruang Wilayah (RTRW) Kabupaten Luwu.',
               coordinateStatus: 'Valid / Sesuai Batas RTRW',
               esgStatus: 'CLEAR',
               pertanianStatus: pertStatus,
-              pertanianBaNumber: item.berita_acara_pertanian_num || undefined,
+              pertanianBaNumber: pertBaNum,
               contactPhone: item.no_whatsapp,
               createdAt: item.created_at || new Date().toISOString()
             });
@@ -723,15 +847,34 @@ export default function PuptrSpatialClearanceDashboard() {
             const luasBangunanMatch = desc.match(/\[Luas Bangunan:\s*([^\]]+)\]/i);
             
             let pertStatus: 'NOT_SUBMITTED' | 'FORWARDED' | 'APPROVED' | 'REJECTED' = 'NOT_SUBMITTED';
-            if (item.berita_acara_num || item.status === 'Approved_Pertanian' || item.pertanian_status === 'APPROVED') {
+            let localBapLp2b: any = null;
+            try {
+              const rawBap = localStorage.getItem(`BAP_LP2B_${appId}`) || localStorage.getItem(`BAP_LP2B_${item.id}`);
+              if (rawBap) localBapLp2b = JSON.parse(rawBap);
+            } catch (e) {}
+
+            const pertBaNum = item.berita_acara_num || localBapLp2b?.nomorSurat || undefined;
+            const isApprovedPert = Boolean(
+              pertBaNum ||
+              item.status === 'Approved_Pertanian' ||
+              item.pertanian_status === 'APPROVED' ||
+              (desc && (
+                desc.includes('REKOMENDASI DINAS PERTANIAN TERBIT') ||
+                desc.includes('BA-LP2B') ||
+                desc.includes('BAP-LP2B') ||
+                desc.includes('SMART FORM LP2B DISUSUN')
+              ))
+            );
+
+            if (isApprovedPert) {
               pertStatus = 'APPROVED';
             } else if (item.status === 'Rejected_Pertanian' || item.pertanian_rejection_notes || item.pertanian_status === 'REJECTED') {
               pertStatus = 'REJECTED';
             } else if (
               item.status === 'Forwarded_To_Pertanian' ||
               item.pertanian_status === 'FORWARDED' ||
-              (desc && desc.includes('PERTANIAN')) ||
-              isLocallyForwarded(item.id, item.plot_number || item.certificate_number, item.pkkpr_doc_number, item.name || item.title)
+              (!isApprovedPert && (desc && desc.includes('DITERUSKAN KE DINAS PERTANIAN'))) ||
+              (!isApprovedPert && isLocallyForwarded(item.id, item.plot_number || item.certificate_number, item.pkkpr_doc_number, item.name || item.title))
             ) {
               pertStatus = 'FORWARDED';
             }
@@ -790,7 +933,27 @@ export default function PuptrSpatialClearanceDashboard() {
               const isBerusaha = app.category === 'Berusaha';
               const luasM2 = app.luas_m2 || 500;
               let pertStatus: 'NOT_SUBMITTED' | 'FORWARDED' | 'APPROVED' | 'REJECTED' = 'NOT_SUBMITTED';
-              if (app.berita_acara_pertanian_num || app.status_pkkpr === 'Approved_Pertanian' || app.pertanian_status === 'APPROVED' || app.status === 'Approved_Pertanian') {
+              let localBapLp2b: any = null;
+              try {
+                const rawBap = localStorage.getItem(`BAP_LP2B_${appId}`) || localStorage.getItem(`BAP_LP2B_${app.id}`);
+                if (rawBap) localBapLp2b = JSON.parse(rawBap);
+              } catch (e) {}
+
+              const pertBaNum = app.berita_acara_pertanian_num || localBapLp2b?.nomorSurat || undefined;
+              const isApprovedPert = Boolean(
+                pertBaNum ||
+                app.status_pkkpr === 'Approved_Pertanian' ||
+                app.pertanian_status === 'APPROVED' ||
+                app.status === 'Approved_Pertanian' ||
+                (app.catatan_teknis && (
+                  app.catatan_teknis.includes('REKOMENDASI DINAS PERTANIAN TERBIT') ||
+                  app.catatan_teknis.includes('BA-LP2B') ||
+                  app.catatan_teknis.includes('BAP-LP2B') ||
+                  app.catatan_teknis.includes('SMART FORM LP2B DISUSUN')
+                ))
+              );
+
+              if (isApprovedPert) {
                 pertStatus = 'APPROVED';
               } else if (app.status_pkkpr === 'Rejected_Pertanian' || app.pertanian_status === 'REJECTED' || app.status === 'Rejected_Pertanian' || app.pertanian_rejection_notes) {
                 pertStatus = 'REJECTED';
@@ -798,8 +961,8 @@ export default function PuptrSpatialClearanceDashboard() {
                 app.pertanian_status === 'FORWARDED' ||
                 app.status_pkkpr === 'Forwarded_To_Pertanian' ||
                 app.status === 'Forwarded_To_Pertanian' ||
-                (app.catatan_teknis && app.catatan_teknis.includes('PERTANIAN')) ||
-                isLocallyForwarded(appId, app.nik || app.nib, app.pkkpr_doc_number, app.title || app.perusahaan || app.nama_pemohon)
+                (!isApprovedPert && (app.catatan_teknis && app.catatan_teknis.includes('DITERUSKAN KE DINAS PERTANIAN'))) ||
+                (!isApprovedPert && isLocallyForwarded(appId, app.nik || app.nib, app.pkkpr_doc_number, app.title || app.perusahaan || app.nama_pemohon))
               ) {
                 pertStatus = 'FORWARDED';
               }
@@ -2532,7 +2695,7 @@ export default function PuptrSpatialClearanceDashboard() {
               {/* Decision Selector */}
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-slate-800 dark:text-slate-200">Keputusan Rekomendasi Spasial</label>
-                {(Boolean(selectedApp.pkkprDocNumber) || Boolean(selectedApp.skPkkprDocNumber) || selectedApp.pkkprStatus === 'Approved' || Boolean(issuedSkNumber)) ? (
+                {isPertekIssued ? (
                   <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 rounded-xl flex items-center justify-between text-xs text-emerald-800 dark:text-emerald-300 font-bold">
                     <span className="flex items-center gap-1.5">
                       <CheckCircle2 className="w-4 h-4 text-emerald-600" />
@@ -2548,7 +2711,7 @@ export default function PuptrSpatialClearanceDashboard() {
                     </span>
                     <span className="text-[10px] px-2 py-0.5 bg-amber-600 text-white rounded-md font-mono">LOCKED</span>
                   </div>
-                ) : selectedApp.pertanianStatus === 'FORWARDED' ? (
+                ) : (selectedApp.pertanianStatus === 'FORWARDED' && !isPertanianApproved && !isOverridden) ? (
                   <div className="p-2.5 bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 rounded-xl flex items-center justify-between text-xs text-amber-800 dark:text-amber-300 font-bold">
                     <span className="flex items-center gap-1.5">
                       <Clock className="w-4 h-4 text-amber-600 animate-spin" />
@@ -2627,7 +2790,7 @@ export default function PuptrSpatialClearanceDashboard() {
                     ℹ️ Permohonan ini telah dikeluarkan dari antrean tugas aktif Petugas PUPTR dan sedang menunggu perbaikan oleh pemohon.
                   </p>
                 </div>
-              ) : (Boolean(selectedApp.pkkprDocNumber) || Boolean(selectedApp.skPkkprDocNumber) || selectedApp.pkkprStatus === 'Approved' || Boolean(issuedSkNumber)) ? (
+              ) : isPertekIssued ? (
                 <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-xs space-y-1 font-sans">
                   <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 font-extrabold uppercase">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
@@ -2660,15 +2823,17 @@ export default function PuptrSpatialClearanceDashboard() {
                         Poligon beririsan dengan <strong className="text-amber-800 dark:text-amber-300">{spatialConflictAudit.conflictCategories.join(', ') || 'Zona LP2B / Lindung'}</strong> seluas <strong>{spatialConflictAudit.totalOverlapHa || selectedApp.areaHa} Ha</strong> ({spatialConflictAudit.totalOverlapSqm.toLocaleString('id-ID')} m²).
                       </p>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                        Seluruh tombol persetujuan, revisi, penolakan, dan cetak BAP dinonaktifkan hingga konflik diselesaikan via salah satu opsi resmi di bawah:
+                        Seluruh tombol proses (Persetujuan, Revisi, Penolakan, dan Cetak BAP) akan aktif setelah:
+                        <br /><strong>1. Admin menekan tombol Override atas Izin Pimpinan</strong>, atau
+                        <br /><strong>2. Mendapat persetujuan peralihan fungsi lahan dari Admin Dinas Pertanian</strong>.
                       </p>
                     </div>
                   </div>
 
-                  {/* 2 Authorized Action Buttons */}
+                  {/* 3 Authorized Action Options */}
                   <div className="flex flex-col gap-2 pt-1">
                     {/* 1. Forward to Agriculture */}
-                    {selectedApp.pertanianStatus === 'FORWARDED' ? (
+                    {(selectedApp.pertanianStatus === 'FORWARDED' && !isPertanianApproved && !isOverridden) ? (
                       <div className="w-full py-2.5 bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/40 rounded-xl text-xs font-bold flex items-center justify-center gap-2">
                         <Clock className="w-4 h-4 animate-spin text-amber-600" />
                         <span>Dalam Antrean Verifikasi Dinas Pertanian ⏳</span>
@@ -2677,21 +2842,31 @@ export default function PuptrSpatialClearanceDashboard() {
                       <button
                         type="button"
                         onClick={handleOpenForwardPertanianModal}
-                        className="w-full py-3 bg-gradient-to-r from-amber-600 via-emerald-600 to-amber-700 hover:from-amber-500 hover:to-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-600/30 transition transform active:scale-95 cursor-pointer"
+                        className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md transition transform active:scale-95 cursor-pointer"
                       >
                         <Send className="w-4 h-4" />
-                        <span>Ajukan Permohonan Perubahan Status Lahan ke Dinas Pertanian 🌾</span>
+                        <span>1. Ajukan Alih Fungsi ke Dinas Pertanian 🌾</span>
                       </button>
                     )}
 
-                    {/* 2. Spatial Override */}
+                    {/* 2. Direct Leadership Override Button */}
+                    <button
+                      type="button"
+                      onClick={handleQuickLeadershipOverride}
+                      className="w-full py-2.5 bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-500 hover:to-rose-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md transition transform active:scale-95 cursor-pointer"
+                    >
+                      <ShieldAlert className="w-4 h-4 text-amber-200" />
+                      <span>2. Override atas Izin Pimpinan (Buka Kunci Proses Langsung) 🔓</span>
+                    </button>
+
+                    {/* 3. Formal Conflict Resolution Tool */}
                     <button
                       type="button"
                       onClick={() => setShowConflictResolutionModal(true)}
-                      className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-300 border border-amber-500/50 font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm transition cursor-pointer"
+                      className="w-full py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-300 border border-amber-500/40 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition cursor-pointer"
                     >
-                      <ShieldAlert className="w-4 h-4 text-amber-400" />
-                      <span>Otorisasi Override Spasial (BAP Verified Diskresi) 🛡️</span>
+                      <FileText className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Formulir Detail Conflict Resolution Tool 🛡️</span>
                     </button>
                   </div>
                 </div>
@@ -2744,7 +2919,7 @@ export default function PuptrSpatialClearanceDashboard() {
                     <span>Lihat / Cetak BAP Penolakan Dinas Pertanian 📄</span>
                   </button>
                 </>
-              ) : selectedApp.pertanianStatus === 'FORWARDED' ? (
+              ) : (selectedApp.pertanianStatus === 'FORWARDED' && !isPertanianApproved && !isOverridden) ? (
                 <button
                   type="button"
                   disabled
@@ -2784,10 +2959,10 @@ export default function PuptrSpatialClearanceDashboard() {
               {/* BAP Resmi PUPTR Preview & Print Button */}
               <button
                 type="button"
-                disabled={isConflictLocked || selectedApp.pertanianStatus === 'FORWARDED'}
+                disabled={isConflictLocked || (selectedApp.pertanianStatus === 'FORWARDED' && !isPertanianApproved && !isOverridden)}
                 onClick={handleOpenBapModal}
                 className={`w-full py-2.5 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition ${
-                  isConflictLocked || selectedApp.pertanianStatus === 'FORWARDED'
+                  isConflictLocked || (selectedApp.pertanianStatus === 'FORWARDED' && !isPertanianApproved && !isOverridden)
                     ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 border border-slate-200 dark:border-slate-700 cursor-not-allowed opacity-60'
                     : 'bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 cursor-pointer'
                 }`}
@@ -2796,7 +2971,7 @@ export default function PuptrSpatialClearanceDashboard() {
                 <span>
                   {isConflictLocked
                     ? 'BAP PUPTR Terkunci (Selesaikan Konflik Spasial Dahulu)'
-                    : selectedApp.pertanianStatus === 'FORWARDED'
+                    : (selectedApp.pertanianStatus === 'FORWARDED' && !isPertanianApproved && !isOverridden)
                     ? 'BAP PUPTR Belum Dapat Diterbitkan (Menunggu Rekomendasi Pertanian)'
                     : 'Lihat / Cetak Berita Acara (BAP) Kesesuaian Ruang PUPTR'}
                 </span>
@@ -3078,8 +3253,22 @@ export default function PuptrSpatialClearanceDashboard() {
           detectedOverlapHa={selectedApp.areaHa}
           existingBapNumber={selectedApp.pertanianBaNumber}
           onOverrideSuccess={(justification, bapNum) => {
-            setTechnicalNotes(prev => `[SPATIAL OVERRIDE BAP ${bapNum || 'TERLAMPIR'}]: ${justification}\n\n${prev}`);
+            const overrideText = `[SPATIAL OVERRIDE BAP ${bapNum || 'TERLAMPIR'}]: ${justification}`;
+            setHasLocalOverride(true);
+            setTechnicalNotes(prev => `${overrideText}\n\n${prev}`);
             setIsGisToastDismissed(true);
+            setSelectedApp((prev: any) => prev ? {
+              ...prev,
+              overrideJustification: justification,
+              pertanianBaNumber: prev.pertanianBaNumber || bapNum,
+              technicalNotes: `${overrideText}\n\n${prev.technicalNotes || ''}`
+            } : null);
+            setQueueList(prev => prev.map(item => item.id === selectedApp?.id ? {
+              ...item,
+              overrideJustification: justification,
+              pertanianBaNumber: item.pertanianBaNumber || bapNum,
+              technicalNotes: `${overrideText}\n\n${item.technicalNotes || ''}`
+            } : item));
             fetchQueue();
           }}
         />
