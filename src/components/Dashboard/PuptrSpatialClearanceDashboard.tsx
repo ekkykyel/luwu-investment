@@ -244,6 +244,7 @@ export default function PuptrSpatialClearanceDashboard() {
   const [issuedSkNumber, setIssuedSkNumber] = useState<string | null>(null);
   const [isExportingPdf, setIsExportingPdf] = useState<boolean>(false);
   const [isTimelineModalOpen, setIsTimelineModalOpen] = useState<boolean>(false);
+  const [isGisToastDismissed, setIsGisToastDismissed] = useState<boolean>(false);
 
   // Return application to applicant (rejected or needs revision, optionally incorporating BAP Pertanian notes)
   const handleReturnToApplicant = async () => {
@@ -1550,88 +1551,117 @@ export default function PuptrSpatialClearanceDashboard() {
 
             {/* AUTOMATED ENVIRONMENTAL FLAG BANNER (LP2B & LAHAN BASAH) & ROUTING TRIGGER */}
             {(activeStates['layer_sawah'] || activeStates['layer_lahan_kering_primer'] || zoningAudit?.suitabilityLevel === 'DIBATASI' || selectedApp.pertanianStatus !== 'NOT_SUBMITTED') && (
-              <div className="bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-amber-500/10 border-2 border-amber-500/40 rounded-2xl p-4 space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div className="flex items-start gap-3">
-                    <div className="p-2 bg-amber-500 text-slate-950 rounded-xl font-bold shrink-0 mt-0.5 shadow-md">
-                      <AlertTriangle className="w-5 h-5 animate-bounce" />
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-black uppercase tracking-wider text-rose-600 dark:text-rose-400">
-                          ⚠️ AUTOMATED ENVIRONMENTAL FLAG: TUMPANG TINDIH LP2B &amp; LAHAN BASAH DETECTED
-                        </span>
-                        <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30">
-                          UU No. 41 / 2009
-                        </span>
+              selectedApp.pertanianStatus === 'APPROVED' || selectedApp.pertanianBaNumber ? (
+                /* BANNER HIJAU SETELAH DISETUJUI DINAS PERTANIAN */
+                <div className="bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-emerald-500/15 border-2 border-emerald-500/50 rounded-2xl p-4 space-y-3 shadow-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-start gap-3">
+                      <div className="p-2 bg-emerald-500 text-white rounded-xl font-bold shrink-0 mt-0.5 shadow-md">
+                        <CheckCircle2 className="w-5 h-5" />
                       </div>
-                      <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
-                        Poligon lokasi pemohon <strong className="font-bold">{selectedApp.applicantName} ({selectedApp.companyName})</strong> beririsan dengan zona <span className="font-bold text-amber-600 dark:text-amber-400">Lahan Pertanian Pangan Berkelanjutan (LP2B) / Sawah Irigasi Teknis</span>. Sebelum SK PKKPR diterbitkan, berkas WAJIB melalui klarifikasi &amp; Berita Acara Alih Fungsi Lahan dari Dinas Pertanian.
-                      </p>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
+                            ✓ REKOMENDASI ALIH FUNGSI LAHAN DISETUJUI (BAP PERTANIAN ACTIVE)
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                            BAP NO: {selectedApp.pertanianBaNumber || 'TERLAMPIR'}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
+                          Dinas Pertanian Kab. Luwu telah menyetujui rekomendasi pertimbangan alih fungsi lahan untuk pemohon <strong className="font-bold">{selectedApp.applicantName} ({selectedApp.companyName})</strong>. Peringatan tumpang tindih LP2B dihentikan dan berkas siap diproses untuk penerbitan Pertek PUPTR &amp; SK PKKPR DPMPTSP.
+                        </p>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Inter-Agency Transfer Action Button */}
-                  <div className="shrink-0">
-                    {selectedApp.pertanianStatus === 'FORWARDED' ? (
-                      <div className="px-3.5 py-2 bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/40 rounded-xl text-xs font-bold flex items-center gap-2">
-                        <Clock className="w-4 h-4 animate-spin text-amber-600" />
-                        <span>Dalam Antrean Verifikasi Dinas Pertanian</span>
-                      </div>
-                    ) : selectedApp.pertanianStatus === 'APPROVED' ? (
+                    <div className="shrink-0">
                       <div className="px-3.5 py-2 bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/40 rounded-xl text-xs font-bold flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                        <span>✓ Rekomendasi Pertanian Disetujui ({selectedApp.pertanianBaNumber || 'BA Terlampir'})</span>
+                        <span>✓ BAP Pertanian Terlampir</span>
                       </div>
-                    ) : selectedApp.pertanianStatus === 'REJECTED' ? (
-                      <div className="px-3.5 py-2 bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-500/40 rounded-xl text-xs font-bold flex items-center gap-2">
-                        <X className="w-4 h-4 text-rose-600" />
-                        <span>⚠️ Dikembalikan Dinas Pertanian</span>
-                      </div>
-                    ) : (
+                    </div>
+                  </div>
+
+                  {/* Status Inter-Agency Feedback Notice */}
+                  {selectedApp.pertanianBaNumber && (
+                    <div className="p-3 bg-white/80 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 rounded-xl text-xs text-slate-800 dark:text-emerald-200 space-y-1">
+                      <p className="font-bold flex items-center gap-2 text-emerald-700 dark:text-emerald-300">
+                        <Sparkles className="w-4 h-4" />
+                        <span>Legal Reference Baseline Dinas Pertanian Active:</span>
+                      </p>
+                      <p className="font-mono text-[11px]">
+                        Berita Acara No: <strong>{selectedApp.pertanianBaNumber}</strong> | Surat Rekomendasi: <strong>{selectedApp.pertanianSrNumber || 'SR-DISTAN-2026'}</strong>
+                      </p>
                       <button
                         type="button"
-                        onClick={handleOpenForwardPertanianModal}
-                        className="w-full sm:w-auto px-4 py-2.5 bg-gradient-to-r from-amber-600 to-emerald-600 hover:from-amber-500 hover:to-emerald-500 text-white text-xs font-bold rounded-xl shadow-md shadow-amber-600/20 flex items-center justify-center gap-2 transition transform active:scale-95 cursor-pointer"
+                        onClick={() => {
+                          setTechnicalNotes(
+                            `MEMPERHATIKAN: Berita Acara Rekomendasi Alih Fungsi Lahan Dinas Pertanian No. ${selectedApp.pertanianBaNumber}. Lokasi disetujui dengan kewajiban penyediaan Lahan Pengganti LP2B seluas ${selectedApp.areaHa} Ha.`
+                          );
+                          Swal.fire({
+                            icon: 'info',
+                            title: 'Berita Acara Teraplikasi',
+                            text: 'Rekomendasi Dinas Pertanian telah di-hydrate ke dalam Form Teknis SK PKKPR.',
+                            confirmButtonColor: '#10b981',
+                            timer: 2000
+                          });
+                        }}
+                        className="mt-1 text-[11px] text-emerald-700 dark:text-emerald-300 underline font-bold hover:text-emerald-800 cursor-pointer"
                       >
-                        <Send className="w-4 h-4" />
-                        <span>Ajukan Permohonan Perubahan Status Lahan ke Dinas Pertanian</span>
+                        + Salin Nomor Berita Acara Ke Form Teknis SK PKKPR
                       </button>
-                    )}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* BANNER WARNING SEBELUM DISETUJUI PERTANIAN */
+                <div className="bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-amber-500/10 border-2 border-amber-500/40 rounded-2xl p-4 space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-start gap-3">
+                      <div className="p-2 bg-amber-500 text-slate-950 rounded-xl font-bold shrink-0 mt-0.5 shadow-md">
+                        <AlertTriangle className="w-5 h-5 animate-bounce" />
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-black uppercase tracking-wider text-rose-600 dark:text-rose-400">
+                            ⚠️ AUTOMATED ENVIRONMENTAL FLAG: TUMPANG TINDIH LP2B &amp; LAHAN BASAH DETECTED
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                            UU No. 41 / 2009
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
+                          Poligon lokasi pemohon <strong className="font-bold">{selectedApp.applicantName} ({selectedApp.companyName})</strong> beririsan dengan zona <span className="font-bold text-amber-600 dark:text-amber-400">Lahan Pertanian Pangan Berkelanjutan (LP2B) / Sawah Irigasi Teknis</span>. Sebelum SK PKKPR diterbitkan, berkas WAJIB melalui klarifikasi &amp; Berita Acara Alih Fungsi Lahan dari Dinas Pertanian.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Inter-Agency Transfer Action Button */}
+                    <div className="shrink-0">
+                      {selectedApp.pertanianStatus === 'FORWARDED' ? (
+                        <div className="px-3.5 py-2 bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/40 rounded-xl text-xs font-bold flex items-center gap-2">
+                          <Clock className="w-4 h-4 animate-spin text-amber-600" />
+                          <span>Dalam Antrean Verifikasi Dinas Pertanian</span>
+                        </div>
+                      ) : selectedApp.pertanianStatus === 'REJECTED' ? (
+                        <div className="px-3.5 py-2 bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-500/40 rounded-xl text-xs font-bold flex items-center gap-2">
+                          <X className="w-4 h-4 text-rose-600" />
+                          <span>⚠️ Dikembalikan Dinas Pertanian</span>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={handleOpenForwardPertanianModal}
+                          className="w-full sm:w-auto px-4 py-2.5 bg-gradient-to-r from-amber-600 to-emerald-600 hover:from-amber-500 hover:to-emerald-500 text-white text-xs font-bold rounded-xl shadow-md shadow-amber-600/20 flex items-center justify-center gap-2 transition transform active:scale-95 cursor-pointer"
+                        >
+                          <Send className="w-4 h-4" />
+                          <span>Ajukan Permohonan Perubahan Status Lahan ke Dinas Pertanian</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
-
-                {/* Status Inter-Agency Feedback Notice */}
-                {selectedApp.pertanianStatus === 'APPROVED' && selectedApp.pertanianBaNumber && (
-                  <div className="p-3 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 rounded-xl text-xs text-slate-800 dark:text-emerald-200 space-y-1">
-                    <p className="font-bold flex items-center gap-2 text-emerald-700 dark:text-emerald-300">
-                      <Sparkles className="w-4 h-4" />
-                      <span>Legal Reference Baseline Dinas Pertanian Active:</span>
-                    </p>
-                    <p className="font-mono text-[11px]">
-                      Berita Acara No: <strong>{selectedApp.pertanianBaNumber}</strong> | Surat Rekomendasi: <strong>{selectedApp.pertanianSrNumber || 'SR-DISTAN-2026'}</strong>
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setTechnicalNotes(
-                           `MEMPERHATIKAN: Berita Acara Rekomendasi Alih Fungsi Lahan Dinas Pertanian No. ${selectedApp.pertanianBaNumber}. Lokasi disetujui dengan kewajiban penyediaan Lahan Pengganti LP2B seluas ${selectedApp.areaHa} Ha.`
-                        );
-                        Swal.fire({
-                          icon: 'info',
-                          title: 'Berita Acara Teraplikasi',
-                          text: 'Rekomendasi Dinas Pertanian telah di-hydrate ke dalam Form Teknis SK PKKPR.',
-                          confirmButtonColor: '#10b981',
-                          timer: 2000
-                        });
-                      }}
-                      className="mt-1 text-[11px] text-emerald-700 dark:text-emerald-300 underline font-bold hover:text-emerald-800 cursor-pointer"
-                    >
-                      + Salin Nomor Berita Acara Ke Form Teknis SK PKKPR
-                    </button>
-                  </div>
-                )}
-              </div>
+              )
             )}
 
             {/* MapLibre Container with real Polygon Thematic Layers */}
@@ -1666,6 +1696,73 @@ export default function PuptrSpatialClearanceDashboard() {
                   mapMode="satellite"
                   
                 />
+
+                {/* FLOATING REAL-TIME GIS TOAST NOTIFICATION WITH DISMISSAL LOGIC */}
+                {!isGisToastDismissed && (selectedApp || zoningAudit) && (
+                  selectedApp.pertanianStatus === 'APPROVED' || selectedApp.pertanianBaNumber ? (
+                    /* TOAST HIJAU: NOTIFIKASI WARNING DIHENTIKAN/DITUTUP SETELAH PERTANIAN SETUJU */
+                    <div className="absolute top-3 left-3 z-30 max-w-sm sm:max-w-md bg-emerald-950/90 text-emerald-100 backdrop-blur-md border border-emerald-500/60 rounded-2xl p-3 shadow-2xl flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top duration-300 font-sans">
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-1.5 bg-emerald-500 text-white rounded-xl shrink-0 font-bold">
+                          <CheckCircle2 className="w-4 h-4" />
+                        </div>
+                        <div className="text-xs">
+                          <div className="font-extrabold text-white flex items-center gap-1.5">
+                            <span>✓ Alih Fungsi Lahan Disetujui</span>
+                            <span className="text-[9px] px-1.5 py-0.2 bg-emerald-800 text-emerald-200 rounded font-mono">DISTAN OK</span>
+                          </div>
+                          <div className="text-[11px] text-emerald-200 font-mono">
+                            BAP No: {selectedApp.pertanianBaNumber || 'Terlampir'} • Peringatan Tumpang Tindih Dihentikan
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setIsGisToastDismissed(true)}
+                        className="p-1.5 hover:bg-emerald-900/80 rounded-xl text-emerald-300 transition shrink-0 cursor-pointer"
+                        title="Tutup Notifikasi"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (activeStates['layer_sawah'] || activeStates['layer_lahan_kering_primer'] || zoningAudit?.suitabilityLevel === 'DIBATASI') ? (
+                    /* TOAST AMBER WARNING: SEMENTARA MENDAPATKAN PERSETUJUAN PERTANIAN */
+                    <div className="absolute top-3 left-3 z-30 max-w-sm sm:max-w-md bg-amber-950/90 text-amber-100 backdrop-blur-md border border-amber-500/60 rounded-2xl p-3 shadow-2xl flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top duration-300 font-sans">
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-1.5 bg-amber-500 text-slate-950 rounded-xl shrink-0 font-bold">
+                          <AlertTriangle className="w-4 h-4 animate-bounce" />
+                        </div>
+                        <div className="text-xs">
+                          <div className="font-extrabold text-amber-200 uppercase tracking-wider flex items-center gap-1.5">
+                            <span>⚠️ TURF.JS: TUMPANG TINDIH LP2B DETECTED</span>
+                          </div>
+                          <div className="text-[11px] text-amber-100/90 leading-tight">
+                            Poligon lokasi beririsan Sawah LP2B. Memerlukan BAP Pertimbangan Teknis Pertanian!
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {selectedApp.pertanianStatus === 'NOT_SUBMITTED' && (
+                          <button
+                            type="button"
+                            onClick={handleOpenForwardPertanianModal}
+                            className="px-2.5 py-1 bg-gradient-to-r from-amber-500 to-emerald-600 hover:from-amber-400 hover:to-emerald-500 text-slate-950 font-black text-[10px] rounded-lg shadow transition flex items-center gap-1 cursor-pointer"
+                          >
+                            <span>Kirim ➔</span>
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setIsGisToastDismissed(true)}
+                          className="p-1.5 hover:bg-amber-900/80 rounded-xl text-amber-300 transition cursor-pointer"
+                          title="Tutup Toast"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : null
+                )}
 
                 {/* Spatial Overlay Card on top of Map (Hasil Analisis Turf.js & Data Pemohon Tersusun Kebawah) */}
                 {(zoningAudit || selectedApp) && (
