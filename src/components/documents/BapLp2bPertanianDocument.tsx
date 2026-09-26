@@ -222,7 +222,7 @@ export const DEFAULT_BAP_LP2B_DATA: BapLp2bDocumentData = {
   kasiNip: "19890518 201202 1 006",
   kasiJabatan: "Kepala Seksi Lahan dan Irigasi Pertanian",
 
-  petaImageUrl: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80",
+  petaImageUrl: undefined,
   analisGisNama: "MUHAMMAD FACHRI, S.P.",
   analisGisNip: "19930412 201903 1 005",
   analisGisJabatan: "Analis Spasial Lahan & Irigasi Pertanian",
@@ -295,11 +295,12 @@ export const DEFAULT_BAP_LP2B_NON_BERUSAHA_DATA: BapLp2bDocumentData = {
   kadisJabatan: "Kepala Dinas Pertanian",
   kadisPangkat: "Pembina Utama Muda (IV/c)",
 
+  // Non-Berusaha defaults
   kasiNama: "ANDI TENRI SENO, S.P.",
   kasiNip: "19890518 201202 1 006",
   kasiJabatan: "Kepala Seksi Lahan dan Irigasi Pertanian",
 
-  petaImageUrl: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80",
+  petaImageUrl: undefined,
   analisGisNama: "MUHAMMAD FACHRI, S.P.",
   analisGisNip: "19930412 201903 1 005",
   analisGisJabatan: "Analis Spasial Lahan & Irigasi Pertanian",
@@ -367,11 +368,12 @@ export const DEFAULT_BAP_LP2B_REJECTED_DATA: BapLp2bDocumentData = {
   kadisJabatan: "Kepala Dinas Pertanian",
   kadisPangkat: "Pembina Utama Muda (IV/c)",
 
+  // Rejected defaults
   kasiNama: "ANDI TENRI SENO, S.P.",
   kasiNip: "19890518 201202 1 006",
   kasiJabatan: "Kepala Seksi Lahan dan Irigasi Pertanian",
 
-  petaImageUrl: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80",
+  petaImageUrl: undefined,
   analisGisNama: "MUHAMMAD FACHRI, S.P.",
   analisGisNip: "19930412 201903 1 005",
   analisGisJabatan: "Analis Spasial Lahan & Irigasi Pertanian",
@@ -1480,10 +1482,10 @@ export function BapLp2bPertanianDocument({
               border: "1.5px solid #000000", 
               position: "relative", 
               width: "100%", 
-              height: "135mm", 
+              height: "140mm", 
               overflow: "hidden", 
               marginBottom: "10px", 
-              backgroundColor: "#e2e8f0",
+              backgroundColor: "#0f172a",
               boxSizing: "border-box"
             }}>
               <img 
@@ -1493,44 +1495,14 @@ export function BapLp2bPertanianDocument({
                   pemohon: data.namaPemohon,
                   perusahaan: data.namaPerusahaan,
                   luas: data.luasLahanDisetujui,
-                  tipeDoc: 'LP2B'
+                  tipeDoc: 'LP2B',
+                  nomorSurat: data.nomorSurat,
+                  koordinatPoligon: data.koordinatPoligon,
+                  statusLp2b: data.statusLp2b
                 })} 
                 alt="Peta Delineasi Geospasial LP2B & Irigasi" 
-                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
               />
-              
-              {/* Overlay Grid Simbolik & Garis Delineasi */}
-              <div style={{ position: "absolute", inset: 0, pointerEvents: "none", border: "1px dashed rgba(0,0,0,0.4)" }} />
-
-              {/* North Arrow Compass */}
-              <div style={{ position: "absolute", top: "10px", right: "12px", backgroundColor: "rgba(255,255,255,0.95)", border: "1px solid #000000", padding: "4px 8px", textAlign: "center" }}>
-                <div style={{ fontSize: "12pt", fontWeight: "bold", color: "#dc2626" }}>▲ U</div>
-                <div style={{ fontSize: "7pt", fontWeight: "bold", color: "#000000" }}>UTARA</div>
-              </div>
-
-              {/* Legenda Peta Geospasial Pertanian Formal */}
-              <div style={{ position: "absolute", bottom: "10px", left: "10px", backgroundColor: "rgba(255,255,255,0.95)", border: "1px solid #000000", padding: "6px 8px", fontSize: "7.5pt", width: "195px" }}>
-                <div style={{ fontWeight: "bold", borderBottom: "1px solid #000000", paddingBottom: "2px", marginBottom: "4px" }}>LEGENDA PETA TEMATIK:</div>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
-                  <div style={{ width: "14px", height: "8px", border: "2px solid #dc2626", backgroundColor: "rgba(220,38,38,0.3)" }} />
-                  <span>Delineasi Permohonan</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
-                  <div style={{ width: "14px", height: "8px", backgroundColor: "#16a34a" }} />
-                  <span>Zona LP2B Aktif Kab. Luwu</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <div style={{ width: "14px", height: "2px", backgroundColor: "#0284c7" }} />
-                  <span>Saluran Irigasi Teknis / Tersier</span>
-                </div>
-              </div>
-
-              {/* Skala Batang Simbolik */}
-              <div style={{ position: "absolute", bottom: "10px", right: "10px", backgroundColor: "rgba(255,255,255,0.95)", border: "1px solid #000000", padding: "4px 8px", fontSize: "7pt", textAlign: "center" }}>
-                <div>Skala 1 : 5.000</div>
-                <div style={{ width: "80px", height: "3px", backgroundColor: "#000000", margin: "2px auto" }} />
-                <div>0  100m  250m</div>
-              </div>
             </div>
 
             {/* Catatan Analis Spasial Lahan & Irigasi */}
@@ -1856,7 +1828,7 @@ export function convertAppToBapLp2bData(
     kasiNip: "19890518 201202 1 006",
     kasiJabatan: "Kepala Seksi Lahan dan Irigasi Pertanian",
 
-    petaImageUrl: customMapSnapshot || app?.mapSnapshotUrl || (isNonBerusaha ? DEFAULT_BAP_LP2B_NON_BERUSAHA_DATA.petaImageUrl : DEFAULT_BAP_LP2B_DATA.petaImageUrl),
+    petaImageUrl: customMapSnapshot || app?.mapSnapshotUrl || undefined,
     analisGisNama: "MUHAMMAD FACHRI, S.P.",
     analisGisNip: "19930412 201903 1 005",
     analisGisJabatan: "Analis Spasial Lahan & Irigasi Pertanian",

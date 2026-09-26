@@ -24,6 +24,7 @@ import {
   Info
 } from "lucide-react";
 import { BapLp2bDocumentData, DEFAULT_BAP_LP2B_DATA } from "../documents/BapLp2bPertanianDocument";
+import { getEffectiveMapImageUrl } from "../../utils/luwuGisMapGenerator";
 import { getOpdSettings, saveOpdSettings } from "../../utils/opdSettingsStorage";
 import { supabase } from "../../lib/supabaseClient";
 import Swal from "sweetalert2";
@@ -905,19 +906,21 @@ export function SmartFormPertanianModal({
                       Pratinjau Snapshot Peta Geospasial LP2B:
                     </span>
                     <div className="h-64 rounded-2xl overflow-hidden border-2 border-slate-300 dark:border-slate-700 bg-slate-950 relative shadow-inner flex items-center justify-center">
-                      {formData.petaImageUrl ? (
-                        <img
-                          src={formData.petaImageUrl}
-                          alt="Snapshot Peta Pertanian"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="text-center p-4 text-slate-400 space-y-1">
-                          <MapPin size={32} className="mx-auto text-emerald-500 animate-pulse" />
-                          <p className="text-xs font-bold text-white">Belum Ada Snapshot Peta</p>
-                          <p className="text-[10px]">Silakan klik tombol Ambil Snapshot Peta</p>
-                        </div>
-                      )}
+                      <img
+                        src={getEffectiveMapImageUrl(formData.petaImageUrl, mapSnapshot, {
+                          desa: formData.desaKelurahan,
+                          kecamatan: formData.kecamatan,
+                          pemohon: formData.namaPemohon,
+                          perusahaan: formData.namaPerusahaan,
+                          luas: formData.luasLahanDisetujui,
+                          tipeDoc: 'LP2B',
+                          nomorSurat: formData.nomorSurat,
+                          koordinatPoligon: formData.koordinatPoligon,
+                          statusLp2b: formData.statusLp2b
+                        })}
+                        alt="Snapshot Peta Pertanian"
+                        className="w-full h-full object-contain"
+                      />
                     </div>
                   </div>
 

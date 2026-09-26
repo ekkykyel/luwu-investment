@@ -662,10 +662,12 @@ export const SkPkkprDpmptspDocument: React.FC<SkPkkprDpmptspDocumentProps> = ({
                   pemohon: data.namaPemohon,
                   perusahaan: data.namaPerusahaan,
                   luas: data.luasLahanDisetujui,
-                  tipeDoc: 'PKKPR'
+                  tipeDoc: 'PKKPR',
+                  nomorSurat: data.nomorSkPkkpr,
+                  koordinatPoligon: data.koordinatPoligon
                 })}
                 alt="Peta Spasial PKKPR"
-                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                style={{ width: "100%", height: "100%", objectFit: "contain", display: "block", backgroundColor: "#0f172a" }}
               />
             </div>
 

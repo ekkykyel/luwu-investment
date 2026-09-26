@@ -215,7 +215,7 @@ export const DEFAULT_BAP_KTR_DATA: BapKtrDocumentData = {
   kasiNip: "19880210 201101 1 007",
   kasiJabatan: "Kepala Seksi Pengawasan Ruang",
 
-  petaImageUrl: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80",
+  petaImageUrl: undefined,
   analisGisNama: "ANDI BASO MATTATA, S.T.",
   analisGisNip: "19940822 202012 1 003",
   analisGisJabatan: "Analis Spasial & Pemetaan GIS",
@@ -289,11 +289,12 @@ export const DEFAULT_BAP_NON_BERUSAHA_DATA: BapKtrDocumentData = {
   kadisJabatan: "Kepala Dinas Pekerjaan Umum dan Penataan Ruang",
   kadisPangkat: "Pembina Utama Muda (IV/c)",
 
+  // Non-Berusaha defaults
   kasiNama: "SYAHRUL RAMADHAN, S.T.",
   kasiNip: "19880210 201101 1 007",
   kasiJabatan: "Kepala Seksi Pengawasan Ruang",
 
-  petaImageUrl: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80",
+  petaImageUrl: undefined,
   analisGisNama: "ANDI BASO MATTATA, S.T.",
   analisGisNip: "19940822 202012 1 003",
   analisGisJabatan: "Analis Spasial & Pemetaan GIS",
@@ -358,11 +359,12 @@ export const DEFAULT_BAP_REJECTED_DATA: BapKtrDocumentData = {
   kadisJabatan: "Kepala Dinas Pekerjaan Umum dan Penataan Ruang",
   kadisPangkat: "Pembina Utama Muda (IV/c)",
 
+  // Rejected defaults
   kasiNama: "SYAHRUL RAMADHAN, S.T.",
   kasiNip: "19880210 201101 1 007",
   kasiJabatan: "Kepala Seksi Pengawasan Ruang",
 
-  petaImageUrl: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80",
+  petaImageUrl: undefined,
   analisGisNama: "ANDI BASO MATTATA, S.T.",
   analisGisNip: "19940822 202012 1 003",
   analisGisJabatan: "Analis Spasial & Pemetaan GIS",
@@ -1678,10 +1680,10 @@ export function BapKtrPuptrDocument({
               border: "1.5px solid #000000", 
               position: "relative", 
               width: "100%", 
-              height: "135mm", 
+              height: "140mm", 
               overflow: "hidden", 
               marginBottom: "10px", 
-              backgroundColor: "#e2e8f0",
+              backgroundColor: "#0f172a",
               boxSizing: "border-box"
             }}>
               <img 
@@ -1691,44 +1693,14 @@ export function BapKtrPuptrDocument({
                   pemohon: data.namaPemohon,
                   perusahaan: data.namaPerusahaan,
                   luas: data.luasLahanDisetujui,
-                  tipeDoc: 'KTR'
+                  tipeDoc: 'KTR',
+                  nomorSurat: data.nomorSurat,
+                  koordinatPoligon: data.koordinatPoligon,
+                  zonaRtrw: data.zonaPolaRuangRtrw
                 })} 
-                alt="Peta Delineasi Geospasial" 
-                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                alt="Peta Delineasi Geospasial & Zonasi RTRW" 
+                style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
               />
-              
-              {/* Overlay Grid Simbolik & Garis Delineasi */}
-              <div style={{ position: "absolute", inset: 0, pointerEvents: "none", border: "1px dashed rgba(0,0,0,0.4)" }} />
-
-              {/* North Arrow Compass */}
-              <div style={{ position: "absolute", top: "10px", right: "12px", backgroundColor: "rgba(255,255,255,0.95)", border: "1px solid #000000", padding: "4px 8px", textAlign: "center" }}>
-                <div style={{ fontSize: "12pt", fontWeight: "bold", color: "#dc2626" }}>▲ U</div>
-                <div style={{ fontSize: "7pt", fontWeight: "bold", color: "#000000" }}>UTARA</div>
-              </div>
-
-              {/* Legenda Peta Geospasial Formal */}
-              <div style={{ position: "absolute", bottom: "10px", left: "10px", backgroundColor: "rgba(255,255,255,0.95)", border: "1px solid #000000", padding: "6px 8px", fontSize: "7.5pt", width: "185px" }}>
-                <div style={{ fontWeight: "bold", borderBottom: "1px solid #000000", paddingBottom: "2px", marginBottom: "4px" }}>LEGENDA PETA:</div>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
-                  <div style={{ width: "14px", height: "8px", border: "2px solid #dc2626", backgroundColor: "rgba(220,38,38,0.3)" }} />
-                  <span>Delineasi Permohonan</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
-                  <div style={{ width: "14px", height: "8px", backgroundColor: "#7c3aed" }} />
-                  <span>Pola Ruang RTRW Kab. Luwu</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <div style={{ width: "14px", height: "2px", backgroundColor: "#2563eb" }} />
-                  <span>Jalur Arteri Poros Sulawesi</span>
-                </div>
-              </div>
-
-              {/* Skala Batang Simbolik */}
-              <div style={{ position: "absolute", bottom: "10px", right: "10px", backgroundColor: "rgba(255,255,255,0.95)", border: "1px solid #000000", padding: "4px 8px", fontSize: "7pt", textAlign: "center" }}>
-                <div>Skala 1 : 5.000</div>
-                <div style={{ width: "80px", height: "3px", backgroundColor: "#000000", margin: "2px auto" }} />
-                <div>0  100m  250m</div>
-              </div>
             </div>
 
             {/* Catatan Surveyor / Geospasial */}
@@ -2056,7 +2028,7 @@ export function convertAppToBapKtrData(
     kasiNip: '19880210 201101 1 007',
     kasiJabatan: 'Kepala Seksi Pengawasan Ruang',
 
-    petaImageUrl: customMapSnapshot || app?.mapSnapshotUrl || (isNonBerusaha ? DEFAULT_BAP_NON_BERUSAHA_DATA.petaImageUrl : DEFAULT_BAP_KTR_DATA.petaImageUrl),
+    petaImageUrl: customMapSnapshot || app?.mapSnapshotUrl || undefined,
     analisGisNama: 'ANDI BASO MATTATA, S.T.',
     analisGisNip: '19940822 202012 1 003',
     analisGisJabatan: 'Analis Spasial & Pemetaan GIS',

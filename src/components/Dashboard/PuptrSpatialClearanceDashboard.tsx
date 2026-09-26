@@ -98,7 +98,7 @@ export interface PkkprApplicationItem {
   suratPengantarDesaUrl?: string;
   berkasLegalitasGabunganUrl?: string;
   geometry?: any;
-  pkkprStatus: 'Pending Spatial Check' | 'Approved' | 'Requires Revision' | 'Rejected';
+  pkkprStatus: 'Pending Spatial Check' | 'Approved' | 'Requires Revision' | 'Rejected' | 'Returned';
   pkkprDocNumber?: string;
   skPkkprDocNumber?: string;
   technicalNotes?: string;
@@ -530,6 +530,7 @@ export default function PuptrSpatialClearanceDashboard() {
 
   // Open BAP Document Modal with High-Res Map Canvas Snapshot
   const handleOpenBapModal = () => {
+    let capturedSnap: string | null = null;
     const map = mapRef.current?.getMapInstance?.();
     if (map) {
       // 1. If map canvas is currently ready, capture immediately
@@ -537,6 +538,7 @@ export default function PuptrSpatialClearanceDashboard() {
         if (map.loaded()) {
           const snap = map.getCanvas().toDataURL('image/png');
           if (snap && snap !== 'data:,' && snap.length > 500) {
+            capturedSnap = snap;
             setMapSnapshot(snap);
           }
         }
@@ -562,6 +564,7 @@ export default function PuptrSpatialClearanceDashboard() {
         try {
           const snap = mapCanvas.toDataURL('image/png');
           if (snap && snap.length > 500) {
+            capturedSnap = snap;
             setMapSnapshot(snap);
           }
         } catch (e) {

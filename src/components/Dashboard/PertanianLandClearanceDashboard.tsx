@@ -285,7 +285,10 @@ export default function PertanianLandClearanceDashboard() {
 
   // Open BAP Document Modal with High-Res Map Canvas Snapshot (Clean static capture)
   const handleOpenBapModal = () => {
-    captureCurrentMapSnapshot();
+    const snap = captureCurrentMapSnapshot();
+    if (snap) {
+      setCustomBapData(prev => prev ? { ...prev, petaImageUrl: snap } : null);
+    }
     setShowDocumentPreview(true);
   };
 
@@ -789,6 +792,10 @@ export default function PertanianLandClearanceDashboard() {
       }
 
       setShowApprovalModal(false);
+      const snap = captureCurrentMapSnapshot();
+      if (snap) {
+        setCustomBapData(prev => prev ? { ...prev, petaImageUrl: snap } : null);
+      }
       setShowDocumentPreview(true);
 
       // Trigger Cross-OPD Notification to Dinas PUPTR
@@ -2130,7 +2137,8 @@ export default function PertanianLandClearanceDashboard() {
             }
           }}
           onOpenFullBapPreview={(updated) => {
-            setCustomBapData(updated);
+            const snap = captureCurrentMapSnapshot();
+            setCustomBapData(snap ? { ...updated, petaImageUrl: snap } : updated);
             setShowSmartFormModal(false);
             setShowDocumentPreview(true);
           }}
