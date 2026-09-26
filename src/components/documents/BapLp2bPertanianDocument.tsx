@@ -3,7 +3,7 @@ import jsPDF from "jspdf";
 import { safeHtml2Canvas } from "../../lib/html2canvasShim";
 import { OFFICIAL_LUWU_LOGO_URL } from "../LuwuLogo";
 import { getOpdSettings, saveOpdSettings } from "../../utils/opdSettingsStorage";
-import { getEffectiveMapImageUrl } from "../../utils/luwuGisMapGenerator";
+import { getEffectiveMapImageUrl, generateLuwuGisMapSvgDataUrl } from "../../utils/luwuGisMapGenerator";
 import { supabase } from "../../lib/supabaseClient";
 import { 
   Printer, 
@@ -1502,6 +1502,22 @@ export function BapLp2bPertanianDocument({
                 })} 
                 alt="Peta Delineasi Geospasial LP2B & Irigasi" 
                 style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+                onError={(e) => {
+                  const fallbackUrl = generateLuwuGisMapSvgDataUrl({
+                    desa: data.desaKelurahan,
+                    kecamatan: data.kecamatan,
+                    pemohon: data.namaPemohon,
+                    perusahaan: data.namaPerusahaan,
+                    luas: data.luasLahanDisetujui,
+                    tipeDoc: 'LP2B',
+                    nomorSurat: data.nomorSurat,
+                    koordinatPoligon: data.koordinatPoligon,
+                    statusLp2b: data.statusLp2b
+                  });
+                  if (e.currentTarget.src !== fallbackUrl) {
+                    e.currentTarget.src = fallbackUrl;
+                  }
+                }}
               />
             </div>
 
