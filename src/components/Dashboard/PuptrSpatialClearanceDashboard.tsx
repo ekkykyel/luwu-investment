@@ -50,8 +50,10 @@ import {
   identifyDistrictFromGeometryOrCoord, 
   normalizeName,
   evaluateSpatialConflictsTurf,
-  SpatialConflictEvaluation
+  SpatialConflictEvaluation,
+  calculateAreaWithSRID
 } from '../../utils/geoUtils';
+import { SridMismatchAlertBanner } from '../common/SridMismatchAlertBanner';
 import MapComponent, { MapComponentRef } from '../MaplibreComponent';
 import OrientationPrompt from '../OrientationPrompt';
 import { getOpdSettings } from '../../utils/opdSettingsStorage';
@@ -327,6 +329,29 @@ export default function PuptrSpatialClearanceDashboard() {
   const isConflictLocked = Boolean(
     spatialConflictAudit.hasConflict && !isOverridden && !isPertanianApproved
   );
+
+  // Auto-detect SRID Mismatch & Spatial Discrepancies for selected application
+  const activeAppSridReport = React.useMemo(() => {
+    if (!selectedApp) return null;
+    try {
+      const pkkprGeom = selectedApp.geometry || (selectedApp as any).geojson || (selectedApp as any).polygon;
+      if (pkkprGeom) {
+        return calculateAreaWithSRID(pkkprGeom, 32751, {
+          featureName: selectedApp.companyName || selectedApp.applicantName || 'Permohonan PKKPR PUPTR',
+          featureProperties: {
+            pkkprDocNumber: selectedApp.pkkprDocNumber || selectedApp.skPkkprDocNumber,
+            applicant: selectedApp.applicantName,
+            company: selectedApp.companyName,
+            areaHa: selectedApp.areaHa
+          },
+          comparisonGeometry: (selectedApp as any).original_geometry || (selectedApp as any).investment_geometry
+        });
+      }
+    } catch (e) {
+      console.warn('SRID audit calculation note:', e);
+    }
+    return null;
+  }, [selectedApp]);
 
   // Official Pertek Issuance Check: True ONLY if PUPTR has officially generated a Pertek document number in current session or database
   const isPertekIssued = Boolean(
@@ -2074,6 +2099,14 @@ export default function PuptrSpatialClearanceDashboard() {
         <div className={`grid grid-cols-1 ${isMapExpanded ? 'grid-cols-1' : 'lg:grid-cols-3'} gap-6`}>
           {/* Left / Top Column: Studio GIS Map Canvas (Module 3) */}
           <div className={`${isMapExpanded ? 'w-full col-span-full' : 'lg:col-span-2'} bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-5 shadow-sm space-y-4`}>
+            
+            {/* SRID Mismatch Warning Banner */}
+            {activeAppSridReport?.sridMismatch?.detected && (
+              <SridMismatchAlertBanner
+                report={activeAppSridReport.sridMismatch}
+                pkkprDocNumber={selectedApp.pkkprDocNumber || selectedApp.skPkkprDocNumber}
+              />
+            )}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3.5">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl shrink-0">

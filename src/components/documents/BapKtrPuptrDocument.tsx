@@ -5,7 +5,8 @@ import { OFFICIAL_LUWU_LOGO_URL } from "../LuwuLogo";
 import { getOpdSettings, saveOpdSettings } from "../../utils/opdSettingsStorage";
 import { getEffectiveMapImageUrl, generateLuwuGisMapSvgDataUrl } from "../../utils/luwuGisMapGenerator";
 import { formatDistrictName, formatVillageName } from "../../utils/gisHelpers";
-import { auditPkkprPipelineGeometry, auditPkkprVsInvestmentSridComparison } from "../../utils/geoUtils";
+import { auditPkkprPipelineGeometry, auditPkkprVsInvestmentSridComparison, calculateAreaWithSRID } from "../../utils/geoUtils";
+import { SridMismatchAlertBanner } from "../common/SridMismatchAlertBanner";
 import { supabase } from "../../lib/supabaseClient";
 import { 
   Printer, 
@@ -449,6 +450,28 @@ export function BapKtrPuptrDocument({
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
   const documentContainerRef = useRef<HTMLDivElement>(null);
 
+  // Auto-detect SRID Mismatch & Spatial Discrepancies between BAP PKKPR polygon and application investment polygon
+  const sridReport = React.useMemo(() => {
+    try {
+      const rawPkkprGeom = (initialData as any)?.geometry || (initialData as any)?.geometry_json || (initialData as any)?.geom || data.koordinatPoligon;
+      const rawCompGeom = (initialData as any)?.original_geometry || (initialData as any)?.investment_geometry;
+      if (rawPkkprGeom) {
+        return calculateAreaWithSRID(rawPkkprGeom, 32751, {
+          featureName: 'Delineasi BAP PKKPR PUPTR',
+          featureProperties: {
+            nomorSurat: data.nomorSurat,
+            pemohon: data.namaPemohon,
+            luas: data.luasLahanPermohonan
+          },
+          comparisonGeometry: rawCompGeom
+        });
+      }
+    } catch (e) {
+      console.warn("SRID auto-detection note:", e);
+    }
+    return null;
+  }, [initialData, data.nomorSurat, data.namaPemohon, data.luasLahanPermohonan, data.koordinatPoligon]);
+
   /**
    * Helper to format point 6 location cleanly without repeating district/regency names
    */
@@ -724,6 +747,15 @@ export function BapKtrPuptrDocument({
               <CheckCircle2 size={16} className="shrink-0 text-emerald-600" />
               <span>{saveSuccessMsg}</span>
             </div>
+          )}
+
+          {/* SRID Mismatch & Projection Discrepancy UI Warning Banner */}
+          {sridReport?.sridMismatch?.detected && (
+            <SridMismatchAlertBanner
+              report={sridReport.sridMismatch}
+              pkkprDocNumber={data.nomorSurat}
+              className="mt-3"
+            />
           )}
 
           {/* Quick Page Navigator */}

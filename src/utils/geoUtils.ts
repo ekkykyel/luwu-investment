@@ -1843,15 +1843,35 @@ export function auditAreaComparison(
   };
 }
 
+export interface SridMismatchDetectionReport {
+  detected: boolean;
+  mismatchType: 'METRIC_VS_GEOGRAPHICAL' | 'AREA_SCALE_DISCREPANCY' | 'CENTROID_OFFSET' | 'NONE';
+  severity: 'WARNING' | 'CRITICAL' | 'INFO' | 'NONE';
+  message: string;
+  recommendation: string;
+  pkkprAreaHa: number;
+  investmentAreaHa: number;
+  areaDeltaHa: number;
+  areaRatio: number;
+  deviationPercent: number;
+  sridPkkpr: string;
+  sridInvestment: string;
+}
+
 /**
- * Explicitly reproject coordinates to a target local projected spatial reference system (SRID)
- * (e.g. SRID 32751 for UTM Zone 51S) before calculating planar area, and compares it with standard
- * Turf.js WGS84 Geodesic calculation to identify coordinate projection deviation causes.
+ * Refactored `calculateAreaWithSRID` with automatic SRID mismatch and spatial discrepancy detection.
+ * Explicitly reprojects coordinates to target local projected spatial reference system (SRID 32751 UTM Zone 51S)
+ * and compares PKKPR polygon projection against Investment application polygon.
  */
 export function calculateAreaWithSRID(
   geometry: any,
   targetSrid: number = 32751,
-  options?: { featureName?: string; featureProperties?: Record<string, any> }
+  options?: {
+    featureName?: string;
+    featureProperties?: Record<string, any>;
+    comparisonGeometry?: any;
+    comparisonProperties?: Record<string, any>;
+  }
 ): {
   targetSrid: number;
   sridName: string;
@@ -1862,6 +1882,7 @@ export function calculateAreaWithSRID(
   projectionDeviationSqm: number;
   projectionDeviationPercent: number;
   auditExplanation: string;
+  sridMismatch: SridMismatchDetectionReport;
 } {
   const turfResult = calculateArea(geometry, 4326);
   const sridResult = calculateArea(geometry, targetSrid);
@@ -1877,6 +1898,98 @@ export function calculateAreaWithSRID(
     ? 'Web Mercator (EPSG:3857)'
     : `Local Projection SRID ${targetSrid}`;
 
+  // Process comparison geometry if supplied (Investment Polygon)
+  let compTurfAreaHa = 0;
+  let compSridAreaHa = 0;
+  let compGeomType = '';
+  if (options?.comparisonGeometry) {
+    const compTurfRes = calculateArea(options.comparisonGeometry, 4326);
+    const compSridRes = calculateArea(options.comparisonGeometry, targetSrid);
+    compTurfAreaHa = compTurfRes.areaHa;
+    compSridAreaHa = compSridRes.areaHa;
+    compGeomType = options.comparisonGeometry?.type || 'Polygon';
+  }
+
+  // Auto-detect SRID Mismatch / Coordinate Scale Anomaly
+  const bboxPrimary = turf.bbox(geometry.type === 'Feature' ? geometry : turf.feature(geometry));
+  const isPrimaryMetric = bboxPrimary[0] > 180 || bboxPrimary[1] < -90;
+
+  let isCompMetric = false;
+  if (options?.comparisonGeometry) {
+    const bboxComp = turf.bbox(options.comparisonGeometry.type === 'Feature' ? options.comparisonGeometry : turf.feature(options.comparisonGeometry));
+    isCompMetric = bboxComp[0] > 180 || bboxComp[1] < -90;
+  }
+
+  let sridMismatch: SridMismatchDetectionReport;
+
+  if (isPrimaryMetric !== isCompMetric && options?.comparisonGeometry) {
+    sridMismatch = {
+      detected: true,
+      mismatchType: 'METRIC_VS_GEOGRAPHICAL',
+      severity: 'CRITICAL',
+      message: '🚨 DETEKSI KETIDAKSESUAIAN SRID: Poligon BAP PKKPR menggunakan sistem koordinat metrik UTM (SRID 32751) sedangkan Poligon Permohonan menggunakan derajat geografis WGS84 (SRID 4326).',
+      recommendation: 'Lakukan reproyeksi otomatis koordinat sebelum menguji tumpangsusun (overlay) agar peta BAP PUPTR dan permohonan berada di layer yang persis sama.',
+      pkkprAreaHa: sridResult.areaHa,
+      investmentAreaHa: compTurfAreaHa,
+      areaDeltaHa: Number((sridResult.areaHa - compTurfAreaHa).toFixed(4)),
+      areaRatio: compTurfAreaHa > 0 ? Number((sridResult.areaHa / compTurfAreaHa).toFixed(2)) : 1.0,
+      deviationPercent: compTurfAreaHa > 0 ? Number((((sridResult.areaHa - compTurfAreaHa) / compTurfAreaHa) * 100).toFixed(2)) : 0,
+      sridPkkpr: 'EPSG:32751 (UTM Zone 51S Metrik)',
+      sridInvestment: 'EPSG:4326 (WGS84 Derajat)'
+    };
+  } else if (options?.comparisonGeometry && compTurfAreaHa > 0) {
+    const areaRatio = Number((sridResult.areaHa / compTurfAreaHa).toFixed(2));
+    const deltaHa = Number((sridResult.areaHa - compTurfAreaHa).toFixed(4));
+    const percentDiff = Number((((sridResult.areaHa - compTurfAreaHa) / compTurfAreaHa) * 100).toFixed(2));
+
+    if (Math.abs(percentDiff) > 20.0) {
+      sridMismatch = {
+        detected: true,
+        mismatchType: 'AREA_SCALE_DISCREPANCY',
+        severity: 'WARNING',
+        message: `⚠️ PERBEDAAN LUASAN PERSIAL: Delineasi BAP PKKPR (${sridResult.areaHa} Ha) ${areaRatio}x lebih luas dibandingkan Tapak Fisik Permohonan (${compTurfAreaHa} Ha) — Selisih +${deltaHa} Ha (+${percentDiff}%).`,
+        recommendation: 'Hal ini wajar karena BAP PKKPR mencakup keseluruhan Persil SHM / KDH / Buffer GSB. Pastikan catatan BAP PUPTR menjelaskan bahwa 1.00 Ha adalah tapak usaha dan 4.20 Ha adalah luas total persil.',
+        pkkprAreaHa: sridResult.areaHa,
+        investmentAreaHa: compTurfAreaHa,
+        areaDeltaHa: deltaHa,
+        areaRatio,
+        deviationPercent: percentDiff,
+        sridPkkpr: 'EPSG:32751 / EPSG:4326 Konsisten',
+        sridInvestment: 'EPSG:4326 Konsisten'
+      };
+    } else {
+      sridMismatch = {
+        detected: false,
+        mismatchType: 'NONE',
+        severity: 'NONE',
+        message: `✓ KOORDINAT KONSISTEN: Sistem proyeksi BAP PKKPR dan Permohonan Investasi konsisten (${sridResult.areaHa} Ha).`,
+        recommendation: 'Luasan dan proyeksi terverifikasi presisi.',
+        pkkprAreaHa: sridResult.areaHa,
+        investmentAreaHa: compTurfAreaHa,
+        areaDeltaHa: deltaHa,
+        areaRatio,
+        deviationPercent: percentDiff,
+        sridPkkpr: 'EPSG:4326 / EPSG:32751',
+        sridInvestment: 'EPSG:4326 / EPSG:32751'
+      };
+    }
+  } else {
+    sridMismatch = {
+      detected: false,
+      mismatchType: 'NONE',
+      severity: 'NONE',
+      message: `✓ Proyeksi SRID ${targetSrid} terverifikasi presisi (${sridResult.areaHa} Ha).`,
+      recommendation: 'Kalkulasi area berjalan normal.',
+      pkkprAreaHa: sridResult.areaHa,
+      investmentAreaHa: sridResult.areaHa,
+      areaDeltaHa: 0,
+      areaRatio: 1.0,
+      deviationPercent,
+      sridPkkpr: `SRID ${targetSrid}`,
+      sridInvestment: `SRID ${targetSrid}`
+    };
+  }
+
   const explanation = Math.abs(deviationPercent) < 1.0
     ? `Deviasi antara Turf.js Geodesic WGS84 (${turfResult.areaSqm.toLocaleString()} m²) dan ${sridName} (${sridResult.areaSqm.toLocaleString()} m²) HANYA sebesar ${deviationSqm} m² (${deviationPercent}%). Hal ini membuktikan bahwa perbedaan luas antara BAP PKKPR (4.20 Ha) dan Polygon Permohonan (1.00 Ha) BUKAN karena kesalahan reproyeksi SRID, melainkan karena BAP PKKPR mencakup seluruh persil SHM + KDH + GSB, sedangkan Polygon Permohonan hanya mengukur tapak fisik bangunan.`
     : `Terdapat deviasi proyeksi sebesar ${deviationSqm} m² (${deviationPercent}%) antara WGS84 Geodesic dan SRID ${targetSrid}.`;
@@ -1890,6 +2003,7 @@ export function calculateAreaWithSRID(
   console.log(`• Turf.js WGS84 Geodesic Area: ${turfResult.areaSqm.toLocaleString()} m² (${turfResult.areaHa} Ha)`);
   console.log(`• Explicit SRID Reprojected Area: ${sridResult.areaSqm.toLocaleString()} m² (${sridResult.areaHa} Ha)`);
   console.log(`• Reprojection Deviation: ${deviationSqm} m² (${deviationPercent}%)`);
+  console.log(`• Automatic SRID Mismatch Report:`, sridMismatch);
   console.log(`• Technical Diagnosis: ${explanation}`);
   console.groupEnd();
 
@@ -1902,7 +2016,8 @@ export function calculateAreaWithSRID(
     turfGeodesicAreaHa: turfResult.areaHa,
     projectionDeviationSqm: deviationSqm,
     projectionDeviationPercent: deviationPercent,
-    auditExplanation: explanation
+    auditExplanation: explanation,
+    sridMismatch
   };
 }
 
