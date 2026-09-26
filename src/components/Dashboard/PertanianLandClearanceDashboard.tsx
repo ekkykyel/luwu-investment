@@ -1397,9 +1397,9 @@ export default function PertanianLandClearanceDashboard() {
         <div className={`grid grid-cols-1 ${isMapExpanded ? 'grid-cols-1' : 'lg:grid-cols-3'} gap-6`}>
           {/* Left Column: Agrarian Map Analysis Workspace (Module 3) */}
           <div className={`${isMapExpanded ? 'w-full col-span-full' : 'lg:col-span-2'} bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-5 shadow-sm space-y-4`}>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3.5">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl shrink-0">
                   <Map className="w-5 h-5" />
                 </div>
                 <div>
@@ -1412,42 +1412,42 @@ export default function PertanianLandClearanceDashboard() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full md:w-auto">
                 <button
                   type="button"
                   onClick={() => {
                     captureCurrentMapSnapshot();
                     setShowSmartFormModal(true);
                   }}
-                  className="px-3 py-1.5 bg-gradient-to-r from-emerald-600 via-emerald-700 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer hover:scale-105 active:scale-95"
+                  className="h-10 px-3 bg-gradient-to-r from-emerald-600 via-emerald-700 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer active:scale-95"
                   title="Buka Smart Form Rekomendasi Teknis LP2B & Alih Fungsi Lahan"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                  <span>Smart Form LP2B</span>
+                  <Sparkles className="w-4 h-4 text-amber-300 shrink-0" />
+                  <span className="truncate">Smart Form LP2B</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsTurfCardCollapsed(prev => !prev)}
-                  className={`px-3 py-1.5 border rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
+                  className={`h-10 px-3 border rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-98 cursor-pointer ${
                     isTurfCardCollapsed
                       ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700 hover:bg-emerald-100'
                       : 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100'
                   }`}
-                  title={isTurfCardCollapsed ? "Tampilkan Panel Hasil Analisis & Data Pemohon" : "Sembunyikan Panel (Buka Kanvas Peta Lebih Luas)"}
+                  title={isTurfCardCollapsed ? "Tampilkan Panel Hasil Analisis & Data Pemohon" : "Sembunyikan Panel"}
                 >
-                  {isTurfCardCollapsed ? <Eye className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <EyeOff className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />}
-                  <span>{isTurfCardCollapsed ? "Buka Panel Analisis" : "Tutup Panel Analisis"}</span>
+                  {isTurfCardCollapsed ? <Eye className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" /> : <EyeOff className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />}
+                  <span className="truncate">{isTurfCardCollapsed ? "Buka Panel Analisis" : "Tutup Panel"}</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsMapExpanded(prev => !prev)}
-                  className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+                  className="h-10 px-3 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-98 cursor-pointer"
                   title={isMapExpanded ? "Kembali ke Mode Normal (2 Kolom)" : "Perbesar Peta (Mode Studio Lebar)"}
                 >
-                  <Maximize2 className="w-3.5 h-3.5" />
-                  <span>{isMapExpanded ? "Tampilan Normal" : "Mode Peta Studio Lebar"}</span>
+                  <Maximize2 className="w-4 h-4 shrink-0" />
+                  <span className="truncate">{isMapExpanded ? "Tampilan Normal" : "Mode Peta Lebar"}</span>
                 </button>
-                <span className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-xl border border-emerald-200 dark:border-emerald-800">
+                <span className="col-span-2 sm:col-span-1 h-10 font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-3 rounded-xl border border-emerald-200 dark:border-emerald-800 flex items-center justify-center truncate">
                   {selectedApp.companyName}
                 </span>
               </div>
@@ -1831,9 +1831,9 @@ export default function PertanianLandClearanceDashboard() {
                       captureCurrentMapSnapshot();
                       setShowSmartFormModal(true);
                     }}
-                    className="w-full py-2.5 bg-gradient-to-r from-emerald-700 via-teal-700 to-emerald-800 hover:from-emerald-600 hover:to-teal-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-700/20 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+                    className="w-full min-h-[46px] px-4 py-3 bg-gradient-to-r from-emerald-700 via-teal-700 to-emerald-800 hover:from-emerald-600 hover:to-teal-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-700/20 transition-all active:scale-98 cursor-pointer"
                   >
-                    <Sparkles className="w-4 h-4 text-amber-300" />
+                    <Sparkles className="w-4 h-4 text-amber-300 shrink-0" />
                     <span>Smart Form Rekomendasi Teknis LP2B &amp; Pertanian</span>
                   </button>
 
@@ -1841,9 +1841,9 @@ export default function PertanianLandClearanceDashboard() {
                   <button
                     type="button"
                     onClick={handleOpenApprovalModal}
-                    className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 transition-all cursor-pointer"
+                    className="w-full min-h-[46px] px-4 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 transition-all active:scale-98 cursor-pointer"
                   >
-                    <CheckCircle2 className="w-4 h-4 text-emerald-200" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-200 shrink-0" />
                     <span>PATH A: Setujui &amp; Terbit Berita Acara LP2B 📄</span>
                   </button>
 
@@ -1851,9 +1851,9 @@ export default function PertanianLandClearanceDashboard() {
                   <button
                     type="button"
                     onClick={handleOpenRejectionModal}
-                    className="w-full py-3 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-rose-600/10 transition-all cursor-pointer"
+                    className="w-full min-h-[46px] px-4 py-3 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-rose-600/10 transition-all active:scale-98 cursor-pointer"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="w-4 h-4 shrink-0" />
                     <span>PATH B: Kembalikan / Tolak Ke PUPTR ⚠️</span>
                   </button>
                 </>

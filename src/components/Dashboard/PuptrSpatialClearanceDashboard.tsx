@@ -2074,9 +2074,9 @@ export default function PuptrSpatialClearanceDashboard() {
         <div className={`grid grid-cols-1 ${isMapExpanded ? 'grid-cols-1' : 'lg:grid-cols-3'} gap-6`}>
           {/* Left / Top Column: Studio GIS Map Canvas (Module 3) */}
           <div className={`${isMapExpanded ? 'w-full col-span-full' : 'lg:col-span-2'} bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-5 shadow-sm space-y-4`}>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3.5">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl shrink-0">
                   <Map className="w-5 h-5" />
                 </div>
                 <div>
@@ -2089,30 +2089,30 @@ export default function PuptrSpatialClearanceDashboard() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full md:w-auto">
                 <button
                   type="button"
                   onClick={() => setIsTurfCardCollapsed(prev => !prev)}
-                  className={`px-3 py-1.5 border rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
+                  className={`h-10 px-3 border rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-98 cursor-pointer ${
                     isTurfCardCollapsed
                       ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700 hover:bg-emerald-100'
                       : 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100'
                   }`}
                   title={isTurfCardCollapsed ? "Tampilkan Panel Hasil Analisis & Data Pemohon" : "Sembunyikan Panel (Buka Kanvas Peta Lebih Luas)"}
                 >
-                  {isTurfCardCollapsed ? <Eye className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <EyeOff className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />}
-                  <span>{isTurfCardCollapsed ? "Buka Panel Analisis" : "Tutup Panel Analisis"}</span>
+                  {isTurfCardCollapsed ? <Eye className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" /> : <EyeOff className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />}
+                  <span className="truncate">{isTurfCardCollapsed ? "Buka Panel Analisis" : "Tutup Panel"}</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsMapExpanded(prev => !prev)}
-                  className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+                  className="h-10 px-3 bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-98 cursor-pointer"
                   title={isMapExpanded ? "Kembali ke Mode Normal (2 Kolom)" : "Perbesar Peta (Mode Studio Lebar)"}
                 >
-                  <Maximize2 className="w-3.5 h-3.5" />
-                  <span>{isMapExpanded ? "Tampilan Normal" : "Mode Peta Studio Lebar"}</span>
+                  <Maximize2 className="w-4 h-4 shrink-0" />
+                  <span className="truncate">{isMapExpanded ? "Tampilan Normal" : "Mode Peta Lebar"}</span>
                 </button>
-                <span className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-xl border border-emerald-200 dark:border-emerald-800">
+                <span className="col-span-2 sm:col-span-1 h-10 font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-3 rounded-xl border border-emerald-200 dark:border-emerald-800 flex items-center justify-center truncate">
                   NIB: {selectedApp.nibNik}
                 </span>
               </div>
@@ -2184,57 +2184,57 @@ export default function PuptrSpatialClearanceDashboard() {
                 </div>
               ) : (
                 /* BANNER WARNING SEBELUM DISETUJUI PERTANIAN ATAU DI-OVERRIDE */
-                <div className="bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-amber-500/10 border-2 border-amber-500/40 rounded-2xl p-4 space-y-3 font-sans">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-start gap-3">
-                      <div className="p-2 bg-amber-500 text-slate-950 rounded-xl font-bold shrink-0 mt-0.5 shadow-md">
+                <div className="bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-amber-500/10 border-2 border-amber-500/40 rounded-2xl p-4 sm:p-5 space-y-4 font-sans shadow-sm">
+                  <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                    <div className="flex items-start gap-3.5">
+                      <div className="p-2.5 bg-amber-500 text-slate-950 rounded-xl font-bold shrink-0 mt-0.5 shadow-md">
                         <AlertTriangle className="w-5 h-5 animate-bounce" />
                       </div>
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-black uppercase tracking-wider text-rose-600 dark:text-rose-400">
+                      <div className="space-y-1.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-xs font-black uppercase tracking-wider text-rose-600 dark:text-rose-400 leading-snug">
                             ⚠️ AUTOMATED ENVIRONMENTAL FLAG: {spatialConflictAudit.conflictCategories.length > 0 ? spatialConflictAudit.conflictCategories.join(' & ') : 'TUMPANG TINDIH LP2B / LAHAN BASAH'} DETECTED
                           </span>
-                          <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30 shrink-0">
                             UU No. 41 / 2009 &amp; PP No. 21 / 2021
                           </span>
                         </div>
                         <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
-                          Poligon lokasi pemohon <strong className="font-bold">{selectedApp.applicantName} ({selectedApp.companyName})</strong> beririsan dengan <span className="font-bold text-amber-600 dark:text-amber-400">{spatialConflictAudit.conflictCategories.join(', ') || 'Zona Lahan Pertanian LP2B / Kawasan Lindung'}</span> seluas <strong className="font-mono">{spatialConflictAudit.totalOverlapHa || selectedApp.areaHa} Ha</strong>. Tombol proses (Disetujui, Revisi, Ditolak, Cetak BAP) dikunci sampai terbit BAP Pertanian atau Otorisasi Override Spasial.
+                          Poligon lokasi pemohon <strong className="font-bold text-slate-900 dark:text-white">{selectedApp.applicantName} ({selectedApp.companyName})</strong> beririsan dengan <span className="font-bold text-amber-600 dark:text-amber-400">{spatialConflictAudit.conflictCategories.join(', ') || 'Zona Lahan Pertanian LP2B / Kawasan Lindung'}</span> seluas <strong className="font-mono">{spatialConflictAudit.totalOverlapHa || selectedApp.areaHa} Ha</strong>. Tombol proses (Disetujui, Revisi, Ditolak, Cetak BAP) dikunci sampai terbit BAP Pertanian atau Otorisasi Override Spasial.
                         </p>
                       </div>
                     </div>
 
-                    {/* Inter-Agency Transfer Action Button */}
-                    <div className="shrink-0 flex flex-wrap items-center gap-2">
+                    {/* Inter-Agency Transfer Action Buttons - Symmetrical Android Grid */}
+                    <div className="w-full lg:w-auto shrink-0 grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-col xl:flex-row items-stretch gap-2.5 pt-1 lg:pt-0">
                       <button
                         type="button"
                         onClick={() => setShowConflictResolutionModal(true)}
-                        className="w-full sm:w-auto px-3.5 py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-300 border border-amber-500/40 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer shadow-sm"
+                        className="min-h-[44px] px-4 py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-300 border border-amber-500/40 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition active:scale-98 cursor-pointer shadow-sm"
                         title="Buka Conflict Resolution Tool untuk mencatat pertimbangan teknis override spasial"
                       >
-                        <ShieldAlert className="w-4 h-4 text-amber-400" />
-                        <span>Override Spasial (BAP Verified)</span>
+                        <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
+                        <span className="truncate">Override Spasial (BAP Verified)</span>
                       </button>
 
                       {selectedApp.pertanianStatus === 'FORWARDED' ? (
-                        <div className="px-3.5 py-2 bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/40 rounded-xl text-xs font-bold flex items-center gap-2">
-                          <Clock className="w-4 h-4 animate-spin text-amber-600" />
-                          <span>Dalam Antrean Verifikasi Dinas Pertanian ⏳</span>
+                        <div className="min-h-[44px] px-4 py-2.5 bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/40 rounded-xl text-xs font-bold flex items-center justify-center gap-2 text-center">
+                          <Clock className="w-4 h-4 animate-spin text-amber-600 shrink-0" />
+                          <span className="truncate">Antrean Verifikasi Pertanian ⏳</span>
                         </div>
                       ) : selectedApp.pertanianStatus === 'REJECTED' ? (
-                        <div className="px-3.5 py-2 bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-500/40 rounded-xl text-xs font-bold flex items-center gap-2">
-                          <X className="w-4 h-4 text-rose-600" />
-                          <span>⚠️ Dikembalikan Dinas Pertanian</span>
+                        <div className="min-h-[44px] px-4 py-2.5 bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-500/40 rounded-xl text-xs font-bold flex items-center justify-center gap-2 text-center">
+                          <X className="w-4 h-4 text-rose-600 shrink-0" />
+                          <span className="truncate">Dikembalikan Dinas Pertanian</span>
                         </div>
                       ) : (
                         <button
                           type="button"
                           onClick={handleOpenForwardPertanianModal}
-                          className="w-full sm:w-auto px-4 py-2.5 bg-gradient-to-r from-amber-600 to-emerald-600 hover:from-amber-500 hover:to-emerald-500 text-white text-xs font-bold rounded-xl shadow-md shadow-amber-600/20 flex items-center justify-center gap-2 transition transform active:scale-95 cursor-pointer"
+                          className="min-h-[44px] px-4 py-2.5 bg-gradient-to-r from-amber-600 to-emerald-600 hover:from-amber-500 hover:to-emerald-500 text-white text-xs font-bold rounded-xl shadow-md shadow-amber-600/20 flex items-center justify-center gap-2 transition active:scale-98 cursor-pointer"
                         >
-                          <Send className="w-4 h-4" />
-                          <span>Ajukan Permohonan Perubahan Status Lahan ke Dinas Pertanian 🌾</span>
+                          <Send className="w-4 h-4 shrink-0" />
+                          <span className="truncate">Ajukan Permohonan ke Dinas Pertanian 🌾</span>
                         </button>
                       )}
                     </div>
@@ -2728,10 +2728,10 @@ export default function PuptrSpatialClearanceDashboard() {
                     <button
                       type="button"
                       onClick={() => setClearanceDecision('Approved')}
-                      className={`py-2 rounded-xl text-xs font-bold transition border ${
+                      className={`min-h-[46px] px-2 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 active:scale-98 border flex items-center justify-center cursor-pointer ${
                         clearanceDecision === 'Approved'
-                          ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                          ? 'bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/20 ring-2 ring-emerald-500/30'
+                          : 'bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-750'
                       }`}
                     >
                       Disetujui
@@ -2739,10 +2739,10 @@ export default function PuptrSpatialClearanceDashboard() {
                     <button
                       type="button"
                       onClick={() => setClearanceDecision('Requires Revision')}
-                      className={`py-2 rounded-xl text-xs font-bold transition border ${
+                      className={`min-h-[46px] px-2 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 active:scale-98 border flex items-center justify-center cursor-pointer ${
                         clearanceDecision === 'Requires Revision'
-                          ? 'bg-amber-600 text-white border-amber-600 shadow-sm'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                          ? 'bg-amber-600 text-white border-amber-600 shadow-md shadow-amber-600/20 ring-2 ring-amber-500/30'
+                          : 'bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-750'
                       }`}
                     >
                       Revisi
@@ -2750,10 +2750,10 @@ export default function PuptrSpatialClearanceDashboard() {
                     <button
                       type="button"
                       onClick={() => setClearanceDecision('Rejected')}
-                      className={`py-2 rounded-xl text-xs font-bold transition border ${
+                      className={`min-h-[46px] px-2 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 active:scale-98 border flex items-center justify-center cursor-pointer ${
                         clearanceDecision === 'Rejected'
-                          ? 'bg-rose-600 text-white border-rose-600 shadow-sm'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                          ? 'bg-rose-600 text-white border-rose-600 shadow-md shadow-rose-600/20 ring-2 ring-rose-500/30'
+                          : 'bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-750'
                       }`}
                     >
                       Ditolak
