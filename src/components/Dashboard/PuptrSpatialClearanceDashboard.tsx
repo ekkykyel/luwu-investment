@@ -48,6 +48,7 @@ import { useTechnicalSpatialLayers } from '../../hooks/useTechnicalSpatialLayers
 import { Investment } from '../../types';
 import { useData } from '../../contexts/DataContext';
 import { PkkprSlaTimelineTracker } from './PkkprSlaTimelineTracker';
+import { ConflictResolutionToolModal } from '../GIS/ConflictResolutionToolModal';
 import { LuwuLogo } from '../LuwuLogo';
 import { generateBapPdfFromElement } from '../../utils/bapPdfGenerator';
 import { CrossOpdNotificationBell } from '../CrossOpdNotificationBell';
@@ -245,6 +246,7 @@ export default function PuptrSpatialClearanceDashboard() {
   const [isExportingPdf, setIsExportingPdf] = useState<boolean>(false);
   const [isTimelineModalOpen, setIsTimelineModalOpen] = useState<boolean>(false);
   const [isGisToastDismissed, setIsGisToastDismissed] = useState<boolean>(false);
+  const [showConflictResolutionModal, setShowConflictResolutionModal] = useState<boolean>(false);
 
   // Return application to applicant (rejected or needs revision, optionally incorporating BAP Pertanian notes)
   const handleReturnToApplicant = async () => {
@@ -1680,7 +1682,17 @@ export default function PuptrSpatialClearanceDashboard() {
                     </div>
 
                     {/* Inter-Agency Transfer Action Button */}
-                    <div className="shrink-0">
+                    <div className="shrink-0 flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowConflictResolutionModal(true)}
+                        className="w-full sm:w-auto px-3.5 py-2.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-900 dark:text-amber-200 border border-amber-500/40 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
+                        title="Buka Conflict Resolution Tool untuk mencatat pertimbangan teknis override spasial"
+                      >
+                        <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                        <span>Override Spasial (BAP Verified)</span>
+                      </button>
+
                       {selectedApp.pertanianStatus === 'FORWARDED' ? (
                         <div className="px-3.5 py-2 bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/40 rounded-xl text-xs font-bold flex items-center gap-2">
                           <Clock className="w-4 h-4 animate-spin text-amber-600" />
@@ -1785,6 +1797,14 @@ export default function PuptrSpatialClearanceDashboard() {
                         </div>
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => setShowConflictResolutionModal(true)}
+                          className="px-2 py-1 bg-amber-800/80 hover:bg-amber-700 text-amber-200 text-[10px] font-bold rounded-lg border border-amber-500/40 transition cursor-pointer"
+                          title="Buka Conflict Resolution Tool untuk mencatat pertimbangan teknis override"
+                        >
+                          <span>Override 🛡️</span>
+                        </button>
                         {selectedApp.pertanianStatus === 'NOT_SUBMITTED' && (
                           <button
                             type="button"
@@ -2555,6 +2575,29 @@ export default function PuptrSpatialClearanceDashboard() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Conflict Resolution Tool Modal (Spatial Overrides) */}
+      {selectedApp && (
+        <ConflictResolutionToolModal
+          isOpen={showConflictResolutionModal}
+          onClose={() => setShowConflictResolutionModal(false)}
+          applicationId={selectedApp.id}
+          applicantName={selectedApp.applicantName}
+          companyName={selectedApp.companyName}
+          nibNik={selectedApp.nibNik}
+          districtName={selectedApp.districtName}
+          villageName={selectedApp.villageName}
+          detectedConflictType="LP2B_OVERLAP"
+          detectedOverlapSqm={Math.round(selectedApp.areaHa * 10000)}
+          detectedOverlapHa={selectedApp.areaHa}
+          existingBapNumber={selectedApp.pertanianBaNumber}
+          onOverrideSuccess={(justification, bapNum) => {
+            setTechnicalNotes(prev => `[SPATIAL OVERRIDE BAP ${bapNum || 'TERLAMPIR'}]: ${justification}\n\n${prev}`);
+            setIsGisToastDismissed(true);
+            fetchQueue();
+          }}
+        />
+      )}
 
       {/* SLA Timeline Tracker Modal */}
       {isTimelineModalOpen && selectedApp && (
