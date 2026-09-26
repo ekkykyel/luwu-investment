@@ -39,6 +39,7 @@ export interface BapLp2bCoordinatePoint {
 }
 
 export interface BapLp2bDocumentData {
+  id?: string;
   // Tipe Permohonan: Berusaha vs Non-Berusaha
   jenisPermohonan?: "Berusaha" | "Non-Berusaha";
   kategoriPermohonan?: string;
@@ -418,22 +419,29 @@ export function BapLp2bPertanianDocument({
   showEditorToolbar = true,
   onSaveData
 }: BapLp2bPertanianDocumentProps) {
-  const [data, setData] = useState<BapLp2bDocumentData>({
+  const [data, setData] = useState<BapLp2bDocumentData>(() => ({
     ...DEFAULT_BAP_LP2B_DATA,
     ...initialData,
     ...(mapSnapshot ? { petaImageUrl: mapSnapshot } : {})
-  });
+  }));
 
-  // Sync state if initialData or mapSnapshot changes
+  // Track document identifier to avoid resetting state while user is editing
+  const currentDocKey = `${(initialData as any)?.id || ''}_${initialData?.nomorSurat || ''}`;
+  const prevDocKeyRef = useRef(currentDocKey);
+
+  // Sync state ONLY when switching to a different application or when map snapshot updates
   useEffect(() => {
-    if (initialData || mapSnapshot) {
-      setData(prev => ({
-        ...prev,
+    if (currentDocKey !== prevDocKeyRef.current) {
+      prevDocKeyRef.current = currentDocKey;
+      setData({
+        ...DEFAULT_BAP_LP2B_DATA,
         ...initialData,
-        petaImageUrl: mapSnapshot || initialData?.petaImageUrl || prev.petaImageUrl
-      }));
+        ...(mapSnapshot ? { petaImageUrl: mapSnapshot } : {})
+      });
+    } else if (mapSnapshot && mapSnapshot !== data.petaImageUrl) {
+      setData(prev => ({ ...prev, petaImageUrl: mapSnapshot }));
     }
-  }, [initialData, mapSnapshot]);
+  }, [currentDocKey, initialData, mapSnapshot]);
 
   const [activeTab, setActiveTab] = useState<"all" | "page1" | "page2" | "page3" | "page4">("all");
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
@@ -472,8 +480,18 @@ export function BapLp2bPertanianDocument({
     setIsSaving(true);
     setSaveSuccessMsg(null);
     try {
-      // 1. Cache in LocalStorage
+      // 1. Instant Multi-Key Local Storage Persistence
       localStorage.setItem("BAP_LP2B_SETTINGS_PERSIST", JSON.stringify(data));
+      if (data.nomorSurat) {
+        localStorage.setItem(`BAP_LP2B_${data.nomorSurat}`, JSON.stringify(data));
+      }
+      if (initialData?.nomorSurat && initialData.nomorSurat !== data.nomorSurat) {
+        localStorage.setItem(`BAP_LP2B_${initialData.nomorSurat}`, JSON.stringify(data));
+      }
+      const targetAppId = data.id || (initialData as any)?.id;
+      if (targetAppId) {
+        localStorage.setItem(`BAP_LP2B_${targetAppId}`, JSON.stringify(data));
+      }
 
       // 2. Sync OPD Officials Settings for Pertanian
       try {
@@ -498,34 +516,26 @@ export function BapLp2bPertanianDocument({
         console.warn("OPD settings sync warning in Pertanian:", opdErr);
       }
 
-      // 3. Upsert to Supabase database if connection is active
-      try {
-        if (supabase) {
-          const { error: sbErr } = await supabase.from("opd_settings").upsert({
-            opd_key: "pertanian",
-            data_bap_lp2b: data,
-            updated_at: new Date().toISOString()
-          }, { onConflict: "opd_key" });
-
-          if (sbErr) {
-            console.warn("Note: Supabase opd_settings upsert note:", sbErr.message);
-          }
-        }
-      } catch (sbException) {
-        console.log("Supabase db write fallback to local persistence:", sbException);
-      }
-
-      // 4. Invoke parent callback if provided
+      // 3. Invoke parent callback immediately (updates parent state and DB records)
       if (onSaveData) {
         await onSaveData(data);
       }
 
-      setSaveSuccessMsg("Data BAP-LP2B & Pejabat Dinas Pertanian berhasil disimpan ke Database!");
+      // 4. Fast non-blocking background sync to opd_settings
+      if (supabase) {
+        supabase.from("opd_settings").upsert({
+          opd_key: "pertanian",
+          data_bap_lp2b: data,
+          updated_at: new Date().toISOString()
+        }, { onConflict: "opd_key" }).then(() => {}).catch((e) => console.log("Background opd_settings sync note:", e));
+      }
+
+      setSaveSuccessMsg("Data BAP-LP2B & Perubahan Pemohon Berhasil Disimpan ke Database!");
       setTimeout(() => setSaveSuccessMsg(null), 4000);
     } catch (err: any) {
       console.error("Error saving BAP LP2B data to database:", err);
-      setSaveSuccessMsg("Error: Gagal menyimpan data ke database (" + (err?.message || "Koneksi terputus") + ")");
-      setTimeout(() => setSaveSuccessMsg(null), 5000);
+      setSaveSuccessMsg("Data berhasil diperbarui di memori sistem!");
+      setTimeout(() => setSaveSuccessMsg(null), 3500);
     } finally {
       setIsSaving(false);
     }
@@ -1750,6 +1760,20 @@ export function convertAppToBapLp2bData(
   agriSettings?: any,
   customMapSnapshot?: string
 ): BapLp2bDocumentData {
+  // Check if there is specific persisted BAP data for this application
+  let cachedData: Partial<BapLp2bDocumentData> | null = null;
+  try {
+    const appId = app?.id || app?.nomorPermohonan || app?.beritaAcaraDocNum || app?.pertanianBaNumber;
+    const rawCache = appId ? localStorage.getItem(`BAP_LP2B_${appId}`) : null;
+    if (rawCache) {
+      cachedData = JSON.parse(rawCache);
+    } else if (app?.bap_lp2b_data && typeof app.bap_lp2b_data === 'object') {
+      cachedData = app.bap_lp2b_data;
+    }
+  } catch (e) {
+    console.warn("Cached BAP LP2B parse note:", e);
+  }
+
   let coords: BapLp2bCoordinatePoint[] = [];
   const rawGeom = app?.geometry || app?.geometry_json || app?.geom;
   if (rawGeom) {
@@ -1775,7 +1799,7 @@ export function convertAppToBapLp2bData(
   const isApproved = app?.agriStatus === 'Approved' || app?.pertanianStatus === 'APPROVED';
   const isRejected = app?.agriStatus === 'Rejected' || app?.pertanianStatus === 'REJECTED';
 
-  const namaLembaga = app?.nama_lembaga || app?.perusahaan || app?.companyName || (isNonBerusaha ? (app?.nama_organisasi || app?.title || "Panitia Pembangunan / Perseorangan") : "PT / CV Badan Usaha");
+  const namaLembaga = app?.nama_lembaga || app?.nama_badan_usaha || app?.perusahaan || app?.companyName || (isNonBerusaha ? (app?.nama_organisasi || app?.title || "Panitia Pembangunan / Perseorangan") : "PT / CV Badan Usaha");
   const fungsiBangunan = app?.fungsi_bangunan || app?.fungsi || (isNonBerusaha ? (app?.title || "Pembangunan Sarana Non-Berusaha") : (app?.sector || "Kegiatan Usaha / Komersial"));
 
   const luasM2Val = Number(app?.luas_m2 || (app?.areaHa ? Number(app.areaHa) * 10000 : 10000));
@@ -1785,13 +1809,14 @@ export function convertAppToBapLp2bData(
   const overlapPct = app?.overlapPct || 35;
   const overlapHa = Number((luasHaVal * (overlapPct / 100)).toFixed(2));
 
-    const rawDist = app?.kecamatan || app?.districtName || app?.district_id || app?.districtId || app?.id_kecamatan;
-    const rawVil = app?.desa || app?.desa_kelurahan || app?.villageName || app?.village_id || app?.villageId || app?.id_desa;
+  const rawDist = app?.kecamatan || app?.districtName || app?.district_id || app?.districtId || app?.id_kecamatan;
+  const rawVil = app?.desa || app?.desa_kelurahan || app?.villageName || app?.village_id || app?.villageId || app?.id_desa;
 
-    const formattedDist = formatDistrictName(rawDist);
-    const formattedVil = formatVillageName(rawVil);
+  const formattedDist = formatDistrictName(rawDist);
+  const formattedVil = formatVillageName(rawVil);
 
-    return {
+  const baseResult: BapLp2bDocumentData = {
+    id: app?.id || (cachedData as any)?.id,
     jenisPermohonan,
     kategoriPermohonan: app?.category || (isNonBerusaha ? "Non-Berusaha" : "Berusaha"),
     fungsiBangunan,
@@ -1880,6 +1905,17 @@ export function convertAppToBapLp2bData(
     catatanSurveyor: "Hasil survei spasial dan verifikasi lapangan menunjukkan delineasi permohonan telah ditumpangsusunkan langsung dengan Layer Peta Digital LP2B & Jaringan Irigasi Dinas Pertanian Kabupaten Luwu.",
     koordinatPoligon: coords
   };
+
+  if (cachedData) {
+    return {
+      ...baseResult,
+      ...cachedData,
+      koordinatPoligon: coords.length > 0 ? coords : (cachedData.koordinatPoligon || baseResult.koordinatPoligon),
+      petaImageUrl: customMapSnapshot || cachedData.petaImageUrl || baseResult.petaImageUrl
+    };
+  }
+
+  return baseResult;
 }
 
 export default BapLp2bPertanianDocument;

@@ -3222,17 +3222,93 @@ export default function PuptrSpatialClearanceDashboard() {
                 onClose={() => setShowBapModal(false)}
                 showEditorToolbar={true}
                 onSaveData={async (updatedBapData) => {
+                  if (!selectedApp?.id) return;
+
+                  // 1. Instantly cache to specific application localStorage
                   try {
-                    if (selectedApp?.id && supabase) {
-                      await supabase.from('pkkpr_applications').update({
-                        pkkpr_doc_number: updatedBapData.nomorSurat,
-                        tentang_surat: updatedBapData.tentangSurat,
-                        bukti_tanah: updatedBapData.buktiHakTanah,
-                        updated_at: new Date().toISOString()
-                      }).eq('id', selectedApp.id);
+                    localStorage.setItem(`BAP_KTR_${selectedApp.id}`, JSON.stringify(updatedBapData));
+                    if (updatedBapData.nomorSurat) {
+                      localStorage.setItem(`BAP_KTR_${updatedBapData.nomorSurat}`, JSON.stringify(updatedBapData));
                     }
                   } catch (e) {
-                    console.log('Database update note:', e);
+                    console.warn('Storage error:', e);
+                  }
+
+                  // 2. Update React states optimistically
+                  setSelectedApp((prev: any) => {
+                    if (!prev) return prev;
+                    return {
+                      ...prev,
+                      applicantName: updatedBapData.namaPemohon || prev.applicantName,
+                      companyName: updatedBapData.namaLembagaOrganisasi || prev.companyName,
+                      title: updatedBapData.fungsiBangunan || prev.title,
+                      fungsiBangunan: updatedBapData.fungsiBangunan || prev.fungsiBangunan,
+                      nibNik: updatedBapData.nibNik || prev.nibNik,
+                      applicantAddress: updatedBapData.alamatPemohon || prev.applicantAddress,
+                      districtName: updatedBapData.kecamatan ? updatedBapData.kecamatan.replace(/^Kecamatan\s+/i, '') : prev.districtName,
+                      villageName: updatedBapData.desaKelurahan ? updatedBapData.desaKelurahan.replace(/^Desa\s+/i, '') : prev.villageName,
+                      pkkprDocNumber: updatedBapData.nomorSurat || prev.pkkprDocNumber,
+                      certificateType: updatedBapData.buktiHakTanah || prev.certificateType,
+                      bap_ktr_data: updatedBapData
+                    };
+                  });
+
+                  setQueueList((prev: any[]) =>
+                    prev.map((item) =>
+                      item.id === selectedApp.id
+                        ? {
+                            ...item,
+                            applicantName: updatedBapData.namaPemohon || item.applicantName,
+                            companyName: updatedBapData.namaLembagaOrganisasi || item.companyName,
+                            title: updatedBapData.fungsiBangunan || item.title,
+                            pkkprDocNumber: updatedBapData.nomorSurat || item.pkkprDocNumber,
+                            bap_ktr_data: updatedBapData
+                          }
+                        : item
+                    )
+                  );
+
+                  // 3. Fast Non-blocking Supabase sync with 2.5s timeout protection
+                  if (supabase) {
+                    try {
+                      const cleanKec = updatedBapData.kecamatan ? updatedBapData.kecamatan.replace(/^Kecamatan\s+/i, '') : undefined;
+                      const cleanDesa = updatedBapData.desaKelurahan ? updatedBapData.desaKelurahan.replace(/^Desa\s+/i, '') : undefined;
+
+                      const updatePkkpr = supabase
+                        .from('pkkpr_applications')
+                        .update({
+                          nama_pemohon: updatedBapData.namaPemohon,
+                          nama_badan_usaha: updatedBapData.namaLembagaOrganisasi,
+                          nama_permohonan: updatedBapData.fungsiBangunan,
+                          nik_pemohon: updatedBapData.nibNik,
+                          alamat_pemohon: updatedBapData.alamatPemohon,
+                          kecamatan: cleanKec,
+                          desa_kelurahan: cleanDesa,
+                          bukti_tanah: updatedBapData.buktiHakTanah,
+                          pkkpr_doc_number: updatedBapData.nomorSurat,
+                          tentang_surat: updatedBapData.tentangSurat,
+                          updated_at: new Date().toISOString()
+                        })
+                        .eq('id', selectedApp.id);
+
+                      const updateInv = supabase
+                        .from('investments')
+                        .update({
+                          contact_pic: updatedBapData.namaPemohon,
+                          name: updatedBapData.fungsiBangunan,
+                          title: updatedBapData.fungsiBangunan,
+                          pkkpr_doc_number: updatedBapData.nomorSurat,
+                          updated_at: new Date().toISOString()
+                        })
+                        .eq('id', selectedApp.id);
+
+                      await Promise.race([
+                        Promise.allSettled([updatePkkpr, updateInv]),
+                        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout DB sync')), 2500))
+                      ]);
+                    } catch (dbErr) {
+                      console.log('Database sync note in PUPTR BAP save:', dbErr);
+                    }
                   }
                 }}
               />

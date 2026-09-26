@@ -2094,15 +2094,36 @@ export default function PertanianLandClearanceDashboard() {
               // 1. Simpan ke local cache spesifik ID permohonan
               try {
                 localStorage.setItem(`BAP_LP2B_${selectedApp.id}`, JSON.stringify(updated));
+                if (updated.nomorSurat) {
+                  localStorage.setItem(`BAP_LP2B_${updated.nomorSurat}`, JSON.stringify(updated));
+                }
               } catch (e) {
                 console.warn('Storage error:', e);
               }
 
-              // 2. Simpan ke Supabase gis_pkkpr & investments dengan timeout protection
+              // 2. Simpan ke Supabase pkkpr_applications, gis_pkkpr & investments dengan timeout protection
               try {
+                const updatePkkpr = supabase
+                  .from('pkkpr_applications')
+                  .update({
+                    nama_pemohon: updated.namaPemohon,
+                    nama_badan_usaha: updated.namaLembagaOrganisasi,
+                    nama_permohonan: updated.fungsiBangunan,
+                    nik_pemohon: updated.nibNik,
+                    alamat_pemohon: updated.alamatPemohon,
+                    pertanian_ba_number: updated.nomorSurat,
+                    pertanian_status: 'APPROVED',
+                    status_pkkpr: 'Approved_Pertanian',
+                    updated_at: new Date().toISOString()
+                  })
+                  .eq('id', selectedApp.id);
+
                 const updateGis = supabase
                   .from('gis_pkkpr')
                   .update({
+                    applicant_name: updated.namaPemohon,
+                    company_name: updated.namaLembagaOrganisasi,
+                    project_name: updated.fungsiBangunan,
                     berita_acara_pertanian_num: updated.nomorSurat,
                     status_pkkpr: 'Approved_Pertanian',
                     catatan_teknis: `[SMART FORM LP2B DISUSUN - ${updated.nomorSurat}]: ${updated.catatanRekomendasiTeknis?.join('; ') || updated.keteranganLp2b || 'Rekomendasi teknis alih fungsi lahan pertanian telah disusun.'}`,
@@ -2113,6 +2134,9 @@ export default function PertanianLandClearanceDashboard() {
                 const updateInv = supabase
                   .from('investments')
                   .update({
+                    contact_pic: updated.namaPemohon,
+                    name: updated.fungsiBangunan,
+                    title: updated.fungsiBangunan,
                     berita_acara_num: updated.nomorSurat,
                     surat_rekomendasi_num: updated.nomorSuratRekomendasi,
                     replacement_land_ha: updated.luasWajibLahanPenggantiHa || selectedApp.areaHa,
@@ -2124,8 +2148,8 @@ export default function PertanianLandClearanceDashboard() {
                   .eq('id', selectedApp.id);
 
                 await Promise.race([
-                  Promise.allSettled([updateGis, updateInv]),
-                  new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout sync DB')), 3500))
+                  Promise.allSettled([updatePkkpr, updateGis, updateInv]),
+                  new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout sync DB')), 2500))
                 ]);
               } catch (dbErr) {
                 console.warn('Supabase sync note in onSaveData:', dbErr);
@@ -2155,6 +2179,9 @@ export default function PertanianLandClearanceDashboard() {
                     if (app.id === selectedApp.id || app.nibNik === selectedApp.nibNik) {
                       return {
                         ...app,
+                        applicantName: updated.namaPemohon || app.applicantName,
+                        companyName: updated.namaLembagaOrganisasi || app.companyName,
+                        title: updated.fungsiBangunan || app.title,
                         agriStatus: 'Approved',
                         pertanianStatus: 'APPROVED',
                         beritaAcaraDocNum: updated.nomorSurat,
@@ -2177,9 +2204,15 @@ export default function PertanianLandClearanceDashboard() {
                   item.id === selectedApp.id
                     ? {
                         ...item,
+                        applicantName: updated.namaPemohon || item.applicantName,
+                        companyName: updated.namaLembagaOrganisasi || item.companyName,
+                        title: updated.fungsiBangunan || item.title,
                         beritaAcaraDocNum: updated.nomorSurat,
                         suratRekomendasiNum: updated.nomorSuratRekomendasi,
-                        replacementLandHa: updated.luasWajibLahanPenggantiHa || item.replacementLandHa
+                        pertanianBaNumber: updated.nomorSurat,
+                        pertanianSrNumber: updated.nomorSuratRekomendasi,
+                        replacementLandHa: updated.luasWajibLahanPenggantiHa || item.replacementLandHa,
+                        bap_lp2b_data: updated
                       }
                     : item
                 )
@@ -2189,9 +2222,15 @@ export default function PertanianLandClearanceDashboard() {
                 prev
                   ? {
                       ...prev,
+                      applicantName: updated.namaPemohon || prev.applicantName,
+                      companyName: updated.namaLembagaOrganisasi || prev.companyName,
+                      title: updated.fungsiBangunan || prev.title,
                       beritaAcaraDocNum: updated.nomorSurat,
                       suratRekomendasiNum: updated.nomorSuratRekomendasi,
-                      replacementLandHa: updated.luasWajibLahanPenggantiHa || prev.replacementLandHa
+                      pertanianBaNumber: updated.nomorSurat,
+                      pertanianSrNumber: updated.nomorSuratRekomendasi,
+                      replacementLandHa: updated.luasWajibLahanPenggantiHa || prev.replacementLandHa,
+                      bap_lp2b_data: updated
                     }
                   : null
               );
@@ -2216,10 +2255,76 @@ export default function PertanianLandClearanceDashboard() {
               initialData={customBapData || convertAppToBapLp2bData(selectedApp, getOpdSettings('pertanian'), mapSnapshot)}
               mapSnapshot={mapSnapshot}
               onClose={() => setShowDocumentPreview(false)}
-              onSaveData={(updated) => {
+              onSaveData={async (updated) => {
                 setCustomBapData(updated);
                 if (updated.nomorSurat) setBaDocNum(updated.nomorSurat);
                 if (updated.nomorSuratRekomendasi) setSrDocNum(updated.nomorSuratRekomendasi);
+
+                if (selectedApp?.id) {
+                  try {
+                    localStorage.setItem(`BAP_LP2B_${selectedApp.id}`, JSON.stringify(updated));
+                    if (updated.nomorSurat) {
+                      localStorage.setItem(`BAP_LP2B_${updated.nomorSurat}`, JSON.stringify(updated));
+                    }
+                  } catch (e) {}
+
+                  // Optimistically update React State
+                  setSelectedApp((prev: any) => prev ? {
+                    ...prev,
+                    applicantName: updated.namaPemohon || prev.applicantName,
+                    companyName: updated.namaLembagaOrganisasi || prev.companyName,
+                    title: updated.fungsiBangunan || prev.title,
+                    beritaAcaraDocNum: updated.nomorSurat,
+                    pertanianBaNumber: updated.nomorSurat,
+                    bap_lp2b_data: updated
+                  } : null);
+
+                  setQueueList((prev: any[]) => prev.map(item => item.id === selectedApp.id ? {
+                    ...item,
+                    applicantName: updated.namaPemohon || item.applicantName,
+                    companyName: updated.namaLembagaOrganisasi || item.companyName,
+                    title: updated.fungsiBangunan || item.title,
+                    beritaAcaraDocNum: updated.nomorSurat,
+                    pertanianBaNumber: updated.nomorSurat,
+                    bap_lp2b_data: updated
+                  } : item));
+
+                  if (supabase) {
+                    try {
+                      const updatePkkpr = supabase.from('pkkpr_applications').update({
+                        nama_pemohon: updated.namaPemohon,
+                        nama_badan_usaha: updated.namaLembagaOrganisasi,
+                        nama_permohonan: updated.fungsiBangunan,
+                        nik_pemohon: updated.nibNik,
+                        alamat_pemohon: updated.alamatPemohon,
+                        pertanian_ba_number: updated.nomorSurat,
+                        updated_at: new Date().toISOString()
+                      }).eq('id', selectedApp.id);
+
+                      const updateGis = supabase.from('gis_pkkpr').update({
+                        applicant_name: updated.namaPemohon,
+                        company_name: updated.namaLembagaOrganisasi,
+                        project_name: updated.fungsiBangunan,
+                        berita_acara_pertanian_num: updated.nomorSurat,
+                        updated_at: new Date().toISOString()
+                      }).eq('id', selectedApp.id);
+
+                      const updateInv = supabase.from('investments').update({
+                        contact_pic: updated.namaPemohon,
+                        name: updated.fungsiBangunan,
+                        title: updated.fungsiBangunan,
+                        berita_acara_num: updated.nomorSurat,
+                        surat_rekomendasi_num: updated.nomorSuratRekomendasi,
+                        updated_at: new Date().toISOString()
+                      }).eq('id', selectedApp.id);
+
+                      Promise.race([
+                        Promise.allSettled([updatePkkpr, updateGis, updateInv]),
+                        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout DB sync')), 2000))
+                      ]).catch((e) => console.log('Pertanian BAP DB sync note:', e));
+                    } catch (e) {}
+                  }
+                }
               }}
             />
           </div>

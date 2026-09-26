@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
@@ -48,25 +48,32 @@ export function SmartFormPertanianModal({
   onOpenFullBapPreview,
   onCaptureLatestSnapshot
 }: SmartFormPertanianModalProps) {
-  const [formData, setFormData] = useState<BapLp2bDocumentData>({
+  const [formData, setFormData] = useState<BapLp2bDocumentData>(() => ({
     ...DEFAULT_BAP_LP2B_DATA,
     ...(initialData || {}),
     ...(mapSnapshot ? { petaImageUrl: mapSnapshot } : {})
-  });
+  }));
 
   const [activeTab, setActiveTab] = useState<"pemohon" | "agraria" | "kompensasi" | "pejabat" | "geospasial">("pemohon");
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
 
+  // Track document identifier to prevent form state clobbering on parent re-renders
+  const currentDocKey = `${(initialData as any)?.id || ''}_${initialData?.nomorSurat || ''}`;
+  const prevDocKeyRef = useRef(currentDocKey);
+
   useEffect(() => {
-    if (initialData) {
-      setFormData(prev => ({
-        ...prev,
-        ...initialData,
-        petaImageUrl: mapSnapshot || initialData.petaImageUrl || prev.petaImageUrl
-      }));
+    if (currentDocKey !== prevDocKeyRef.current) {
+      prevDocKeyRef.current = currentDocKey;
+      setFormData({
+        ...DEFAULT_BAP_LP2B_DATA,
+        ...(initialData || {}),
+        ...(mapSnapshot ? { petaImageUrl: mapSnapshot } : {})
+      });
+    } else if (mapSnapshot && mapSnapshot !== formData.petaImageUrl) {
+      setFormData(prev => ({ ...prev, petaImageUrl: mapSnapshot }));
     }
-  }, [initialData, mapSnapshot]);
+  }, [currentDocKey, initialData, mapSnapshot]);
 
   if (!isOpen) return null;
 
@@ -88,8 +95,18 @@ export function SmartFormPertanianModal({
     setIsSaving(true);
     setSaveSuccessMsg(null);
     try {
-      // 1. Simpan ke Local Storage untuk kontinuitas offline & persistence
+      // 1. Simpan ke Local Storage multi-key untuk kontinuitas offline & persistence
       localStorage.setItem("BAP_LP2B_SETTINGS_PERSIST", JSON.stringify(formData));
+      if (formData.nomorSurat) {
+        localStorage.setItem(`BAP_LP2B_${formData.nomorSurat}`, JSON.stringify(formData));
+      }
+      if (initialData?.nomorSurat && initialData.nomorSurat !== formData.nomorSurat) {
+        localStorage.setItem(`BAP_LP2B_${initialData.nomorSurat}`, JSON.stringify(formData));
+      }
+      const targetAppId = formData.id || (initialData as any)?.id;
+      if (targetAppId) {
+        localStorage.setItem(`BAP_LP2B_${targetAppId}`, JSON.stringify(formData));
+      }
 
       // 2. Sinkronkan Pengaturan OPD Dinas Pertanian
       try {
@@ -114,36 +131,33 @@ export function SmartFormPertanianModal({
         console.warn("OPD settings sync warning:", opdErr);
       }
 
-      // 3. Upsert ke Supabase opd_settings dengan safe timeout (3 detik)
-      try {
-        if (supabase) {
-          const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Timeout koneksi opd_settings")), 3000)
-          );
-          const upsertPromise = supabase.from("opd_settings").upsert(
-            {
-              opd_key: "pertanian",
-              data_bap_lp2b: formData,
-              updated_at: new Date().toISOString()
-            },
-            { onConflict: "opd_key" }
-          );
-
-          await Promise.race([upsertPromise, timeoutPromise]);
-        }
-      } catch (sbErr) {
-        console.warn("Supabase opd_settings note in Smart Form:", sbErr);
+      // 3. Background non-blocking sync ke Supabase opd_settings
+      if (supabase) {
+        (async () => {
+          try {
+            await supabase.from("opd_settings").upsert(
+              {
+                opd_key: "pertanian",
+                data_bap_lp2b: formData,
+                updated_at: new Date().toISOString()
+              },
+              { onConflict: "opd_key" }
+            );
+          } catch (sbErr) {
+            console.log("Background opd_settings sync note:", sbErr);
+          }
+        })();
       }
 
-      // 4. Trigger Parent Callback untuk update database permohonan (gis_pkkpr & investments)
+      // 4. Trigger Parent Callback untuk update optimis database permohonan
       if (onSaveData) {
         await onSaveData(formData);
       }
 
       setSaveSuccessMsg("Data Smart Form & BAP-LP2B berhasil disinkronkan ke Database!");
 
-      // 5. Tampilkan Notifikasi Sukses yang Jelas & Profesional
-      await Swal.fire({
+      // 5. Tampilkan Notifikasi Cepat & Tutup Modal Tanpa Menunggu Lama
+      Swal.fire({
         icon: "success",
         title: "Formulir Berhasil Disimpan & Diterapkan! 🌾",
         html: `
@@ -167,11 +181,11 @@ export function SmartFormPertanianModal({
         `,
         confirmButtonColor: "#059669",
         confirmButtonText: "Kembali ke Dashboard",
-        timer: 3500,
+        timer: 1500,
         timerProgressBar: true
       });
 
-      // 6. Tutup modal secara otomatis dan kembali ke Dashboard Menu Rekomendasi Lahan Pertanian
+      // 6. Tutup modal secara otomatis
       onClose();
 
     } catch (err: any) {

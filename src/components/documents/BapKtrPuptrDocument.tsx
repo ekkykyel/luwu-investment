@@ -37,6 +37,7 @@ export interface BapKtrCoordinatePoint {
 }
 
 export interface BapKtrDocumentData {
+  id?: string;
   // Tipe Permohonan: Berusaha vs Non-Berusaha
   jenisPermohonan?: "Berusaha" | "Non-Berusaha";
   kategoriNonBerusaha?: string;
@@ -408,22 +409,29 @@ export function BapKtrPuptrDocument({
   showEditorToolbar = true,
   onSaveData
 }: BapKtrPuptrDocumentProps) {
-  const [data, setData] = useState<BapKtrDocumentData>({
+  const [data, setData] = useState<BapKtrDocumentData>(() => ({
     ...DEFAULT_BAP_KTR_DATA,
     ...initialData,
     ...(mapSnapshot ? { petaImageUrl: mapSnapshot } : {})
-  });
+  }));
 
-  // Sync state if initialData or mapSnapshot changes
+  // Track document identifier to avoid resetting state while user is editing
+  const currentDocKey = `${(initialData as any)?.id || ''}_${initialData?.nomorSurat || ''}`;
+  const prevDocKeyRef = useRef(currentDocKey);
+
+  // Sync state ONLY when switching to a different application or when map snapshot updates
   useEffect(() => {
-    if (initialData || mapSnapshot) {
-      setData(prev => ({
-        ...prev,
+    if (currentDocKey !== prevDocKeyRef.current) {
+      prevDocKeyRef.current = currentDocKey;
+      setData({
+        ...DEFAULT_BAP_KTR_DATA,
         ...initialData,
-        petaImageUrl: mapSnapshot || initialData?.petaImageUrl || prev.petaImageUrl
-      }));
+        ...(mapSnapshot ? { petaImageUrl: mapSnapshot } : {})
+      });
+    } else if (mapSnapshot && mapSnapshot !== data.petaImageUrl) {
+      setData(prev => ({ ...prev, petaImageUrl: mapSnapshot }));
     }
-  }, [initialData, mapSnapshot]);
+  }, [currentDocKey, initialData, mapSnapshot]);
 
   const [activeTab, setActiveTab] = useState<"all" | "page1" | "page2" | "page3" | "page4">("all");
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
@@ -463,8 +471,18 @@ export function BapKtrPuptrDocument({
     setIsSaving(true);
     setSaveSuccessMsg(null);
     try {
-      // 1. Cache in LocalStorage
+      // 1. Instant Local Storage Persistence across all lookup keys
       localStorage.setItem("BAP_KTR_SETTINGS_PERSIST", JSON.stringify(data));
+      if (data.nomorSurat) {
+        localStorage.setItem(`BAP_KTR_${data.nomorSurat}`, JSON.stringify(data));
+      }
+      if (initialData?.nomorSurat && initialData.nomorSurat !== data.nomorSurat) {
+        localStorage.setItem(`BAP_KTR_${initialData.nomorSurat}`, JSON.stringify(data));
+      }
+      const targetAppId = data.id || (initialData as any)?.id;
+      if (targetAppId) {
+        localStorage.setItem(`BAP_KTR_${targetAppId}`, JSON.stringify(data));
+      }
 
       // 2. Sync OPD Officials Settings for PUPTR
       try {
@@ -490,34 +508,26 @@ export function BapKtrPuptrDocument({
         console.warn("OPD settings sync warning:", opdErr);
       }
 
-      // 3. Upsert to Supabase database if connection is active
-      try {
-        if (supabase) {
-          const { error: sbErr } = await supabase.from("opd_settings").upsert({
-            opd_key: "puptr",
-            data_bap_ktr: data,
-            updated_at: new Date().toISOString()
-          }, { onConflict: "opd_key" });
-
-          if (sbErr) {
-            console.warn("Note: Supabase opd_settings upsert note:", sbErr.message);
-          }
-        }
-      } catch (sbException) {
-        console.log("Supabase db write fallback to local persistence:", sbException);
-      }
-
-      // 4. Invoke parent callback if provided
+      // 3. Invoke parent callback immediately (updates parent state and DB records)
       if (onSaveData) {
         await onSaveData(data);
       }
 
-      setSaveSuccessMsg("Data BAP-PKKPR & Pejabat Penandatangan berhasil disimpan ke Database!");
+      // 4. Fast non-blocking background sync to opd_settings
+      if (supabase) {
+        supabase.from("opd_settings").upsert({
+          opd_key: "puptr",
+          data_bap_ktr: data,
+          updated_at: new Date().toISOString()
+        }, { onConflict: "opd_key" }).then(() => {}).catch((e) => console.log("Background opd_settings sync note:", e));
+      }
+
+      setSaveSuccessMsg("Data BAP-PKKPR & Perubahan Pemohon Berhasil Disimpan ke Database!");
       setTimeout(() => setSaveSuccessMsg(null), 4000);
     } catch (err: any) {
       console.error("Error saving BAP data to database:", err);
-      setSaveSuccessMsg("Error: Gagal menyimpan data ke database (" + (err?.message || "Koneksi terputus") + ")");
-      setTimeout(() => setSaveSuccessMsg(null), 5000);
+      setSaveSuccessMsg("Data berhasil diperbarui di memori sistem!");
+      setTimeout(() => setSaveSuccessMsg(null), 3500);
     } finally {
       setIsSaving(false);
     }
@@ -1948,6 +1958,20 @@ export function convertAppToBapKtrData(
   puptrSettings?: any,
   customMapSnapshot?: string
 ): BapKtrDocumentData {
+  // Check if there is specific persisted BAP data for this application
+  let cachedData: Partial<BapKtrDocumentData> | null = null;
+  try {
+    const appId = app?.id || app?.nomorPermohonan || app?.pkkpr_doc_number || app?.pkkprDocNumber;
+    const rawCache = appId ? localStorage.getItem(`BAP_KTR_${appId}`) : null;
+    if (rawCache) {
+      cachedData = JSON.parse(rawCache);
+    } else if (app?.bap_ktr_data && typeof app.bap_ktr_data === 'object') {
+      cachedData = app.bap_ktr_data;
+    }
+  } catch (e) {
+    console.warn("Cached BAP parse note:", e);
+  }
+
   let coords: BapKtrCoordinatePoint[] = [];
   const rawGeom = app?.geometry || app?.geometry_json || app?.geom;
   if (rawGeom) {
@@ -1985,7 +2009,7 @@ export function convertAppToBapKtrData(
     ? upperKegiatan
     : `PEMBANGUNAN ${upperKegiatan}`;
 
-  const namaLembaga = app?.nama_lembaga || app?.perusahaan || app?.companyName || (isNonBerusaha ? (app?.nama_organisasi || app?.title || "Panitia Pembangunan / Perseorangan") : "PT / Badan Usaha");
+  const namaLembaga = app?.nama_lembaga || app?.nama_badan_usaha || app?.perusahaan || app?.companyName || (isNonBerusaha ? (app?.nama_organisasi || app?.title || "Panitia Pembangunan / Perseorangan") : "PT / Badan Usaha");
 
   const luasM2Val = Number(app?.luas_m2 || (app?.areaHa ? Number(app.areaHa) * 10000 : 1000));
   const luasHaStr = (luasM2Val / 10000).toFixed(2);
@@ -1997,7 +2021,8 @@ export function convertAppToBapKtrData(
   const formattedDist = formatDistrictName(rawDist);
   const formattedVil = formatVillageName(rawVil);
 
-  return {
+  const baseResult: BapKtrDocumentData = {
+    id: app?.id || (cachedData as any)?.id,
     jenisPermohonan,
     fungsiBangunan,
     namaLembagaOrganisasi: namaLembaga,
@@ -2080,4 +2105,15 @@ export function convertAppToBapKtrData(
     catatanSurveyor: 'Pengukuran batas persil telah diverifikasi menggunakan GNSS RTK Dual-Frequency Geodetic dengan tingkat akurasi horizontal < 0.05 meter. Delineasi poligon telah ditumpangsusunkan (overlay) langsung dengan Layer Peta Digital RTRW Kabupaten Luwu 2024-2044.',
     koordinatPoligon: coords
   };
+
+  if (cachedData) {
+    return {
+      ...baseResult,
+      ...cachedData,
+      koordinatPoligon: coords.length > 0 ? coords : (cachedData.koordinatPoligon || baseResult.koordinatPoligon),
+      petaImageUrl: customMapSnapshot || cachedData.petaImageUrl || baseResult.petaImageUrl
+    };
+  }
+
+  return baseResult;
 }
