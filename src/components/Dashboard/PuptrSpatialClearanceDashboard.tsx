@@ -143,7 +143,7 @@ export default function PuptrSpatialClearanceDashboard() {
   const [isSavingGeometry, setIsSavingGeometry] = useState<boolean>(false);
 
   // Master Data & Spatial Selection State
-  const { districts, villages } = useData();
+  const { districts, villages, rtrwZoning } = useData();
   const [selectedDistrictId, setSelectedDistrictId] = useState<string | null>(null);
   const [selectedVillageId, setSelectedVillageId] = useState<string | null>(null);
 
