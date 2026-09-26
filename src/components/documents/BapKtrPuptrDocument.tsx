@@ -5,6 +5,7 @@ import { OFFICIAL_LUWU_LOGO_URL } from "../LuwuLogo";
 import { getOpdSettings, saveOpdSettings } from "../../utils/opdSettingsStorage";
 import { getEffectiveMapImageUrl, generateLuwuGisMapSvgDataUrl } from "../../utils/luwuGisMapGenerator";
 import { formatDistrictName, formatVillageName } from "../../utils/gisHelpers";
+import { auditPkkprPipelineGeometry, auditPkkprVsInvestmentSridComparison } from "../../utils/geoUtils";
 import { supabase } from "../../lib/supabaseClient";
 import { 
   Printer, 
@@ -123,6 +124,14 @@ export function ddToDms(dd: number, isLat: boolean): string {
  */
 export function extractCoordinatesFromGeometry(geometry: any): BapKtrCoordinatePoint[] {
   if (!geometry) return [];
+
+  // Granular pipeline audit before coordinate extraction
+  try {
+    auditPkkprPipelineGeometry(geometry, "BAP PKKPR Document Coordinate Extraction Pipeline");
+  } catch (err) {
+    console.warn("Pipeline geometry audit log note:", err);
+  }
+
   let ring: [number, number][] = [];
 
   if (typeof geometry === 'string') {
@@ -1976,6 +1985,26 @@ export function convertAppToBapKtrData(
   const rawGeom = app?.geometry || app?.geometry_json || app?.geom;
   if (rawGeom) {
     coords = extractCoordinatesFromGeometry(rawGeom);
+    try {
+      auditPkkprVsInvestmentSridComparison(
+        rawGeom,
+        app?.original_geometry || rawGeom,
+        {
+          pkkpr_doc_number: app?.skPkkprDocNumber || app?.pkkprDocNumber || app?.pkkpr_doc_number,
+          pemohon: app?.applicantName || app?.nama_pemohon || "IRFAN",
+          lokasi: app?.lokasi_dimohon || "Desa Noling, Kec. Bua Ponrang",
+          luas: app?.luas_m2 ? `${app.luas_m2} m²` : "42.000 m² (4.20 Ha)"
+        },
+        {
+          nama_investasi: app?.title || app?.nama_permohonan || "SENTRA KAKAO NOLING",
+          pemohon: app?.nama_pemohon || "IRFAN",
+          sektor: app?.sector || "Pertanian",
+          luas: app?.luas_m2 ? `${app.luas_m2} m²` : "10.000 m² (1.00 Ha)"
+        }
+      );
+    } catch (e) {
+      console.warn("SRID audit comparison note:", e);
+    }
   }
   if (coords.length === 0 && Array.isArray(app?.koordinat_poligon) && app.koordinat_poligon.length > 0) {
     coords = app.koordinat_poligon;
