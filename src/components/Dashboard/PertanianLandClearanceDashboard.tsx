@@ -89,6 +89,8 @@ export interface AgrarianQueueItem {
   suratRekomendasiNum?: string;
   rejectionReason?: string;
   replacementLandHa?: number;
+  pkkprDocNumber?: string;
+  skPkkprDocNumber?: string;
   geometry?: any;
   sertifikatTanahUrl?: string;
   suratPengantarDesaUrl?: string;
@@ -353,7 +355,7 @@ export default function PertanianLandClearanceDashboard() {
             const isBerusaha = item.jenis_permohonan === 'Berusaha';
             const rawDist = item.kecamatan || item.district_id || item.districtId || '';
             const resolvedDistrictName = formatDistrictName(rawDist);
-            const resolvedDistrictId = matchedDist ? matchedDist.id : 'dist_luwu';
+            const resolvedDistrictId = rawDist || 'dist_luwu';
 
             const rawVil = item.desa_kelurahan || item.village_id || item.villageId || '';
             const resolvedVillageName = formatVillageName(rawVil);
@@ -435,7 +437,7 @@ export default function PertanianLandClearanceDashboard() {
               const isNik = (item.plot_number && item.plot_number.length === 16) || item.contact_pic?.toLowerCase().includes('h.') || (item.category && item.category.includes('Non-Komersial'));
               const rawDist = item.district_id || item.districtId || item.kecamatan || item.id_kecamatan || '';
               const resolvedDistrictName = formatDistrictName(rawDist);
-              const resolvedDistrictId = matchedDist ? matchedDist.id : 'dist_luwu';
+              const resolvedDistrictId = rawDist || 'dist_luwu';
               const rawVil = item.village_id || item.villageId || item.desa || item.id_desa || '';
               const resolvedVillageName = formatVillageName(rawVil);
 
@@ -520,7 +522,7 @@ export default function PertanianLandClearanceDashboard() {
             } else {
               const rawDist = fApp.districtName || fApp.districtId || fApp.kecamatan || '';
               const resolvedDistrictName = formatDistrictName(rawDist);
-              const resolvedDistrictId = matchedDist ? matchedDist.id : 'dist_luwu';
+              const resolvedDistrictId = rawDist || 'dist_luwu';
               const resolvedVillageName = formatVillageName(fApp.villageName || fApp.villageId || fApp.desa);
 
               mapped.unshift({

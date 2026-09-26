@@ -99,7 +99,10 @@ export interface PkkprApplicationItem {
   suratPengantarDesaUrl?: string;
   berkasLegalitasGabunganUrl?: string;
   geometry?: any;
-  pkkprStatus: 'Pending Spatial Check' | 'Approved' | 'Requires Revision' | 'Rejected' | 'Returned';
+  pkkprStatus: 'Pending Spatial Check' | 'Approved' | 'Requires Revision' | 'Rejected' | 'Returned' | 'Approved_Pertanian' | 'Approved_PUPTR' | 'Published' | string;
+  status_pkkpr?: string;
+  status?: string;
+  pertekDocNumber?: string;
   pkkprDocNumber?: string;
   skPkkprDocNumber?: string;
   technicalNotes?: string;
