@@ -1565,7 +1565,7 @@ export default function AdminPortalDashboard() {
       />
 
       {/* Main Content */}
-      <div className="w-full md:flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto flex flex-col">
+      <div className="w-full md:flex-1 px-3.5 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 overflow-y-auto flex flex-col min-w-0">
         {/* Top Navbar */}
         <div className="hidden md:flex justify-between items-center py-4 px-4 md:px-6 lg:px-8 -mx-4 md:-mx-6 lg:-mx-8 -mt-4 md:-mt-6 lg:-mt-8 mb-6 border-b border-slate-200 dark:border-slate-800/60 sticky top-0 z-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
           <div className="flex items-center gap-2">
