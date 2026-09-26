@@ -792,8 +792,12 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
     }
 
     const sDistId = String(props.selectedDistrictId).toLowerCase().trim();
-    const districtObj = props.districts.find(d => String(d.id).toLowerCase().trim() === sDistId);
-    const dName = districtObj ? districtObj.name.toLowerCase().trim() : "";
+    const districtObj = props.districts.find(d => 
+      String(d.id).toLowerCase().trim() === sDistId ||
+      normalizeName(d.name) === normalizeName(sDistId) ||
+      d.name.toLowerCase().trim() === sDistId
+    );
+    const dName = districtObj ? districtObj.name.toLowerCase().trim() : sDistId;
 
     let geojson = districtObj?.geojson || null;
 
@@ -805,12 +809,13 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
       const match = features.find((feat: any) => {
         const p = feat.properties || {};
         const fId = String(p.id || p.districtId || p.district_id || p.id_kecamatan || "").toLowerCase().trim();
-        if (fId && fId === sDistId) return true;
+        if (fId && (fId === sDistId || fId === `dist_${sDistId.replace(/\s+/g, '_')}`)) return true;
         
         const featName = String(p.KECAMATAN || p.kecamatan || p.name || p.Name || p.WADMKC || "").toLowerCase().trim();
         const cleanKec = featName.replace(/kec\.\s*/i, "").replace(/kecamatan\s*/i, "").trim();
         
-        if (dName && (cleanKec === dName || cleanKec.includes(dName) || dName.includes(cleanKec))) return true;
+        if (dName && (cleanKec === dName || normalizeName(cleanKec) === normalizeName(dName) || cleanKec.includes(dName) || dName.includes(cleanKec))) return true;
+        if (cleanKec === sDistId || normalizeName(cleanKec) === normalizeName(sDistId)) return true;
         return false;
       });
       if (match) geojson = match;

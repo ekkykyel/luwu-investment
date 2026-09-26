@@ -38,13 +38,13 @@ export const TECHNICAL_LAYERS_CONFIG: LayerMetadata[] = [
     color: '#10b981',
     lineWidth: 1,
     opacity: 0.45,
-    defaultActive: false,
+    defaultActive: true,
     featureCountHint: 227
   },
   // LINGKUNGAN
   {
     id: 'layer_sawah',
-    name: 'Layer Sawah',
+    name: 'Layer Sawah (LP2B)',
     category: 'Lingkungan',
     url: '/gis_sawah.json',
     color: '#22c55e',
@@ -61,7 +61,7 @@ export const TECHNICAL_LAYERS_CONFIG: LayerMetadata[] = [
     color: '#0ea5e9',
     lineWidth: 1.5,
     opacity: 0.65,
-    defaultActive: false,
+    defaultActive: true,
     featureCountHint: 50
   },
   {
@@ -100,7 +100,7 @@ export const TECHNICAL_LAYERS_CONFIG: LayerMetadata[] = [
   },
   {
     id: 'layer_zonasi',
-    name: 'Zonasi Kawasan (RTRW)',
+    name: 'Zonasi Kawasan (RTRW & Hutan Lindung)',
     category: 'Kehutanan & Tata Ruang',
     url: '/gis_zonasi.json',
     color: '#8b5cf6',
