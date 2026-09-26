@@ -33,6 +33,7 @@ import {
   Award
 } from 'lucide-react';
 import Swal from 'sweetalert2';
+import { SkPkkprDpmptspDocument, SkPkkprDpmptspData } from '../documents/SkPkkprDpmptspDocument';
 import { supabase } from '../../lib/supabaseClient';
 import { formatRupiah } from '../../lib/formatters';
 import {
@@ -1725,102 +1726,63 @@ export default function PkkprBusinessProcessMonitorDashboard() {
 
       {/* 10. MODAL PRATINJAU DOKUMEN RESMI SK PKKPR */}
       {showPrintModal && selectedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="bg-white text-slate-900 rounded-3xl max-w-2xl w-full p-8 space-y-6 shadow-2xl animate-in zoom-in-95 duration-200 max-h-[95vh] overflow-y-auto font-serif">
-            {/* Kop Surat Resmi */}
-            <div className="text-center border-b-2 border-slate-900 pb-4 space-y-1">
-              <h2 className="text-base font-extrabold tracking-wider uppercase">Pemerintah Kabupaten Luwu</h2>
-              <h3 className="text-sm font-bold uppercase">Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu</h3>
-              <p className="text-[11px] font-sans text-slate-600">
-                Jl. Jenderal Sudirman No. 1, Kompleks Perkantoran Pemkab Luwu, Belopa • Telp: (0471) 321-456
-              </p>
-            </div>
-
-            {/* Title Document */}
-            <div className="text-center space-y-1">
-              <h4 className="text-sm font-extrabold uppercase tracking-wide underline">
-                Surat Keputusan Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (SK PKKPR)
-              </h4>
-              <p className="text-xs font-mono font-bold">
-                Nomor: {selectedItem.skPkkprDocNumber || selectedItem.puptrDocNumber || '503/PKKPR/LUWU/2026/089'}
-              </p>
-            </div>
-
-            {/* Document Content */}
-            <div className="text-xs font-sans space-y-3 leading-relaxed">
-              <p>
-                Berdasarkan hasil telaah teknis kesesuaian tata ruang dari <strong>Dinas Pekerjaan Umum dan Tata Ruang (PUPTR)</strong> Nomor <code>{selectedItem.puptrDocNumber || '503/PKKPR-PUPTR/2026'}</code> serta rekomendasi teknis dari <strong>Dinas Pertanian Kabupaten Luwu</strong> Nomor <code>{selectedItem.pertanianDocNumber || '521/REK-DISTAN/2026'}</code>, Pemerintah Kabupaten Luwu memberikan Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang kepada:
-              </p>
-
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1.5">
-                <div className="grid grid-cols-3 gap-2">
-                  <span className="font-bold text-slate-600">Nama Perusahaan / Pemohon:</span>
-                  <span className="col-span-2 font-extrabold text-slate-900">{selectedItem.companyName} ({selectedItem.applicantName})</span>
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  <span className="font-bold text-slate-600">Nomor Induk Berusaha (NIB/NIK):</span>
-                  <span className="col-span-2 font-mono font-bold text-slate-900">{selectedItem.nibNik}</span>
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  <span className="font-bold text-slate-600">Lokasi Tapak Proyek:</span>
-                  <span className="col-span-2 font-semibold text-slate-900">Desa {selectedItem.villageName}, Kec. {selectedItem.districtName}, Kab. Luwu</span>
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  <span className="font-bold text-slate-600">Luas Lahan Disetujui:</span>
-                  <span className="col-span-2 font-semibold text-slate-900">{selectedItem.areaHa} Hektar</span>
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  <span className="font-bold text-slate-600">Peruntukan Ruang:</span>
-                  <span className="col-span-2 font-semibold text-indigo-700">Kawasan Peruntukan {selectedItem.sector} (Sesuai RTRW)</span>
-                </div>
-              </div>
-
-              <p className="text-[11px] text-slate-600 pt-2 italic">
-                Dokumen ini merupakan persetujuan resmi berkekuatan hukum dan menjadi persyaratan dasar penerbitan izin berusaha pada sistem OSS-RBA.
-              </p>
-            </div>
-
-            {/* Signature & QR Seal Block */}
-            <div className="pt-4 flex justify-between items-end border-t border-slate-200 font-sans">
-              <div className="flex items-center gap-3">
-                <div className="p-2 border-2 border-slate-900 rounded-xl">
-                  <QrCode className="w-14 h-14 text-slate-900" />
-                </div>
-                <div className="text-[10px] text-slate-500 space-y-0.5">
-                  <p className="font-bold text-slate-900">Validasi Digital DPMPTSP</p>
-                  <p>Kode Verifikasi: <code>{selectedItem.id.slice(0, 12).toUpperCase()}</code></p>
-                  <p>Dicetak: {new Date().toLocaleDateString('id-ID')}</p>
-                </div>
-              </div>
-
-              <div className="text-center text-xs space-y-1">
-                <p className="text-slate-600">Belopa, {new Date().toLocaleDateString('id-ID')}</p>
-                <p className="font-bold">Kepala DPMPTSP Kabupaten Luwu</p>
-                <div className="h-12 flex items-center justify-center font-serif text-slate-400 italic text-[11px]">
-                  [Tanda Tangan Elektronik]
-                </div>
-                <p className="font-extrabold underline text-slate-900">Drs. H. MUHAMMAD SALEH, M.Si</p>
-                <p className="text-[10px] text-slate-500">NIP. 19740512 199903 1 004</p>
-              </div>
-            </div>
-
-            {/* Modal Buttons */}
-            <div className="flex justify-end gap-2 pt-4 border-t border-slate-200 font-sans">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-2 sm:p-4 overflow-y-auto">
+          <div className="bg-slate-900 rounded-3xl border border-slate-800 w-full max-w-5xl max-h-[94vh] overflow-y-auto shadow-2xl p-4 sm:p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3 print:hidden">
+              <h3 className="text-sm font-bold text-teal-300">
+                Dokumen Resmi Surat Keputusan Izin PKKPR DPMPTSP Kab. Luwu
+              </h3>
               <button
-                onClick={() => window.print()}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer"
-              >
-                <Printer className="w-3.5 h-3.5" />
-                <span>Cetak Dokumen Sekarang</span>
-              </button>
-
-              <button
+                type="button"
                 onClick={() => setShowPrintModal(false)}
-                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-xl text-xs font-bold transition cursor-pointer"
+                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white cursor-pointer transition"
               >
-                Tutup
+                ✕
               </button>
             </div>
+
+            <SkPkkprDpmptspDocument
+              data={{
+                nomorSkPkkpr: selectedItem.skPkkprDocNumber || `503/SK-PKKPR/DPMPTSP-LW/${new Date().getFullYear()}/${selectedItem.id.slice(0, 4)}`,
+                tanggalDitetapkan: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+                tempatDitetapkan: 'Belopa',
+                jenisPermohonan: 'Berusaha',
+                nomorBapPuptr: selectedItem.puptrDocNumber || `600.1.15/042/BAP-PKKPR-B/PUPTR-TR/LUWU/${new Date().getFullYear()}`,
+                tanggalBapPuptr: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+                nomorBapPertanian: selectedItem.pertanianDocNumber,
+                tanggalBapPertanian: selectedItem.pertanianDocNumber ? new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : undefined,
+                namaPemohon: selectedItem.applicantName || 'Pemohon Terdaftar',
+                namaPerusahaan: selectedItem.companyName || 'Badan Usaha',
+                nibOss: selectedItem.nibNik || 'NIB-OSS-TERDAFTAR',
+                alamatPemohon: `Desa/Kel. ${selectedItem.villageName}, Kec. ${selectedItem.districtName}, Kab. Luwu`,
+                sektorUsaha: selectedItem.sector || 'Komersial / Usaha',
+                kbliCode: '68111',
+                lokasiKegiatan: `Desa/Kel. ${selectedItem.villageName}, Kec. ${selectedItem.districtName}, Kab. Luwu`,
+                desaKelurahan: selectedItem.villageName,
+                kecamatan: selectedItem.districtName,
+                kabupaten: 'Luwu',
+                luasLahanPermohonan: `${selectedItem.areaHa} Hektar (Ha)`,
+                luasLahanDisetujui: `${selectedItem.areaHa} Hektar (Ha)`,
+                statusKepemilikanTanah: 'Sertifikat Hak Milik / Bukti Kepemilikan Sah',
+                zonaRtrw: `Kawasan Peruntukan ${selectedItem.sector} RTRW Kab. Luwu`,
+                fungsiBangunan: selectedItem.sector || 'Bangunan Gedung Komersial',
+                koefisienDasarBangunan: '60%',
+                koefisienLantaiBangunan: '2.4',
+                koefisienDaerahHijau: '20%',
+                garisSempadanBangunan: '15 meter dari As Jalan Utama / 10 meter dari Sempadan Sungai',
+                ketentuanPersyaratanTeknis: [
+                  'Mematuhi seluruh ketentuan persyaratan teknis bangunan gedung dan tata ruang sesuai Perda RTRW Kab. Luwu No. 3 Tahun 2024;',
+                  'Mengurus dokumen perizinan lingkungan lanjutan (AMDAL/UKL-UPL/SPPL) dan Persetujuan Bangunan Gedung (PBG);',
+                  'Tidak memindahtangankan dokumen SK PKKPR ini kepada pihak lain tanpa persetujuan tertulis dari Pemerintah Kabupaten Luwu.'
+                ],
+                masaBerlakuTahun: 3,
+                kadisNama: 'Drs. H. Muhammad Rudi, M.Si',
+                kadisNip: '19740812 199803 1 004',
+                kadisPangkatGolongan: 'Pembina Utama Muda (IV/c)',
+                kadisJabatan: 'Kepala Dinas Penanaman Modal dan PTSP Kab. Luwu',
+                isTteSigned: true
+              }}
+            />
           </div>
         </div>
       )}

@@ -31,6 +31,8 @@ import { supabase } from '../../lib/supabase';
 import { getOpdSettings } from '../../utils/opdSettingsStorage';
 import { addCrossOpdNotification } from '../../utils/crossOpdNotificationStore';
 import { PkkprSlaTimelineTracker, PkkprSlaTimelineData } from './PkkprSlaTimelineTracker';
+import { SkPkkprDpmptspDocument, SkPkkprDpmptspData } from '../documents/SkPkkprDpmptspDocument';
+import { SmartFormSkPkkprModal } from './SmartFormSkPkkprModal';
 
 interface PkkprIssuanceItem {
   id: string;
@@ -66,6 +68,8 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
   const [isProcessModalOpen, setIsProcessModalOpen] = useState(false);
   const [isTimelineModalOpen, setIsTimelineModalOpen] = useState(false);
   const [isPdfPreviewOpen, setIsPdfPreviewOpen] = useState(false);
+  const [isSmartFormOpen, setIsSmartFormOpen] = useState(false);
+  const [customSkData, setCustomSkData] = useState<SkPkkprDpmptspData | null>(null);
 
   // Processing form state
   const [generatedSkNumber, setGeneratedSkNumber] = useState('');
@@ -77,6 +81,63 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const dpmptspSettings = getOpdSettings('dpmptsp');
+
+  // Helper to build SK Data object for Document & Smart Form
+  const buildSkData = (item: PkkprIssuanceItem, overrideSkNum?: string, isTte?: boolean): SkPkkprDpmptspData => {
+    const dateStr = new Date().toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+
+    return {
+      nomorSkPkkpr: overrideSkNum || item.skPkkprNum || `503/SK-PKKPR/DPMPTSP-LW/${new Date().getFullYear()}/${item.id.slice(0, 4)}`,
+      tanggalDitetapkan: dateStr,
+      tempatDitetapkan: 'Belopa',
+      jenisPermohonan: item.applicantType.includes('NIB') ? 'Berusaha' : 'Non-Berusaha',
+      
+      nomorBapPuptr: item.pertekPuptrNum || `600.1.15/042/BAP-PKKPR-B/PUPTR-TR/LUWU/${new Date().getFullYear()}`,
+      tanggalBapPuptr: item.pertekDate ? new Date(item.pertekDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : dateStr,
+      nomorBapPertanian: item.pertanianBaNumber,
+      tanggalBapPertanian: item.pertanianBaNumber ? dateStr : undefined,
+
+      namaPemohon: item.applicantName || 'Pemohon Terdaftar',
+      namaPerusahaan: item.companyName || 'Badan Usaha / Perorangan',
+      nibOss: item.nibNik || 'NIB-OSS-TERDAFTAR',
+      alamatPemohon: `Desa/Kel. ${item.villageName}, Kec. ${item.districtName}, Kab. Luwu`,
+      
+      sektorUsaha: item.sector || 'Komersial / Usaha',
+      kbliCode: '68111',
+      lokasiKegiatan: `Kecamatan ${item.districtName}, Desa/Kel. ${item.villageName}`,
+      desaKelurahan: item.villageName,
+      kecamatan: item.districtName,
+      kabupaten: 'Luwu',
+      luasLahanPermohonan: `${item.areaHa} Ha (${(item.areaHa * 10000).toLocaleString('id-ID')} m²)`,
+      luasLahanDisetujui: `${item.areaHa} Ha (${(item.areaHa * 10000).toLocaleString('id-ID')} m²)`,
+      statusKepemilikanTanah: 'Sertifikat Hak Milik / Bukti Kepemilikan Sah',
+
+      zonaRtrw: 'Kawasan Perumahan & Sektor Komersial RTRW Kab. Luwu',
+      fungsiBangunan: item.sector || 'Bangunan Gedung Komersial / Fasilitas Umum',
+      koefisienDasarBangunan: '60%',
+      koefisienLantaiBangunan: '2.4',
+      koefisienDaerahHijau: '20%',
+      garisSempadanBangunan: '15 meter dari As Jalan Utama / 10 meter dari Sempadan Sungai',
+
+      ketentuanPersyaratanTeknis: [
+        'Mematuhi seluruh ketentuan persyaratan teknis bangunan gedung dan tata ruang sesuai Perda RTRW Kab. Luwu No. 3 Tahun 2024;',
+        'Mengurus dokumen perizinan lingkungan lanjutan (AMDAL/UKL-UPL/SPPL) dan Persetujuan Bangunan Gedung (PBG);',
+        'Tidak memindahtangankan dokumen SK PKKPR ini kepada pihak lain tanpa persetujuan tertulis dari Pemerintah Kabupaten Luwu.'
+      ],
+      masaBerlakuTahun: 3,
+
+      kadisNama: dpmptspSettings?.headOfDepartment?.name || tteSignerName || 'Drs. H. Muhammad Rudi, M.Si',
+      kadisNip: dpmptspSettings?.headOfDepartment?.nip || tteSignerNip || '19740812 199803 1 004',
+      kadisPangkatGolongan: dpmptspSettings?.headOfDepartment?.rank || 'Pembina Utama Muda (IV/c)',
+      kadisJabatan: 'Kepala Dinas Penanaman Modal dan PTSP Kab. Luwu',
+      isTteSigned: isTte !== undefined ? isTte : item.isTteSigned,
+      tteSignedDate: dateStr
+    };
+  };
 
   // Fetch verified pertek records from PUPTR
   const fetchQueue = async () => {
@@ -278,6 +339,7 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
   // Handle opening the Issuance & TTE modal
   const handleOpenProcessModal = (item: PkkprIssuanceItem) => {
     setSelectedItem(item);
+    setCustomSkData(null);
     const year = new Date().getFullYear();
     const randomSeq = Math.floor(100 + Math.random() * 900);
     const generated = item.skPkkprNum || `503/SK-PKKPR/DPMPTSP-LW/${year}/${randomSeq}`;
@@ -861,25 +923,35 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
                 </div>
               </div>
 
-              {/* Action 1: Preview SK PDF */}
+              {/* Action 1: Preview SK PDF & Smart Form */}
               <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h4 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                     <FileText className="w-4 h-4 text-teal-600" />
-                    <span>Generate &amp; Pratinjau Draf SK PKKPR (PDF)</span>
+                    <span>Naskah &amp; Draf SK Izin PKKPR DPMPTSP</span>
                   </h4>
                   <p className="text-[11px] text-slate-500">
-                    Periksa draf keputusan izin lengkap dengan kop dinas, rujukan Pertek PUPTR &amp; BAP Pertanian sebelum disahkan.
+                    Periksa draf keputusan izin lengkap dengan Kop Dinas, Konsideran, Diktum Memutuskkan, Rujukan Pertek PUPTR &amp; BAP Pertanian.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleGeneratePdfDraft}
-                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow-sm cursor-pointer whitespace-nowrap"
-                >
-                  <Eye className="w-4 h-4" />
-                  <span>Lihat Draf PDF SK</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsSmartFormOpen(true)}
+                    className="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-sm cursor-pointer whitespace-nowrap"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    <span>Smart Form Editor ✨</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleGeneratePdfDraft}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow-sm cursor-pointer whitespace-nowrap"
+                  >
+                    <Eye className="w-4 h-4" />
+                    <span>Lihat Draf SK</span>
+                  </button>
+                </div>
               </div>
 
               {/* Action 2: Digital TTE & Upload */}
@@ -1007,147 +1079,48 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
 
       {/* MODAL 3: PREVIEW & CETAK SK IZIN PKKPR RESMI (PDF FORMAT) */}
       {isPdfPreviewOpen && selectedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-black/70 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 w-full max-w-4xl max-h-[92vh] overflow-y-auto shadow-2xl p-6 sm:p-8 space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 print:hidden">
-              <span className="text-xs font-bold text-slate-500">Pratinjau Dokumen Resmi SK Izin PKKPR</span>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto bg-black/80 backdrop-blur-md">
+          <div className="bg-slate-900 rounded-3xl border border-slate-800 w-full max-w-5xl max-h-[94vh] overflow-y-auto shadow-2xl p-4 sm:p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3 print:hidden">
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => window.print()}
-                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shadow-sm"
-                >
-                  <Printer className="w-4 h-4" />
-                  <span>Cetak / Print PDF</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsPdfPreviewOpen(false)}
-                  className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 cursor-pointer"
-                >
-                  ✕
-                </button>
+                <span className="text-xs font-bold text-teal-300">Pratinjau Dokumen Resmi SK Izin PKKPR DPMPTSP</span>
               </div>
+              <button
+                type="button"
+                onClick={() => setIsPdfPreviewOpen(false)}
+                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white cursor-pointer transition"
+              >
+                ✕
+              </button>
             </div>
 
-            {/* Official SK PKKPR Certificate Paper */}
-            <div className="bg-white text-slate-900 p-8 sm:p-12 rounded-2xl border border-slate-300 shadow-lg font-serif space-y-6 max-w-3xl mx-auto">
-              {/* Kop Surat DPMPTSP */}
-              <div className="flex items-center justify-center gap-4 border-b-4 border-double border-slate-900 pb-4 text-center">
-                <div className="w-16 h-20 flex items-center justify-center">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/2/29/Lambang_Kabupaten_Luwu.png"
-                    alt="Logo Luwu"
-                    className="w-16 h-auto object-contain"
-                    onError={(e) => {
-                      (e.currentTarget as HTMLElement).style.display = 'none';
-                    }}
-                  />
-                </div>
-                <div className="space-y-0.5">
-                  <h3 className="text-sm sm:text-base font-bold uppercase tracking-wide">
-                    Pemerintah Kabupaten Luwu
-                  </h3>
-                  <h2 className="text-base sm:text-lg font-black uppercase tracking-wide">
-                    Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu
-                  </h2>
-                  <p className="text-[10px] font-sans text-slate-700">
-                    Jl. Jenderal Sudirman No. 01 Kompleks Perkantoran Pemkab Luwu, Belopa • Telp: (0471) 3310001
-                  </p>
-                </div>
-              </div>
-
-              {/* Judul Keputusan */}
-              <div className="text-center space-y-1">
-                <h4 className="text-xs sm:text-sm font-black uppercase underline tracking-wider">
-                  Surat Keputusan Kepala DPMPTSP Kabupaten Luwu
-                </h4>
-                <p className="text-xs font-mono font-bold">
-                  Nomor: {generatedSkNumber || selectedItem.skPkkprNum}
-                </p>
-                <p className="text-[11px] font-sans font-bold uppercase text-slate-700 pt-1">
-                  Tentang: Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR)
-                </p>
-              </div>
-
-              {/* Rujukan Hukum & Pertimbangan */}
-              <div className="text-xs font-sans space-y-3 leading-relaxed text-justify">
-                <p>
-                  Berdasarkan ketentuan Undang-Undang Nomor 6 Tahun 2023 tentang Penetapan Perppu Cipta Kerja dan Peraturan Pemerintah Nomor 21 Tahun 2021 tentang Penyelenggaraan Penataan Ruang, serta memperhatikan:
-                </p>
-                <ol className="list-decimal pl-5 space-y-1 text-[11px] bg-slate-50 p-3 rounded-lg border border-slate-200">
-                  <li>
-                    <strong>Pertimbangan Teknis Dinas PUPTR:</strong> Surat Rekomendasi Teknis No. <span className="font-mono font-bold">{selectedItem.pertekPuptrNum || '503/PERTEK-PUPTR/LUWU/2026'}</span> tanggal {new Date().toLocaleDateString('id-ID')}.
-                  </li>
-                  {selectedItem.pertanianBaNumber && (
-                    <li>
-                      <strong>Berita Acara Dinas Pertanian:</strong> Berita Acara Rekomendasi Alih Fungsi Lahan LP2B No. <span className="font-mono font-bold">{selectedItem.pertanianBaNumber}</span>.
-                    </li>
-                  )}
-                  <li>
-                    <strong>Kesesuaian Rencana Tata Ruang:</strong> Peraturan Daerah Kabupaten Luwu tentang Rencana Tata Ruang Wilayah (RTRW) Kabupaten Luwu.
-                  </li>
-                </ol>
-
-                <p className="font-bold pt-1">MEMUTUSKAN DAN MENERBITKAN:</p>
-
-                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs">
-                  <div className="grid grid-cols-3 gap-2">
-                    <span className="font-semibold">Nama Pemohon</span>
-                    <span className="col-span-2 font-bold">: {selectedItem.applicantName}</span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <span className="font-semibold">Badan Usaha / Usaha</span>
-                    <span className="col-span-2 font-bold">: {selectedItem.companyName}</span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <span className="font-semibold">Nomor NIB / NIK</span>
-                    <span className="col-span-2 font-mono font-bold">: {selectedItem.nibNik}</span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <span className="font-semibold">Sektor / Rencana Kegiatan</span>
-                    <span className="col-span-2">: {selectedItem.sector}</span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <span className="font-semibold">Lokasi Kegiatan</span>
-                    <span className="col-span-2">: Kec. {selectedItem.districtName}, Desa {selectedItem.villageName}</span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <span className="font-semibold">Luas Ruang Disetujui</span>
-                    <span className="col-span-2 font-bold text-emerald-700">: {selectedItem.areaHa} Hektar (Ha)</span>
-                  </div>
-                </div>
-
-                <p className="text-[11px] text-slate-600">
-                  Dokumen ini merupakan persetujuan pemanfaatan ruang yang sah dan berlaku sebagai <strong>persyaratan utama dalam pengajuan Persetujuan Bangunan Gedung (PBG)</strong> serta perizinan operasional berusaha di Kabupaten Luwu.
-                </p>
-              </div>
-
-              {/* Tanda Tangan & QR-Code BSRE */}
-              <div className="pt-6 border-t border-slate-300 flex items-end justify-between font-sans">
-                <div className="text-center space-y-1">
-                  <div className="w-20 h-20 bg-slate-100 border border-slate-300 p-1 rounded-lg mx-auto flex items-center justify-center">
-                    <QrCode className="w-16 h-16 text-slate-800" />
-                  </div>
-                  <p className="text-[9px] font-mono text-slate-500">BSRE Valid Signature</p>
-                </div>
-
-                <div className="text-right space-y-1 text-xs">
-                  <p>Ditetapkan di Belopa</p>
-                  <p>Pada tanggal: {new Date().toLocaleDateString('id-ID')}</p>
-                  <p className="font-bold pt-1">{tteSignerTitle}</p>
-                  <div className="h-14 flex items-center justify-end">
-                    <span className="px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-300 rounded font-mono font-bold text-[10px]">
-                      [Ditandatangani Secara Elektronik / TTE]
-                    </span>
-                  </div>
-                  <p className="font-bold underline">{tteSignerName}</p>
-                  <p className="text-[10px] text-slate-600">NIP. {tteSignerNip}</p>
-                </div>
-              </div>
-            </div>
+            {/* Official SK PKKPR Document Component */}
+            <SkPkkprDpmptspDocument
+              data={customSkData || buildSkData(selectedItem, generatedSkNumber, isTteApplied)}
+              onEditRequested={() => setIsSmartFormOpen(true)}
+            />
           </div>
         </div>
+      )}
+
+      {/* MODAL 4: SMART FORM EDIT SK PKKPR */}
+      {isSmartFormOpen && selectedItem && (
+        <SmartFormSkPkkprModal
+          isOpen={isSmartFormOpen}
+          onClose={() => setIsSmartFormOpen(false)}
+          initialData={customSkData || buildSkData(selectedItem, generatedSkNumber, isTteApplied)}
+          onSave={async (updatedData) => {
+            setCustomSkData(updatedData);
+            setGeneratedSkNumber(updatedData.nomorSkPkkpr);
+            setIsSmartFormOpen(false);
+            Swal.fire({
+              icon: 'success',
+              title: 'Draf SK PKKPR Diperbarui! ✨',
+              text: 'Naskah, Konsideran, Diktum Memutuskan, dan Parameter Teknis SK Izin PKKPR berhasil disesuaikan.',
+              confirmButtonColor: '#10b981'
+            });
+          }}
+        />
       )}
     </div>
   );
