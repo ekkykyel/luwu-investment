@@ -222,7 +222,7 @@ Pesan: ${result.message || "N/A"}
           </div>
 
           {/* Error Message Details Overlay Block */}
-          {status === "failed" && result?.error && (
+              {status === "failed" && result?.error && (
             <div className="space-y-2">
               <span className="text-xs font-semibold text-rose-700 dark:text-rose-400 flex items-center gap-1">
                 <AlertCircle className="w-3.5 h-3.5" /> DETAIL GANGGUAN DETEKSI KONEKSI
@@ -230,7 +230,21 @@ Pesan: ${result.message || "N/A"}
               <div className="p-3.5 bg-rose-950/30 border border-rose-500/20 rounded-2xl font-mono text-[11px] text-rose-300 leading-relaxed overflow-x-auto select-all max-h-40 whitespace-pre-wrap">
                 {result.error}
               </div>
-              {result.error.includes("exceed_egress_quota") || result.error.includes("restricted") ? (
+
+              {result.error.includes("429") || result.error.toLowerCase().includes("too many requests") ? (
+                <div className="p-3.5 bg-amber-950/40 rounded-2xl text-xs text-amber-200 border border-amber-500/30 leading-relaxed space-y-1.5">
+                  <div className="flex items-center gap-1.5 font-bold text-amber-300">
+                    <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>Penyebab: Pembatasan Frekuensi Request (HTTP 429 Too Many Requests)</span>
+                  </div>
+                  <p className="text-[11px] text-amber-200/90 leading-relaxed">
+                    Server atau gateway Supabase menahan sementara request karena melampaui batas frekuensi panggilan per detik (rate limit). Sistem secara otomatis mengaktifkan <strong>Honest Fallback Array Kosong []</strong> sesuai Doktrin Pemkab Luwu.
+                  </p>
+                  <p className="text-[11px] text-amber-300 font-semibold leading-relaxed">
+                    🛠️ <strong>Solusi:</strong> Tunggu beberapa detik agar cooldown rate limit selesai, kemudian klik <strong>Tes Ulang Koneksi</strong> di bawah, atau jalankan aplikasi dengan Honest Fallback.
+                  </p>
+                </div>
+              ) : result.error.includes("exceed_egress_quota") || result.error.includes("restricted") ? (
                 <div className="p-3.5 bg-amber-950/40 rounded-2xl text-xs text-amber-200 border border-amber-500/30 leading-relaxed space-y-1.5">
                   <div className="flex items-center gap-1.5 font-bold text-amber-300">
                     <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
@@ -245,7 +259,7 @@ Pesan: ${result.message || "N/A"}
                 </div>
               ) : (
                 <div className="p-3 bg-slate-950/40 rounded-xl text-xs text-slate-400 border border-slate-850/60 leading-relaxed">
-                  💡 <span className="font-semibold text-slate-300">Rekomendasi Pemulihan Vercel:</span> Masuk ke Dashboard Vercel Proyek, buka bagian <span className="font-mono font-bold text-slate-300">Settings &gt; Environment Variables</span>. Tambahkan key bernama <span className="font-mono text-yellow-400 font-bold">SUPABASE_URL</span> dan <span className="font-mono text-yellow-400 font-bold">SUPABASE_SERVICE_ROLE_KEY</span> dengan nilai yang valid dari dashboard Supabase Anda, lalu lakukan <span className="font-bold text-slate-300">Redeploy</span>.
+                  💡 <span className="font-semibold text-slate-300">Rekomendasi Pemulihan Vercel / Database:</span> Masuk ke Dashboard Vercel Proyek, buka bagian <span className="font-mono font-bold text-slate-300">Settings &gt; Environment Variables</span>. Pastikan key bernama <span className="font-mono text-yellow-400 font-bold">VITE_SUPABASE_URL</span> dan <span className="font-mono text-yellow-400 font-bold">VITE_SUPABASE_ANON_KEY</span> diisi dengan nilai yang valid dari dashboard Supabase Anda, lalu lakukan <span className="font-bold text-slate-300">Redeploy</span>.
                 </div>
               )}
             </div>
