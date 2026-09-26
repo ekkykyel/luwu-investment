@@ -2306,25 +2306,35 @@ export default function PuptrSpatialClearanceDashboard() {
                     </div>
                   ) : (spatialConflictAudit.hasConflict || activeStates['layer_sawah'] || activeStates['layer_lahan_kering_primer'] || zoningAudit?.suitabilityLevel === 'DIBATASI') ? (
                     /* TOAST AMBER WARNING: SEMENTARA MENDAPATKAN PERSETUJUAN PERTANIAN */
-                    <div className="absolute top-3 left-3 z-30 max-w-sm sm:max-w-md bg-amber-950/90 text-amber-100 backdrop-blur-md border border-amber-500/60 rounded-2xl p-3 shadow-2xl flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top duration-300 font-sans">
-                      <div className="flex items-center gap-2.5">
-                        <div className="p-1.5 bg-amber-500 text-slate-950 rounded-xl shrink-0 font-bold">
-                          <AlertTriangle className="w-4 h-4 animate-bounce" />
-                        </div>
-                        <div className="text-xs">
-                          <div className="font-extrabold text-amber-200 uppercase tracking-wider flex items-center gap-1.5">
-                            <span>⚠️ TURF.JS: {spatialConflictAudit.conflictCategories.length > 0 ? spatialConflictAudit.conflictCategories[0] : 'TUMPANG TINDIH SPASIAL'} DETECTED</span>
+                    <div className="absolute top-2 left-2 right-2 sm:right-auto sm:top-3 sm:left-3 z-30 max-w-none sm:max-w-md bg-amber-950/95 text-amber-100 backdrop-blur-md border border-amber-500/60 rounded-2xl p-2.5 sm:p-3 shadow-2xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 animate-in fade-in slide-in-from-top duration-300 font-sans">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-start gap-2.5">
+                          <div className="p-1.5 bg-amber-500 text-slate-950 rounded-xl shrink-0 font-bold mt-0.5">
+                            <AlertTriangle className="w-4 h-4 animate-bounce" />
                           </div>
-                          <div className="text-[11px] text-amber-100/90 leading-tight">
-                            Poligon beririsan {spatialConflictAudit.totalOverlapHa ? `${spatialConflictAudit.totalOverlapHa} Ha` : 'kawasan bersyarat'}. Memerlukan BAP Pertanian atau Override Spasial!
+                          <div className="text-xs">
+                            <div className="font-extrabold text-amber-200 uppercase tracking-wider text-[11px] sm:text-xs">
+                              ⚠️ TURF.JS: {spatialConflictAudit.conflictCategories.length > 0 ? spatialConflictAudit.conflictCategories[0] : 'TUMPANG TINDIH SPASIAL'} DETECTED
+                            </div>
+                            <div className="text-[11px] text-amber-100/90 leading-snug mt-0.5">
+                              Poligon beririsan {spatialConflictAudit.totalOverlapHa ? `${spatialConflictAudit.totalOverlapHa} Ha` : 'kawasan bersyarat'}. Memerlukan BAP Pertanian atau Override Spasial!
+                            </div>
                           </div>
                         </div>
+                        <button
+                          type="button"
+                          onClick={() => setIsGisToastDismissed(true)}
+                          className="p-1 hover:bg-amber-900/80 rounded-lg text-amber-300 transition shrink-0 cursor-pointer sm:hidden"
+                          title="Tutup Toast"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
                       </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
+                      <div className="flex items-center justify-end gap-1.5 shrink-0 pt-1.5 sm:pt-0 border-t sm:border-t-0 border-amber-800/40">
                         <button
                           type="button"
                           onClick={() => setShowConflictResolutionModal(true)}
-                          className="px-2 py-1 bg-amber-800/80 hover:bg-amber-700 text-amber-200 text-[10px] font-bold rounded-lg border border-amber-500/40 transition cursor-pointer"
+                          className="flex-1 sm:flex-initial px-2.5 py-1.5 bg-amber-800/80 hover:bg-amber-700 text-amber-200 text-[11px] font-bold rounded-lg border border-amber-500/40 transition cursor-pointer text-center"
                           title="Buka Conflict Resolution Tool untuk mencatat pertimbangan teknis override"
                         >
                           <span>Override 🛡️</span>
@@ -2333,7 +2343,7 @@ export default function PuptrSpatialClearanceDashboard() {
                           <button
                             type="button"
                             onClick={handleOpenForwardPertanianModal}
-                            className="px-2.5 py-1 bg-gradient-to-r from-amber-500 to-emerald-600 hover:from-amber-400 hover:to-emerald-500 text-slate-950 font-black text-[10px] rounded-lg shadow transition flex items-center gap-1 cursor-pointer"
+                            className="flex-1 sm:flex-initial px-3 py-1.5 bg-gradient-to-r from-amber-500 to-emerald-600 hover:from-amber-400 hover:to-emerald-500 text-slate-950 font-black text-[11px] rounded-lg shadow transition flex items-center justify-center gap-1 cursor-pointer"
                           >
                             <span>Kirim ➔</span>
                           </button>
@@ -2341,7 +2351,7 @@ export default function PuptrSpatialClearanceDashboard() {
                         <button
                           type="button"
                           onClick={() => setIsGisToastDismissed(true)}
-                          className="p-1.5 hover:bg-amber-900/80 rounded-xl text-amber-300 transition cursor-pointer"
+                          className="hidden sm:block p-1.5 hover:bg-amber-900/80 rounded-xl text-amber-300 transition cursor-pointer"
                           title="Tutup Toast"
                         >
                           <X className="w-4 h-4" />
@@ -2357,7 +2367,7 @@ export default function PuptrSpatialClearanceDashboard() {
                     <button
                       type="button"
                       onClick={() => setIsTurfCardCollapsed(false)}
-                      className="fixed bottom-3 right-3 md:absolute md:top-3 md:right-14 md:bottom-auto bg-slate-900/90 text-white hover:bg-slate-800 backdrop-blur-md border border-indigo-500/50 rounded-2xl px-3.5 py-2 shadow-2xl z-20 text-xs font-bold flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer group"
+                      className="absolute bottom-14 right-2 sm:bottom-3 sm:right-3 md:top-3 md:right-14 md:bottom-auto bg-slate-900/90 text-white hover:bg-slate-800 backdrop-blur-md border border-indigo-500/50 rounded-2xl px-3 py-1.5 sm:px-3.5 sm:py-2 shadow-2xl z-20 text-[11px] sm:text-xs font-bold flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer group"
                       title="Klik untuk membuka panel Hasil Analisis Turf.js & Data Pemohon"
                     >
                       <Compass className="w-4 h-4 text-emerald-400 group-hover:rotate-45 transition-transform" />
@@ -2365,7 +2375,7 @@ export default function PuptrSpatialClearanceDashboard() {
                       <ChevronDown className="w-4 h-4 text-slate-300" />
                     </button>
                   ) : (
-                    <div className="fixed bottom-3 inset-x-3 md:absolute md:top-3 md:right-14 md:left-auto md:w-96 max-h-[82vh] overflow-y-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-2xl z-20 text-xs space-y-3 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 animate-in fade-in zoom-in-95 duration-150">
+                    <div className="absolute bottom-2 inset-x-2 sm:bottom-3 sm:inset-x-3 md:top-3 md:right-14 md:left-auto md:w-96 max-h-[75vh] md:max-h-[82vh] overflow-y-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 sm:p-4 shadow-2xl z-20 text-xs space-y-3 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 animate-in fade-in zoom-in-95 duration-150">
                       {/* Header with Title & Badges */}
                       <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
                         <div className="flex items-center gap-2">

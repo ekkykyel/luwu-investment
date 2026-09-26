@@ -3729,7 +3729,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
       {/* UNIFIED MAP CONTROLS (Android-First Mobile Quick Bar & Desktop Bar) */}
       
       {/* Mobile Floating Quick Bar (Ultra Compact Glass Capsule) */}
-      <div className="md:hidden fixed bottom-[70px] left-1/2 -translate-x-1/2 z-[60] pointer-events-auto flex items-center select-none">
+      <div className="md:hidden absolute bottom-3 left-1/2 -translate-x-1/2 z-[60] pointer-events-auto flex items-center select-none">
         {/* Mobile Basemap Selector Popover */}
         <AnimatePresence>
           {showBasemapSheet && (

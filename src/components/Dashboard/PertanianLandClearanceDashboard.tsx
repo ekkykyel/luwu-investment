@@ -1491,7 +1491,7 @@ export default function PertanianLandClearanceDashboard() {
                   <button
                     type="button"
                     onClick={() => setIsTurfCardCollapsed(false)}
-                    className="fixed bottom-3 right-3 md:absolute md:top-3 md:right-14 md:bottom-auto bg-slate-900/90 text-white hover:bg-slate-800 backdrop-blur-md border border-emerald-500/50 rounded-2xl px-3.5 py-2 shadow-2xl z-20 text-xs font-bold flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer group"
+                    className="absolute bottom-14 right-2 sm:bottom-3 sm:right-3 md:top-3 md:right-14 md:bottom-auto bg-slate-900/90 text-white hover:bg-slate-800 backdrop-blur-md border border-emerald-500/50 rounded-2xl px-3 py-1.5 sm:px-3.5 sm:py-2 shadow-2xl z-20 text-[11px] sm:text-xs font-bold flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer group"
                     title="Klik untuk membuka panel Hasil Analisis Turf.js & Data Pemohon"
                   >
                     <Sprout className="w-4 h-4 text-emerald-400 group-hover:rotate-45 transition-transform" />
@@ -1499,7 +1499,7 @@ export default function PertanianLandClearanceDashboard() {
                     <ChevronDown className="w-4 h-4 text-slate-300" />
                   </button>
                 ) : (
-                  <div className="fixed bottom-3 inset-x-3 md:absolute md:top-3 md:right-14 md:left-auto md:w-96 max-h-[82vh] overflow-y-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-2xl z-20 text-xs space-y-3 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="absolute bottom-2 inset-x-2 sm:bottom-3 sm:inset-x-3 md:top-3 md:right-14 md:left-auto md:w-96 max-h-[75vh] md:max-h-[82vh] overflow-y-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 sm:p-4 shadow-2xl z-20 text-xs space-y-3 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 animate-in fade-in zoom-in-95 duration-150">
                     <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
                       <div className="flex items-center gap-2">
                         <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
