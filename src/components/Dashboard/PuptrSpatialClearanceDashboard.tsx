@@ -33,7 +33,8 @@ import {
   Download,
   ChevronDown,
   ChevronUp,
-  FileCheck2
+  FileCheck2,
+  ShieldAlert
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { supabase } from '../../lib/supabaseClient';
