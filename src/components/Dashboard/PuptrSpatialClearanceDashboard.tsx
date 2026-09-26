@@ -316,12 +316,12 @@ export default function PuptrSpatialClearanceDashboard() {
     const { value: returnReason } = await Swal.fire({
       title: 'Kembalikan Permohonan ke Pemohon?',
       html: `
-        <div class="text-left text-xs space-y-2 p-2">
+        <div class="text-left text-xs space-y-2 p-2 font-sans">
           <p class="text-slate-700 dark:text-slate-300">
-            Permohonan <strong>${selectedApp.companyName}</strong> (${selectedApp.nibNik}) akan dikembalikan dengan status <strong>Memerlukan Perbaikan (Revisi)</strong>.
+            Permohonan <strong>${selectedApp.companyName}</strong> (${selectedApp.nibNik}) akan dikembalikan dengan status <strong class="text-rose-600 dark:text-rose-400">Memerlukan Perbaikan (Revisi)</strong>.
           </p>
           <p class="text-[11px] text-slate-500">
-            Catatan teknis dan BAP Dinas Pertanian (jika ada) akan diteruskan ke Dashboard Pemohon.
+            Catatan teknis dan BAP Dinas Pertanian (jika ada) akan diteruskan ke Dashboard Pemohon, dan berkas akan dikeluarkan dari antrean tugas aktif PUPTR.
           </p>
         </div>
       `,
@@ -343,29 +343,122 @@ export default function PuptrSpatialClearanceDashboard() {
     setIsIssuingSk(true);
     try {
       const timestamp = new Date().toISOString();
+      const targetId = selectedApp.id;
+      const targetNibNik = selectedApp.nibNik;
+      const targetDocNum = selectedApp.pkkprDocNumber || targetId;
 
-      await Promise.all([
-        supabase
+      // 1. Supabase Updates
+      try {
+        await supabase
           .from('gis_pkkpr')
           .update({
             status_pkkpr: 'Requires Revision',
             catatan_teknis: returnReason,
+            pertanian_rejection_notes: selectedApp.pertanianNotes || undefined,
             updated_at: timestamp
           })
-          .eq('id', selectedApp.id),
-        supabase
+          .or(`id.eq.${targetId},pkkpr_doc_number.eq.${targetDocNum},nib.eq.${targetNibNik}`);
+      } catch (e) {
+        console.warn('gis_pkkpr return update note:', e);
+      }
+
+      try {
+        await supabase
           .from('investments')
           .update({
             status: 'Requires Revision',
             override_justification: returnReason,
             updated_at: timestamp
           })
-          .eq('id', selectedApp.id)
-      ]);
+          .or(`id.eq.${targetId},plot_number.eq.${targetNibNik},certificate_number.eq.${targetNibNik}`);
+      } catch (e) {
+        console.warn('investments return update note:', e);
+      }
 
-      // Update local state
+      // 2. Update localStorage "luwu_pkkpr_my_apps"
+      try {
+        const localAppsRaw = localStorage.getItem("luwu_pkkpr_my_apps");
+        if (localAppsRaw) {
+          const localApps = JSON.parse(localAppsRaw);
+          const updatedLocalApps = localApps.map((app: any) => {
+            if (
+              app.id === targetId ||
+              app.pkkpr_doc_number === targetId ||
+              app.pkkpr_doc_number === targetDocNum ||
+              app.nik === targetNibNik ||
+              app.nib === targetNibNik
+            ) {
+              return {
+                ...app,
+                status: 'Requires Revision',
+                status_pkkpr: 'Requires Revision',
+                pkkpr_status: 'Memerlukan Revisi / Perbaikan Pemohon',
+                catatan_teknis: returnReason,
+                pertanian_rejection_notes: selectedApp.pertanianNotes || app.pertanian_rejection_notes,
+                updated_at: timestamp
+              };
+            }
+            return app;
+          });
+          localStorage.setItem("luwu_pkkpr_my_apps", JSON.stringify(updatedLocalApps));
+        }
+      } catch (e) {
+        console.warn('localApps return update note:', e);
+      }
+
+      // 3. Update localStorage "luwu_pkkpr_forwarded_apps_data" & "luwu_pkkpr_forwarded_to_pertanian_ids"
+      try {
+        const fAppsRaw = localStorage.getItem('luwu_pkkpr_forwarded_apps_data');
+        if (fAppsRaw) {
+          const fApps = JSON.parse(fAppsRaw);
+          const updatedFApps = fApps.map((fa: any) => {
+            if (fa.id === targetId || fa.nibNik === targetNibNik) {
+              return {
+                ...fa,
+                pkkprStatus: 'Requires Revision',
+                status_pkkpr: 'Requires Revision',
+                puptrReturnedToApplicant: true,
+                rejectionReason: returnReason,
+                updatedAt: timestamp
+              };
+            }
+            return fa;
+          });
+          localStorage.setItem('luwu_pkkpr_forwarded_apps_data', JSON.stringify(updatedFApps));
+        }
+
+        const forwardedIdsRaw = localStorage.getItem('luwu_pkkpr_forwarded_to_pertanian_ids');
+        if (forwardedIdsRaw) {
+          const ids = JSON.parse(forwardedIdsRaw);
+          const filtered = ids.filter((id: string) => id !== targetId && id !== targetNibNik && id !== targetDocNum);
+          localStorage.setItem('luwu_pkkpr_forwarded_to_pertanian_ids', JSON.stringify(filtered));
+        }
+      } catch (e) {
+        console.warn('forwarded cache update note:', e);
+      }
+
+      // 4. Broadcast Realtime
+      try {
+        const liveChannel = supabase.channel('luwu-spatial-cross-opd');
+        await liveChannel.send({
+          type: 'broadcast',
+          event: 'PKKPR_RETURNED_TO_APPLICANT',
+          payload: {
+            applicationId: targetId,
+            nibNik: targetNibNik,
+            companyName: selectedApp.companyName,
+            status: 'Requires Revision',
+            notes: returnReason,
+            timestamp
+          }
+        });
+      } catch (broadErr) {
+        console.warn('Realtime broadcast note:', broadErr);
+      }
+
+      // 5. Update local state
       setQueueList(prev => prev.map(item => {
-        if (item.id === selectedApp.id) {
+        if (item.id === targetId || item.nibNik === targetNibNik) {
           return {
             ...item,
             pkkprStatus: 'Requires Revision',
@@ -375,7 +468,17 @@ export default function PuptrSpatialClearanceDashboard() {
         return item;
       }));
 
-      // Notify Applicant
+      // 6. Update selectedApp state
+      setSelectedApp(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          pkkprStatus: 'Requires Revision',
+          technicalNotes: returnReason
+        };
+      });
+
+      // 7. Notify Applicant
       addCrossOpdNotification({
         applicationId: selectedApp.id,
         applicantName: selectedApp.applicantName,
@@ -392,10 +495,19 @@ export default function PuptrSpatialClearanceDashboard() {
       });
 
       Swal.fire({
-        icon: 'info',
-        title: 'Permohonan Dikembalikan ke Pemohon',
-        text: 'Catatan teknis dan BAP Pertanian telah terkirim ke dashboard pemohon untuk ditindaklanjuti.',
-        confirmButtonColor: '#e11d48'
+        icon: 'success',
+        title: 'Permohonan Berhasil Dikembalikan ke Pemohon ↩️',
+        html: `
+          <div class="text-left text-xs space-y-2 p-2 font-sans">
+            <p class="text-slate-800 dark:text-slate-200">
+              Permohonan <strong>${selectedApp.companyName}</strong> telah dikembalikan ke pemohon dengan status <strong>Memerlukan Perbaikan (Revisi)</strong>.
+            </p>
+            <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
+              ✓ Berkas otomatis dikeluarkan dari antrean tugas aktif Petugas PUPTR.
+            </p>
+          </div>
+        `,
+        confirmButtonColor: '#10b981'
       });
     } catch (err: any) {
       console.error('Error returning application:', err);
@@ -640,7 +752,7 @@ export default function PuptrSpatialClearanceDashboard() {
               kmzFileName: item.proposal_file_name || 'Batas_Poligon_Lokasi.kmz',
               kmzFileUrl: item.photo_url || '',
               geometry: item.geometry,
-              pkkprStatus: item.sk_pkkpr_doc_number ? 'Approved' : (item.status === 'Revision' ? 'Requires Revision' : 'Pending Spatial Check'),
+              pkkprStatus: item.sk_pkkpr_doc_number ? 'Approved' : (item.status === 'Revision' || item.status === 'Requires Revision' || item.status_pkkpr === 'Requires Revision' ? 'Requires Revision' : (item.status_pkkpr || item.status || 'Pending Spatial Check')),
               pkkprDocNumber: item.pkkpr_doc_number || item.sk_pkkpr_doc_number,
               skPkkprDocNumber: item.sk_pkkpr_doc_number || item.pkkpr_doc_number,
               technicalNotes: item.override_justification || 'Sesuai dengan Rencana Tata Ruang Wilayah (RTRW) Kabupaten Luwu.',
@@ -708,7 +820,7 @@ export default function PuptrSpatialClearanceDashboard() {
                 suratPengantarDesaUrl: app.surat_pengantar_desa_url,
                 berkasLegalitasGabunganUrl: app.berkas_legalitas_gabungan_url || app.berkas_gabungan_pdf,
                 geometry: app.geometry,
-                pkkprStatus: app.sk_pkkpr_doc_number ? 'Approved' : 'Pending Spatial Check',
+                pkkprStatus: app.sk_pkkpr_doc_number ? 'Approved' : (app.status_pkkpr === 'Requires Revision' || app.status === 'Requires Revision' || app.status_pkkpr === 'Revision' || app.status === 'Revision' ? 'Requires Revision' : (app.status_pkkpr || app.status || 'Pending Spatial Check')),
                 pkkprDocNumber: app.sk_pkkpr_doc_number || undefined,
                 skPkkprDocNumber: app.sk_pkkpr_doc_number || undefined,
                 technicalNotes: app.catatan_teknis || 'Permohonan dari Portal Layanan Perizinan PKKPR Publik.',
@@ -736,6 +848,9 @@ export default function PuptrSpatialClearanceDashboard() {
           fApps.forEach((fa: any) => {
             const target = mapped.find(m => m.id === fa.id || m.nibNik === fa.nibNik);
             if (target) {
+              if (fa.pkkprStatus === 'Requires Revision' || fa.status_pkkpr === 'Requires Revision' || fa.puptrReturnedToApplicant) {
+                target.pkkprStatus = 'Requires Revision';
+              }
               if (fa.pertanianStatus === 'REJECTED' || fa.agriStatus === 'Rejected') {
                 target.pertanianStatus = 'REJECTED';
                 if (fa.rejectionReason || fa.pertanianNotes) {
@@ -756,11 +871,11 @@ export default function PuptrSpatialClearanceDashboard() {
 
       setQueueList(mapped);
 
-      // Auto-select first active pending item for inspection (excluding forwarded to Pertanian or approved items)
+      // Auto-select first active pending item for inspection (excluding forwarded to Pertanian or already approved/returned items)
       if (mapped.length > 0) {
         setSelectedApp(prev => {
-          const activePending = mapped.filter(m => m.pertanianStatus !== 'FORWARDED' && m.pkkprStatus !== 'Approved');
-          if (activePending.length === 0) return null;
+          const activePending = mapped.filter(m => m.pertanianStatus !== 'FORWARDED' && m.pkkprStatus !== 'Approved' && m.pkkprStatus !== 'Requires Revision');
+          if (activePending.length === 0) return mapped[0];
           if (!prev) return activePending[0];
           const found = activePending.find(m => m.id === prev.id || m.nibNik === prev.nibNik);
           return found || activePending[0];
@@ -1249,7 +1364,7 @@ export default function PuptrSpatialClearanceDashboard() {
     }
   };
 
-  // Filtered Queue List (Excludes items currently forwarded to Dinas Pertanian from default active PUPTR queue)
+  // Filtered Queue List (Excludes items currently forwarded to Dinas Pertanian or already returned/approved from default active PUPTR queue)
   const filteredQueue = useMemo(() => {
     return queueList.filter(item => {
       const matchSearch =
@@ -1263,15 +1378,17 @@ export default function PuptrSpatialClearanceDashboard() {
         return false;
       }
 
-      // Hide APPROVED items from the active pending queue ('ALL' or 'PENDING') so they don't linger in the active queue table!
-      if ((statusFilter === 'ALL' || statusFilter === 'PENDING') && item.pkkprStatus === 'Approved') {
-        return false;
+      // Hide APPROVED and REVISED/RETURNED items from the active pending queue ('ALL' or 'PENDING') so they don't linger in the active task queue table!
+      if (statusFilter === 'ALL' || statusFilter === 'PENDING') {
+        if (item.pkkprStatus === 'Approved' || item.pkkprStatus === 'Requires Revision' || item.pkkprStatus === 'Rejected' || item.pkkprStatus === 'Returned') {
+          return false;
+        }
       }
 
       if (statusFilter === 'ALL' || statusFilter === 'PENDING') return matchSearch;
-      if (statusFilter === 'REJECTED_PERTANIAN') return matchSearch && item.pertanianStatus === 'REJECTED';
+      if (statusFilter === 'REJECTED_PERTANIAN') return matchSearch && item.pertanianStatus === 'REJECTED' && item.pkkprStatus !== 'Requires Revision';
       if (statusFilter === 'APPROVED') return matchSearch && item.pkkprStatus === 'Approved';
-      if (statusFilter === 'REVISION') return matchSearch && item.pkkprStatus === 'Requires Revision';
+      if (statusFilter === 'REVISION') return matchSearch && (item.pkkprStatus === 'Requires Revision' || item.pkkprStatus === 'Rejected' || item.pkkprStatus === 'Returned');
       if (statusFilter === 'FORWARDED') return matchSearch && item.pertanianStatus === 'FORWARDED';
       if (statusFilter === 'ALL_HISTORICAL') return matchSearch;
       return matchSearch;
@@ -1542,10 +1659,10 @@ export default function PuptrSpatialClearanceDashboard() {
 
           <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
             {[
-              { id: 'ALL', label: 'Antrean Aktif PUPTR', count: queueList.filter(i => i.pkkprStatus !== 'Approved' && i.pertanianStatus !== 'FORWARDED').length },
-              { id: 'REJECTED_PERTANIAN', label: '⚠️ Dikembalikan Pertanian', count: queueList.filter(i => i.pertanianStatus === 'REJECTED').length },
+              { id: 'ALL', label: 'Antrean Aktif PUPTR', count: queueList.filter(i => i.pkkprStatus !== 'Approved' && i.pkkprStatus !== 'Requires Revision' && i.pkkprStatus !== 'Rejected' && i.pkkprStatus !== 'Returned' && i.pertanianStatus !== 'FORWARDED').length },
+              { id: 'REJECTED_PERTANIAN', label: '⚠️ Dikembalikan Pertanian', count: queueList.filter(i => i.pertanianStatus === 'REJECTED' && i.pkkprStatus !== 'Requires Revision').length },
               { id: 'APPROVED', label: 'Pertek Disetujui', count: queueList.filter(i => i.pkkprStatus === 'Approved').length },
-              { id: 'REVISION', label: 'Revisi', count: queueList.filter(i => i.pkkprStatus === 'Requires Revision').length },
+              { id: 'REVISION', label: 'Revisi Pemohon', count: queueList.filter(i => i.pkkprStatus === 'Requires Revision' || i.pkkprStatus === 'Rejected' || i.pkkprStatus === 'Returned').length },
               { id: 'FORWARDED', label: '🌾 Diteruskan Pertanian', count: queueList.filter(i => i.pertanianStatus === 'FORWARDED').length },
               { id: 'ALL_HISTORICAL', label: 'Semua Riwayat', count: queueList.length }
             ].map(tab => (
@@ -1610,17 +1727,19 @@ export default function PuptrSpatialClearanceDashboard() {
                         className={`inline-flex px-2 py-0.5 rounded-full text-[9px] font-bold border shrink-0 ${
                           item.pkkprStatus === 'Approved'
                             ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 border-emerald-300'
+                            : item.pkkprStatus === 'Requires Revision' || item.pkkprStatus === 'Rejected' || item.pkkprStatus === 'Returned'
+                            ? 'bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300 border-rose-300 font-extrabold'
                             : item.pertanianStatus === 'REJECTED'
                             ? 'bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300 border-rose-300 animate-pulse'
                             : item.pertanianStatus === 'FORWARDED'
-                            ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border-amber-300'
-                            : item.pkkprStatus === 'Requires Revision'
                             ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border-amber-300'
                             : 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950/80 dark:text-indigo-300 border-indigo-300'
                         }`}
                       >
                         {item.pkkprStatus === 'Approved'
                           ? 'Pertek Disetujui'
+                          : item.pkkprStatus === 'Requires Revision' || item.pkkprStatus === 'Rejected' || item.pkkprStatus === 'Returned'
+                          ? '↩️ Dikembalikan ke Pemohon'
                           : item.pertanianStatus === 'REJECTED'
                           ? '⚠️ Dikembalikan Pertanian'
                           : item.pertanianStatus === 'FORWARDED'
@@ -1719,17 +1838,19 @@ export default function PuptrSpatialClearanceDashboard() {
                             className={`inline-flex px-2.5 py-1 rounded-full text-[10px] font-bold border ${
                               item.pkkprStatus === 'Approved'
                                 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 border-emerald-300'
+                                : item.pkkprStatus === 'Requires Revision' || item.pkkprStatus === 'Rejected' || item.pkkprStatus === 'Returned'
+                                ? 'bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300 border-rose-300 font-extrabold'
                                 : item.pertanianStatus === 'REJECTED'
                                 ? 'bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300 border-rose-300 animate-pulse'
                                 : item.pertanianStatus === 'FORWARDED'
-                                ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border-amber-300'
-                                : item.pkkprStatus === 'Requires Revision'
                                 ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border-amber-300'
                                 : 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950/80 dark:text-indigo-300 border-indigo-300'
                             }`}
                           >
                             {item.pkkprStatus === 'Approved'
                               ? 'Pertek Disetujui'
+                              : item.pkkprStatus === 'Requires Revision' || item.pkkprStatus === 'Rejected' || item.pkkprStatus === 'Returned'
+                              ? '↩️ Dikembalikan ke Pemohon'
                               : item.pertanianStatus === 'REJECTED'
                               ? '⚠️ Dikembalikan Pertanian'
                               : item.pertanianStatus === 'FORWARDED'
@@ -2468,7 +2589,23 @@ export default function PuptrSpatialClearanceDashboard() {
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-2 mt-4">
-              {(Boolean(selectedApp.pkkprDocNumber) || Boolean(selectedApp.skPkkprDocNumber) || selectedApp.pkkprStatus === 'Approved' || Boolean(issuedSkNumber)) ? (
+              {selectedApp.pkkprStatus === 'Requires Revision' || selectedApp.pkkprStatus === 'Rejected' || selectedApp.pkkprStatus === 'Returned' ? (
+                <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/80 border border-rose-300 dark:border-rose-800 text-xs space-y-1.5 font-sans">
+                  <div className="flex items-center gap-2 text-rose-700 dark:text-rose-300 font-extrabold uppercase">
+                    <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                    <span>↩️ BERKAS TELAH DIKEMBALIKAN KE PEMOHON</span>
+                  </div>
+                  <p className="text-slate-800 dark:text-slate-200">
+                    Status: <strong className="text-rose-600 dark:text-rose-400">Memerlukan Perbaikan (Revisi)</strong>
+                  </p>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300 italic bg-white/60 dark:bg-slate-900/60 p-2 rounded-lg border border-rose-200 dark:border-rose-900/60">
+                    "{selectedApp.technicalNotes || selectedApp.pertanianNotes || 'Menunggu pemohon memperbaiki deliniasi koordinat/dokumen persyaratan.'}"
+                  </p>
+                  <p className="text-[10px] text-slate-500 pt-1 border-t border-rose-200 dark:border-rose-800/60">
+                    ℹ️ Permohonan ini telah dikeluarkan dari antrean tugas aktif Petugas PUPTR dan sedang menunggu perbaikan oleh pemohon.
+                  </p>
+                </div>
+              ) : (Boolean(selectedApp.pkkprDocNumber) || Boolean(selectedApp.skPkkprDocNumber) || selectedApp.pkkprStatus === 'Approved' || Boolean(issuedSkNumber)) ? (
                 <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-xs space-y-1 font-sans">
                   <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300 font-extrabold uppercase">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
