@@ -341,7 +341,7 @@ export default function PertanianLandClearanceDashboard() {
         const { data: pkkprGisData, error: gisErr } = await supabase
           .from('gis_pkkpr')
           .select('*')
-          .or('status_pkkpr.eq.Forwarded_To_Pertanian,status_pkkpr.eq.Approved_Pertanian,status_pkkpr.eq.Rejected_Pertanian,berita_acara_pertanian_num.not.is.null')
+          .or('status_pkkpr.eq.Forwarded_To_Pertanian,status_pkkpr.eq.Approved_Pertanian,status_pkkpr.eq.Rejected_Pertanian,pertanian_status.eq.FORWARDED,pertanian_status.eq.APPROVED,pertanian_status.eq.REJECTED,berita_acara_pertanian_num.not.is.null')
           .order('created_at', { ascending: false });
 
         if (!gisErr && pkkprGisData && pkkprGisData.length > 0) {
@@ -369,10 +369,13 @@ export default function PertanianLandClearanceDashboard() {
             const luasM2 = item.luas_m2 ? Number(item.luas_m2) : Math.round(luasHa * 10000);
 
             let agriStat: 'Pending Review' | 'Approved' | 'Rejected' = 'Pending Review';
-            if (item.berita_acara_pertanian_num || item.status_pkkpr === 'Approved_Pertanian') {
+            let pertStat: 'NOT_SUBMITTED' | 'FORWARDED' | 'APPROVED' | 'REJECTED' = 'FORWARDED';
+            if (item.berita_acara_pertanian_num || item.status_pkkpr === 'Approved_Pertanian' || item.pertanian_status === 'APPROVED') {
               agriStat = 'Approved';
-            } else if (item.status_pkkpr === 'Rejected_Pertanian') {
+              pertStat = 'APPROVED';
+            } else if (item.status_pkkpr === 'Rejected_Pertanian' || item.pertanian_status === 'REJECTED' || (rawCatatan && rawCatatan.includes('DITOLAK DINAS PERTANIAN'))) {
               agriStat = 'Rejected';
+              pertStat = 'REJECTED';
             }
 
             mapped.push({
@@ -397,9 +400,10 @@ export default function PertanianLandClearanceDashboard() {
               existingCrop: 'Kawasan Pertanian & Pangan Berkelanjutan (LP2B)',
               puptrForwardedNotes: item.catatan_teknis || 'Permohonan diteruskan dari Dinas PUPTR untuk analisis kesesuaian LP2B.',
               agriStatus: agriStat,
+              pertanianStatus: pertStat,
               beritaAcaraDocNum: item.berita_acara_pertanian_num || undefined,
               suratRekomendasiNum: undefined,
-              rejectionReason: agriStat === 'Rejected' ? item.catatan_teknis : undefined,
+              rejectionReason: agriStat === 'Rejected' ? (item.pertanian_rejection_notes || item.catatan_teknis) : undefined,
               replacementLandHa: luasHa,
               geometry: item.geometry_json || item.geom,
               sertifikatTanahUrl: item.sertifikat_tanah_url || undefined,
@@ -419,7 +423,7 @@ export default function PertanianLandClearanceDashboard() {
         const { data: invData, error: invError } = await supabase
           .from('investments')
           .select('*')
-          .or('status.eq.Forwarded_To_Pertanian,status.eq.Approved_Pertanian,pertanian_status.eq.FORWARDED,pertanian_status.eq.APPROVED,berita_acara_num.not.is.null')
+          .or('status.eq.Forwarded_To_Pertanian,status.eq.Approved_Pertanian,status.eq.Rejected_Pertanian,pertanian_status.eq.FORWARDED,pertanian_status.eq.APPROVED,pertanian_status.eq.REJECTED,berita_acara_num.not.is.null')
           .order('created_at', { ascending: false });
 
         if (!invError && invData && invData.length > 0) {
@@ -440,10 +444,13 @@ export default function PertanianLandClearanceDashboard() {
               const areaHa = item.area_ha || 1.0;
 
               let agriStat: 'Pending Review' | 'Approved' | 'Rejected' = 'Pending Review';
+              let pertStat: 'NOT_SUBMITTED' | 'FORWARDED' | 'APPROVED' | 'REJECTED' = 'FORWARDED';
               if (item.berita_acara_num || item.pertanian_status === 'APPROVED' || item.status === 'Approved_Pertanian') {
                 agriStat = 'Approved';
-              } else if (item.status === 'Rejected' || item.pertanian_status === 'REJECTED') {
+                pertStat = 'APPROVED';
+              } else if (item.status === 'Rejected' || item.status === 'Rejected_Pertanian' || item.pertanian_status === 'REJECTED' || item.pertanian_rejection_notes) {
                 agriStat = 'Rejected';
+                pertStat = 'REJECTED';
               }
 
               mapped.push({
@@ -468,6 +475,7 @@ export default function PertanianLandClearanceDashboard() {
                 existingCrop: 'Kawasan Pertanian & Pangan Berkelanjutan (LP2B)',
                 puptrForwardedNotes: item.override_justification || 'Permohonan diteruskan dari Dinas PUPTR untuk telaah alih fungsi lahan.',
                 agriStatus: agriStat,
+                pertanianStatus: pertStat,
                 beritaAcaraDocNum: item.berita_acara_num || undefined,
                 suratRekomendasiNum: item.surat_rekomendasi_num || undefined,
                 rejectionReason: item.pertanian_rejection_notes || undefined,
@@ -489,8 +497,24 @@ export default function PertanianLandClearanceDashboard() {
         if (fAppsRaw) {
           const fApps: any[] = JSON.parse(fAppsRaw);
           fApps.forEach((fApp: any) => {
-            const exists = mapped.some(m => m.id === fApp.id || m.nibNik === fApp.nibNik);
-            if (!exists) {
+            const existingIndex = mapped.findIndex(m => m.id === fApp.id || m.nibNik === fApp.nibNik);
+            
+            let agriStat: 'Pending Review' | 'Approved' | 'Rejected' = 'Pending Review';
+            let pertStat: 'NOT_SUBMITTED' | 'FORWARDED' | 'APPROVED' | 'REJECTED' = 'FORWARDED';
+            if (fApp.agriStatus === 'Approved' || fApp.pertanianStatus === 'APPROVED' || fApp.beritaAcaraDocNum || fApp.berita_acara_pertanian_num) {
+              agriStat = 'Approved';
+              pertStat = 'APPROVED';
+            } else if (fApp.agriStatus === 'Rejected' || fApp.pertanianStatus === 'REJECTED' || fApp.rejectionReason || fApp.pertanian_rejection_notes) {
+              agriStat = 'Rejected';
+              pertStat = 'REJECTED';
+            }
+
+            if (existingIndex >= 0) {
+              mapped[existingIndex].agriStatus = agriStat;
+              mapped[existingIndex].pertanianStatus = pertStat;
+              if (fApp.rejectionReason) mapped[existingIndex].rejectionReason = fApp.rejectionReason;
+              if (fApp.beritaAcaraDocNum) mapped[existingIndex].beritaAcaraDocNum = fApp.beritaAcaraDocNum;
+            } else {
               const rawDist = fApp.districtName || fApp.districtId || '';
               const matchedDist = findDistrictMatch(districts, rawDist);
               const resolvedDistrictName = matchedDist ? matchedDist.name : (rawDist || 'Kabupaten Luwu');
@@ -518,10 +542,11 @@ export default function PertanianLandClearanceDashboard() {
                 buktiTanah: fApp.buktiTanah || 'Sertifikat Hak Milik (SHM)',
                 existingCrop: 'Kawasan Pertanian & Pangan Berkelanjutan (LP2B)',
                 puptrForwardedNotes: fApp.technicalNotes || 'Permohonan diteruskan dari Dinas PUPTR untuk analisis kesesuaian LP2B.',
-                agriStatus: 'Pending Review',
-                beritaAcaraDocNum: fApp.pertanianBaNumber || undefined,
-                suratRekomendasiNum: fApp.pertanianSrNumber || undefined,
-                rejectionReason: undefined,
+                agriStatus: agriStat,
+                pertanianStatus: pertStat,
+                beritaAcaraDocNum: fApp.pertanianBaNumber || fApp.beritaAcaraDocNum || undefined,
+                suratRekomendasiNum: fApp.pertanianSrNumber || fApp.suratRekomendasiNum || undefined,
+                rejectionReason: agriStat === 'Rejected' ? (fApp.rejectionReason || fApp.pertanian_rejection_notes) : undefined,
                 replacementLandHa: fApp.areaHa || 1.0,
                 geometry: fApp.geometry,
                 sertifikatTanahUrl: fApp.sertifikatTanahUrl,
@@ -541,7 +566,9 @@ export default function PertanianLandClearanceDashboard() {
 
       if (mapped.length > 0) {
         if (!selectedApp || !mapped.some(m => m.id === selectedApp.id)) {
-          selectAppForReview(mapped[0]);
+          // Default to first pending review application
+          const pendingItem = mapped.find(m => m.agriStatus === 'Pending Review') || mapped[0];
+          selectAppForReview(pendingItem);
         }
       } else {
         setSelectedApp(null);
@@ -700,6 +727,7 @@ export default function PertanianLandClearanceDashboard() {
             return {
               ...item,
               agriStatus: 'Approved',
+              pertanianStatus: 'APPROVED',
               beritaAcaraDocNum: baDocNum,
               suratRekomendasiNum: srDocNum
             };
@@ -707,6 +735,58 @@ export default function PertanianLandClearanceDashboard() {
           return item;
         })
       );
+
+      // Synchronize persistent localStorage across OPDs
+      try {
+        // 1. Remove ID from forwarded pending registry
+        const fRaw = localStorage.getItem('luwu_pkkpr_forwarded_to_pertanian_ids');
+        if (fRaw) {
+          const fList: string[] = JSON.parse(fRaw);
+          const updatedFList = fList.filter(id => id !== selectedApp.id && id !== selectedApp.nibNik && id !== selectedApp.companyName);
+          localStorage.setItem('luwu_pkkpr_forwarded_to_pertanian_ids', JSON.stringify(updatedFList));
+        }
+
+        // 2. Update snapshot in luwu_pkkpr_forwarded_apps_data
+        const fAppsRaw = localStorage.getItem('luwu_pkkpr_forwarded_apps_data');
+        if (fAppsRaw) {
+          const fApps: any[] = JSON.parse(fAppsRaw);
+          const updatedFApps = fApps.map(app => {
+            if (app.id === selectedApp.id || app.nibNik === selectedApp.nibNik) {
+              return {
+                ...app,
+                agriStatus: 'Approved',
+                pertanianStatus: 'APPROVED',
+                beritaAcaraDocNum: baDocNum,
+                suratRekomendasiNum: srDocNum,
+                pertanianBaNumber: baDocNum,
+                pertanianSrNumber: srDocNum
+              };
+            }
+            return app;
+          });
+          localStorage.setItem('luwu_pkkpr_forwarded_apps_data', JSON.stringify(updatedFApps));
+        }
+
+        // 3. Update society apps in luwu_pkkpr_my_apps
+        const myAppsRaw = localStorage.getItem('luwu_pkkpr_my_apps');
+        if (myAppsRaw) {
+          const myApps: any[] = JSON.parse(myAppsRaw);
+          const updatedMyApps = myApps.map(app => {
+            if (app.id === selectedApp.id || app.pkkpr_doc_number === selectedApp.id || app.nik === selectedApp.nibNik || app.nib === selectedApp.nibNik) {
+              return {
+                ...app,
+                pertanian_status: 'APPROVED',
+                berita_acara_pertanian_num: baDocNum,
+                surat_rekomendasi_pertanian_num: srDocNum
+              };
+            }
+            return app;
+          });
+          localStorage.setItem('luwu_pkkpr_my_apps', JSON.stringify(updatedMyApps));
+        }
+      } catch (storageErr) {
+        console.warn('Cross-OPD local cache sync error on approval:', storageErr);
+      }
 
       setShowApprovalModal(false);
       setShowDocumentPreview(true);
@@ -808,14 +888,77 @@ export default function PertanianLandClearanceDashboard() {
             return {
               ...item,
               agriStatus: 'Rejected',
-              rejectionReason: rejectionReasonInput
+              pertanianStatus: 'REJECTED',
+              rejectionReason: rejectionReasonInput,
+              pertanianNotes: rejectionReasonInput
             };
           }
           return item;
         })
       );
 
+      // Synchronize persistent localStorage across OPDs
+      try {
+        // 1. Remove ID from forwarded pending registry so PUPTR recognizes returned status
+        const fRaw = localStorage.getItem('luwu_pkkpr_forwarded_to_pertanian_ids');
+        if (fRaw) {
+          const fList: string[] = JSON.parse(fRaw);
+          const updatedFList = fList.filter(id => id !== selectedApp.id && id !== selectedApp.nibNik && id !== selectedApp.companyName);
+          localStorage.setItem('luwu_pkkpr_forwarded_to_pertanian_ids', JSON.stringify(updatedFList));
+        }
+
+        // 2. Update snapshot in luwu_pkkpr_forwarded_apps_data
+        const fAppsRaw = localStorage.getItem('luwu_pkkpr_forwarded_apps_data');
+        if (fAppsRaw) {
+          const fApps: any[] = JSON.parse(fAppsRaw);
+          const updatedFApps = fApps.map(app => {
+            if (app.id === selectedApp.id || app.nibNik === selectedApp.nibNik) {
+              return {
+                ...app,
+                agriStatus: 'Rejected',
+                pertanianStatus: 'REJECTED',
+                rejectionReason: rejectionReasonInput,
+                pertanianNotes: rejectionReasonInput,
+                catatan_teknis: `[DITOLAK DINAS PERTANIAN]: ${rejectionReasonInput}`
+              };
+            }
+            return app;
+          });
+          localStorage.setItem('luwu_pkkpr_forwarded_apps_data', JSON.stringify(updatedFApps));
+        }
+
+        // 3. Update society apps in luwu_pkkpr_my_apps
+        const myAppsRaw = localStorage.getItem('luwu_pkkpr_my_apps');
+        if (myAppsRaw) {
+          const myApps: any[] = JSON.parse(myAppsRaw);
+          const updatedMyApps = myApps.map(app => {
+            if (app.id === selectedApp.id || app.pkkpr_doc_number === selectedApp.id || app.nik === selectedApp.nibNik || app.nib === selectedApp.nibNik) {
+              return {
+                ...app,
+                pertanian_status: 'REJECTED',
+                status_pkkpr: 'Rejected_Pertanian',
+                status: 'Rejected_Pertanian',
+                catatan_teknis: `[DITOLAK DINAS PERTANIAN]: ${rejectionReasonInput}`,
+                pertanian_rejection_notes: rejectionReasonInput
+              };
+            }
+            return app;
+          });
+          localStorage.setItem('luwu_pkkpr_my_apps', JSON.stringify(updatedMyApps));
+        }
+      } catch (storageErr) {
+        console.warn('Cross-OPD local cache sync error on rejection:', storageErr);
+      }
+
       setShowRejectionModal(false);
+
+      // Auto-advance inspection focus to next remaining pending review application
+      const remainingPending = queueList.filter(q => q.id !== selectedApp.id && q.agriStatus === 'Pending Review');
+      if (remainingPending.length > 0) {
+        selectAppForReview(remainingPending[0]);
+      } else {
+        setSelectedApp(null);
+      }
 
       // Trigger Cross-OPD Notification to Dinas PUPTR
       addCrossOpdNotification({
@@ -994,17 +1137,27 @@ export default function PertanianLandClearanceDashboard() {
           </div>
 
           <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
-            {['ALL', 'PENDING', 'APPROVED', 'REJECTED'].map(st => (
+            {[
+              { id: 'ALL', label: 'Antrean Tugas (Menunggu Evaluasi)', count: queueList.filter(i => i.agriStatus === 'Pending Review').length },
+              { id: 'APPROVED', label: 'Disetujui (BA Terbit)', count: queueList.filter(i => i.agriStatus === 'Approved').length },
+              { id: 'REJECTED', label: 'Dikembalikan ke PUPTR / Ditolak', count: queueList.filter(i => i.agriStatus === 'Rejected' || i.agriStatus === 'Requires Revision').length },
+              { id: 'ALL_HISTORY', label: 'Semua Riwayat', count: queueList.length }
+            ].map(tab => (
               <button
-                key={st}
-                onClick={() => setStatusFilter(st)}
-                className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition whitespace-nowrap cursor-pointer ${
-                  statusFilter === st
+                key={tab.id}
+                onClick={() => setStatusFilter(tab.id)}
+                className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
+                  statusFilter === tab.id
                     ? 'bg-emerald-600 text-white shadow-sm'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
                 }`}
               >
-                {st === 'ALL' ? 'Semua Status' : st === 'PENDING' ? 'Menunggu Evaluasi' : st === 'APPROVED' ? 'BA Terbit' : 'Ditolak/Revisi'}
+                <span>{tab.label}</span>
+                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
+                  statusFilter === tab.id ? 'bg-emerald-700 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                }`}>
+                  {tab.count}
+                </span>
               </button>
             ))}
           </div>

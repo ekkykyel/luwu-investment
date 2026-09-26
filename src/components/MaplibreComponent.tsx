@@ -4556,7 +4556,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
           </>
         )}
 
-        {/* 5.2 ACTIVE SELECTED INVESTMENT COORDINATE PINPOINT (COMPACT, TRANSLUCENT, SLEEK GIS INDICATOR) */}
+        {/* 5.2 ACTIVE SELECTED INVESTMENT COORDINATE PINPOINT (ULTRA-SLIM, TRANSLUCENT, SUBTLE PULSE) */}
         {selectedInvestments.map((inv) => {
           const coords = getCoordinates(inv);
           if (!coords) return null;
@@ -4587,56 +4587,55 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
                   }
                 }}
               >
-                {/* Subtle Translucent Sonar Wave (Compact 36px) */}
+                {/* Ultra-Slim Micro Sonar Pulse (Compact 20px, 15% opacity) */}
                 <div 
-                  className="absolute w-10 h-10 rounded-full pointer-events-none opacity-40 animate-ping"
+                  className="absolute w-5 h-5 rounded-full pointer-events-none opacity-20 animate-ping"
                   style={{
-                    backgroundColor: `${theme.primary}20`,
-                    border: `1px solid ${theme.primary}`
+                    backgroundColor: `${theme.primary}15`,
+                    border: `0.75px solid ${theme.primary}`
                   }}
                 />
 
-                {/* Delicate Target Reticle Ring */}
+                {/* Delicate Target Reticle Ring (16px) */}
                 <div 
-                  className="absolute w-7 h-7 rounded-full pointer-events-none"
+                  className="absolute w-4 h-4 rounded-full pointer-events-none opacity-40"
                   style={{
-                    border: `1px dashed ${theme.primary}80`,
-                    boxShadow: `0 0 8px ${theme.glow}`
+                    border: `0.75px dashed ${theme.primary}60`
                   }}
                 />
 
-                {/* Sleek Compact Glassmorphic Pin Center (24px) */}
+                {/* Sleek Compact Glassmorphic Pin Center (18px) */}
                 <div 
-                  className="relative z-10 w-6 h-6 rounded-full bg-slate-950/75 backdrop-blur-sm border shadow-lg flex items-center justify-center transition-all duration-200 transform group-hover:scale-115"
+                  className="relative z-10 w-4.5 h-4.5 rounded-full bg-slate-950/60 backdrop-blur-xs border shadow-sm flex items-center justify-center transition-all duration-200 transform group-hover:scale-115"
                   style={{
-                    borderColor: `${theme.primary}95`,
-                    boxShadow: `0 0 10px ${theme.glow}`
+                    borderColor: `${theme.primary}80`,
+                    boxShadow: `0 0 6px ${theme.glow}`
                   }}
                 >
-                  {/* Delicate Minimalist Center Dot / Crosshair Core */}
+                  {/* Minimalist Center Dot */}
                   <div 
-                    className="w-2.5 h-2.5 rounded-full ring-1 ring-white/50"
+                    className="w-1.5 h-1.5 rounded-full"
                     style={{ backgroundColor: theme.primary }}
                   />
                 </div>
 
                 {/* Compact Floating Label Above Coordinates */}
                 <motion.div
-                  initial={{ opacity: 0, y: 6, scale: 0.92 }}
+                  initial={{ opacity: 0, y: 4, scale: 0.94 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ type: "spring", stiffness: 450, damping: 25 }}
-                  className="absolute -top-11 left-1/2 -translate-x-1/2 whitespace-nowrap z-30 px-2.5 py-1 rounded-xl bg-slate-950/85 backdrop-blur-md border border-white/10 shadow-xl flex items-center gap-2 pointer-events-none"
+                  className="absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap z-30 px-2 py-0.5 rounded-lg bg-slate-950/80 backdrop-blur-md border border-white/10 shadow-lg flex items-center gap-1.5 pointer-events-none"
                   style={{
-                    borderColor: `${theme.primary}50`,
-                    boxShadow: `0 8px 20px -4px rgba(0,0,0,0.5), 0 0 12px ${theme.glow}`
+                    borderColor: `${theme.primary}40`,
+                    boxShadow: `0 4px 12px -2px rgba(0,0,0,0.4)`
                   }}
                 >
-                  <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: theme.primary }} />
+                  <span className="w-1 h-1 rounded-full" style={{ backgroundColor: theme.primary }} />
                   <div className="flex flex-col text-left leading-tight">
-                    <span className="text-[11px] font-bold text-white font-sora truncate max-w-[180px]">
+                    <span className="text-[10px] font-bold text-white font-sora truncate max-w-[170px]">
                       {inv.name || 'Lokasi Permohonan'}
                     </span>
-                    <span className="text-[9px] text-slate-400 font-medium flex items-center gap-1">
+                    <span className="text-[8px] text-slate-400 font-medium flex items-center gap-1">
                       <span className="text-emerald-400">{inv.sector || 'Investasi'}</span>
                       {districtName && (
                         <>
@@ -4670,7 +4669,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
                   "Pariwisata", "#ec4899",
                   "#64748b"
                 ],
-                "fill-opacity": 0.45,
+                "fill-opacity": 0.18,
                 "fill-outline-color": "#ffffff"
               }}
             />
@@ -4689,8 +4688,8 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
                   "Pariwisata", "#ec4899",
                   "#64748b"
                 ],
-                "line-width": 3,
-                "line-opacity": 0.8
+                "line-width": 1.5,
+                "line-opacity": 0.75
               }}
             />
           </Source>
