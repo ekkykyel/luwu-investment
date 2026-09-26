@@ -55,6 +55,7 @@ export interface SkPkkprDpmptspData {
 
   // Data Rencana Usaha & Lokasi
   sektorUsaha: string;
+  skalaUsaha?: string;
   kbliCode: string;
   judulKbli?: string;
   lokasiKegiatan: string;
@@ -64,6 +65,9 @@ export interface SkPkkprDpmptspData {
   luasLahanPermohonan: string;
   luasLahanDisetujui: string;
   statusKepemilikanTanah: string;
+  dokumenLingkungan?: string;
+  nomorRekomendasiFpr?: string;
+  tanggalRekomendasiFpr?: string;
 
   // Audit Spasial & Parameter Teknis Bangunan
   zonaRtrw: string;
@@ -480,8 +484,8 @@ export const SkPkkprDpmptspDocument: React.FC<SkPkkprDpmptspDocumentProps> = ({
                           <td style={{ padding: "3px 6px" }}>: <b>{data.namaPerusahaan}</b></td>
                         </tr>
                         <tr style={{ borderBottom: "1px solid #d1d5db" }}>
-                          <td style={{ padding: "3px 6px", fontWeight: "bold", backgroundColor: "#f9fafb" }}>Sektor & Kode KBLI</td>
-                          <td style={{ padding: "3px 6px" }}>: {data.sektorUsaha} (KBLI: {data.kbliCode})</td>
+                          <td style={{ padding: "3px 6px", fontWeight: "bold", backgroundColor: "#f9fafb" }}>Sektor & Skala Usaha</td>
+                          <td style={{ padding: "3px 6px" }}>: {data.sektorUsaha} {data.skalaUsaha ? `[${data.skalaUsaha}]` : ''} (KBLI: {data.kbliCode})</td>
                         </tr>
                         <tr style={{ borderBottom: "1px solid #d1d5db" }}>
                           <td style={{ padding: "3px 6px", fontWeight: "bold", backgroundColor: "#f9fafb" }}>Lokasi Kegiatan / Investasi</td>
@@ -491,10 +495,20 @@ export const SkPkkprDpmptspDocument: React.FC<SkPkkprDpmptspDocumentProps> = ({
                           <td style={{ padding: "3px 6px", fontWeight: "bold", backgroundColor: "#f9fafb" }}>Luas Lahan Disetujui</td>
                           <td style={{ padding: "3px 6px" }}>: <b>{data.luasLahanDisetujui}</b> (Permohonan Awal: {data.luasLahanPermohonan})</td>
                         </tr>
-                        <tr>
+                        <tr style={{ borderBottom: "1px solid #d1d5db" }}>
+                          <td style={{ padding: "3px 6px", fontWeight: "bold", backgroundColor: "#f9fafb" }}>Status Kepemilikan Lahan</td>
+                          <td style={{ padding: "3px 6px" }}>: {data.statusKepemilikanTanah || 'Sertipikat / Bukti Kepemilikan Hak Atas Tanah Sah'}</td>
+                        </tr>
+                        <tr style={{ borderBottom: "1px solid #d1d5db" }}>
                           <td style={{ padding: "3px 6px", fontWeight: "bold", backgroundColor: "#f9fafb" }}>Rencana Pola Ruang RTRW</td>
                           <td style={{ padding: "3px 6px" }}>: <b>{data.zonaRtrw}</b></td>
                         </tr>
+                        {data.dokumenLingkungan && (
+                          <tr>
+                            <td style={{ padding: "3px 6px", fontWeight: "bold", backgroundColor: "#f9fafb" }}>Kewajiban Dokumen Lingkungan</td>
+                            <td style={{ padding: "3px 6px" }}>: <b>{data.dokumenLingkungan}</b></td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </td>
@@ -511,18 +525,20 @@ export const SkPkkprDpmptspDocument: React.FC<SkPkkprDpmptspDocumentProps> = ({
                     <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #000000", fontSize: "8.5pt", textAlign: "center" }}>
                       <thead>
                         <tr style={{ backgroundColor: "#f3f4f6", borderBottom: "1px solid #000000" }}>
-                          <th style={{ borderRight: "1px solid #000000", padding: "3px" }}>Koefisien Dasar Bangunan (KDB)</th>
-                          <th style={{ borderRight: "1px solid #000000", padding: "3px" }}>Koefisien Lantai Bangunan (KLB)</th>
-                          <th style={{ borderRight: "1px solid #000000", padding: "3px" }}>Koefisien Daerah Hijau (KDH)</th>
-                          <th style={{ padding: "3px" }}>Garis Sempadan Bangunan (GSB)</th>
+                          <th style={{ borderRight: "1px solid #000000", padding: "3px" }}>Koefisien Dasar (KDB)</th>
+                          <th style={{ borderRight: "1px solid #000000", padding: "3px" }}>Koefisien Lantai (KLB)</th>
+                          <th style={{ borderRight: "1px solid #000000", padding: "3px" }}>Koefisien Hijau (KDH)</th>
+                          <th style={{ borderRight: "1px solid #000000", padding: "3px" }}>Garis Sempadan (GSB)</th>
+                          <th style={{ padding: "3px" }}>Ketinggian Bangunan</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
-                          <td style={{ borderRight: "1px solid #000000", padding: "4px", fontWeight: "bold" }}>Maksimal {data.koefisienDasarBangunan}</td>
-                          <td style={{ borderRight: "1px solid #000000", padding: "4px", fontWeight: "bold" }}>Maksimal {data.koefisienLantaiBangunan}</td>
-                          <td style={{ borderRight: "1px solid #000000", padding: "4px", fontWeight: "bold" }}>Minimal {data.koefisienDaerahHijau}</td>
-                          <td style={{ padding: "4px", fontWeight: "bold" }}>{data.garisSempadanBangunan}</td>
+                          <td style={{ borderRight: "1px solid #000000", padding: "4px", fontWeight: "bold" }}>Maks {data.koefisienDasarBangunan}</td>
+                          <td style={{ borderRight: "1px solid #000000", padding: "4px", fontWeight: "bold" }}>Maks {data.koefisienLantaiBangunan}</td>
+                          <td style={{ borderRight: "1px solid #000000", padding: "4px", fontWeight: "bold" }}>Min {data.koefisienDaerahHijau}</td>
+                          <td style={{ borderRight: "1px solid #000000", padding: "4px", fontWeight: "bold" }}>{data.garisSempadanBangunan}</td>
+                          <td style={{ padding: "4px", fontWeight: "bold" }}>{data.ketinggianMaksimalBangunan || 'Maksimal 2 Lantai (≤ 9m)'}</td>
                         </tr>
                       </tbody>
                     </table>

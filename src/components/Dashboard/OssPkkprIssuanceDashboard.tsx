@@ -106,7 +106,8 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
       nibOss: item.nibNik || 'NIB-OSS-TERDAFTAR',
       alamatPemohon: `Desa/Kel. ${item.villageName}, Kec. ${item.districtName}, Kab. Luwu`,
       
-      sektorUsaha: item.sector || 'Komersial / Usaha',
+      sektorUsaha: item.sector || 'Sektor Perdagangan, Hotel & Restoran',
+      skalaUsaha: 'Usaha Kecil (Modal Usaha > Rp 1 Miliar s.d. Rp 5 Miliar)',
       kbliCode: '68111',
       lokasiKegiatan: `Kecamatan ${item.districtName}, Desa/Kel. ${item.villageName}`,
       desaKelurahan: item.villageName,
@@ -114,14 +115,18 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
       kabupaten: 'Luwu',
       luasLahanPermohonan: `${item.areaHa} Ha (${(item.areaHa * 10000).toLocaleString('id-ID')} m²)`,
       luasLahanDisetujui: `${item.areaHa} Ha (${(item.areaHa * 10000).toLocaleString('id-ID')} m²)`,
-      statusKepemilikanTanah: 'Sertifikat Hak Milik / Bukti Kepemilikan Sah',
+      statusKepemilikanTanah: 'Sertipikat Hak Milik (SHM)',
+      dokumenLingkungan: 'Surat Pernyataan Kesanggupan Pengelolaan dan Pemantauan Lingkungan Hidup (SPPL)',
+      nomorRekomendasiFpr: `503/FPR-LUWU/2026/${item.id.slice(0, 4)}`,
+      tanggalRekomendasiFpr: dateStr,
 
-      zonaRtrw: 'Kawasan Perumahan & Sektor Komersial RTRW Kab. Luwu',
-      fungsiBangunan: item.sector || 'Bangunan Gedung Komersial / Fasilitas Umum',
+      zonaRtrw: 'Kawasan Perdagangan dan Jasa',
+      fungsiBangunan: 'Bangunan Gedung Komersial / Perdagangan & Jasa',
       koefisienDasarBangunan: '60%',
       koefisienLantaiBangunan: '2.4',
       koefisienDaerahHijau: '20%',
-      garisSempadanBangunan: '15 meter dari As Jalan Utama / 10 meter dari Sempadan Sungai',
+      garisSempadanBangunan: '15 meter dari As Jalan Utama',
+      ketinggianMaksimalBangunan: 'Maksimal 2 Lantai (≤ 9 Meter)',
 
       ketentuanPersyaratanTeknis: [
         'Mematuhi seluruh ketentuan persyaratan teknis bangunan gedung dan tata ruang sesuai Perda RTRW Kab. Luwu No. 3 Tahun 2024;',
