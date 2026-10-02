@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { motion } from 'motion/react';
+import React, { useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Accessibility, 
   Sparkles, 
@@ -84,11 +84,28 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
   isDark = false,
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  const scroll = (direction: 'left' | 'right') => {
+  // Smooth scroll and state sync handler
+  const scrollToCard = (index: number) => {
+    const targetIndex = Math.max(0, Math.min(index, SHOWCASE_ITEMS.length - 1));
+    setActiveIndex(targetIndex);
     if (scrollRef.current) {
-      const offset = direction === 'left' ? -380 : 380;
-      scrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
+      const card = scrollRef.current.children[targetIndex] as HTMLElement;
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+  };
+
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const scrollLeft = scrollRef.current.scrollLeft;
+      const cardWidth = scrollRef.current.children[0]?.clientWidth || 300;
+      const calculatedIndex = Math.round(scrollLeft / (cardWidth + 16));
+      if (calculatedIndex >= 0 && calculatedIndex < SHOWCASE_ITEMS.length && calculatedIndex !== activeIndex) {
+        setActiveIndex(calculatedIndex);
+      }
     }
   };
 
@@ -110,16 +127,22 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => scroll('left')}
-            className="w-9 h-9 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95"
+            onClick={() => scrollToCard(activeIndex - 1)}
+            disabled={activeIndex === 0}
+            className={`w-9 h-9 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95 ${
+              activeIndex === 0 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-emerald-50 dark:hover:bg-slate-700'
+            }`}
             aria-label="Geser ke kiri"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
           <button
             type="button"
-            onClick={() => scroll('right')}
-            className="w-9 h-9 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95"
+            onClick={() => scrollToCard(activeIndex + 1)}
+            disabled={activeIndex === SHOWCASE_ITEMS.length - 1}
+            className={`w-9 h-9 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95 ${
+              activeIndex === SHOWCASE_ITEMS.length - 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-emerald-50 dark:hover:bg-slate-700'
+            }`}
             aria-label="Geser ke kanan"
           >
             <ChevronRight className="w-4 h-4" />
@@ -127,21 +150,26 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
         </div>
       </div>
 
-      {/* Horizontal Swipeable Cards Container */}
+      {/* Horizontal Swipeable Cards Container with native snap & smooth sliding */}
       <div className="relative">
         <div
           ref={scrollRef}
-          className="flex items-stretch gap-4 sm:gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-none no-scrollbar pb-3 pt-1 px-1 touch-pan-x"
+          onScroll={handleScroll}
+          className="flex items-stretch gap-4 sm:gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-none no-scrollbar pb-3 pt-1 px-1 touch-pan-x"
         >
-          {SHOWCASE_ITEMS.map((item) => {
+          {SHOWCASE_ITEMS.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <div
+              <motion.div
                 key={item.id}
-                className="w-[300px] sm:w-[360px] shrink-0 snap-start rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-md shadow-slate-200/40 dark:shadow-none hover:shadow-xl hover:border-emerald-500/50 transition-all duration-300 flex flex-col justify-between overflow-hidden group"
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: idx * 0.05 }}
+                className="w-[85vw] max-w-[340px] sm:w-[380px] shrink-0 snap-center sm:snap-start rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-md shadow-slate-200/40 dark:shadow-none hover:shadow-xl hover:border-emerald-500/50 transition-all duration-300 flex flex-col justify-between overflow-hidden group select-none"
               >
-                {/* Image Banner Header */}
-                <div className="relative h-40 w-full overflow-hidden bg-slate-800">
+                {/* Image Banner Header: Enhanced height on mobile (h-60 sm:h-64 md:h-72) for greater visual impact */}
+                <div className="relative h-60 sm:h-64 md:h-72 w-full overflow-hidden bg-slate-800">
                   <img
                     src={item.image}
                     alt={item.title}
@@ -151,18 +179,18 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
                   
                   {/* Floating Badge */}
-                  <div className="absolute top-3 left-3">
+                  <div className="absolute top-3.5 left-3.5">
                     <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider backdrop-blur-md border ${item.badgeColor}`}>
                       <Icon className="w-3 h-3" />
                       {item.badge}
                     </span>
                   </div>
 
-                  <div className="absolute bottom-3 left-3 right-3 text-white">
-                    <div className="text-[11px] font-semibold text-emerald-300 uppercase tracking-wider">
+                  <div className="absolute bottom-3.5 left-3.5 right-3.5 text-white">
+                    <div className="text-[11px] font-semibold text-emerald-300 uppercase tracking-wider mb-0.5">
                       {item.kicker}
                     </div>
-                    <h3 className="text-base font-extrabold leading-snug line-clamp-1 font-sans">
+                    <h3 className="text-base sm:text-lg font-extrabold leading-snug line-clamp-1 font-sans">
                       {item.title}
                     </h3>
                   </div>
@@ -170,14 +198,14 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
 
                 {/* Card Body */}
                 <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-4">
-                  <p className="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
                     {item.description}
                   </p>
 
                   {/* Feature Checklist Tags */}
                   <div className="space-y-1.5 pt-1">
-                    {item.features.map((feat, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-[11px] text-slate-700 dark:text-slate-300 font-semibold">
+                    {item.features.map((feat, fIdx) => (
+                      <div key={fIdx} className="flex items-center gap-2 text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 font-semibold">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
                         <span className="truncate">{feat}</span>
                       </div>
@@ -202,10 +230,27 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
                     </button>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
+      </div>
+
+      {/* Mobile Dot Indicators for Active Slide */}
+      <div className="flex sm:hidden items-center justify-center gap-1.5 pt-1">
+        {SHOWCASE_ITEMS.map((_, idx) => (
+          <button
+            key={idx}
+            type="button"
+            onClick={() => scrollToCard(idx)}
+            aria-label={`Lihat slide ${idx + 1}`}
+            className={`h-1.5 rounded-full transition-all duration-300 ${
+              activeIndex === idx 
+                ? 'w-6 bg-emerald-600 dark:bg-emerald-400' 
+                : 'w-1.5 bg-slate-300 dark:bg-slate-700'
+            }`}
+          />
+        ))}
       </div>
     </section>
   );
