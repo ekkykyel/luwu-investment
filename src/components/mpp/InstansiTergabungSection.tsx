@@ -92,8 +92,11 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
   return (
     <section 
       id={id} 
-      className={className || "w-full max-w-xl mx-auto px-4 pt-8 pb-28 space-y-6 text-slate-900 dark:text-slate-100 scroll-mt-28"}
+      className={className || "relative w-full max-w-xl mx-auto px-4 pt-8 pb-28 space-y-6 text-slate-900 dark:text-slate-100 scroll-mt-28"}
     >
+      {/* Subtle Dot-Grid Texture Accent */}
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:28px_28px] opacity-[0.03] dark:opacity-[0.05] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_70%,transparent_100%)]" />
+
       {/* 2. SECTION HEADER WITH STANDARDIZED DUAL-TONE PATTERN */}
       <div className="text-center space-y-2">
         <div className="flex justify-center mb-2">
@@ -104,7 +107,7 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
         <div className="inline-block relative pb-2">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white font-sans text-center">
             Instansi Tergabung{" "}
-            <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 dark:from-emerald-400 dark:to-cyan-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 dark:from-emerald-300 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent">
               Layanan Prima
             </span>
           </h2>

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, useInView, type Variants, AnimatePresence } from 'motion/react';
+import { motion, useInView, type Variants, AnimatePresence, useReducedMotion } from 'motion/react';
 import { 
   Building2, Car, Store,
   Bot, Bell, Menu, Ticket, SearchCheck, Pointer, Search, CheckSquare, 
@@ -507,6 +507,23 @@ export default function PortalMPP() {
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [aiModalQuery, setAiModalQuery] = useState<string | undefined>(undefined);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showAccessibilityCoachMark, setShowAccessibilityCoachMark] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const seen = localStorage.getItem('mpp_accessibility_coachmark_seen');
+      if (!seen) {
+        setShowAccessibilityCoachMark(true);
+      }
+    }
+  }, []);
+
+  const dismissAccessibilityCoachMark = useCallback(() => {
+    setShowAccessibilityCoachMark(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('mpp_accessibility_coachmark_seen', 'true');
+    }
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -1926,15 +1943,41 @@ export default function PortalMPP() {
               </div>
 
               {/* Ramah Inklusif & Disabilitas Utility Button (Enlarged for High Accessibility) */}
-              <button
-                type="button"
-                onClick={() => window.dispatchEvent(new CustomEvent('toggle-mpp-accessibility'))}
-                className="flex w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/30 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 hover:text-emerald-600 dark:hover:text-emerald-200 hover:bg-emerald-100 dark:hover:bg-emerald-950/60 items-center justify-center transition-all active:scale-95 cursor-pointer shrink-0 shadow-xs"
-                title="Layanan Ramah Inklusif & Disabilitas (Pusat Bantuan & Alat Bantu)"
-                aria-label="Layanan Ramah Inklusif & Disabilitas"
-              >
-                <Accessibility className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400" />
-              </button>
+              <div className="relative group shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    dismissAccessibilityCoachMark();
+                    window.dispatchEvent(new CustomEvent('toggle-mpp-accessibility'));
+                  }}
+                  className="flex w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/30 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 hover:text-emerald-600 dark:hover:text-emerald-200 hover:bg-emerald-100 dark:hover:bg-emerald-950/60 items-center justify-center transition-all active:scale-95 cursor-pointer shrink-0 shadow-xs"
+                  aria-label="Layanan Ramah Inklusif & Disabilitas"
+                >
+                  <Accessibility className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400" />
+                </button>
+
+                {/* Desktop Micro-Tooltip */}
+                <div className="hidden sm:block pointer-events-none absolute top-full right-0 sm:left-1/2 sm:-translate-x-1/2 mt-2 px-2.5 py-1 bg-slate-900/90 dark:bg-slate-800/95 text-white text-[11px] font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg z-50">
+                  Mode Aksesibilitas & Pembaca Suara
+                </div>
+
+                {/* Mobile One-Time Coach-Mark Badge */}
+                {showAccessibilityCoachMark && (
+                  <div className="sm:hidden absolute top-full right-0 mt-2 p-2 bg-emerald-600 text-white text-[10px] font-bold rounded-xl shadow-xl z-50 flex items-center gap-1.5 whitespace-nowrap animate-bounce">
+                    <span>Aksesibilitas & Suara ♿</span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        dismissAccessibilityCoachMark();
+                      }}
+                      className="p-0.5 rounded-full hover:bg-emerald-700 text-white cursor-pointer"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                )}
+              </div>
 
               <button 
                 type="button" 
@@ -2120,7 +2163,7 @@ export default function PortalMPP() {
             <div className="pointer-events-none absolute top-10 left-1/2 -translate-x-1/2 w-[70vw] max-w-[800px] h-[300px] bg-gradient-to-r from-blue-500/10 via-emerald-500/10 to-teal-500/10 blur-2xl -z-10 rounded-full" />
 
             {/* Architectural Blueprint Dot Pattern (Transparent Governance) */}
-            <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:28px_28px] opacity-[0.08] dark:opacity-[0.12] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_35%,#000_70%,transparent_100%)]" />
+            <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:28px_28px] opacity-[0.08] dark:opacity-[0.07] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_35%,#000_70%,transparent_100%)]" />
 
             {/* Subtle Watermark Lambang Luwu (Authentic Civic Identity) */}
             <div className="pointer-events-none absolute top-4 left-1/2 -translate-x-1/2 opacity-[0.03] dark:opacity-[0.04] -z-10 select-none">
@@ -2141,8 +2184,8 @@ export default function PortalMPP() {
                 visible: {
                   opacity: 1,
                   transition: {
-                    staggerChildren: 0.18,
-                    delayChildren: 0.05,
+                    staggerChildren: 0.1,
+                    delayChildren: 0.04,
                   },
                 },
               }}
@@ -2150,26 +2193,28 @@ export default function PortalMPP() {
               {/* Accreditation Kicker - Standardized Dual-Tone Section Header Pattern */}
               <motion.div
                 variants={{
-                  hidden: { opacity: 0, y: 15 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+                  hidden: { opacity: 0, y: 12 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
                 }}
                 className="flex justify-center mb-3"
               >
-                <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60">
-                  PEMKAB LUWU • MPP DIGITAL SIMPURUSIANG
+                <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[9.5px] xs:text-[10.5px] sm:text-[11px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60 whitespace-nowrap shadow-2xs">
+                  <span>PEMKAB LUWU</span>
+                  <span className="opacity-50 text-[8px] xs:text-[10px]">•</span>
+                  <span>MPP DIGITAL SIMPURUSIANG</span>
                 </span>
               </motion.div>
               
               {/* Judul: Dual-Tone Section Title */}
               <motion.h1 
                 variants={{
-                  hidden: { opacity: 0, y: 25 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.35 } },
+                  hidden: { opacity: 0, y: 12 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
                 }}
                 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight max-w-2xl mx-auto mb-3 font-sans"
               >
                 Transformasi Digital{" "}
-                <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 dark:from-emerald-400 dark:to-cyan-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 dark:from-emerald-300 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent">
                   MPP Simpurusiang
                 </span>
               </motion.h1>
@@ -2177,8 +2222,8 @@ export default function PortalMPP() {
               {/* Sub-judul */}
               <motion.p 
                 variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.35 } },
+                  hidden: { opacity: 0, y: 12 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
                 }}
                 className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed mb-6 px-2 font-sans"
               >
@@ -2188,8 +2233,8 @@ export default function PortalMPP() {
               {/* Smart Search Bar (Tabe' Search) Mobilization */}
               <motion.div 
                 variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+                  hidden: { opacity: 0, y: 12 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
                 }}
                 className="w-full max-w-md mx-auto mb-4"
               >
@@ -2232,17 +2277,23 @@ export default function PortalMPP() {
                   </button>
                 </div>
 
-                {/* Layanan Populer (Horizontal Scroll Chips) */}
-                <div className="w-full max-w-md mx-auto flex items-center gap-2 overflow-x-auto pb-2 mb-6 scrollbar-none snap-x justify-start sm:justify-center px-1">
-                  {[
-                    { label: t("mppPortal.search.chipDukcapil", "Dukcapil & KTP"), id: "dukcapil" },
-                    { label: t("mppPortal.search.chipNIB", "Izin Usaha NIB"), id: "oss" },
-                    { label: t("mppPortal.search.chipAntrean", "Antrean Online"), id: "antrean" },
-                    { label: t("mppPortal.search.chipBPJS", "BPJS Kesehatan"), id: "bpjs" },
-                    { label: t("mppPortal.search.chipPBB", "Pajak PBB"), id: "bapenda" },
-                    { label: "SAMSAT Luwu", id: "samsat" },
-                    { label: "Pertanahan BPN", id: "bpn" },
-                  ].map((chip) => (
+                {/* Layanan Populer (Horizontal Scroll Chips dengan Fade-Gradient Mask) */}
+                <div className="relative w-full max-w-md mx-auto mb-6">
+                  {/* Fade Gradient Sisi Kanan untuk Indikasi Scrollable Content */}
+                  <div className="pointer-events-none absolute right-0 top-0 bottom-2 w-8 sm:w-10 bg-gradient-to-l from-white dark:from-slate-950 to-transparent z-10 rounded-r-xl" />
+                  {/* Fade Gradient Sisi Kiri */}
+                  <div className="pointer-events-none absolute left-0 top-0 bottom-2 w-6 bg-gradient-to-r from-white dark:from-slate-950 to-transparent z-10 rounded-l-xl" />
+
+                  <div className="w-full max-w-md mx-auto flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none snap-x justify-start sm:justify-center px-1">
+                    {[
+                      { label: t("mppPortal.search.chipDukcapil", "Dukcapil & KTP"), id: "dukcapil" },
+                      { label: t("mppPortal.search.chipNIB", "Izin Usaha NIB"), id: "oss" },
+                      { label: t("mppPortal.search.chipAntrean", "Antrean Online"), id: "antrean" },
+                      { label: t("mppPortal.search.chipBPJS", "BPJS Kesehatan"), id: "bpjs" },
+                      { label: t("mppPortal.search.chipPBB", "Pajak PBB"), id: "bapenda" },
+                      { label: "SAMSAT Luwu", id: "samsat" },
+                      { label: "Pertanahan BPN", id: "bpn" },
+                    ].map((chip) => (
                     <button
                       key={chip.id}
                       type="button"
@@ -2258,6 +2309,7 @@ export default function PortalMPP() {
                       {chip.label}
                     </button>
                   ))}
+                  </div>
                 </div>
               </motion.div>
 

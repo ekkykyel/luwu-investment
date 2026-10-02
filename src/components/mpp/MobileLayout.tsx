@@ -57,8 +57,16 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
           <div className="flex flex-col items-start gap-2.5 w-full bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
             {badgeText && (
               <div className="flex flex-wrap gap-1.5 items-center w-full">
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60 font-sans">
-                  {badgeText}
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[9.5px] xs:text-[10px] font-extrabold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60 font-sans whitespace-nowrap overflow-hidden text-ellipsis max-w-full">
+                  {badgeText.includes('•') ? (
+                    <>
+                      <span>{badgeText.split('•')[0].trim()}</span>
+                      <span className="opacity-50 text-[8px]">•</span>
+                      <span className="truncate">{badgeText.split('•')[1].trim()}</span>
+                    </>
+                  ) : (
+                    badgeText
+                  )}
                 </span>
               </div>
             )}
@@ -66,7 +74,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
             {/* DUAL-TONE GRADIENT TITLE IN PLUS JAKARTA SANS */}
             <h2 className="text-xl font-extrabold text-slate-900 dark:text-white leading-tight mt-1 font-sans">
               {titlePrefix}{" "}
-              <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 dark:from-emerald-400 dark:to-cyan-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 dark:from-emerald-300 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent">
                 {titleAccent}
               </span>
             </h2>
