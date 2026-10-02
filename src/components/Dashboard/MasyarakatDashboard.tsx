@@ -2,7 +2,7 @@ import { LUWU_LOGO_BASE64 } from "@/lib/logoBase64.js";
 import { requestSmartFullscreen, exitSmartFullscreen } from "../../utils/fullscreen";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { booleanPointInPolygon, point, area as turfArea } from '@turf/turf';
 import { 
   X, Send, MapPin, Building2, Phone, User, AlertCircle, Camera, 
@@ -634,6 +634,14 @@ export default function MasyarakatDashboard({
   const [pkkprSelectedKecId, setPkkprSelectedKecId] = useState("");
   const [pkkprSelectedDesaId, setPkkprSelectedDesaId] = useState("");
   const [pkkprSelectedDesaGeom, setPkkprSelectedDesaGeom] = useState<any>(null);
+
+  const drawerFocusTarget = useMemo(() => ({
+    districtName: pkkprKecamatan,
+    districtId: pkkprSelectedKecId,
+    villageName: pkkprDesa,
+    villageId: pkkprSelectedDesaId,
+    villageGeojson: pkkprSelectedDesaGeom
+  }), [pkkprKecamatan, pkkprSelectedKecId, pkkprDesa, pkkprSelectedDesaId, pkkprSelectedDesaGeom]);
 
   // Spatial Read-Only Lock State for KML/KMZ Auto-Detection
   const [isPkkprLocationLocked, setIsPkkprLocationLocked] = useState(false);
@@ -5052,13 +5060,7 @@ export default function MasyarakatDashboard({
               <SimplePolygonDrawer
                 isDarkMode={isDarkMode}
                 onCancel={() => setIsDrawerOpen(false)}
-                focusTarget={{
-                  districtName: pkkprKecamatan,
-                  districtId: pkkprSelectedKecId,
-                  villageName: pkkprDesa,
-                  villageId: pkkprSelectedDesaId,
-                  villageGeojson: pkkprSelectedDesaGeom
-                }}
+                focusTarget={drawerFocusTarget}
                 initialGeometry={pkkprGeometry}
                 onSave={(geom, esg) => {
                   setPkkprGeometry(geom);

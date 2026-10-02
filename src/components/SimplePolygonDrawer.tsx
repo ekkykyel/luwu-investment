@@ -337,6 +337,7 @@ export default function SimplePolygonDrawer({
 
   // ─── AUTO FLY-TO CONTEXT LOGIC (SINGLE EXECUTION PER TARGET LOCK) ───
   const hasAutoFlownRef = useRef<boolean>(false);
+  const userIsDrawingRef = useRef<boolean>(false);
   const lastFocusedTargetKeyRef = useRef<string>("");
 
   const focusTargetKey = `${focusTarget?.districtId || focusTarget?.districtName || ''}_${focusTarget?.villageId || focusTarget?.villageName || ''}_${initialGeometry ? 'geom' : 'nogeom'}`;
@@ -345,6 +346,7 @@ export default function SimplePolygonDrawer({
     if (lastFocusedTargetKeyRef.current !== focusTargetKey) {
       lastFocusedTargetKeyRef.current = focusTargetKey;
       hasAutoFlownRef.current = false;
+      userIsDrawingRef.current = false;
     }
   }, [focusTargetKey]);
 
@@ -353,23 +355,25 @@ export default function SimplePolygonDrawer({
     const map = mapRef.current.getMap ? mapRef.current.getMap() : (mapRef.current as any);
     if (!map) return;
 
-    // Prevent repeated camera jumps if already auto-flown for this target unless explicitly forced
-    if (hasAutoFlownRef.current && !force) {
+    // NEVER reset or move camera if user has started drawing or map has already auto-flown (unless forced)
+    if ((hasAutoFlownRef.current || userIsDrawingRef.current) && !force) {
       return;
     }
+
+    // Mark as flown immediately to prevent race conditions during async data loads
+    hasAutoFlownRef.current = true;
 
     // 1. Priority A: Initial Geometry fitBounds
     if (initialGeometry && initialGeometry.coordinates && initialGeometry.coordinates.length > 0) {
       try {
-        const feature = { type: "Feature" as const, properties: {}, geometry: initialGeometry };
-        const bbox = turf.bbox(feature);
+        const featureObj = { type: "Feature" as const, properties: {}, geometry: initialGeometry };
+        const bbox = turf.bbox(featureObj);
         if (bbox && !bbox.some(isNaN)) {
           map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], {
             padding: 60,
             maxZoom: 16,
             duration: 1200
           });
-          hasAutoFlownRef.current = true;
           return;
         }
       } catch (e) {
@@ -387,7 +391,6 @@ export default function SimplePolygonDrawer({
             maxZoom: focusTarget?.villageId ? 15 : 13,
             duration: 1500
           });
-          hasAutoFlownRef.current = true;
           return;
         }
       } catch (err) {
@@ -412,22 +415,24 @@ export default function SimplePolygonDrawer({
         essential: true,
         duration: 1500
       });
-      hasAutoFlownRef.current = true;
     }
   }, [focusTarget, initialGeometry, activeBoundaryFeature]);
 
-  // Trigger auto flyTo ONCE when boundary context or map is ready
+  // Trigger auto flyTo ONCE when boundary context or map is ready (isolated from drawing state)
   useEffect(() => {
-    if (!hasAutoFlownRef.current) {
+    if (!hasAutoFlownRef.current && !userIsDrawingRef.current) {
       const timer = setTimeout(() => {
         triggerAutoFlyTo();
       }, 350);
       return () => clearTimeout(timer);
     }
-  }, [triggerAutoFlyTo]);
+  }, [focusTargetKey]);
 
-  // ─── LIVE ESG RADAR & BOUNDARY ENFORCEMENT ───
+  // ─── LIVE ESG RADAR & BOUNDARY ENFORCEMENT (DECOUPLED FROM CAMERA) ───
   const handleDrawEvent = useCallback((evt: any) => {
+    // Flag that user active drawing session is underway
+    userIsDrawingRef.current = true;
+
     if (!drawRef.current) return;
     const data = drawRef.current.getAll();
     
@@ -440,29 +445,21 @@ export default function SimplePolygonDrawer({
     const drawnFeature = data.features[0];
     const drawnGeom = drawnFeature.geometry;
     
-    // 1. Strict Administrative Boundary Enforcement
+    // 1. Strict Administrative Boundary Enforcement (Only for complete valid Polygons)
     if (activeBoundaryFeature) {
       try {
-        let isWithin = false;
+        let isWithin = true;
         if (drawnGeom.type === "Point") {
           isWithin = turf.booleanPointInPolygon(drawnFeature as any, activeBoundaryFeature as any);
-        } else {
+        } else if (drawnGeom.type === "Polygon" && drawnGeom.coordinates && drawnGeom.coordinates[0]?.length >= 4) {
           isWithin = turf.booleanWithin(drawnFeature as any, activeBoundaryFeature as any);
         }
 
-        setIsOutOfBounds(!isWithin);
-        if (!isWithin) {
-          Swal.fire({
-            icon: 'warning',
-            title: 'MELAMPAUI BATAS WILAYAH',
-            text: 'Area digitasi melampaui batas administrasi desa terpilih. Harap posisikan poligon di dalam batas wilayah.',
-            confirmButtonColor: '#e11d48',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 4500
-          });
-        }
+        // Functional state update prevents React re-render thrashing
+        setIsOutOfBounds((prev) => {
+          const nextState = !isWithin;
+          return prev !== nextState ? nextState : prev;
+        });
       } catch (err) {
         console.warn("Boundary enforcement check error:", err);
       }
@@ -507,12 +504,19 @@ export default function SimplePolygonDrawer({
   }, [activeBoundaryFeature, activeZoningData]);
 
   useEffect(() => {
+    const map = mapRef.current?.getMap();
+    if (map) {
+      map.on("draw.create", handleDrawEvent);
+      map.on("draw.update", handleDrawEvent);
+      map.on("draw.delete", handleDrawEvent);
+      map.on("draw.selectionchange", handleDrawEvent);
+    }
     return () => {
-      const map = mapRef.current?.getMap();
       if (map) {
         map.off("draw.create", handleDrawEvent);
         map.off("draw.update", handleDrawEvent);
         map.off("draw.delete", handleDrawEvent);
+        map.off("draw.selectionchange", handleDrawEvent);
       }
     };
   }, [handleDrawEvent]);
@@ -539,21 +543,16 @@ export default function SimplePolygonDrawer({
     map.addControl(draw, "top-left");
     drawRef.current = draw;
 
-    // Listeners for draw events
-    map.on("draw.create", handleDrawEvent);
-    map.on("draw.update", handleDrawEvent);
-    map.on("draw.delete", handleDrawEvent);
-
     if (initialGeometry && initialGeometry.coordinates && initialGeometry.coordinates.length > 0) {
       try {
-        const feature = {
+        const featureObj = {
           type: "Feature" as any,
           properties: {},
           geometry: initialGeometry
         };
-        draw.add(feature);
+        draw.add(featureObj);
         
-        const bbox = turf.bbox(feature);
+        const bbox = turf.bbox(featureObj);
         if (bbox && !bbox.some(isNaN)) {
           map.fitBounds(
             [[bbox[0], bbox[1]], [bbox[2], bbox[3]]],
@@ -574,7 +573,7 @@ export default function SimplePolygonDrawer({
         } catch(e) {}
       }, 400);
     }
-  }, [initialGeometry, triggerAutoFlyTo, handleDrawEvent]);
+  }, [initialGeometry, triggerAutoFlyTo]);
 
   const handleSave = () => {
     if (!drawRef.current) return;
@@ -633,6 +632,7 @@ export default function SimplePolygonDrawer({
     if (drawRef.current) {
        drawRef.current.deleteAll();
        drawRef.current.changeMode("draw_polygon");
+       userIsDrawingRef.current = false;
        setIsOutOfBounds(false);
        setIntersectedProtectedZones(null);
     }
