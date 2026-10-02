@@ -4,6 +4,7 @@ import {
   ShieldCheck,
   Upload,
   MapPin,
+  MapPinOff,
   Layers,
   CheckCircle2,
   AlertTriangle,
@@ -1844,6 +1845,26 @@ export default function PuptrSpatialClearanceDashboard() {
     });
   }, [queueList, searchQuery, statusFilter]);
 
+  // Auto-sync selectedApp with filteredQueue: reset to null if filteredQueue is empty or update active selection
+  useEffect(() => {
+    if (isLoadingQueue) return;
+    if (filteredQueue.length === 0) {
+      if (selectedApp !== null) {
+        setSelectedApp(null);
+        setZoningAudit(null);
+      }
+    } else {
+      // If current selectedApp is not in the filtered list (e.g. after tab filter change), select the first item
+      const isStillInQueue = selectedApp && filteredQueue.some(item => item.id === selectedApp.id || item.nibNik === selectedApp.nibNik);
+      if (!isStillInQueue) {
+        setSelectedApp(filteredQueue[0]);
+        setTechnicalNotes(filteredQueue[0].technicalNotes || `Sesuai tata ruang kawasan ${filteredQueue[0].sector} di Kec. ${filteredQueue[0].districtName}.`);
+        setIssuedSkNumber(filteredQueue[0].skPkkprDocNumber || null);
+        setZoningAudit(checkPkkprSpatialZoning(filteredQueue[0].geometry));
+      }
+    }
+  }, [filteredQueue, isLoadingQueue]);
+
   // Viewport GeoJSON feature for MapLibre
   const currentMapGeoJson = useMemo(() => {
     if (!selectedApp?.geometry) return null;
@@ -2350,7 +2371,7 @@ export default function PuptrSpatialClearanceDashboard() {
       {/* ─────────────────────────────────────────────────────────────
           MODULE 3 & MODULE 4: ADMIN STUDIO GIS INSPECTOR & SK ISSUANCE
          ───────────────────────────────────────────────────────────── */}
-      {selectedApp && (
+      {selectedApp ? (
         <div className={`grid grid-cols-1 ${isMapExpanded ? 'grid-cols-1' : 'lg:grid-cols-3'} gap-6`}>
           {/* Left / Top Column: Studio GIS Map Canvas (Module 3) */}
           <div className={`${isMapExpanded ? 'w-full col-span-full' : 'lg:col-span-2'} bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-5 shadow-sm space-y-4`}>
@@ -3402,6 +3423,21 @@ export default function PuptrSpatialClearanceDashboard() {
                 </span>
               </button>
             </div>
+          </div>
+        </div>
+      ) : (
+        /* EMPTY STATE / NO SELECTION PLACEHOLDER */
+        <div className="bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-800 rounded-3xl p-8 sm:p-14 text-center space-y-4 shadow-sm animate-in fade-in duration-300">
+          <div className="w-16 h-16 rounded-3xl bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 flex items-center justify-center mx-auto border border-slate-200 dark:border-slate-700 shadow-inner">
+            <MapPinOff className="w-8 h-8" />
+          </div>
+          <div className="space-y-1.5 max-w-md mx-auto">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+              Tidak Ada Permohonan Aktif Dipilih
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+              Silakan pilih salah satu permohonan pada tabel antrean di atas untuk membuka Studio GIS, analisis spasial, dan form rekomendasi teknis.
+            </p>
           </div>
         </div>
       )}

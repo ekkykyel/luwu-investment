@@ -4,6 +4,7 @@ import {
   ShieldCheck,
   Upload,
   MapPin,
+  MapPinOff,
   Layers,
   CheckCircle2,
   AlertTriangle,
@@ -1227,6 +1228,22 @@ export default function PertanianLandClearanceDashboard() {
     });
   }, [queueList, searchQuery, statusFilter]);
 
+  // Auto-sync selectedApp with filteredQueue: reset to null if filteredQueue is empty or update active selection
+  useEffect(() => {
+    if (isLoadingQueue) return;
+    if (filteredQueue.length === 0) {
+      if (selectedApp !== null) {
+        setSelectedApp(null);
+      }
+    } else {
+      // If current selectedApp is not in the filtered list (e.g. after tab filter change), select the first item
+      const isStillInQueue = selectedApp && filteredQueue.some(item => item.id === selectedApp.id || item.nibNik === selectedApp.nibNik);
+      if (!isStillInQueue) {
+        selectAppForReview(filteredQueue[0]);
+      }
+    }
+  }, [filteredQueue, isLoadingQueue]);
+
   // Viewport GeoJSON feature for MapLibre
   const currentMapGeoJson = useMemo(() => {
     if (!selectedApp?.geometry) return null;
@@ -1588,19 +1605,7 @@ export default function PertanianLandClearanceDashboard() {
       {/* ─────────────────────────────────────────────────────────────
           MODULE 3 & MODULE 4: AGRARIAN MAP WORKSPACE & DUAL-PATH DECISION ENGINE
          ───────────────────────────────────────────────────────────── */}
-      {!selectedApp && queueList.length === 0 && !isLoadingQueue && (
-        <div className="p-8 rounded-2xl border border-dashed border-slate-300 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 text-center space-y-2">
-          <Wheat className="w-10 h-10 text-emerald-500/40 mx-auto" />
-          <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">
-            Workspace Rekomendasi Lahan (LP2B) Standby
-          </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-            Workspace analisis spasial citra satelit dan modul penerbitan Berita Acara (BAP) LP2B akan aktif secara otomatis saat permohonan diteruskan dari Dinas PUPTR.
-          </p>
-        </div>
-      )}
-
-      {selectedApp && (
+      {selectedApp ? (
         <div className={`grid grid-cols-1 ${isMapExpanded ? 'grid-cols-1' : 'lg:grid-cols-3'} gap-6`}>
           {/* Left Column: Agrarian Map Analysis Workspace (Module 3) */}
           <div className={`${isMapExpanded ? 'w-full col-span-full' : 'lg:col-span-2'} bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 sm:p-5 shadow-sm space-y-4`}>
@@ -2158,6 +2163,21 @@ export default function PertanianLandClearanceDashboard() {
                 </span>
               </button>
             </div>
+          </div>
+        </div>
+      ) : (
+        /* EMPTY STATE / NO SELECTION PLACEHOLDER */
+        <div className="bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-800 rounded-3xl p-8 sm:p-14 text-center space-y-4 shadow-sm animate-in fade-in duration-300">
+          <div className="w-16 h-16 rounded-3xl bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 flex items-center justify-center mx-auto border border-slate-200 dark:border-slate-700 shadow-inner">
+            <MapPinOff className="w-8 h-8" />
+          </div>
+          <div className="space-y-1.5 max-w-md mx-auto">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+              Tidak Ada Permohonan Aktif Dipilih
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+              Silakan pilih salah satu permohonan pada tabel antrean di atas untuk membuka Studio GIS, analisis spasial, dan form rekomendasi teknis.
+            </p>
           </div>
         </div>
       )}
