@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { 
   Building2, 
   Search, 
@@ -1560,89 +1561,106 @@ export function InteractiveFloorPlan({
           }
           style={isFullscreen ? { height: '100dvh', width: '100vw' } : { minHeight: '620px', maxHeight: '780px' }}
         >
-          {/* Small floating Close button on top-right of the fullscreen map */}
-          {isFullscreen && (
-            <div className="absolute top-4 right-4 z-50">
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedNode(null);
-                  setIsFullscreen(false);
-                }}
-                className="flex items-center justify-center w-9 h-9 rounded-full bg-slate-900/90 dark:bg-slate-900/90 hover:bg-rose-600 text-slate-200 hover:text-white shadow-xl border border-slate-700 hover:border-rose-500 transition-all cursor-pointer active:scale-95"
-                title="Tutup Layar Lebar"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-          )}
-
-          {/* Small floating Zoom controls on bottom-right of the fullscreen map */}
-          {isFullscreen && (
-            <div className="absolute bottom-4 right-4 z-50 flex items-center gap-1 p-1 rounded-full bg-slate-900/90 dark:bg-slate-900/90 border border-slate-700/80 shadow-2xl">
-              <button
-                type="button"
-                onClick={handleZoomIn}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer active:scale-90"
-                title="Perbesar"
-              >
-                <ZoomIn className="w-3.5 h-3.5" />
-              </button>
-              <button
-                type="button"
-                onClick={handleZoomOut}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer active:scale-90"
-                title="Perkecil"
-              >
-                <ZoomOut className="w-3.5 h-3.5" />
-              </button>
-              <button
-                type="button"
-                onClick={handleResetZoom}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer active:scale-90"
-                title="Reset"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          )}
-
-          {/* Floating Kiosk Quick-Access Overlay on Map Canvas */}
-          {!isFullscreen && (
-            <div className="absolute top-4 right-4 z-30">
-              <button
-                type="button"
-                onClick={() => setIsFullscreen(true)}
-                className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md border border-slate-700 text-white text-xs font-bold shadow-lg hover:bg-emerald-600 hover:border-emerald-500 transition-all cursor-pointer active:scale-95 group"
-              >
-                <Maximize2 className="w-4 h-4 text-emerald-400 group-hover:text-white transition-colors" />
-                <span>Ketuk Layar Lebar (Landscape)</span>
-              </button>
-            </div>
-          )}
-
-          {/* Subtle Ambient Radial Grid Pattern */}
-          <div 
-            className="absolute inset-0 pointer-events-none opacity-40"
-            style={{
-              backgroundImage: `radial-gradient(${isDark ? '#10b981' : '#94a3b8'} 1px, transparent 1px)`,
-              backgroundSize: '24px 24px'
-            }}
-          />
-
-          {/* Interactive Transform Wrapper */}
-          <div 
-            className="relative w-full h-full flex items-center justify-center transition-transform duration-300"
-            style={{ transform: `scale(${zoomLevel})` }}
+          <TransformWrapper
+            disabled={!isFullscreen}
+            minScale={0.8}
+            maxScale={5}
+            initialScale={1}
+            limitToBounds={true}
+            centerOnInit={true}
+            doubleClick={{ disabled: false }}
+            wheel={{ step: 0.1 }}
+            panning={{ velocityDisabled: false }}
           >
-            <svg
-              viewBox="0 0 1200 800"
-              preserveAspectRatio="xMidYMid meet"
-              className={isFullscreen 
-                ? "w-full h-full max-h-[98%] max-w-[98%] block select-none drop-shadow-md"
-                : "w-full h-auto max-h-[640px] block select-none drop-shadow-md"
-              }
-            >
+            {({ zoomIn, zoomOut, resetTransform }) => (
+              <>
+                {/* Small floating Close button on top-right of the fullscreen map */}
+                {isFullscreen && (
+                  <div className="absolute top-4 right-4 z-50">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedNode(null);
+                        setIsFullscreen(false);
+                      }}
+                      className="flex items-center justify-center w-9 h-9 rounded-full bg-slate-900/90 dark:bg-slate-900/90 hover:bg-rose-600 text-slate-200 hover:text-white shadow-xl border border-slate-700 hover:border-rose-500 transition-all cursor-pointer active:scale-95"
+                      title="Tutup Layar Lebar"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                )}
+
+                {/* Small floating Zoom controls on bottom-right of the fullscreen map */}
+                {isFullscreen && (
+                  <div className="absolute bottom-4 right-4 z-50 flex items-center gap-1 p-1 rounded-2xl bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-md select-none">
+                    <button
+                      type="button"
+                      onClick={() => zoomIn(0.25)}
+                      className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-750 dark:text-slate-300 transition-colors cursor-pointer active:scale-90"
+                      title="Perbesar"
+                    >
+                      <ZoomIn className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => zoomOut(0.25)}
+                      className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-750 dark:text-slate-300 transition-colors cursor-pointer active:scale-90"
+                      title="Perkecil"
+                    >
+                      <ZoomOut className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => resetTransform()}
+                      className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-750 dark:text-slate-300 transition-colors cursor-pointer active:scale-90"
+                      title="Reset"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
+                {/* Floating Kiosk Quick-Access Overlay on Map Canvas */}
+                {!isFullscreen && (
+                  <div className="absolute top-4 right-4 z-30">
+                    <button
+                      type="button"
+                      onClick={() => setIsFullscreen(true)}
+                      className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md border border-slate-700 text-white text-xs font-bold shadow-lg hover:bg-emerald-600 hover:border-emerald-500 transition-all cursor-pointer active:scale-95 group"
+                    >
+                      <Maximize2 className="w-4 h-4 text-emerald-400 group-hover:text-white transition-colors" />
+                      <span>Ketuk Layar Lebar (Landscape)</span>
+                    </button>
+                  </div>
+                )}
+
+                {/* Subtle Ambient Radial Grid Pattern */}
+                <div 
+                  className="absolute inset-0 pointer-events-none opacity-40"
+                  style={{
+                    backgroundImage: `radial-gradient(${isDark ? '#10b981' : '#94a3b8'} 1px, transparent 1px)`,
+                    backgroundSize: '24px 24px'
+                  }}
+                />
+
+                <TransformComponent
+                  wrapperClass={isFullscreen ? "w-full h-full cursor-grab active:cursor-grabbing flex items-center justify-center" : "w-full h-full flex items-center justify-center"}
+                  contentClass="w-full h-full flex items-center justify-center"
+                >
+                  {/* Interactive Transform Wrapper */}
+                  <div 
+                    className="relative w-full h-full flex items-center justify-center transition-transform duration-300"
+                    style={isFullscreen ? {} : { transform: `scale(${zoomLevel})` }}
+                  >
+                    <svg
+                      viewBox="0 0 1200 800"
+                      preserveAspectRatio="xMidYMid meet"
+                      className={isFullscreen 
+                        ? "w-full h-full max-h-[98%] max-w-[98%] block select-none drop-shadow-md"
+                        : "w-full h-auto max-h-[640px] block select-none drop-shadow-md"
+                      }
+                    >
               <defs>
                 {/* Glow Filter for Active / Hovered Nodes */}
                 <filter id="mpp-active-glow" x="-20%" y="-20%" width="140%" height="140%">
@@ -1983,8 +2001,12 @@ export function InteractiveFloorPlan({
                   </g>
                 );
               })}
-            </svg>
-          </div>
+                    </svg>
+                  </div>
+                </TransformComponent>
+              </>
+            )}
+          </TransformWrapper>
 
           {/* Floating Instructions Pill */}
           {!isFullscreen && (
