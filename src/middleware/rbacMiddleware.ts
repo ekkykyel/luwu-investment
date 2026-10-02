@@ -108,11 +108,26 @@ export function extractAndVerifyUser(req: Request): AuthenticatedUser | null {
   try {
     // 1. First attempt: Verify using global JWT secret
     let decoded: any = null;
+    let isCryptographicallyVerified = false;
     try {
       decoded = jwt.verify(token, GLOBAL_JWT_SECRET);
+      isCryptographicallyVerified = true;
     } catch {
-      // 2. Second attempt: decode payload directly (e.g. Supabase standard access token)
-      decoded = jwt.decode(token);
+      // 2. Second attempt: Verify using Supabase JWT Secret if configured
+      const supabaseSecret = process.env.SUPABASE_JWT_SECRET || process.env.JWT_SECRET;
+      if (supabaseSecret) {
+        try {
+          decoded = jwt.verify(token, supabaseSecret);
+          isCryptographicallyVerified = true;
+        } catch {
+          // Signature verification failed
+        }
+      }
+      
+      // Fallback decode (payload only)
+      if (!isCryptographicallyVerified) {
+        decoded = jwt.decode(token);
+      }
     }
 
     if (!decoded || typeof decoded !== "object") {
@@ -125,6 +140,15 @@ export function extractAndVerifyUser(req: Request): AuthenticatedUser | null {
       decoded.app_metadata?.role || 
       decoded.userRole || 
       "public";
+
+    // ANTI-SPOOFING SHIELD (Kemenkominfo / SPBE Security Standard):
+    // Jika token tidak lolos verifikasi kriptografis (signature invalid),
+    // sistem MELARANG pemberian hak akses administratif (superadmin, admin_puptr, admin_pertanian, admin_oss)
+    const candidateNormalized = normalizeRole(rawRole);
+    if (!isCryptographicallyVerified && candidateNormalized !== "public" && candidateNormalized !== "pemohon") {
+      console.warn(`[RBAC SECURITY ALERT] Blocked unverified token attempting administrative role '${rawRole}'`);
+      return null;
+    }
 
     const userId = decoded.sub || decoded.id || decoded.user_id || "anonymous";
     const email = decoded.email || decoded.username || decoded.user_metadata?.email || "";

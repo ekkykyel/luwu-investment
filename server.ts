@@ -6628,7 +6628,7 @@ app.post("/api/investments/validate-environment", async (req, res) => {
 
 // POST /api/v1/pkkpr/approve-alih-fungsi
 // Dynamic Spatial Difference: Cuts LP2B / Sawah layer geometry with application polygon and updates luas_m2 in PostGIS / Supabase
-app.post("/api/v1/pkkpr/approve-alih-fungsi", async (req, res) => {
+app.post("/api/v1/pkkpr/approve-alih-fungsi", verifyRole(['admin_pertanian', 'pertanian']), async (req, res) => {
   try {
     const { permohonan_id, berita_acara_num, surat_rekomendasi_num, notes } = req.body;
 
@@ -6933,9 +6933,10 @@ async function recordPkkprAuditLog(params: {
 const ALLOWED_PKKPR_TRANSITIONS: Record<string, string[]> = {
   SUBMITTED: ['VERIFIKASI_PERTANIAN', 'BYPASS_PERTANIAN', 'VERIFIKASI_PUPTR'],
   BYPASS_PERTANIAN: ['VERIFIKASI_PUPTR', 'APPROVED_PUPTR', 'REVISI_PEMOHON', 'DITOLAK'],
-  VERIFIKASI_PERTANIAN: ['APPROVED_PERTANIAN', 'REVISI_PEMOHON', 'DITOLAK'],
+  VERIFIKASI_PERTANIAN: ['APPROVED_PERTANIAN', 'REJECTED_PERTANIAN', 'REVISI_PEMOHON', 'DITOLAK'],
   APPROVED_PERTANIAN: ['VERIFIKASI_PUPTR', 'APPROVED_PUPTR', 'REVISI_PEMOHON', 'DITOLAK'],
-  VERIFIKASI_PUPTR: ['APPROVED_PUPTR', 'REVISI_PEMOHON', 'DITOLAK'],
+  REJECTED_PERTANIAN: ['REVISI_PEMOHON', 'DITOLAK', 'VERIFIKASI_PUPTR'],
+  VERIFIKASI_PUPTR: ['VERIFIKASI_PERTANIAN', 'APPROVED_PUPTR', 'REVISI_PEMOHON', 'DITOLAK'],
   APPROVED_PUPTR: ['TERBIT', 'PROSES_OSS', 'REVISI_PEMOHON', 'DITOLAK'],
   PROSES_OSS: ['TERBIT', 'REVISI_PEMOHON', 'DITOLAK'],
   REVISI_PEMOHON: ['SUBMITTED', 'VERIFIKASI_PERTANIAN', 'VERIFIKASI_PUPTR', 'BYPASS_PERTANIAN'],
@@ -6947,8 +6948,9 @@ function normalizePkkprBackendStatus(status?: string): string {
   if (!status) return 'SUBMITTED';
   const s = status.toUpperCase().trim();
   if (s === 'APPROVED_PERTANIAN' || s === 'PERTEK_PERTANIAN' || s === 'SELESAI_REKOMENDASI') return 'APPROVED_PERTANIAN';
+  if (s === 'REJECTED_PERTANIAN' || s === 'DITOLAK_PERTANIAN') return 'REJECTED_PERTANIAN';
   if (s === 'APPROVED_PUPTR' || s === 'BAP_PUPTR' || s === 'PROSES_OSS') return 'APPROVED_PUPTR';
-  if (s === 'REJECTED_PERTANIAN' || s === 'REJECTED_FINAL' || s === 'DITOLAK' || s === 'REJECTED') return 'DITOLAK';
+  if (s === 'REJECTED_FINAL' || s === 'DITOLAK' || s === 'REJECTED') return 'DITOLAK';
   if (s === 'REVISI' || s === 'REVISI_PEMOHON' || s === 'REQUIRES REVISION' || s === 'NEED_REVISION') return 'REVISI_PEMOHON';
   if (s === 'ESCALATED_PERTANIAN' || s === 'VERIFIKASI_PERTANIAN' || s === 'PENDING PERTEK PERTANIAN' || s === 'FORWARDED_TO_PERTANIAN') return 'VERIFIKASI_PERTANIAN';
   if (s === 'BYPASS_PERTANIAN' || s === 'BYPASS') return 'BYPASS_PERTANIAN';
@@ -7396,6 +7398,20 @@ app.post("/api/v1/pkkpr/workflow/approve-puptr-final", verifyRole(['admin_puptr'
       return res.status(400).json({ success: false, error: transitionCheck.error });
     }
 
+    // Resolusi Konflik Lintas Dinas: Jika Dinas Pertanian menolak (LP2B terlanggar), PUPTR dilarang langsung menyetujui ke OSS
+    const { data: checkPertRow } = await supabase
+      .from('investments')
+      .select('pertanian_status, status_permohonan, override_justification')
+      .eq('id', permohonan_id)
+      .maybeSingle();
+
+    if (checkPertRow?.pertanian_status === 'REJECTED' || checkPertRow?.status_permohonan === 'REJECTED_PERTANIAN') {
+      return res.status(409).json({ 
+        success: false, 
+        error: "Konflik Kebijakan Lintas Dinas: Dinas Pertanian telah menerbitkan BAP Penolakan Alih Fungsi LP2B. Berkas tidak dapat disetujui langsung ke OSS. Silakan gunakan fungsi 'Kembalikan untuk Revisi' (agar pemohon memotong deliniasi LP2B) atau lakukan 'Penolakan Final'." 
+      });
+    }
+
     const year = new Date().getFullYear();
     const docNum = pertek_puptr_num || `600.1.15/042/BAP-PKKPR-B/PUPTR-TR/LUWU/${year}`;
     const noteText = notes || "BAP Kesesuaian Tata Ruang telah disahkan oleh Kepala Dinas PUPTR. Berkas diteruskan ke Dinas Penanaman Modal & PTSP (OSS) untuk penerbitan SK.";
@@ -7467,6 +7483,35 @@ app.post("/api/v1/pkkpr/workflow/oss-publish-izin", verifyRole(['admin_oss', 'ad
     const transitionCheck = await checkAndValidatePkkprTransition(permohonan_id, 'TERBIT');
     if (!transitionCheck.valid) {
       return res.status(400).json({ success: false, error: transitionCheck.error });
+    }
+
+    // Validasi Prasyarat Mutlak Penerbitan SK (Kemenkominfo & OSS-RBA Compliance):
+    // Memastikan Rekomendasi Teknis PUPTR sudah sah dan tidak ada penolakan LP2B Pertanian aktif
+    const { data: appValidation } = await supabase
+      .from('gis_pkkpr')
+      .select('pertek_puptr_num, berita_acara_pertanian_num, status_pkkpr')
+      .eq('id', permohonan_id)
+      .maybeSingle();
+
+    const { data: invValidation } = await supabase
+      .from('investments')
+      .select('pkkpr_doc_number, pertanian_status, status_permohonan')
+      .eq('id', permohonan_id)
+      .maybeSingle();
+
+    const pertekDoc = appValidation?.pertek_puptr_num || invValidation?.pkkpr_doc_number;
+    if (!pertekDoc) {
+      return res.status(412).json({
+        success: false,
+        error: "Prasyarat Otorisasi Gagal: Dokumen Pertimbangan Teknis (Pertek) Dinas PUPTR belum terbit atau belum tercatat pada pangkalan data. DPMPTSP dilarang menerbitkan SK PKKPR tanpa Pertek Ruang yang sah."
+      });
+    }
+
+    if (invValidation?.pertanian_status === 'REJECTED' || invValidation?.status_permohonan === 'REJECTED_PERTANIAN') {
+      return res.status(412).json({
+        success: false,
+        error: "Prasyarat Otorisasi Gagal: Lahan beririsan dengan kawasan LP2B dan ditolak oleh Dinas Pertanian. SK PKKPR tidak dapat diterbitkan."
+      });
     }
 
     const year = new Date().getFullYear();
@@ -7649,6 +7694,121 @@ app.post("/api/v1/pkkpr/workflow/request-revision", verifyRole(['admin_puptr', '
   } catch (err: any) {
     console.error("[POST /api/v1/pkkpr/workflow/request-revision] Error:", err);
     return res.status(500).json({ success: false, error: err.message || "Gagal memproses permintaan revisi." });
+  }
+});
+
+// 8. WORKFLOW RESUBMIT REVISI: Pemohon mengirimkan perbaikan koordinat/dokumen dengan versioning & audit snapshot
+app.post("/api/v1/pkkpr/workflow/resubmit-revision", verifyRole(['pemohon', 'investor', 'masyarakat', 'superadmin', 'admin_puptr']), async (req: any, res) => {
+  try {
+    const { permohonan_id, updated_geometry, updated_documents, revision_notes } = req.body;
+    if (!permohonan_id) {
+      return res.status(400).json({ success: false, error: "permohonan_id wajib disertakan!" });
+    }
+
+    // Validasi Parameter Wajib Spasial (Zero Null Exception)
+    if (!updated_geometry && !updated_documents) {
+      return res.status(400).json({
+        success: false,
+        error: "Validasi Spasial Gagal: Delineasi poligon/koordinat atau dokumen perbaikan wajib disertakan pada pengajuan revisi."
+      });
+    }
+
+    // 1. Fetch current record to archive version snapshot
+    const { data: currentRecord } = await supabase
+      .from('investments')
+      .select('*')
+      .eq('id', permohonan_id)
+      .maybeSingle();
+
+    const previousGeometry = currentRecord?.geometry || null;
+    const previousAreaHa = currentRecord?.area_ha || null;
+    const nowIso = new Date().toISOString();
+    const versionNumber = (currentRecord?.revision_count || 0) + 1;
+
+    // Calculate area if geometry provided
+    let newAreaHa = previousAreaHa;
+    if (updated_geometry) {
+      try {
+        const polyFeature = turf.feature(updated_geometry.geometry || updated_geometry);
+        const areaM2 = turf.area(polyFeature);
+        newAreaHa = Number((areaM2 / 10000).toFixed(4));
+      } catch (geomErr) {
+        console.warn("[resubmit-revision] Area calculation fallback:", geomErr);
+      }
+    }
+
+    const note = revision_notes || `Revisi ke-${versionNumber} diajukan oleh pemohon dengan pembaharuan koordinat spasial.`;
+    const fullNote = `[REVISI PEMOHON DIAJUKAN - Versi #${versionNumber} - ${new Date().toLocaleDateString('id-ID')}]: ${note}`;
+
+    const updatePayloadInv: any = {
+      status_permohonan: 'REVIEW_PUPTR',
+      status: 'Pending Spatial Check',
+      revision_count: versionNumber,
+      last_revision_at: nowIso,
+      override_justification: fullNote,
+      updated_at: nowIso
+    };
+
+    if (updated_geometry) {
+      updatePayloadInv.geometry = updated_geometry;
+      updatePayloadInv.area_ha = newAreaHa;
+    }
+
+    const updatePayloadGis: any = {
+      status_pkkpr: 'VERIFIKASI_PUPTR',
+      catatan_teknis: fullNote,
+      updated_at: nowIso
+    };
+
+    if (updated_geometry) {
+      updatePayloadGis.geometry_json = updated_geometry;
+      updatePayloadGis.geom = updated_geometry;
+      if (newAreaHa) {
+        updatePayloadGis.luas_ha = newAreaHa;
+        updatePayloadGis.luas_m2 = Math.round(newAreaHa * 10000);
+      }
+    }
+
+    await Promise.all([
+      supabase.from('investments').update(updatePayloadInv).eq('id', permohonan_id),
+      supabase.from('gis_pkkpr').update(updatePayloadGis).eq('id', permohonan_id),
+      supabase.from('pkkpr_permohonan').update({
+        status_permohonan: 'REVIEW_PUPTR',
+        catatan_teknis: fullNote,
+        geom: updated_geometry || undefined,
+        geometry_json: updated_geometry || undefined,
+        updated_at: nowIso
+      }).eq('id', permohonan_id)
+    ]);
+
+    // Record audit log with archived previous geometry snapshot (Anti-Data Loss / Versioning)
+    await recordPkkprAuditLog({
+      permohonan_id,
+      old_status: 'REVISI_PEMOHON',
+      new_status: 'REVIEW_PUPTR',
+      action_type: 'RESUBMIT_REVISION',
+      changed_by_user_id: req.user?.id || req.user?.sub,
+      changed_by_role: req.user?.role || 'pemohon',
+      changed_by_email: req.user?.email,
+      notes: fullNote,
+      metadata: {
+        revision_version: versionNumber,
+        archived_previous_geometry: previousGeometry,
+        archived_previous_area_ha: previousAreaHa,
+        new_area_ha: newAreaHa
+      }
+    });
+
+    return res.json({
+      success: true,
+      status_permohonan: 'REVIEW_PUPTR',
+      revision_version: versionNumber,
+      message: `Berkas revisi ke-${versionNumber} berhasil disubmit. Delineasi lama telah diarsipkan dan berkas kembali masuk antrean verifikasi Dinas PUPTR.`,
+      permohonan_id
+    });
+  } catch (err: any) {
+    console.error("[POST /api/v1/pkkpr/workflow/resubmit-revision] Error:", err);
+    return res.status(500).json({ success: false, error: err.message || "Gagal mengirimkan berkas revisi." });
   }
 });
 
