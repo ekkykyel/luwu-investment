@@ -1829,22 +1829,17 @@ export default function PortalMPP() {
                 />
               </div>
               <div className="flex flex-col shrink min-w-0">
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <span className="text-sm xs:text-base sm:text-lg md:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight font-sans truncate">
-                    MPP Simpurusiang
-                  </span>
-                  <span className="hidden xl:inline-flex items-center gap-1 text-[9px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/15 dark:bg-emerald-500/20 border border-emerald-500/30 px-2.5 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap shadow-xs">
-                    {t("mppPortal.nav.topBadge", "Layanan Unggul")}
-                  </span>
-                </div>
+                <span className="text-sm xs:text-base sm:text-lg md:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight font-sans truncate">
+                  MPP Simpurusiang
+                </span>
                 <span className="hidden sm:block text-[10px] sm:text-xs text-emerald-800 dark:text-emerald-400 font-semibold tracking-wide whitespace-nowrap font-sans">
                   {t("mppPortal.nav.govName")}
                 </span>
               </div>
             </div>
 
-            {/* Desktop Navigation - Perfectly Center Aligned */}
-            <nav className="hidden lg:flex items-center gap-4 xl:gap-6 mx-auto font-sans">
+            {/* Desktop Navigation - Balanced Center Aligned */}
+            <nav className="hidden lg:flex items-center gap-6 xl:gap-8 mx-auto font-sans">
               <a 
                 className="text-emerald-700 dark:text-emerald-400 border-b-2 border-emerald-600 dark:border-emerald-400 pb-0.5 font-sans text-xs sm:text-sm font-bold hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer whitespace-nowrap" 
                 href="#hero"

@@ -185,14 +185,9 @@ export const PortalLayout: React.FC<PortalLayoutProps> = ({
                   </div>
 
                   <div className="flex flex-col min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-base sm:text-lg font-black tracking-tight text-slate-900 dark:text-white leading-none font-sans">
-                        MPP Simpurusiang
-                      </span>
-                      <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-700/60">
-                        SUPER APP
-                      </span>
-                    </div>
+                    <span className="text-base sm:text-lg font-black tracking-tight text-slate-900 dark:text-white leading-tight font-sans">
+                      MPP Simpurusiang
+                    </span>
                     <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 truncate">
                       Pemerintah Kabupaten Luwu
                     </span>
