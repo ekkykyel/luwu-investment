@@ -48,6 +48,7 @@ interface MppCommandPaletteProps {
   onOpenVoiceAssistant?: () => void;
   onOpenAgenciesCatalog: () => void;
   onOpenServicesCatalog: () => void;
+  initialQuery?: string;
 }
 
 export const MppCommandPalette: React.FC<MppCommandPaletteProps> = ({
@@ -61,6 +62,7 @@ export const MppCommandPalette: React.FC<MppCommandPaletteProps> = ({
   onOpenVoiceAssistant,
   onOpenAgenciesCatalog,
   onOpenServicesCatalog,
+  initialQuery,
 }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -70,14 +72,14 @@ export const MppCommandPalette: React.FC<MppCommandPaletteProps> = ({
   // Focus input when opened
   useEffect(() => {
     if (isOpen) {
-      setQuery('');
+      setQuery(initialQuery || '');
       setSelectedIndex(0);
       const timer = setTimeout(() => {
         inputRef.current?.focus();
       }, 80);
       return () => clearTimeout(timer);
     }
-  }, [isOpen]);
+  }, [isOpen, initialQuery]);
 
   // Global Keyboard shortcuts: Ctrl+K / Cmd+K and Esc
   useEffect(() => {

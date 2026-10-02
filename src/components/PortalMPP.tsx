@@ -48,6 +48,13 @@ import 'swiper/css/pagination';
 import { AnimatedSectionHeader } from './common/AnimatedSectionHeader';
 import { TiltCard } from './common/TiltCard';
 import { SpotlightCard } from './common/SpotlightCard';
+import { SuperHeroSearch } from './mpp/SuperHeroSearch';
+import { PriorityShowcaseCarousel } from './mpp/PriorityShowcaseCarousel';
+import { BentoLiveQueueRadar } from './mpp/BentoLiveQueueRadar';
+import { InteractiveRequirementStepper } from './mpp/InteractiveRequirementStepper';
+import { InteractiveSpatialFloorPlan } from './mpp/InteractiveSpatialFloorPlan';
+import { GlobalHelpdeskFab } from './mpp/GlobalHelpdeskFab';
+import { FaqAccordion } from './mpp/FaqAccordion';
 import { MagneticButton } from './common/MagneticButton';
 import { SonarRadarPulse } from './common/SonarRadarPulse';
 import { MppNewsItem, getStoredMppNews, syncMppNewsWithServer } from '../data/mppNewsData';
@@ -585,6 +592,7 @@ export default function PortalMPP() {
 
   // State & Listener Universal Command Palette (Ctrl + K / Cmd + K)
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [commandPaletteInitialQuery, setCommandPaletteInitialQuery] = useState('');
 
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
@@ -2174,153 +2182,44 @@ export default function PortalMPP() {
               />
             </div>
 
-            {/* Staggered Reveal Container */}
-            <motion.div 
-              className="flex flex-col items-center w-full max-w-4xl"
-              initial="hidden"
-              animate="visible"
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: {
-                    staggerChildren: 0.1,
-                    delayChildren: 0.04,
-                  },
-                },
+            {/* Desktop Super-App Prominent Hero Search Bar (Material Design 3 & Google Style) */}
+            <SuperHeroSearch
+              activePersona={activePersona}
+              onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+              onOpenVoiceAssistant={() => window.dispatchEvent(new CustomEvent('open-mpp-voice-assistant'))}
+              onSelectChip={(chipId) => {
+                if (chipId === 'antrean') {
+                  setIsQueueBookingOpen(true);
+                } else {
+                  setIsCommandPaletteOpen(true);
+                }
               }}
+              onSearchSubmit={(q) => {
+                setCommandPaletteInitialQuery(q);
+                setIsCommandPaletteOpen(true);
+              }}
+            />
+
+            {/* Services & VIP Fast-Track Carousel (Horizontal Progressive Disclosure) */}
+            <div className="w-full max-w-6xl mx-auto pt-2 pb-6 px-1">
+              <PriorityShowcaseCarousel
+                isDark={isDark}
+                onOpenAccessibilityPanel={() => window.dispatchEvent(new CustomEvent('open-mpp-accessibility-panel'))}
+                onOpenVipInvestor={() => {
+                  const el = document.getElementById('investor-vip');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+              />
+            </div>
+
+            {/* Quick Action Ribbon - Executive Bento Cards with Thematic Accents */}
+            <motion.div 
+              variants={{
+                hidden: { opacity: 0, y: 15 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
+              }}
+              className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-4xl px-1 sm:px-2 mb-8"
             >
-              {/* Accreditation Kicker - Standardized Dual-Tone Section Header Pattern */}
-              <motion.div
-                variants={{
-                  hidden: { opacity: 0, y: 12 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
-                }}
-                className="flex justify-center mb-3"
-              >
-                <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[9.5px] xs:text-[10.5px] sm:text-[11px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60 whitespace-nowrap shadow-2xs">
-                  <span>PEMKAB LUWU</span>
-                  <span className="opacity-50 text-[8px] xs:text-[10px]">•</span>
-                  <span>MPP DIGITAL SIMPURUSIANG</span>
-                </span>
-              </motion.div>
-              
-              {/* Judul: Dual-Tone Section Title */}
-              <motion.h1 
-                variants={{
-                  hidden: { opacity: 0, y: 12 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
-                }}
-                className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight max-w-2xl mx-auto mb-3 font-sans"
-              >
-                Transformasi Digital{" "}
-                <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 dark:from-emerald-300 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent">
-                  MPP Simpurusiang
-                </span>
-              </motion.h1>
-              
-              {/* Sub-judul */}
-              <motion.p 
-                variants={{
-                  hidden: { opacity: 0, y: 12 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
-                }}
-                className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed mb-6 px-2 font-sans"
-              >
-                {t("mppPortal.hero.subtitle", "Pusat pelayanan publik terintegrasi Kabupaten Luwu. Menghubungkan 19 instansi pemerintah, BUMN, dan swasta dalam satu pintu yang cepat, transparan, dan nyaman.")}
-              </motion.p>
-
-              {/* Smart Search Bar (Tabe' Search) Mobilization */}
-              <motion.div 
-                variants={{
-                  hidden: { opacity: 0, y: 12 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
-                }}
-                className="w-full max-w-md mx-auto mb-4"
-              >
-                <div 
-                  onClick={() => setIsCommandPaletteOpen(true)}
-                  className="w-full max-w-md mx-auto bg-white dark:bg-slate-900 rounded-2xl p-2 shadow-xl border border-slate-200 dark:border-slate-800 flex items-center gap-2 mb-4 cursor-pointer group hover:border-emerald-500/80 transition-all"
-                >
-                  <span className="px-2.5 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-xs font-bold rounded-xl shrink-0">
-                    Tabe'
-                  </span>
-                  <div className="w-full bg-transparent text-xs sm:text-sm focus:outline-none text-slate-900 dark:text-white placeholder:text-slate-400 flex items-center truncate">
-                    <span className="text-slate-400 dark:text-slate-500 truncate">
-                      {t("mppPortal.search.placeholderShort", "Cari layanan publik...")}
-                    </span>
-                  </div>
-                  
-                  {/* Voice Assistant Direct Mic Trigger */}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.dispatchEvent(new CustomEvent('open-mpp-voice-assistant'));
-                    }}
-                    title="Pencarian Suara & Asisten Suara AI"
-                    aria-label="Pencarian Suara & Asisten Suara AI"
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors shrink-0 flex items-center justify-center cursor-pointer"
-                  >
-                    <Mic className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsCommandPaletteOpen(true);
-                    }}
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm rounded-xl shrink-0 shadow-md cursor-pointer transition-all active:scale-95"
-                  >
-                    {t("mppPortal.search.buttonMobile", "Cari")}
-                  </button>
-                </div>
-
-                {/* Layanan Populer (Horizontal Scroll Chips dengan Fade-Gradient Mask) */}
-                <div className="relative w-full max-w-md mx-auto mb-6">
-                  {/* Fade Gradient Sisi Kanan untuk Indikasi Scrollable Content */}
-                  <div className="pointer-events-none absolute right-0 top-0 bottom-2 w-8 sm:w-10 bg-gradient-to-l from-white dark:from-slate-950 to-transparent z-10 rounded-r-xl" />
-                  {/* Fade Gradient Sisi Kiri */}
-                  <div className="pointer-events-none absolute left-0 top-0 bottom-2 w-6 bg-gradient-to-r from-white dark:from-slate-950 to-transparent z-10 rounded-l-xl" />
-
-                  <div className="w-full max-w-md mx-auto flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none snap-x justify-start sm:justify-center px-1">
-                    {[
-                      { label: t("mppPortal.search.chipDukcapil", "Dukcapil & KTP"), id: "dukcapil" },
-                      { label: t("mppPortal.search.chipNIB", "Izin Usaha NIB"), id: "oss" },
-                      { label: t("mppPortal.search.chipAntrean", "Antrean Online"), id: "antrean" },
-                      { label: t("mppPortal.search.chipBPJS", "BPJS Kesehatan"), id: "bpjs" },
-                      { label: t("mppPortal.search.chipPBB", "Pajak PBB"), id: "bapenda" },
-                      { label: "SAMSAT Luwu", id: "samsat" },
-                      { label: "Pertanahan BPN", id: "bpn" },
-                    ].map((chip) => (
-                    <button
-                      key={chip.id}
-                      type="button"
-                      onClick={() => {
-                        if (chip.id === 'antrean') {
-                          setIsQueueBookingOpen(true);
-                        } else {
-                          setIsCommandPaletteOpen(true);
-                        }
-                      }}
-                      className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800/80 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-slate-700 dark:text-slate-300 text-xs font-medium rounded-xl whitespace-nowrap snap-start shrink-0 border border-slate-200/60 dark:border-slate-700/60 transition-all cursor-pointer select-none active:scale-95"
-                    >
-                      {chip.label}
-                    </button>
-                  ))}
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Quick Action Ribbon - Executive Bento Cards with Thematic Accents */}
-              <motion.div 
-                variants={{
-                  hidden: { opacity: 0, y: 15 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
-                }}
-                className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-4xl px-1 sm:px-2 mb-8"
-              >
                 {activePersona === 'investor' ? (
                   <>
                     <div
@@ -2525,7 +2424,6 @@ export default function PortalMPP() {
                   </button>
                 </div>
               </motion.div>
-            </motion.div>
           </section>
 
           {/* Seksi Motto Pelayanan Kami */}
@@ -2621,13 +2519,12 @@ export default function PortalMPP() {
           {/* Seksi Maklumat Pelayanan & SLA Radar (UU No. 25/2009 & PermenPAN-RB) */}
           <MppMaklumatSlaRadar isDark={isDark} />
 
-          {/* Seksi Smart Live Queue & Loket Radar */}
-          <div id="smart-live-queue" className="scroll-mt-28">
-            <SmartLiveQueue 
+          {/* Seksi Bento Live Queue & Loket Radar (Material Design 3 Asymmetrical Bento Grid) */}
+          <div id="smart-live-queue" className="w-full max-w-[1440px] mx-auto px-1 sm:px-4 md:px-8 lg:px-16 scroll-mt-28">
+            <BentoLiveQueueRadar 
               isDark={isDark} 
               onRegisterQueue={(agencyName) => {
                 if (agencyName) {
-                  // Find if there is a matching service option or just set as-is
                   setQueueForm(prev => ({ ...prev, service: agencyName }));
                 }
                 setIsQueueBookingOpen(true);
@@ -2938,8 +2835,9 @@ export default function PortalMPP() {
             </div>
           </motion.section>
 
-          {/* Seksi AI Requirement Assistant & Smart Checklist */}
-          <div id="syarat-dokumen">
+          {/* Seksi AI Requirement Assistant & Interactive Progressive Stepper */}
+          <div id="syarat-dokumen" className="w-full max-w-7xl mx-auto px-1 sm:px-4 md:px-8 space-y-8 scroll-mt-28">
+            <InteractiveRequirementStepper />
             <SmartRequirementAssistant isDark={isDark} />
           </div>
 
@@ -3420,8 +3318,15 @@ export default function PortalMPP() {
             )}
           </motion.section>
 
-          {/* Seksi Denah 3D & Navigasi Loket Interaktif */}
-          <div id="denah-interaktif">
+          {/* Seksi Denah & Navigasi Spasial Interaktif Canvas */}
+          <div id="denah-interaktif" className="w-full max-w-7xl mx-auto px-1 sm:px-4 md:px-8 space-y-8 scroll-mt-28">
+            <InteractiveSpatialFloorPlan 
+              isDark={isDark}
+              onSelectLoket={(loketName) => {
+                setQueueForm(prev => ({ ...prev, service: loketName }));
+                setIsQueueBookingOpen(true);
+              }}
+            />
             <InteractiveFloorPlan isDark={isDark} />
           </div>
 
@@ -3643,10 +3548,10 @@ export default function PortalMPP() {
                           <div
                             key={product.id || idx}
                             onClick={() => setCurrentUmkmIndex(idx)}
-                            className={`flex flex-col group rounded-3xl border transition-all duration-500 backdrop-blur-2xl overflow-hidden cursor-pointer relative shadow-lg ${
+                            className={`flex flex-col group rounded-3xl border transition-all duration-300 backdrop-blur-2xl overflow-hidden cursor-pointer relative shadow-md hover:shadow-2xl hover:border-emerald-500/60 hover:-translate-y-1.5 ${
                               isCurrent 
-                                ? "border-emerald-500 ring-4 ring-emerald-500/20 bg-gradient-to-b from-white via-slate-50/80 to-emerald-50/30 dark:from-slate-900 dark:via-slate-900/95 dark:to-emerald-950/40 shadow-2xl shadow-emerald-500/15 scale-[1.02] -translate-y-1" 
-                                : "border-slate-200/90 dark:border-white/10 bg-white/95 dark:bg-slate-900/80 hover:border-emerald-500/50 hover:shadow-xl hover:-translate-y-1"
+                                ? "border-emerald-500 ring-4 ring-emerald-500/20 bg-gradient-to-b from-white via-slate-50/80 to-emerald-50/30 dark:from-slate-900 dark:via-slate-900/95 dark:to-emerald-950/40 shadow-2xl shadow-emerald-500/15 scale-[1.02] -translate-y-1.5" 
+                                : "border-slate-200/90 dark:border-white/10 bg-white/95 dark:bg-slate-900/80"
                             }`}
                           >
                             {/* Gambar Produk Diperbesar (Tinggi h-60 sm:h-64) */}
@@ -5405,15 +5310,12 @@ export default function PortalMPP() {
             </div>
           </motion.section>
 
-          {/* Seksi Tanya Jawab (FAQ) Interaktif */}
-          <motion.section
-            id="faq"
-            initial={{ opacity: 0, y: 30, scale: 0.98 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.1 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="max-w-5xl mx-auto w-full scroll-mt-28 py-8 sm:py-14 md:py-20 px-2 sm:px-5 md:px-8 font-sans"
-          >
+          {/* Seksi Tanya Jawab (FAQ) Interaktif - Material 3 Smooth Accordion */}
+          <div id="faq" className="w-full max-w-5xl mx-auto py-8 sm:py-14 md:py-20 px-2 sm:px-5 md:px-8 font-sans scroll-mt-28">
+            <FaqAccordion />
+          </div>
+
+          <div className="hidden">
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-xl mx-auto text-center px-3 flex flex-col items-center mb-6 sm:mb-10 break-words">
               <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2 inline-block text-center bg-emerald-500/10 border border-emerald-500/20 px-3 py-0.5 rounded-full">
@@ -5566,7 +5468,7 @@ export default function PortalMPP() {
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
-          </motion.section>
+          </div>
 
           {/* Widget Prakiraan Cuaca Kabupaten Luwu (Paling Bawah Di Atas Footer) */}
           <div className="w-full max-w-4xl mx-auto my-8 px-0.5 sm:px-4 flex justify-center">
@@ -7350,7 +7252,11 @@ export default function PortalMPP() {
         {/* Universal GovTech Command Palette (Ctrl + K) - Inovasi GovTech 3 */}
         <MppCommandPalette
           isOpen={isCommandPaletteOpen}
-          onClose={() => setIsCommandPaletteOpen(false)}
+          onClose={() => {
+            setIsCommandPaletteOpen(false);
+            setCommandPaletteInitialQuery('');
+          }}
+          initialQuery={commandPaletteInitialQuery}
           isDark={isDark}
           activePersona={activePersona}
           onSelectPersona={(persona) => setActivePersona(persona)}
@@ -7375,6 +7281,13 @@ export default function PortalMPP() {
           }}
           isDark={isDark}
           initialData={pkkprInitialData}
+        />
+
+        {/* Material Design 3 Desktop Super-App Global Helpdesk Floating Action Button */}
+        <GlobalHelpdeskFab
+          onOpenQueueBooking={() => setIsQueueBookingOpen(true)}
+          onOpenAiAssistant={() => setIsAiModalOpen(true)}
+          onOpenVoiceAssistant={() => window.dispatchEvent(new CustomEvent('open-mpp-voice-assistant'))}
         />
       </div>
     </div>
