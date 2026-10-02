@@ -1378,7 +1378,7 @@ export function InteractiveFloorPlan({
 
   return (
     <div className={isFullscreen 
-      ? "fixed inset-0 z-[9999] bg-slate-950 text-slate-100 p-2 sm:p-4 md:p-8 flex flex-col justify-between overflow-hidden select-none"
+      ? "fixed inset-0 z-[9999] bg-slate-950 text-slate-100 p-0 flex flex-col justify-center items-center overflow-hidden select-none"
       : `w-full rounded-3xl border transition-all duration-300 overflow-hidden shadow-sm flex flex-col ${
           isDark ? 'bg-slate-900/95 border-slate-800 text-slate-100' : 'bg-white border-slate-100 text-slate-900'
         } ${className}`
@@ -1387,85 +1387,7 @@ export function InteractiveFloorPlan({
       {/* ───────────────────────────────────────────────────────────────── */}
       {/* 1. TOP BAR: TITLE, FILTER CHIPS, SEARCH & ZOOM CONTROLS           */}
       {/* ───────────────────────────────────────────────────────────────── */}
-      {isFullscreen ? (
-        <>
-          <div className="flex items-center justify-between gap-2 pb-2.5 sm:pb-4 border-b border-slate-800/80 mb-2 shrink-0">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 sm:p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                <Layers className="w-4 h-4 sm:w-5 sm:h-5 animate-pulse" />
-              </div>
-              <div>
-                <h3 className="text-xs sm:text-sm md:text-base font-extrabold text-white font-sans flex items-center gap-1 sm:gap-2">
-                  <span className="truncate max-w-[130px] xs:max-w-none">Kiosk Spasial Denah MPP</span>
-                  <span className="hidden xs:inline-block px-1.5 py-0.5 rounded bg-emerald-500/20 text-[9px] text-emerald-400 border border-emerald-500/30 font-mono whitespace-nowrap">
-                    LANDSCAPE MODE
-                  </span>
-                </h3>
-                <p className="hidden sm:block text-[10px] text-slate-400 font-medium">
-                  Kabupaten Luwu • Pilih pin-drop gerai atau fasilitas terpadu.
-                </p>
-              </div>
-            </div>
-
-            {/* Screen orientation guidance helper - Pulsing in portrait, hidden in landscape */}
-            <div className="flex xs:hidden md:hidden items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[9px] font-mono animate-pulse">
-              <RotateCw className="w-3 h-3 animate-spin" style={{ animationDuration: '3s' }} />
-              <span>📱 Putar Layar (Landscape)</span>
-            </div>
-
-            {/* Center legend markers (visible only on md:landscape screens and larger) */}
-            <div className="hidden lg:flex items-center gap-4 text-[11px] font-semibold text-slate-400">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Buka</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-amber-400" />
-                <span>Ramai</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-slate-500" />
-                <span>Tutup</span>
-              </span>
-            </div>
-
-            {/* Kiosk Controls Cluster */}
-            <div className="flex items-center gap-2 sm:gap-3">
-              {/* Search Bar inside Kiosk Mode (hidden on small landscape screens) */}
-              <div className="relative hidden md:block min-w-[160px]">
-                <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Cari..."
-                  className="w-full pl-9 pr-8 py-1.5 text-xs rounded-xl border border-slate-700 bg-slate-900 text-white placeholder-slate-500 focus:border-emerald-500 outline-none"
-                />
-              </div>
-
-              {/* Close/Exit Kiosk button (Highly visible and responsive) */}
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedNode(null);
-                  setIsFullscreen(false);
-                }}
-                className="flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold border border-rose-600 shadow-lg shadow-rose-950/40 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
-                title="Keluar dari Layar Lebar"
-              >
-                <Minimize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                <span>Keluar</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Landscape Assistant Banner - visible on mobile screens */}
-          <div className="md:hidden flex items-center justify-center gap-2 p-2 mb-2 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold animate-pulse shrink-0">
-            <RotateCw className="w-4 h-4" />
-            <span>Putar HP ke Samping (Landscape) untuk Tampilan Penuh</span>
-          </div>
-        </>
-      ) : (
+      {!isFullscreen && (
         <div className={`p-4 sm:p-5 border-b flex flex-col lg:flex-row lg:items-center justify-between gap-4 ${
           isDark ? 'border-slate-800/80 bg-slate-900/50' : 'border-slate-100 bg-slate-50/50'
         }`}>
@@ -1633,11 +1555,58 @@ export function InteractiveFloorPlan({
         <div 
           ref={containerRef}
           className={isFullscreen
-            ? "relative w-full flex-1 overflow-hidden flex flex-col items-center justify-center p-2 sm:p-4 touch-pan-x touch-pan-y bg-slate-950"
+            ? "relative w-full h-full overflow-hidden flex flex-col items-center justify-center p-0 touch-pan-x touch-pan-y bg-slate-950"
             : "relative w-full overflow-hidden flex flex-col items-center justify-center p-2 sm:p-4 touch-pan-x touch-pan-y"
           }
-          style={isFullscreen ? { height: 'calc(100dvh - 75px)' } : { minHeight: '620px', maxHeight: '780px' }}
+          style={isFullscreen ? { height: '100dvh', width: '100vw' } : { minHeight: '620px', maxHeight: '780px' }}
         >
+          {/* Small floating Close button on top-right of the fullscreen map */}
+          {isFullscreen && (
+            <div className="absolute top-4 right-4 z-50">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedNode(null);
+                  setIsFullscreen(false);
+                }}
+                className="flex items-center justify-center w-9 h-9 rounded-full bg-slate-900/90 dark:bg-slate-900/90 hover:bg-rose-600 text-slate-200 hover:text-white shadow-xl border border-slate-700 hover:border-rose-500 transition-all cursor-pointer active:scale-95"
+                title="Tutup Layar Lebar"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          )}
+
+          {/* Small floating Zoom controls on bottom-right of the fullscreen map */}
+          {isFullscreen && (
+            <div className="absolute bottom-4 right-4 z-50 flex items-center gap-1 p-1 rounded-full bg-slate-900/90 dark:bg-slate-900/90 border border-slate-700/80 shadow-2xl">
+              <button
+                type="button"
+                onClick={handleZoomIn}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer active:scale-90"
+                title="Perbesar"
+              >
+                <ZoomIn className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={handleZoomOut}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer active:scale-90"
+                title="Perkecil"
+              >
+                <ZoomOut className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={handleResetZoom}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer active:scale-90"
+                title="Reset"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
           {/* Floating Kiosk Quick-Access Overlay on Map Canvas */}
           {!isFullscreen && (
             <div className="absolute top-4 right-4 z-30">
@@ -1670,7 +1639,7 @@ export function InteractiveFloorPlan({
               viewBox="0 0 1200 800"
               preserveAspectRatio="xMidYMid meet"
               className={isFullscreen 
-                ? "w-full h-full max-h-[92%] max-w-[96%] block select-none drop-shadow-md"
+                ? "w-full h-full max-h-[98%] max-w-[98%] block select-none drop-shadow-md"
                 : "w-full h-auto max-h-[640px] block select-none drop-shadow-md"
               }
             >
@@ -2018,12 +1987,14 @@ export function InteractiveFloorPlan({
           </div>
 
           {/* Floating Instructions Pill */}
-          <div className="absolute bottom-3 left-4 pointer-events-none">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shadow-md backdrop-blur-md">
-              <Compass className="w-3.5 h-3.5 text-emerald-500 animate-spin" />
-              <span>Ketuk ruangan / loket untuk detail layanan & antrean</span>
-            </span>
-          </div>
+          {!isFullscreen && (
+            <div className="absolute bottom-3 left-4 pointer-events-none">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shadow-md backdrop-blur-md">
+                <Compass className="w-3.5 h-3.5 text-emerald-500 animate-spin" />
+                <span>Ketuk ruangan / loket untuk detail layanan & antrean</span>
+              </span>
+            </div>
+          )}
         </div>
       ) : (
         /* ───────────────────────────────────────────────────────────────── */
@@ -2087,7 +2058,7 @@ export function InteractiveFloorPlan({
           const isAccessible = (isFacility && facilityInfo ? facilityInfo.isAccessibleDisability : selectedNode.isDisabilityFriendly);
 
           return (
-            <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-2 sm:p-4 bg-slate-950/70 backdrop-blur-xs">
+            <div className="fixed inset-0 z-[10001] flex items-end sm:items-center justify-center p-2 sm:p-4 bg-slate-950/70 backdrop-blur-xs">
               <motion.div
                 initial={{ opacity: 0, y: 20, scale: 0.96 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
