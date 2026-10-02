@@ -30,6 +30,7 @@ import {
   Cell,
   BarChart,
   Bar,
+  LabelList,
 } from "recharts";
 
 export interface AnalitikSpasialSectionProps {
@@ -279,6 +280,25 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
               <linearGradient id="gradLaborForeign" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#fbbf24" />
                 <stop offset="100%" stopColor="#d97706" />
+              </linearGradient>
+
+              {/* Donut Smooth Gradient: Emerald to Teal */}
+              <linearGradient id="gradEmeraldTeal" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#10b981" />
+                <stop offset="100%" stopColor="#0d9488" />
+              </linearGradient>
+
+              {/* Donut Smooth Gradient: Amber to Orange */}
+              <linearGradient id="gradAmberOrange" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#f59e0b" />
+                <stop offset="100%" stopColor="#ea580c" />
+              </linearGradient>
+
+              {/* Realisasi Target Gauge Smooth Gradient */}
+              <linearGradient id="gradTargetGauge" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#059669" />
+                <stop offset="50%" stopColor="#10b981" />
+                <stop offset="100%" stopColor="#14b8a6" />
               </linearGradient>
             </defs>
           </svg>
@@ -555,145 +575,33 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                 )}
               </div>
             </div>
+          </div>
 
-            {/* CHART 3: KOMPOSISI SUMBER MODAL (PMA VS PMDN) */}
+          {/* ========================================================================= */}
+          {/* 2-ROW SYMMETRICAL ANALYTICS GRID: TOP 5 SPASIAL (ROW 1) + DUAL METRICS (ROW 2) */}
+          {/* ========================================================================= */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6 w-full mt-5 lg:mt-6">
+
+            {/* 1. TOP ROW: TOP 5 KONSENTRASI SPASIAL (FULL WIDTH: lg:col-span-2) */}
             <div
-              className={`col-span-1 p-4 sm:p-6 rounded-3xl border flex flex-col justify-between relative overflow-hidden transition-all duration-300 hover:border-amber-500/40 group ${computedCardBg}`}
-            >
-              {/* Top Accent Glowing Rail */}
-              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-amber-500 via-orange-500 to-emerald-500" />
-              <div className="absolute top-0 right-0 w-36 h-36 bg-amber-500/10 dark:bg-amber-400/5 blur-3xl pointer-events-none" />
-
-              {/* Header */}
-              <div className="flex items-center gap-3 mb-3 border-b pb-4 border-slate-500/10">
-                <div
-                  className={`p-2.5 sm:p-3 rounded-2xl ${isDark ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" : "bg-amber-50 text-amber-600 border border-amber-200"}`}
-                >
-                  <Globe size={20} className="group-hover:scale-110 transition-transform duration-300" />
-                </div>
-                <div>
-                  <h3 className="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
-                    {t("chartsExtra.capitalSource", "Sumber Modal")}
-                  </h3>
-                  <p className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-widest ${textMuted}`}>
-                    {t("chartsExtra.pmaVsPmdn", "PMA vs PMDN")}
-                  </p>
-                </div>
-              </div>
-
-              {/* Donut Chart with Track & Center Tag */}
-              <div className="w-full relative flex flex-col items-center justify-center min-w-0">
-                <div className="relative w-full h-[180px] flex items-center justify-center">
-                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
-                    <span className="text-xl sm:text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400">
-                      85% : 15%
-                    </span>
-                    <span className={`text-[9px] uppercase font-bold tracking-widest ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-                      Rasio Domestik/Asing
-                    </span>
-                  </div>
-
-                  <ResponsiveContainer width="100%" height={180}>
-                    <PieChart>
-                      {/* Gauge Track */}
-                      <Pie
-                        data={[{ value: 1 }]}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={58}
-                        outerRadius={78}
-                        dataKey="value"
-                        stroke="none"
-                        isAnimationActive={false}
-                      >
-                        <Cell fill={isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.04)"} />
-                      </Pie>
-
-                      <Pie
-                        data={[
-                          { name: 'PMDN (Domestik)', value: 85, fill: '#10b981' },
-                          { name: 'PMA (Asing)', value: 15, fill: '#f59e0b' }
-                        ]}
-                        dataKey="value"
-                        nameKey="name"
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={58}
-                        outerRadius={78}
-                        paddingAngle={4}
-                        cornerRadius={6}
-                        stroke={isDark ? "#0f172a" : "#ffffff"}
-                        strokeWidth={2}
-                      >
-                        <Cell key="cell-0" fill="#10b981" />
-                        <Cell key="cell-1" fill="#f59e0b" />
-                      </Pie>
-                      <Tooltip 
-                        content={({ active, payload }) => {
-                          if (active && payload && payload.length) {
-                            return (
-                              <div className={`p-2.5 rounded-xl border backdrop-blur-xl shadow-xl ${
-                                isDark ? 'bg-slate-900/95 border-slate-700/80 text-white' : 'bg-white/95 border-slate-200/90 text-slate-900'
-                              }`}>
-                                <div className="text-xs font-bold">{payload[0].name}</div>
-                                <div className="text-sm font-black text-amber-500 font-mono mt-0.5">
-                                  {payload[0].value}% Komposisi
-                                </div>
-                              </div>
-                            );
-                          }
-                          return null;
-                        }}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-
-                {/* Rich Comparison Cards */}
-                <div className="grid grid-cols-2 gap-2.5 w-full mt-2 pt-2 border-t border-slate-500/10">
-                  <div className="p-2.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex flex-col justify-between">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">PMDN</span>
-                      <span className="text-xs font-mono font-black text-emerald-600 dark:text-emerald-400">85%</span>
-                    </div>
-                    <p className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 truncate">Modal Domestik</p>
-                    <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 mt-1">
-                      Rp {(currentTotalBillion * 0.85).toFixed(1)} Miliar
-                    </span>
-                  </div>
-
-                  <div className="p-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex flex-col justify-between">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">PMA</span>
-                      <span className="text-xs font-mono font-black text-amber-600 dark:text-amber-400">15%</span>
-                    </div>
-                    <p className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 truncate">Modal Asing</p>
-                    <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 mt-1">
-                      Rp {(currentTotalBillion * 0.15).toFixed(1)} Miliar
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* CHART 4: TOP KECAMATAN TERLUAS */}
-            <div
-              className={`col-span-1 md:col-span-2 p-4 sm:p-6 rounded-3xl border flex flex-col justify-between relative overflow-hidden transition-all duration-300 hover:border-emerald-500/40 group ${computedCardBg}`}
+              className={`w-full lg:col-span-2 p-6 rounded-3xl border flex flex-col justify-between relative overflow-hidden transition-all duration-300 hover:border-emerald-500/40 group ${
+                isDark ? "bg-slate-900/90 border-slate-800 text-slate-100" : "bg-white border-slate-100 text-slate-900 shadow-sm"
+              }`}
             >
               {/* Top Accent Glowing Rail */}
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500" />
               <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-500/10 dark:bg-emerald-400/5 blur-3xl pointer-events-none" />
 
               {/* Header */}
-              <div className="flex items-center gap-3 mb-3 border-b pb-4 border-slate-500/10">
+              <div className="flex items-center gap-3 mb-4 border-b pb-4 border-slate-500/10">
                 <div
-                  className={`p-2.5 sm:p-3 rounded-2xl ${isDark ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-emerald-50 text-emerald-600 border border-emerald-200"}`}
+                  className={`p-3 rounded-2xl ${isDark ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-emerald-50 text-emerald-600 border border-emerald-200"}`}
                 >
-                  <MapPin size={20} className="group-hover:scale-110 transition-transform duration-300" />
+                  <MapPin size={22} className="group-hover:scale-110 transition-transform duration-300" />
                 </div>
                 <div>
                   <h3 className="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
-                    {t("charts.top5Title", "Top 5 Wilayah Potensial")}
+                    {t("charts.top5Title", "Top 5 Konsentrasi Spasial Investasi")}
                   </h3>
                   <p className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-widest ${textMuted}`}>
                     {t("charts.certifiedArea", "Luasan Lahan Bersertifikat (Ha)")}
@@ -701,17 +609,18 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                 </div>
               </div>
 
-              <div className="w-full relative flex items-center justify-center overflow-x-auto overscroll-x-contain hide-scrollbar min-w-0" style={{ width: "100%", height: 260, minHeight: 260 }}>
+              {/* Horizontal Bar Chart with Full Right Rounding, Inline Value Labels & Softened Grid */}
+              <div className="w-full relative flex items-center justify-center overflow-x-auto overscroll-x-contain hide-scrollbar min-w-0" style={{ width: "100%", height: 280, minHeight: 280 }}>
                 {safeDistrictData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={260}>
+                  <ResponsiveContainer width="100%" height={280}>
                     <BarChart
                       data={safeDistrictData}
-                      margin={{ top: 10, right: 25, left: -5, bottom: 0 }}
+                      margin={{ top: 10, right: 90, left: 10, bottom: 0 }}
                       layout="vertical"
                     >
                       <CartesianGrid
                         strokeDasharray="3 3"
-                        stroke={isDark ? "rgba(148, 163, 184, 0.08)" : "rgba(148, 163, 184, 0.15)"}
+                        stroke={isDark ? "rgba(241, 245, 249, 0.06)" : "#f1f5f9"}
                         horizontal={true}
                         vertical={false}
                       />
@@ -727,18 +636,18 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                         type="category"
                         dataKey="name"
                         stroke="#94a3b8"
-                        tick={{ fill: axisTextColor, fontSize: 11, fontWeight: 600 }}
-                        tickMargin={8}
+                        tick={{ fill: axisTextColor, fontSize: 12, fontWeight: 700 }}
+                        tickMargin={12}
                         axisLine={false}
                         tickLine={false}
-                        width={110}
+                        width={130}
                       />
                       <Tooltip
                         cursor={{ fill: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)" }}
                         content={({ active, payload }) => {
                           if (active && payload && payload.length) {
                             return (
-                              <div className={`p-2.5 rounded-xl border backdrop-blur-xl shadow-xl ${
+                              <div className={`p-3 rounded-2xl border backdrop-blur-xl shadow-xl ${
                                 isDark ? 'bg-slate-900/95 border-slate-700/80 text-white' : 'bg-white/95 border-slate-200/90 text-slate-900'
                               }`}>
                                 <div className="text-xs font-bold text-slate-400">Kecamatan</div>
@@ -755,10 +664,19 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                       <Bar
                         dataKey="Area"
                         fill="url(#gradSpasialBar)"
-                        radius={[0, 10, 10, 0]}
-                        barSize={20}
+                        radius={[0, 9999, 9999, 0]}
+                        barSize={22}
                         name={t("charts.certifiedArea", "Luasan (Ha)")}
-                      />
+                      >
+                        <LabelList
+                          dataKey="Area"
+                          position="right"
+                          offset={12}
+                          formatter={(val: any) => `${Number(val || 0).toLocaleString("id-ID")} Ha`}
+                          className="font-mono font-bold text-xs"
+                          fill={isDark ? "#34d399" : "#059669"}
+                        />
+                      </Bar>
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
@@ -771,29 +689,162 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
 
               {/* Footer Note */}
               <div className="mt-3 pt-3 border-t border-slate-500/10 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                <span className="text-[11px]">Berdasarkan pemetaan RTRW & IPRO Kab. Luwu</span>
-                <span className="font-bold text-emerald-600 dark:text-emerald-400 text-[11px]">Sistem Geospasial Aktif</span>
+                <span className="text-[11px]">Berdasarkan pemetaan spasial RTRW & katalog IPRO Kab. Luwu</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400 text-[11px] flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  Sistem Geospasial Aktif
+                </span>
               </div>
             </div>
 
-            {/* CHART 5: TARGET VS REALISASI INVESTASI */}
+            {/* 2. BOTTOM ROW (LEFT): SUMBER MODAL: PMA VS PMDN (lg:col-span-1) */}
             <div
-              className={`col-span-1 p-4 sm:p-6 rounded-3xl border flex flex-col justify-between relative overflow-hidden transition-all duration-300 hover:border-emerald-500/40 group ${computedCardBg}`}
+              className={`w-full lg:col-span-1 h-full p-6 rounded-3xl border flex flex-col justify-between relative overflow-hidden transition-all duration-300 hover:border-emerald-500/40 group ${
+                isDark ? "bg-slate-900/90 border-slate-800 text-slate-100" : "bg-white border-slate-100 text-slate-900 shadow-sm"
+              }`}
             >
               {/* Top Accent Glowing Rail */}
-              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-500 via-cyan-400 to-emerald-500" />
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-500" />
               <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-500/10 dark:bg-emerald-400/5 blur-3xl pointer-events-none" />
 
               {/* Header */}
-              <div className="flex items-center gap-3 mb-3 border-b pb-4 border-slate-500/10">
+              <div className="flex items-center gap-3 mb-4 border-b pb-4 border-slate-500/10">
                 <div
-                  className={`p-2.5 sm:p-3 rounded-2xl ${isDark ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-emerald-50 text-emerald-600 border border-emerald-200"}`}
+                  className={`p-3 rounded-2xl ${isDark ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-emerald-50 text-emerald-600 border border-emerald-200"}`}
                 >
-                  <Target size={20} className="group-hover:scale-110 transition-transform duration-300 text-emerald-500" />
+                  <Globe size={22} className="group-hover:scale-110 transition-transform duration-300" />
                 </div>
                 <div>
                   <h3 className="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
-                    {t("performance.realizationTitle", "Target & Capaian Investasi")}
+                    {t("chartsExtra.capitalSource", "Sumber Modal")}
+                  </h3>
+                  <p className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-widest ${textMuted}`}>
+                    {t("chartsExtra.pmaVsPmdn", "PMA vs PMDN")}
+                  </p>
+                </div>
+              </div>
+
+              {/* Donut Chart with Smooth Stroke Gradients & Modern Center Typography */}
+              <div className="w-full relative flex flex-col items-center justify-center min-w-0">
+                <div className="relative w-full h-[200px] flex items-center justify-center">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 text-center">
+                    <span className="text-3xl font-black font-mono tracking-tight text-emerald-600 dark:text-emerald-400">
+                      85%
+                    </span>
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400 dark:text-slate-500 mt-0.5">
+                      Modal Domestik
+                    </span>
+                  </div>
+
+                  <ResponsiveContainer width="100%" height={200}>
+                    <PieChart>
+                      {/* Background Track */}
+                      <Pie
+                        data={[{ value: 1 }]}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={62}
+                        outerRadius={84}
+                        dataKey="value"
+                        stroke="none"
+                        isAnimationActive={false}
+                      >
+                        <Cell fill={isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.03)"} />
+                      </Pie>
+
+                      {/* Donut Data with Smooth Gradients & Rounded Caps */}
+                      <Pie
+                        data={[
+                          { name: 'PMDN (Domestik)', value: 85 },
+                          { name: 'PMA (Asing)', value: 15 }
+                        ]}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={62}
+                        outerRadius={84}
+                        paddingAngle={5}
+                        cornerRadius={8}
+                        strokeLinecap="round"
+                        stroke={isDark ? "#0f172a" : "#ffffff"}
+                        strokeWidth={3}
+                      >
+                        <Cell key="cell-pmdn" fill="url(#gradEmeraldTeal)" />
+                        <Cell key="cell-pma" fill="url(#gradAmberOrange)" />
+                      </Pie>
+                      <Tooltip 
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            return (
+                              <div className={`p-2.5 rounded-xl border backdrop-blur-xl shadow-xl ${
+                                isDark ? 'bg-slate-900/95 border-slate-700/80 text-white' : 'bg-white/95 border-slate-200/90 text-slate-900'
+                              }`}>
+                                <div className="text-xs font-bold">{payload[0].name}</div>
+                                <div className="text-sm font-black text-emerald-500 font-mono mt-0.5">
+                                  {payload[0].value}% Komposisi
+                                </div>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Bottom Legend Cards using clean, rounded pill badges */}
+                <div className="grid grid-cols-2 gap-3 w-full mt-4 pt-3 border-t border-slate-500/10">
+                  <div className="rounded-2xl p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                        <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">PMDN</span>
+                      </div>
+                      <span className="text-xs font-mono font-black text-emerald-600 dark:text-emerald-400">85%</span>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 mt-1">
+                      Rp {(currentTotalBillion * 0.85).toFixed(1)} Miliar
+                    </span>
+                  </div>
+
+                  <div className="rounded-2xl p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                        <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">PMA</span>
+                      </div>
+                      <span className="text-xs font-mono font-black text-amber-600 dark:text-amber-400">15%</span>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 mt-1">
+                      Rp {(currentTotalBillion * 0.15).toFixed(1)} Miliar
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 2. BOTTOM ROW (RIGHT): REALISASI TARGET INVESTASI (lg:col-span-1) */}
+            <div
+              className={`w-full lg:col-span-1 h-full p-6 rounded-3xl border flex flex-col justify-between relative overflow-hidden transition-all duration-300 hover:border-emerald-500/40 group ${
+                isDark ? "bg-slate-900/90 border-slate-800 text-slate-100" : "bg-white border-slate-100 text-slate-900 shadow-sm"
+              }`}
+            >
+              {/* Top Accent Glowing Rail */}
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-teal-500 via-emerald-400 to-cyan-500" />
+              <div className="absolute top-0 right-0 w-36 h-36 bg-teal-500/10 dark:bg-teal-400/5 blur-3xl pointer-events-none" />
+
+              {/* Header */}
+              <div className="flex items-center gap-3 mb-4 border-b pb-4 border-slate-500/10">
+                <div
+                  className={`p-3 rounded-2xl ${isDark ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-emerald-50 text-emerald-600 border border-emerald-200"}`}
+                >
+                  <Target size={22} className="group-hover:scale-110 transition-transform duration-300 text-emerald-500" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
+                    {t("performance.realizationTitle", "Realisasi Target Investasi")}
                   </h3>
                   <p className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-widest ${textMuted}`}>
                     {t("performance.fiscalYear", "Tahun Anggaran Berjalan (2026)")}
@@ -801,19 +852,33 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                 </div>
               </div>
 
-              {/* Ring Gauge Chart Container */}
-              <div className="w-full relative flex items-center justify-center min-w-0" style={{ width: "100%", height: 180, minHeight: 180 }}>
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
-                  <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-emerald-600 dark:text-emerald-400 drop-shadow-[0_0_12px_rgba(16,185,129,0.3)]">
+              {/* Ring Gauge Chart with Smooth Stroke Gradients & Modern Center Typography */}
+              <div className="w-full relative flex items-center justify-center min-w-0" style={{ width: "100%", height: 200, minHeight: 200 }}>
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 text-center">
+                  <span className="text-3xl font-black font-mono tracking-tight text-emerald-600 dark:text-emerald-400 drop-shadow-[0_0_12px_rgba(16,185,129,0.25)]">
                     {((safeTotalValue / 2500000000000) * 100).toFixed(1)}%
                   </span>
-                  <span className={`text-[9px] uppercase font-bold tracking-widest ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-                    {t("performance.achievementPercentage", "Capaian Target")}
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400 dark:text-slate-500 mt-0.5">
+                    {t("performance.achievementPercentage", "Capaian Target RPJMD")}
                   </span>
                 </div>
 
-                <ResponsiveContainer width="100%" height={180}>
+                <ResponsiveContainer width="100%" height={200}>
                   <PieChart>
+                    {/* Background Gauge Track */}
+                    <Pie
+                      data={[{ value: 1 }]}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={62}
+                      outerRadius={84}
+                      dataKey="value"
+                      stroke="none"
+                      isAnimationActive={false}
+                    >
+                      <Cell fill={isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.03)"} />
+                    </Pie>
+
                     <Pie
                       data={[
                         { name: t("performance.realizationData", "Realisasi"), value: safeTotalValue },
@@ -822,15 +887,18 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                       cx="50%"
                       cy="50%"
                       innerRadius={62}
-                      outerRadius={82}
+                      outerRadius={84}
                       startAngle={90}
                       endAngle={-270}
                       paddingAngle={0}
-                      cornerRadius={6}
+                      cornerRadius={8}
+                      strokeLinecap="round"
                       dataKey="value"
+                      stroke={isDark ? "#0f172a" : "#ffffff"}
+                      strokeWidth={2}
                     >
-                      <Cell key="cell-realisasi" fill="url(#gradRealisasiNeon)" className="stroke-transparent" />
-                      <Cell key="cell-sisa" fill={isDark ? "rgba(30, 41, 59, 0.5)" : "rgba(226, 232, 240, 0.7)"} className="stroke-transparent" />
+                      <Cell key="cell-realisasi" fill="url(#gradTargetGauge)" />
+                      <Cell key="cell-sisa" fill={isDark ? "rgba(30, 41, 59, 0.4)" : "rgba(226, 232, 240, 0.6)"} />
                     </Pie>
                     <Tooltip
                       formatter={(value: number, name: string) => [formatRupiah(value), name]}
@@ -846,30 +914,38 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                 </ResponsiveContainer>
               </div>
 
-              {/* Scorecard Table details below */}
-              <div className="grid grid-cols-2 gap-3 bg-slate-500/5 p-3 rounded-2xl border border-slate-500/10 mt-1">
-                <div>
-                  <span className={`text-[9px] uppercase tracking-wider block font-bold ${textMuted}`}>
+              {/* Bottom Legend Cards using clean, rounded pill badges */}
+              <div className="grid grid-cols-2 gap-3 w-full mt-4 pt-3 border-t border-slate-500/10">
+                <div className="rounded-2xl p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
+                  <span className="text-[10px] uppercase tracking-wider block font-bold text-slate-400 dark:text-slate-500">
                     {t("performance.rpjmdTarget", "Target RPJMD")}
                   </span>
-                  <span className="text-xs sm:text-sm font-black font-mono text-blue-600 dark:text-blue-400">
+                  <span className="text-sm font-black font-mono text-teal-600 dark:text-teal-400 mt-0.5">
                     Rp 2,50 T
                   </span>
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">Tahun 2026</span>
                 </div>
-                <div>
-                  <span className={`text-[9px] uppercase tracking-wider block font-bold ${textMuted}`}>
-                    {t("performance.realizationData", "Realisasi")}
+
+                <div className="rounded-2xl p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
+                  <span className="text-[10px] uppercase tracking-wider block font-bold text-slate-400 dark:text-slate-500">
+                    {t("performance.currentRealization", "Realisasi Terdata")}
                   </span>
-                  <span className="text-xs sm:text-sm font-black font-mono text-emerald-600 dark:text-emerald-400">
+                  <span className="text-sm font-black font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">
                     {safeTotalValue >= 1e12 
                       ? `Rp ${(safeTotalValue / 1e12).toFixed(2)} T` 
                       : safeTotalValue >= 1e9 
                         ? `Rp ${(safeTotalValue / 1e9).toFixed(1)} M` 
                         : formatRupiah(safeTotalValue)}
                   </span>
+                  <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">OSS Terverifikasi</span>
                 </div>
               </div>
             </div>
+
+          </div>
+
+          {/* LOWER GRID FOR COMMODITY AND LABOR ABSORPTION */}
+          <div className="grid grid-cols-1 gap-5 lg:gap-6 w-full mt-5 lg:mt-6">
 
             {/* CHART 6: KOMODITAS PER KECAMATAN */}
             <div
