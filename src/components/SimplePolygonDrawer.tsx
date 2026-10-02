@@ -510,6 +510,7 @@ export default function SimplePolygonDrawer({
       map.on("draw.update", handleDrawEvent);
       map.on("draw.delete", handleDrawEvent);
       map.on("draw.selectionchange", handleDrawEvent);
+      map.on("draw.modechange", handleDrawEvent);
     }
     return () => {
       if (map) {
@@ -517,6 +518,7 @@ export default function SimplePolygonDrawer({
         map.off("draw.update", handleDrawEvent);
         map.off("draw.delete", handleDrawEvent);
         map.off("draw.selectionchange", handleDrawEvent);
+        map.off("draw.modechange", handleDrawEvent);
       }
     };
   }, [handleDrawEvent]);
