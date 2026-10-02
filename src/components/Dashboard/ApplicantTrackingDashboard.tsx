@@ -28,7 +28,8 @@ import {
   Wheat,
   Scale,
   Upload,
-  ShieldCheck
+  ShieldCheck,
+  ShieldAlert
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import maplibregl from 'maplibre-gl';
@@ -1311,6 +1312,59 @@ export const ApplicantTrackingDashboard: React.FC<ApplicantTrackingDashboardProp
                         <span>Unduh SK PKKPR (PDF)</span>
                       </button>
                     </div>
+
+                    {/* BAP Penolakan & Catatan Evaluasi Teknis (Hanya tampil saat DITOLAK / MEMERLUKAN REVISI) */}
+                    {(selectedApplication.status_permohonan === 'REJECTED_PERTANIAN' ||
+                      selectedApplication.status_permohonan === 'REJECTED_FINAL' ||
+                      String(selectedApplication.status_permohonan || '').includes('REJECT') ||
+                      String(selectedApplication.status_pkkpr || '').includes('REJECT') ||
+                      String(selectedApplication.status_pkkpr || '').includes('Revision') ||
+                      Boolean(selectedApplication.catatan_revisi) ||
+                      Boolean(selectedApplication.catatan_teknis)) && (
+                      <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <AlertTriangle className="w-5 h-5 text-rose-600 dark:text-rose-400" />
+                            <span className="font-bold text-xs text-rose-900 dark:text-rose-200">Catatan BAP Penolakan</span>
+                          </div>
+                          <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-500/20 text-rose-600 dark:text-rose-400">
+                            Perlu Perbaikan
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-600 dark:text-slate-300 italic">
+                          "{selectedApplication.catatan_teknis || selectedApplication.catatan_revisi || 'Ditemukan irisan deliniasi lahan pada kawasan Perlindungan Lahan Pertanian Pangan Berkelanjutan (LP2B).'}"
+                        </p>
+                        <button
+                          onClick={() => {
+                            const isPertanian = String(selectedApplication.status_permohonan || '').includes('PERTANIAN');
+                            Swal.fire({
+                              icon: 'warning',
+                              title: 'Ringkasan BAP Penolakan Teknis',
+                              html: `
+                                <div class="text-left text-xs space-y-2">
+                                  <p><strong>OPD Evaluator:</strong> ${isPertanian ? 'Dinas Pertanian Kab. Luwu (Tim LP2B)' : 'Dinas PUPTR Kab. Luwu (Bidang Tata Ruang)'}</p>
+                                  <p><strong>Nomor BAP:</strong> ${selectedApplication.berita_acara_pertanian_num || selectedApplication.pertek_puptr_num || 'BAP-TOLAK/LUWU/2026'}</p>
+                                  <p class="p-2.5 bg-rose-100 dark:bg-rose-950 rounded-xl border border-rose-300 dark:border-rose-800 text-rose-900 dark:text-rose-200">
+                                    <strong>Poin Alasan Penolakan:</strong><br/>
+                                    "${selectedApplication.catatan_teknis || selectedApplication.catatan_revisi || 'Irisan deliniasi spasial pada Lahan Sawah Dilindungi (LP2B).'}"
+                                  </p>
+                                  <p class="p-2.5 bg-amber-100 dark:bg-amber-950 rounded-xl border border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200">
+                                    <strong>Rekomendasi &amp; Tindak Lanjut:</strong><br/>
+                                    Silakan lakukan pemotongan poligon lahan pada menu Peta Digitasi untuk mengeluarkan zona LP2B/sempadan, lalu ajukan perbaikan.
+                                  </p>
+                                </div>
+                              `,
+                              confirmButtonColor: '#e11d48',
+                              confirmButtonText: 'Tutup'
+                            });
+                          }}
+                          className="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                        >
+                          <ShieldAlert className="w-3.5 h-3.5" />
+                          <span>Lihat BAP Penolakan &amp; Catatan Teknis</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

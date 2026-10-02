@@ -10,7 +10,7 @@ import {
   Loader2, AlertOctagon, HelpCircle, Check, Eye, ChevronRight, Info,
   Sun, Moon, Star, Filter, Image as ImageIcon, Briefcase, Home, Plus,
   Clock, Sparkles, Lock, FileCode, UploadCloud, Globe, CreditCard,
-  FileCheck, Trash2, Paperclip, Layers
+  FileCheck, Trash2, Paperclip, Layers, AlertTriangle, ShieldAlert
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { supabase, safeFetchLayerData } from "../../lib/supabaseClient";
@@ -602,6 +602,10 @@ export default function MasyarakatDashboard({
   const [selectedBapPreviewApp, setSelectedBapPreviewApp] = useState<any>(null);
   const [isPertanianBapModalOpen, setIsPertanianBapModalOpen] = useState(false);
   const [selectedPertanianBapApp, setSelectedPertanianBapApp] = useState<any>(null);
+
+  // Conditional BAP Rejection Modal State
+  const [isRejectionModalOpen, setIsRejectionModalOpen] = useState(false);
+  const [selectedRejectionApp, setSelectedRejectionApp] = useState<any>(null);
 
   // Document Upload States (Sertifikat, Siteplan, Surat Pengantar Desa, Surat Bebas Sengketa)
   const [fileSertifikat, setFileSertifikat] = useState<File | null>(null);
@@ -2813,20 +2817,34 @@ export default function MasyarakatDashboard({
                       );
                     })()}
                     <div className="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2 text-xs">
-                      {/* Technical Notes / BAP Rejection Notice if application is returned */}
-                      {(app.status_pkkpr === 'Requires Revision' || app.status === 'Requires Revision' || app.pertanian_status === 'REJECTED' || app.pertanian_rejection_notes) && (
-                        <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-900 space-y-1">
-                          <div className="flex items-center justify-between text-[11px] font-bold text-rose-700 dark:text-rose-300">
-                            <span>⚠️ Catatan Pengembalian / Revisi:</span>
-                            {app.berita_acara_pertanian_num && (
+                      {/* Technical Notes & Conditional BAP Penolakan Button */}
+                      {(app.status_pkkpr === 'Requires Revision' || app.status === 'Requires Revision' || app.status === 'REJECTED' || app.pertanian_status === 'REJECTED' || app.pertanian_rejection_notes) && (
+                        <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-900 space-y-2">
+                          <div className="flex items-center justify-between text-xs font-bold text-rose-700 dark:text-rose-300">
+                            <span className="flex items-center gap-1.5">
+                              <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+                              <span>Catatan Evaluasi / Penolakan Teknis:</span>
+                            </span>
+                            {(app.berita_acara_pertanian_num || app.pertek_puptr_num) && (
                               <span className="font-mono text-[10px] bg-rose-200/60 dark:bg-rose-900/60 px-1.5 py-0.5 rounded">
-                                BAP No. {app.berita_acara_pertanian_num}
+                                BAP No. {app.berita_acara_pertanian_num || app.pertek_puptr_num}
                               </span>
                             )}
                           </div>
                           <p className="text-[11px] text-slate-700 dark:text-slate-300 italic">
-                            "{app.catatan_teknis || app.pertanian_rejection_notes || 'Silakan perbaiki deliniasi koordinat/dokumen sesuai instruksi teknis.'}"
+                            "{app.catatan_teknis || app.pertanian_rejection_notes || 'Permohonan memerlukan perbaikan deliniasi spasial atau kelengkapan berkas.'}"
                           </p>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedRejectionApp(app);
+                              setIsRejectionModalOpen(true);
+                            }}
+                            className="mt-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white flex items-center gap-1.5 transition cursor-pointer shadow-sm"
+                          >
+                            <ShieldAlert className="w-3.5 h-3.5" />
+                            <span>Lihat BAP Penolakan &amp; Rekomendasi</span>
+                          </button>
                         </div>
                       )}
 
@@ -5158,6 +5176,124 @@ export default function MasyarakatDashboard({
                 initialData={convertAppToBapLp2bData(selectedPertanianBapApp)}
                 onClose={() => setIsPertanianBapModalOpen(false)}
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL BAP PENOLAKAN & REKOMENDASI TEKNIS (CONDITIONAL FOR APPLICANTS) */}
+      {isRejectionModalOpen && selectedRejectionApp && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex flex-col p-2 sm:p-6 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-2xl max-w-2xl mx-auto w-full border border-rose-500/40 my-auto flex flex-col">
+            {/* Header */}
+            <div className="p-4 bg-rose-950 text-white flex items-center justify-between border-b border-rose-900">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-rose-500/20 text-rose-400">
+                  <AlertOctagon className="w-6 h-6" />
+                </div>
+                <div>
+                  <span className="font-extrabold text-sm sm:text-base block text-rose-200">
+                    Ringkasan Berita Acara (BAP) Penolakan &amp; Catatan Teknis
+                  </span>
+                  <span className="text-[11px] text-rose-300/80 font-mono">
+                    Pemerintah Kabupaten Luwu - Dinas PUPTR &amp; Dinas Pertanian
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsRejectionModalOpen(false)}
+                className="p-2 rounded-xl bg-rose-900/50 hover:bg-rose-900 text-rose-300 hover:text-white transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-5 space-y-4 max-h-[75vh] overflow-y-auto custom-scrollbar text-slate-800 dark:text-slate-100">
+              {/* Identitas Permohonan */}
+              <div className="p-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs space-y-1.5">
+                <div className="flex justify-between items-center font-bold">
+                  <span className="text-slate-500 dark:text-slate-400">Nomor Registrasi:</span>
+                  <span className="font-mono text-emerald-600 dark:text-emerald-400">{selectedRejectionApp.id || selectedRejectionApp.nomor_permohonan}</span>
+                </div>
+                <div className="flex justify-between items-center font-bold">
+                  <span className="text-slate-500 dark:text-slate-400">Pemohon / Lembaga:</span>
+                  <span>{selectedRejectionApp.nama_pemohon || selectedRejectionApp.nama_lembaga || selectedRejectionApp.perusahaan || '-'}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 dark:text-slate-400">Lokasi Lahan:</span>
+                  <span className="font-semibold">Desa {selectedRejectionApp.desa || '-'}, Kec. {selectedRejectionApp.kecamatan || '-'}</span>
+                </div>
+              </div>
+
+              {/* Status & OPD Penerbit */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900">
+                  <span className="block text-[10px] uppercase font-bold text-rose-600 dark:text-rose-400 mb-1">OPD Penerbit Evaluasi</span>
+                  <span className="font-extrabold block">
+                    {selectedRejectionApp.pertanian_status === 'REJECTED' || selectedRejectionApp.pertanian_rejection_notes
+                      ? "Dinas Pertanian Kab. Luwu (Tim LP2B)"
+                      : "Dinas PUPTR Kab. Luwu (Bidang Tata Ruang)"}
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                  <span className="block text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 mb-1">Nomor &amp; Tgl BAP Penolakan</span>
+                  <span className="font-mono font-bold block">
+                    {selectedRejectionApp.berita_acara_pertanian_num || selectedRejectionApp.pertek_puptr_num || "BAP-TOLAK/LUWU/2026"}
+                  </span>
+                  <span className="text-[10px] text-slate-500">
+                    {new Date(selectedRejectionApp.updated_at || selectedRejectionApp.created_at || Date.now()).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </span>
+                </div>
+              </div>
+
+              {/* Poin Pelanggaran Spasial */}
+              <div className="p-4 rounded-2xl bg-rose-500/10 border-2 border-rose-500/30 space-y-2">
+                <h4 className="text-xs font-black uppercase text-rose-700 dark:text-rose-300 flex items-center gap-1.5">
+                  <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+                  <span>Poin Evaluasi &amp; Alasan Penolakan Spasial:</span>
+                </h4>
+                <p className="text-xs font-semibold leading-relaxed text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-950 p-3 rounded-xl border border-rose-300 dark:border-rose-800/60">
+                  "{selectedRejectionApp.catatan_teknis || selectedRejectionApp.pertanian_rejection_notes || selectedRejectionApp.catatan_revisi || 'Ditemukan irisan deliniasi lahan pada kawasan Perlindungan Lahan Pertanian Pangan Berkelanjutan (LP2B) / Kawasan Hutan Lindung tanpa kelengkapan syarat perizinan alih fungsi.'}"
+                </p>
+              </div>
+
+              {/* Rekomendasi & Tindak Lanjut */}
+              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-2">
+                <h4 className="text-xs font-bold uppercase text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
+                  <HelpCircle className="w-4 h-4 text-amber-500" />
+                  <span>Rekomendasi &amp; Tindak Lanjut Bagi Pemohon:</span>
+                </h4>
+                <ul className="text-xs space-y-1.5 list-disc list-inside font-medium text-slate-700 dark:text-slate-300">
+                  <li>Lakukan pemotongan (*deliniasi*) poligon spasial lahan untuk mengeluarkan titik yang beririsan dengan kawasan LP2B / sempadan.</li>
+                  <li>Unggah kembali berkas perbaikan peta spasial melalui menu **Buka Peta Digitasi**.</li>
+                  <li>Hubungi Layanan Helpdesk Dinas PUPTR / Dinas Pertanian jika memerlukan pendampingan teknis.</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedPertanianBapApp(selectedRejectionApp);
+                  setIsPertanianBapModalOpen(true);
+                  setIsRejectionModalOpen(false);
+                }}
+                className="px-3.5 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>Lihat Naskah BAP Lengkap</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsRejectionModalOpen(false)}
+                className="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition cursor-pointer shadow-md"
+              >
+                Tutup
+              </button>
             </div>
           </div>
         </div>
