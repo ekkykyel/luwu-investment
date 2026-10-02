@@ -482,16 +482,16 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
   };
 
   return (
-    <div className={`w-full transition-all ${
+    <div className={`w-full max-w-full transition-all ${
       isInModal 
-        ? 'p-1 sm:p-2 bg-transparent border-0 shadow-none text-slate-900 dark:text-slate-100' 
-        : `rounded-3xl border p-4 sm:p-8 backdrop-blur-md shadow-xl ${
+        ? 'p-2 sm:p-4 md:p-6 bg-transparent border-0 shadow-none text-slate-900 dark:text-slate-100' 
+        : `rounded-3xl border p-4 sm:p-8 backdrop-blur-md shadow-xl w-full max-w-7xl mx-auto ${
             isDarkMode ? 'bg-slate-900/70 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
           }`
     }`}>
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800">
-        <div>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800 w-full">
+        <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2 flex-wrap">
             <span className="px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-sans inline-flex items-center gap-1.5">
               <Award className="w-3.5 h-3.5" /> PermenPAN-RB No. 14 / 2017
@@ -502,10 +502,10 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
                 : (isZh ? '鲁乌县居民满意度调查' : isEn ? 'Luwu Citizen Survey' : 'SKM Warga Kabupaten Luwu')}
             </span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold font-sans tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold font-sans tracking-tight text-slate-900 dark:text-white">
             {isZh ? '公众满意度调查 (SKM)' : isEn ? 'Public Satisfaction Survey (SKM)' : 'Survei Kepuasan Masyarakat (SKM)'}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl leading-relaxed font-normal">
+          <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 mt-1.5 w-full max-w-full leading-relaxed font-medium">
             {isZh 
               ? '协助我们在 Simpurusiang 公共服务中心打造卓越且问责的政务服务。您的评价将自动同步至 MPP 门户网站的“满意度调查”专区。' 
               : isEn 
@@ -768,31 +768,31 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
               return (
                 <div
                   key={q.id}
-                  className="p-2.5 sm:p-4 md:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 mb-2 sm:mb-4 bg-slate-50 dark:bg-slate-800/50 transition-all w-full"
+                  className="p-3.5 sm:p-5 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 mb-3 sm:mb-5 bg-slate-50 dark:bg-slate-800/50 transition-all w-full max-w-full shadow-xs"
                 >
-                  <div className="flex items-start justify-between gap-2 mb-3">
-                    <div className="flex items-start gap-2.5 flex-1 min-w-0">
-                      <div className={`p-2 rounded-xl bg-emerald-500/10 ${q.color} shrink-0 mt-0.5`}>
-                        <Icon className="w-4 h-4" />
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <div className={`p-2.5 rounded-xl bg-emerald-500/10 ${q.color} shrink-0 mt-0.5`}>
+                        <Icon className="w-5 h-5" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-xs sm:text-sm md:text-base font-bold font-sans text-slate-900 dark:text-white">
+                        <h4 className="text-xs sm:text-sm md:text-base font-extrabold uppercase tracking-wider font-sans text-emerald-800 dark:text-emerald-400">
                           {q.title}
                         </h4>
                         {/* Teks Pertanyaan */}
-                        <p className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-slate-100 mt-1 mb-2 leading-snug tracking-normal w-full">
+                        <p className="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-slate-100 mt-1 mb-2 leading-relaxed tracking-normal w-full max-w-full">
                           {q.question}
                         </p>
                       </div>
                     </div>
 
-                    <span className="text-[11px] sm:text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 shrink-0">
+                    <span className="text-xs sm:text-sm font-extrabold text-emerald-600 dark:text-emerald-400 font-mono px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 shrink-0">
                       {currentVal} / 4
                     </span>
                   </div>
 
                   {/* Grid Pilihan Jawaban (4 Opsi 4 Kolom) */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 w-full mt-2">
                     {ratingOptions.map((opt) => {
                       const isSelected = currentVal === opt.value;
                       return (
@@ -800,16 +800,16 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
                           key={opt.value}
                           type="button"
                           onClick={() => handleRatingChange(q.id, opt.value)}
-                          className={`relative flex items-center justify-between px-2.5 py-2 sm:p-3.5 rounded-xl border text-left transition-all w-full cursor-pointer min-h-[48px] sm:min-h-[52px] ${
+                          className={`relative flex items-center justify-between px-3 py-2.5 sm:p-4 rounded-xl border text-left transition-all w-full cursor-pointer min-h-[50px] sm:min-h-[56px] ${
                             isSelected
                               ? 'border-emerald-500 bg-emerald-500 text-white dark:bg-emerald-600 shadow-md font-bold'
                               : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-emerald-500'
                           }`}
                         >
-                          <span className={`text-xs sm:text-sm font-semibold leading-snug pr-1 flex-1 ${isSelected ? 'text-white' : 'text-slate-800 dark:text-slate-100'}`}>
+                          <span className={`text-xs sm:text-sm md:text-base font-semibold leading-snug pr-1 flex-1 ${isSelected ? 'text-white' : 'text-slate-800 dark:text-slate-100'}`}>
                             {opt.label}
                           </span>
-                          <span className={`w-5 h-5 rounded-md text-[11px] font-bold flex items-center justify-center shrink-0 ${
+                          <span className={`w-6 h-6 rounded-md text-xs font-bold flex items-center justify-center shrink-0 ${
                             isSelected
                               ? 'bg-white/20 text-white'
                               : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
