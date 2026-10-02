@@ -122,6 +122,83 @@ function enrichKmlProperties(kmlDom: Document, geojson: GeoJSON.FeatureCollectio
   }
 }
 
+function sanitizeAndHealGeometry(geometry: GeoJSON.Geometry | null | undefined): GeoJSON.Geometry | null {
+  if (!geometry || !geometry.type || !('coordinates' in geometry)) return null;
+
+  try {
+    if (geometry.type === 'Polygon') {
+      const rings = (geometry as GeoJSON.Polygon).coordinates;
+      const cleanRings: number[][][] = [];
+
+      for (const ring of rings) {
+        if (!Array.isArray(ring) || ring.length < 3) continue;
+
+        const cleanRing = ring.filter(pt => Array.isArray(pt) && pt.length >= 2 && isFinite(pt[0]) && isFinite(pt[1]));
+        if (cleanRing.length < 3) continue;
+
+        const first = cleanRing[0];
+        const last = cleanRing[cleanRing.length - 1];
+        if (first[0] !== last[0] || first[1] !== last[1]) {
+          cleanRing.push([first[0], first[1]]);
+        }
+
+        if (cleanRing.length >= 4) {
+          cleanRings.push(cleanRing);
+        }
+      }
+
+      if (cleanRings.length === 0) return null;
+      return { type: 'Polygon', coordinates: cleanRings };
+    }
+
+    if (geometry.type === 'MultiPolygon') {
+      const polys = (geometry as GeoJSON.MultiPolygon).coordinates;
+      const cleanPolys: number[][][][] = [];
+
+      for (const poly of polys) {
+        const cleanRings: number[][][] = [];
+        for (const ring of poly) {
+          if (!Array.isArray(ring) || ring.length < 3) continue;
+          const cleanRing = ring.filter(pt => Array.isArray(pt) && pt.length >= 2 && isFinite(pt[0]) && isFinite(pt[1]));
+          if (cleanRing.length < 3) continue;
+
+          const first = cleanRing[0];
+          const last = cleanRing[cleanRing.length - 1];
+          if (first[0] !== last[0] || first[1] !== last[1]) {
+            cleanRing.push([first[0], first[1]]);
+          }
+
+          if (cleanRing.length >= 4) {
+            cleanRings.push(cleanRing);
+          }
+        }
+        if (cleanRings.length > 0) {
+          cleanPolys.push(cleanRings);
+        }
+      }
+
+      if (cleanPolys.length === 0) return null;
+      return { type: 'MultiPolygon', coordinates: cleanPolys };
+    }
+
+    if (geometry.type === 'LineString') {
+      const pts = (geometry as GeoJSON.LineString).coordinates.filter(pt => Array.isArray(pt) && pt.length >= 2 && isFinite(pt[0]) && isFinite(pt[1]));
+      if (pts.length < 2) return null;
+      return { type: 'LineString', coordinates: pts };
+    }
+
+    if (geometry.type === 'Point') {
+      const pt = (geometry as GeoJSON.Point).coordinates;
+      if (!Array.isArray(pt) || pt.length < 2 || !isFinite(pt[0]) || !isFinite(pt[1])) return null;
+      return { type: 'Point', coordinates: [pt[0], pt[1]] };
+    }
+
+    return geometry;
+  } catch {
+    return null;
+  }
+}
+
 export default function SpatialImportModal({
   isOpen,
   onClose,
@@ -243,31 +320,36 @@ export default function SpatialImportModal({
     featureCollection.features.forEach((feat, idx) => {
       if (!feat || !feat.geometry || !feat.geometry.type) return;
 
-      const gType = feat.geometry.type;
+      const healedGeom = sanitizeAndHealGeometry(feat.geometry);
+      if (!healedGeom) return;
+
+      const gType = healedGeom.type;
       const cleanProps = { 
         ...(feat.properties || {}), 
         id: feat.id || feat.properties?.id || `imp_${Date.now()}_${idx + 1}` 
       };
 
       try {
+        const cleanFeat: GeoJSON.Feature = {
+          type: 'Feature',
+          id: cleanProps.id,
+          geometry: healedGeom,
+          properties: cleanProps
+        };
+
         if (gType === 'Polygon' || gType === 'MultiPolygon') {
           polyCount++;
-          const area = turf.area(feat);
+          const area = turf.area(cleanFeat);
           if (isFinite(area)) totalAreaSqM += area;
         } else if (gType === 'LineString' || gType === 'MultiLineString') {
           lineCount++;
-          const len = turf.length(feat, { units: 'kilometers' });
+          const len = turf.length(cleanFeat, { units: 'kilometers' });
           if (isFinite(len)) totalLenKm += len;
         } else if (gType === 'Point' || gType === 'MultiPoint') {
           ptCount++;
         }
 
-        cleanFeatures.push({
-          type: 'Feature',
-          id: cleanProps.id,
-          geometry: feat.geometry,
-          properties: cleanProps
-        });
+        cleanFeatures.push(cleanFeat);
       } catch (geomErr) {
         console.warn('Geom validation skip:', geomErr);
       }
