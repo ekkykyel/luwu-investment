@@ -6,6 +6,7 @@ import {
   ZoomIn, 
   ZoomOut, 
   RotateCcw, 
+  RotateCw,
   MapPin, 
   X, 
   Sparkles, 
@@ -1377,7 +1378,7 @@ export function InteractiveFloorPlan({
 
   return (
     <div className={isFullscreen 
-      ? "fixed inset-0 z-50 bg-slate-950 text-slate-100 p-4 sm:p-6 md:p-8 flex flex-col justify-between overflow-hidden select-none"
+      ? "fixed inset-0 z-[9999] bg-slate-950 text-slate-100 p-2 sm:p-4 md:p-8 flex flex-col justify-between overflow-hidden select-none"
       : `w-full rounded-3xl border transition-all duration-300 overflow-hidden shadow-sm flex flex-col ${
           isDark ? 'bg-slate-900/95 border-slate-800 text-slate-100' : 'bg-white border-slate-100 text-slate-900'
         } ${className}`
@@ -1387,26 +1388,32 @@ export function InteractiveFloorPlan({
       {/* 1. TOP BAR: TITLE, FILTER CHIPS, SEARCH & ZOOM CONTROLS           */}
       {/* ───────────────────────────────────────────────────────────────── */}
       {isFullscreen ? (
-        <div className="flex items-center justify-between gap-4 pb-4 border-b border-slate-800/80 mb-2 shrink-0">
+        <div className="flex items-center justify-between gap-2 pb-2.5 sm:pb-4 border-b border-slate-800/80 mb-2 shrink-0">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-              <Layers className="w-5 h-5 animate-pulse" />
+            <div className="p-1.5 sm:p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+              <Layers className="w-4 h-4 sm:w-5 sm:h-5 animate-pulse" />
             </div>
             <div>
-              <h3 className="text-sm sm:text-base font-extrabold text-white font-sans flex items-center gap-2">
-                <span>Kiosk Interaktif Denah Spasial MPP</span>
-                <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-[10px] text-emerald-400 border border-emerald-500/30 font-mono">
+              <h3 className="text-xs sm:text-sm md:text-base font-extrabold text-white font-sans flex items-center gap-1 sm:gap-2">
+                <span className="truncate max-w-[130px] xs:max-w-none">Kiosk Spasial Denah MPP</span>
+                <span className="hidden xs:inline-block px-1.5 py-0.5 rounded bg-emerald-500/20 text-[9px] text-emerald-400 border border-emerald-500/30 font-mono whitespace-nowrap">
                   LANDSCAPE MODE
                 </span>
               </h3>
-              <p className="text-[10px] sm:text-xs text-slate-400 font-medium">
-                Kabupaten Luwu • Ketuk/pilih pin-drop gerai layanan atau fasilitas terpadu.
+              <p className="hidden sm:block text-[10px] text-slate-400 font-medium">
+                Kabupaten Luwu • Pilih pin-drop gerai atau fasilitas terpadu.
               </p>
             </div>
           </div>
 
-          {/* Center legend markers (visible on larger landscape screens) */}
-          <div className="hidden md:flex items-center gap-4 text-[11px] font-semibold text-slate-400">
+          {/* Screen orientation guidance helper - Pulsing in portrait, hidden in landscape */}
+          <div className="flex xs:hidden md:hidden items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[9px] font-mono animate-pulse">
+            <RotateCw className="w-3 h-3 animate-spin" style={{ animationDuration: '3s' }} />
+            <span>📱 Putar Layar (Landscape)</span>
+          </div>
+
+          {/* Center legend markers (visible only on md:landscape screens and larger) */}
+          <div className="hidden lg:flex items-center gap-4 text-[11px] font-semibold text-slate-400">
             <span className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>Buka</span>
@@ -1422,30 +1429,30 @@ export function InteractiveFloorPlan({
           </div>
 
           {/* Kiosk Controls Cluster */}
-          <div className="flex items-center gap-3">
-            {/* Search Bar inside Kiosk Mode */}
-            <div className="relative hidden sm:block min-w-[180px]">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Search Bar inside Kiosk Mode (hidden on small landscape screens) */}
+            <div className="relative hidden md:block min-w-[160px]">
               <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari gerai/fasilitas..."
+                placeholder="Cari..."
                 className="w-full pl-9 pr-8 py-1.5 text-xs rounded-xl border border-slate-700 bg-slate-900 text-white placeholder-slate-500 focus:border-emerald-500 outline-none"
               />
             </div>
 
-            {/* Close/Exit Kiosk button */}
+            {/* Close/Exit Kiosk button (Highly visible and responsive) */}
             <button
               type="button"
               onClick={() => {
                 setSelectedNode(null);
                 setIsFullscreen(false);
               }}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold border border-rose-600 shadow-lg shadow-rose-950/40 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
+              className="flex items-center gap-1 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold border border-rose-600 shadow-lg shadow-rose-950/40 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
               title="Keluar dari Layar Lebar"
             >
-              <Minimize2 className="w-4 h-4" />
+              <Minimize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               <span>Keluar</span>
             </button>
           </div>
@@ -1619,7 +1626,7 @@ export function InteractiveFloorPlan({
             ? "relative w-full flex-1 overflow-hidden flex flex-col items-center justify-center p-2 sm:p-4 touch-pan-x touch-pan-y bg-slate-950"
             : "relative w-full overflow-hidden flex flex-col items-center justify-center p-2 sm:p-4 touch-pan-x touch-pan-y"
           }
-          style={isFullscreen ? { height: 'calc(100vh - 140px)' } : { minHeight: '620px', maxHeight: '780px' }}
+          style={isFullscreen ? { height: 'calc(100dvh - 75px)' } : { minHeight: '620px', maxHeight: '780px' }}
         >
           {/* Floating Kiosk Quick-Access Overlay on Map Canvas */}
           {!isFullscreen && (
@@ -1652,7 +1659,10 @@ export function InteractiveFloorPlan({
             <svg
               viewBox="0 0 1200 800"
               preserveAspectRatio="xMidYMid meet"
-              className="w-full h-auto max-h-[640px] block select-none drop-shadow-md"
+              className={isFullscreen 
+                ? "w-full h-full max-h-[85vh] block select-none drop-shadow-md"
+                : "w-full h-auto max-h-[640px] block select-none drop-shadow-md"
+              }
             >
               <defs>
                 {/* Glow Filter for Active / Hovered Nodes */}
