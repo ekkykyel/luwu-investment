@@ -315,15 +315,15 @@ export const PortalLayout: React.FC<PortalLayoutProps> = ({
       )}
 
       {/* 2. CENTRALIZED MAIN CONTENT WRAPPER */}
-      {/* Notice pb-24 on mobile prevents content hiding behind fixed Bottom App Bar; md:pb-8 on desktop */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 pb-24 md:pb-8 pt-4 sm:pt-6">
+      {/* Notice pb-24 on mobile prevents content hiding behind bottom navigation or FAB; lg:pb-8 on desktop */}
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 lg:pb-8 pt-4 sm:pt-6">
         {children}
       </main>
 
       {/* 3. MATERIAL DESIGN 3 SUPPORT FLOATING ACTION BUTTON (FAB) */}
       {!hideFab && (
         <div 
-          className="fixed bottom-20 md:bottom-8 right-4 md:right-8 z-40 md:z-50 flex flex-col items-end gap-3 pointer-events-auto"
+          className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 pointer-events-auto"
         >
           {/* Back to top scroll button (Sub-FAB) */}
           <AnimatePresence>
