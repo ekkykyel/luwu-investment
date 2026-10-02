@@ -1,0 +1,533 @@
+/**
+ * Crystal Clear High-Fidelity Anti-Stutter Audio Engine
+ * Mal Pelayanan Publik (MPP) Simpurusiang Kabupaten Luwu
+ * 
+ * Features:
+ * 1. High-Fidelity Voice Selection: Prioritizes Microsoft Neural, Google Natural, and Apple native voices.
+ * 2. Phonetic & Dialect Normalization: Optimizes intonation, acronyms, currencies, and numbers for ID, EN, and ZH.
+ * 3. Human-like Breath Cadence: Language-aware semantic clause chunking (Latin vs CJK).
+ * 4. Anti-Garbage Collection (GC) Protection & Active Keep-Alive Watchdog.
+ */
+
+declare global {
+  interface Window {
+    __activeSpeechUtterances?: SpeechSynthesisUtterance[];
+    __speechKeepAliveInterval?: any;
+    __speechSessionId?: number;
+    __speechWatchdogTimer?: any;
+  }
+}
+
+if (typeof window !== 'undefined') {
+  if (!window.__activeSpeechUtterances) {
+    window.__activeSpeechUtterances = [];
+  }
+  if (typeof window.__speechSessionId !== 'number') {
+    window.__speechSessionId = 0;
+  }
+}
+
+/**
+ * Phonetically transforms raw technical text into crystal clear, human-like speech string.
+ * Optimizes intonation, expands acronyms, converts currency & numbers into natural words,
+ * eliminates stutter-inducing punctuation, and normalizes Tana Luwu dialect and government terms.
+ */
+export function formatTextForCrystalClearTts(text: string, lang: 'id' | 'en' | 'zh' = 'id'): string {
+  if (!text) return '';
+
+  let cleaned = text;
+
+  // 1. Strip Markdown formatting
+  cleaned = cleaned.replace(/[\*\_~`#]+/g, '');
+  cleaned = cleaned.replace(/^\s*[\-\•\*\+]\s+/gm, ''); // Bullet markers
+  cleaned = cleaned.replace(/^\s*\d+\.\s+/gm, ''); // Numbered markers
+
+  // 2. Remove URLs, HTML tags, and clean brackets without creating pause stutter
+  cleaned = cleaned.replace(/https?:\/\/\S+/gi, '');
+  cleaned = cleaned.replace(/<[^>]*>/g, '');
+
+  // Convert parenthesized acronyms cleanly (e.g. "Persetujuan Bangunan Gedung (PBG)" -> "Persetujuan Bangunan Gedung atau P B G")
+  cleaned = cleaned.replace(/\s*\(([A-Za-z0-9\-\s]{2,15})\)\s*/g, ' atau $1 ');
+  cleaned = cleaned.replace(/[\(\)\[\]\{\}]/g, ' ');
+
+  // ==========================================
+  // --- 1. BAHASA INDONESIA & TANA LUWU DIALECT ---
+  // ==========================================
+  if (lang === 'id') {
+    // A. Local Greetings & Glottal Stop Softening (mencegah suara robotik tersangkut tanda petik)
+    cleaned = cleaned.replace(/salama['’`]\s*ki['’`]\s*(ta['’`]\s*)?pada\s*salama['’`]?/gi, 'Salama Ki tapada salama');
+    cleaned = cleaned.replace(/salama['’`]/gi, 'Salama');
+    cleaned = cleaned.replace(/tabe['’`]/gi, 'Tabe, ');
+    cleaned = cleaned.replace(/ki['’`]/gi, 'Ki');
+    cleaned = cleaned.replace(/ta['’`]/gi, 'ta');
+
+    // B. Currency & Numbers to spoken words for natural cadence
+    cleaned = cleaned.replace(/\bRp\.?\s*0\b/gi, 'gratis tanpa biaya');
+    cleaned = cleaned.replace(/\bRp\.?\s*350\.?000\b/gi, 'tiga ratus lima puluh ribu rupiah');
+    cleaned = cleaned.replace(/\bRp\.?\s*650\.?000\b/gi, 'enam ratus lima puluh ribu rupiah');
+    cleaned = cleaned.replace(/\bRp\.?\s*80\.?000\b/gi, 'delapan puluh ribu rupiah');
+    cleaned = cleaned.replace(/\bRp\.?\s*75\.?000\b/gi, 'tujuh puluh lima ribu rupiah');
+    cleaned = cleaned.replace(/\bRp\.?\s*50\.?000\b/gi, 'lima puluh ribu rupiah');
+    cleaned = cleaned.replace(/\bRp\.?\s*30\.?000\b/gi, 'tiga puluh ribu rupiah');
+    cleaned = cleaned.replace(/\bRp\.?\s*100\.?000\b/gi, 'seratus ribu rupiah');
+    cleaned = cleaned.replace(/\bRp\.?\s*(\d+)\.?(\d+)?\b/gi, '$1 $2 rupiah');
+
+    // C. Operating Hours & Time Expressions (New Official Schedule: Mon-Thu 07:30-16:00, Fri 07:30-16:30 WITA)
+    cleaned = cleaned.replace(/07:30\s*(s\.?d\.?|-|sampai)\s*16:00\s*(WITA)?\s*,?\s*Jumat\s*07:30\s*(s\.?d\.?|-|sampai)\s*16:30\s*(WITA)?/gi, 'Senin sampai Kamis pukul tujuh tiga puluh sampai enam belas nol nol, dan hari Jumat pukul tujuh tiga puluh sampai enam belas tiga puluh Waktu Indonesia Tengah');
+    cleaned = cleaned.replace(/08:00\s*(s\.?d\.?|-|sampai)\s*15:30\s*WITA/gi, 'pukul tujuh tiga puluh pagi sampai pukul enam belas nol nol Waktu Indonesia Tengah');
+    cleaned = cleaned.replace(/08:00\s*(s\.?d\.?|-|sampai)\s*15:30/gi, 'pukul tujuh tiga puluh pagi sampai pukul enam belas nol nol');
+    cleaned = cleaned.replace(/\bWITA\b/g, 'Waktu Indonesia Tengah');
+
+    // D. Common Public Service Abbreviations & Honorifics
+    cleaned = cleaned.replace(/\bBapak\/Ibu\b/gi, 'Bapak atau Ibu');
+    cleaned = cleaned.replace(/\bBpk\/Ibu\b/gi, 'Bapak atau Ibu');
+    cleaned = cleaned.replace(/\bBpk\.?\b/gi, 'Bapak');
+    cleaned = cleaned.replace(/\bs\.d\.\b/gi, 'sampai dengan');
+    cleaned = cleaned.replace(/\bdll\.\b/gi, 'dan lain-lain');
+    cleaned = cleaned.replace(/\bdsb\.\b/gi, 'dan sebagainya');
+    cleaned = cleaned.replace(/\bNo\.?\s*(\d+)/gi, 'Nomor $1');
+    cleaned = cleaned.replace(/\bLt\.?\s*(\d+)/gi, 'Lantai $1');
+    
+    // Smooth Geographical & Government terms (Kabupaten Luwu -> Luwu anti-lag)
+    cleaned = cleaned.replace(/\bKabupaten\s+Luwu\b/gi, 'Luwu');
+    cleaned = cleaned.replace(/\bKab\.?\s*Luwu\b/gi, 'Luwu');
+    cleaned = cleaned.replace(/\bPemkab\s+Luwu\b/gi, 'Pemerintah Luwu');
+    cleaned = cleaned.replace(/\bKabupaten\b/gi, '');
+    cleaned = cleaned.replace(/\bKab\.?\s*/gi, '');
+    cleaned = cleaned.replace(/\bKec\.?\s*/gi, 'Kecamatan ');
+    cleaned = cleaned.replace(/\bGed\.?\s*/gi, 'Gedung ');
+    cleaned = cleaned.replace(/\bJln\.?\s*/gi, 'Jalan ');
+    cleaned = cleaned.replace(/\bJl\.?\s*/gi, 'Jalan ');
+
+    // E. Official Acronyms (Preserve seamless contiguous flow - ZERO pauses/spaces)
+    cleaned = cleaned.replace(/\bMPP\s+Simpurusiang\b/gi, 'MPP Simpurusiang');
+    cleaned = cleaned.replace(/\bM\s+P\s+P\b/g, 'MPP');
+    cleaned = cleaned.replace(/\bMPP\b/g, 'MPP');
+    cleaned = cleaned.replace(/\bP\s+B\s+G\b/g, 'PBG');
+    cleaned = cleaned.replace(/\bPBG\b/g, 'PBG');
+    cleaned = cleaned.replace(/\bN\s+I\s+B\b/g, 'NIB');
+    cleaned = cleaned.replace(/\bNIB\b/g, 'NIB');
+    cleaned = cleaned.replace(/\bOSS-RBA\b/gi, 'OSS RBA');
+    cleaned = cleaned.replace(/\bOSS\b/g, 'OSS');
+    cleaned = cleaned.replace(/\bKTP-el\b/gi, 'KTP elektronik');
+    cleaned = cleaned.replace(/\bK\s+T\s+P\b/g, 'KTP');
+    cleaned = cleaned.replace(/\bKTP\b/g, 'KTP');
+    cleaned = cleaned.replace(/\bSIMBG\b/gi, 'SIMBG');
+    cleaned = cleaned.replace(/\bSIM A\b/gi, 'SIM A');
+    cleaned = cleaned.replace(/\bSIM C\b/gi, 'SIM C');
+    cleaned = cleaned.replace(/\bSIM\b/g, 'SIM');
+    cleaned = cleaned.replace(/\bSKCK\b/g, 'SKCK');
+    cleaned = cleaned.replace(/\bSLA\b/g, 'standar waktu pelayanan');
+    cleaned = cleaned.replace(/\bBPN\b/g, 'BPN');
+    cleaned = cleaned.replace(/\bBUMN\b/g, 'BUMN');
+    cleaned = cleaned.replace(/\bNPWP\b/g, 'NPWP');
+    cleaned = cleaned.replace(/\bDPUPR\b/g, 'Dinas PUPR');
+    cleaned = cleaned.replace(/\bDinas PUPR\b/gi, 'Dinas PUPR');
+    cleaned = cleaned.replace(/\bDPMPTSP\b/g, 'DPMPTSP');
+    cleaned = cleaned.replace(/\bDISDUKCAPIL\b/gi, 'Disdukcapil');
+    cleaned = cleaned.replace(/\bKPP\b/g, 'KPP Pratama');
+    cleaned = cleaned.replace(/\bBPJS Kesehatan\b/gi, 'BPJS Kesehatan');
+    cleaned = cleaned.replace(/\bBPJS Ketenagakerjaan\b/gi, 'BPJS Ketenagakerjaan');
+    cleaned = cleaned.replace(/\bBPJS\b/g, 'BPJS');
+    cleaned = cleaned.replace(/\bPKKPR\b/g, 'PKKPR');
+    cleaned = cleaned.replace(/\bSPPL\b/g, 'SPPL');
+    cleaned = cleaned.replace(/\bSLF\b/g, 'SLF');
+    cleaned = cleaned.replace(/\bPNBP\b/g, 'PNBP');
+    cleaned = cleaned.replace(/\bPTSP\b/g, 'PTSP');
+    cleaned = cleaned.replace(/\bKK\b/g, 'Kartu Keluarga');
+    cleaned = cleaned.replace(/\bKIA\b/g, 'Kartu Identitas Anak');
+    cleaned = cleaned.replace(/\bIKD\b/g, 'Identitas Kependudukan Digital');
+    cleaned = cleaned.replace(/\bADM\b/g, 'Anjungan Dukcapil Mandiri');
+    cleaned = cleaned.replace(/\bSAMSAT\b/gi, 'Samsat');
+    cleaned = cleaned.replace(/\bBSrE\b/g, 'Badan Siber dan Sandi Negara');
+    cleaned = cleaned.replace(/\bPT\b/g, 'PT');
+    cleaned = cleaned.replace(/\bCV\b/g, 'CV');
+  }
+
+  // ==========================================
+  // --- 2. ENGLISH (INTERNATIONAL ENUNCIATION) ---
+  // ==========================================
+  else if (lang === 'en') {
+    // A. Currency and numbers
+    cleaned = cleaned.replace(/\bRp\.?\s*350\,?000\b/gi, '350 thousand Indonesian Rupiah');
+    cleaned = cleaned.replace(/\bRp\.?\s*650\,?000\b/gi, '650 thousand Indonesian Rupiah');
+    cleaned = cleaned.replace(/\bRp\.?\s*0\b/gi, 'free of charge');
+    cleaned = cleaned.replace(/\bRp\.?\s*(\d+)/gi, '$1 Indonesian Rupiah');
+
+    // B. Operating Hours & Dates
+    cleaned = cleaned.replace(/07:30\s*(to|-)\s*16:00\s*(WITA)?\s*,?\s*Friday\s*07:30\s*(to|-)\s*16:30/gi, 'Monday to Thursday 7:30 AM to 4:00 PM, and Friday 7:30 AM to 4:30 PM Central Indonesia Time');
+    cleaned = cleaned.replace(/08:00\s*(to|-)\s*15:30\s*(WITA)?/gi, '7:30 AM to 4:00 PM Central Indonesia Time');
+    cleaned = cleaned.replace(/\bWITA\b/g, 'Central Indonesia Time');
+
+    // C. Clarify Indonesian Government Acronyms for International Investors
+    cleaned = cleaned.replace(/\bKabupaten Luwu\b/gi, 'Luwu');
+    cleaned = cleaned.replace(/\bLuwu Regency\b/gi, 'Luwu');
+    cleaned = cleaned.replace(/\bMPP Simpurusiang\b/gi, 'MPP Simpurusiang Public Service Center');
+    cleaned = cleaned.replace(/\bMPP\b/g, 'MPP Public Service Center');
+    cleaned = cleaned.replace(/\bPBG\b/g, 'Building Approval PBG');
+    cleaned = cleaned.replace(/\bSLF\b/g, 'Certificate of Building Fitness SLF');
+    cleaned = cleaned.replace(/\bNIB\b/g, 'Single Business Number NIB');
+    cleaned = cleaned.replace(/\bOSS-RBA\b/gi, 'OSS Risk-Based Approach system');
+    cleaned = cleaned.replace(/\bOSS\b/g, 'OSS system');
+    cleaned = cleaned.replace(/\bSIMBG\b/gi, 'SIMBG national building portal');
+    cleaned = cleaned.replace(/\bDPMPTSP\b/g, 'Investment Agency DPMPTSP');
+    cleaned = cleaned.replace(/\bDPUPR\b/g, 'Public Works Agency DPUPR');
+    cleaned = cleaned.replace(/\bPKKPR\b/g, 'Spatial Conformity Confirmation PKKPR');
+    cleaned = cleaned.replace(/\bSPPL\b/g, 'Environmental Statement SPPL');
+    cleaned = cleaned.replace(/\bNPWP\b/g, 'Tax Identification Number NPWP');
+    cleaned = cleaned.replace(/\bKTP\b/g, 'National ID Card');
+    cleaned = cleaned.replace(/\bBSrE\b/g, 'National Cyber and Crypto Agency');
+    cleaned = cleaned.replace(/\bSLA\b/g, 'Service Level Agreement duration');
+    cleaned = cleaned.replace(/\bNo\.\s*(\d+)/gi, 'Number $1');
+  }
+
+  // ==========================================
+  // --- 3. MANDARIN CHINESE (标准普通话与政务术语) ---
+  // ==========================================
+  else if (lang === 'zh') {
+    // A. 币种与费用转换为地道中文发音
+    cleaned = cleaned.replace(/Rp\.?\s*350[\.\,]?000/gi, '三十五万印尼盾');
+    cleaned = cleaned.replace(/Rp\.?\s*650[\.\,]?000/gi, '六十五万印尼盾');
+    cleaned = cleaned.replace(/Rp\.?\s*80[\.\,]?000/gi, '八万印尼盾');
+    cleaned = cleaned.replace(/Rp\.?\s*75[\.\,]?000/gi, '七万五千印尼盾');
+    cleaned = cleaned.replace(/Rp\.?\s*30[\.\,]?000/gi, '三万印尼盾');
+    cleaned = cleaned.replace(/Rp\.?\s*0/gi, '全程免费');
+    cleaned = cleaned.replace(/Rp\.?\s*/gi, '印尼盾 ');
+
+    // B. 时间与作息时间地道转换
+    cleaned = cleaned.replace(/07:30\s*(至|-)\s*16:00\s*(WITA)?\s*,?\s*周五\s*07:30\s*(至|-)\s*16:30/gi, '周一至周四上午 7 点半至下午 4 点，周五上午 7 点半至下午 4 点半');
+    cleaned = cleaned.replace(/08:00\s*(至|-)\s*15:30\s*(WITA)?/gi, '周一至周四上午 7 点半至下午 4 点，周五上午 7 点半至下午 4 点半');
+    cleaned = cleaned.replace(/\bWITA\b/g, '印尼中部时间');
+
+    // C. 混合英文缩写优化为标准的中文政务用语
+    cleaned = cleaned.replace(/MPP Simpurusiang/gi, '鲁武县欣普鲁香公共服务大楼');
+    cleaned = cleaned.replace(/MPP/g, '公共服务大楼');
+    cleaned = cleaned.replace(/PBG/g, 'PBG 建筑施工许可');
+    cleaned = cleaned.replace(/SLF/g, 'SLF 建筑物竣工合格证');
+    cleaned = cleaned.replace(/NIB/g, 'NIB 统一企业商业编号');
+    cleaned = cleaned.replace(/OSS-RBA/gi, 'OSS 风险分级在线审批系统');
+    cleaned = cleaned.replace(/OSS/g, 'OSS 在线企业注册系统');
+    cleaned = cleaned.replace(/NPWP/g, 'NPWP 企业与个人税号');
+    cleaned = cleaned.replace(/KTP/g, '印尼居民身份证');
+    cleaned = cleaned.replace(/KK/g, '家庭户口卡');
+    cleaned = cleaned.replace(/KIA/g, '少儿身份证');
+    cleaned = cleaned.replace(/SIMBG/g, '国家建筑在线审批系统');
+    cleaned = cleaned.replace(/PKKPR/g, '空间规划合规确认书');
+    cleaned = cleaned.replace(/SPPL/g, '环保承诺书');
+    cleaned = cleaned.replace(/DPMPTSP/g, '投资与一站式综合审批局');
+    cleaned = cleaned.replace(/DPUPR/g, '公共工程与空间规划局');
+    cleaned = cleaned.replace(/Bank Sulselbar/g, '南苏尔塞尔巴尔银行');
+    cleaned = cleaned.replace(/BSrE/g, '印尼国家密码与网络局');
+    cleaned = cleaned.replace(/SLA/g, '法定办理时限');
+    cleaned = cleaned.replace(/SKCK/g, '无犯罪记录证明');
+    cleaned = cleaned.replace(/SAMSAT/g, '机动车税务窗口');
+  }
+
+  // 4. Slashes & Punctuation Cleanup (Pembersihan Tanda Baca Anti-Stutter)
+  cleaned = cleaned.replace(/\s*\/\s*/g, lang === 'en' ? ' or ' : lang === 'zh' ? '或' : ' atau ');
+  
+  // Colons and semicolons separating clauses should become periods for crisp cadence
+  cleaned = cleaned.replace(/[\:\;]/g, '. ');
+
+  // Sanitize duplicate or colliding punctuations that cause dead silence in TTS engines
+  cleaned = cleaned.replace(/[,，]{2,}/g, ', ');
+  cleaned = cleaned.replace(/[.!?。！？]{2,}/g, '. ');
+  cleaned = cleaned.replace(/([.!?。！？])\s*[,，]/g, '$1 ');
+  cleaned = cleaned.replace(/^\s*[,，.\s]+/gm, '');
+  cleaned = cleaned.replace(/\s+/g, ' ').trim();
+
+  return cleaned;
+}
+
+/**
+ * Stops all active speech synthesis playback and clears keep-alive timers.
+ */
+export function stopAllSpeech(): void {
+  if (typeof window === 'undefined') return;
+
+  if (window.__speechKeepAliveInterval) {
+    clearInterval(window.__speechKeepAliveInterval);
+    window.__speechKeepAliveInterval = null;
+  }
+
+  if (window.__speechWatchdogTimer) {
+    clearTimeout(window.__speechWatchdogTimer);
+    window.__speechWatchdogTimer = null;
+  }
+
+  if (window.__activeSpeechUtterances) {
+    window.__activeSpeechUtterances = [];
+  }
+
+  if ('speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.cancel();
+    } catch (e) {}
+  }
+}
+
+export interface SpeakOptions {
+  lang?: 'id' | 'en' | 'zh';
+  rate?: number;
+  pitch?: number;
+  volume?: number;
+  onStart?: () => void;
+  onEnd?: () => void;
+  onError?: (err: any) => void;
+  availableVoices?: SpeechSynthesisVoice[];
+}
+
+/**
+ * Language-aware semantic clause chunking (Latin vs CJK characters).
+ * Splits text into full natural sentences (up to 260 chars) so the synthesizer
+ * speaks continuously without awkward mid-sentence hardware pause gaps.
+ */
+function splitTextIntoSafeChunks(text: string, lang: 'id' | 'en' | 'zh' = 'id'): string[] {
+  if (!text || !text.trim()) return [];
+
+  const safeChunks: string[] = [];
+
+  if (lang === 'zh') {
+    // Mandarin CJK: split primarily by Chinese sentence punctuation
+    const cjkSentences = text.split(/(?<=[。！？\n!?])\s*/);
+    for (const sentence of cjkSentences) {
+      const trimmed = sentence.trim();
+      if (!trimmed) continue;
+
+      if (trimmed.length <= 75) {
+        safeChunks.push(trimmed);
+      } else {
+        // Subdivide unusually long sentence by commas or semicolons
+        const subParts = trimmed.split(/(?<=[，、；;])\s*/);
+        let acc = '';
+        for (const sub of subParts) {
+          if ((acc + sub).length <= 75) {
+            acc += sub;
+          } else {
+            if (acc) safeChunks.push(acc);
+            acc = sub;
+          }
+        }
+        if (acc) safeChunks.push(acc);
+      }
+    }
+  } else {
+    // Latin languages (Indonesian & English)
+    // Primary split strictly by Sentence Boundaries (Periods, Question marks, Exclamations, Newlines)
+    const sentences = text.split(/(?<=[.?!。\n！？])\s+/);
+
+    for (const sentence of sentences) {
+      const trimmed = sentence.trim();
+      if (!trimmed) continue;
+
+      // Allow full natural sentences up to 260 characters without splitting!
+      // This guarantees phrases like "Selamat Datang di Mal Pelayanan Publik Simpurusiang Kabupaten Luwu, Terima kasih atas pertanyaan Bapak atau Ibu."
+      // are spoken as ONE single continuous, fluid utterance with ZERO audio hardware latency.
+      if (trimmed.length <= 260) {
+        safeChunks.push(trimmed);
+      } else {
+        // If an individual run-on sentence exceeds 260 characters, split cleanly at word boundaries
+        const words = trimmed.split(/\s+/);
+        let accumulator = '';
+
+        for (const word of words) {
+          if ((accumulator + ' ' + word).trim().length <= 220) {
+            accumulator = (accumulator + ' ' + word).trim();
+          } else {
+            if (accumulator) safeChunks.push(accumulator);
+            accumulator = word;
+          }
+        }
+        if (accumulator) safeChunks.push(accumulator);
+      }
+    }
+  }
+
+  return safeChunks.filter(s => s.trim().length > 0);
+}
+
+/**
+ * Selects the most natural, human-like voice available in the client system.
+ * Prioritizes Microsoft Neural Online, Google Natural, and Apple native voices.
+ */
+function findOptimalVoice(voices: SpeechSynthesisVoice[], lang: 'id' | 'en' | 'zh'): SpeechSynthesisVoice | null {
+  if (!voices || voices.length === 0) return null;
+
+  if (lang === 'en') {
+    return (
+      voices.find(v => (v.lang === 'en-US' || v.lang === 'en_US') && (v.name.includes('Neural') || v.name.includes('Natural') || v.name.includes('Online'))) ||
+      voices.find(v => (v.lang === 'en-US' || v.lang === 'en_US') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Jenny') || v.name.includes('Aria'))) ||
+      voices.find(v => v.lang.startsWith('en') && (v.name.includes('Neural') || v.name.includes('Natural') || v.name.includes('Google'))) ||
+      voices.find(v => v.lang.startsWith('en')) ||
+      null
+    );
+  }
+
+  if (lang === 'zh') {
+    return (
+      voices.find(v => (v.lang === 'zh-CN' || v.lang === 'zh_CN') && (v.name.includes('Neural') || v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Xiaoxiao') || v.name.includes('Yunxi'))) ||
+      voices.find(v => (v.lang === 'zh-CN' || v.lang === 'zh_CN') && (v.name.includes('Google') || v.name.includes('Ting-Ting') || v.name.includes('Mei-Jia'))) ||
+      voices.find(v => (v.lang.startsWith('zh') || v.lang.includes('cmn')) && (v.name.includes('Google') || v.name.includes('Natural'))) ||
+      voices.find(v => v.lang.startsWith('zh') || v.lang.includes('cmn')) ||
+      null
+    );
+  }
+
+  // Indonesian (default)
+  return (
+    voices.find(v => (v.lang === 'id-ID' || v.lang === 'id_ID' || v.lang === 'id') && (v.name.includes('Neural') || v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Gadis') || v.name.includes('Ardi'))) ||
+    voices.find(v => (v.lang === 'id-ID' || v.lang === 'id_ID' || v.lang === 'id') && (v.name.includes('Google') || v.name.includes('Damayanti') || v.name.includes('Indonesian'))) ||
+    voices.find(v => v.lang.startsWith('id') || v.lang.includes('id_ID') || v.lang.includes('id-ID') || v.lang.includes('ind')) ||
+    null
+  );
+}
+
+/**
+ * Plays speech audio with crystal clear high-fidelity quality, calibrated prosody,
+ * watchdog safety timers, and natural human breathing cadence.
+ */
+export function speakCrystalClearText(text: string, options: SpeakOptions = {}): number {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return 0;
+
+  const {
+    lang = 'id',
+    rate,
+    pitch,
+    volume = 1.0,
+    onStart,
+    onEnd,
+    onError,
+    availableVoices = []
+  } = options;
+
+  stopAllSpeech();
+
+  if (!text || !text.trim()) return 0;
+
+  window.__speechSessionId = (window.__speechSessionId || 0) + 1;
+  const currentSessionId = window.__speechSessionId;
+
+  // 1. Phonetically normalize and enrich text for chosen language
+  const normalizedText = formatTextForCrystalClearTts(text, lang);
+  if (!normalizedText.trim()) return 0;
+
+  // 2. Intelligent Sentence & Clause Chunking (Zero-Lag sentences)
+  const sentenceChunks = splitTextIntoSafeChunks(normalizedText, lang);
+  if (sentenceChunks.length === 0) return 0;
+
+  if (onStart) onStart();
+
+  // 3. Select Highest Quality Available Voice
+  const voiceList = availableVoices.length > 0 ? availableVoices : window.speechSynthesis.getVoices();
+  const targetVoice = findOptimalVoice(voiceList, lang);
+
+  // 4. Default Prosody Tuning per Language (Natural human pitch & speed calibration - measured for maximum enunciation clarity)
+  const finalRate = rate !== undefined ? rate : (lang === 'zh' ? 0.82 : lang === 'en' ? 0.85 : 0.92);
+  const finalPitch = pitch !== undefined ? pitch : (lang === 'id' ? 1.01 : lang === 'zh' ? 1.02 : 1.0);
+
+  // 5. Chromium Keep-Alive Heartbeat
+  window.__speechKeepAliveInterval = setInterval(() => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      if (window.speechSynthesis.paused) {
+        try {
+          window.speechSynthesis.resume();
+        } catch (e) {}
+      }
+    }
+  }, 1500);
+
+  let currentIdx = 0;
+
+  const playNextChunk = () => {
+    if (window.__speechSessionId !== currentSessionId) {
+      stopAllSpeech();
+      return;
+    }
+
+    if (currentIdx >= sentenceChunks.length) {
+      stopAllSpeech();
+      if (onEnd) onEnd();
+      return;
+    }
+
+    const chunkText = sentenceChunks[currentIdx];
+    const utterance = new SpeechSynthesisUtterance(chunkText);
+
+    // Retain utterance in global array to prevent GC eviction
+    if (!window.__activeSpeechUtterances) window.__activeSpeechUtterances = [];
+    window.__activeSpeechUtterances.push(utterance);
+
+    if (lang === 'en') {
+      utterance.lang = 'en-US';
+    } else if (lang === 'zh') {
+      utterance.lang = 'zh-CN';
+    } else {
+      utterance.lang = 'id-ID';
+    }
+
+    if (targetVoice) utterance.voice = targetVoice;
+
+    utterance.rate = Math.min(Math.max(finalRate, 0.75), 1.15);
+    utterance.pitch = finalPitch;
+    utterance.volume = volume;
+
+    let hasHandledChunk = false;
+
+    const handleChunkCompleted = () => {
+      if (hasHandledChunk) return;
+      hasHandledChunk = true;
+
+      if (window.__speechWatchdogTimer) {
+        clearTimeout(window.__speechWatchdogTimer);
+        window.__speechWatchdogTimer = null;
+      }
+
+      if (window.__activeSpeechUtterances) {
+        window.__activeSpeechUtterances = window.__activeSpeechUtterances.filter(u => u !== utterance);
+      }
+
+      if (window.__speechSessionId !== currentSessionId) return;
+
+      currentIdx++;
+      // Immediate seamless zero-delay transition to next sentence
+      playNextChunk();
+    };
+
+    utterance.onend = () => {
+      handleChunkCompleted();
+    };
+
+    utterance.onerror = (e) => {
+      if (window.__speechSessionId !== currentSessionId) return;
+      if (e.error === 'canceled' || e.error === 'interrupted') {
+        return;
+      }
+      if (onError) onError(e);
+      handleChunkCompleted();
+    };
+
+    // 6. Intelligent Utterance Watchdog (generous timeout to avoid premature truncation)
+    const estimatedDurationMs = Math.max(chunkText.length * 100, 2500) + 3000;
+    if (window.__speechWatchdogTimer) clearTimeout(window.__speechWatchdogTimer);
+    window.__speechWatchdogTimer = setTimeout(() => {
+      if (!hasHandledChunk && window.__speechSessionId === currentSessionId) {
+        handleChunkCompleted();
+      }
+    }, estimatedDurationMs);
+
+    if (window.speechSynthesis.paused) {
+      try { window.speechSynthesis.resume(); } catch (e) {}
+    }
+
+    try {
+      window.speechSynthesis.speak(utterance);
+    } catch (err) {
+      console.warn('speechSynthesis.speak error:', err);
+      handleChunkCompleted();
+    }
+  };
+
+  playNextChunk();
+  return currentSessionId;
+}
+

@@ -1,0 +1,12 @@
+dist/
+node_modules/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+service-account-key.json
+-e 
+node-compile-cache/
+*.hm
+.de913477188f48fb-0.hm
