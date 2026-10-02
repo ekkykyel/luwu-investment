@@ -1528,7 +1528,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ duration: 0.2 }}
-              className="w-full max-w-4xl h-full sm:h-auto sm:max-h-[92vh] bg-white dark:bg-slate-900 border-0 sm:border border-slate-200/90 dark:border-emerald-500/30 rounded-none sm:rounded-3xl p-4 sm:p-6 md:p-7 shadow-2xl overflow-hidden flex flex-col text-slate-900 dark:text-white font-['Plus_Jakarta_Sans',sans-serif]"
+              className="w-full max-w-4xl h-full sm:h-auto sm:max-h-[92vh] bg-white dark:bg-slate-900 border-0 sm:border border-slate-200/90 dark:border-emerald-500/30 rounded-none sm:rounded-3xl p-4 sm:p-6 md:p-7 shadow-2xl overflow-hidden flex flex-col text-slate-900 dark:text-white font-sans"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Header with Standard Badges */}

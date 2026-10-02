@@ -2448,16 +2448,16 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-5xl lg:max-w-6xl mx-auto flex flex-col items-center text-center py-8 sm:py-16 md:py-24 px-0 sm:px-4 md:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto flex flex-col items-center text-center py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi - Staggered Fade-Up & MPP Badung Visuals */}
-            <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
+            <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
               <motion.div 
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 font-sans mb-2"
+                className="text-[11px] font-sans font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2"
               >
                 {t("mppPortal.motto.badge")}
               </motion.div>
@@ -2466,7 +2466,7 @@ export default function PortalMPP() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans mt-1"
+                className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans mt-1"
               >
                 {t("mppPortal.motto.title")}{" "}
                 <span className="bg-gradient-to-r from-teal-500 to-blue-600 bg-clip-text text-transparent">
@@ -2480,7 +2480,7 @@ export default function PortalMPP() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="mt-3.5 mb-3 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400"
+                className="mt-3.5 mb-3 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400"
               >
                 <span className="text-slate-900 dark:text-slate-200 font-semibold">Murah</span>
                 <span className="text-slate-300 dark:text-slate-700">·</span>
@@ -2520,12 +2520,12 @@ export default function PortalMPP() {
           </motion.section>
 
           {/* Seksi VIP Investor Fast-Track Concierge (Full Width on Android & Desktop) */}
-          <div id="investor-vip" className="w-full max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-4 sm:py-6 scroll-mt-28">
+          <div id="investor-vip" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 scroll-mt-28">
             <VipInvestorConcierge isDark={isDark} />
           </div>
 
           {/* Seksi Operational Status Banner & Heatmap Jam Ramai vs Sepi */}
-          <div id="operasional-heatmap" className="w-full max-w-[1440px] mx-auto px-0.5 sm:px-4 md:px-8 lg:px-16 scroll-mt-28">
+          <div id="operasional-heatmap" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 scroll-mt-28">
             <div id="peta-jam-ramai" className="scroll-mt-28">
               <OperationalHeatmap isDark={isDark} />
             </div>
@@ -2535,7 +2535,7 @@ export default function PortalMPP() {
           <MppMaklumatSlaRadar isDark={isDark} />
 
           {/* Seksi Bento Live Queue & Loket Radar (Material Design 3 Asymmetrical Bento Grid) */}
-          <div id="smart-live-queue" className="w-full max-w-[1440px] mx-auto px-1 sm:px-4 md:px-8 lg:px-16 scroll-mt-28">
+          <div id="smart-live-queue" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 scroll-mt-28">
             <BentoLiveQueueRadar 
               isDark={isDark} 
               onRegisterQueue={(agencyName) => {
@@ -2616,16 +2616,16 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto  scroll-mt-28 py-12 sm:py-16 md:py-24 px-2 sm:px-5 md:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto scroll-mt-28 py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Section Header Terpusat - Staggered Fade-Up */}
-            <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
+            <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
               <motion.span 
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center font-sans bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full"
+                className="text-[11px] font-sans font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full"
               >
                 {t("mppPortal.layanan.badge")}
               </motion.span>
@@ -2634,7 +2634,7 @@ export default function PortalMPP() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans mt-1"
+                className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans mt-1"
               >
                 <span className="bg-gradient-to-r from-teal-500 to-blue-600 bg-clip-text text-transparent">
                   {t("mppPortal.layanan.title")}
@@ -2645,7 +2645,7 @@ export default function PortalMPP() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-2.5 mb-5 text-center"
+                className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto text-center leading-relaxed mt-1"
               >
                 {t("mppPortal.layanan.subtitle")}
               </motion.p>
@@ -2841,7 +2841,7 @@ export default function PortalMPP() {
               <MagneticButton 
                 strength={0.25}
                 onClick={() => setIsServicesMatrixOpen(true)}
-                className="w-full sm:w-auto min-h-[48px] h-12 px-8 rounded-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs sm:text-sm tracking-wide shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:brightness-105 transition-all flex items-center justify-center gap-2 cursor-pointer group font-['Plus_Jakarta_Sans',sans-serif]"
+                className="w-full sm:w-auto min-h-[48px] h-12 px-8 rounded-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs sm:text-sm tracking-wide shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:brightness-105 transition-all flex items-center justify-center gap-2 cursor-pointer group font-sans"
               >
                 <Sparkles className="w-4 h-4 text-slate-950" />
                 <span>{t("mppPortal.layanan.viewAllBtn")}</span>
@@ -2851,7 +2851,7 @@ export default function PortalMPP() {
           </motion.section>
 
           {/* Seksi AI Requirement Assistant & Interactive Progressive Stepper */}
-          <div id="syarat-dokumen" className="w-full max-w-7xl mx-auto px-1 sm:px-4 md:px-8 space-y-8 scroll-mt-28">
+          <div id="syarat-dokumen" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 space-y-8 scroll-mt-28">
             <InteractiveRequirementStepper />
             <SmartRequirementAssistant isDark={isDark} />
           </div>
@@ -3113,7 +3113,7 @@ export default function PortalMPP() {
             {/* Fitur 5: Modal Detail Fasilitas Publik (Full-Bleed 16:9 Header & max-w-3xl) */}
             {isFacilityModalOpen && (
               <div 
-                className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-slate-950/85 backdrop-blur-md overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]"
+                className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-slate-950/85 backdrop-blur-md overflow-hidden font-sans"
                 onClick={() => setIsFacilityModalOpen(false)}
               >
                 <motion.div
@@ -3295,7 +3295,7 @@ export default function PortalMPP() {
           </motion.section>
 
           {/* Seksi Denah & Navigasi Spasial Interaktif Canvas */}
-          <div id="denah-interaktif" className="w-full max-w-7xl mx-auto px-1 sm:px-4 md:px-8 space-y-8 scroll-mt-28">
+          <div id="denah-interaktif" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 space-y-8 scroll-mt-28">
             {/* A. WIDGET ATAS: Asisten Pencarian & Direktori Layanan Cepat */}
             <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-7 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 shadow-xl">
               <SmartServiceFinder 
@@ -3332,7 +3332,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-28 py-10 sm:py-16 md:py-24 px-0.5 sm:px-5 md:px-8 relative"
+            className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-28 py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative"
           >
             {/* Header Seksi */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 space-y-2">
@@ -3795,7 +3795,7 @@ export default function PortalMPP() {
           </AnimatePresence>
 
           {/* Seksi Pelacakan Berkas Perizinan Real-Time (Smart Document Tracker) */}
-          <div id="tracking-berkas">
+          <div id="tracking-berkas" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 scroll-mt-28">
             <SmartDocumentTracker isDark={isDark} />
           </div>
 
@@ -3806,17 +3806,17 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-28 py-10 sm:py-16 md:py-24 px-0.5 sm:px-5 md:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-28 py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Terpusat */}
-            <div className="w-full max-w-[96%] sm:max-w-xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 break-words">
-              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2 inline-block text-center font-mono bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
+            <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 break-words">
+              <span className="text-[11px] font-sans font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2 inline-block text-center bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                 {t("mppPortal.statistik.badge")}
               </span>
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight leading-snug text-slate-900 dark:text-white font-sans">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans">
                 {t("mppPortal.statistik.title")}
               </h2>
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-[96%] mx-auto leading-relaxed mt-1.5 mb-3 text-center font-normal">
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed mt-1.5 mb-3 text-center font-medium">
                 {t("mppPortal.statistik.subtitle")}
               </p>
               <div className="w-10 sm:w-14 h-1 bg-emerald-500 rounded-full mx-auto mt-2"></div>
@@ -3979,7 +3979,7 @@ export default function PortalMPP() {
               <button
                 type="button"
                 onClick={() => setIsAnalyticsModalOpen(true)}
-                className="min-h-[48px] h-12 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white rounded-full px-8 text-xs sm:text-sm font-bold tracking-wide transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 cursor-pointer font-['Plus_Jakarta_Sans',sans-serif] inline-flex items-center justify-center gap-2 active:scale-95"
+                className="min-h-[48px] h-12 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white rounded-full px-8 text-xs sm:text-sm font-bold tracking-wide transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 cursor-pointer font-sans inline-flex items-center justify-center gap-2 active:scale-95"
               >
                 <BarChart3 className="w-4 h-4 text-emerald-100" />
                 <span>{t("mppPortal.statistik.fullReportBtn")}</span>
@@ -3994,11 +3994,11 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-7xl mx-auto flex flex-col py-10 sm:py-16 md:py-20 px-4 sm:px-6 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-7xl mx-auto flex flex-col py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 space-y-2">
-              <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60 font-sans">
+              <span className="px-3 py-1 rounded-full text-[11px] font-sans font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60">
                 {t("mppPortal.survey.badge", "Survei Kepuasan")}
               </span>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white font-sans text-center">
@@ -4034,7 +4034,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-28 py-10 sm:py-16 md:py-24 px-2 sm:px-5 md:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-28 py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 space-y-2">
@@ -4251,7 +4251,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto py-10 sm:py-16 md:py-24 px-2 sm:px-5 md:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-5 sm:mb-8 space-y-2">
@@ -4550,7 +4550,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className={`relative overflow-hidden rounded-t-[1.75rem] sm:rounded-t-[2.5rem] md:rounded-t-[4rem] w-full py-8 sm:py-16 md:py-24 px-2 sm:px-4 transition-colors duration-300 ${
+            className={`relative overflow-hidden rounded-t-[1.75rem] sm:rounded-t-[2.5rem] md:rounded-t-[4rem] w-full py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 transition-colors duration-300 ${
               isDark ? 'bg-slate-900/90 text-white' : 'bg-slate-100/80 text-slate-900 border-t border-slate-200'
             }`}
           >
@@ -4577,7 +4577,7 @@ export default function PortalMPP() {
               whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
               viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="relative z-10 max-w-4xl mx-auto px-3 text-center mb-6 sm:mb-10 flex flex-col items-center space-y-2"
+              className="relative z-10 max-w-2xl mx-auto px-4 text-center mb-6 sm:mb-10 flex flex-col items-center space-y-2"
             >
               <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60 font-sans inline-block">
                 {t("mppPortal.ulasan.badge", "Testimoni Warga")}
@@ -4693,17 +4693,17 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="w-full max-w-6xl mx-auto scroll-mt-28 py-8 sm:py-14 md:py-20 px-2 sm:px-5 md:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10 font-sans"
+            className="w-full max-w-6xl mx-auto scroll-mt-28 py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10 font-sans"
           >
             {/* Header Seksi Terpusat */}
-            <div className="w-full max-w-xl mx-auto text-center px-3 flex flex-col items-center mb-6 sm:mb-10 break-words">
-              <span className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2 inline-block text-center bg-emerald-500/10 border border-emerald-500/20 px-3 py-0.5 rounded-full">
+            <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 break-words">
+              <span className="text-[11px] font-sans font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2 inline-block text-center bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
                 {t("mppPortal.kontak.badge")}
               </span>
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight leading-snug text-slate-900 dark:text-white">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans mt-1">
                 {t("mppPortal.kontak.title")}
               </h2>
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-md mx-auto leading-relaxed mt-1.5 mb-3 text-center font-normal">
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed mt-1.5 mb-3 text-center font-medium">
                 {t("mppPortal.kontak.subtitle")}
               </p>
               <div className="w-10 sm:w-14 h-1 bg-emerald-500 rounded-full mx-auto mt-2"></div>
@@ -4828,16 +4828,16 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="w-full max-w-6xl mx-auto py-8 sm:py-14 md:py-20 px-2 sm:px-5 md:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10 font-sans"
+            className="w-full max-w-6xl mx-auto py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10 font-sans"
           >
             {/* Header Seksi Terpusat - Staggered Fade-Up */}
-            <div className="w-full max-w-xl mx-auto text-center px-3 flex flex-col items-center mb-6 sm:mb-10 break-words">
+            <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 break-words">
               <motion.span 
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2 inline-block text-center bg-emerald-500/10 border border-emerald-500/20 px-3 py-0.5 rounded-full"
+                className="text-[11px] font-sans font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2.5 inline-block text-center bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full"
               >
                 {t("mppPortal.sosialMedia.badge")}
               </motion.span>
@@ -4846,7 +4846,7 @@ export default function PortalMPP() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight leading-snug text-slate-900 dark:text-white"
+                className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans mt-1"
               >
                 <span className="bg-gradient-to-r from-teal-500 to-blue-600 bg-clip-text text-transparent">
                   {t("mppPortal.sosialMedia.title")}
@@ -4857,7 +4857,7 @@ export default function PortalMPP() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed mt-1.5 mb-3 text-center font-normal"
+                className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed mt-1.5 mb-3 text-center font-medium"
               >
                 {t("mppPortal.sosialMedia.subtitle")}
               </motion.p>
@@ -5236,7 +5236,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="w-full max-w-6xl mx-auto scroll-mt-28 py-8 sm:py-14 md:py-20 px-2 sm:px-5 md:px-8 font-sans"
+            className="w-full max-w-6xl mx-auto scroll-mt-28 py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 font-sans"
           >
             <div className={`rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-7 md:p-9 relative overflow-hidden shadow-xl sm:shadow-2xl flex flex-col md:flex-row items-center gap-6 sm:gap-10 border transition-all ${
               isDark
@@ -5248,16 +5248,16 @@ export default function PortalMPP() {
               <div className="absolute -left-20 -top-20 w-80 h-80 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
               
               <div className="relative z-10 md:w-1/2 text-left">
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider mb-3 ${
+                <span className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[11px] font-sans font-bold uppercase tracking-wider mb-3 ${
                   isDark ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : 'text-emerald-800 bg-emerald-500/15 border border-emerald-500/30 font-extrabold'
                 }`}>
                   <Globe className="w-3.5 h-3.5 text-emerald-500" />
                   {t("mppPortal.map.geospatialBadge", "Eksplorasi Geospasial")}
                 </span>
-                <h2 className={`text-xl sm:text-2xl md:text-3xl font-bold tracking-tight leading-snug ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                <h2 className={`text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight font-sans mt-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                   {t("mppPortal.webgisTitle", "WebGIS & Potensi Investasi Luwu")}
                 </h2>
-                <p className={`text-xs sm:text-sm leading-relaxed mb-6 max-w-lg ${isDark ? 'text-slate-300' : 'text-slate-600 font-medium'}`}>
+                <p className={`text-xs sm:text-sm leading-relaxed mb-6 max-w-lg ${isDark ? 'text-slate-300' : 'text-slate-500 font-medium'}`}>
                   {t("mppPortal.map.geospatialDesc", "Portal MPP Simpurusiang terintegrasi langsung dengan platform spasial cerdas. Analisis potensi lahan, pantau infrastruktur, dan rancang titik lokasi bisnis Anda secara presisi dengan sistem informasi geografis kami.")}
                 </p>
                 <button
@@ -5306,7 +5306,7 @@ export default function PortalMPP() {
           </motion.section>
 
           {/* Seksi Tanya Jawab (FAQ) Interaktif - Material 3 Smooth Accordion */}
-          <div id="faq" className="w-full max-w-5xl mx-auto py-8 sm:py-14 md:py-20 px-2 sm:px-5 md:px-8 font-sans scroll-mt-28">
+          <div id="faq" className="w-full max-w-6xl mx-auto py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 font-sans scroll-mt-28">
             <FaqAccordion />
           </div>
 
@@ -6055,7 +6055,7 @@ export default function PortalMPP() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.94, y: 20 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="w-full max-w-2xl h-full sm:h-auto sm:max-h-[90vh] bg-white dark:bg-slate-900 border-0 sm:border border-slate-200 dark:border-white/10 rounded-none sm:rounded-3xl p-5 sm:p-7 shadow-2xl overflow-y-auto text-slate-900 dark:text-white font-['Plus_Jakarta_Sans',sans-serif] flex flex-col"
+              className="w-full max-w-2xl h-full sm:h-auto sm:max-h-[90vh] bg-white dark:bg-slate-900 border-0 sm:border border-slate-200 dark:border-white/10 rounded-none sm:rounded-3xl p-5 sm:p-7 shadow-2xl overflow-y-auto text-slate-900 dark:text-white font-sans flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Handle Drag Bar untuk Mobile */}
@@ -6078,15 +6078,15 @@ export default function PortalMPP() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                      <span className="px-3 py-0.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 font-['Plus_Jakarta_Sans',sans-serif]">
+                      <span className="px-3 py-0.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 font-sans">
                         {activeAgency.kategori || "Instansi Terintegrasi"}
                       </span>
-                      <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1 font-['Plus_Jakarta_Sans',sans-serif]">
+                      <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1 font-sans">
                         <MapPin className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                         {activeAgency.loket || "Gerai MPP Simpurusiang"}
                       </span>
                     </div>
-                    <h3 className="text-base sm:text-lg md:text-xl font-extrabold text-slate-900 dark:text-white font-['Plus_Jakarta_Sans',sans-serif] leading-snug">
+                    <h3 className="text-base sm:text-lg md:text-xl font-extrabold text-slate-900 dark:text-white font-sans leading-snug">
                       {activeAgency.fullName || activeAgency.nama}
                     </h3>
                   </div>

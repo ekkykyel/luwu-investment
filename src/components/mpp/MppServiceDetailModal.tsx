@@ -536,7 +536,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
     <AnimatePresence>
       <div 
         id="mpp-service-detail-backdrop"
-        className="fixed inset-0 z-50 flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 bg-slate-900/80 backdrop-blur-sm overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]"
+        className="fixed inset-0 z-50 flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 bg-slate-900/80 backdrop-blur-sm overflow-hidden font-sans"
         onClick={(e) => {
           if (e.target === e.currentTarget) {
             onClose();
@@ -933,7 +933,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                     onBookQueue(serviceTitle);
                   }
                 }}
-                className="flex-[2] sm:flex-none px-5 sm:px-6 py-2.5 rounded-xl sm:rounded-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:brightness-105 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer group font-['Plus_Jakarta_Sans',sans-serif]"
+                className="flex-[2] sm:flex-none px-5 sm:px-6 py-2.5 rounded-xl sm:rounded-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:brightness-105 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer group font-sans"
               >
                 <Calendar className="w-4 h-4 text-slate-950 shrink-0" />
                 <span className="truncate">{t("mppPortal.serviceDetail.bookQueueBtn", "Daftar Antrean")}</span>

@@ -450,7 +450,7 @@ export const MppServicesMatrixModal: React.FC<MppServicesMatrixModalProps> = ({
     <AnimatePresence>
       {isOpen && (
       <div
-        className="fixed inset-0 z-50 flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 bg-slate-900/80 backdrop-blur-sm overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]"
+        className="fixed inset-0 z-50 flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 bg-slate-900/80 backdrop-blur-sm overflow-hidden font-sans"
         onClick={onClose}
       >
         <motion.div

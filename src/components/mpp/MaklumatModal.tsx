@@ -24,7 +24,7 @@ export const MaklumatModal: React.FC<MaklumatModalProps> = ({
   return (
     <AnimatePresence>
       <div 
-        className="fixed inset-0 z-[100] flex flex-col justify-end sm:justify-center sm:items-center bg-slate-950/80 backdrop-blur-md overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]"
+        className="fixed inset-0 z-[100] flex flex-col justify-end sm:justify-center sm:items-center bg-slate-950/80 backdrop-blur-md overflow-hidden font-sans"
         onClick={onClose}
       >
         <motion.div
