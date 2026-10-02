@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { LuwuLogo } from "./LuwuLogo";
-import { useTranslation } from "react-i18next";
 
 const loadingMessages = [
   "loading.spatial_intelligence",
@@ -18,7 +17,6 @@ const fallbackMessages: Record<string, string> = {
 };
 
 export default function LoadingScreen() {
-  const { t } = useTranslation();
   const [msgIdx, setMsgIdx] = useState(0);
 
   useEffect(() => {
@@ -29,7 +27,7 @@ export default function LoadingScreen() {
   }, []);
 
   const currentKey = loadingMessages[msgIdx];
-  const translatedMessage = t(currentKey, fallbackMessages[currentKey]);
+  const translatedMessage = fallbackMessages[currentKey] || "Memuat Aplikasi...";
 
   return (
     <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-slate-950 select-none overflow-hidden">
