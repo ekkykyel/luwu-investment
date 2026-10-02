@@ -10,7 +10,7 @@ import {
   Loader2, AlertOctagon, HelpCircle, Check, Eye, ChevronRight, Info,
   Sun, Moon, Star, Filter, Image as ImageIcon, Briefcase, Home, Plus,
   Clock, Sparkles, Lock, FileCode, UploadCloud, Globe, CreditCard,
-  FileCheck, Trash2, Paperclip, Layers, AlertTriangle, ShieldAlert
+  FileCheck, Trash2, Paperclip, Layers, AlertTriangle, ShieldAlert, Download
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { supabase, safeFetchLayerData } from "../../lib/supabaseClient";
@@ -26,6 +26,7 @@ import { MppOtpVerificationGuard } from "../mpp/MppOtpVerificationGuard";
 import { getKecamatanLabel, getDesaLabel, getKecamatanId, getDesaId } from "../../utils/gisHelpers";
 import { isSameDistrict, normalizeDistrictName } from "../../utils/geoUtils";
 import { generateMergedPkkprPdf, readFileAsDataUrl, uploadPkkprDocumentToStorage } from "../../utils/pkkprDocumentMerger";
+import { generateSkPkkprPdf } from "../../utils/skPkkprPdfGenerator";
 import { getKategoriPengajuan, PKKPR_JENIS_PENGAJUAN_OPTIONS } from "../../utils/pkkprWorkflowService";
 import { BapKtrPuptrDocument, convertAppToBapKtrData } from "../documents/BapKtrPuptrDocument";
 import { BapLp2bPertanianDocument, convertAppToBapLp2bData } from "../documents/BapLp2bPertanianDocument";
@@ -254,6 +255,71 @@ export default function MasyarakatDashboard({
     return activeProfile?.nik || (typeof window !== "undefined" ? localStorage.getItem("luwu_user_nik") || "" : "");
   });
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [isDownloadingSkId, setIsDownloadingSkId] = useState<string | null>(null);
+
+  const handleDownloadSkPkkprMasyarakat = async (app: any) => {
+    try {
+      const appId = String(app.id || 'current');
+      setIsDownloadingSkId(appId);
+
+      // If user uploaded a direct SK file or backend generated a direct URL:
+      if (app.file_sk_url || app.sk_url || app.fileSkUrl || app.tte_document_url) {
+        const fileUrl = app.file_sk_url || app.sk_url || app.fileSkUrl || app.tte_document_url;
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        const rawNum = app.pkkpr_doc_number || app.sk_pkkpr_num || app.id || 'BERKAS';
+        link.download = `SK_PKKPR_${String(rawNum).replace(/[^a-zA-Z0-9_-]/g, '_')}.pdf`;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        Swal.fire({
+          icon: "success",
+          title: "File SK PKKPR Berhasil Diunduh!",
+          text: `Dokumen Surat Keputusan Persetujuan PKKPR No. ${app.pkkpr_doc_number || app.sk_pkkpr_num || app.id} berhasil diunduh ke perangkat Anda.`,
+          confirmButtonColor: "#10b981",
+          timer: 3000
+        });
+        return;
+      }
+
+      // Generate client-side official high-res PDF with Kop Surat Pemkab Luwu, TTE BSrE, & QR Code
+      await generateSkPkkprPdf({
+        applicationId: String(app.id || 'PKKPR-' + Date.now()),
+        applicantName: app.nama_pemohon || app.pemohon_name || app.nama || nama || 'Masyarakat Pemohon',
+        companyName: app.nama_perusahaan || app.perusahaan || app.nama_pemohon || 'Perorangan / Mandiri',
+        nibNik: app.nik || userNik || app.nib || app.nomor_registrasi || app.nomor_permohonan || '7317000000000001',
+        sector: app.sektor || app.sektor_kegiatan || 'Non-Berusaha / Mandiri',
+        districtName: app.kecamatan || app.kecamatan_name || 'Kecamatan Luwu',
+        villageName: app.desa || app.desa_name || 'Desa Luwu',
+        areaHa: Number(app.luas_ha || ((app.luas_m2 || 0) / 10000) || 0.1),
+        investmentValue: Number(app.nilai_investasi || 0),
+        skPkkprDocNumber: app.pkkpr_doc_number || app.sk_pkkpr_num || `503/SK-PKKPR/DPMPTSP-LW/2026/${String(app.id || '001').slice(-4)}`,
+        pertanianBaNumber: app.pertanian_ba_num || app.berita_acara_pertanian_num,
+        puptrPertekNumber: app.pertek_puptr_num || app.puptr_pertek_num,
+        issueDate: app.updated_at ? new Date(app.updated_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : undefined
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "File SK PKKPR Berhasil Diunduh!",
+        text: `Dokumen resmi Surat Keputusan Persetujuan PKKPR (PDF) berhasil di-generate dan disimpan ke perangkat Anda.`,
+        confirmButtonColor: "#10b981",
+        timer: 3500
+      });
+    } catch (err) {
+      console.error("Gagal mengunduh SK PKKPR:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Gagal Mengunduh Dokumen",
+        text: "Terjadi kendala saat merender berkas PDF SK PKKPR. Silakan coba kembali.",
+        confirmButtonColor: "#ef4444"
+      });
+    } finally {
+      setIsDownloadingSkId(null);
+    }
+  };
 
   const [kecamatanList, setKecamatanList] = useState<any[]>([]);
   const [desaList, setDesaList] = useState<any[]>([]);
@@ -2873,18 +2939,17 @@ export default function MasyarakatDashboard({
                           {(app.status === 'APPROVED' || app.status === 'IZIN_TERBIT' || app.status_permohonan === 'IZIN_TERBIT' || app.pkkpr_status?.includes('Terbit') || app.pkkpr_status?.includes('APPROVED') || app.progress === 100) && (
                             <button
                               type="button"
-                              onClick={() => {
-                                Swal.fire({
-                                  icon: "success",
-                                  title: "SK PKKPR Resmi Terbit",
-                                  text: `Surat Keputusan Persetujuan PKKPR No. ${app.pkkpr_doc_number || app.id} siap diunduh.`,
-                                  confirmButtonColor: "#10b981"
-                                });
-                              }}
-                              className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all flex items-center gap-1 shadow-sm cursor-pointer"
+                              disabled={isDownloadingSkId === String(app.id || 'current')}
+                              onClick={() => handleDownloadSkPkkprMasyarakat(app)}
+                              className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-700/60 text-white transition-all flex items-center gap-1 shadow-sm cursor-pointer disabled:cursor-not-allowed active:scale-95"
+                              title="Unduh berkas resmi Surat Keputusan (SK) PKKPR format PDF"
                             >
-                              <FileCheck className="w-3.5 h-3.5" />
-                              <span>Unduh SK PKKPR</span>
+                              {isDownloadingSkId === String(app.id || 'current') ? (
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              ) : (
+                                <Download className="w-3.5 h-3.5" />
+                              )}
+                              <span>{isDownloadingSkId === String(app.id || 'current') ? 'Mengunduh...' : 'Unduh SK PKKPR'}</span>
                             </button>
                           )}
                         </div>

@@ -203,7 +203,10 @@ export async function generateSkPkkprPdf(data: SkPkkprPdfData): Promise<void> {
 
     pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, Math.min(contentHeightMm, pdfHeight));
 
-    const cleanFileName = `SK-IZIN-PKKPR-DPMPTSP-LUWU-${data.companyName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+    const fileIdentifier = data.skPkkprDocNumber 
+      ? data.skPkkprDocNumber.replace(/[^a-zA-Z0-9_-]/g, '_')
+      : (data.applicationId ? data.applicationId.replace(/[^a-zA-Z0-9_-]/g, '_') : data.companyName.replace(/[^a-zA-Z0-9_-]/g, '_'));
+    const cleanFileName = `SK_PKKPR_${fileIdentifier}.pdf`;
     pdf.save(cleanFileName);
   } finally {
     document.body.removeChild(container);

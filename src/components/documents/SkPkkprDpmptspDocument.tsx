@@ -193,7 +193,8 @@ export const SkPkkprDpmptspDocument: React.FC<SkPkkprDpmptspDocumentProps> = ({
         document.body.removeChild(offscreenContainer);
       }
 
-      const cleanFileName = `SK-PKKPR_${data.namaPerusahaan.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`;
+      const docIdent = data.nomorSkPkkpr ? data.nomorSkPkkpr.replace(/[^a-zA-Z0-9_-]/g, "_") : data.namaPerusahaan.replace(/[^a-zA-Z0-9_-]/g, "_");
+      const cleanFileName = `SK_PKKPR_${docIdent}.pdf`;
       pdf.save(cleanFileName);
     } catch (error) {
       console.error("Gagal mengunduh PDF SK PKKPR:", error);

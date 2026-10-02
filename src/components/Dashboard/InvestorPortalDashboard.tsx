@@ -589,6 +589,70 @@ export default function InvestorPortalDashboard() {
     setIsSkDocModalOpen(true);
   };
 
+  const [isDownloadingInvestorSkId, setIsDownloadingInvestorSkId] = useState<string | null>(null);
+
+  const handleDownloadDirectSk = async (appItem: any) => {
+    try {
+      const appId = String(appItem.id || 'current');
+      setIsDownloadingInvestorSkId(appId);
+
+      if (appItem.file_sk_url || appItem.sk_url || appItem.fileSkUrl || appItem.tte_document_url) {
+        const fileUrl = appItem.file_sk_url || appItem.sk_url || appItem.fileSkUrl || appItem.tte_document_url;
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        const rawNum = appItem.skPkkprNum || appItem.pkkpr_doc_number || appItem.id || 'BERKAS';
+        link.download = `SK_PKKPR_${String(rawNum).replace(/[^a-zA-Z0-9_-]/g, '_')}.pdf`;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        Swal.fire({
+          icon: "success",
+          title: "File SK PKKPR Berhasil Diunduh!",
+          text: `Dokumen Surat Keputusan Persetujuan PKKPR No. ${rawNum} berhasil diunduh ke perangkat Anda.`,
+          confirmButtonColor: "#10b981",
+          timer: 3000
+        });
+        return;
+      }
+
+      await generateSkPkkprPdf({
+        applicationId: String(appItem.id || 'PKKPR-' + Date.now()),
+        applicantName: appItem.namaPemohon || hydratedCorporateProfile.namaPenanggungJawab || 'Pemohon Terdaftar',
+        companyName: appItem.namaBadanUsaha || hydratedCorporateProfile.namaPerusahaan || 'PT Pemohon Berusaha',
+        nibNik: appItem.nib || hydratedCorporateProfile.nib || '1234567890123',
+        sector: appItem.sektor || 'Industri & Investasi',
+        districtName: appItem.kecamatan || 'Kecamatan Luwu',
+        villageName: appItem.desa || 'Desa Luwu',
+        areaHa: Number(appItem.luasHa || ((appItem.luasM2 || 0) / 10000) || 1),
+        investmentValue: Number(appItem.nilaiInvestasi || 5000000000),
+        skPkkprDocNumber: appItem.skPkkprNum || `503/SK-PKKPR/DPMPTSP-LW/${new Date().getFullYear()}/${String(appItem.id || '001').slice(-4)}`,
+        pertanianBaNumber: appItem.pertanianBaNum,
+        puptrPertekNumber: appItem.pertekPuptrNum,
+        issueDate: appItem.updatedAt ? new Date(appItem.updatedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : undefined
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "File SK PKKPR Berhasil Diunduh!",
+        text: `Dokumen resmi Surat Keputusan Persetujuan PKKPR (PDF) berhasil di-generate dan disimpan ke perangkat Anda.`,
+        confirmButtonColor: "#10b981",
+        timer: 3500
+      });
+    } catch (err) {
+      console.error("Gagal mengunduh SK PKKPR:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Gagal Mengunduh Dokumen",
+        text: "Terjadi kendala saat merender berkas PDF SK PKKPR. Silakan coba kembali.",
+        confirmButtonColor: "#ef4444"
+      });
+    } finally {
+      setIsDownloadingInvestorSkId(null);
+    }
+  };
+
   useEffect(() => {
     fetchAndHydrateCorporateProfile();
     fetchInvestorApplications();
@@ -1703,13 +1767,29 @@ Ulas secara mendalam:
                             Luas: {app.luasHa ? app.luasHa.toFixed(2) : '-'} Ha • {app.sektor}
                           </span>
                           {isPublished ? (
-                            <button
-                              onClick={() => handleOpenSkDocument(app)}
-                              className="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-[10px] flex items-center gap-1.5 transition shadow-sm cursor-pointer"
-                            >
-                              <Printer className="w-3 h-3" />
-                              <span>Cetak SK PKKPR</span>
-                            </button>
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                onClick={() => handleDownloadDirectSk(app)}
+                                disabled={isDownloadingInvestorSkId === String(app.id || 'current')}
+                                className="px-2 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:bg-emerald-700/60 text-slate-950 font-black text-[10px] flex items-center gap-1 transition shadow-sm cursor-pointer disabled:cursor-not-allowed active:scale-95"
+                                title="Unduh berkas resmi SK PKKPR (PDF)"
+                              >
+                                {isDownloadingInvestorSkId === String(app.id || 'current') ? (
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                ) : (
+                                  <Download className="w-3 h-3" />
+                                )}
+                                <span>{isDownloadingInvestorSkId === String(app.id || 'current') ? 'Mengunduh...' : 'Unduh SK'}</span>
+                              </button>
+                              <button
+                                onClick={() => handleOpenSkDocument(app)}
+                                className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-[10px] flex items-center gap-1 transition border border-slate-700 shadow-sm cursor-pointer"
+                                title="Pratinjau & Cetak Dokumen SK"
+                              >
+                                <Eye className="w-3 h-3" />
+                                <span>Lihat</span>
+                              </button>
+                            </div>
                           ) : (
                             <button
                               onClick={() => setActiveTab('pkkpr_tracking')}
