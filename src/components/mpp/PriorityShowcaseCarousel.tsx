@@ -85,15 +85,18 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
   const [isPaused, setIsPaused] = useState(false);
   const touchStartXRef = useRef<number | null>(null);
 
-  // Smooth scroll and state sync handler
+  // Smooth scroll and state sync handler without entire viewport hijacking
   const scrollToCard = useCallback((index: number) => {
     // Loop around gracefully
     const targetIndex = (index + SHOWCASE_ITEMS.length) % SHOWCASE_ITEMS.length;
     setActiveIndex(targetIndex);
     if (scrollRef.current) {
-      const card = scrollRef.current.children[targetIndex] as HTMLElement;
+      const container = scrollRef.current;
+      const card = container.children[targetIndex] as HTMLElement;
       if (card) {
-        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        // Calculate the target scroll position relative to the container itself, preventing page-level scroll hijacking
+        const targetScrollLeft = card.offsetLeft - (container.clientWidth - card.clientWidth) / 2;
+        container.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
       }
     }
   }, []);
@@ -106,12 +109,12 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
     scrollToCard(activeIndex - 1);
   }, [activeIndex, scrollToCard]);
 
-  // Auto-play timer (4.5 detik) with pause-on-hover
+  // Auto-play timer (3.5 detik) with pause-on-hover
   useEffect(() => {
     if (isPaused) return;
     const timer = setInterval(() => {
       handleNext();
-    }, 4500);
+    }, 3500);
     return () => clearInterval(timer);
   }, [isPaused, handleNext]);
 

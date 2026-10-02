@@ -90,12 +90,12 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
     setCurrentPage((prev) => (prev - 1 + totalPages) % Math.max(1, totalPages));
   }, [totalPages]);
 
-  // Auto-slide setiap 5 detik jika tidak di-pause
+  // Auto-slide setiap 3.5 detik jika tidak di-pause
   useEffect(() => {
     if (isPaused || totalPages <= 1) return;
     const timer = setInterval(() => {
       handleNext();
-    }, 5000);
+    }, 3500);
     return () => clearInterval(timer);
   }, [isPaused, totalPages, handleNext]);
 
