@@ -22,7 +22,8 @@ import { AirportCallingAlertModal } from './mpp/AirportCallingAlertModal';
 import { triggerFullAirportCallingAlert } from '../utils/airportAudioAlert';
 import { LiveMarketTicker } from './LiveMarketTicker';
 import { SmartLiveQueue } from './mpp/SmartLiveQueue';
-import { InteractiveFloorPlan } from './mpp/InteractiveFloorPlan';
+import { InteractiveFloorPlan, SelectedFloorItem } from './mpp/InteractiveFloorPlan';
+import { SmartServiceFinder } from './mpp/SmartServiceFinder';
 import { SmartDocumentTracker } from './mpp/SmartDocumentTracker';
 import { SmartRequirementAssistant } from './mpp/SmartRequirementAssistant';
 import { VipInvestorConcierge } from './mpp/VipInvestorConcierge';
@@ -52,7 +53,6 @@ import { SuperHeroSearch } from './mpp/SuperHeroSearch';
 import { PriorityShowcaseCarousel } from './mpp/PriorityShowcaseCarousel';
 import { BentoLiveQueueRadar } from './mpp/BentoLiveQueueRadar';
 import { InteractiveRequirementStepper } from './mpp/InteractiveRequirementStepper';
-import { InteractiveSpatialFloorPlan } from './mpp/InteractiveSpatialFloorPlan';
 import { GlobalHelpdeskFab } from './mpp/GlobalHelpdeskFab';
 import { FaqAccordion } from './mpp/FaqAccordion';
 import { MagneticButton } from './common/MagneticButton';
@@ -368,6 +368,26 @@ export default function PortalMPP() {
   const [currentUmkmIndex, setCurrentUmkmIndex] = useState(0);
   const [isUmkmAutoPlay, setIsUmkmAutoPlay] = useState(true);
   const [isUmkmHovered, setIsUmkmHovered] = useState(false);
+
+  // Two-way interactive floor plan & smart finder synchronization
+  const [selectedFloorItem, setSelectedFloorItem] = useState<SelectedFloorItem | null>(null);
+  const floorPlanSectionRef = useRef<HTMLDivElement>(null);
+
+  const handleSelectServiceFromTop = useCallback((tenantCodeOrId: string) => {
+    setSelectedFloorItem({
+      id: tenantCodeOrId,
+      code: tenantCodeOrId,
+      name: tenantCodeOrId,
+      type: 'tenant',
+      status: 'open',
+      services: [],
+      activeRequests: []
+    });
+
+    if (floorPlanSectionRef.current) {
+      floorPlanSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, []);
 
   const filteredUmkmProducts = useMemo(() => {
     return umkmProducts.filter((p) => activeUmkmFilter === "Semua" || p.kategori === activeUmkmFilter);
@@ -3315,20 +3335,33 @@ export default function PortalMPP() {
 
           {/* Seksi Denah & Navigasi Spasial Interaktif Canvas */}
           <div id="denah-interaktif" className="w-full max-w-7xl mx-auto px-1 sm:px-4 md:px-8 space-y-8 scroll-mt-28">
-            <InteractiveSpatialFloorPlan 
-              isDark={isDark}
-              onSelectLoket={(loketName) => {
-                setQueueForm(prev => ({ ...prev, service: loketName }));
-                setIsQueueBookingOpen(true);
-              }}
-            />
-            <InteractiveFloorPlan 
-              isDark={isDark} 
-              onOpenQueueBooking={(serviceName) => {
-                if (serviceName) setQueueForm(prev => ({ ...prev, service: serviceName }));
-                setIsQueueBookingOpen(true);
-              }}
-            />
+            {/* A. WIDGET ATAS: Asisten Pencarian & Direktori Layanan Cepat */}
+            <div className="bg-slate-900 rounded-3xl p-5 sm:p-7 text-white border border-slate-800 shadow-2xl">
+              <SmartServiceFinder 
+                selectedItem={selectedFloorItem}
+                onResetSelection={() => setSelectedFloorItem(null)}
+                onSelectCategory={handleSelectServiceFromTop}
+                onOpenQueueBooking={(serviceName) => {
+                  if (serviceName) setQueueForm(prev => ({ ...prev, service: serviceName }));
+                  setIsQueueBookingOpen(true);
+                }}
+              />
+            </div>
+
+            {/* B. DENAH FLOOR MPP UTAMA (Seksi Bawah) */}
+            <div ref={floorPlanSectionRef} className="w-full scroll-mt-32">
+              <InteractiveFloorPlan 
+                isDark={isDark} 
+                selectedId={selectedFloorItem?.id || selectedFloorItem?.code}
+                onSelectElement={(item) => {
+                  setSelectedFloorItem(item);
+                }}
+                onOpenQueueBooking={(serviceName) => {
+                  if (serviceName) setQueueForm(prev => ({ ...prev, service: serviceName }));
+                  setIsQueueBookingOpen(true);
+                }}
+              />
+            </div>
           </div>
 
           {/* Seksi Katalog Kemitraan UMKM Luwu */}

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Building2, 
@@ -51,10 +51,31 @@ export interface FloorNode {
   wayfindingTips?: string;
 }
 
+export interface SelectedFloorItem {
+  id: string;
+  code?: string;
+  name: string;
+  subName?: string;
+  type: 'tenant' | 'facility' | 'zone';
+  category?: 'counter' | 'facility' | 'disability' | string;
+  zone?: string;
+  status: 'open' | 'busy' | 'closed' | 'active' | 'standby' | 'alert' | 'responding';
+  services: string[];
+  description?: string;
+  operatingHours?: string;
+  wayfindingTips?: string;
+  isDisabilityFriendly?: boolean;
+  activeRequests?: any[];
+}
+
 export interface InteractiveFloorPlanProps {
   isDark?: boolean;
   onOpenQueueBooking?: (serviceName?: string) => void;
   className?: string;
+  selectedId?: string | null;
+  onSelectElement?: (item: SelectedFloorItem) => void;
+  floor?: 1 | 2;
+  onFloorChange?: (floor: 1 | 2) => void;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -821,7 +842,11 @@ const FLOOR_NODES: FloorNode[] = [
 export function InteractiveFloorPlan({ 
   isDark = false, 
   onOpenQueueBooking,
-  className = '' 
+  className = '',
+  selectedId,
+  onSelectElement,
+  floor = 1,
+  onFloorChange
 }: InteractiveFloorPlanProps) {
   // State management
   const [activeFilter, setActiveFilter] = useState<FloorCategory>('all');
@@ -831,6 +856,26 @@ export function InteractiveFloorPlan({
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
   const [isWayfindingActive, setIsWayfindingActive] = useState(false);
+
+  // Sync external selectedId with internal selectedNode
+  useEffect(() => {
+    if (!selectedId) {
+      return;
+    }
+    const cleanId = selectedId.trim().toLowerCase();
+    const matched = FLOOR_NODES.find(n => 
+      n.id.toLowerCase() === cleanId || 
+      n.name.toLowerCase() === cleanId ||
+      (n.subName && n.subName.toLowerCase().includes(cleanId)) ||
+      (cleanId === 'dukcapil' && n.id.startsWith('DUKCAPIL')) ||
+      (cleanId === 'dpmptsp' && n.id.startsWith('DPMPTSP')) ||
+      (cleanId === 'bpjs' && n.id.startsWith('BPJS'))
+    );
+    if (matched) {
+      setSelectedNode(matched);
+      setIsWayfindingActive(true);
+    }
+  }, [selectedId]);
 
   // SVG Pan & Zoom reference
   const containerRef = useRef<HTMLDivElement>(null);
@@ -892,6 +937,24 @@ export function InteractiveFloorPlan({
 
   const handleSelectNode = (node: FloorNode) => {
     setSelectedNode(node);
+    if (onSelectElement) {
+      const selectedItem: SelectedFloorItem = {
+        id: node.id,
+        code: node.id,
+        name: node.name,
+        subName: node.subName,
+        type: node.category === 'counter' ? 'tenant' : 'facility',
+        category: node.category,
+        zone: node.zone,
+        status: node.status === 'open' ? 'open' : 'busy',
+        services: node.services,
+        description: `${node.name} - ${node.subName || ''}. Lokasi: ${node.zone}`,
+        operatingHours: node.operatingHours,
+        wayfindingTips: node.wayfindingTips,
+        isDisabilityFriendly: node.isDisabilityFriendly
+      };
+      onSelectElement(selectedItem);
+    }
   };
 
   return (
@@ -1478,4 +1541,5 @@ export function InteractiveFloorPlan({
   );
 }
 
+export const MppFloorPlan = InteractiveFloorPlan;
 export default InteractiveFloorPlan;
