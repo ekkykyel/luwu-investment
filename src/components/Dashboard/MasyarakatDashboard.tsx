@@ -4566,7 +4566,33 @@ export default function MasyarakatDashboard({
                           </div>
                           <button
                             type="button"
-                            onClick={() => setIsDrawerOpen(true)}
+                            onClick={() => {
+                              if (!pkkprKecamatan) {
+                                Swal.fire({
+                                  icon: "warning",
+                                  title: "Kecamatan Belum Dipilih",
+                                  text: "Harap pilih Kecamatan lokasi lahan terlebih dahulu.",
+                                  toast: true,
+                                  position: "top-end",
+                                  showConfirmButton: false,
+                                  timer: 3500
+                                });
+                                return;
+                              }
+                              if (!pkkprDesa) {
+                                Swal.fire({
+                                  icon: "warning",
+                                  title: "Desa / Kelurahan Belum Dipilih",
+                                  text: "Harap pilih Desa / Kelurahan lokasi lahan terlebih dahulu agar peta dapat melakukan Auto-Zoom presisi ke lokasi desa.",
+                                  toast: true,
+                                  position: "top-end",
+                                  showConfirmButton: false,
+                                  timer: 3500
+                                });
+                                return;
+                              }
+                              setIsDrawerOpen(true);
+                            }}
                             className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0"
                           >
                             Ubah Polygon
@@ -4577,7 +4603,27 @@ export default function MasyarakatDashboard({
                           type="button"
                           onClick={() => {
                             if (!pkkprKecamatan) {
-                              Swal.fire("Kecamatan Belum Dipilih", "Silakan pilih Kecamatan lokasi lahan terlebih dahulu.", "warning");
+                              Swal.fire({
+                                icon: "warning",
+                                title: "Kecamatan Belum Dipilih",
+                                text: "Harap pilih Kecamatan lokasi lahan terlebih dahulu.",
+                                toast: true,
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 3500
+                              });
+                              return;
+                            }
+                            if (!pkkprDesa) {
+                              Swal.fire({
+                                icon: "warning",
+                                title: "Desa / Kelurahan Belum Dipilih",
+                                text: "Harap pilih Desa / Kelurahan lokasi lahan terlebih dahulu agar peta dapat melakukan Auto-Zoom presisi ke lokasi desa.",
+                                toast: true,
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 3500
+                              });
                               return;
                             }
                             setIsDrawerOpen(true);
