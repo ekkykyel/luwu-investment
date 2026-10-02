@@ -1,5 +1,5 @@
 import React from 'react';
-import { SmartLiveQueueSection } from './SmartLiveQueueSection';
+import { BentoQueueGrid } from './BentoQueueGrid';
 
 export function SmartLiveQueue({ 
   isDark = false, 
@@ -9,11 +9,12 @@ export function SmartLiveQueue({
   onRegisterQueue?: (serviceName?: string) => void 
 }) {
   return (
-    <SmartLiveQueueSection 
+    <BentoQueueGrid 
       isDark={isDark} 
-      onRegisterQueue={onRegisterQueue} 
+      onRegisterQueue={(serviceName) => onRegisterQueue?.(serviceName)} 
     />
   );
 }
 
 export default SmartLiveQueue;
+
