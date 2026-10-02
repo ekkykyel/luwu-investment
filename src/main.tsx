@@ -10,11 +10,24 @@ import './i18n.ts';
 import './index.css';
 
 
+window.addEventListener('error', (event) => {
+  const msg = event.message || '';
+  if (
+    msg.includes('ResizeObserver') ||
+    msg.includes('ResizeObserver loop completed with undelivered notifications') ||
+    msg.includes('ResizeObserver loop limit exceeded')
+  ) {
+    event.stopImmediatePropagation();
+    event.preventDefault();
+  }
+});
+
 window.addEventListener('unhandledrejection', (event) => {
   const msg = event.reason?.message || '';
   if (
     msg.includes('Failed to fetch') ||
-    msg.includes('AJAXError')
+    msg.includes('AJAXError') ||
+    msg.includes('ResizeObserver')
   ) {
     event.preventDefault(); // Prevent the error overlay
   }
