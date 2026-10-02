@@ -859,6 +859,10 @@ export default function AdminPortalDashboard({ defaultTab }: AdminPortalDashboar
           'adminpuptr@luwukab.go.id': 'admin_puptr',
           'pertanian@luwukab.go.id': 'admin_pertanian',
           'adminpertanian@luwukab.go.id': 'admin_pertanian',
+          'adminmpp@luwukab.go.id': 'admin_mpp',
+          'mppluwu@gmail.com': 'admin_mpp',
+          'mpp@luwukab.go.id': 'admin_mpp',
+          'nilambintangselatan@gmail.com': 'admin_mpp',
           'superadmin@luwu.go.id': 'superadmin'
         };
 
@@ -892,6 +896,7 @@ export default function AdminPortalDashboard({ defaultTab }: AdminPortalDashboar
           else if (localRole.includes("data")) effectiveRole = "admin_data";
           else if (localRole.includes("puptr") || localRole.includes("gis")) effectiveRole = "admin_puptr";
           else if (localRole.includes("pertanian")) effectiveRole = "admin_pertanian";
+          else if (localRole.includes("mpp")) effectiveRole = "admin_mpp";
           else if (localRole.includes("super")) effectiveRole = "superadmin";
         }
 
@@ -904,6 +909,7 @@ export default function AdminPortalDashboard({ defaultTab }: AdminPortalDashboar
           if (normalized === 'admin data' || normalized === 'admindata') effectiveRole = 'admin_data';
           if (normalized === 'admin puptr' || normalized === 'adminpuptr' || normalized === 'admin gis') effectiveRole = 'admin_puptr';
           if (normalized === 'admin pertanian' || normalized === 'adminpertanian') effectiveRole = 'admin_pertanian';
+          if (normalized === 'admin mpp' || normalized === 'adminmpp' || normalized === 'operator mpp') effectiveRole = 'admin_mpp';
           if (normalized === 'super admin' || normalized === 'super_admin') effectiveRole = 'superadmin';
 
           // Auto-sync profile in database if official department email had wrong or missing role
@@ -917,13 +923,17 @@ export default function AdminPortalDashboard({ defaultTab }: AdminPortalDashboar
                          : effectiveRole === 'admin_promosi' ? 'Bidang Promosi & Penanaman Modal'
                          : effectiveRole === 'admin_puptr' ? 'Admin Dinas PUPTR (Tata Ruang & Studio GIS)'
                          : effectiveRole === 'admin_pertanian' ? 'Admin Dinas Pertanian (LP2B & Lahan Basah)'
+                         : effectiveRole === 'admin_mpp' ? 'Admin MPP (Pengelola Mal Pelayanan Publik)'
                          : 'Bidang Penyelenggaraan Pelayanan Perizinan'
               });
             } catch(e) {}
           }
 
           setUserRole(effectiveRole);
-          if (effectiveRole === 'admin_oss') {
+          if (effectiveRole === 'admin_mpp' || effectiveRole === 'operator_mpp') {
+            navigate('/admin/beranda', { replace: true });
+            return;
+          } else if (effectiveRole === 'admin_oss') {
             setActiveTab('overview_perizinan');
           } else if (effectiveRole === 'admin_puptr' || effectiveRole === 'admin_gis') {
             setActiveTab('verifikasi_pkkpr');
@@ -934,9 +944,14 @@ export default function AdminPortalDashboard({ defaultTab }: AdminPortalDashboar
           }
         }
 
-        const validAdminRoles = ['admin_dalak', 'admin_oss', 'admin_promosi', 'superadmin', 'admin_data', 'admin_puptr', 'admin_pertanian', 'admin_gis'];
+        const validAdminRoles = ['admin_dalak', 'admin_oss', 'admin_promosi', 'superadmin', 'admin_data', 'admin_puptr', 'admin_pertanian', 'admin_gis', 'admin_mpp', 'operator_mpp'];
         if (!effectiveRole || !validAdminRoles.includes(effectiveRole)) {
           navigate("/403-forbidden");
+          return;
+        }
+
+        if (effectiveRole === 'admin_mpp' || effectiveRole === 'operator_mpp') {
+          navigate('/admin/beranda', { replace: true });
           return;
         }
 

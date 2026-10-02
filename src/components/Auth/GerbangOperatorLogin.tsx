@@ -98,7 +98,7 @@ export default function GerbangOperatorLogin({ onSuccess }: GerbangOperatorLogin
       }
 
       if (
-        (effectiveEmail === "operator@luwu.go.id" || effectiveEmail === "adminmpp@luwukab.go.id" || cleanInput === "operator" || cleanInput === "adminmpp") &&
+        (effectiveEmail === "operator@luwu.go.id" || effectiveEmail === "adminmpp@luwukab.go.id" || effectiveEmail === "nilambintangselatan@gmail.com" || cleanInput === "operator" || cleanInput === "adminmpp") &&
         password === "Operator123!"
       ) {
         localStorage.setItem("luwu_user_role", "admin_mpp");

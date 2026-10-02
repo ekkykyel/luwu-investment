@@ -185,6 +185,9 @@ export default function InvestorLogin() {
     'promosiluwu@gmail.com': 'admin_promosi',
     'dpmptspluwu@gmail.com': 'admin_oss',
     'adminmpp@luwukab.go.id': 'admin_mpp',
+    'mppluwu@gmail.com': 'admin_mpp',
+    'mpp@luwukab.go.id': 'admin_mpp',
+    'nilambintangselatan@gmail.com': 'admin_mpp',
   };
 
   // ── Role Barometer Discrepancy Notifier ──
