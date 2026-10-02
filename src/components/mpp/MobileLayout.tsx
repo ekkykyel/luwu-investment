@@ -131,14 +131,14 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
           type="button"
           onClick={() => onNavTabChange && onNavTabChange('antrean')}
           aria-current={activeNavTab === 'antrean' ? 'page' : undefined}
-          className="flex flex-col items-center justify-center gap-1 text-[11px] xs:text-xs font-extrabold font-sans cursor-pointer transition-all active:scale-95 text-emerald-600 dark:text-emerald-400"
+          className="flex flex-col items-center justify-center gap-1 text-[11.5px] xs:text-[12.5px] font-extrabold font-sans cursor-pointer transition-all active:scale-95 text-emerald-600 dark:text-emerald-400 tracking-tight"
         >
           <div className="p-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 shadow-2xs">
             <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5z" />
             </svg>
           </div>
-          <span>Antrean</span>
+          <span className="text-emerald-600 dark:text-emerald-400 font-extrabold">Antrean</span>
         </button>
 
         <button
