@@ -13,6 +13,8 @@ import {
   Clock, 
   Navigation, 
   Accessibility, 
+  Maximize2,
+  Minimize2, 
   Ticket, 
   ArrowRight,
   Armchair,
@@ -1251,6 +1253,19 @@ export function InteractiveFloorPlan({
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
   const [isWayfindingActive, setIsWayfindingActive] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Lock scroll when fullscreen mode is active
+  useEffect(() => {
+    if (isFullscreen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isFullscreen]);
 
   // Sync external selectedId with internal selectedNode
   useEffect(() => {
@@ -1361,16 +1376,84 @@ export function InteractiveFloorPlan({
   };
 
   return (
-    <div className={`w-full rounded-3xl border transition-all duration-300 overflow-hidden shadow-sm flex flex-col ${
-      isDark ? 'bg-slate-900/95 border-slate-800 text-slate-100' : 'bg-white border-slate-100 text-slate-900'
-    } ${className}`}>
+    <div className={isFullscreen 
+      ? "fixed inset-0 z-50 bg-slate-950 text-slate-100 p-4 sm:p-6 md:p-8 flex flex-col justify-between overflow-hidden select-none"
+      : `w-full rounded-3xl border transition-all duration-300 overflow-hidden shadow-sm flex flex-col ${
+          isDark ? 'bg-slate-900/95 border-slate-800 text-slate-100' : 'bg-white border-slate-100 text-slate-900'
+        } ${className}`
+    }>
 
       {/* ───────────────────────────────────────────────────────────────── */}
       {/* 1. TOP BAR: TITLE, FILTER CHIPS, SEARCH & ZOOM CONTROLS           */}
       {/* ───────────────────────────────────────────────────────────────── */}
-      <div className={`p-4 sm:p-5 border-b flex flex-col lg:flex-row lg:items-center justify-between gap-4 ${
-        isDark ? 'border-slate-800/80 bg-slate-900/50' : 'border-slate-100 bg-slate-50/50'
-      }`}>
+      {isFullscreen ? (
+        <div className="flex items-center justify-between gap-4 pb-4 border-b border-slate-800/80 mb-2 shrink-0">
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+              <Layers className="w-5 h-5 animate-pulse" />
+            </div>
+            <div>
+              <h3 className="text-sm sm:text-base font-extrabold text-white font-sans flex items-center gap-2">
+                <span>Kiosk Interaktif Denah Spasial MPP</span>
+                <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-[10px] text-emerald-400 border border-emerald-500/30 font-mono">
+                  LANDSCAPE MODE
+                </span>
+              </h3>
+              <p className="text-[10px] sm:text-xs text-slate-400 font-medium">
+                Kabupaten Luwu • Ketuk/pilih pin-drop gerai layanan atau fasilitas terpadu.
+              </p>
+            </div>
+          </div>
+
+          {/* Center legend markers (visible on larger landscape screens) */}
+          <div className="hidden md:flex items-center gap-4 text-[11px] font-semibold text-slate-400">
+            <span className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Buka</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-amber-400" />
+              <span>Ramai</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-slate-500" />
+              <span>Tutup</span>
+            </span>
+          </div>
+
+          {/* Kiosk Controls Cluster */}
+          <div className="flex items-center gap-3">
+            {/* Search Bar inside Kiosk Mode */}
+            <div className="relative hidden sm:block min-w-[180px]">
+              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Cari gerai/fasilitas..."
+                className="w-full pl-9 pr-8 py-1.5 text-xs rounded-xl border border-slate-700 bg-slate-900 text-white placeholder-slate-500 focus:border-emerald-500 outline-none"
+              />
+            </div>
+
+            {/* Close/Exit Kiosk button */}
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedNode(null);
+                setIsFullscreen(false);
+              }}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold border border-rose-600 shadow-lg shadow-rose-950/40 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
+              title="Keluar dari Layar Lebar"
+            >
+              <Minimize2 className="w-4 h-4" />
+              <span>Keluar</span>
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className={`p-4 sm:p-5 border-b flex flex-col lg:flex-row lg:items-center justify-between gap-4 ${
+          isDark ? 'border-slate-800/80 bg-slate-900/50' : 'border-slate-100 bg-slate-50/50'
+        }`}>
         
         {/* Left: Section Title & Live Badge */}
         <div>
@@ -1466,8 +1549,20 @@ export function InteractiveFloorPlan({
               <RotateCcw className="w-4 h-4" />
             </button>
           </div>
+
+          {/* Fullscreen Maximize Button */}
+          <button
+            type="button"
+            onClick={() => setIsFullscreen(true)}
+            className="flex items-center gap-1.5 px-3 py-2.5 text-xs font-bold rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-all cursor-pointer shadow-2xs active:scale-95 whitespace-nowrap"
+            title="Tampilkan Denah Layar Lebar (Landscape)"
+          >
+            <Maximize2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <span>Ketuk Layar Lebar</span>
+          </button>
         </div>
       </div>
+      )}
 
       {/* ───────────────────────────────────────────────────────────────── */}
       {/* 2. FILTER CHIPS (TOP BAR CATEGORIES)                              */}
@@ -1520,9 +1615,26 @@ export function InteractiveFloorPlan({
       {viewMode === 'map' ? (
         <div 
           ref={containerRef}
-          className="relative w-full overflow-hidden flex flex-col items-center justify-center p-2 sm:p-4 touch-pan-x touch-pan-y"
-          style={{ minHeight: '620px', maxHeight: '780px' }}
+          className={isFullscreen
+            ? "relative w-full flex-1 overflow-hidden flex flex-col items-center justify-center p-2 sm:p-4 touch-pan-x touch-pan-y bg-slate-950"
+            : "relative w-full overflow-hidden flex flex-col items-center justify-center p-2 sm:p-4 touch-pan-x touch-pan-y"
+          }
+          style={isFullscreen ? { height: 'calc(100vh - 140px)' } : { minHeight: '620px', maxHeight: '780px' }}
         >
+          {/* Floating Kiosk Quick-Access Overlay on Map Canvas */}
+          {!isFullscreen && (
+            <div className="absolute top-4 right-4 z-30">
+              <button
+                type="button"
+                onClick={() => setIsFullscreen(true)}
+                className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md border border-slate-700 text-white text-xs font-bold shadow-lg hover:bg-emerald-600 hover:border-emerald-500 transition-all cursor-pointer active:scale-95 group"
+              >
+                <Maximize2 className="w-4 h-4 text-emerald-400 group-hover:text-white transition-colors" />
+                <span>Ketuk Layar Lebar (Landscape)</span>
+              </button>
+            </div>
+          )}
+
           {/* Subtle Ambient Radial Grid Pattern */}
           <div 
             className="absolute inset-0 pointer-events-none opacity-40"
