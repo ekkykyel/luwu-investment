@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ShieldCheck,
@@ -114,6 +114,28 @@ export interface AgrarianQueueItem {
   contactPhone?: string;
   createdAt: string;
   updatedAt?: string;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SINGLE SOURCE OF TRUTH TAB CLASSIFICATION HELPER FOR PERTANIAN
+// ─────────────────────────────────────────────────────────────────────────────
+export function isApplicationInPertanianTab(item: AgrarianQueueItem, tabId: string): boolean {
+  if (!item) return false;
+  const rawStatus = String(item.agriStatus || '').toUpperCase().trim();
+  const rawPertanianStatus = String(item.pertanianStatus || '').toUpperCase().trim();
+
+  switch (tabId) {
+    case 'APPROVED':
+      return rawStatus === 'APPROVED' || rawPertanianStatus === 'APPROVED';
+    case 'REJECTED':
+      return rawStatus === 'REJECTED' || rawStatus === 'REQUIRES REVISION' || rawPertanianStatus === 'REJECTED' || rawPertanianStatus === 'REVISI_PEMOHON';
+    case 'ALL_HISTORY':
+      return true;
+    case 'ALL':
+    case 'PENDING':
+    default:
+      return rawStatus === 'PENDING REVIEW' || rawStatus === 'PENDING' || rawPertanianStatus === 'FORWARDED' || (!rawStatus && rawPertanianStatus !== 'APPROVED' && rawPertanianStatus !== 'REJECTED');
+  }
 }
 
 export default function PertanianLandClearanceDashboard() {
@@ -1195,36 +1217,31 @@ export default function PertanianLandClearanceDashboard() {
     }
   };
 
+  // Single Source of Truth Tab Badge Counter
+  const getBadgeCount = useCallback((tabId: string) => {
+    return queueList.filter(item => isApplicationInPertanianTab(item, tabId)).length;
+  }, [queueList]);
+
   // Filtered Queue strictly segregated across 4 tabs
   const filteredQueue = useMemo(() => {
+    const cleanSearch = searchQuery.trim().toLowerCase();
     return queueList.filter(item => {
+      // 1. Must match current tab filter
+      if (!isApplicationInPertanianTab(item, statusFilter)) {
+        return false;
+      }
+
+      // 2. Search query matching
+      if (!cleanSearch) return true;
       const matchSearch =
-        !searchQuery.trim() ||
-        item.nibNik.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.applicantName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.districtName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.villageName.toLowerCase().includes(searchQuery.toLowerCase());
+        (item.nibNik && item.nibNik.toLowerCase().includes(cleanSearch)) ||
+        (item.applicantName && item.applicantName.toLowerCase().includes(cleanSearch)) ||
+        (item.companyName && item.companyName.toLowerCase().includes(cleanSearch)) ||
+        (item.districtName && item.districtName.toLowerCase().includes(cleanSearch)) ||
+        (item.villageName && item.villageName.toLowerCase().includes(cleanSearch)) ||
+        (item.id && item.id.toLowerCase().includes(cleanSearch));
 
-      if (!matchSearch) return false;
-
-      // Tab 2: Disetujui (BA Terbit)
-      if (statusFilter === 'APPROVED') {
-        return item.agriStatus === 'Approved';
-      }
-
-      // Tab 3: Dikembalikan ke PUPTR / Ditolak
-      if (statusFilter === 'REJECTED') {
-        return item.agriStatus === 'Rejected' || item.agriStatus === 'Requires Revision';
-      }
-
-      // Tab 4: Semua Riwayat
-      if (statusFilter === 'ALL_HISTORY') {
-        return true;
-      }
-
-      // Tab 1 (Default: 'ALL' / 'PENDING'): Antrean Tugas (Menunggu Evaluasi)
-      return item.agriStatus === 'Pending Review';
+      return Boolean(matchSearch);
     });
   }, [queueList, searchQuery, statusFilter]);
 
@@ -1371,10 +1388,10 @@ export default function PertanianLandClearanceDashboard() {
 
           <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
             {[
-              { id: 'ALL', label: 'Antrean Tugas (Menunggu Evaluasi)', count: queueList.filter(i => i.agriStatus === 'Pending Review').length },
-              { id: 'APPROVED', label: 'Disetujui (BA Terbit)', count: queueList.filter(i => i.agriStatus === 'Approved').length },
-              { id: 'REJECTED', label: 'Dikembalikan ke PUPTR / Ditolak', count: queueList.filter(i => i.agriStatus === 'Rejected' || i.agriStatus === 'Requires Revision').length },
-              { id: 'ALL_HISTORY', label: 'Semua Riwayat', count: queueList.length }
+              { id: 'ALL', label: 'Antrean Tugas (Menunggu Evaluasi)', count: getBadgeCount('ALL') },
+              { id: 'APPROVED', label: 'Disetujui (BA Terbit)', count: getBadgeCount('APPROVED') },
+              { id: 'REJECTED', label: 'Dikembalikan ke PUPTR / Ditolak', count: getBadgeCount('REJECTED') },
+              { id: 'ALL_HISTORY', label: 'Semua Riwayat', count: getBadgeCount('ALL_HISTORY') }
             ].map(tab => (
               <button
                 key={tab.id}

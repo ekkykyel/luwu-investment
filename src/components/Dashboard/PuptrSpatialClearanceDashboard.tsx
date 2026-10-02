@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ShieldCheck,
@@ -141,6 +141,81 @@ export interface PkkprApplicationItem {
   contactPhone?: string;
   createdAt: string;
   updatedAt?: string;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SINGLE SOURCE OF TRUTH TAB CLASSIFICATION HELPER FOR PUPTR
+// ─────────────────────────────────────────────────────────────────────────────
+export function isApplicationInPuptrTab(item: PkkprApplicationItem, tabId: string): boolean {
+  if (!item) return false;
+
+  const rawPkkprStatus = String(item.status_pkkpr || '').toUpperCase().trim();
+  const rawPermohonanStatus = String(item.status_permohonan || '').toUpperCase().trim();
+  const rawPkkprDisplay = String(item.pkkprStatus || '').toUpperCase().trim();
+  const rawAgriStatus = String(item.pertanianStatus || '').toUpperCase().trim();
+
+  // 1. Forwarded to Dinas Pertanian
+  const isForwardedToPertanian =
+    rawPkkprStatus === 'VERIFIKASI_PERTANIAN' ||
+    rawPkkprStatus === 'PENDING PERTEK PERTANIAN' ||
+    rawAgriStatus === 'FORWARDED' ||
+    rawPermohonanStatus === 'ESCALATED_PERTANIAN' ||
+    rawPermohonanStatus === 'WAITING_PERTANIAN';
+
+  // 2. Approved / Published
+  const isApproved =
+    rawPkkprStatus === 'APPROVED_PUPTR' ||
+    rawPkkprStatus === 'TERBIT' ||
+    rawPkkprStatus === 'IZIN_TERBIT' ||
+    rawPkkprDisplay === 'APPROVED' ||
+    rawPermohonanStatus === 'PROSES_OSS' ||
+    rawPermohonanStatus === 'IZIN_TERBIT' ||
+    rawPermohonanStatus === 'APPROVED';
+
+  // 3. Revision by Applicant or Final Rejection
+  const isRevisionOrRejectedFinal =
+    rawPkkprStatus === 'REVISI_PEMOHON' ||
+    rawPkkprDisplay === 'REQUIRES REVISION' ||
+    rawPkkprDisplay === 'REVISION' ||
+    rawPkkprDisplay === 'REJECTED' ||
+    rawPkkprDisplay === 'RETURNED' ||
+    rawPermohonanStatus === 'REJECTED_FINAL' ||
+    rawPermohonanStatus === 'REVISI_PEMOHON';
+
+  // 4. Returned / Rejected by Pertanian (Awaiting PUPTR resolution)
+  const isRejectedPertanian =
+    (rawPkkprStatus === 'DITOLAK' ||
+     rawAgriStatus === 'REJECTED' ||
+     rawPermohonanStatus === 'REJECTED_PERTANIAN') &&
+    !isRevisionOrRejectedFinal;
+
+  switch (tabId) {
+    case 'ALL':
+    case 'PENDING':
+    case 'PUPTR_ACTIVE':
+    case 'ACTIVE': {
+      // Must not be in forwarded, approved, revision, or rejected by Pertanian
+      return !isForwardedToPertanian && !isApproved && !isRevisionOrRejectedFinal && !isRejectedPertanian;
+    }
+
+    case 'REJECTED_PERTANIAN':
+      return isRejectedPertanian;
+
+    case 'APPROVED':
+      return isApproved;
+
+    case 'REVISION':
+      return isRevisionOrRejectedFinal;
+
+    case 'FORWARDED':
+      return isForwardedToPertanian;
+
+    case 'ALL_HISTORICAL':
+      return true;
+
+    default:
+      return true;
+  }
 }
 
 export default function PuptrSpatialClearanceDashboard() {
@@ -1787,61 +1862,31 @@ export default function PuptrSpatialClearanceDashboard() {
     }
   };
 
-  // Filtered Queue List (Excludes items currently forwarded to Dinas Pertanian or already returned/approved from default active PUPTR queue)
-  const filteredQueue = useMemo(() => {
-    return queueList.filter(item => {
-      const matchSearch =
-        item.nibNik.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.applicantName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.districtName.toLowerCase().includes(searchQuery.toLowerCase());
+  // Single Source of Truth Tab Badge Counter
+  const getBadgeCount = useCallback((tabId: string) => {
+    return queueList.filter(item => isApplicationInPuptrTab(item, tabId)).length;
+  }, [queueList]);
 
-      // Hide items currently forwarded to Dinas Pertanian from default active PUPTR queue unless explicitly filtering FORWARDED or ALL_HISTORICAL
-      if (
-        (item.status_pkkpr === 'VERIFIKASI_PERTANIAN' || item.pertanianStatus === 'FORWARDED' || item.status_permohonan === 'ESCALATED_PERTANIAN') &&
-        statusFilter !== 'FORWARDED' &&
-        statusFilter !== 'ALL_HISTORICAL'
-      ) {
+  // Filtered Queue List using the Single Source of Truth filter
+  const filteredQueue = useMemo(() => {
+    const cleanSearch = searchQuery.trim().toLowerCase();
+    return queueList.filter(item => {
+      // 1. Must match current tab filter
+      if (!isApplicationInPuptrTab(item, statusFilter)) {
         return false;
       }
 
-      // Hide PROSES_OSS, APPROVED, and REJECTED_FINAL items from the active pending queue ('ALL' or 'PENDING')
-      if (statusFilter === 'ALL' || statusFilter === 'PENDING') {
-        const isEligiblePuptr =
-          item.status_pkkpr === 'VERIFIKASI_PUPTR' ||
-          item.status_pkkpr === 'APPROVED_PERTANIAN' ||
-          item.status_pkkpr === 'BYPASS_PERTANIAN' ||
-          item.status_pkkpr === 'SUBMITTED' ||
-          (!item.status_pkkpr && item.pertanianStatus !== 'FORWARDED');
+      // 2. Search query matching
+      if (!cleanSearch) return true;
+      const matchSearch =
+        (item.nibNik && item.nibNik.toLowerCase().includes(cleanSearch)) ||
+        (item.applicantName && item.applicantName.toLowerCase().includes(cleanSearch)) ||
+        (item.companyName && item.companyName.toLowerCase().includes(cleanSearch)) ||
+        (item.districtName && item.districtName.toLowerCase().includes(cleanSearch)) ||
+        (item.villageName && item.villageName.toLowerCase().includes(cleanSearch)) ||
+        (item.id && item.id.toLowerCase().includes(cleanSearch));
 
-        if (!isEligiblePuptr) {
-          return false;
-        }
-
-        if (
-          item.status_pkkpr === 'APPROVED_PUPTR' ||
-          item.status_pkkpr === 'TERBIT' ||
-          item.status_pkkpr === 'REVISI_PEMOHON' ||
-          item.status_pkkpr === 'DITOLAK' ||
-          item.status_permohonan === 'PROSES_OSS' ||
-          item.status_permohonan === 'IZIN_TERBIT' ||
-          item.status_permohonan === 'REJECTED_FINAL' ||
-          item.pkkprStatus === 'Approved' ||
-          item.pkkprStatus === 'Requires Revision' ||
-          item.pkkprStatus === 'Rejected' ||
-          item.pkkprStatus === 'Returned'
-        ) {
-          return false;
-        }
-      }
-
-      if (statusFilter === 'ALL' || statusFilter === 'PENDING') return matchSearch;
-      if (statusFilter === 'REJECTED_PERTANIAN') return matchSearch && (item.status_pkkpr === 'DITOLAK' || item.pertanianStatus === 'REJECTED' || item.status_permohonan === 'REJECTED_PERTANIAN') && item.pkkprStatus !== 'Requires Revision';
-      if (statusFilter === 'APPROVED') return matchSearch && (item.status_pkkpr === 'APPROVED_PUPTR' || item.status_pkkpr === 'TERBIT' || item.pkkprStatus === 'Approved' || item.status_permohonan === 'PROSES_OSS' || item.status_permohonan === 'IZIN_TERBIT');
-      if (statusFilter === 'REVISION') return matchSearch && (item.status_pkkpr === 'REVISI_PEMOHON' || item.pkkprStatus === 'Requires Revision' || item.status_permohonan === 'REJECTED_FINAL' || item.pkkprStatus === 'Rejected' || item.pkkprStatus === 'Returned');
-      if (statusFilter === 'FORWARDED') return matchSearch && (item.status_pkkpr === 'VERIFIKASI_PERTANIAN' || item.pertanianStatus === 'FORWARDED' || item.status_permohonan === 'ESCALATED_PERTANIAN');
-      if (statusFilter === 'ALL_HISTORICAL') return matchSearch;
-      return matchSearch;
+      return Boolean(matchSearch);
     });
   }, [queueList, searchQuery, statusFilter]);
 
@@ -1855,15 +1900,17 @@ export default function PuptrSpatialClearanceDashboard() {
       }
     } else {
       // If current selectedApp is not in the filtered list (e.g. after tab filter change), select the first item
-      const isStillInQueue = selectedApp && filteredQueue.some(item => item.id === selectedApp.id || item.nibNik === selectedApp.nibNik);
+      const isStillInQueue = selectedApp && filteredQueue.some(item => item.id === selectedApp.id || (selectedApp.nibNik && item.nibNik === selectedApp.nibNik));
       if (!isStillInQueue) {
         setSelectedApp(filteredQueue[0]);
         setTechnicalNotes(filteredQueue[0].technicalNotes || `Sesuai tata ruang kawasan ${filteredQueue[0].sector} di Kec. ${filteredQueue[0].districtName}.`);
         setIssuedSkNumber(filteredQueue[0].skPkkprDocNumber || null);
-        setZoningAudit(checkPkkprSpatialZoning(filteredQueue[0].geometry));
+        if (filteredQueue[0].geometry) {
+          setZoningAudit(checkPkkprSpatialZoning(filteredQueue[0].geometry));
+        }
       }
     }
-  }, [filteredQueue, isLoadingQueue]);
+  }, [filteredQueue, isLoadingQueue, selectedApp]);
 
   // Viewport GeoJSON feature for MapLibre
   const currentMapGeoJson = useMemo(() => {
@@ -2129,12 +2176,12 @@ export default function PuptrSpatialClearanceDashboard() {
 
           <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
             {[
-              { id: 'ALL', label: 'Antrean Aktif PUPTR', count: queueList.filter(i => i.pkkprStatus !== 'Approved' && i.pkkprStatus !== 'Requires Revision' && i.pkkprStatus !== 'Rejected' && i.pkkprStatus !== 'Returned' && i.pertanianStatus !== 'FORWARDED').length },
-              { id: 'REJECTED_PERTANIAN', label: '⚠️ Dikembalikan Pertanian', count: queueList.filter(i => i.pertanianStatus === 'REJECTED' && i.pkkprStatus !== 'Requires Revision').length },
-              { id: 'APPROVED', label: 'Pertek Disetujui', count: queueList.filter(i => i.pkkprStatus === 'Approved').length },
-              { id: 'REVISION', label: 'Revisi Pemohon', count: queueList.filter(i => i.pkkprStatus === 'Requires Revision' || i.pkkprStatus === 'Rejected' || i.pkkprStatus === 'Returned').length },
-              { id: 'FORWARDED', label: '🌾 Diteruskan Pertanian', count: queueList.filter(i => i.pertanianStatus === 'FORWARDED').length },
-              { id: 'ALL_HISTORICAL', label: 'Semua Riwayat', count: queueList.length }
+              { id: 'ALL', label: 'Antrean Aktif PUPTR', count: getBadgeCount('ALL') },
+              { id: 'REJECTED_PERTANIAN', label: '⚠️ Dikembalikan Pertanian', count: getBadgeCount('REJECTED_PERTANIAN') },
+              { id: 'APPROVED', label: 'Pertek Disetujui', count: getBadgeCount('APPROVED') },
+              { id: 'REVISION', label: 'Revisi Pemohon', count: getBadgeCount('REVISION') },
+              { id: 'FORWARDED', label: '🌾 Diteruskan Pertanian', count: getBadgeCount('FORWARDED') },
+              { id: 'ALL_HISTORICAL', label: 'Semua Riwayat', count: getBadgeCount('ALL_HISTORICAL') }
             ].map(tab => (
               <button
                 key={tab.id}
