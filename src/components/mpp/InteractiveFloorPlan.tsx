@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { 
   Building2, 
   Search, 
@@ -1257,6 +1256,119 @@ export function InteractiveFloorPlan({
   const [isWayfindingActive, setIsWayfindingActive] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  // Fullscreen Pan & Pinch Gesture States (Custom ultra-smooth 0-dependency implementation)
+  const [fullscreenScale, setFullscreenScale] = useState(1);
+  const [fullscreenPosition, setFullscreenPosition] = useState({ x: 0, y: 0 });
+
+  const isDraggingRef = useRef(false);
+  const startPanRef = useRef({ x: 0, y: 0 });
+  const lastTouchDistanceRef = useRef<number | null>(null);
+
+  // Sync zoom states when isFullscreen changes
+  useEffect(() => {
+    if (!isFullscreen) {
+      setFullscreenScale(1);
+      setFullscreenPosition({ x: 0, y: 0 });
+    }
+  }, [isFullscreen]);
+
+  const handleFullscreenMouseDown = (e: React.MouseEvent) => {
+    if (!isFullscreen) return;
+    e.preventDefault();
+    isDraggingRef.current = true;
+    startPanRef.current = {
+      x: e.clientX - fullscreenPosition.x,
+      y: e.clientY - fullscreenPosition.y
+    };
+  };
+
+  const handleFullscreenMouseMove = (e: React.MouseEvent) => {
+    if (!isDraggingRef.current || !isFullscreen) return;
+    const newX = e.clientX - startPanRef.current.x;
+    const newY = e.clientY - startPanRef.current.y;
+    
+    // Limits / Boundaries relative to scale
+    const limitX = Math.max(0, 800 * (fullscreenScale - 1));
+    const limitY = Math.max(0, 500 * (fullscreenScale - 1));
+    const clampedX = Math.max(-limitX, Math.min(limitX, newX));
+    const clampedY = Math.max(-limitY, Math.min(limitY, newY));
+
+    setFullscreenPosition({ x: clampedX, y: clampedY });
+  };
+
+  const handleFullscreenMouseUpOrLeave = () => {
+    isDraggingRef.current = false;
+  };
+
+  const handleFullscreenTouchStart = (e: React.TouchEvent) => {
+    if (!isFullscreen) return;
+
+    if (e.touches.length === 1) {
+      isDraggingRef.current = true;
+      const touch = e.touches[0];
+      startPanRef.current = {
+        x: touch.clientX - fullscreenPosition.x,
+        y: touch.clientY - fullscreenPosition.y
+      };
+      lastTouchDistanceRef.current = null;
+    } else if (e.touches.length === 2) {
+      isDraggingRef.current = false; // Disable dragging when pinching
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const distance = Math.hypot(
+        touch1.clientX - touch2.clientX,
+        touch1.clientY - touch2.clientY
+      );
+      lastTouchDistanceRef.current = distance;
+    }
+  };
+
+  const handleFullscreenTouchMove = (e: React.TouchEvent) => {
+    if (!isFullscreen) return;
+
+    if (e.touches.length === 1 && isDraggingRef.current) {
+      const touch = e.touches[0];
+      const newX = touch.clientX - startPanRef.current.x;
+      const newY = touch.clientY - startPanRef.current.y;
+
+      const limitX = Math.max(0, 800 * (fullscreenScale - 1));
+      const limitY = Math.max(0, 500 * (fullscreenScale - 1));
+      const clampedX = Math.max(-limitX, Math.min(limitX, newX));
+      const clampedY = Math.max(-limitY, Math.min(limitY, newY));
+
+      setFullscreenPosition({ x: clampedX, y: clampedY });
+    } else if (e.touches.length === 2 && lastTouchDistanceRef.current !== null) {
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const distance = Math.hypot(
+        touch1.clientX - touch2.clientX,
+        touch1.clientY - touch2.clientY
+      );
+      
+      const factor = distance / lastTouchDistanceRef.current;
+      setFullscreenScale(prev => {
+        const nextScale = Math.max(0.8, Math.min(5, prev * factor));
+        return nextScale;
+      });
+      lastTouchDistanceRef.current = distance;
+    }
+  };
+
+  const handleFullscreenTouchEnd = () => {
+    isDraggingRef.current = false;
+    lastTouchDistanceRef.current = null;
+  };
+
+  const handleFullscreenWheel = (e: React.WheelEvent) => {
+    if (!isFullscreen) return;
+    const zoomFactor = 0.12;
+    const direction = e.deltaY < 0 ? 1 : -1;
+    setFullscreenScale(prev => {
+      const nextScale = Math.max(0.8, Math.min(5, prev + direction * zoomFactor));
+      return nextScale;
+    });
+  };
+
   // Lock scroll when fullscreen mode is active
   useEffect(() => {
     if (isFullscreen) {
@@ -1561,111 +1673,110 @@ export function InteractiveFloorPlan({
           }
           style={isFullscreen ? { height: '100dvh', width: '100vw' } : { minHeight: '620px', maxHeight: '780px' }}
         >
-          <TransformWrapper
-            disabled={!isFullscreen}
-            minScale={0.8}
-            maxScale={5}
-            initialScale={1}
-            limitToBounds={true}
-            centerOnInit={true}
-            doubleClick={{ disabled: false }}
-            wheel={{ step: 0.1 }}
-            panning={{ velocityDisabled: false }}
+          {/* Small floating Close button on top-right of the fullscreen map */}
+          {isFullscreen && (
+            <div className="absolute top-4 right-4 z-50">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedNode(null);
+                  setIsFullscreen(false);
+                }}
+                className="flex items-center justify-center w-9 h-9 rounded-full bg-slate-900/90 dark:bg-slate-900/90 hover:bg-rose-600 text-slate-200 hover:text-white shadow-xl border border-slate-700 hover:border-rose-500 transition-all cursor-pointer active:scale-95"
+                title="Tutup Layar Lebar"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          )}
+
+          {/* Small floating Zoom controls on bottom-right of the fullscreen map */}
+          {isFullscreen && (
+            <div className="absolute bottom-4 right-4 z-50 flex items-center gap-1 p-1 rounded-2xl bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-md select-none">
+              <button
+                type="button"
+                onClick={() => setFullscreenScale(prev => Math.min(5, prev + 0.3))}
+                className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-750 dark:text-slate-300 transition-colors cursor-pointer active:scale-90"
+                title="Perbesar"
+              >
+                <ZoomIn className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setFullscreenScale(prev => Math.max(0.8, prev - 0.3))}
+                className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-750 dark:text-slate-300 transition-colors cursor-pointer active:scale-90"
+                title="Perkecil"
+              >
+                <ZoomOut className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setFullscreenScale(1);
+                  setFullscreenPosition({ x: 0, y: 0 });
+                }}
+                className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-750 dark:text-slate-300 transition-colors cursor-pointer active:scale-90"
+                title="Reset"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+
+          {/* Floating Kiosk Quick-Access Overlay on Map Canvas */}
+          {!isFullscreen && (
+            <div className="absolute top-4 right-4 z-30">
+              <button
+                type="button"
+                onClick={() => setIsFullscreen(true)}
+                className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md border border-slate-700 text-white text-xs font-bold shadow-lg hover:bg-emerald-600 hover:border-emerald-500 transition-all cursor-pointer active:scale-95 group"
+              >
+                <Maximize2 className="w-4 h-4 text-emerald-400 group-hover:text-white transition-colors" />
+                <span>Ketuk Layar Lebar (Landscape)</span>
+              </button>
+            </div>
+          )}
+
+          {/* Subtle Ambient Radial Grid Pattern */}
+          <div 
+            className="absolute inset-0 pointer-events-none opacity-40"
+            style={{
+              backgroundImage: `radial-gradient(${isDark ? '#10b981' : '#94a3b8'} 1px, transparent 1px)`,
+              backgroundSize: '24px 24px'
+            }}
+          />
+
+          {/* Custom Interactive Transform Wrapper */}
+          <div 
+            className={isFullscreen 
+              ? "w-full h-full cursor-grab active:cursor-grabbing flex items-center justify-center select-none overflow-hidden touch-none" 
+              : "relative w-full h-full flex items-center justify-center transition-transform duration-300"
+            }
+            style={isFullscreen 
+              ? { 
+                  transform: `translate(${fullscreenPosition.x}px, ${fullscreenPosition.y}px) scale(${fullscreenScale})`,
+                  transformOrigin: 'center center',
+                  transition: isDraggingRef.current ? 'none' : 'transform 0.15s ease-out'
+                } 
+              : { transform: `scale(${zoomLevel})` }
+            }
+            onMouseDown={isFullscreen ? handleFullscreenMouseDown : undefined}
+            onMouseMove={isFullscreen ? handleFullscreenMouseMove : undefined}
+            onMouseUp={isFullscreen ? handleFullscreenMouseUpOrLeave : undefined}
+            onMouseLeave={isFullscreen ? handleFullscreenMouseUpOrLeave : undefined}
+            onTouchStart={isFullscreen ? handleFullscreenTouchStart : undefined}
+            onTouchMove={isFullscreen ? handleFullscreenTouchMove : undefined}
+            onTouchEnd={isFullscreen ? handleFullscreenTouchEnd : undefined}
+            onWheel={isFullscreen ? handleFullscreenWheel : undefined}
           >
-            {({ zoomIn, zoomOut, resetTransform }) => (
-              <>
-                {/* Small floating Close button on top-right of the fullscreen map */}
-                {isFullscreen && (
-                  <div className="absolute top-4 right-4 z-50">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedNode(null);
-                        setIsFullscreen(false);
-                      }}
-                      className="flex items-center justify-center w-9 h-9 rounded-full bg-slate-900/90 dark:bg-slate-900/90 hover:bg-rose-600 text-slate-200 hover:text-white shadow-xl border border-slate-700 hover:border-rose-500 transition-all cursor-pointer active:scale-95"
-                      title="Tutup Layar Lebar"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-                )}
-
-                {/* Small floating Zoom controls on bottom-right of the fullscreen map */}
-                {isFullscreen && (
-                  <div className="absolute bottom-4 right-4 z-50 flex items-center gap-1 p-1 rounded-2xl bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-md select-none">
-                    <button
-                      type="button"
-                      onClick={() => zoomIn(0.25)}
-                      className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-750 dark:text-slate-300 transition-colors cursor-pointer active:scale-90"
-                      title="Perbesar"
-                    >
-                      <ZoomIn className="w-4 h-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => zoomOut(0.25)}
-                      className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-750 dark:text-slate-300 transition-colors cursor-pointer active:scale-90"
-                      title="Perkecil"
-                    >
-                      <ZoomOut className="w-4 h-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => resetTransform()}
-                      className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-750 dark:text-slate-300 transition-colors cursor-pointer active:scale-90"
-                      title="Reset"
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
-
-                {/* Floating Kiosk Quick-Access Overlay on Map Canvas */}
-                {!isFullscreen && (
-                  <div className="absolute top-4 right-4 z-30">
-                    <button
-                      type="button"
-                      onClick={() => setIsFullscreen(true)}
-                      className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md border border-slate-700 text-white text-xs font-bold shadow-lg hover:bg-emerald-600 hover:border-emerald-500 transition-all cursor-pointer active:scale-95 group"
-                    >
-                      <Maximize2 className="w-4 h-4 text-emerald-400 group-hover:text-white transition-colors" />
-                      <span>Ketuk Layar Lebar (Landscape)</span>
-                    </button>
-                  </div>
-                )}
-
-                {/* Subtle Ambient Radial Grid Pattern */}
-                <div 
-                  className="absolute inset-0 pointer-events-none opacity-40"
-                  style={{
-                    backgroundImage: `radial-gradient(${isDark ? '#10b981' : '#94a3b8'} 1px, transparent 1px)`,
-                    backgroundSize: '24px 24px'
-                  }}
-                />
-
-                <TransformComponent
-                  wrapperClass={isFullscreen ? "w-full h-full cursor-grab active:cursor-grabbing flex items-center justify-center" : "w-full h-full flex items-center justify-center"}
-                  contentClass="w-full h-full flex items-center justify-center"
-                  wrapperStyle={{ width: "100%", height: "100%" }}
-                  contentStyle={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}
-                >
-                  {/* Interactive Transform Wrapper */}
-                  <div 
-                    className={isFullscreen 
-                      ? "w-full h-full flex items-center justify-center" 
-                      : "relative w-full h-full flex items-center justify-center transition-transform duration-300"
-                    }
-                    style={isFullscreen ? {} : { transform: `scale(${zoomLevel})` }}
-                  >
-                    <svg
-                      viewBox="0 0 1200 800"
-                      preserveAspectRatio="xMidYMid meet"
-                      className={isFullscreen 
-                        ? "w-full h-full max-h-screen object-contain block select-none drop-shadow-md"
-                        : "w-full h-auto max-h-[640px] block select-none drop-shadow-md"
-                      }
-                    >
+            <svg
+              viewBox="0 0 1200 800"
+              preserveAspectRatio="xMidYMid meet"
+              className={isFullscreen 
+                ? "w-full h-full max-h-screen object-contain block select-none drop-shadow-md pointer-events-auto"
+                : "w-full h-auto max-h-[640px] block select-none drop-shadow-md"
+              }
+            >
               <defs>
                 {/* Glow Filter for Active / Hovered Nodes */}
                 <filter id="mpp-active-glow" x="-20%" y="-20%" width="140%" height="140%">
@@ -2008,10 +2119,6 @@ export function InteractiveFloorPlan({
               })}
                     </svg>
                   </div>
-                </TransformComponent>
-              </>
-            )}
-          </TransformWrapper>
 
           {/* Floating Instructions Pill */}
           {!isFullscreen && (
