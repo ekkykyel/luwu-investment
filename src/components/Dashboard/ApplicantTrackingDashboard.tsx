@@ -1311,36 +1311,6 @@ export const ApplicantTrackingDashboard: React.FC<ApplicantTrackingDashboardProp
                         <span>Unduh SK PKKPR (PDF)</span>
                       </button>
                     </div>
-
-                    {/* BAP Pertanian Document */}
-                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Wheat className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                          <span className="font-bold text-xs text-slate-900 dark:text-white">BAP Pertek Pertanian</span>
-                        </div>
-                        {selectedApplication.berita_acara_pertanian_num ? (
-                          <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
-                            Tersedia
-                          </span>
-                        ) : (
-                          <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-200 dark:bg-slate-800 text-slate-500">
-                            Tidak Diperlukan
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-[11px] text-slate-500">
-                        Berita Acara Rekomendasi Alih Fungsi Lahan &amp; Pemotongan Spasial LP2B.
-                      </p>
-                      <button
-                        onClick={handleDownloadBapPertanian}
-                        disabled={!selectedApplication.berita_acara_pertanian_num}
-                        className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 text-white text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                        <span>Unduh BAP Pertanian</span>
-                      </button>
-                    </div>
                   </div>
                 </div>
               )}

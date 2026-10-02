@@ -1305,7 +1305,7 @@ export default function MasyarakatDashboard({
               }]
             },
             status: "APPROVED",
-            pkkpr_status: "Diterbitkan BAP-PKKPR Non-Berusaha Dinas PUPTR",
+            pkkpr_status: "Dokumen Terverifikasi & Disetujui PUPTR",
             created_at: new Date(Date.now() - 86400000 * 2).toISOString()
           },
           {
@@ -1337,7 +1337,7 @@ export default function MasyarakatDashboard({
               }]
             },
             status: "APPROVED",
-            pkkpr_status: "Diterbitkan BAP-KTR / PKKPR Berusaha DPUPTR",
+            pkkpr_status: "Dokumen Terverifikasi & Disetujui PUPTR",
             created_at: new Date(Date.now() - 86400000 * 5).toISOString()
           }
         ];
@@ -2839,48 +2839,35 @@ export default function MasyarakatDashboard({
                           {app.pkkpr_status || app.status || "Menunggu Verifikasi PUPTR"}
                         </span>
                         <div className="flex items-center gap-1.5">
-                          {/* Button 1: BAP Penolakan / Persetujuan LP2B Pertanian (if available) */}
-                          {(app.berita_acara_pertanian_num || app.pertanian_status === 'REJECTED' || app.pertanian_status === 'APPROVED') && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setSelectedPertanianBapApp(app);
-                                setIsPertanianBapModalOpen(true);
-                              }}
-                              className={`px-2.5 py-1.5 rounded-xl text-[11px] font-extrabold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer ${
-                                app.pertanian_status === 'REJECTED' || app.status_pkkpr === 'Requires Revision'
-                                  ? 'bg-rose-600 hover:bg-rose-500 text-white'
-                                  : 'bg-emerald-700 hover:bg-emerald-600 text-white'
-                              }`}
-                            >
-                              <FileText className="w-3.5 h-3.5" />
-                              <span>{app.pertanian_status === 'REJECTED' ? 'BAP Penolakan Pertanian' : 'BAP LP2B Pertanian'}</span>
-                            </button>
-                          )}
-
-                          {/* Button 2: BAP Tata Ruang PUPTR */}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedBapPreviewApp(app);
-                              setIsBapDocumentModalOpen(true);
-                            }}
-                            className="px-2.5 py-1.5 rounded-xl text-[11px] font-extrabold bg-[#166534] hover:bg-[#15803d] text-white flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
-                          >
-                            <FileCheck className="w-3.5 h-3.5 text-emerald-200" />
-                            <span>BAP PUPTR</span>
-                          </button>
-
                           {app.berkas_gabungan_pdf && (
                             <a
                               href={app.berkas_gabungan_pdf}
                               target="_blank"
                               rel="noreferrer"
-                              className="px-2 py-1.5 rounded-xl text-[11px] font-bold bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all flex items-center gap-1"
+                              className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all flex items-center gap-1"
                             >
                               <Eye className="w-3.5 h-3.5" />
-                              <span>PDF</span>
+                              <span>PDF Berkas</span>
                             </a>
+                          )}
+
+                          {/* Tombol Unduh SK PKKPR Resmi (Hanya tampil saat status TERBIT / 100% / APPROVED) */}
+                          {(app.status === 'APPROVED' || app.status === 'IZIN_TERBIT' || app.status_permohonan === 'IZIN_TERBIT' || app.pkkpr_status?.includes('Terbit') || app.pkkpr_status?.includes('APPROVED') || app.progress === 100) && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                Swal.fire({
+                                  icon: "success",
+                                  title: "SK PKKPR Resmi Terbit",
+                                  text: `Surat Keputusan Persetujuan PKKPR No. ${app.pkkpr_doc_number || app.id} siap diunduh.`,
+                                  confirmButtonColor: "#10b981"
+                                });
+                              }}
+                              className="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all flex items-center gap-1 shadow-sm cursor-pointer"
+                            >
+                              <FileCheck className="w-3.5 h-3.5" />
+                              <span>Unduh SK PKKPR</span>
+                            </button>
                           )}
                         </div>
                       </div>
@@ -5007,50 +4994,14 @@ export default function MasyarakatDashboard({
                 </div>
 
                 {/* Submit Action Buttons */}
-                <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end gap-3">
                   <button
                     type="button"
-                    onClick={() => {
-                      const isVerifiedNama = !!hydratedProfile.nama && !["masyarakat", "masyarakat publik", "offline-user", "masyarakat pemohon"].includes(hydratedProfile.nama.toLowerCase());
-                      const isVerifiedNik = /^\d{16}$/.test(hydratedProfile.nik);
-                      const finalNama = isVerifiedNama ? hydratedProfile.nama : (pkkprNamaPemohon || "Pemohon Terdaftar");
-                      const finalNik = isVerifiedNik ? hydratedProfile.nik : (pkkprNikPemohon || "7317011909890001");
-
-                      const draftApp = {
-                        category: pkkprCategory,
-                        jenis_permohonan: pkkprCategory,
-                        title: pkkprTitle || (pkkprCategory === "Non-Berusaha" ? "Pembangunan Gereja Toraja Jemaat Belopa" : "Permohonan Investasi & Pemanfaatan Ruang"),
-                        fungsi_bangunan: pkkprCategory === "Non-Berusaha" ? pkkprFungsiBangunan : "Kegiatan Komersial / Industri",
-                        nama_lembaga: pkkprCategory === "Non-Berusaha" ? (pkkprNamaLembaga || "Panitia Pembangunan Gereja Toraja Jemaat Belopa") : (pkkprPerusahaan || "PT. LUWU AGRO INDUSTRI"),
-                        perusahaan: pkkprCategory === "Berusaha" ? pkkprPerusahaan : (pkkprNamaLembaga || "Panitia Pembangunan / Perseorangan"),
-                        nama_pemohon: finalNama,
-                        nik: finalNik,
-                        nib: pkkprCategory === "Berusaha" ? pkkprNib : null,
-                        kecamatan: pkkprKecamatan || "Latimojong",
-                        desa: pkkprDesa || "Ranteballa",
-                        luas_m2: pkkprLuasM2 || (pkkprCategory === "Non-Berusaha" ? 2450 : 254800),
-                        luas_bangunan_m2: pkkprLuasBangunan,
-                        bukti_tanah: `${pkkprBuktiTanahJenis} ${pkkprBuktiTanahNomor ? `(No. ${pkkprBuktiTanahNomor})` : ''}`,
-                        geometry: pkkprGeometry,
-                        created_at: new Date().toISOString()
-                      };
-                      setSelectedBapPreviewApp(draftApp);
-                      setIsBapDocumentModalOpen(true);
-                    }}
-                    className="px-4 py-2.5 rounded-xl text-xs font-bold border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 flex items-center gap-2 transition-all cursor-pointer shadow-sm"
+                    onClick={() => setIsPkkprModalOpen(false)}
+                    className="px-5 py-3 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all cursor-pointer"
                   >
-                    <FileCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                    <span>Pratinjau Draf Naskah BAP-PKKPR ({pkkprCategory})</span>
+                    Batal
                   </button>
-
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setIsPkkprModalOpen(false)}
-                      className="px-5 py-3 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all cursor-pointer"
-                    >
-                      Batal
-                    </button>
 
                     <button
                       type="submit"
@@ -5070,8 +5021,7 @@ export default function MasyarakatDashboard({
                       )}
                     </button>
                   </div>
-                </div>
-              </form>
+                </form>
             </motion.div>
           </div>
         )}
