@@ -1139,6 +1139,98 @@ const FLOOR_NODES: FloorNode[] = [
     deskType: 'teller',
     operatingHours: '08:00 - 15:00 WITA',
     wayfindingTips: 'Sayap Utara sebelah barat Ruang Tim Teknis.'
+  },
+
+  // ── 5. TRANSITION ZONES, LOBBIES & STAIR ACCESS ──
+  {
+    id: 'tangga_naik_w',
+    name: 'TANGGA BARAT',
+    subName: 'Akses Lantai 2 Sayap Barat',
+    category: 'facility',
+    zone: 'West Wing (Sayap Barat)',
+    x: 35,
+    y: 338,
+    w: 105,
+    h: 74,
+    rx: 8,
+    accent: '#475569',
+    status: 'open',
+    services: ['Akses Tangga Lantai 2', 'Handrail Stainless Steel', 'Step Nosing Anti-Slip'],
+    isDisabilityFriendly: false,
+    operatingHours: '07:00 - 17:00 WITA',
+    wayfindingTips: 'Di bawah DUKCAPIL KTP-el.'
+  },
+  {
+    id: 'tangga_naik_ne',
+    name: 'TANGGA UTARA',
+    subName: 'Akses Lantai 2 Sayap Utara',
+    category: 'facility',
+    zone: 'North Wing (Sayap Utara)',
+    x: 1075,
+    y: 115,
+    w: 82,
+    h: 65,
+    rx: 6,
+    accent: '#475569',
+    status: 'open',
+    services: ['Akses Tangga Lantai 2', 'Dekat Smoking Area', 'Penerangan Sensor Gerak'],
+    isDisabilityFriendly: false,
+    operatingHours: '07:00 - 17:00 WITA',
+    wayfindingTips: 'Di samping Smoking Area.'
+  },
+  {
+    id: 'tangga_naik_se',
+    name: 'TANGGA TIMUR',
+    subName: 'Akses Lantai 2 Sayap Timur',
+    category: 'facility',
+    zone: 'East Wing (Sayap Timur)',
+    x: 1075,
+    y: 470,
+    w: 82,
+    h: 65,
+    rx: 6,
+    accent: '#475569',
+    status: 'open',
+    services: ['Akses Tangga VIP', 'Handrail Pengaman', 'Akses Ruang Rapat'],
+    isDisabilityFriendly: false,
+    operatingHours: '07:00 - 17:00 WITA',
+    wayfindingTips: 'Di bawah Ruang Rapat.'
+  },
+  {
+    id: 'lobby_kiri',
+    name: 'LOBBY BARAT',
+    subName: 'Ruang Tunggu Pemohon Barat',
+    category: 'facility',
+    zone: 'West Wing (Sayap Barat)',
+    x: 354,
+    y: 520,
+    w: 115,
+    h: 70,
+    rx: 8,
+    accent: '#475569',
+    status: 'open',
+    services: ['Kursi Tunggu Pemohon Layanan', 'Display TV Informasi Antrean', 'Charging Station Gratis'],
+    isDisabilityFriendly: true,
+    operatingHours: '07:30 - 16:00 WITA',
+    wayfindingTips: 'Di sebelah kiri E-KIOSK 1.'
+  },
+  {
+    id: 'lobby_kanan',
+    name: 'LOBBY TIMUR',
+    subName: 'Ruang Tunggu Pemohon Timur',
+    category: 'facility',
+    zone: 'East Wing (Sayap Timur)',
+    x: 730,
+    y: 520,
+    w: 115,
+    h: 70,
+    rx: 8,
+    accent: '#475569',
+    status: 'open',
+    services: ['Kursi Tunggu Pemohon Layanan', 'Display TV Informasi Antrean', 'Charging Station Gratis'],
+    isDisabilityFriendly: true,
+    operatingHours: '07:30 - 16:00 WITA',
+    wayfindingTips: 'Di sebelah kanan E-KIOSK 2.'
   }
 ];
 
@@ -1484,7 +1576,45 @@ export function InteractiveFloorPlan({
               />
               <rect x="482" y="600" width="236" height="15" fill={isDark ? "#090e1a" : "#f8fafc"} />
 
-              {/* 2. Circulation Wayfinding & Yellow Tactile Disability Path */}
+              {/* Exterior Architectural Pillars (West & East) */}
+              {[140, 270, 400, 530].map((y, idx) => (
+                <g key={`ext-col-w-${idx}`} opacity="0.8">
+                  <rect x="4" y={y - 7} width="13" height="13" rx="2" fill={isDark ? "#0f172a" : "#f1f5f9"} stroke={isDark ? "#475569" : "#64748b"} strokeWidth="1.2" />
+                  <rect x="7" y={y - 4} width="7" height="7" fill="none" stroke="#06b6d4" strokeWidth="0.8" />
+                </g>
+              ))}
+              {[140, 270, 400, 530].map((y, idx) => (
+                <g key={`ext-col-e-${idx}`} opacity="0.8">
+                  <rect x="1183" y={y - 7} width="13" height="13" rx="2" fill={isDark ? "#0f172a" : "#f1f5f9"} stroke={isDark ? "#475569" : "#64748b"} strokeWidth="1.2" />
+                  <rect x="1186" y={y - 4} width="7" height="7" fill="none" stroke="#06b6d4" strokeWidth="0.8" />
+                </g>
+              ))}
+
+              {/* Structural Building Columns */}
+              {[
+                { x: 25, y: 20 }, { x: 260, y: 20 }, { x: 600, y: 20 }, { x: 940, y: 20 }, { x: 1175, y: 20 },
+                { x: 25, y: 310 }, { x: 1175, y: 310 },
+                { x: 25, y: 600 }, { x: 475, y: 600 }, { x: 725, y: 600 }, { x: 1175, y: 600 },
+                { x: 475, y: 780 }, { x: 725, y: 780 }
+              ].map((col, idx) => (
+                <g key={`bldg-col-${idx}`} opacity="0.55" pointerEvents="none">
+                  <rect x={col.x - 5} y={col.y - 5} width="10" height="10" rx="1.5" fill={isDark ? "#1e293b" : "#e2e8f0"} stroke={isDark ? "#475569" : "#94a3b8"} strokeWidth="1" />
+                </g>
+              ))}
+
+              {/* 2. Circulation Wayfinding & Entrance Flow */}
+              {/* Main Pedestrian Entry Guide Line (Pintu Masuk -> Pos Jaga -> E-Kiosk -> Front Office) */}
+              <path
+                d="M 620 770 L 620 600 L 600 550 L 600 485"
+                fill="none"
+                stroke="#10b981"
+                strokeWidth="2.5"
+                strokeDasharray="5 4"
+                strokeLinecap="round"
+                className="animate-pulse"
+                opacity="0.9"
+              />
+
               {/* Yellow Braille / Blind Tactile Line from Pintu Masuk to Front Office */}
               <path
                 d="M 600 765 L 600 550"
@@ -1512,6 +1642,17 @@ export function InteractiveFloorPlan({
                 strokeDasharray="5 4"
                 strokeLinecap="round"
                 className={isWayfindingActive ? "animate-pulse" : ""}
+              />
+
+              {/* Outer Smooth Contour Loop Around Wings */}
+              <path
+                d="M 280 200 C 400 130, 800 130, 920 200 C 990 250, 990 380, 920 425 C 800 495, 400 495, 280 425 C 210 380, 210 250, 280 200 Z"
+                fill="none"
+                stroke={isDark ? "#1e293b" : "#cbd5e1"}
+                strokeWidth="24"
+                strokeLinecap="round"
+                opacity={isDark ? "0.3" : "0.45"}
+                pointerEvents="none"
               />
 
               {/* 3. Central Atrium Oval Island Floor Base */}
@@ -1616,6 +1757,82 @@ export function InteractiveFloorPlan({
                       filter={isSelected ? 'url(#mpp-active-glow)' : undefined}
                       className="group-hover:filter group-hover:drop-shadow-md transition-all"
                     />
+
+                    {/* CAD Micro Furniture Visual Cues */}
+                    {/* A. 10 Workstations in Ruang Tim Teknis */}
+                    {node.deskType === 'workstation' && (
+                      <g opacity="0.65" pointerEvents="none">
+                        <rect x={node.x + 10} y={node.y + 14} width={node.w - 20} height={12} rx="2" fill={isDark ? "#1e293b" : "#e2e8f0"} stroke="#475569" strokeWidth="0.8" />
+                        <rect x={node.x + 10} y={node.y + 54} width={node.w - 20} height={12} rx="2" fill={isDark ? "#1e293b" : "#e2e8f0"} stroke="#475569" strokeWidth="0.8" />
+                        {[0.12, 0.3, 0.5, 0.7, 0.88].map((r, i) => (
+                          <React.Fragment key={i}>
+                            <rect x={node.x + 10 + (node.w - 20) * r - 5} y={node.y + 16} width="10" height="3" rx="1" fill="#38bdf8" />
+                            <circle cx={node.x + 10 + (node.w - 20) * r} cy={node.y + 8} r="2.5" fill="#64748b" />
+                            <rect x={node.x + 10 + (node.w - 20) * r - 5} y={node.y + 59} width="10" height="3" rx="1" fill="#38bdf8" />
+                            <circle cx={node.x + 10 + (node.w - 20) * r} cy={node.y + 72} r="2.5" fill="#64748b" />
+                          </React.Fragment>
+                        ))}
+                      </g>
+                    )}
+
+                    {/* B. Long Boardroom Conference Table in Ruang Rapat */}
+                    {node.deskType === 'conference' && (
+                      <g opacity="0.7" pointerEvents="none">
+                        <rect
+                          x={node.x + 16}
+                          y={node.y + 25}
+                          width={node.w - 32}
+                          height={node.h - 50}
+                          rx="14"
+                          fill={isDark ? "#1e293b" : "#e2e8f0"}
+                          stroke={isDark ? "#475569" : "#94a3b8"}
+                          strokeWidth="1.2"
+                        />
+                        {[0.18, 0.34, 0.5, 0.66, 0.82].map((ratio, idx) => (
+                          <React.Fragment key={idx}>
+                            <circle cx={node.x + 8} cy={node.y + (node.h - 50) * ratio + 25} r="3" fill="#64748b" />
+                            <circle cx={node.x + node.w - 8} cy={node.y + (node.h - 50) * ratio + 25} r="3" fill="#64748b" />
+                          </React.Fragment>
+                        ))}
+                        <circle cx={centerX} cy={node.y + 14} r="3" fill="#64748b" />
+                        <circle cx={centerX} cy={node.y + node.h - 14} r="3" fill="#64748b" />
+                      </g>
+                    )}
+
+                    {/* C. Service Booth Counter Curves */}
+                    {node.deskType === 'booth' && (
+                      <g opacity="0.55" pointerEvents="none">
+                        <path
+                          d={`M ${node.x + 8} ${node.y + node.h - 10} Q ${centerX} ${node.y + node.h - 18} ${node.x + node.w - 8} ${node.y + node.h - 10}`}
+                          fill="none"
+                          stroke={isDark ? "#475569" : "#94a3b8"}
+                          strokeWidth="1.5"
+                        />
+                        <circle cx={centerX} cy={node.y + 12} r="2.5" fill="#64748b" />
+                        <circle cx={centerX - 10} cy={node.y + node.h - 5} r="2" fill="#94a3b8" />
+                        <circle cx={centerX + 10} cy={node.y + node.h - 5} r="2" fill="#94a3b8" />
+                      </g>
+                    )}
+
+                    {/* D. Teller Partition in Bank */}
+                    {node.deskType === 'teller' && (
+                      <g opacity="0.6" pointerEvents="none">
+                        <line x1={node.x + 8} y1={centerY + 6} x2={node.x + node.w - 8} y2={centerY + 6} stroke="#3b82f6" strokeWidth="1.2" strokeDasharray="3 3" />
+                        <circle cx={centerX - 14} cy={centerY - 8} r="2.5" fill="#60a5fa" />
+                        <circle cx={centerX + 14} cy={centerY - 8} r="2.5" fill="#60a5fa" />
+                        <circle cx={centerX - 14} cy={centerY + 16} r="2" fill="#64748b" />
+                        <circle cx={centerX + 14} cy={centerY + 16} r="2" fill="#64748b" />
+                      </g>
+                    )}
+
+                    {/* E. Straight Counter */}
+                    {node.deskType === 'counter' && (
+                      <g opacity="0.6" pointerEvents="none">
+                        <rect x={node.x + 12} y={centerY + 4} width={node.w - 24} height={5} rx="1.5" fill={isDark ? "#1e293b" : "#e2e8f0"} stroke="#475569" strokeWidth="0.8" />
+                        <circle cx={centerX} cy={centerY - 8} r="2.5" fill="#94a3b8" />
+                        <circle cx={centerX} cy={centerY + 16} r="2" fill="#64748b" />
+                      </g>
+                    )}
 
                     {/* Status Pip (Top Right) */}
                     <circle
