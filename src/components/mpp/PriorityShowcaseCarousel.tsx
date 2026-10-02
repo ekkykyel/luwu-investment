@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Accessibility, 
@@ -7,10 +7,7 @@ import {
   ChevronRight, 
   Armchair, 
   Baby, 
-  HeartHandshake, 
-  ShieldCheck, 
-  ExternalLink,
-  Laptop
+  ExternalLink 
 } from 'lucide-react';
 
 export interface PriorityShowcaseCarouselProps {
@@ -85,10 +82,13 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const touchStartXRef = useRef<number | null>(null);
 
   // Smooth scroll and state sync handler
-  const scrollToCard = (index: number) => {
-    const targetIndex = Math.max(0, Math.min(index, SHOWCASE_ITEMS.length - 1));
+  const scrollToCard = useCallback((index: number) => {
+    // Loop around gracefully
+    const targetIndex = (index + SHOWCASE_ITEMS.length) % SHOWCASE_ITEMS.length;
     setActiveIndex(targetIndex);
     if (scrollRef.current) {
       const card = scrollRef.current.children[targetIndex] as HTMLElement;
@@ -96,7 +96,24 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
         card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       }
     }
-  };
+  }, []);
+
+  const handleNext = useCallback(() => {
+    scrollToCard(activeIndex + 1);
+  }, [activeIndex, scrollToCard]);
+
+  const handlePrev = useCallback(() => {
+    scrollToCard(activeIndex - 1);
+  }, [activeIndex, scrollToCard]);
+
+  // Auto-play timer (4.5 detik) with pause-on-hover
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => {
+      handleNext();
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [isPaused, handleNext]);
 
   const handleScroll = () => {
     if (scrollRef.current) {
@@ -109,13 +126,37 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
     }
   };
 
+  // Touch handlers for mobile swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsPaused(true);
+    touchStartXRef.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    setIsPaused(false);
+    if (touchStartXRef.current === null) return;
+    const diff = touchStartXRef.current - e.changedTouches[0].clientX;
+    if (diff > 45) {
+      handleNext();
+    } else if (diff < -45) {
+      handlePrev();
+    }
+    touchStartXRef.current = null;
+  };
+
   return (
-    <section className="w-full space-y-4">
+    <section 
+      className="w-full space-y-4"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Header bar with controls */}
       <div className="flex items-center justify-between px-1">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-700/60">
-            <Sparkles className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+            <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>Fasilitas Prioritas & Layanan Inklusif</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight font-sans">
@@ -127,25 +168,19 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => scrollToCard(activeIndex - 1)}
-            disabled={activeIndex === 0}
-            className={`w-9 h-9 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95 ${
-              activeIndex === 0 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-emerald-50 dark:hover:bg-slate-700'
-            }`}
+            onClick={handlePrev}
             aria-label="Geser ke kiri"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/50 flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:shadow-md active:scale-95"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             type="button"
-            onClick={() => scrollToCard(activeIndex + 1)}
-            disabled={activeIndex === SHOWCASE_ITEMS.length - 1}
-            className={`w-9 h-9 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95 ${
-              activeIndex === SHOWCASE_ITEMS.length - 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-emerald-50 dark:hover:bg-slate-700'
-            }`}
+            onClick={handleNext}
             aria-label="Geser ke kanan"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/50 flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:shadow-md active:scale-95"
           >
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-5 h-5" />
           </button>
         </div>
       </div>
@@ -159,16 +194,21 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
         >
           {SHOWCASE_ITEMS.map((item, idx) => {
             const Icon = item.icon;
+            const isCurrent = activeIndex === idx;
+
             return (
               <motion.div
                 key={item.id}
                 initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: idx * 0.05 }}
-                className="w-[85vw] max-w-[340px] sm:w-[380px] shrink-0 snap-center sm:snap-start rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-md shadow-slate-200/40 dark:shadow-none hover:shadow-xl hover:border-emerald-500/50 transition-all duration-300 flex flex-col justify-between overflow-hidden group select-none"
+                className={`w-[85vw] max-w-[340px] sm:w-[380px] shrink-0 snap-center sm:snap-start rounded-3xl bg-white dark:bg-slate-900 border transition-all duration-300 flex flex-col justify-between overflow-hidden group select-none ${
+                  isCurrent
+                    ? 'border-emerald-500/70 dark:border-emerald-500/60 shadow-xl shadow-emerald-900/5 dark:shadow-emerald-950/20 ring-1 ring-emerald-500/20'
+                    : 'border-slate-200/90 dark:border-slate-800 shadow-md shadow-slate-200/40 dark:shadow-none hover:shadow-xl hover:border-emerald-500/50'
+                }`}
               >
-                {/* Image Banner Header: Enhanced height on mobile (h-60 sm:h-64 md:h-72) for greater visual impact */}
+                {/* Image Banner Header: Enhanced height on mobile & desktop */}
                 <div className="relative h-60 sm:h-64 md:h-72 w-full overflow-hidden bg-slate-800">
                   <img
                     src={item.image}
@@ -223,7 +263,7 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
                           onOpenAccessibilityPanel();
                         }
                       }}
-                      className="w-full py-2.5 px-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-600 dark:hover:bg-emerald-600 hover:text-white dark:hover:text-white text-slate-800 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-2xs"
+                      className="w-full py-2.5 px-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-600 dark:hover:bg-emerald-600 hover:text-white dark:hover:text-white text-slate-800 dark:text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-2xs group-hover:bg-emerald-600 group-hover:text-white"
                     >
                       <span>{item.actionLabel}</span>
                       <ExternalLink className="w-3.5 h-3.5" />
@@ -236,18 +276,18 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
         </div>
       </div>
 
-      {/* Mobile Dot Indicators for Active Slide */}
-      <div className="flex sm:hidden items-center justify-center gap-1.5 pt-1">
+      {/* Pagination Dot Indicators (Mobile & Desktop) */}
+      <div className="flex items-center justify-center gap-1.5 pt-1">
         {SHOWCASE_ITEMS.map((_, idx) => (
           <button
             key={idx}
             type="button"
             onClick={() => scrollToCard(idx)}
             aria-label={`Lihat slide ${idx + 1}`}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
+            className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
               activeIndex === idx 
-                ? 'w-6 bg-emerald-600 dark:bg-emerald-400' 
-                : 'w-1.5 bg-slate-300 dark:bg-slate-700'
+                ? 'w-7 bg-emerald-600 dark:bg-emerald-400 shadow-xs' 
+                : 'w-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'
             }`}
           />
         ))}
