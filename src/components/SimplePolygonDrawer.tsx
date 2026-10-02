@@ -118,13 +118,28 @@ export default function SimplePolygonDrawer({
 
   const [isOutOfBounds, setIsOutOfBounds] = useState(false);
 
-  const [viewState, setViewState] = useState({
-    longitude: 120.252,
-    latitude: -3.203,
-    zoom: 11,
-    pitch: 0,
-    bearing: 0
-  });
+  // Uncontrolled viewState initialized once to prevent React state re-render camera jumps
+  const initialViewState = useMemo(() => {
+    const getCorrectedCenter = (coords?: [number, number]): [number, number] | null => {
+      if (!coords || !Array.isArray(coords) || coords.length < 2) return null;
+      let [c1, c2] = coords;
+      if (typeof c1 !== "number" || typeof c2 !== "number" || (c1 === 0 && c2 === 0)) return null;
+      if (Math.abs(c1) < 10 && Math.abs(c2) > 100) return [c2, c1];
+      return [c1, c2];
+    };
+
+    const center = getCorrectedCenter(focusTarget?.villageCoords) ||
+                   getCorrectedCenter(focusTarget?.districtCoords) ||
+                   [120.252, -3.203];
+
+    return {
+      longitude: center[0],
+      latitude: center[1],
+      zoom: focusTarget?.villageId ? 14 : focusTarget?.districtId ? 12 : 11,
+      pitch: 0,
+      bearing: 0
+    };
+  }, [focusTarget?.villageId, focusTarget?.districtId]);
 
   const [zoningDataState, setZoningDataState] = useState<any>(null);
 
@@ -320,11 +335,28 @@ export default function SimplePolygonDrawer({
     }
   }, [activeBoundaryFeature]);
 
-  // ─── AUTO FLY-TO CONTEXT LOGIC ───
-  const triggerAutoFlyTo = useCallback(() => {
+  // ─── AUTO FLY-TO CONTEXT LOGIC (SINGLE EXECUTION PER TARGET LOCK) ───
+  const hasAutoFlownRef = useRef<boolean>(false);
+  const lastFocusedTargetKeyRef = useRef<string>("");
+
+  const focusTargetKey = `${focusTarget?.districtId || focusTarget?.districtName || ''}_${focusTarget?.villageId || focusTarget?.villageName || ''}_${initialGeometry ? 'geom' : 'nogeom'}`;
+
+  useEffect(() => {
+    if (lastFocusedTargetKeyRef.current !== focusTargetKey) {
+      lastFocusedTargetKeyRef.current = focusTargetKey;
+      hasAutoFlownRef.current = false;
+    }
+  }, [focusTargetKey]);
+
+  const triggerAutoFlyTo = useCallback((force = false) => {
     if (!mapRef.current) return;
-    const map = mapRef.current.getMap();
+    const map = mapRef.current.getMap ? mapRef.current.getMap() : (mapRef.current as any);
     if (!map) return;
+
+    // Prevent repeated camera jumps if already auto-flown for this target unless explicitly forced
+    if (hasAutoFlownRef.current && !force) {
+      return;
+    }
 
     // 1. Priority A: Initial Geometry fitBounds
     if (initialGeometry && initialGeometry.coordinates && initialGeometry.coordinates.length > 0) {
@@ -335,8 +367,9 @@ export default function SimplePolygonDrawer({
           map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], {
             padding: 60,
             maxZoom: 16,
-            duration: 1500
+            duration: 1200
           });
+          hasAutoFlownRef.current = true;
           return;
         }
       } catch (e) {
@@ -352,8 +385,9 @@ export default function SimplePolygonDrawer({
           map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], {
             padding: 70,
             maxZoom: focusTarget?.villageId ? 15 : 13,
-            duration: 2000
+            duration: 1500
           });
+          hasAutoFlownRef.current = true;
           return;
         }
       } catch (err) {
@@ -374,19 +408,22 @@ export default function SimplePolygonDrawer({
     if (center) {
       map.flyTo({
         center,
-        zoom: focusTarget?.villageId ? 14 : 12,
+        zoom: focusTarget?.villageId ? 15 : 13,
         essential: true,
-        duration: 2000
+        duration: 1500
       });
+      hasAutoFlownRef.current = true;
     }
   }, [focusTarget, initialGeometry, activeBoundaryFeature]);
 
-  // Trigger auto flyTo when map or boundary context ready with debounce
+  // Trigger auto flyTo ONCE when boundary context or map is ready
   useEffect(() => {
-    const timer = setTimeout(() => {
-      triggerAutoFlyTo();
-    }, 400); // 400ms debounce to prevent tile cancellation spam during quick re-renders
-    return () => clearTimeout(timer);
+    if (!hasAutoFlownRef.current) {
+      const timer = setTimeout(() => {
+        triggerAutoFlyTo();
+      }, 350);
+      return () => clearTimeout(timer);
+    }
   }, [triggerAutoFlyTo]);
 
   // ─── LIVE ESG RADAR & BOUNDARY ENFORCEMENT ───
@@ -631,8 +668,17 @@ export default function SimplePolygonDrawer({
         
         <div className="flex items-center gap-2.5">
           <button
+            type="button"
+            onClick={() => triggerAutoFlyTo(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-semibold transition cursor-pointer"
+            title="Fokus Ulang Peta ke Lokasi Desa/Kecamatan"
+          >
+            <Compass className="h-3.5 w-3.5 text-emerald-400" /> Fokus Wilayah
+          </button>
+
+          <button
             onClick={handleReset}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-semibold transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-semibold transition cursor-pointer"
           >
             <RefreshCcw className="h-3.5 w-3.5" /> Reset
           </button>
@@ -796,12 +842,11 @@ export default function SimplePolygonDrawer({
 
         <Map
           ref={mapRef}
-          {...viewState}
+          initialViewState={initialViewState}
           // @ts-ignore
           preserveDrawingBuffer={true}
           maxZoom={22}
           minZoom={5}
-          onMove={(e) => setViewState(e.viewState)}
           transformRequest={(url) => {
             if (url.includes('cartocdn.com') || url.includes('openstreetmap.org') || url.includes('google') || url.includes('arcgisonline.com')) {
               return { url, headers: {} };
