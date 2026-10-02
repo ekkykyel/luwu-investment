@@ -3322,7 +3322,13 @@ export default function PortalMPP() {
                 setIsQueueBookingOpen(true);
               }}
             />
-            <InteractiveFloorPlan isDark={isDark} />
+            <InteractiveFloorPlan 
+              isDark={isDark} 
+              onOpenQueueBooking={(serviceName) => {
+                if (serviceName) setQueueForm(prev => ({ ...prev, service: serviceName }));
+                setIsQueueBookingOpen(true);
+              }}
+            />
           </div>
 
           {/* Seksi Katalog Kemitraan UMKM Luwu */}
