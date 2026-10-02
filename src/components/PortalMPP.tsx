@@ -3297,7 +3297,7 @@ export default function PortalMPP() {
           {/* Seksi Denah & Navigasi Spasial Interaktif Canvas */}
           <div id="denah-interaktif" className="w-full max-w-7xl mx-auto px-1 sm:px-4 md:px-8 space-y-8 scroll-mt-28">
             {/* A. WIDGET ATAS: Asisten Pencarian & Direktori Layanan Cepat */}
-            <div className="bg-slate-900 rounded-3xl p-5 sm:p-7 text-white border border-slate-800 shadow-2xl">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-7 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 shadow-xl">
               <SmartServiceFinder 
                 selectedItem={selectedFloorItem}
                 onResetSelection={() => setSelectedFloorItem(null)}

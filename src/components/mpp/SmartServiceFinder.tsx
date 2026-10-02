@@ -16,14 +16,7 @@ import {
   HeartPulse,
   Scale,
   Accessibility,
-  ArrowRight,
-  RotateCcw,
-  Info,
-  ChevronRight,
-  ShieldCheck,
-  PhoneCall,
-  Flame,
-  BadgeCheck
+  ArrowRight
 } from 'lucide-react';
 import { SelectedFloorItem } from './InteractiveFloorPlan';
 
@@ -38,7 +31,7 @@ export interface SmartServiceFinderProps {
 // ─────────────────────────────────────────────────────────────────────────────
 // FAST-TRACK SERVICE DIRECTORY MASTER (KABUPATEN LUWU)
 // ─────────────────────────────────────────────────────────────────────────────
-interface FastTrackService {
+export interface FastTrackService {
   id: string;
   nodeId: string;
   category: string;
@@ -52,7 +45,7 @@ interface FastTrackService {
   requirements: string[];
 }
 
-const FAST_TRACK_SERVICES: FastTrackService[] = [
+export const FAST_TRACK_SERVICES: FastTrackService[] = [
   {
     id: 'paspor',
     nodeId: 'IMIGRASI',
@@ -134,7 +127,7 @@ const FAST_TRACK_SERVICES: FastTrackService[] = [
 ];
 
 // Categories Grouping for Top Quick Filter Chips
-const CATEGORY_TABS = [
+export const CATEGORY_TABS = [
   { id: 'all', label: 'Semua Direktori', icon: Compass },
   { id: 'Kependudukan & Capil', label: 'Kependudukan', icon: Users, defaultNode: 'DUKCAPIL_W1' },
   { id: 'Perizinan & Investasi', label: 'Perizinan OSS', icon: Briefcase, defaultNode: 'DPMPTSP_N' },
@@ -182,22 +175,25 @@ export function SmartServiceFinder({
       {/* ───────────────────────────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+          <div className="flex flex-wrap items-center gap-2 mb-1.5">
+            {/* Badge Top 1: Direktori & Pencarian Cepat Layanan */}
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-800/50">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               Direktori & Pencarian Cepat Layanan
             </span>
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-              <Compass className="w-3 h-3 text-indigo-400" />
+
+            {/* Badge Top 2: Sinkron ke Denah Spasial */}
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-950/50 dark:text-indigo-300 dark:border-indigo-800/50">
+              <Compass className="w-3 h-3 text-indigo-600 dark:text-indigo-400" />
               Sinkron ke Denah Spasial
             </span>
           </div>
 
-          <h3 className="text-xl sm:text-2xl font-black tracking-tight text-white font-sans">
+          <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-sans">
             Navigasi Cepat Gerai & Loket Layanan
           </h3>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl">
-            Pilih kebutuhan administrasi Anda di bawah untuk langsung menyorot posisi gerai pada denah denah interaktif MPP Simpurusiang.
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl font-normal leading-relaxed">
+            Pilih kebutuhan administrasi Anda di bawah untuk langsung menyorot posisi gerai pada denah interaktif MPP Simpurusiang.
           </p>
         </div>
 
@@ -209,13 +205,13 @@ export function SmartServiceFinder({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari layanan (Paspor, KTP, NIB, BPJS)..."
-            className="w-full pl-10 pr-9 py-2.5 text-xs sm:text-sm rounded-xl bg-slate-800/90 border border-slate-700 text-white placeholder-slate-400 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all shadow-inner font-medium"
+            className="w-full pl-10 pr-9 py-2.5 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all shadow-xs font-medium"
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 dark:hover:text-white"
             >
               <X className="w-4 h-4" />
             </button>
@@ -242,11 +238,11 @@ export function SmartServiceFinder({
               }}
               className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-2 shrink-0 border ${
                 isActive
-                  ? 'bg-emerald-600 text-white border-emerald-500 shadow-md shadow-emerald-950/50'
-                  : 'bg-slate-800/80 hover:bg-slate-750 text-slate-300 border-slate-700 hover:border-slate-600'
+                  ? 'bg-emerald-600 text-white border-emerald-500 shadow-md shadow-emerald-950/20'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700'
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-emerald-400'}`} />
+              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-emerald-600 dark:text-emerald-400'}`} />
               <span>{tab.label}</span>
             </button>
           );
@@ -269,8 +265,8 @@ export function SmartServiceFinder({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -15, scale: 0.98 }}
               transition={{ duration: 0.2 }}
-              className={`relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-800/95 via-slate-850 to-slate-900 border p-5 sm:p-6 shadow-2xl ${
-                isFacility ? 'border-teal-500/40' : 'border-emerald-500/40'
+              className={`relative overflow-hidden rounded-2xl bg-slate-50 dark:bg-slate-850 border p-5 sm:p-6 shadow-md ${
+                isFacility ? 'border-teal-500/50 dark:border-teal-500/40' : 'border-emerald-500/50 dark:border-emerald-500/40'
               }`}
             >
               {/* Ambient Background Glow */}
@@ -284,8 +280,8 @@ export function SmartServiceFinder({
                 <div className="flex items-start gap-4">
                   <div className={`p-3.5 rounded-2xl border shrink-0 ${
                     isFacility 
-                      ? 'bg-teal-500/20 text-teal-400 border-teal-500/30' 
-                      : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                      ? 'bg-teal-100 text-teal-700 border-teal-200 dark:bg-teal-500/20 dark:text-teal-400 dark:border-teal-500/30' 
+                      : 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30'
                   }`}>
                     {isFacility ? <Sparkles className="w-7 h-7" /> : <Building2 className="w-7 h-7" />}
                   </div>
@@ -295,64 +291,64 @@ export function SmartServiceFinder({
                       {/* Element Type Tag */}
                       <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold border uppercase tracking-wider ${
                         isFacility 
-                          ? 'bg-teal-500/20 text-teal-300 border-teal-500/30' 
-                          : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                          ? 'bg-teal-50 text-teal-800 border-teal-200 dark:bg-teal-500/20 dark:text-teal-300 dark:border-teal-500/30' 
+                          : 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30'
                       }`}>
                         {isFacility ? 'Fasilitas Publik' : 'Gerai Pelayanan'}
                       </span>
 
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700">
                         ID: {selectedItem.code || selectedItem.id}
                       </span>
 
                       <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
                         isFacility
-                          ? 'bg-teal-500/10 text-teal-400 border-teal-500/20'
-                          : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                          ? 'bg-teal-50 text-teal-800 border-teal-200 dark:bg-teal-500/10 dark:text-teal-400 dark:border-teal-500/20'
+                          : 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20'
                       }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isFacility ? 'bg-teal-400' : 'bg-emerald-400'}`} />
+                        <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isFacility ? 'bg-teal-500' : 'bg-emerald-500'}`} />
                         {isFacility ? 'Tersedia / Siap Digunakan' : 'Normal / Buka'}
                       </span>
 
                       {selectedItem.isDisabilityFriendly && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
-                          <Accessibility className="w-3 h-3 text-cyan-400" />
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-50 text-cyan-800 border border-cyan-200 dark:bg-cyan-500/10 dark:text-cyan-300 dark:border-cyan-500/20">
+                          <Accessibility className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
                           Ramah Disabilitas
                         </span>
                       )}
 
                       {isFacility && selectedItem.capacity && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                          <Users className="w-3 h-3 text-indigo-400" />
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-800 border border-indigo-200 dark:bg-indigo-500/10 dark:text-indigo-300 dark:border-indigo-500/20">
+                          <Users className="w-3 h-3 text-indigo-600 dark:text-indigo-400" />
                           {selectedItem.capacity}
                         </span>
                       )}
                     </div>
 
-                    <h4 className="text-lg sm:text-xl font-black text-white tracking-tight font-sans">
+                    <h4 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight font-sans">
                       {selectedItem.name}
                       {selectedItem.subName && (
-                        <span className="text-slate-300 font-semibold text-sm sm:text-base ml-2">
+                        <span className="text-slate-600 dark:text-slate-300 font-semibold text-sm sm:text-base ml-2">
                           — {selectedItem.subName}
                         </span>
                       )}
                     </h4>
 
                     {selectedItem.description && (
-                      <p className="text-xs text-slate-300/90 leading-relaxed max-w-2xl">
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl font-normal">
                         {selectedItem.description}
                       </p>
                     )}
 
-                    <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300 pt-0.5">
+                    <div className="flex flex-wrap items-center gap-4 text-xs pt-0.5">
                       {selectedItem.zone && (
-                        <div className={`flex items-center gap-1.5 font-medium ${isFacility ? 'text-teal-300' : 'text-emerald-300'}`}>
+                        <div className={`flex items-center gap-1.5 font-semibold ${isFacility ? 'text-teal-700 dark:text-teal-300' : 'text-emerald-700 dark:text-emerald-300'}`}>
                           <MapPin className="w-3.5 h-3.5" />
                           <span>Lokasi: {selectedItem.zone}</span>
                         </div>
                       )}
-                      <div className="flex items-center gap-1.5 text-slate-400">
-                        <Clock className="w-3.5 h-3.5 text-slate-400" />
+                      <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 font-medium">
+                        <Clock className="w-3.5 h-3.5" />
                         <span>{selectedItem.operatingHours || (isFacility ? '07:30 - 16:00 WITA' : '08:00 - 15:30 WITA')}</span>
                       </div>
                     </div>
@@ -360,15 +356,15 @@ export function SmartServiceFinder({
                     {/* Section: Amenities (Facility) or Services (Tenant) */}
                     {displayAmenities.length > 0 && (
                       <div className="pt-2">
-                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                        <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
                           {isFacility ? (
                             <>
-                              <Sparkles className="w-3 h-3 text-teal-400" />
+                              <Sparkles className="w-3 h-3 text-teal-600 dark:text-teal-400" />
                               <span>Kelengkapan & Sarana Fasilitas:</span>
                             </>
                           ) : (
                             <>
-                              <Building2 className="w-3 h-3 text-emerald-400" />
+                              <Building2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                               <span>Layanan yang Disediakan:</span>
                             </>
                           )}
@@ -377,9 +373,9 @@ export function SmartServiceFinder({
                           {displayAmenities.map((item, idx) => (
                             <span
                               key={idx}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs bg-slate-800 text-slate-200 border border-slate-700/80 font-medium"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700/80 font-medium shadow-2xs"
                             >
-                              <CheckCircle2 className={`w-3 h-3 ${isFacility ? 'text-teal-400' : 'text-emerald-400'}`} />
+                              <CheckCircle2 className={`w-3 h-3 ${isFacility ? 'text-teal-600 dark:text-teal-400' : 'text-emerald-600 dark:text-emerald-400'}`} />
                               {item}
                             </span>
                           ))}
@@ -394,9 +390,9 @@ export function SmartServiceFinder({
                   <button
                     type="button"
                     onClick={() => onSelectCategory(selectedItem.id)}
-                    className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 hover:text-white border border-slate-700 text-xs font-bold transition-all flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs"
                   >
-                    <Compass className={`w-4 h-4 ${isFacility ? 'text-teal-400' : 'text-emerald-400'}`} />
+                    <Compass className={`w-4 h-4 ${isFacility ? 'text-teal-600 dark:text-teal-400' : 'text-emerald-600 dark:text-emerald-400'}`} />
                     <span>Sorot di Denah Bawah</span>
                   </button>
 
@@ -405,7 +401,7 @@ export function SmartServiceFinder({
                     <button
                       type="button"
                       onClick={() => onOpenQueueBooking?.(selectedItem.name)}
-                      className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-950/60 transition-all flex items-center justify-center gap-2"
+                      className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center gap-2"
                     >
                       <Ticket className="w-4 h-4" />
                       <span>Ambil Antrean Online</span>
@@ -416,7 +412,7 @@ export function SmartServiceFinder({
                     type="button"
                     onClick={onResetSelection}
                     title="Pilih Gerai/Fasilitas Lain"
-                    className="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition-all"
+                    className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white border border-slate-200 dark:border-slate-700 transition-all"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -440,7 +436,7 @@ export function SmartServiceFinder({
                 <div
                   key={service.id}
                   onClick={() => onSelectCategory(service.nodeId)}
-                  className="group cursor-pointer rounded-2xl bg-slate-800/70 hover:bg-slate-800 border border-slate-700/80 hover:border-emerald-500/60 p-4 transition-all duration-200 flex flex-col justify-between hover:shadow-xl hover:shadow-emerald-950/30 hover:-translate-y-0.5"
+                  className="group cursor-pointer rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100/80 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/60 hover:border-emerald-500/60 p-4 transition-all duration-200 flex flex-col justify-between shadow-xs hover:shadow-md hover:-translate-y-0.5"
                 >
                   <div>
                     {/* Card Top: Category, Popular badge & Icon */}
@@ -449,34 +445,34 @@ export function SmartServiceFinder({
                         <div className={`p-2 rounded-xl bg-gradient-to-br ${service.color} text-white shadow-sm`}>
                           <Icon className="w-4 h-4" />
                         </div>
-                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">
+                        <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                           {service.agency}
                         </span>
                       </div>
 
                       {service.popularLabel && (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/20">
                           {service.popularLabel}
                         </span>
                       )}
                     </div>
 
                     {/* Title & Description */}
-                    <h5 className="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors line-clamp-1 mb-1 font-sans">
+                    <h5 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors line-clamp-1 mb-1 font-sans">
                       {service.title}
                     </h5>
-                    <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-3">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed mb-3">
                       {service.description}
                     </p>
 
                     {/* Requirements checklist snippet */}
-                    <div className="space-y-1 pt-2 border-t border-slate-700/60 mb-3">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    <div className="space-y-1 pt-2 border-t border-slate-200 dark:border-slate-700/60 mb-3">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                         Syarat Utama:
                       </span>
                       {service.requirements.slice(0, 2).map((req, i) => (
-                        <div key={i} className="flex items-center gap-1.5 text-[11px] text-slate-300">
-                          <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                        <div key={i} className="flex items-center gap-1.5 text-[11px] text-slate-700 dark:text-slate-300">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
                           <span className="truncate">{req}</span>
                         </div>
                       ))}
@@ -484,13 +480,13 @@ export function SmartServiceFinder({
                   </div>
 
                   {/* Card Bottom: Location & Action */}
-                  <div className="pt-2 border-t border-slate-700/60 flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1 text-[11px] text-emerald-300 font-medium truncate max-w-[170px]">
-                      <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
+                  <div className="pt-2 border-t border-slate-200 dark:border-slate-700/60 flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-1 text-[11px] text-emerald-700 dark:text-emerald-300 font-semibold truncate max-w-[170px]">
+                      <MapPin className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
                       <span className="truncate">{service.zone}</span>
                     </div>
 
-                    <span className="inline-flex items-center gap-1 text-emerald-400 font-bold text-[11px] group-hover:translate-x-0.5 transition-transform">
+                    <span className="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-bold text-[11px] group-hover:translate-x-0.5 transition-transform">
                       <span>Lihat di Denah</span>
                       <ArrowRight className="w-3 h-3" />
                     </span>
@@ -506,4 +502,5 @@ export function SmartServiceFinder({
   );
 }
 
+export const QuickNavigationCard = SmartServiceFinder;
 export default SmartServiceFinder;
