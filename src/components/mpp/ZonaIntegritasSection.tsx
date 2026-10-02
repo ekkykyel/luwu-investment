@@ -1,8 +1,17 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  ShieldCheck, Megaphone, ChevronLeft, ChevronRight, 
-  PhoneCall, X, ExternalLink, ShieldAlert, Shield
+  ShieldCheck, 
+  Megaphone, 
+  ChevronLeft, 
+  ChevronRight, 
+  PhoneCall, 
+  X, 
+  ExternalLink, 
+  ShieldAlert, 
+  Shield,
+  AlertTriangle,
+  Info
 } from 'lucide-react';
 
 export interface IntegritySlide {
@@ -16,13 +25,24 @@ export interface IntegritySlide {
   desc: string;
 }
 
-interface ZonaIntegritasSectionProps {
+export interface ZonaIntegritasSectionProps {
   className?: string;
   isDark?: boolean;
 }
 
+/**
+ * ZonaIntegritasSection Component
+ * Refactored for Symmetrical Desktop Illusion and Native Android App-Like Mobile Experience.
+ * 
+ * Layout Directives:
+ * 1. Global Container: `w-full max-w-5xl mx-auto px-4 md:px-8` with `flex flex-col lg:grid lg:grid-cols-2 lg:gap-12 items-center lg:items-start`
+ * 2. Left Column: Touch-friendly large buttons (`min-h-[56px]`, `rounded-xl`, `active:scale-95`) + Informational Alert Banner (`bg-red-600 text-white font-bold p-5 rounded-2xl`)
+ * 3. Right Column: Material 3 Carousel Card (`bg-white rounded-3xl shadow-sm border border-slate-100 p-6 lg:p-8`)
+ * 4. Mobile Clearance: `mb-28 lg:mb-0` on the right column to clear fixed Android Bottom App Bar
+ */
 export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({ 
-  className 
+  className = '',
+  isDark = false
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isWbsModalOpen, setIsWbsModalOpen] = useState(false);
@@ -95,74 +115,106 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
   return (
     <section 
       id="zona-integritas"
-      className={className || "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 scroll-mt-28"}
+      className={`w-full max-w-5xl mx-auto px-4 md:px-8 py-10 sm:py-16 scroll-mt-28 ${className}`}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      {/* 1. GLOBAL CONTAINER: DESKTOP SYMMETRY & MOBILE STACKING */}
+      <div className="flex flex-col lg:grid lg:grid-cols-2 lg:gap-12 items-center lg:items-start w-full">
         
-        {/* KOLOM KIRI (INFO & ACTION HUB - lg:col-span-5) */}
-        <div className="lg:col-span-5 space-y-4">
-          {/* Badge Top */}
+        {/* 2. LEFT COLUMN (TEXT & ACTIONS) */}
+        <div className="w-full space-y-5 text-left">
+          
+          {/* Header Badge */}
           <div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-red-50 text-red-600 border border-red-200 dark:bg-red-950/60 dark:text-red-400 dark:border-red-800/60 font-sans">
-              <ShieldCheck className="w-4 h-4" /> Zona Integritas WBK / WBBM
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-red-50 text-red-600 border border-red-200 dark:bg-red-950/60 dark:text-red-400 dark:border-red-800/60 font-sans shadow-2xs">
+              <ShieldCheck className="w-4 h-4 text-red-600 dark:text-red-400" />
+              <span>Zona Integritas WBK / WBBM</span>
             </span>
           </div>
 
-          {/* Judul Dual-Tone */}
-          <h2 className="text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white mt-3 leading-tight font-sans">
-            Zona Integritas <span className="bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 bg-clip-text text-transparent">Bebas Pungli</span>
-          </h2>
+          {/* Heading */}
+          <div className="space-y-2">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight font-sans tracking-tight">
+              Zona Integritas{' '}
+              <span className="bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 bg-clip-text text-transparent">
+                Bebas Pungli
+              </span>
+            </h2>
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-medium font-sans leading-relaxed">
+              Pencegahan gratifikasi, akuntabilitas pelayanan publik, dan transparansi penuh tanpa biaya tambahan yang tidak resmi. Seluruh aparatur berkomitmen mewujudkan Wilayah Bebas dari Korupsi di Kabupaten Luwu.
+            </p>
+          </div>
 
-          {/* Deskripsi Singkat */}
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-2 font-medium font-sans">
-            Pencegahan gratifikasi, akuntabilitas pelayanan publik, dan transparansi penuh tanpa biaya tambahan yang tidak resmi.
-          </p>
-
-          {/* Action Buttons Stack (WBS & Saber Pungli WA) */}
-          <div className="flex flex-col sm:flex-row lg:flex-col gap-3 mt-6 font-sans">
+          {/* Action Blocks Stack */}
+          <div className="flex flex-col gap-3.5 pt-2 w-full">
+            
+            {/* Action Block 1: Touch-friendly large button (min-h-[56px]) */}
             <button
               type="button"
               onClick={() => setIsWbsModalOpen(true)}
-              className="w-full inline-flex justify-center items-center gap-2 px-5 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold shadow-md shadow-red-600/20 transition-all font-sans cursor-pointer active:scale-95"
+              className="w-full min-h-[56px] px-6 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-bold text-sm shadow-md shadow-red-600/25 transition-transform duration-200 active:scale-95 flex items-center justify-center gap-3 cursor-pointer select-none"
             >
-              <Megaphone className="w-5 h-5" />
-              <span>Lapor WBS / Whistleblowing System</span>
+              <Megaphone className="w-5 h-5 shrink-0" />
+              <span className="truncate">Lapor WBS / Whistleblowing System</span>
             </button>
+
+            {/* Action Block 2: Touch-friendly large button (min-h-[56px]) */}
             <a
               href="https://wa.me/6281142011?text=Halo%20Satgas%20Saber%20Pungli%20Inspektorat%20Luwu,%20saya%20ingin%20melaporkan%20indikasi%20pelanggaran%20layanan%20di%20MPP"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full inline-flex justify-center items-center gap-2 px-5 py-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-800 font-bold transition-all font-sans"
+              className="w-full min-h-[56px] px-6 py-3.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800 font-bold text-sm transition-transform duration-200 active:scale-95 flex items-center justify-center gap-3 cursor-pointer select-none"
             >
-              <PhoneCall className="w-5 h-5" />
-              <span>Saber Pungli WA Hotline</span>
+              <PhoneCall className="w-5 h-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+              <span className="truncate">Saber Pungli WA Hotline</span>
             </a>
-          </div>
 
-          {/* Banner Jaminan Retribusi Rp 0,- */}
-          <div className="mt-4 p-3.5 rounded-xl bg-gradient-to-r from-rose-500 to-red-600 text-white font-bold text-xs sm:text-sm text-center shadow-sm font-sans">
-            <p>Rp 0,- (GRATIS) KECUALI RETRIBUSI RESMI BANK BPD SULSELBAR • PETUGAS DILARANG MENERIMA UANG CASH</p>
+            {/* Action Block 3: Informational Alert Banner (STRICTLY NON-BUTTON) */}
+            {/* Refactored: No hover:shadow, no cursor-pointer, no click animations */}
+            <div 
+              role="alert"
+              className="w-full bg-red-600 text-white font-bold p-5 rounded-2xl shadow-sm text-left flex items-start gap-3.5"
+            >
+              <AlertTriangle className="w-5 h-5 text-white shrink-0 mt-0.5" />
+              <div className="space-y-1 text-xs sm:text-sm leading-relaxed">
+                <div className="uppercase tracking-wider font-black text-amber-200 text-[11px] sm:text-xs">
+                  Maklumat Bebas Pungutan Liar
+                </div>
+                <p className="font-bold text-white/95">
+                  Rp 0,- (GRATIS) KECUALI RETRIBUSI RESMI BANK BPD SULSELBAR • PETUGAS DILARANG MENERIMA UANG CASH
+                </p>
+                <p className="text-[11px] font-normal text-white/80">
+                  Seluruh pembayaran retribusi daerah yang sah wajib melalui QRIS resmi atau loket Bank BPD Sulselbar dengan bukti setoran kas daerah.
+                </p>
+              </div>
+            </div>
+
           </div>
         </div>
 
-        {/* KOLOM KANAN (PAKTA INTEGRITAS CARD & SLIDER CONTROL - lg:col-span-7) */}
-        <div className="lg:col-span-7 space-y-4">
-          {/* Card Container */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/50 dark:shadow-none space-y-6 relative border-l-4 border-l-red-500 font-sans">
-            {/* Tag Sub-Judul Kartu */}
+        {/* 3. RIGHT COLUMN (CAROUSEL CARD) & 4. MOBILE-SPECIFIC FIXES */}
+        {/* mb-28 on mobile ensures safe clearance from fixed Bottom App Bar, reset to lg:mb-0 on desktop */}
+        <div className="w-full space-y-4 mt-8 lg:mt-0 mb-28 lg:mb-0">
+          
+          {/* Material Design 3 Card Aesthetics: bg-white rounded-3xl shadow-sm border border-slate-100 p-6 lg:p-8 */}
+          <div className="w-full bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 p-6 lg:p-8 space-y-6 relative border-l-4 border-l-red-500 font-sans transition-all duration-300">
+            
+            {/* Kicker Badge Header */}
             <div className="flex items-center justify-between gap-2 flex-wrap">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-sans">
-                <Shield className="w-4 h-4 text-red-500" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-sans border border-slate-200/80 dark:border-slate-700/80">
+                <Shield className="w-4 h-4 text-red-600 dark:text-red-400" />
                 <span>{currentSlide.badge}</span>
+              </span>
+              <span className="text-[10px] font-mono font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                Slide {currentIndex + 1} dari {totalSlides}
               </span>
             </div>
 
             {/* Sub-Header & Isi Pakta */}
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <h3 className="text-xs font-extrabold uppercase tracking-widest text-red-600 dark:text-red-400 font-sans">
                 {currentSlide.tag}
               </h3>
-              <h4 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-sans">
+              <h4 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-sans tracking-tight">
                 {currentSlide.title}
               </h4>
               <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-sans font-normal">
@@ -170,45 +222,69 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
               </p>
             </div>
 
+            {/* Sub-note on Law */}
+            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex items-start gap-2.5">
+              <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+              <div className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                <strong className="text-slate-700 dark:text-slate-300 font-semibold">Regulasi Acuan: </strong>
+                {currentSlide.law}
+              </div>
+            </div>
+
             {/* Footer Kartu & Link Rincian Sanksi */}
             <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4 font-sans">
-              <span className="text-xs font-mono text-slate-400">
+              <span className="text-xs font-mono font-medium text-slate-400">
                 {currentSlide.law.split('&')[0]}
               </span>
               <button
                 type="button"
                 onClick={() => setSelectedPillar(currentSlide)}
-                className="text-xs font-bold text-red-600 hover:text-red-700 dark:text-red-400 inline-flex items-center gap-1 cursor-pointer font-sans"
+                className="text-xs font-bold text-red-600 hover:text-red-700 dark:text-red-400 inline-flex items-center gap-1 cursor-pointer transition-colors font-sans hover:underline"
               >
                 <span>Rincian Sanksi Hukum &rarr;</span>
               </button>
             </div>
+
+            {/* Integrasi Navigasi Slider di Bawah Kartu */}
+            <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/60 font-sans">
+              <div className="flex items-center gap-1.5">
+                {slides.map((_, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setCurrentIndex(idx)}
+                    aria-label={`Buka slide ${idx + 1}`}
+                    className={`h-2 rounded-full transition-all cursor-pointer ${
+                      currentIndex === idx 
+                        ? 'w-6 bg-red-600 dark:bg-red-500' 
+                        : 'w-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300'
+                    }`}
+                  />
+                ))}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={prevSlide}
+                  aria-label="Slide sebelumnya"
+                  className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer active:scale-95"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={nextSlide}
+                  aria-label="Slide berikutnya"
+                  className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer active:scale-95"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
           </div>
 
-          {/* Integrasi Navigasi Slider di Bawah Kartu */}
-          <div className="flex items-center justify-between pt-2 px-1 font-sans">
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={prevSlide}
-                aria-label="Slide sebelumnya"
-                className="p-2 rounded-full border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer active:scale-95"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 px-2 min-w-[40px] text-center">
-                {currentIndex + 1} / {totalSlides}
-              </span>
-              <button
-                type="button"
-                onClick={nextSlide}
-                aria-label="Slide berikutnya"
-                className="p-2 rounded-full border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer active:scale-95"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
         </div>
 
       </div>
@@ -226,11 +302,12 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ duration: 0.2 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-lg rounded-3xl border border-rose-500/30 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl p-5 sm:p-7 relative"
+              className="w-full max-w-lg rounded-3xl border border-rose-500/30 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl p-5 sm:p-7 relative font-sans"
             >
               <button
                 type="button"
                 onClick={() => setSelectedPillar(null)}
+                aria-label="Tutup rincian sanksi"
                 className="absolute top-4 right-4 p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-500 hover:text-white transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
@@ -251,7 +328,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
               </div>
 
               <div className="space-y-3 text-xs text-slate-600 dark:text-slate-300">
-                <div className="p-3 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10">
+                <div className="p-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10">
                   <strong className="block text-slate-900 dark:text-white mb-1 font-bold">
                     📜 Landasan Hukum & Regulasi:
                   </strong>
@@ -260,7 +337,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                   </p>
                 </div>
 
-                <div className="p-3 rounded-2xl bg-rose-500/10 border border-rose-500/20">
+                <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20">
                   <strong className="block text-rose-700 dark:text-rose-400 mb-1 font-bold">
                     ⚠️ Sanksi Tegas & Konsekuensi Hukum:
                   </strong>
@@ -269,7 +346,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                   </p>
                 </div>
 
-                <div className="p-3 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10">
+                <div className="p-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10">
                   <strong className="block text-slate-900 dark:text-white mb-1 font-bold">
                     🛡️ Penerapan di MPP Simpurusiang:
                   </strong>
@@ -309,11 +386,12 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ duration: 0.2 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-lg rounded-3xl border border-rose-500/40 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl p-5 sm:p-7 relative"
+              className="w-full max-w-lg rounded-3xl border border-rose-500/40 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl p-5 sm:p-7 relative font-sans"
             >
               <button
                 type="button"
                 onClick={() => setIsWbsModalOpen(false)}
+                aria-label="Tutup form WBS"
                 className="absolute top-4 right-4 p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-500 hover:text-white transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
@@ -333,8 +411,8 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                 </div>
               </div>
 
-              <div className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300 mb-4">
-                <div className="p-3 rounded-2xl bg-rose-500/10 border border-rose-500/20">
+              <div className="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-4">
+                <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20">
                   <strong className="text-rose-700 dark:text-rose-300 block mb-1">
                     🛡️ Perlindungan Identitas Pelapor:
                   </strong>
@@ -348,7 +426,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                     href="https://wa.me/6281142011?text=Halo%20Inspektorat%20Luwu,%20saya%20ingin%20melaporkan%20indikasi%20pungli/gratifikasi%20pada%20loket%20MPP:%20[Nama%20Instansi/Loket]%20pada%20tanggal%20[Tanggal]"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full p-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-between font-bold transition-all shadow-md shadow-emerald-700/20"
+                    className="w-full p-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-between font-bold transition-all shadow-md shadow-emerald-700/20"
                   >
                     <div className="flex items-center gap-2.5">
                       <PhoneCall className="w-4 h-4" />
@@ -364,7 +442,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                     href="https://www.lapor.go.id"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full p-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white flex items-center justify-between font-bold transition-all border border-white/10"
+                    className="w-full p-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white flex items-center justify-between font-bold transition-all border border-white/10"
                   >
                     <div className="flex items-center gap-2.5">
                       <ExternalLink className="w-4 h-4 text-rose-400" />

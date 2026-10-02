@@ -14,7 +14,7 @@ export function AntiCorruptionBanner({
 }: AntiCorruptionBannerProps) {
   return (
     <ZonaIntegritasSection 
-      className={className || "w-full max-w-xl mx-auto px-4 pt-8 pb-24 space-y-4 text-slate-900 dark:text-slate-100"} 
+      className={className} 
       isDark={isDark} 
     />
   );
