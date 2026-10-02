@@ -257,121 +257,175 @@ export function SmartServiceFinder({
       {/* 3. DYNAMIC PANEL: SELECTED ITEM CALLOUT OR FAST-TRACK CARDS       */}
       {/* ───────────────────────────────────────────────────────────────── */}
       <AnimatePresence mode="wait">
-        {selectedItem ? (
-          /* A. ACTIVE SELECTION SPOTLIGHT CARD (FROM DENAH OR DIRECTORY) */
-          <motion.div
-            key={`selected-${selectedItem.id}`}
-            initial={{ opacity: 0, y: 15, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -15, scale: 0.98 }}
-            transition={{ duration: 0.2 }}
-            className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-800/90 via-slate-850 to-slate-900 border border-emerald-500/40 p-5 sm:p-6 shadow-2xl"
-          >
-            {/* Ambient Background Glow */}
-            <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        {selectedItem ? (() => {
+          const isFacility = selectedItem.type === 'facility' || selectedItem.category === 'facility';
+          const displayAmenities = selectedItem.amenities || selectedItem.services || [];
+          
+          return (
+            /* A. ACTIVE SELECTION SPOTLIGHT CARD (FROM DENAH OR DIRECTORY) */
+            <motion.div
+              key={`selected-${selectedItem.id}`}
+              initial={{ opacity: 0, y: 15, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -15, scale: 0.98 }}
+              transition={{ duration: 0.2 }}
+              className={`relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-800/95 via-slate-850 to-slate-900 border p-5 sm:p-6 shadow-2xl ${
+                isFacility ? 'border-teal-500/40' : 'border-emerald-500/40'
+              }`}
+            >
+              {/* Ambient Background Glow */}
+              <div className={`absolute top-0 right-0 w-80 h-80 rounded-full blur-3xl pointer-events-none ${
+                isFacility ? 'bg-teal-500/10' : 'bg-emerald-500/10'
+              }`} />
 
-            <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-              
-              {/* Left Details */}
-              <div className="flex items-start gap-4">
-                <div className="p-3.5 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shrink-0">
-                  <Building2 className="w-7 h-7" />
-                </div>
-
-                <div className="space-y-1.5">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                      ID: {selectedItem.code || selectedItem.id}
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      Normal / Buka
-                    </span>
-                    {selectedItem.isDisabilityFriendly && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
-                        <Accessibility className="w-3 h-3 text-cyan-400" />
-                        Ramah Disabilitas
-                      </span>
-                    )}
+              <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                
+                {/* Left Details */}
+                <div className="flex items-start gap-4">
+                  <div className={`p-3.5 rounded-2xl border shrink-0 ${
+                    isFacility 
+                      ? 'bg-teal-500/20 text-teal-400 border-teal-500/30' 
+                      : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                  }`}>
+                    {isFacility ? <Sparkles className="w-7 h-7" /> : <Building2 className="w-7 h-7" />}
                   </div>
 
-                  <h4 className="text-lg sm:text-xl font-black text-white tracking-tight font-sans">
-                    {selectedItem.name}
-                    {selectedItem.subName && (
-                      <span className="text-slate-300 font-semibold text-sm sm:text-base ml-2">
-                        — {selectedItem.subName}
+                  <div className="space-y-1.5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {/* Element Type Tag */}
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold border uppercase tracking-wider ${
+                        isFacility 
+                          ? 'bg-teal-500/20 text-teal-300 border-teal-500/30' 
+                          : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                      }`}>
+                        {isFacility ? 'Fasilitas Publik' : 'Gerai Pelayanan'}
                       </span>
-                    )}
-                  </h4>
 
-                  <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300 pt-0.5">
-                    {selectedItem.zone && (
-                      <div className="flex items-center gap-1.5 text-emerald-300 font-medium">
-                        <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Lokasi: {selectedItem.zone}</span>
-                      </div>
-                    )}
-                    <div className="flex items-center gap-1.5 text-slate-400">
-                      <Clock className="w-3.5 h-3.5 text-slate-400" />
-                      <span>{selectedItem.operatingHours || '08:00 - 15:30 WITA'}</span>
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                        ID: {selectedItem.code || selectedItem.id}
+                      </span>
+
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
+                        isFacility
+                          ? 'bg-teal-500/10 text-teal-400 border-teal-500/20'
+                          : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                      }`}>
+                        <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isFacility ? 'bg-teal-400' : 'bg-emerald-400'}`} />
+                        {isFacility ? 'Tersedia / Siap Digunakan' : 'Normal / Buka'}
+                      </span>
+
+                      {selectedItem.isDisabilityFriendly && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+                          <Accessibility className="w-3 h-3 text-cyan-400" />
+                          Ramah Disabilitas
+                        </span>
+                      )}
+
+                      {isFacility && selectedItem.capacity && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                          <Users className="w-3 h-3 text-indigo-400" />
+                          {selectedItem.capacity}
+                        </span>
+                      )}
                     </div>
-                  </div>
 
-                  {/* Services List Preview */}
-                  {selectedItem.services && selectedItem.services.length > 0 && (
-                    <div className="pt-2">
-                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                        Layanan yang Disediakan:
+                    <h4 className="text-lg sm:text-xl font-black text-white tracking-tight font-sans">
+                      {selectedItem.name}
+                      {selectedItem.subName && (
+                        <span className="text-slate-300 font-semibold text-sm sm:text-base ml-2">
+                          — {selectedItem.subName}
+                        </span>
+                      )}
+                    </h4>
+
+                    {selectedItem.description && (
+                      <p className="text-xs text-slate-300/90 leading-relaxed max-w-2xl">
+                        {selectedItem.description}
                       </p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {selectedItem.services.map((srv, idx) => (
-                          <span
-                            key={idx}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs bg-slate-800 text-slate-200 border border-slate-700/80 font-medium"
-                          >
-                            <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                            {srv}
-                          </span>
-                        ))}
+                    )}
+
+                    <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300 pt-0.5">
+                      {selectedItem.zone && (
+                        <div className={`flex items-center gap-1.5 font-medium ${isFacility ? 'text-teal-300' : 'text-emerald-300'}`}>
+                          <MapPin className="w-3.5 h-3.5" />
+                          <span>Lokasi: {selectedItem.zone}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-1.5 text-slate-400">
+                        <Clock className="w-3.5 h-3.5 text-slate-400" />
+                        <span>{selectedItem.operatingHours || (isFacility ? '07:30 - 16:00 WITA' : '08:00 - 15:30 WITA')}</span>
                       </div>
                     </div>
-                  )}
+
+                    {/* Section: Amenities (Facility) or Services (Tenant) */}
+                    {displayAmenities.length > 0 && (
+                      <div className="pt-2">
+                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                          {isFacility ? (
+                            <>
+                              <Sparkles className="w-3 h-3 text-teal-400" />
+                              <span>Kelengkapan & Sarana Fasilitas:</span>
+                            </>
+                          ) : (
+                            <>
+                              <Building2 className="w-3 h-3 text-emerald-400" />
+                              <span>Layanan yang Disediakan:</span>
+                            </>
+                          )}
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {displayAmenities.map((item, idx) => (
+                            <span
+                              key={idx}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs bg-slate-800 text-slate-200 border border-slate-700/80 font-medium"
+                            >
+                              <CheckCircle2 className={`w-3 h-3 ${isFacility ? 'text-teal-400' : 'text-emerald-400'}`} />
+                              {item}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
+
+                {/* Right Actions: Conditional Button */}
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 shrink-0 w-full lg:w-auto">
+                  <button
+                    type="button"
+                    onClick={() => onSelectCategory(selectedItem.id)}
+                    className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 hover:text-white border border-slate-700 text-xs font-bold transition-all flex items-center justify-center gap-2"
+                  >
+                    <Compass className={`w-4 h-4 ${isFacility ? 'text-teal-400' : 'text-emerald-400'}`} />
+                    <span>Sorot di Denah Bawah</span>
+                  </button>
+
+                  {!isFacility && (
+                    /* IF TENANT: Show Ambil Antrean button */
+                    <button
+                      type="button"
+                      onClick={() => onOpenQueueBooking?.(selectedItem.name)}
+                      className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-950/60 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Ticket className="w-4 h-4" />
+                      <span>Ambil Antrean Online</span>
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={onResetSelection}
+                    title="Pilih Gerai/Fasilitas Lain"
+                    className="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition-all"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
               </div>
-
-              {/* Right Actions */}
-              <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 shrink-0 w-full lg:w-auto">
-                <button
-                  type="button"
-                  onClick={() => onSelectCategory(selectedItem.id)}
-                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 hover:text-white border border-slate-700 text-xs font-bold transition-all flex items-center justify-center gap-2"
-                >
-                  <Compass className="w-4 h-4 text-emerald-400" />
-                  <span>Sorot di Denah Bawah</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => onOpenQueueBooking?.(selectedItem.name)}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-950/60 transition-all flex items-center justify-center gap-2"
-                >
-                  <Ticket className="w-4 h-4" />
-                  <span>Ambil Antrean</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={onResetSelection}
-                  title="Pilih Gerai Lain"
-                  className="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition-all"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-            </div>
-          </motion.div>
-        ) : (
+            </motion.div>
+          );
+        })() : (
           /* B. FAST-TRACK CARDS DIRECTORY GRID */
           <motion.div
             key="directory-grid"

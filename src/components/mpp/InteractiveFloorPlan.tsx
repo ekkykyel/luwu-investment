@@ -26,7 +26,9 @@ import {
   HelpCircle,
   Eye,
   SlidersHorizontal,
-  Compass
+  Compass,
+  Users,
+  ShieldCheck
 } from 'lucide-react';
 
 export type FloorCategory = 'all' | 'counter' | 'facility' | 'disability';
@@ -51,6 +53,303 @@ export interface FloorNode {
   wayfindingTips?: string;
 }
 
+export interface FacilityDetailInfo {
+  id: string;
+  name: string;
+  description: string;
+  capacity?: string;
+  amenities: string[];
+  isAccessibleDisability: boolean;
+  status: 'available' | 'maintenance' | 'in_use';
+}
+
+export const FACILITY_DETAILS: Record<string, FacilityDetailInfo> = {
+  'ruang_perawatan': {
+    id: 'ruang_perawatan',
+    name: 'Pojok Laktasi & Ibu Menyusui',
+    description: 'Ruang privat yang higienis, tenang, dan nyaman khusus bagi ibu menyusui dan memerah ASI.',
+    capacity: '3 - 4 Ibu & Bayi',
+    amenities: [
+      'Sofa Menyusui Ergonomis & Tirai Privasi',
+      'Air Purifier HEPA & AC Central Sejuk',
+      'Kulkas Khusus Penyimpanan ASI Perah',
+      'Sterilizer & Pemanas Botol Susu Elektrik',
+      'Wastafel Cuci Tangan & Sabun Antiseptik',
+      'Meja Ganti Popok Bayi (Diaper Table Lembut)',
+      'Stop Kontak & Fast Charging Station'
+    ],
+    isAccessibleDisability: true,
+    status: 'available'
+  },
+  'ruang_laktasi': {
+    id: 'ruang_laktasi',
+    name: 'Pojok Laktasi & Ibu Menyusui',
+    description: 'Ruang privat yang higienis, tenang, dan nyaman khusus bagi ibu menyusui dan memerah ASI.',
+    capacity: '3 - 4 Ibu & Bayi',
+    amenities: [
+      'Sofa Menyusui Ergonomis & Tirai Privasi',
+      'Air Purifier HEPA & AC Central Sejuk',
+      'Kulkas Khusus Penyimpanan ASI Perah',
+      'Sterilizer & Pemanas Botol Susu Elektrik',
+      'Wastafel Cuci Tangan & Sabun Antiseptik',
+      'Meja Ganti Popok Bayi (Diaper Table Lembut)',
+      'Stop Kontak & Fast Charging Station'
+    ],
+    isAccessibleDisability: true,
+    status: 'available'
+  },
+  'layanan_disabilitas': {
+    id: 'layanan_disabilitas',
+    name: 'Layanan Inklusif & Jalur Ramah Disabilitas',
+    description: 'Pos fasilitasi dan pendampingan terpadu bagi penyandang disabilitas, lansia, dan kelompok rentan.',
+    capacity: '5 - 8 Pemohon Prioritas',
+    amenities: [
+      'Kursi Roda & Tongkat Ketiak Standar Medis',
+      'Jalur Pemandu Tactile (Guiding Blocks Kuning)',
+      'Loket Pelayanan Rendah (Wheelchair Height)',
+      'Petugas Pendamping Bahasa Isyarat',
+      'Earphone & Perangkat Bantu Dengar Audio',
+      'Formulir Huruf Braille & Dokumen Khusus',
+      'Jalur Evakuasi Landai (Ramp Anti-Slip)'
+    ],
+    isAccessibleDisability: true,
+    status: 'available'
+  },
+  'ruang_bermain_anak': {
+    id: 'ruang_bermain_anak',
+    name: 'Ruang Bermain Anak (Kids Play Corner)',
+    description: 'Area bermain edukatif yang aman dan ramah anak untuk kenyamanan keluarga pemohon layanan.',
+    capacity: '10 - 15 Anak',
+    amenities: [
+      'Matras Lembut Anti-Benturan (Soft Play Floor)',
+      'Mainan Edukatif Bersertifikat SNI',
+      'Buku Cerita Bergambar & Meja Mewarnai',
+      'Smart TV Edukasi & Kartun Ramah Anak',
+      'Dispenser Air Minum Higienis',
+      'CCTV Pemantau Keamanan 24 Jam',
+      'Pendingin Udara AC & Filter Udara Sehat'
+    ],
+    isAccessibleDisability: true,
+    status: 'available'
+  },
+  'mushalla': {
+    id: 'mushalla',
+    name: 'Mushalla Al-Ikhlas MPP Simpurusiang',
+    description: 'Sarana ibadah yang bersih, tenang, dan representatif bagi pengunjung maupun petugas MPP.',
+    capacity: '25 - 30 Jamaah',
+    amenities: [
+      'Tempat Wudhu Pria & Wanita Terpisah',
+      'Karpet Sajadah Tebal & Harum',
+      'Mukena, Sarung & Al-Quran Bersih',
+      'Pendingin Ruangan AC Split',
+      'Penunjuk Arah Kiblat Presisi',
+      'Rak Sepatu & Sandal Khusus Wudhu',
+      'Sound System Azan & Panggilan Sholat'
+    ],
+    isAccessibleDisability: true,
+    status: 'available'
+  },
+  'ruang_baca': {
+    id: 'ruang_baca',
+    name: 'Pojok Baca Digital & Ruang Literasi',
+    description: 'Fasilitas membaca dan penelusuran referensi digital persembahan Dinas Perpustakaan & Kearsipan Luwu.',
+    capacity: '8 - 12 Pengunjung',
+    amenities: [
+      'Tablet & PC Akses E-Perpusnas / E-Luwu',
+      'Koleksi Buku Fisik, Jurnal & Majalah Terbaru',
+      'Sofa Baca Nyaman & Meja Diskusi Literasi',
+      'Free High-Speed Wi-Fi Pemkab Luwu',
+      'Stop Kontak Charging di Setiap Meja',
+      'Pencahayaan Hangat (Warm White) Ramah Mata'
+    ],
+    isAccessibleDisability: true,
+    status: 'available'
+  },
+  'toilet_pria': {
+    id: 'toilet_pria',
+    name: 'Toilet Pria & Sanitasi Bersih',
+    description: 'Fasilitas sanitasi toilet pria standar modern dengan sirkulasi udara bersih dan higienis.',
+    capacity: '4 Bilik + 4 Urinoir Otomatis',
+    amenities: [
+      'Bilik Kloset Duduk & Jongkok Higienis',
+      'Urinoir Sensor Flush Otomatis',
+      'Wastafel Cermin & Dispenser Sabun Sensor',
+      'Hand Dryer Pengering Tangan Cepat',
+      'Exhaust Fan & Pewangi Ruangan Otomatis',
+      'Tempat Sampah Tertutup Sensor'
+    ],
+    isAccessibleDisability: false,
+    status: 'available'
+  },
+  'toilet_wanita': {
+    id: 'toilet_wanita',
+    name: 'Toilet Wanita & Sanitasi Inklusif',
+    description: 'Fasilitas sanitasi toilet wanita bersih, higienis, dan dilengkapi bilik khusus ramah difabel.',
+    capacity: '6 Bilik Sanitasi',
+    amenities: [
+      'Bilik Khusus Difabel (Handrail Besi & Pintu Geser Lebar)',
+      'Kloset Duduk Higienis Standar Inklusif',
+      'Wastafel Rias Cermin LED & Sabun Antiseptik',
+      'Tempat Pembuangan Khusus Sanitasi Wanita',
+      'Hand Dryer & Hand Towel',
+      'Tombol Darurat (Emergency Call Button) di Bilik Difabel'
+    ],
+    isAccessibleDisability: true,
+    status: 'available'
+  },
+  'smoking_area': {
+    id: 'smoking_area',
+    name: 'Smoking Area (Area Merokok Terbuka)',
+    description: 'Area terbuka dengan sirkulasi alami terpisah dari gedung utama agar tidak mencemari ruang pelayanan publik.',
+    capacity: '10 - 15 Orang',
+    amenities: [
+      'Asbak Berdiri Khusus (Standing Ashtray Safety)',
+      'Kanopi Peneduh Panas & Hujan',
+      'Bangku Kayu Taman Tahan Cuaca',
+      'Tanaman Hias Penyerap Polusi Udara',
+      'Tempat Sampah Pilah Puntung Rokok'
+    ],
+    isAccessibleDisability: true,
+    status: 'available'
+  },
+  'ruang_istirahat': {
+    id: 'ruang_istirahat',
+    name: 'Ruang Istirahat & Locker Petugas',
+    description: 'Fasilitas rehat internal bagi petugas loket dan front office untuk menjaga kualitas prima pelayanan.',
+    capacity: '12 Petugas',
+    amenities: [
+      'Locker Kunci Pribadi Petugas Loket',
+      'Sofa Rehat Nyaman & Dispenser Air Minum',
+      'Kotak P3K & Perlengkapan Medis Darurat',
+      'Microwave & Kulkas Mini Petugas',
+      'Meja Santap Petugas Terpisah'
+    ],
+    isAccessibleDisability: true,
+    status: 'available'
+  },
+  'ruang_tim_teknis': {
+    id: 'ruang_tim_teknis',
+    name: 'Ruang Tim Teknis Lintas OPD Terpadu',
+    description: 'Workstation 10 Komputer koordinasi teknis verifikasi dokumen PKKPR, PBG, Andalalin, dan Amdal.',
+    capacity: '15 - 20 Tim Teknis',
+    amenities: [
+      '10 Unit PC Workstation High-Spec Multi-Screen',
+      'Jaringan Intranet Dedicated Fiber Optic Pemda',
+      'Printer & Scanner Dokumen Plotter A3/A4',
+      'Meja Diskusi Pleno Teknis Perizinan',
+      'Smart Interactive Board Presentasi Peta CAD/GIS',
+      'AC Central Sejuk & Ergonomic Chairs'
+    ],
+    isAccessibleDisability: true,
+    status: 'available'
+  },
+  'ruang_rapat': {
+    id: 'ruang_rapat',
+    name: 'Ruang Rapat Utama & Ekspose Investasi',
+    description: 'Ruang konferensi representatif untuk rapat koordinasi instansi, evaluasi SLA, dan ekspose investor VIP.',
+    capacity: '20 - 30 Orang',
+    amenities: [
+      'Meja Rapat Konferensi Kayu Solid Oval',
+      'Smart LED TV 85-Inch 4K & Video Conference System',
+      'Mikrofon Delegasi Audio Conference System',
+      'Podium Presentasi & Laser Pointer Wireless',
+      'Koneksi HDMI & Screen Casting Terintegrasi',
+      'Kursi Rapat Eksekutif Ergonomis'
+    ],
+    isAccessibleDisability: true,
+    status: 'available'
+  },
+  'dekranasda': {
+    id: 'dekranasda',
+    name: 'Dekranasda & Galeri Produk Unggulan Luwu',
+    description: 'Galeri pameran dan promosi produk kerajinan tenun, kriya, kuliner, dan kopi khas Kabupaten Luwu.',
+    capacity: '15 - 20 Pengunjung',
+    amenities: [
+      'Etalase Display Produk Tenun & Kriya Berlampu LED',
+      'Katalog Digital Produk UMKM & Transaksi QRIS',
+      'Sample Kopi Khas Luwu (Latimojong & Bastem)',
+      'Brosur & Informasi Kemitraan Usaha Daerah',
+      'Meja Kasir Terpadu Bank Sulselbar'
+    ],
+    isAccessibleDisability: true,
+    status: 'available'
+  },
+  'front_office': {
+    id: 'front_office',
+    name: 'Front Office Concierge & Resepsionis Sentral',
+    description: 'Pusat penerimaan tamu, bantuan informasi awal, verifikasi berkas cepat, dan pemandu alur MPP Simpurusiang.',
+    capacity: 'Meja Layanan 4 Petugas Sentral',
+    amenities: [
+      'Petugas Front Office & Concierge Ramah Profesional',
+      'Buku Tamu Digital & Scanner Barcode',
+      'Papan Informasi Alur Layanan 19 Instansi Terpadu',
+      'Helpdesk Pengaduan & Asistensi SP4N LAPOR',
+      'Kamera CCTV Sentral & Intercom Panggilan'
+    ],
+    isAccessibleDisability: true,
+    status: 'available'
+  },
+  'layanan_mandiri_1': {
+    id: 'layanan_mandiri_1',
+    name: 'E-Kiosk 1 (Tiket Antrean & Layanan Mandiri)',
+    description: 'Mesin self-service touch-screen untuk pengambilan nomor tiket antrean berbasis NIK dan cetak QR Code.',
+    capacity: '1 Unit Kios Mandiri',
+    amenities: [
+      'Layar Sentuh Interaktif 24-Inch Full HD',
+      'Thermal Printer Tiket Antrean Cepat',
+      'Barcode Scanner & E-KTP Card Reader',
+      'Petugas Pendamping Khusus E-Kiosk',
+      'Instruksi Audio Panduan Pengambilan Antrean'
+    ],
+    isAccessibleDisability: true,
+    status: 'available'
+  },
+  'layanan_mandiri_2': {
+    id: 'layanan_mandiri_2',
+    name: 'E-Kiosk 2 (Tiket Antrean & Layanan Mandiri)',
+    description: 'Mesin self-service touch-screen untuk pengambilan nomor tiket antrean berbasis NIK dan cetak QR Code.',
+    capacity: '1 Unit Kios Mandiri',
+    amenities: [
+      'Layar Sentuh Interaktif 24-Inch Full HD',
+      'Thermal Printer Tiket Antrean Cepat',
+      'Barcode Scanner & E-KTP Card Reader',
+      'Petugas Pendamping Khusus E-Kiosk',
+      'Instruksi Audio Panduan Pengambilan Antrean'
+    ],
+    isAccessibleDisability: true,
+    status: 'available'
+  },
+  'pos_keamanan': {
+    id: 'pos_keamanan',
+    name: 'Pos Penjagaan & Pemeriksaan Awal',
+    description: 'Pos keamanan Satpol PP dan sekuriti untuk pemeriksaan awal, penitipan barang, dan ketertiban gedung.',
+    capacity: '2 - 3 Petugas Keamanan',
+    amenities: [
+      'Metal Detector & Walkthrough Gate Sensor',
+      'Monitor CCTV 16 Channel Realtime Gedung',
+      'Kotak P3K Medis Darurat',
+      'Alat Pemadam Api Ringan (APAR)',
+      'Buku Log Tamu Khusus & Penitipan Barang'
+    ],
+    isAccessibleDisability: true,
+    status: 'available'
+  },
+  'gerbang_masuk': {
+    id: 'gerbang_masuk',
+    name: 'Pintu Gerbang Masuk Utama',
+    description: 'Akses masuk utama gedung MPP Simpurusiang dengan pintu kaca otomatis sensor dan ramp landai difabel.',
+    capacity: 'Sirkulasi Pengunjung Bebas',
+    amenities: [
+      'Pintu Kaca Otomatis Sensor Gerak',
+      'Ramp Landai Standar Kursi Roda Difabel',
+      'Guiding Block Tactile Tunanetra',
+      'Karpet Debu Sanitasi & Disinfeksi'
+    ],
+    isAccessibleDisability: true,
+    status: 'available'
+  }
+};
+
 export interface SelectedFloorItem {
   id: string;
   code?: string;
@@ -62,6 +361,10 @@ export interface SelectedFloorItem {
   status: 'open' | 'busy' | 'closed' | 'active' | 'standby' | 'alert' | 'responding';
   services: string[];
   description?: string;
+  capacity?: string;
+  amenities?: string[];
+  isAccessibleDisability?: boolean;
+  facilityStatus?: 'available' | 'maintenance' | 'in_use';
   operatingHours?: string;
   wayfindingTips?: string;
   isDisabilityFriendly?: boolean;
@@ -938,17 +1241,25 @@ export function InteractiveFloorPlan({
   const handleSelectNode = (node: FloorNode) => {
     setSelectedNode(node);
     if (onSelectElement) {
+      const isFacility = node.category === 'facility';
+      const facilityInfo = FACILITY_DETAILS[node.id];
       const selectedItem: SelectedFloorItem = {
         id: node.id,
         code: node.id,
-        name: node.name,
+        name: isFacility && facilityInfo ? facilityInfo.name : node.name,
         subName: node.subName,
-        type: node.category === 'counter' ? 'tenant' : 'facility',
+        type: isFacility ? 'facility' : 'tenant',
         category: node.category,
         zone: node.zone,
         status: node.status === 'open' ? 'open' : 'busy',
-        services: node.services,
-        description: `${node.name} - ${node.subName || ''}. Lokasi: ${node.zone}`,
+        services: isFacility && facilityInfo ? facilityInfo.amenities : node.services,
+        description: isFacility && facilityInfo 
+          ? facilityInfo.description 
+          : `${node.name} - ${node.subName || ''}. Lokasi: ${node.zone}`,
+        capacity: facilityInfo?.capacity,
+        amenities: facilityInfo?.amenities,
+        isAccessibleDisability: facilityInfo?.isAccessibleDisability ?? node.isDisabilityFriendly,
+        facilityStatus: facilityInfo?.status ?? 'available',
         operatingHours: node.operatingHours,
         wayfindingTips: node.wayfindingTips,
         isDisabilityFriendly: node.isDisabilityFriendly
@@ -1418,123 +1729,206 @@ export function InteractiveFloorPlan({
       {/* 4. FLOATING DETAIL CARD / MODAL POPOVER                             */}
       {/* ───────────────────────────────────────────────────────────────── */}
       <AnimatePresence>
-        {selectedNode && (
-          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
-            <motion.div
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 30, scale: 0.95 }}
-              transition={{ duration: 0.25 }}
-              className={`w-full max-w-lg p-5 sm:p-6 rounded-3xl border shadow-2xl overflow-hidden relative flex flex-col justify-between ${
-                isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
-              }`}
-            >
-              {/* Card Header */}
-              <div className="flex items-start justify-between gap-3 border-b pb-3.5 border-slate-100 dark:border-slate-800">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                      {selectedNode.zone}
-                    </span>
-                    {selectedNode.isDisabilityFriendly && (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-50 dark:bg-cyan-950/80 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800">
-                        <Accessibility className="w-3 h-3" />
-                        <span>Ramah Disabilitas</span>
+        {selectedNode && (() => {
+          const isFacility = selectedNode.category === 'facility';
+          const facilityInfo = FACILITY_DETAILS[selectedNode.id];
+          const displayName = isFacility && facilityInfo ? facilityInfo.name : selectedNode.name;
+          const displayDesc = isFacility && facilityInfo ? facilityInfo.description : selectedNode.subName;
+          const displayAmenities = isFacility && facilityInfo ? facilityInfo.amenities : selectedNode.services;
+          const isAccessible = (isFacility && facilityInfo ? facilityInfo.isAccessibleDisability : selectedNode.isDisabilityFriendly);
+
+          return (
+            <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-xs">
+              <motion.div
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 30, scale: 0.95 }}
+                transition={{ duration: 0.25 }}
+                className={`w-full max-w-lg p-5 sm:p-6 rounded-3xl border shadow-2xl overflow-hidden relative flex flex-col justify-between max-h-[90vh] overflow-y-auto ${
+                  isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
+                }`}
+              >
+                {/* Card Header with Distinct Type Badges */}
+                <div className="flex items-start justify-between gap-3 border-b pb-3.5 border-slate-100 dark:border-slate-800">
+                  <div className="space-y-1.5">
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                      {/* Element Type Badge */}
+                      <span className={`text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
+                        isFacility
+                          ? 'bg-teal-500/10 text-teal-400 border-teal-500/30'
+                          : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                      }`}>
+                        {isFacility ? 'Fasilitas Publik' : 'Gerai Pelayanan'}
                       </span>
+
+                      {/* Zone Badge */}
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                        {selectedNode.zone}
+                      </span>
+
+                      {/* Accessibility Badge */}
+                      {isAccessible && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-50 dark:bg-cyan-950/80 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800">
+                          <Accessibility className="w-3 h-3 text-cyan-500" />
+                          <span>Ramah Disabilitas</span>
+                        </span>
+                      )}
+
+                      {/* Capacity Badge for Facilities */}
+                      {isFacility && facilityInfo?.capacity && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                          <Users className="w-3 h-3 text-indigo-400" />
+                          <span>{facilityInfo.capacity}</span>
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="text-lg sm:text-xl font-black tracking-tight leading-tight">
+                      {displayName}
+                    </h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                      {displayDesc}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedNode(null)}
+                    className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 transition-colors shrink-0"
+                    aria-label="Tutup detail"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Card Body: Conditional Separation */}
+                <div className="py-4 space-y-4">
+                  {/* Status Bar */}
+                  <div className="flex flex-wrap items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 text-xs gap-2">
+                    <div className="flex items-center gap-2">
+                      <Clock className={`w-4 h-4 ${isFacility ? 'text-teal-500' : 'text-emerald-500'}`} />
+                      <span className="font-semibold text-slate-700 dark:text-slate-300">
+                        {selectedNode.operatingHours || (isFacility ? '07:30 - 16:00 WITA' : '08:00 - 15:30 WITA')}
+                      </span>
+                    </div>
+
+                    {isFacility ? (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+                        <span className="w-2 h-2 rounded-full bg-teal-500" />
+                        <span>Tersedia / Siap Digunakan</span>
+                      </span>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:inline">
+                          Estimasi: <strong className="text-slate-700 dark:text-slate-200">± 5-10 Menit</strong>
+                        </span>
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${
+                          selectedNode.status === 'open'
+                            ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+                            : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                        }`}>
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                          <span>{selectedNode.status === 'open' ? 'Normal / Buka' : 'Ramai'}</span>
+                        </span>
+                      </div>
                     )}
                   </div>
-                  <h3 className="text-lg sm:text-xl font-black tracking-tight leading-tight">
-                    {selectedNode.name}
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    {selectedNode.subName}
-                  </p>
-                </div>
 
-                <button
-                  type="button"
-                  onClick={() => setSelectedNode(null)}
-                  className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 transition-colors"
-                  aria-label="Tutup detail"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Card Body: Live Status & Services List */}
-              <div className="py-4 space-y-3.5">
-                {/* Status Bar */}
-                <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 text-xs">
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                    <span className="font-semibold text-slate-700 dark:text-slate-300">
-                      {selectedNode.operatingHours || '08:00 - 15:30 WITA'}
-                    </span>
-                  </div>
-
-                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${
-                    selectedNode.status === 'open'
-                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
-                      : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
-                  }`}>
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>{selectedNode.status === 'open' ? 'Normal / Buka' : 'Ramai'}</span>
-                  </span>
-                </div>
-
-                {/* Sub-services list */}
-                <div>
-                  <h5 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                    Daftar Layanan Tersedia
-                  </h5>
-                  <div className="space-y-1.5">
-                    {selectedNode.services.map((srv, idx) => (
-                      <div key={idx} className="flex items-start gap-2 text-xs font-medium text-slate-700 dark:text-slate-300">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                        <span>{srv}</span>
+                  {/* Section A: IF FACILITY -> Show Amenities & Equipment */}
+                  {isFacility ? (
+                    <div>
+                      <h5 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5 flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-teal-400" />
+                        <span>Kelengkapan & Sarana Fasilitas</span>
+                      </h5>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {displayAmenities.map((amenity, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-start gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-750 text-xs font-medium text-slate-700 dark:text-slate-200"
+                          >
+                            <CheckCircle2 className="w-4 h-4 text-teal-500 dark:text-teal-400 shrink-0 mt-0.5" />
+                            <span className="leading-snug">{amenity}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ) : (
+                    /* Section B: IF TENANT -> Show List of Official Services */
+                    <div>
+                      <h5 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
+                        <Building2 className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Daftar Layanan Dokumen & Perizinan</span>
+                      </h5>
+                      <div className="space-y-1.5">
+                        {selectedNode.services.map((srv, idx) => (
+                          <div key={idx} className="flex items-start gap-2 text-xs font-medium text-slate-700 dark:text-slate-300">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                            <span>{srv}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Wayfinding tip */}
+                  {selectedNode.wayfindingTips && (
+                    <div className={`p-3 rounded-2xl border text-xs flex items-start gap-2 ${
+                      isFacility
+                        ? 'bg-teal-50/50 dark:bg-teal-950/30 border-teal-200/60 dark:border-teal-800/60'
+                        : 'bg-emerald-50/50 dark:bg-emerald-950/30 border-emerald-200/60 dark:border-emerald-800/60'
+                    }`}>
+                      <Navigation className={`w-4 h-4 shrink-0 mt-0.5 ${isFacility ? 'text-teal-600 dark:text-teal-400' : 'text-emerald-600 dark:text-emerald-400'}`} />
+                      <div className="text-slate-600 dark:text-slate-300">
+                        <strong className={isFacility ? 'text-teal-700 dark:text-teal-300' : 'text-emerald-700 dark:text-emerald-300'}>
+                          Panduan Arah: 
+                        </strong>{' '}
+                        {selectedNode.wayfindingTips}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* Wayfinding tip */}
-                {selectedNode.wayfindingTips && (
-                  <div className="p-3 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-800/60 text-xs flex items-start gap-2">
-                    <Navigation className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-                    <div className="text-slate-600 dark:text-slate-300">
-                      <strong className="text-emerald-700 dark:text-emerald-300">Panduan Arah: </strong>
-                      {selectedNode.wayfindingTips}
-                    </div>
-                  </div>
-                )}
-              </div>
+                {/* Card Footer: Conditional Action Buttons */}
+                <div className="pt-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setIsWayfindingActive(prev => !prev)}
+                    className="px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold transition-all flex items-center gap-1.5"
+                  >
+                    <Navigation className={`w-3.5 h-3.5 ${isFacility ? 'text-teal-500' : 'text-emerald-500'}`} />
+                    <span>{isWayfindingActive ? 'Sembunyikan Jalur' : 'Petunjuk Arah'}</span>
+                  </button>
 
-              {/* Card Footer: Action Buttons */}
-              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => setIsWayfindingActive(prev => !prev)}
-                  className="px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold transition-all flex items-center gap-1.5"
-                >
-                  <Navigation className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>{isWayfindingActive ? 'Sembunyikan Jalur' : 'Petunjuk Arah'}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedNode(null);
-                    onOpenQueueBooking?.(selectedNode.name);
-                  }}
-                  className="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition-all flex items-center gap-1.5"
-                >
-                  <Ticket className="w-3.5 h-3.5" />
-                  <span>Ambil Antrean</span>
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
+                  {isFacility ? (
+                    /* IF FACILITY: Single Close / Acknowledged Action (NO QUEUE BUTTON) */
+                    <button
+                      type="button"
+                      onClick={() => setSelectedNode(null)}
+                      className="px-5 py-2.5 rounded-2xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition-all flex items-center gap-1.5"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Tutup Informasi</span>
+                    </button>
+                  ) : (
+                    /* IF TENANT: Prominent "Ambil Antrean" Button */
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedNode(null);
+                        onOpenQueueBooking?.(selectedNode.name);
+                      }}
+                      className="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition-all flex items-center gap-1.5"
+                    >
+                      <Ticket className="w-3.5 h-3.5" />
+                      <span>Ambil Antrean Online</span>
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            </div>
+          );
+        })()}
       </AnimatePresence>
 
     </div>
