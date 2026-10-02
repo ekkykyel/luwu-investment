@@ -1350,7 +1350,7 @@ export function evaluateSpatialConflictsTurf(
   applicantGeometry: any,
   spatialLayersList?: any[],
   customZoningData?: any,
-  options?: { requestedAreaHa?: number; requestedAreaSqm?: number; tolerancePercent?: number } | number
+  options?: { requestedAreaHa?: number; requestedAreaSqm?: number; tolerancePercent?: number; hasPertanianBap?: boolean } | number
 ): SpatialConflictEvaluation {
   const investFeature = extractTurfGeometry(applicantGeometry);
 
@@ -1368,19 +1368,20 @@ export function evaluateSpatialConflictsTurf(
   let hasGeometryMismatch = false;
   let geometryMismatchDetails = '';
 
-  // 1. AREA MISMATCH VALIDATION (Turf.js vs Input Field BAP / luas_dimohon)
+  // 1. AREA MISMATCH VALIDATION (Turf.js vs BAP Pertanian - ONLY valid if BAP Pertanian is issued)
+  const isPertanianBapActive = typeof options === 'object' ? Boolean(options?.hasPertanianBap) : false;
   let requestedHa = typeof options === 'number' ? options : options?.requestedAreaHa;
   let requestedSqm = typeof options === 'object' ? options?.requestedAreaSqm : undefined;
   const tolerance = typeof options === 'object' && options?.tolerancePercent !== undefined ? options.tolerancePercent : 5; // 5% default
 
-  // Fallback to extract requested area from applicantGeometry properties if present
-  if (!requestedHa && applicantGeometry?.properties) {
+  // Fallback to extract requested area from applicantGeometry properties only if BAP Pertanian active
+  if (isPertanianBapActive && !requestedHa && applicantGeometry?.properties) {
     const props = applicantGeometry.properties;
     requestedHa = props.luas_ha || props.areaHa || props.area_ha || (props.luas_m2 ? props.luas_m2 / 10000 : undefined);
     if (!requestedSqm) requestedSqm = props.luas_m2 || props.luas_dimohon;
   }
 
-  if (investFeature.geometry.type === 'Polygon' || investFeature.geometry.type === 'MultiPolygon') {
+  if (isPertanianBapActive && (investFeature.geometry.type === 'Polygon' || investFeature.geometry.type === 'MultiPolygon')) {
     try {
       const calculatedSqm = turf.area(investFeature);
       const calculatedHa = Number((calculatedSqm / 10000).toFixed(4));
@@ -1392,13 +1393,13 @@ export function evaluateSpatialConflictsTurf(
 
         if (percentDeviation > tolerance) {
           hasGeometryMismatch = true;
-          geometryMismatchDetails = `CRITICAL: GEOMETRY_MISMATCH - Luas poligon di peta (${calculatedHa.toFixed(2)} Ha / ${Math.round(calculatedSqm).toLocaleString('id-ID')} m²) berbeda signifikan dengan data BAP (${requestedHa.toFixed(2)} Ha / ${Math.round(requestedSqm).toLocaleString('id-ID')} m²). Deviasi: +${percentDeviation.toFixed(1)}% (Batas Toleransi ${tolerance}%).`;
+          geometryMismatchDetails = `Perbedaan Luas Peta vs BAP Pertanian: Luas poligon di peta (${calculatedHa.toFixed(2)} Ha / ${Math.round(calculatedSqm).toLocaleString('id-ID')} m²) berbeda dengan BAP Pertanian (${requestedHa.toFixed(2)} Ha / ${Math.round(requestedSqm).toLocaleString('id-ID')} m²). Deviasi: +${percentDeviation.toFixed(1)}% (Batas Toleransi ${tolerance}%).`;
 
           conflicts.push({
             category: 'GEOMETRY_MISMATCH',
-            label: 'CRITICAL: GEOMETRY_MISMATCH - Luas poligon di peta berbeda signifikan dengan data BAP',
+            label: 'Perbedaan Luas Poligon Peta vs BAP Pertanian',
             layerId: 'turf_area_validation',
-            layerName: 'Validasi Luas Poligon WebGIS vs BAP',
+            layerName: 'Validasi Luas Poligon WebGIS vs BAP Pertanian',
             overlapAreaHa: Number((deltaSqm / 10000).toFixed(4)),
             overlapAreaSqm: Math.round(deltaSqm),
             description: geometryMismatchDetails,
@@ -1641,8 +1642,11 @@ export function evaluateSpatialConflictsTurf(
   }
 
   const hasConflict = conflicts.length > 0;
-  const conflictCategories = Array.from(new Set(conflicts.map(c => c.label)));
-  const totalOverlapSqm = conflicts.reduce((acc, curr) => acc + curr.overlapAreaSqm, 0);
+  const spatialConflictsOnly = conflicts.filter(c => c.category !== 'GEOMETRY_MISMATCH');
+  const conflictCategories = spatialConflictsOnly.length > 0
+    ? Array.from(new Set(spatialConflictsOnly.map(c => c.layerName || c.label)))
+    : Array.from(new Set(conflicts.map(c => c.layerName || c.label)));
+  const totalOverlapSqm = (spatialConflictsOnly.length > 0 ? spatialConflictsOnly : conflicts).reduce((acc, curr) => acc + curr.overlapAreaSqm, 0);
   const totalOverlapHa = Number((totalOverlapSqm / 10000).toFixed(4));
 
   return {

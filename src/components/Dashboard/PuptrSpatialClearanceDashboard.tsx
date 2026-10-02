@@ -310,9 +310,10 @@ export default function PuptrSpatialClearanceDashboard() {
     }
     return evaluateSpatialConflictsTurf(selectedApp.geometry, spatialLayers, rtrwZoning, {
       requestedAreaHa: selectedApp.areaHa,
-      requestedAreaSqm: selectedApp.luasM2
+      requestedAreaSqm: selectedApp.luasM2,
+      hasPertanianBap: Boolean(selectedApp.pertanianBaNumber || selectedApp.pertanianStatus === 'APPROVED' || selectedApp.status_pkkpr === 'APPROVED_PERTANIAN')
     });
-  }, [selectedApp?.geometry, selectedApp?.areaHa, selectedApp?.luasM2, spatialLayers, rtrwZoning]);
+  }, [selectedApp?.geometry, selectedApp?.areaHa, selectedApp?.luasM2, selectedApp?.pertanianBaNumber, selectedApp?.pertanianStatus, selectedApp?.status_pkkpr, spatialLayers, rtrwZoning]);
 
   // Load override history for selected application
   useEffect(() => {
@@ -330,7 +331,7 @@ export default function PuptrSpatialClearanceDashboard() {
     if (selectedApp && selectedApp.geometry) {
       if (selectedApp.status_pkkpr === 'SUBMITTED' || selectedApp.status_pkkpr === 'VERIFIKASI_PERTANIAN') {
         checkLp2bIntersection(selectedApp.geometry).then((isIntersect) => {
-          if (!isIntersect && selectedApp.status_pkkpr !== 'BYPASS_PERTANIAN') {
+          if (!isIntersect && selectedApp.status_pkkpr !== 'BYPASS_PERTANIAN' && !spatialConflictAudit.hasConflict) {
             const timestamp = new Date().toISOString();
             supabase.from('gis_pkkpr').update({
               status_pkkpr: 'BYPASS_PERTANIAN',
@@ -344,7 +345,7 @@ export default function PuptrSpatialClearanceDashboard() {
         });
       }
     }
-  }, [selectedApp?.id]);
+  }, [selectedApp?.id, spatialConflictAudit.hasConflict]);
 
   const isOverridden = Boolean(
     hasLocalOverride ||
@@ -360,22 +361,29 @@ export default function PuptrSpatialClearanceDashboard() {
     selectedApp?.pertanianStatus === 'APPROVED' ||
     Boolean(selectedApp?.pertanianBaNumber) ||
     selectedApp?.status_pkkpr === 'APPROVED_PERTANIAN' ||
-    selectedApp?.status_pkkpr === 'BYPASS_PERTANIAN' ||
     (selectedApp as any)?.status === 'Approved_Pertanian' ||
     (selectedApp as any)?.pkkprStatus === 'Approved_Pertanian' ||
     (selectedApp?.technicalNotes && (
       selectedApp.technicalNotes.includes('REKOMENDASI DINAS PERTANIAN TERBIT') ||
       selectedApp.technicalNotes.includes('BA-LP2B') ||
-      selectedApp.technicalNotes.includes('BAP-LP2B') ||
-      selectedApp.technicalNotes.includes('SMART FORM LP2B DISUSUN') ||
-      selectedApp.technicalNotes.includes('SMART SPATIAL BYPASS') ||
-      selectedApp.technicalNotes.includes('Bebas LP2B')
+      selectedApp.technicalNotes.includes('BAP-LP2B')
     ))
   );
 
   // Hard Lockdown: If Turf.js identifies any spatial conflict AND neither override nor Pertanian approval exists
   const isConflictLocked = Boolean(
     spatialConflictAudit.hasConflict && !isOverridden && !isPertanianApproved
+  );
+
+  // Ready for Final Pertek PUPTR approval banner & button
+  const isReadyForFinalPertek = Boolean(
+    !isConflictLocked && (
+      !spatialConflictAudit.hasConflict ||
+      isPertanianApproved ||
+      isOverridden ||
+      (selectedApp?.status_permohonan as string) === 'WAITING_PUPTR_FINAL' ||
+      (selectedApp?.status_pkkpr as string) === 'WAITING_PUPTR_FINAL'
+    )
   );
 
   // Auto-detect SRID Mismatch & Spatial Discrepancies for selected application
@@ -2480,7 +2488,7 @@ export default function PuptrSpatialClearanceDashboard() {
                           </span>
                         </div>
                         <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
-                          Poligon lokasi pemohon <strong className="font-bold text-slate-900 dark:text-white">{selectedApp.applicantName} ({selectedApp.companyName})</strong> beririsan dengan <span className="font-bold text-amber-600 dark:text-amber-400">{spatialConflictAudit.conflictCategories.join(', ') || 'Zona Lahan Pertanian LP2B / Kawasan Lindung'}</span> seluas <strong className="font-mono">{spatialConflictAudit.totalOverlapHa || selectedApp.areaHa} Ha</strong>. Tombol proses (Disetujui, Revisi, Ditolak, Cetak BAP) dikunci sampai terbit BAP Pertanian atau Otorisasi Override Spasial.
+                          Poligon lokasi beririsan dengan <span className="font-bold text-amber-600 dark:text-amber-400">{spatialConflictAudit.conflictCategories.join(', ') || 'Lahan Pertanian Pangan Berkelanjutan (LP2B)'}</span> seluas <strong className="font-mono">{spatialConflictAudit.totalOverlapHa || selectedApp.areaHa} Ha</strong>. Diperlukan rekomendasi alih fungsi dari Dinas Pertanian. Tombol proses (Disetujui, Revisi, Ditolak, Cetak BAP) dikunci sampai terbit BAP Pertanian atau Otorisasi Override Spasial.
                         </p>
                       </div>
                     </div>
@@ -3181,7 +3189,7 @@ export default function PuptrSpatialClearanceDashboard() {
                         </span>
                       </div>
                       <p className="text-xs text-slate-700 dark:text-slate-200 leading-snug">
-                        Poligon beririsan dengan <strong className="text-amber-800 dark:text-amber-300">{spatialConflictAudit.conflictCategories.join(', ') || 'Zona LP2B / Lindung'}</strong> seluas <strong>{spatialConflictAudit.totalOverlapHa || selectedApp.areaHa} Ha</strong> ({spatialConflictAudit.totalOverlapSqm.toLocaleString('id-ID')} m²).
+                        Poligon lokasi beririsan dengan <strong className="text-amber-800 dark:text-amber-300">{spatialConflictAudit.conflictCategories.join(', ') || 'Lahan Pertanian Pangan Berkelanjutan (LP2B)'}</strong> seluas <strong>{spatialConflictAudit.totalOverlapHa || selectedApp.areaHa} Ha</strong> ({spatialConflictAudit.totalOverlapSqm.toLocaleString('id-ID')} m²). Diperlukan rekomendasi alih fungsi dari Dinas Pertanian.
                       </p>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400">
                         Seluruh tombol proses (Persetujuan, Revisi, Penolakan, dan Cetak BAP) akan aktif setelah:
@@ -3324,8 +3332,8 @@ export default function PuptrSpatialClearanceDashboard() {
                 </button>
               ) : (
                 <>
-                  {/* Guidance callout for Admin PUPTR */}
-                  {clearanceDecision === 'Approved' && !isPertekIssued && (
+                  {/* Guidance callout for Admin PUPTR - Strictly requires isReadyForFinalPertek */}
+                  {isReadyForFinalPertek && clearanceDecision === 'Approved' && !isPertekIssued && (
                     <div className="p-3 bg-emerald-500/10 border-2 border-emerald-500/40 rounded-xl space-y-1 text-slate-800 dark:text-slate-100 font-sans shadow-sm">
                       <p className="text-xs font-black text-emerald-700 dark:text-emerald-300 uppercase tracking-wide flex items-center gap-1.5">
                         <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
@@ -3339,8 +3347,8 @@ export default function PuptrSpatialClearanceDashboard() {
                     </div>
                   )}
 
-                  {/* Tombol Setujui hanya muncul jika Keputusan = Approved */}
-                  {clearanceDecision === 'Approved' && (
+                  {/* Tombol Setujui hanya muncul jika Keputusan = Approved DAN isReadyForFinalPertek */}
+                  {isReadyForFinalPertek && clearanceDecision === 'Approved' && (
                     <button
                       type="button"
                       disabled={isIssuingSk}
