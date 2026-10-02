@@ -1647,17 +1647,22 @@ export function InteractiveFloorPlan({
                 <TransformComponent
                   wrapperClass={isFullscreen ? "w-full h-full cursor-grab active:cursor-grabbing flex items-center justify-center" : "w-full h-full flex items-center justify-center"}
                   contentClass="w-full h-full flex items-center justify-center"
+                  wrapperStyle={{ width: "100%", height: "100%" }}
+                  contentStyle={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}
                 >
                   {/* Interactive Transform Wrapper */}
                   <div 
-                    className="relative w-full h-full flex items-center justify-center transition-transform duration-300"
+                    className={isFullscreen 
+                      ? "w-full h-full flex items-center justify-center" 
+                      : "relative w-full h-full flex items-center justify-center transition-transform duration-300"
+                    }
                     style={isFullscreen ? {} : { transform: `scale(${zoomLevel})` }}
                   >
                     <svg
                       viewBox="0 0 1200 800"
                       preserveAspectRatio="xMidYMid meet"
                       className={isFullscreen 
-                        ? "w-full h-full max-h-[98%] max-w-[98%] block select-none drop-shadow-md"
+                        ? "w-full h-full max-h-screen object-contain block select-none drop-shadow-md"
                         : "w-full h-auto max-h-[640px] block select-none drop-shadow-md"
                       }
                     >
