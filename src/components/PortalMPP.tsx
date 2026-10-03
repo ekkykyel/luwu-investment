@@ -5443,7 +5443,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }} 
             transition={{ type: "spring", stiffness: 75, damping: 20 }} 
             viewport={{ once: true, amount: 0.1 }} 
-            className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
+            className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 relative z-10"
           >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
               {/* Brand & Description (5 cols on desktop) */}
