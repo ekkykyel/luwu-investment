@@ -1068,48 +1068,8 @@ export default function SpatialMapWorkspace() {
       bbox = [119.85, -3.70, 120.65, -2.45];
     }
 
-    requestAnimationFrame(() => {
-      const padding = targetVillageId ? { top: 85, bottom: 85, left: 85, right: 85 } : { top: 70, bottom: 70, left: 70, right: 70 };
-      const maxZoom = targetVillageId ? 15.5 : targetDistrictId ? 13.5 : 12;
-
-      if (bbox) {
-        if (mapComponentRef.current && typeof mapComponentRef.current.fitBounds === "function") {
-          mapComponentRef.current.fitBounds(bbox, {
-            padding,
-            duration: 1800,
-            maxZoom,
-            essential: true
-          });
-        } else if (mapComponentRef.current && typeof mapComponentRef.current.getMapInstance === "function") {
-          try {
-            const map = mapComponentRef.current.getMapInstance();
-            map?.fitBounds(bbox, { padding, duration: 1800, maxZoom, essential: true });
-          } catch {
-            // fallback
-          }
-        } else if ((window as any).globalLuwuMapInstance) {
-          try {
-            (window as any).globalLuwuMapInstance.fitBounds(bbox, { padding, duration: 1800, maxZoom, essential: true });
-          } catch {
-            // fallback
-          }
-        }
-      } else if (targetVillage?.coordinates && targetVillage.coordinates.length >= 2) {
-        if (mapComponentRef.current?.flyToCoordinate) {
-          mapComponentRef.current.flyToCoordinate(targetVillage.coordinates[1], targetVillage.coordinates[0], 14.5);
-        } else if ((window as any).globalLuwuMapInstance) {
-          (window as any).globalLuwuMapInstance.flyTo({ center: [targetVillage.coordinates[1], targetVillage.coordinates[0]], zoom: 14.5, duration: 1800 });
-        }
-      } else if (targetDistrict?.coordinates && targetDistrict.coordinates.length >= 2) {
-        if (mapComponentRef.current?.flyToCoordinate) {
-          mapComponentRef.current.flyToCoordinate(targetDistrict.coordinates[1], targetDistrict.coordinates[0], 12.5);
-        } else if ((window as any).globalLuwuMapInstance) {
-          (window as any).globalLuwuMapInstance.flyTo({ center: [targetDistrict.coordinates[1], targetDistrict.coordinates[0]], zoom: 12.5, duration: 1800 });
-        }
-      } else if (mapComponentRef.current?.fitBounds) {
-        mapComponentRef.current.fitBounds([119.85, -3.70, 120.65, -2.45], { padding: 50, duration: 1500 });
-      }
-    });
+    // Kamera statis: animasi terbang/fitBounds otomatis dinonaktifkan sesuai preferensi pengguna
+    // Posisi peta dipertahankan statis tanpa pergerakan otomatis saat kecamatan/desa dipilih
   }, [selectedDistrictId, selectedVillageId, districts, villages, investments, spatialLayers]);
 
   // Letter of Intent (LoI) Ticketing logic
