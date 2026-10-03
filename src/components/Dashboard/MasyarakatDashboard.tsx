@@ -1632,11 +1632,49 @@ export default function MasyarakatDashboard({
     setIsPkkprModalOpen(true);
   };
 
+  const validatePkkprFile = (file: File, docLabel: string): boolean => {
+    if (!file) return false;
+    
+    // 1. Strict File Size Validation (Max 5 MB)
+    const MAX_SIZE = 5 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      Swal.fire({
+        icon: "warning",
+        title: "Ukuran Berkas Terlalu Besar",
+        text: `Ukuran berkas ${file.name || docLabel} terlalu besar (${(file.size / (1024 * 1024)).toFixed(1)} MB). Maksimal 5 MB. Silakan kompres berkas PDF/Gambar Anda sebelum diunggah.`,
+        confirmButtonColor: "#f59e0b"
+      });
+      return false;
+    }
+
+    // 2. Allowed MIME Types (PDF, JPG, JPEG, PNG)
+    const allowedMimeTypes = ["application/pdf", "image/jpeg", "image/jpg", "image/png"];
+    const fileType = file.type?.toLowerCase() || "";
+    const fileName = file.name?.toLowerCase() || "";
+    const isValid = allowedMimeTypes.includes(fileType) ||
+      fileName.endsWith(".pdf") ||
+      fileName.endsWith(".jpg") ||
+      fileName.endsWith(".jpeg") ||
+      fileName.endsWith(".png");
+
+    if (!isValid) {
+      Swal.fire({
+        icon: "warning",
+        title: "Format Berkas Tidak Didukung",
+        text: `Format berkas ${file.name || docLabel} tidak didukung. Silakan gunakan format PDF, JPG, atau PNG.`,
+        confirmButtonColor: "#f59e0b"
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSertifikatUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 15 * 1024 * 1024) {
-      Swal.fire("Ukuran File Terlalu Besar", "Maksimal ukuran file Sertifikat adalah 15MB.", "warning");
+    if (!validatePkkprFile(file, "Sertifikat Hak Atas Tanah")) {
+      e.target.value = "";
       return;
     }
     try {
@@ -1652,8 +1690,8 @@ export default function MasyarakatDashboard({
   const handleSuratPengantarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 15 * 1024 * 1024) {
-      Swal.fire("Ukuran File Terlalu Besar", "Maksimal ukuran file Surat Pengantar adalah 15MB.", "warning");
+    if (!validatePkkprFile(file, "Surat Pengantar Desa / Kelurahan")) {
+      e.target.value = "";
       return;
     }
     try {
@@ -1669,8 +1707,8 @@ export default function MasyarakatDashboard({
   const handleSiteplanUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 15 * 1024 * 1024) {
-      Swal.fire("Ukuran File Terlalu Besar", "Maksimal ukuran file Siteplan adalah 15MB.", "warning");
+    if (!validatePkkprFile(file, "Siteplan / Denah Rencana Bangunan")) {
+      e.target.value = "";
       return;
     }
     try {
@@ -1686,8 +1724,8 @@ export default function MasyarakatDashboard({
   const handleSuratBebasSengketaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 15 * 1024 * 1024) {
-      Swal.fire("Ukuran File Terlalu Besar", "Maksimal ukuran file Surat Bebas Sengketa adalah 15MB.", "warning");
+    if (!validatePkkprFile(file, "Surat Bebas Sengketa")) {
+      e.target.value = "";
       return;
     }
     try {
@@ -1825,14 +1863,35 @@ export default function MasyarakatDashboard({
       }
 
       // Upload documents to Supabase Storage bucket ('pkkpr_documents' or 'investments' fallback)
-      const [sertifikatTanahStorageUrl, siteplanStorageUrl, suratPengantarDesaStorageUrl, berkasLegalitasGabunganStorageUrl] = await Promise.all([
-        uploadPkkprDocumentToStorage(fileSertifikat || sertifikatDataUrl, sertifikatFileName || 'sertifikat_tanah.pdf', 'sertifikat'),
-        (pkkprKategoriPengajuan === 'BANGUNAN' && (fileSiteplan || siteplanDataUrl))
-          ? uploadPkkprDocumentToStorage(fileSiteplan || siteplanDataUrl, siteplanFileName || 'siteplan_bangunan.pdf', 'siteplan')
-          : Promise.resolve(null),
-        uploadPkkprDocumentToStorage(fileSuratPengantarDesa || suratPengantarDataUrl, suratPengantarFileName || 'surat_pengantar_desa.pdf', 'surat_pengantar'),
-        uploadPkkprDocumentToStorage(finalMergedPdfBlob || finalMergedPdfDataUrl, `Berkas_Gabungan_PKKPR_${docNumber}.pdf`, 'berkas_gabungan')
-      ]);
+      let sertifikatTanahStorageUrl: string | null = null;
+      let siteplanStorageUrl: string | null = null;
+      let suratPengantarDesaStorageUrl: string | null = null;
+      let berkasLegalitasGabunganStorageUrl: string | null = null;
+
+      try {
+        [sertifikatTanahStorageUrl, siteplanStorageUrl, suratPengantarDesaStorageUrl, berkasLegalitasGabunganStorageUrl] = await Promise.all([
+          uploadPkkprDocumentToStorage(fileSertifikat || sertifikatDataUrl, sertifikatFileName || 'sertifikat_tanah.pdf', 'sertifikat'),
+          (pkkprKategoriPengajuan === 'BANGUNAN' && (fileSiteplan || siteplanDataUrl))
+            ? uploadPkkprDocumentToStorage(fileSiteplan || siteplanDataUrl, siteplanFileName || 'siteplan_bangunan.pdf', 'siteplan')
+            : Promise.resolve(null),
+          uploadPkkprDocumentToStorage(fileSuratPengantarDesa || suratPengantarDataUrl, suratPengantarFileName || 'surat_pengantar_desa.pdf', 'surat_pengantar'),
+          uploadPkkprDocumentToStorage(finalMergedPdfBlob || finalMergedPdfDataUrl, `Berkas_Gabungan_PKKPR_${docNumber}.pdf`, 'berkas_gabungan')
+        ]);
+      } catch (uploadErr: any) {
+        console.error("[Storage Upload Error]:", uploadErr);
+        setIsSubmittingPkkpr(false);
+        const errMsg = uploadErr?.message || "";
+        const isSizeErr = errMsg.includes("terlalu besar") || errMsg.includes("5 MB");
+        Swal.fire({
+          icon: isSizeErr ? "warning" : "error",
+          title: isSizeErr ? "Ukuran Berkas Terlalu Besar" : "Gagal Mengunggah Berkas",
+          text: isSizeErr
+            ? errMsg
+            : "Gagal mengunggah berkas karena koneksi terputus. Periksa koneksi internet Anda atau coba kompres ukuran berkas.",
+          confirmButtonColor: "#ef4444"
+        });
+        return;
+      }
 
       const finalSertifikatUrl = sertifikatTanahStorageUrl || sertifikatDataUrl || null;
       const finalSiteplanUrl = siteplanStorageUrl || siteplanDataUrl || null;
@@ -5053,7 +5112,7 @@ export default function MasyarakatDashboard({
                               1. Sertifikat Hak Atas Tanah <span className="text-rose-500">*</span>
                             </span>
                             <span className="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5">
-                              Format: PDF, JPG, PNG (Max 15MB)
+                              Format: PDF, JPG, PNG (Max 5MB)
                             </span>
                             {sertifikatFileName && (
                               <span className="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 block mt-1 truncate max-w-[180px]">
@@ -5101,7 +5160,7 @@ export default function MasyarakatDashboard({
                               2. Surat Pengantar Desa / Kelurahan <span className="text-rose-500">*</span>
                             </span>
                             <span className="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5">
-                              Format: PDF, JPG, PNG (Max 15MB)
+                              Format: PDF, JPG, PNG (Max 5MB)
                             </span>
                             {suratPengantarFileName && (
                               <span className="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 block mt-1 truncate max-w-[180px]">
@@ -5150,7 +5209,7 @@ export default function MasyarakatDashboard({
                                 3. Peta Lokasi / Siteplan / Denah Rencana Bangunan <span className="text-rose-500">*</span>
                               </span>
                               <span className="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5">
-                                Format: PDF, JPG, PNG (Max 15MB). Diperlukan untuk verifikasi KDB, KLB, dan sempadan jalan oleh tim teknis PUPTR.
+                                Format: PDF, JPG, PNG (Max 5MB). Diperlukan untuk verifikasi KDB, KLB, dan sempadan jalan oleh tim teknis PUPTR.
                               </span>
                               {siteplanFileName && (
                                 <span className="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 block mt-1 truncate max-w-[280px]">

@@ -18,8 +18,17 @@ export interface PkkprDocumentInput {
   suratBebasSengketaFileName?: string;
 }
 
+export const MAX_PKKPR_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+
+export const ALLOWED_PKKPR_MIME_TYPES = [
+  "application/pdf",
+  "image/jpeg",
+  "image/jpg",
+  "image/png"
+];
+
 /**
- * Uploads a PKKPR document (File, Blob, or DataUrl) to Supabase Storage.
+ * Uploads a PKKPR document (File, Blob, or DataUrl) to Supabase Storage with resilient error handling & timeouts.
  * Tries bucket 'pkkpr_documents' first, falls back to 'investments'.
  * Returns the public URL of the uploaded document or null on error.
  */
@@ -57,45 +66,67 @@ export const uploadPkkprDocumentToStorage = async (
       return null;
     }
 
-    const ext = contentType.includes("png") ? "png" : contentType.includes("jp") ? "jpg" : "pdf";
-    const cleanFileName = fileName ? fileName.replace(/[^a-zA-Z0-9_.-]/g, "_") : `doc_${docType}.${ext}`;
-    const uniquePath = `pkkpr_${docType}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}_${cleanFileName}`;
+    // Strict client-side file size validation (5MB max)
+    if (blob.size > MAX_PKKPR_FILE_SIZE_BYTES) {
+      throw new Error(`Ukuran berkas ${fileName || docType} terlalu besar (${(blob.size / (1024 * 1024)).toFixed(1)} MB). Maksimal 5 MB.`);
+    }
+
+    const ext = contentType.includes("png") ? "png" : (contentType.includes("jp") ? "jpg" : "pdf");
+    const sanitizedFileName = (fileName ? fileName.replace(/[^a-zA-Z0-9.-]/g, "_") : `doc_${docType}.${ext}`);
+    const uniquePath = `pkkpr_${Date.now()}_${docType}_${sanitizedFileName}`;
+
+    // Helper to upload with a 25s timeout to prevent HTTP/2 socket hang
+    const uploadWithTimeout = async (bucket: string, path: string) => {
+      const uploadPromise = supabase.storage
+        .from(bucket)
+        .upload(path, blob, { contentType, upsert: true });
+
+      const timeoutPromise = new Promise<{ data: null; error: Error }>((_, reject) =>
+        setTimeout(() => reject(new Error(`Timeout saat mengunggah ke ${bucket}`)), 25000)
+      );
+
+      return (await Promise.race([uploadPromise, timeoutPromise])) as { data: any; error: any };
+    };
 
     // 1. Try 'pkkpr_documents' bucket
     const primaryBucket = "pkkpr_documents";
-    const { error: primaryErr } = await supabase.storage
-      .from(primaryBucket)
-      .upload(uniquePath, blob, { contentType, upsert: true });
+    try {
+      const { error: primaryErr } = await uploadWithTimeout(primaryBucket, uniquePath);
 
-    if (!primaryErr) {
-      const { data: pubData } = supabase.storage
-        .from(primaryBucket)
-        .getPublicUrl(uniquePath);
-      if (pubData?.publicUrl) return pubData.publicUrl;
-    } else {
-      console.warn(`[PKKPR Storage] Upload to ${primaryBucket} warning:`, primaryErr);
+      if (!primaryErr) {
+        const { data: pubData } = supabase.storage
+          .from(primaryBucket)
+          .getPublicUrl(uniquePath);
+        if (pubData?.publicUrl) return pubData.publicUrl;
+      } else {
+        console.warn(`[PKKPR Storage] Upload to ${primaryBucket} notice:`, primaryErr.message || primaryErr);
+      }
+    } catch (e: any) {
+      console.warn(`[PKKPR Storage] Primary bucket failed:`, e?.message || e);
     }
 
     // 2. Fallback to 'investments' bucket
     const fallbackBucket = "investments";
     const fallbackPath = `pkkpr/${uniquePath}`;
-    const { error: fallbackErr } = await supabase.storage
-      .from(fallbackBucket)
-      .upload(fallbackPath, blob, { contentType, upsert: true });
+    try {
+      const { error: fallbackErr } = await uploadWithTimeout(fallbackBucket, fallbackPath);
 
-    if (!fallbackErr) {
-      const { data: pubData } = supabase.storage
-        .from(fallbackBucket)
-        .getPublicUrl(fallbackPath);
-      if (pubData?.publicUrl) return pubData.publicUrl;
-    } else {
-      console.warn(`[PKKPR Storage] Upload to ${fallbackBucket} warning:`, fallbackErr);
+      if (!fallbackErr) {
+        const { data: pubData } = supabase.storage
+          .from(fallbackBucket)
+          .getPublicUrl(fallbackPath);
+        if (pubData?.publicUrl) return pubData.publicUrl;
+      } else {
+        console.warn(`[PKKPR Storage] Upload to ${fallbackBucket} notice:`, fallbackErr.message || fallbackErr);
+      }
+    } catch (e: any) {
+      console.warn(`[PKKPR Storage] Fallback bucket failed:`, e?.message || e);
     }
 
     return null;
-  } catch (err) {
-    console.error(`[PKKPR Storage Exception] Failed uploading ${docType}:`, err);
-    return null;
+  } catch (err: any) {
+    console.error(`[PKKPR Storage Exception] Failed uploading ${docType}:`, err?.message || err);
+    throw err;
   }
 };
 

@@ -181,15 +181,16 @@ export default function InvestorPortalDashboard() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 10 * 1024 * 1024) {
-      Swal.fire("Ukuran File Terlalu Besar", "Ukuran dokumen siteplan maksimal adalah 10MB.", "warning");
+    if (file.size > 5 * 1024 * 1024) {
+      Swal.fire("Ukuran Berkas Terlalu Besar", `Ukuran berkas ${file.name} terlalu besar (${(file.size / (1024 * 1024)).toFixed(1)} MB). Maksimal 5 MB. Silakan kompres berkas PDF/Gambar Anda sebelum diunggah.`, "warning");
+      e.target.value = "";
       return;
     }
 
     setIsUploadingSiteplan(true);
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `siteplan_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+      const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const fileName = `siteplan_${Date.now()}_${sanitizedName}`;
 
       const { data, error } = await supabase.storage
         .from('pkkpr-documents')
@@ -230,15 +231,16 @@ export default function InvestorPortalDashboard() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 10 * 1024 * 1024) {
-      Swal.fire("Ukuran File Terlalu Besar", "Ukuran dokumen maksimal adalah 10MB.", "warning");
+    if (file.size > 5 * 1024 * 1024) {
+      Swal.fire("Ukuran Berkas Terlalu Besar", `Ukuran berkas ${file.name} terlalu besar (${(file.size / (1024 * 1024)).toFixed(1)} MB). Maksimal 5 MB. Silakan kompres berkas PDF/Gambar Anda sebelum diunggah.`, "warning");
+      e.target.value = "";
       return;
     }
 
     setIsUploadingAlasHak(true);
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `alas_hak_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+      const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const fileName = `alas_hak_${Date.now()}_${sanitizedName}`;
 
       const { data, error } = await supabase.storage
         .from('pkkpr-documents')
