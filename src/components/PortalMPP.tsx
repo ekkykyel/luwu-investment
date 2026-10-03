@@ -2680,14 +2680,14 @@ export default function PortalMPP() {
                           onClick={() => {
                             setSelectedServiceDetail(service as any);
                           }}
-                          className="w-full h-full glass-crystal glass-card-interactive bg-white/80 dark:bg-slate-900/70 backdrop-blur-2xl border border-white/60 dark:border-white/10 rounded-3xl overflow-hidden group shadow-[0_12px_36px_rgba(0,0,0,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.45)] transition-all duration-300 hover:shadow-2xl hover:border-teal-500/40 flex flex-col justify-between cursor-pointer relative min-h-[440px]"
+                          className="w-full h-full glass-crystal glass-card-interactive bg-white/80 dark:bg-slate-900/70 backdrop-blur-2xl border border-white/60 dark:border-white/10 rounded-3xl overflow-hidden group shadow-[0_12px_36px_rgba(0,0,0,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.45)] transition-all duration-300 hover:shadow-2xl hover:border-teal-500/40 active:scale-[0.98] flex flex-col justify-between cursor-pointer relative min-h-[480px]"
                         >
                           {/* Subtle Ambient Gradient Highlight */}
                           <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.04] via-transparent to-teal-500/[0.03] dark:from-emerald-400/[0.06] dark:to-transparent pointer-events-none" />
 
                           {/* Bagian Atas: Gambar Representatif + Ikon Overlap */}
                           <div 
-                            className="relative h-48 sm:h-52 overflow-hidden bg-slate-900 cursor-pointer"
+                            className="relative h-60 sm:h-64 md:h-72 overflow-hidden bg-slate-900 cursor-pointer"
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedServiceDetail(service as any);
@@ -2973,12 +2973,12 @@ export default function PortalMPP() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, ease: "easeOut" }}
-                  className="w-full bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col justify-between group hover:border-emerald-500/50 transition-all duration-300"
+                  className="w-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md overflow-hidden flex flex-col justify-between group hover:border-emerald-500/50 active:scale-[0.98] transition-all duration-300"
                 >
                   {/* Foto Full-Bleed (Menempel Sisi Kiri, Atas, Kanan Card) */}
                   <div 
                     onClick={() => setIsFacilityLightboxOpen(true)}
-                    className="relative w-full h-56 sm:h-72 md:h-80 lg:h-96 overflow-hidden bg-slate-950 cursor-pointer group/img"
+                    className="relative w-full h-64 sm:h-72 md:h-80 lg:h-96 overflow-hidden bg-slate-950 cursor-pointer group/img"
                     title="Klik untuk melihat foto fasilitas dalam ukuran penuh"
                   >
                     <img
@@ -2992,6 +2992,7 @@ export default function PortalMPP() {
                       }}
                       className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-700 ease-out"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent pointer-events-none" />
                     
                     {/* Badge Tag Top Left */}
                     <div className="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md text-emerald-400 px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1.5 border border-white/10 shadow-md">
@@ -3407,11 +3408,11 @@ export default function PortalMPP() {
                             transition={{ duration: 0.3, ease: "easeOut" }}
                             className="flex flex-col rounded-3xl border border-slate-200/90 dark:border-white/10 bg-white/95 dark:bg-slate-900/85 backdrop-blur-xl overflow-hidden shadow-xl shadow-emerald-950/5 dark:shadow-emerald-950/20"
                           >
-                            <div className="relative h-64 overflow-hidden bg-slate-950">
+                            <div className="relative h-64 sm:h-72 overflow-hidden bg-slate-950">
                               <img
                                 src={product.image}
                                 alt={isZh ? (product.nama_produk_zh || product.nama_produk) : isEn ? (product.nama_produk_en || product.nama_produk) : product.nama_produk}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                 referrerPolicy="no-referrer"
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent pointer-events-none" />
@@ -3497,8 +3498,8 @@ export default function PortalMPP() {
                                 : "border-slate-200/90 dark:border-white/10 bg-white/95 dark:bg-slate-900/80"
                             }`}
                           >
-                            {/* Gambar Produk Diperbesar (Tinggi h-60 sm:h-64) */}
-                            <div className="relative h-60 sm:h-64 overflow-hidden bg-slate-950">
+                            {/* Gambar Produk Diperbesar (Tinggi h-64 sm:h-72) */}
+                            <div className="relative h-64 sm:h-72 overflow-hidden bg-slate-950">
                               <img
                                 src={product.image}
                                 alt={isZh ? (product.nama_produk_zh || product.nama_produk) : isEn ? (product.nama_produk_en || product.nama_produk) : product.nama_produk}
@@ -4827,7 +4828,7 @@ export default function PortalMPP() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.25, delay: 0, ease: "easeOut" }}
-                className="bg-white/90 dark:bg-slate-800/40 backdrop-blur-xl rounded-3xl shadow-md sm:shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-200/80 dark:border-white/10 h-[390px] sm:h-[420px] flex flex-col justify-between group hover:shadow-xl hover:border-emerald-500/50 transition-all duration-300 relative"
+                className="bg-white/90 dark:bg-slate-800/40 backdrop-blur-xl rounded-3xl shadow-md sm:shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-200/80 dark:border-white/10 min-h-[480px] sm:min-h-[520px] flex flex-col justify-between group hover:shadow-xl hover:border-emerald-500/50 active:scale-[0.98] transition-all duration-300 relative"
               >
                 {/* Top Accent Glowing Rail */}
                 <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 z-10" />
@@ -4868,7 +4869,7 @@ export default function PortalMPP() {
                 </div>
 
                 {/* Konten Feed Post */}
-                <div className="relative h-40 sm:h-44 w-full overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0">
+                <div className="relative h-56 sm:h-64 w-full overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0">
                   <img 
                     src={socialMediaData.instagram.postImage || "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&q=80&w=800"} 
                     alt="Aktivitas Pelayanan Publik MPP Luwu" 
@@ -4883,7 +4884,7 @@ export default function PortalMPP() {
                   <div className="absolute top-2.5 right-2.5 bg-black/60 backdrop-blur-md px-3 py-0.5 rounded-lg text-[10px] font-mono font-medium text-white flex items-center gap-1">
                     <Instagram className="w-3 h-3 text-pink-400" /> {socialMediaData.instagram.tag || t("mppPortal.sosialMedia.igTag")}
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent pointer-events-none"></div>
                 </div>
 
                 {/* Info Interaksi & Cuplikan Narasi */}
@@ -4923,7 +4924,7 @@ export default function PortalMPP() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.25, delay: 0.05, ease: "easeOut" }}
-                className="bg-white/90 dark:bg-slate-800/40 backdrop-blur-xl rounded-3xl shadow-md sm:shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-200/80 dark:border-white/10 h-[390px] sm:h-[420px] flex flex-col justify-between group hover:shadow-xl hover:border-emerald-500/50 transition-all duration-300 relative"
+                className="bg-white/90 dark:bg-slate-800/40 backdrop-blur-xl rounded-3xl shadow-md sm:shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-200/80 dark:border-white/10 min-h-[480px] sm:min-h-[520px] flex flex-col justify-between group hover:shadow-xl hover:border-emerald-500/50 active:scale-[0.98] transition-all duration-300 relative"
               >
                 {/* Top Accent Glowing Rail */}
                 <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 z-10" />
@@ -4957,7 +4958,7 @@ export default function PortalMPP() {
                   href={socialMediaData.youtube.videoUrl || socialMediaData.youtube.channelUrl} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="relative h-40 sm:h-44 w-full overflow-hidden bg-slate-900 shrink-0 flex items-center justify-center cursor-pointer block"
+                  className="relative h-56 sm:h-64 w-full overflow-hidden bg-slate-900 shrink-0 flex items-center justify-center cursor-pointer block"
                 >
                   <img 
                     src={socialMediaData.youtube.videoThumbnail || "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800"} 
@@ -4970,6 +4971,7 @@ export default function PortalMPP() {
                     }}
                     className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500" 
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent pointer-events-none" />
                   <div className="absolute flex items-center justify-center">
                     <span className="absolute -inset-3 rounded-full animate-pulse-border bg-red-600/40 pointer-events-none" />
                     <div className="relative w-11 h-11 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg shadow-red-600/40 group-hover:scale-110 transition-transform">
@@ -5013,7 +5015,7 @@ export default function PortalMPP() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.25, delay: 0.1, ease: "easeOut" }}
-                className="bg-white/90 dark:bg-slate-800/40 backdrop-blur-xl rounded-3xl shadow-md sm:shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-200/80 dark:border-white/10 h-[390px] sm:h-[420px] flex flex-col justify-between group hover:shadow-xl hover:border-emerald-500/50 transition-all duration-300 relative"
+                className="bg-white/90 dark:bg-slate-800/40 backdrop-blur-xl rounded-3xl shadow-md sm:shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-200/80 dark:border-white/10 min-h-[480px] sm:min-h-[520px] flex flex-col justify-between group hover:shadow-xl hover:border-emerald-500/50 active:scale-[0.98] transition-all duration-300 relative"
               >
                 {/* Top Accent Glowing Rail */}
                 <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 z-10" />
@@ -5043,7 +5045,7 @@ export default function PortalMPP() {
                 </div>
 
                 {/* Konten Feed Post */}
-                <div className="relative h-40 sm:h-44 w-full overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0">
+                <div className="relative h-56 sm:h-64 w-full overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0">
                   <img 
                     src={socialMediaData.facebook.postImage || "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&q=80&w=800"} 
                     alt="Sosialisasi Perizinan dan Pelayanan Terpadu Luwu" 
@@ -5058,7 +5060,7 @@ export default function PortalMPP() {
                   <div className="absolute top-2.5 right-2.5 bg-black/60 backdrop-blur-md px-3 py-0.5 rounded-lg text-[10px] font-mono font-medium text-white flex items-center gap-1">
                     <Facebook className="w-3 h-3 text-blue-400" /> {socialMediaData.facebook.tag || t("mppPortal.sosialMedia.fbTag")}
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent pointer-events-none"></div>
                 </div>
 
                 {/* Info Interaksi & Cuplikan Narasi */}
@@ -5093,7 +5095,7 @@ export default function PortalMPP() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.25, delay: 0.15, ease: "easeOut" }}
-                className="bg-white/90 dark:bg-slate-800/40 backdrop-blur-xl rounded-3xl shadow-md sm:shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-200/80 dark:border-white/10 h-[390px] sm:h-[420px] flex flex-col justify-between group hover:shadow-xl hover:border-emerald-500/50 transition-all duration-300 relative"
+                className="bg-white/90 dark:bg-slate-800/40 backdrop-blur-xl rounded-3xl shadow-md sm:shadow-lg shadow-emerald-900/5 dark:shadow-emerald-900/20 overflow-hidden border border-slate-200/80 dark:border-white/10 min-h-[480px] sm:min-h-[520px] flex flex-col justify-between group hover:shadow-xl hover:border-emerald-500/50 active:scale-[0.98] transition-all duration-300 relative"
               >
                 {/* Top Accent Glowing Rail */}
                 <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 z-10" />
@@ -5127,7 +5129,7 @@ export default function PortalMPP() {
                   href={socialMediaData.tiktok.profileUrl} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="relative h-40 sm:h-44 w-full overflow-hidden bg-slate-900 shrink-0 block"
+                  className="relative h-56 sm:h-64 w-full overflow-hidden bg-slate-900 shrink-0 block"
                 >
                   <img 
                     src={socialMediaData.tiktok.videoThumbnail || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800"} 
@@ -5143,7 +5145,7 @@ export default function PortalMPP() {
                   <div className="absolute top-2.5 right-2.5 bg-black/60 backdrop-blur-md px-3 py-0.5 rounded-lg text-[10px] font-mono font-medium text-white flex items-center gap-1">
                     <Music2 className="w-3 h-3 text-cyan-400" /> {socialMediaData.tiktok.tag || t("mppPortal.sosialMedia.ttTag")}
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-3">
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent flex flex-col justify-end p-3">
                     <span className="text-white text-xs font-bold font-sans drop-shadow-sm line-clamp-1">
                       {socialMediaData.tiktok.caption || t("mppPortal.sosialMedia.ttTitle")}
                     </span>

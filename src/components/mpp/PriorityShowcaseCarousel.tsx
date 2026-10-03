@@ -205,7 +205,7 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: idx * 0.05 }}
-                className={`w-[85vw] max-w-[340px] sm:w-[380px] shrink-0 snap-center sm:snap-start rounded-3xl bg-white dark:bg-slate-900 border transition-all duration-300 flex flex-col justify-between overflow-hidden group select-none ${
+                className={`w-[85vw] max-w-[340px] sm:w-[380px] shrink-0 snap-center sm:snap-start rounded-3xl bg-white dark:bg-slate-900 border transition-all duration-300 active:scale-[0.98] flex flex-col justify-between overflow-hidden group select-none ${
                   isCurrent
                     ? 'border-emerald-500/70 dark:border-emerald-500/60 shadow-xl shadow-emerald-900/5 dark:shadow-emerald-950/20 ring-1 ring-emerald-500/20'
                     : 'border-slate-200/90 dark:border-slate-800 shadow-md shadow-slate-200/40 dark:shadow-none hover:shadow-xl hover:border-emerald-500/50'
