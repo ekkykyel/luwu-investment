@@ -50,7 +50,19 @@ export function useProfile() {
 
     try {
       // Sesi selalu divalidasi langsung ke backend Supabase Auth (Anti Ghost-Session)
-      const { data: { user }, error: authErr } = await supabase.auth.getUser();
+      let { data: { user }, error: authErr } = await supabase.auth.getUser();
+
+      if (!user) {
+        const match = typeof document !== 'undefined' ? document.cookie.match(/(?:^|;\s*)sb-access-token=([^;]+)/) : null;
+        if (match && match[1]) {
+          try {
+            await supabase.auth.setSession({ access_token: match[1], refresh_token: match[1] });
+            const retry = await supabase.auth.getUser();
+            user = retry?.data?.user || null;
+            if (user) authErr = null;
+          } catch (e) {}
+        }
+      }
 
       if (authErr || !user) {
         saveProfileToCache(null);

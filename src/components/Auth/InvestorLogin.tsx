@@ -434,16 +434,24 @@ export default function InvestorLogin() {
       const citizenName = citizenData.full_name || otpFullName || 'Warga Kab. Luwu';
 
       // Persist session directly via Supabase Auth
-      if (data.sessionToken) {
+      const accessToken = data.session?.access_token || data.accessToken || data.sessionToken;
+      const refreshToken = data.session?.refresh_token || data.refreshToken || accessToken;
+      if (accessToken) {
         try {
           await supabase.auth.setSession({
-            access_token: data.sessionToken,
-            refresh_token: data.refreshToken || data.sessionToken
+            access_token: accessToken,
+            refresh_token: refreshToken
           });
+          document.cookie = `sb-access-token=${accessToken}; path=/; max-age=86400; SameSite=None; Secure`;
         } catch (setErr) {
           console.warn("Could not set supabase auth session from OTP token:", setErr);
         }
       }
+
+      // Invalidate profile cache to ensure fresh hydration
+      try {
+        sessionStorage.removeItem("luwu_cached_profile_data");
+      } catch (e) {}
 
       // Bersihkan stale session di localStorage
       if (typeof window !== 'undefined') {
@@ -454,7 +462,7 @@ export default function InvestorLogin() {
       setIsSuccess(true);
       setTimeout(() => {
         window.location.replace('/masyarakat-dashboard');
-      }, 700);
+      }, 500);
     } catch (err: any) {
       setOtpError(err.message || 'Verifikasi OTP gagal. Silakan periksa kembali kode OTP Anda.');
     } finally {

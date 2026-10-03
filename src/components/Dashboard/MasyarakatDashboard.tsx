@@ -773,7 +773,21 @@ export default function MasyarakatDashboard({
   // Hydrate user profile directly from Supabase session & public.profiles table (Anti Ghost-Session)
   const fetchAndHydrateMasyarakatProfile = async () => {
     try {
-      const { data: { user }, error: authErr } = await supabase.auth.getUser();
+      let { data: { user }, error: authErr } = await supabase.auth.getUser();
+
+      // If initial in-memory getUser is null, check sb-access-token cookie to restore session
+      if (!user) {
+        const match = typeof document !== 'undefined' ? document.cookie.match(/(?:^|;\s*)sb-access-token=([^;]+)/) : null;
+        if (match && match[1]) {
+          try {
+            await supabase.auth.setSession({ access_token: match[1], refresh_token: match[1] });
+            const retryRes = await supabase.auth.getUser();
+            user = retryRes?.data?.user || null;
+            if (user) authErr = null;
+          } catch (e) {}
+        }
+      }
+
       if (authErr || !user) {
         if (typeof window !== "undefined") {
           window.location.href = "/login";

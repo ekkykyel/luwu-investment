@@ -15,6 +15,7 @@ import { GoogleGenAI, Type, Modality } from "@google/genai";
 import YahooFinance from "yahoo-finance2";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import multer from "multer";
 import { createRequire } from "module";
 
@@ -12000,6 +12001,96 @@ app.post("/api/kiosk/send-otp-new", async (req, res) => {
   }
 });
 
+// Helper: Buat atau ambil sesi resmi Supabase Auth untuk warga terverifikasi OTP (RLS & Session Sync)
+async function createOrAuthenticateCitizenSupabaseUser(rawNik: string, fullName: string, phone?: string) {
+  const cleanNik = String(rawNik || "").replace(/\D/g, "");
+  const citizenEmail = `${cleanNik}@warga.luwukab.go.id`;
+  const citizenPassword = crypto.createHmac("sha256", GLOBAL_JWT_SECRET).update("warga_luwu_" + cleanNik).digest("hex");
+  const cleanName = (fullName || `Warga (${cleanNik.slice(-4)})`).trim();
+
+  const authClient = createClient(SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || SUPABASE_SERVICE_ROLE_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+
+  let authSession: any = null;
+  let authUser: any = null;
+
+  try {
+    // 1. Coba login langsung dengan password deterministik
+    const { data: signInData, error: signInErr } = await authClient.auth.signInWithPassword({
+      email: citizenEmail,
+      password: citizenPassword
+    });
+
+    if (!signInErr && signInData?.session && signInData?.user) {
+      authSession = signInData.session;
+      authUser = signInData.user;
+    } else {
+      // 2. Jika belum ada, buat user di auth.users menggunakan Supabase Admin API
+      const { data: createData, error: createErr } = await supabase.auth.admin.createUser({
+        email: citizenEmail,
+        password: citizenPassword,
+        email_confirm: true,
+        user_metadata: {
+          nik: cleanNik,
+          full_name: cleanName,
+          role: 'masyarakat',
+          phone: phone || ''
+        }
+      });
+
+      if (!createErr && createData?.user) {
+        authUser = createData.user;
+        const { data: newSignIn } = await authClient.auth.signInWithPassword({
+          email: citizenEmail,
+          password: citizenPassword
+        });
+        authSession = newSignIn?.session || null;
+      } else if (createErr) {
+        // Jika akun sudah ada tapi password berbeda, sinkronkan via admin API
+        const { data: listData } = await supabase.auth.admin.listUsers();
+        const foundUser = listData?.users?.find(u => u.email?.toLowerCase() === citizenEmail.toLowerCase());
+        if (foundUser) {
+          await supabase.auth.admin.updateUserById(foundUser.id, {
+            password: citizenPassword,
+            email_confirm: true,
+            user_metadata: {
+              nik: cleanNik,
+              full_name: cleanName,
+              role: 'masyarakat',
+              phone: phone || ''
+            }
+          });
+          const { data: retrySignIn } = await authClient.auth.signInWithPassword({
+            email: citizenEmail,
+            password: citizenPassword
+          });
+          authSession = retrySignIn?.session || null;
+          authUser = retrySignIn?.user || foundUser;
+        }
+      }
+    }
+
+    // 3. Pastikan row di public.profiles sinkron dengan user.id
+    if (authUser?.id) {
+      await supabase.from("profiles").upsert({
+        id: authUser.id,
+        email: citizenEmail,
+        nik: cleanNik,
+        full_name: cleanName,
+        role: 'masyarakat',
+        phone_number: phone || null,
+        no_whatsapp: phone || null,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'id' });
+    }
+  } catch (authErr) {
+    console.warn("[Citizen Supabase Auth] Error creating/signing in citizen user:", authErr);
+  }
+
+  return { authSession, authUser, citizenEmail };
+}
+
 // Endpoint 3: Verifikasi 4-Digit OTP
 app.post("/api/kiosk/verify-otp", async (req, res) => {
   try {
@@ -12020,16 +12111,27 @@ app.post("/api/kiosk/verify-otp", async (req, res) => {
         // Fetch or construct citizen profile
         const { data: citData } = await supabase.from("mpp_citizens").select("*").eq("nik", rawNik).maybeSingle();
         const userCitizen = citData || citizenData || { nik: rawNik, full_name: `Pemohon (${rawNik.slice(-4)})` };
-        const sessionToken = "luwu_session_" + Date.now() + "_" + Math.random().toString(36).substring(2, 9);
+        const citizenFullName = userCitizen.full_name || `Warga (${rawNik.slice(-4)})`;
+        const citizenPhone = userCitizen.phone_number || "";
+
+        const { authSession, authUser } = await createOrAuthenticateCitizenSupabaseUser(rawNik, citizenFullName, citizenPhone);
+        const sessionToken = authSession?.access_token || jwt.sign(
+          { nik: rawNik, fullName: citizenFullName, phone: citizenPhone, type: "kiosk_verified_citizen" },
+          GLOBAL_JWT_SECRET,
+          { expiresIn: "15m" }
+        );
 
         return res.json({
           success: true,
           verified: true,
           message: "Verifikasi Kode OTP berhasil! Akses Layanan Mandiri Kios Terbuka.",
+          session: authSession,
+          sessionToken: sessionToken,
+          accessToken: authSession?.access_token || sessionToken,
+          refreshToken: authSession?.refresh_token || sessionToken,
           citizen: userCitizen,
-          user: userCitizen,
-          token: sessionToken,
-          sessionToken: sessionToken
+          user: authUser || userCitizen,
+          token: sessionToken
         });
       }
 
@@ -12096,12 +12198,17 @@ app.post("/api/kiosk/verify-otp", async (req, res) => {
       .eq("nik", rawNik)
       .maybeSingle();
 
-    // Buat Kiosk Session Token (berlaku 15 menit khusus kiosk ini)
-    const sessionToken = jwt.sign(
+    const citizenFullName = updatedCitizen?.full_name || record.fullName || `Warga (${rawNik.slice(-4)})`;
+    const citizenPhone = record.phone || updatedCitizen?.phone_number || "";
+
+    // Generate real Supabase Auth session for citizen
+    const { authSession, authUser } = await createOrAuthenticateCitizenSupabaseUser(rawNik, citizenFullName, citizenPhone);
+
+    const sessionToken = authSession?.access_token || jwt.sign(
       {
         nik: rawNik,
-        fullName: updatedCitizen?.full_name || record.fullName,
-        phone: record.phone,
+        fullName: citizenFullName,
+        phone: citizenPhone,
         type: "kiosk_verified_citizen"
       },
       GLOBAL_JWT_SECRET,
@@ -12111,7 +12218,15 @@ app.post("/api/kiosk/verify-otp", async (req, res) => {
     return res.json({
       success: true,
       message: "Verifikasi identitas berhasil. Selamat datang di Layanan Mandiri MPP Luwu.",
-      sessionToken,
+      session: authSession,
+      sessionToken: sessionToken,
+      accessToken: authSession?.access_token || sessionToken,
+      refreshToken: authSession?.refresh_token || sessionToken,
+      user: authUser || {
+        id: `citizen-${rawNik}`,
+        email: `${rawNik}@warga.luwukab.go.id`,
+        role: 'masyarakat'
+      },
       citizen: updatedCitizen || {
         nik: rawNik,
         full_name: record.fullName,
