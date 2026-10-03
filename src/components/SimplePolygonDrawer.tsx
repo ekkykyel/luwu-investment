@@ -122,8 +122,74 @@ export default function SimplePolygonDrawer({
 
   const [isOutOfBounds, setIsOutOfBounds] = useState(false);
 
-  // Uncontrolled viewState initialized once to prevent React state re-render camera jumps
-  const initialViewState = useMemo(() => {
+  // ─── MEMOIZED BOUNDING BOX & CENTROID STORE ───
+  const activeGeometryBounds = useMemo(() => {
+    // Priority 1: initialGeometry (if editing existing saved polygon)
+    if (initialGeometry && initialGeometry.coordinates && initialGeometry.coordinates.length > 0) {
+      try {
+        const featureObj = { type: "Feature" as const, properties: {}, geometry: initialGeometry };
+        const box = turf.bbox(featureObj);
+        if (box && box.length === 4 && !box.some(isNaN) && box[0] >= 118 && box[2] <= 122 && box[1] >= -5 && box[3] <= -1) {
+          const centerLng = (box[0] + box[2]) / 2;
+          const centerLat = (box[1] + box[3]) / 2;
+          return {
+            key: `geom_${box.join('_')}`,
+            bbox: box as [number, number, number, number],
+            center: [centerLng, centerLat] as [number, number],
+            recommendedZoom: 16,
+            source: 'initialGeometry'
+          };
+        }
+      } catch (e) {}
+    }
+
+    // Priority 2: Pre-computed villageBbox / villageCoords from focusTarget
+    if (focusTarget?.villageBbox && Array.isArray(focusTarget.villageBbox) && focusTarget.villageBbox.length === 4) {
+      const box = focusTarget.villageBbox;
+      const centerLng = (box[0] + box[2]) / 2;
+      const centerLat = (box[1] + box[3]) / 2;
+      return {
+        key: `vbbox_${focusTarget.villageId || focusTarget.villageName}_${box.join('_')}`,
+        bbox: box as [number, number, number, number],
+        center: [centerLng, centerLat] as [number, number],
+        recommendedZoom: 14.8,
+        source: 'villageBbox'
+      };
+    }
+
+    // Priority 3: activeBoundaryFeature (from loaded village / kecamatan GeoJSON or Supabase)
+    if (activeBoundaryFeature) {
+      try {
+        const box = turf.bbox(activeBoundaryFeature);
+        if (box && box.length === 4 && !box.some(isNaN) && box[0] >= 118 && box[2] <= 122 && box[1] >= -5 && box[3] <= -1) {
+          const centerPt = turf.center(activeBoundaryFeature);
+          const [cLng, cLat] = centerPt.geometry.coordinates;
+          return {
+            key: `active_${focusTarget?.villageId || focusTarget?.districtId}_${box.join('_')}`,
+            bbox: box as [number, number, number, number],
+            center: [cLng, cLat] as [number, number],
+            recommendedZoom: (focusTarget?.villageName || focusTarget?.villageId) ? 14.8 : 12.8,
+            source: 'activeBoundaryFeature'
+          };
+        }
+      } catch (e) {}
+    }
+
+    // Priority 4: Pre-computed districtBbox / districtCoords from focusTarget
+    if (focusTarget?.districtBbox && Array.isArray(focusTarget.districtBbox) && focusTarget.districtBbox.length === 4) {
+      const box = focusTarget.districtBbox;
+      const centerLng = (box[0] + box[2]) / 2;
+      const centerLat = (box[1] + box[3]) / 2;
+      return {
+        key: `dbbox_${focusTarget.districtId || focusTarget.districtName}_${box.join('_')}`,
+        bbox: box as [number, number, number, number],
+        center: [centerLng, centerLat] as [number, number],
+        recommendedZoom: 12.8,
+        source: 'districtBbox'
+      };
+    }
+
+    // Priority 5: Raw villageCoords / districtCoords center point
     const getCorrectedCenter = (coords?: [number, number]): [number, number] | null => {
       if (!coords || !Array.isArray(coords) || coords.length < 2) return null;
       let [c1, c2] = coords;
@@ -133,28 +199,29 @@ export default function SimplePolygonDrawer({
       return [c1, c2];
     };
 
-    let center: [number, number] | null = null;
-
-    if (focusTarget?.villageBbox) {
-      const b = focusTarget.villageBbox;
-      center = [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2];
-    } else if (focusTarget?.districtBbox) {
-      const b = focusTarget.districtBbox;
-      center = [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2];
-    } else {
-      center = getCorrectedCenter(focusTarget?.villageCoords) ||
-               getCorrectedCenter(focusTarget?.districtCoords) ||
-               [120.252, -3.203];
-    }
+    const villageCenter = getCorrectedCenter(focusTarget?.villageCoords);
+    const districtCenter = getCorrectedCenter(focusTarget?.districtCoords);
+    const fallbackCenter = villageCenter || districtCenter || [120.252, -3.203];
 
     return {
-      longitude: center[0],
-      latitude: center[1],
-      zoom: (focusTarget?.villageBbox || focusTarget?.villageCoords || focusTarget?.villageId || focusTarget?.villageName) ? 14.8 : (focusTarget?.districtBbox || focusTarget?.districtCoords || focusTarget?.districtId || focusTarget?.districtName) ? 12.8 : 11,
+      key: `coords_${fallbackCenter.join('_')}`,
+      bbox: null,
+      center: fallbackCenter as [number, number],
+      recommendedZoom: villageCenter ? 14.8 : districtCenter ? 12.8 : 11,
+      source: 'coordsFallback'
+    };
+  }, [initialGeometry, focusTarget, activeBoundaryFeature]);
+
+  // Uncontrolled viewState initialized once from activeGeometryBounds
+  const initialViewState = useMemo(() => {
+    return {
+      longitude: activeGeometryBounds.center[0],
+      latitude: activeGeometryBounds.center[1],
+      zoom: activeGeometryBounds.recommendedZoom,
       pitch: 0,
       bearing: 0
     };
-  }, [focusTarget?.villageBbox, focusTarget?.districtBbox, focusTarget?.villageCoords, focusTarget?.districtCoords, focusTarget?.villageId, focusTarget?.districtId, focusTarget?.villageName, focusTarget?.districtName]);
+  }, [activeGeometryBounds]);
 
   const [zoningDataState, setZoningDataState] = useState<any>(null);
 
@@ -350,122 +417,51 @@ export default function SimplePolygonDrawer({
     }
   }, [activeBoundaryFeature]);
 
-  // ─── AUTO FLY-TO CONTEXT LOGIC (SINGLE EXECUTION PER TARGET LOCK) ───
-  const hasAutoFlownRef = useRef<boolean>(false);
+  // ─── CAMERA BOUNDS SYNCHRONIZATION ───
   const userIsDrawingRef = useRef<boolean>(false);
-  const lastFocusedTargetKeyRef = useRef<string>("");
-
-  const focusTargetKey = `${focusTarget?.districtId || focusTarget?.districtName || ''}_${focusTarget?.villageId || focusTarget?.villageName || ''}_${initialGeometry ? 'geom' : 'nogeom'}`;
-
-  useEffect(() => {
-    if (lastFocusedTargetKeyRef.current !== focusTargetKey) {
-      lastFocusedTargetKeyRef.current = focusTargetKey;
-      hasAutoFlownRef.current = false;
-      userIsDrawingRef.current = false;
-    }
-  }, [focusTargetKey]);
+  const lastAppliedBoundsKeyRef = useRef<string>("");
 
   const triggerAutoFlyTo = useCallback((force = false) => {
     if (!mapRef.current) return;
     const map = mapRef.current.getMap ? mapRef.current.getMap() : (mapRef.current as any);
     if (!map) return;
 
-    // NEVER reset or move camera if user has started drawing or map has already auto-flown (unless forced)
-    if ((hasAutoFlownRef.current || userIsDrawingRef.current) && !force) {
+    // Do NOT move camera if user is actively drawing unless forced
+    if (userIsDrawingRef.current && !force) {
       return;
     }
 
-    // Force map resize first so MapLibre calculates container dimensions accurately
-    try {
-      map.resize();
-    } catch (e) {}
+    lastAppliedBoundsKeyRef.current = activeGeometryBounds.key;
 
-    // 1. Priority A: Initial Geometry fitBounds
-    if (initialGeometry && initialGeometry.coordinates && initialGeometry.coordinates.length > 0) {
+    requestAnimationFrame(() => {
       try {
-        const featureObj = { type: "Feature" as const, properties: {}, geometry: initialGeometry };
-        const bbox = turf.bbox(featureObj);
-        if (bbox && !bbox.some(isNaN) && bbox[0] >= 118 && bbox[2] <= 122) {
-          hasAutoFlownRef.current = true;
-          map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], {
-            padding: 60,
-            maxZoom: 16,
-            duration: 1200
+        map.resize();
+        if (activeGeometryBounds.bbox) {
+          const b = activeGeometryBounds.bbox;
+          map.fitBounds([[b[0], b[1]], [b[2], b[3]]], {
+            padding: 70,
+            maxZoom: Math.min(activeGeometryBounds.recommendedZoom + 0.7, 16.5),
+            duration: 1000
           });
-          return;
+        } else if (activeGeometryBounds.center) {
+          map.easeTo({
+            center: activeGeometryBounds.center,
+            zoom: activeGeometryBounds.recommendedZoom,
+            duration: 1000
+          });
         }
       } catch (e) {
-        console.warn("Initial geometry bbox error:", e);
+        console.warn("Error applying activeGeometryBounds to map camera:", e);
       }
-    }
+    });
+  }, [activeGeometryBounds]);
 
-    // 2. Priority B: Use active boundary feature fitBounds / center
-    if (activeBoundaryFeature) {
-      try {
-        const bbox = turf.bbox(activeBoundaryFeature);
-        if (bbox && bbox.length === 4 && !bbox.some(isNaN) && bbox[0] >= 118 && bbox[2] <= 122 && bbox[1] >= -5 && bbox[3] <= -1) {
-          hasAutoFlownRef.current = true;
-
-          const centerPt = turf.center(activeBoundaryFeature);
-          const [centerLng, centerLat] = centerPt.geometry.coordinates;
-
-          map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], {
-            padding: 70,
-            maxZoom: (focusTarget?.villageName || focusTarget?.villageId) ? 15.5 : 13.5,
-            duration: 1200
-          });
-
-          // Safeguard: verify zoom after animation to prevent unexpected over-zooming out
-          setTimeout(() => {
-            try {
-              if (map.getZoom() < 12 && centerLng && centerLat) {
-                map.flyTo({
-                  center: [centerLng, centerLat],
-                  zoom: (focusTarget?.villageName || focusTarget?.villageId) ? 14.5 : 12.5,
-                  duration: 800
-                });
-              }
-            } catch (e) {}
-          }, 500);
-
-          return;
-        }
-      } catch (err) {
-        console.warn("Error fitting bounds to activeBoundaryFeature:", err);
-      }
-    }
-
-    // 3. Priority C: Use coordinates center directly
-    const getCorrectedCenter = (coords?: [number, number]): [number, number] | null => {
-      if (!coords || !Array.isArray(coords) || coords.length < 2) return null;
-      let [c1, c2] = coords;
-      if (typeof c1 !== "number" || typeof c2 !== "number" || (c1 === 0 && c2 === 0)) return null;
-      if (Math.abs(c1) < 10 && Math.abs(c2) > 100) return [c2, c1];
-      if (c1 < 118 || c1 > 122 || c2 < -5 || c2 > -1) return null;
-      return [c1, c2];
-    };
-
-    const center = getCorrectedCenter(focusTarget?.villageCoords) || getCorrectedCenter(focusTarget?.districtCoords);
-    if (center) {
-      hasAutoFlownRef.current = true;
-      map.flyTo({
-        center,
-        zoom: (focusTarget?.villageName || focusTarget?.villageId) ? 14.5 : 12.5,
-        essential: true,
-        duration: 1200
-      });
-    }
-  }, [focusTarget, initialGeometry, activeBoundaryFeature]);
-
-  // Trigger auto flyTo when boundary context or map is ready (isolated from drawing state)
+  // Sync camera ONLY when activeGeometryBounds.key changes
   useEffect(() => {
-    if (!hasAutoFlownRef.current && !userIsDrawingRef.current) {
-      const timer = setTimeout(() => {
-        triggerAutoFlyTo();
-      }, 350);
-      return () => clearTimeout(timer);
+    if (lastAppliedBoundsKeyRef.current !== activeGeometryBounds.key && !userIsDrawingRef.current) {
+      triggerAutoFlyTo();
     }
-  }, [focusTargetKey, activeBoundaryFeature, triggerAutoFlyTo]);
+  }, [activeGeometryBounds.key, triggerAutoFlyTo]);
 
   // ─── LIVE ESG RADAR & BOUNDARY ENFORCEMENT (DECOUPLED FROM CAMERA) ───
   const handleDrawEvent = useCallback((evt: any) => {
