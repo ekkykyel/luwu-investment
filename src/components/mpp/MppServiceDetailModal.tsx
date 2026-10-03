@@ -536,7 +536,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
     <AnimatePresence>
       <div 
         id="mpp-service-detail-backdrop"
-        className="fixed inset-0 z-50 flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 bg-slate-900/80 backdrop-blur-sm overflow-hidden font-sans"
+        className="fixed inset-0 z-50 flex flex-col items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-hidden font-sans"
         onClick={(e) => {
           if (e.target === e.currentTarget) {
             onClose();
@@ -552,7 +552,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ type: "spring", stiffness: 320, damping: 28 }}
-          className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-4xl bg-white dark:bg-slate-900 sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100 border-0 sm:border sm:border-slate-200/80 dark:sm:border-white/10"
+          className="w-[calc(100%-1.5rem)] mx-3 my-auto max-h-[85vh] sm:h-auto sm:max-h-[90vh] sm:max-w-4xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100 border border-slate-200/80 dark:border-white/10"
         >
           {/* Handle Drag Bar untuk Layar Mobile Android/iOS */}
           <div className="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto my-2 sm:hidden shrink-0" />

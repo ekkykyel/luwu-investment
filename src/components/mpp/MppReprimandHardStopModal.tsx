@@ -112,9 +112,9 @@ export const MppReprimandHardStopModal: React.FC<MppReprimandHardStopModalProps>
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-[99999] flex flex-col sm:items-center sm:justify-center p-0 sm:p-6 bg-rose-950/90 backdrop-blur-md animate-in fade-in zoom-in-95 duration-200 select-none overflow-hidden"
+      className="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-3 sm:p-6 bg-rose-950/90 backdrop-blur-md animate-in fade-in zoom-in-95 duration-200 select-none overflow-hidden"
     >
-      <div className="relative w-full max-w-xl h-full sm:h-auto sm:max-h-[92vh] bg-slate-950 border-0 sm:border-2 border-rose-600 rounded-none sm:rounded-3xl shadow-[0_0_80px_rgba(225,29,72,0.5)] overflow-hidden flex flex-col">
+      <div className="relative w-[calc(100%-1.5rem)] mx-3 my-auto max-h-[85vh] sm:h-auto sm:max-h-[92vh] sm:max-w-xl bg-slate-950 border sm:border-2 border-rose-600 rounded-3xl shadow-[0_0_80px_rgba(225,29,72,0.5)] overflow-hidden flex flex-col">
         {/* Top Warning Banner with Pulsing Siren Animation */}
         <div className="bg-gradient-to-r from-rose-700 via-rose-600 to-rose-700 p-4 sm:p-5 text-white flex items-center justify-between">
           <div className="flex items-center gap-3">

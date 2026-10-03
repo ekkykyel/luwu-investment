@@ -201,12 +201,12 @@ export function PkkprTechnicalRecommendationModal({ isOpen, onClose, isDark = fa
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-hidden">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-hidden">
       <motion.div 
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.96 }}
-        className={`w-full max-w-5xl h-full sm:h-auto sm:max-h-[94vh] rounded-none sm:rounded-3xl shadow-2xl flex flex-col border-0 sm:border overflow-hidden ${
+        className={`w-[calc(100%-1.5rem)] mx-3 my-auto max-h-[85vh] sm:h-auto sm:max-h-[94vh] sm:max-w-5xl rounded-3xl shadow-2xl flex flex-col border overflow-hidden ${
           isDark ? 'bg-slate-900 text-white border-slate-800' : 'bg-white text-slate-900 border-slate-200'
         }`}
       >

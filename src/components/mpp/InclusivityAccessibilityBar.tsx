@@ -1520,7 +1520,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
       <AnimatePresence>
         {isAssistanceModalOpen && (
           <div 
-            className="fixed inset-0 z-[100] flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 md:p-6 bg-slate-950/75 backdrop-blur-md overflow-hidden"
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 bg-slate-950/80 backdrop-blur-md overflow-hidden"
             onClick={() => setIsAssistanceModalOpen(false)}
           >
             <motion.div
@@ -1528,7 +1528,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ duration: 0.2 }}
-              className="w-full max-w-4xl h-full sm:h-auto sm:max-h-[92vh] bg-white dark:bg-slate-900 border-0 sm:border border-slate-200/90 dark:border-emerald-500/30 rounded-none sm:rounded-3xl p-4 sm:p-6 md:p-7 shadow-2xl overflow-hidden flex flex-col text-slate-900 dark:text-white font-sans"
+              className="w-[calc(100%-1.5rem)] mx-3 my-auto max-h-[85vh] sm:h-auto sm:max-h-[92vh] sm:max-w-4xl bg-white dark:bg-slate-900 border sm:border border-slate-200/90 dark:border-emerald-500/30 rounded-3xl p-4 sm:p-6 md:p-7 shadow-2xl overflow-hidden flex flex-col text-slate-900 dark:text-white font-sans"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Header with Standard Badges */}

@@ -209,7 +209,7 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
       </div>
 
       {/* Centered Vertical Stack for Maklumat & Zona Integritas (Top-to-Bottom) */}
-      <div className="w-full max-w-5xl mx-auto flex flex-col gap-8 mb-12">
+      <div className="w-full max-w-4xl mx-auto flex flex-col gap-8 mb-12">
         {/* Top Card: Official Government Pledge Card (Maklumat Pelayanan Publik) */}
         <div className={`p-6 sm:p-8 rounded-3xl border transition-all relative overflow-hidden w-full ${
           isDark 

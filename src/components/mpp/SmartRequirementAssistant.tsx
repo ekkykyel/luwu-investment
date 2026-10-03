@@ -534,40 +534,42 @@ export function SmartRequirementAssistant({ isDark = false }: { isDark?: boolean
             </div>
 
             {/* Document Checklist Items */}
-            <div className="space-y-2.5 my-4">
+            <div className="space-y-3.5 my-4">
               {selectedReq.documents.map((doc) => {
                 const isChecked = checkedDocs[doc.id] || false;
                 return (
                   <div
                     key={doc.id}
                     onClick={() => toggleDocCheck(doc.id)}
-                    className={`h-auto min-h-[5rem] p-4 sm:p-5 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-4 active:scale-[0.98] ${
+                    className={`h-auto min-h-[5.5rem] p-5 sm:p-6 rounded-2xl border transition-all cursor-pointer flex flex-col sm:flex-row sm:items-start justify-between gap-4 active:scale-[0.98] ${
                       isChecked 
-                        ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-950 dark:text-emerald-200' 
+                        ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-950 dark:text-emerald-200 shadow-sm shadow-emerald-500/5' 
                         : isDark 
                           ? 'bg-slate-800/60 border-slate-700/60 hover:border-slate-600 text-slate-200' 
                           : 'bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-800'
                     }`}
                   >
-                    <div className="flex items-start gap-3 sm:gap-4">
+                    <div className="flex items-start gap-4">
                       {isChecked ? (
                         <CheckSquare className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                       ) : (
                         <Square className="w-5 h-5 text-slate-400 shrink-0 mt-0.5" />
                       )}
-                      <div className="space-y-1.5 text-left">
-                        <span className="text-xs font-semibold leading-snug block">
+                      <div className="flex flex-col gap-2 text-left">
+                        <span className="text-xs sm:text-sm font-semibold leading-relaxed block text-slate-900 dark:text-white">
                           {doc.name}
                         </span>
                         {doc.templateName && (
-                          <span className="inline-flex items-center gap-1.5 text-[10px] text-blue-600 dark:text-blue-400 font-semibold mt-1">
-                            <Download className="w-3.5 h-3.5 shrink-0" /> {t("mppPortal.smartRequirement.downloadTemplate", "Unduh Draf Formulir / Template")} ({doc.templateName})
-                          </span>
+                          <div className="pt-1">
+                            <span className="inline-flex items-center gap-1.5 text-[11px] text-blue-600 dark:text-blue-400 font-bold hover:underline">
+                              <Download className="w-3.5 h-3.5 shrink-0" /> {t("mppPortal.smartRequirement.downloadTemplate", "Unduh Draf Formulir / Template")} ({doc.templateName})
+                            </span>
+                          </div>
                         )}
                       </div>
                     </div>
 
-                    <span className={`text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider shrink-0 font-sans mt-0.5 ${
+                    <span className={`text-[10px] font-extrabold px-3 py-1 rounded-md uppercase tracking-wider shrink-0 font-sans mt-1 self-start sm:self-auto ${
                       doc.required 
                         ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20' 
                         : 'bg-slate-500/10 text-slate-500 border border-slate-500/20'

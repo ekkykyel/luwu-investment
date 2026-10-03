@@ -53,7 +53,7 @@ export function FacilityDetailModal({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
           transition={{ type: "spring", stiffness: 320, damping: 28 }}
-          className="w-full max-w-3xl mx-auto max-h-[92vh] bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100"
+          className="w-full max-w-3xl mx-auto max-h-[92vh] bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100"
           onClick={(e) => e.stopPropagation()}
         >
           {/* 1. Header Foto Full-Bleed (Menempel Sisi Kiri, Atas, Kanan Card) */}

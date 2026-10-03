@@ -152,7 +152,7 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
   return (
     <AnimatePresence>
       <div
-        className="fixed inset-0 z-50 flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 bg-slate-950/75 backdrop-blur-md overflow-hidden font-sans"
+        className="fixed inset-0 z-50 flex flex-col items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-hidden font-sans"
         onClick={onClose}
       >
         <motion.div
@@ -160,7 +160,7 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 100, scale: 0.95 }}
           transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-          className={`w-full max-w-4xl h-full sm:h-auto sm:max-h-[92vh] flex flex-col rounded-none sm:rounded-3xl border-0 sm:border shadow-2xl overflow-hidden ${
+          className={`w-[calc(100%-1.5rem)] mx-3 my-auto max-h-[85vh] sm:h-auto sm:max-h-[92vh] sm:max-w-4xl flex flex-col rounded-3xl border shadow-2xl overflow-hidden ${
             isDark
               ? 'bg-slate-900 border-slate-800 text-white shadow-emerald-950/40'
               : 'bg-white border-slate-200 text-slate-900 shadow-slate-300/50'

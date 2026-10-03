@@ -5962,8 +5962,8 @@ export default function LandingPage({
         </section>
 
         {/* Footer Sovereign Executive */}
-        <footer className={`relative border-t pt-6 pb-20 sm:pt-12 sm:pb-12 ${isDark ? "bg-slate-900/90 border-slate-800" : "bg-white border-slate-200"}`}>
-          <div className="container mx-auto px-3 sm:px-6 relative max-w-6xl">
+        <footer className={`relative border-t pt-6 pb-20 sm:pt-12 sm:pb-12 px-3 sm:px-6 ${isDark ? "bg-slate-900/90 border-slate-800" : "bg-white border-slate-200"}`}>
+          <div className="container mx-auto px-0 relative max-w-6xl">
             {/* Floating Back to Top Button */}
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -5979,7 +5979,7 @@ export default function LandingPage({
 
             {/* Main Footer Block */}
             <div className="flex flex-col md:flex-row items-center md:items-center justify-between gap-6 pb-8 border-b border-slate-200/80 dark:border-slate-800/80">
-              <div className="flex flex-col md:flex-row items-center gap-3.5 w-full md:w-auto justify-center md:justify-start text-center md:text-left">
+              <div className="flex flex-col items-center justify-center gap-3.5 w-full md:w-auto text-center md:text-left md:flex-row md:justify-start md:items-center">
                 <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center p-1 shadow-inner shrink-0">
                   <img src={LUWU_LOGO_BASE64} alt="Logo Resmi Kabupaten Luwu" className="w-7 h-7 object-contain" />
                 </div>
@@ -6029,15 +6029,15 @@ export default function LandingPage({
 
             {/* Bottom Copyright & Security Metadata */}
             <div className="pt-6 flex flex-col items-center justify-center gap-3 text-center text-xs">
-              <p className="text-center font-sans font-medium text-slate-500 dark:text-slate-400">
+              <p className="text-center font-sans font-medium text-slate-500 dark:text-slate-400 text-xs px-3">
                 {t("footer.copyright", "© 2026 Pemerintah Kabupaten Luwu. Hak Cipta Dilindungi Undang-Undang.")}
               </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 font-mono text-[10px] text-slate-500 dark:text-slate-400">
-                <span className="inline-flex items-center gap-1.5 text-emerald-500 font-semibold bg-emerald-500/5 dark:bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/15">
+              <div className="flex flex-col items-center justify-center gap-2.5 text-xs">
+                <span className="inline-flex items-center gap-1.5 text-emerald-500 font-semibold bg-emerald-500/5 dark:bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/15">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   PostGIS Supabase Enabled
                 </span>
-                <span className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-mono text-[11px]">
                   {t("footer.version", "v2.0.1 (Precision Engine)")}
                 </span>
               </div>
