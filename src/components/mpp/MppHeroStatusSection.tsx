@@ -55,7 +55,7 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
   return (
     <section 
       id="mpp-hero-status"
-      className={className || "w-full max-w-xl mx-auto px-4 pt-8 pb-28 space-y-5 text-slate-900 dark:text-slate-100 scroll-mt-28"}
+      className={className || "w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 space-y-5 text-slate-900 dark:text-slate-100 scroll-mt-28"}
     >
       {/* 2. MAIN HERO HEADER & REAL-TIME BADGE */}
       <div className="space-y-2">

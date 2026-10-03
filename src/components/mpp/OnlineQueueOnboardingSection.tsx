@@ -29,7 +29,7 @@ export const OnlineQueueOnboardingSection: React.FC<OnlineQueueOnboardingSection
   return (
     <section 
       id="antrean-online" 
-      className={className || "w-full max-w-xl mx-auto px-4 pt-8 pb-28 space-y-5 text-slate-900 dark:text-slate-100 scroll-mt-28"}
+      className={className || "w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 space-y-5 text-slate-900 dark:text-slate-100 scroll-mt-28"}
     >
       {/* 2. HERO CARD CONTAINER WITH ACCENT GRADIENT */}
       <div className="relative p-5 sm:p-6 rounded-3xl bg-gradient-to-b from-emerald-50/50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 border border-emerald-200/60 dark:border-emerald-800/50 shadow-md overflow-hidden space-y-5">

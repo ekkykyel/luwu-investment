@@ -45,7 +45,7 @@ export const PeakHoursSection: React.FC<PeakHoursSectionProps> = ({
   return (
     <section 
       id="jam-ramai"
-      className={className || "w-full max-w-xl mx-auto px-4 pt-8 pb-6 space-y-5 text-slate-900 dark:text-slate-100 scroll-mt-28"}
+      className={className || "w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 space-y-5 text-slate-900 dark:text-slate-100 scroll-mt-28"}
     >
       {/* 1. Header Title & Subtitle */}
       <div className="space-y-1.5 text-left">

@@ -185,7 +185,7 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
   return (
     <section 
       id="maklumat-pelayanan-sla"
-      className="w-full max-w-6xl mx-auto py-10 sm:py-14 px-3 sm:px-6 relative scroll-mt-24"
+      className="w-full max-w-6xl mx-auto py-10 sm:py-14 px-4 sm:px-6 lg:px-8 relative scroll-mt-24"
     >
       {/* Header Section */}
       <div className="w-full max-w-3xl mx-auto text-center mb-8 sm:mb-12">
