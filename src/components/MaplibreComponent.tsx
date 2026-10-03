@@ -1470,22 +1470,23 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
   }, [props.spatialLayers]);
 
   // URL Parameter Listener for deep-linking (Peluang Emas Luwu -> Map)
+  const processedDeepLinkIdRef = useRef<string | null>(null);
   useEffect(() => {
     if (typeof window !== 'undefined' && isMapLoaded) {
       const urlParams = new URLSearchParams(window.location.search);
       const urlId = urlParams.get('id');
 
-      if (urlId) {
+      if (urlId && processedDeepLinkIdRef.current !== urlId) {
         const found = props.investments.find(inv => String(inv.id) === urlId);
         if (found) {
-          
+          processedDeepLinkIdRef.current = urlId;
           // Hydrate the state for the investment modal
           props.setSelectedInvestmentId(urlId);
           setDetailModalInvestmentId(urlId);
           
           // Trigger smooth map coordinates fly-to animation
           const map = getMapInstance(mapRef);
-          if (map) {
+          if (map && typeof map.flyTo === 'function') {
              map.flyTo({
                center: [found.longitude || (found as any).lng, found.latitude || (found as any).lat],
                zoom: 14.5,
@@ -2139,15 +2140,26 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
   }, [isDesaActive, desaGeoJSON, viewportBbox, currentMapZoom, props.selectedVillageId, props.selectedDistrictId]);
 
   // Sync zoom and fly to coordinate focus changes
+  const lastFocusCoordRef = useRef<{ lng: number; lat: number } | null>(null);
   useEffect(() => {
     if (props.focusCoordinate && mapRef.current) {
-      mapRef.current.flyTo({
-        center: [props.focusCoordinate.lng, props.focusCoordinate.lat],
-        zoom: 13,
-        speed: 1.2,
-        curve: 1.42,
-        essential: true
-      });
+      if (
+        lastFocusCoordRef.current?.lng === props.focusCoordinate.lng &&
+        lastFocusCoordRef.current?.lat === props.focusCoordinate.lat
+      ) {
+        return;
+      }
+      lastFocusCoordRef.current = { lng: props.focusCoordinate.lng, lat: props.focusCoordinate.lat };
+      const map = getMapInstance(mapRef);
+      if (map && typeof map.flyTo === 'function') {
+        map.flyTo({
+          center: [props.focusCoordinate.lng, props.focusCoordinate.lat],
+          zoom: 13,
+          speed: 1.2,
+          curve: 1.42,
+          essential: true
+        });
+      }
     }
   }, [props.focusCoordinate]);
 
@@ -4014,6 +4026,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
         dragRotate={true}
         touchPitch={true}
         touchZoomRotate={true}
+        hash={false}
 
         {...viewState}
         maxPitch={60}

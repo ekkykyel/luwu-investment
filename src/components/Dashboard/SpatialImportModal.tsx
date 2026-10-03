@@ -764,8 +764,9 @@ export default function SpatialImportModal({
                 {/* Map Component */}
                 <Map
                   ref={mapPreviewRef}
-                  {...previewViewState}
-                  onMove={(evt) => setPreviewViewState(evt.viewState)}
+                  initialViewState={previewViewState}
+                  hash={false}
+                  onMoveEnd={(evt) => setPreviewViewState(evt.viewState)}
                   style={{ width: '100%', height: '100%', minHeight: '260px' }}
                   mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
                 >

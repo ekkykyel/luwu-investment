@@ -224,6 +224,7 @@ export default function DalakMap({ isDarkMode = true, complaints = [] }: DalakMa
       <Map
         ref={mapRef}
         initialViewState={LUWU_CENTER}
+        hash={false}
         mapStyle={GOOGLE_STREET_STYLE}
         mapLib={maplibregl as any}
         style={{ width: "100%", height: "100%" }}

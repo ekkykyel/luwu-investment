@@ -895,7 +895,10 @@ export default function SimplePolygonDrawer({
       </div>
 
       {/* Map Canvas Wrapper */}
-      <div className="flex-1 relative bg-slate-950">
+      <div 
+        className="flex-1 relative bg-slate-950 touch-none select-none overscroll-contain"
+        style={{ touchAction: 'none', overscrollBehavior: 'contain' }}
+      >
         {/* ── IN-MAP WARNING TOAST (ESG RADAR DETECTED PROTECTED ZONE) ── */}
         {intersectedProtectedZones?.isProtected && (
           <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[30] w-[94%] max-w-2xl bg-amber-500/95 text-slate-950 px-4 py-3 rounded-2xl shadow-2xl border-2 border-amber-300 backdrop-blur-md flex items-center justify-between gap-3 animate-fadeIn">
@@ -1062,6 +1065,7 @@ export default function SimplePolygonDrawer({
         <Map
           ref={mapRef}
           initialViewState={initialViewState}
+          hash={false}
           // @ts-ignore
           preserveDrawingBuffer={true}
           maxZoom={22}

@@ -1766,11 +1766,15 @@ export default function PuptrSpatialEditorDashboard({
           </div>
 
           {/* Interactive MapLibre GL Map */}
-          <div className="flex-1 w-full h-full relative">
+          <div 
+            className="flex-1 w-full h-full relative touch-none select-none overscroll-contain"
+            style={{ touchAction: 'none', overscrollBehavior: 'contain' }}
+          >
             <Map
               ref={mapRef}
               initialViewState={viewState}
-              onMove={evt => setViewState(evt.viewState)}
+              hash={false}
+              onMoveEnd={evt => setViewState(evt.viewState)}
               cursor={cursor}
               interactiveLayerIds={interactiveLayerIds}
               onMouseEnter={() => setCursor('pointer')}

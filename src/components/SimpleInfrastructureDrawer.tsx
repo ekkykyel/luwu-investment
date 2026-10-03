@@ -404,10 +404,14 @@ export default function SimpleInfrastructureDrawer({
       </div>
 
       {/* Map Division - Wrapper dengan explicit style height 70vh */}
-      <div className="flex-1 relative bg-slate-950" style={{ height: "70vh" }}>
+      <div 
+        className="flex-1 relative bg-slate-950 touch-none select-none overscroll-contain" 
+        style={{ height: "70vh", touchAction: 'none', overscrollBehavior: 'contain' }}
+      >
         <Map
           ref={mapRef}
           initialViewState={viewState}
+          hash={false}
           // @ts-ignore
           preserveDrawingBuffer={true}
           transformRequest={(url) => {

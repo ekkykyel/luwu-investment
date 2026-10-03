@@ -801,10 +801,11 @@ Bobot Prioritas Infrastruktur:
         )}
 
         {/* MapLibre Map Canvas */}
-        <div className="flex-1 w-full h-full">
+        <div className="flex-1 w-full h-full touch-none select-none overscroll-contain" style={{ touchAction: 'none', overscrollBehavior: 'contain' }}>
           <Map
             ref={mapRef}
             initialViewState={LUWU_CENTER}
+            hash={false}
             mapLib={maplibregl as any}
             mapStyle={activeBasemap === 'hybrid' ? GOOGLE_SATELLITE_HYBRID_STYLE : GOOGLE_STREET_STYLE}
             style={{ width: '100%', height: '100%' }}

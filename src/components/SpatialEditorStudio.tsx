@@ -2504,17 +2504,23 @@ export default function SpatialEditorStudio({
           )}
 
           {/* MAP CANVAS COMPONENT */}
-          <div className="flex-1 w-full h-full bg-slate-900 relative">
+          <div 
+            className="flex-1 w-full h-full bg-slate-900 relative touch-none select-none overscroll-contain"
+            style={{ touchAction: 'none', overscrollBehavior: 'contain' }}
+          >
             <Map
+              ref={mapRef}
               onClick={handleMapClick}
-              {...(viewState as any)}
-              onMove={(evt) => setViewState(evt.viewState)}
+              initialViewState={viewState}
+              hash={false}
+              onMoveEnd={(evt) => setViewState(evt.viewState)}
               style={{ width: "100%", height: "100%", cursor: ((digitizationModule === "INFRASTRUKTUR" && !infraCoords) || (digitizationModule === "ANNOTATION" && !annotationCoords)) ? "crosshair" : "default" }}
               cursor={
                 ((digitizationModule === "INFRASTRUKTUR" && !infraCoords) || (digitizationModule === "ANNOTATION" && !annotationCoords)) 
                   ? "crosshair" 
                   : (editorMode !== "VIEW" ? "crosshair" : "auto")
               }
+              // @ts-ignore
               preserveDrawingBuffer={true}
               mapStyle={
                 mapMode === "osm"
