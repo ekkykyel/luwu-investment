@@ -125,6 +125,7 @@ export default function SimplePolygonDrawer({
       let [c1, c2] = coords;
       if (typeof c1 !== "number" || typeof c2 !== "number" || (c1 === 0 && c2 === 0)) return null;
       if (Math.abs(c1) < 10 && Math.abs(c2) > 100) return [c2, c1];
+      if (c1 < 118 || c1 > 122 || c2 < -5 || c2 > -1) return null;
       return [c1, c2];
     };
 
@@ -135,11 +136,11 @@ export default function SimplePolygonDrawer({
     return {
       longitude: center[0],
       latitude: center[1],
-      zoom: focusTarget?.villageId ? 14 : focusTarget?.districtId ? 12 : 11,
+      zoom: (focusTarget?.villageCoords || focusTarget?.villageId || focusTarget?.villageName) ? 14.5 : (focusTarget?.districtCoords || focusTarget?.districtId || focusTarget?.districtName) ? 12.5 : 11,
       pitch: 0,
       bearing: 0
     };
-  }, [focusTarget?.villageId, focusTarget?.districtId]);
+  }, [focusTarget?.villageCoords, focusTarget?.districtCoords, focusTarget?.villageId, focusTarget?.districtId, focusTarget?.villageName, focusTarget?.districtName]);
 
   const [zoningDataState, setZoningDataState] = useState<any>(null);
 
@@ -360,15 +361,18 @@ export default function SimplePolygonDrawer({
       return;
     }
 
-    // Mark as flown immediately to prevent race conditions during async data loads
-    hasAutoFlownRef.current = true;
+    // Force map resize first so MapLibre calculates container dimensions accurately
+    try {
+      map.resize();
+    } catch (e) {}
 
     // 1. Priority A: Initial Geometry fitBounds
     if (initialGeometry && initialGeometry.coordinates && initialGeometry.coordinates.length > 0) {
       try {
         const featureObj = { type: "Feature" as const, properties: {}, geometry: initialGeometry };
         const bbox = turf.bbox(featureObj);
-        if (bbox && !bbox.some(isNaN)) {
+        if (bbox && !bbox.some(isNaN) && bbox[0] >= 118 && bbox[2] <= 122) {
+          hasAutoFlownRef.current = true;
           map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], {
             padding: 60,
             maxZoom: 16,
@@ -381,16 +385,35 @@ export default function SimplePolygonDrawer({
       }
     }
 
-    // 2. Priority B: Use active boundary feature fitBounds
+    // 2. Priority B: Use active boundary feature fitBounds / center
     if (activeBoundaryFeature) {
       try {
         const bbox = turf.bbox(activeBoundaryFeature);
-        if (bbox && bbox.length === 4 && !bbox.some(isNaN)) {
+        if (bbox && bbox.length === 4 && !bbox.some(isNaN) && bbox[0] >= 118 && bbox[2] <= 122 && bbox[1] >= -5 && bbox[3] <= -1) {
+          hasAutoFlownRef.current = true;
+
+          const centerPt = turf.center(activeBoundaryFeature);
+          const [centerLng, centerLat] = centerPt.geometry.coordinates;
+
           map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], {
             padding: 70,
-            maxZoom: focusTarget?.villageId ? 15 : 13,
-            duration: 1500
+            maxZoom: (focusTarget?.villageName || focusTarget?.villageId) ? 15.5 : 13.5,
+            duration: 1200
           });
+
+          // Safeguard: verify zoom after animation to prevent unexpected over-zooming out
+          setTimeout(() => {
+            try {
+              if (map.getZoom() < 12 && centerLng && centerLat) {
+                map.flyTo({
+                  center: [centerLng, centerLat],
+                  zoom: (focusTarget?.villageName || focusTarget?.villageId) ? 14.5 : 12.5,
+                  duration: 800
+                });
+              }
+            } catch (e) {}
+          }, 500);
+
           return;
         }
       } catch (err) {
@@ -398,27 +421,29 @@ export default function SimplePolygonDrawer({
       }
     }
 
-    // 3. Priority C: Use coordinates center
+    // 3. Priority C: Use coordinates center directly
     const getCorrectedCenter = (coords?: [number, number]): [number, number] | null => {
       if (!coords || !Array.isArray(coords) || coords.length < 2) return null;
       let [c1, c2] = coords;
       if (typeof c1 !== "number" || typeof c2 !== "number" || (c1 === 0 && c2 === 0)) return null;
       if (Math.abs(c1) < 10 && Math.abs(c2) > 100) return [c2, c1];
+      if (c1 < 118 || c1 > 122 || c2 < -5 || c2 > -1) return null;
       return [c1, c2];
     };
 
     const center = getCorrectedCenter(focusTarget?.villageCoords) || getCorrectedCenter(focusTarget?.districtCoords);
     if (center) {
+      hasAutoFlownRef.current = true;
       map.flyTo({
         center,
-        zoom: focusTarget?.villageId ? 15 : 13,
+        zoom: (focusTarget?.villageName || focusTarget?.villageId) ? 14.5 : 12.5,
         essential: true,
-        duration: 1500
+        duration: 1200
       });
     }
   }, [focusTarget, initialGeometry, activeBoundaryFeature]);
 
-  // Trigger auto flyTo ONCE when boundary context or map is ready (isolated from drawing state)
+  // Trigger auto flyTo when boundary context or map is ready (isolated from drawing state)
   useEffect(() => {
     if (!hasAutoFlownRef.current && !userIsDrawingRef.current) {
       const timer = setTimeout(() => {
@@ -426,7 +451,7 @@ export default function SimplePolygonDrawer({
       }, 350);
       return () => clearTimeout(timer);
     }
-  }, [focusTargetKey]);
+  }, [focusTargetKey, activeBoundaryFeature, triggerAutoFlyTo]);
 
   // ─── LIVE ESG RADAR & BOUNDARY ENFORCEMENT (DECOUPLED FROM CAMERA) ───
   const handleDrawEvent = useCallback((evt: any) => {
@@ -525,6 +550,15 @@ export default function SimplePolygonDrawer({
 
   const onMapLoad = useCallback((e: any) => {
     const map = e.target;
+    if (!map) return;
+    mapRef.current = map;
+
+    // Trigger map.resize() after modal DOM render and transition animation complete
+    setTimeout(() => {
+      try {
+        map.resize();
+      } catch (e) {}
+    }, 200);
     
     // Inisialisasi MaplibreDraw (Polygon Mode)
     const draw = new MaplibreDraw({

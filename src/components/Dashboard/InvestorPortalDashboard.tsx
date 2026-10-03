@@ -62,7 +62,7 @@ import {
 import MppQueueRegistrationModal from '../MppQueueRegistrationModal';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid, ReferenceLine, Legend } from 'recharts';
 import Swal from 'sweetalert2';
-import { area } from '@turf/turf';
+import { area, center as turfCenter, feature as turfFeature } from '@turf/turf';
 import { supabase, handleSupabaseError } from '../../lib/supabaseClient';
 import { Investment, SektorInvestasi, District } from '../../types.js';
 import { SECTOR_COLORS } from '../../lib/constants.js';
@@ -276,13 +276,57 @@ export default function InvestorPortalDashboard() {
   const [pkkprSelectedDesaId, setPkkprSelectedDesaId] = useState("");
   const [pkkprSelectedDesaGeom, setPkkprSelectedDesaGeom] = useState<any>(null);
 
+  const villageCoords = useMemo(() => {
+    if (pkkprSelectedDesaGeom) {
+      try {
+        const feat = pkkprSelectedDesaGeom.type === 'Feature'
+          ? pkkprSelectedDesaGeom
+          : turfFeature(pkkprSelectedDesaGeom.geometry || pkkprSelectedDesaGeom.geom || pkkprSelectedDesaGeom);
+        const centerPt = turfCenter(feat);
+        if (centerPt && centerPt.geometry && centerPt.geometry.coordinates) {
+          const [lng, lat] = centerPt.geometry.coordinates;
+          if (typeof lng === 'number' && typeof lat === 'number' && !isNaN(lng) && !isNaN(lat) && lng >= 118 && lng <= 122 && lat >= -5 && lat <= -1) {
+            return [lng, lat] as [number, number];
+          }
+        }
+      } catch (e) {
+        console.warn("Gagal menghitung villageCoords:", e);
+      }
+    }
+    return undefined;
+  }, [pkkprSelectedDesaGeom]);
+
+  const districtCoords = useMemo(() => {
+    if (pkkprKecamatan) {
+      const matchKec = districts?.find((d) => (d.name || d.kecamatan || "").toLowerCase().includes(pkkprKecamatan.toLowerCase()));
+      if (matchKec && (matchKec.geom || matchKec.geometry || matchKec.geojson)) {
+        try {
+          const g = matchKec.geom || matchKec.geometry || matchKec.geojson;
+          const feat = g.type === 'Feature' ? g : turfFeature(g.geometry || g);
+          const centerPt = turfCenter(feat);
+          if (centerPt && centerPt.geometry && centerPt.geometry.coordinates) {
+            const [lng, lat] = centerPt.geometry.coordinates;
+            if (typeof lng === 'number' && typeof lat === 'number' && !isNaN(lng) && !isNaN(lat) && lng >= 118 && lng <= 122 && lat >= -5 && lat <= -1) {
+              return [lng, lat] as [number, number];
+            }
+          }
+        } catch (e) {
+          console.warn("Gagal menghitung districtCoords:", e);
+        }
+      }
+    }
+    return undefined;
+  }, [pkkprKecamatan, districts]);
+
   const drawerFocusTarget = useMemo(() => ({
     districtName: pkkprKecamatan,
     districtId: pkkprSelectedKecId,
+    districtCoords,
     villageName: pkkprDesa,
     villageId: pkkprSelectedDesaId,
+    villageCoords,
     villageGeojson: pkkprSelectedDesaGeom
-  }), [pkkprKecamatan, pkkprSelectedKecId, pkkprDesa, pkkprSelectedDesaId, pkkprSelectedDesaGeom]);
+  }), [pkkprKecamatan, pkkprSelectedKecId, districtCoords, pkkprDesa, pkkprSelectedDesaId, villageCoords, pkkprSelectedDesaGeom]);
 
   // Spatial Read-Only Lock State for Corporate KML/KMZ Auto-Detection
   const [isPkkprLocationLocked, setIsPkkprLocationLocked] = useState(false);
