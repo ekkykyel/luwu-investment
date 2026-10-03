@@ -8,6 +8,7 @@ import {
   featureCollection, 
   polygon, 
   bbox, 
+  center,
   booleanPointInPolygon, 
   booleanWithin, 
   booleanIntersects 
@@ -17,6 +18,7 @@ const turf = {
   featureCollection, 
   polygon, 
   bbox, 
+  center,
   booleanPointInPolygon, 
   booleanWithin, 
   booleanIntersects 
@@ -422,6 +424,8 @@ export default function SimplePolygonDrawer({
   const lastAppliedBoundsKeyRef = useRef<string>("");
 
   const triggerAutoFlyTo = useCallback((force = false) => {
+    // Disable automatic camera movement animations (auto-fly) unless manually forced (e.g., clicking 'Fokus Wilayah')
+    if (!force) return;
     if (!mapRef.current) return;
     const map = mapRef.current.getMap ? mapRef.current.getMap() : (mapRef.current as any);
     if (!map) return;
@@ -624,13 +628,7 @@ export default function SimplePolygonDrawer({
         };
         draw.add(featureObj);
         
-        const bbox = turf.bbox(featureObj);
-        if (bbox && !bbox.some(isNaN)) {
-          map.fitBounds(
-            [[bbox[0], bbox[1]], [bbox[2], bbox[3]]],
-            { padding: 60, maxZoom: 16 }
-          );
-        }
+        // Remove automatic fitBounds to keep position static/unanimated per user request
         draw.changeMode("simple_select");
       } catch(err) {
         console.error("Gagal load initial geometry", err);
