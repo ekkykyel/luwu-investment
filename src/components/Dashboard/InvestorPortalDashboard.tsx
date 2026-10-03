@@ -339,6 +339,16 @@ export default function InvestorPortalDashboard() {
       } catch (e) {}
 
       const meta = user.user_metadata || {};
+      const userRole = prof?.role || meta.role;
+      if (userRole === 'masyarakat') {
+        navigate("/masyarakat-dashboard", { replace: true });
+        return null;
+      }
+      if (userRole && (userRole.startsWith('admin_') || userRole === 'superadmin')) {
+        navigate("/dashboard", { replace: true });
+        return null;
+      }
+
       const isBadCorporateName = (n?: string | null) => {
         if (!n) return true;
         const lower = n.toLowerCase();

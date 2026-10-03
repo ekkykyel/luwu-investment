@@ -857,6 +857,20 @@ export default function MasyarakatDashboard({
         } catch (e) {}
       }
 
+      const userRole = prof?.role || meta.role || activeProfile?.role;
+      if (userRole === 'investor') {
+        if (typeof window !== "undefined") {
+          window.location.replace("/investor-dashboard");
+        }
+        return null;
+      }
+      if (userRole && (userRole.startsWith('admin_') || userRole === 'superadmin')) {
+        if (typeof window !== "undefined") {
+          window.location.replace("/dashboard");
+        }
+        return null;
+      }
+
       // Resolve NIK
       let resolvedNik = prof?.nik || prof?.no_ktp || prof?.no_nik || meta.nik || meta.no_ktp || activeProfile?.nik || activeProfile?.no_ktp || "";
       if (!resolvedNik || !/^\d{16}$/.test(resolvedNik)) {
@@ -1240,7 +1254,7 @@ export default function MasyarakatDashboard({
   const [myPkkprApplications, setMyPkkprApplications] = useState<any[]>([]);
   const [loadingPkkprApps, setLoadingPkkprApps] = useState(false);
 
-  // Fetch User's PKKPR Applications strictly from Supabase gis_pkkpr & investments (Zero Dummy & RLS Protected)
+  // Fetch User's PKKPR Applications strictly from Supabase gis_pkkpr (Zero Dummy & RLS Protected)
   const fetchMyPkkprApplications = useCallback(async () => {
     setLoadingPkkprApps(true);
     try {
@@ -1250,7 +1264,7 @@ export default function MasyarakatDashboard({
         return;
       }
 
-      // Query gis_pkkpr strictly for this authenticated user (Single Source of Truth)
+      // Query gis_pkkpr strictly for this authenticated citizen user (Single Source of Truth)
       const { data: pkkprRows, error: pkkprErr } = await supabase
         .from("gis_pkkpr")
         .select("*")
@@ -1261,36 +1275,16 @@ export default function MasyarakatDashboard({
         console.warn("Notice querying gis_pkkpr:", pkkprErr);
       }
 
-      // Query investments strictly for this user
-      const { data: remoteApps } = await supabase
-        .from("investments")
-        .select("*")
-        .or(`created_by.eq.${user.id},user_id.eq.${user.id}`)
-        .order("created_at", { ascending: false });
+      const formattedApps = (pkkprRows || []).map((app: any) => ({
+        ...app,
+        category: app.kategori_pkkpr || (app.nama_badan_usaha ? "Berusaha" : "Non-Berusaha"),
+        title: app.judul_kegiatan || app.nama_kegiatan || app.nama_permohonan || app.nama_badan_usaha || "Pengajuan PKKPR",
+        status: app.status_pkkpr || "Pending Spatial Check",
+        kecamatan: app.kecamatan,
+        desa: app.desa_kelurahan || app.desa
+      }));
 
-      const mergedMap = new Map();
-      (pkkprRows || []).forEach((app: any) => {
-        const key = app.id || app.pkkpr_doc_number || app.sk_pkkpr_num || app.created_at;
-        if (key && !mergedMap.has(key)) {
-          mergedMap.set(key, {
-            ...app,
-            category: app.kategori_pkkpr || (app.nama_badan_usaha ? "Berusaha" : "Non-Berusaha"),
-            title: app.judul_kegiatan || app.nama_kegiatan || app.nama_badan_usaha || "Pengajuan PKKPR",
-            status: app.status_pkkpr || "Pending Spatial Check",
-            kecamatan: app.kecamatan,
-            desa: app.desa_kelurahan || app.desa
-          });
-        }
-      });
-
-      (remoteApps || []).forEach((app: any) => {
-        const key = app.id || app.pkkpr_doc_number || app.title || app.created_at;
-        if (key && !mergedMap.has(key)) {
-          mergedMap.set(key, app);
-        }
-      });
-
-      setMyPkkprApplications(Array.from(mergedMap.values()));
+      setMyPkkprApplications(formattedApps);
     } catch (err) {
       console.warn("Error fetching PKKPR apps:", err);
       setMyPkkprApplications([]);
