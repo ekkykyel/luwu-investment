@@ -2113,7 +2113,7 @@ export default function PortalMPP() {
         <main className="w-full max-w-[1440px] mx-auto px-0 pt-2 sm:pt-3 pb-28 sm:pb-32 md:py-12 flex flex-col gap-0 overflow-x-clip">
           
           {/* Hero Section */}
-          <section id="hero" className="relative w-full overflow-hidden px-4 sm:px-6 lg:px-8 pt-6 pb-24 sm:pb-12 flex flex-col items-center text-center scroll-mt-24">
+          <section id="hero" className="relative w-full overflow-hidden px-6 sm:px-8 lg:px-12 pt-6 pb-24 sm:pb-12 flex flex-col items-center text-center scroll-mt-24">
             <div id="beranda" className="absolute -top-24 left-0 w-0 h-0 pointer-events-none" />
 
             {/* Ambient Radial Mesh Glow (Atmospheric Depth for Executive GovTech) */}
@@ -2174,9 +2174,9 @@ export default function PortalMPP() {
                   <>
                     <div
                       onClick={() => document.getElementById('investor-vip')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="w-full min-h-[80px] sm:min-h-[88px] p-4 sm:p-5 rounded-2xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800/80 hover:border-emerald-500/50 shadow-sm hover:shadow-md active:scale-[0.98] transition-all flex items-center gap-4 group cursor-pointer text-left"
+                      className="w-full min-h-[96px] h-24 p-4 sm:p-5 rounded-2xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800/80 hover:border-emerald-500/50 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 flex items-center gap-4 group cursor-pointer text-left"
                     >
-                      <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
+                      <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
                         <Sparkles className="w-5 h-5" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -2191,9 +2191,9 @@ export default function PortalMPP() {
 
                     <div
                       onClick={() => document.getElementById('peta-spasial')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="w-full min-h-[80px] sm:min-h-[88px] p-4 sm:p-5 rounded-2xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800/80 hover:border-emerald-500/50 shadow-sm hover:shadow-md active:scale-[0.98] transition-all flex items-center gap-4 group cursor-pointer text-left"
+                      className="w-full min-h-[96px] h-24 p-4 sm:p-5 rounded-2xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800/80 hover:border-emerald-500/50 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 flex items-center gap-4 group cursor-pointer text-left"
                     >
-                      <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
+                      <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
                         <MapPin className="w-5 h-5" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -2208,9 +2208,9 @@ export default function PortalMPP() {
 
                     <div
                       onClick={() => document.getElementById('syarat-dokumen')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="w-full min-h-[80px] sm:min-h-[88px] p-4 sm:p-5 rounded-2xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800/80 hover:border-emerald-500/50 shadow-sm hover:shadow-md active:scale-[0.98] transition-all flex items-center gap-4 group cursor-pointer text-left"
+                      className="w-full min-h-[96px] h-24 p-4 sm:p-5 rounded-2xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800/80 hover:border-emerald-500/50 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 flex items-center gap-4 group cursor-pointer text-left"
                     >
-                      <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
+                      <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
                         <Briefcase className="w-5 h-5" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -2227,9 +2227,9 @@ export default function PortalMPP() {
                   <>
                     <div
                       onClick={() => setIsQueueBookingOpen(true)}
-                      className="w-full min-h-[80px] sm:min-h-[88px] p-4 sm:p-5 rounded-2xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800/80 hover:border-emerald-500/50 shadow-sm hover:shadow-md active:scale-[0.98] transition-all flex items-center gap-4 group cursor-pointer text-left"
+                      className="w-full min-h-[96px] h-24 p-4 sm:p-5 rounded-2xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800/80 hover:border-emerald-500/50 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 flex items-center gap-4 group cursor-pointer text-left"
                     >
-                      <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
+                      <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
                         <Ticket className="w-5 h-5" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -2244,9 +2244,9 @@ export default function PortalMPP() {
 
                     <div
                       onClick={() => document.getElementById('tracking-berkas')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="w-full min-h-[80px] sm:min-h-[88px] p-4 sm:p-5 rounded-2xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800/80 hover:border-emerald-500/50 shadow-sm hover:shadow-md active:scale-[0.98] transition-all flex items-center gap-4 group cursor-pointer text-left"
+                      className="w-full min-h-[96px] h-24 p-4 sm:p-5 rounded-2xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800/80 hover:border-emerald-500/50 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 flex items-center gap-4 group cursor-pointer text-left"
                     >
-                      <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
+                      <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
                         <SearchCheck className="w-5 h-5" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -2264,9 +2264,9 @@ export default function PortalMPP() {
                         setAirportKioskInitialMode('citizen');
                         setIsAirportKioskOpen(true);
                       }}
-                      className="w-full min-h-[80px] sm:min-h-[88px] p-4 sm:p-5 rounded-2xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800/80 hover:border-emerald-500/50 shadow-sm hover:shadow-md active:scale-[0.98] transition-all flex items-center gap-4 group cursor-pointer text-left"
+                      className="w-full min-h-[96px] h-24 p-4 sm:p-5 rounded-2xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800/80 hover:border-emerald-500/50 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 flex items-center gap-4 group cursor-pointer text-left"
                     >
-                      <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
+                      <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
                         <Pointer className="w-5 h-5" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -2383,7 +2383,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto flex flex-col items-center text-center py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto flex flex-col items-center text-center py-10 sm:py-16 md:py-24 px-6 sm:px-8 lg:px-12 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi - Staggered Fade-Up & MPP Badung Visuals */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
@@ -2455,12 +2455,12 @@ export default function PortalMPP() {
           </motion.section>
 
           {/* Seksi VIP Investor Fast-Track Concierge (Full Width on Android & Desktop) */}
-          <div id="investor-vip" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 scroll-mt-28">
+          <div id="investor-vip" className="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-16 md:py-24 scroll-mt-28">
             <VipInvestorConcierge isDark={isDark} />
           </div>
 
           {/* Seksi Operational Status Banner & Heatmap Jam Ramai vs Sepi */}
-          <div id="operasional-heatmap" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 scroll-mt-28">
+          <div id="operasional-heatmap" className="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-16 md:py-24 scroll-mt-28">
             <div id="peta-jam-ramai" className="scroll-mt-28">
               <OperationalHeatmap isDark={isDark} />
             </div>
@@ -2470,7 +2470,7 @@ export default function PortalMPP() {
           <MppMaklumatSlaRadar isDark={isDark} />
 
           {/* Seksi Bento Live Queue & Loket Radar (Material Design 3 Asymmetrical Bento Grid) */}
-          <div id="smart-live-queue" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 scroll-mt-28">
+          <div id="smart-live-queue" className="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-16 md:py-24 scroll-mt-28">
             <BentoLiveQueueRadar 
               isDark={isDark} 
               onRegisterQueue={(agencyName) => {
@@ -2505,7 +2505,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1 }} 
             transition={{ duration: 0.45, ease: "easeOut" }} 
             viewport={{ once: true, amount: 0.1 }} 
-            className="w-full max-w-6xl mx-auto py-8 sm:py-14 md:py-20 px-4 sm:px-6 lg:px-8"
+            className="w-full max-w-6xl mx-auto py-8 sm:py-14 md:py-20 px-6 sm:px-8 lg:px-12"
           >
             <SpotlightCard 
               spotlightColor={isDark ? "rgba(16, 185, 129, 0.2)" : "rgba(16, 185, 129, 0.15)"}
