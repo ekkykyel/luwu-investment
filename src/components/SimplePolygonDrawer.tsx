@@ -27,6 +27,7 @@ import { Check, X, MapPin, AlertCircle, RefreshCcw, AlertTriangle, Layers, Eye, 
 import Swal from "sweetalert2";
 import { supabase, safeFetchLayerData } from "../lib/supabaseClient";
 import { DEFAULT_LUWU_ZONING_GEOJSON } from "../utils/geoUtils";
+import { useMapAnimationState } from "../hooks/useMapAnimationState";
 
 interface SimplePolygonDrawerProps {
   onSave: (
@@ -93,6 +94,7 @@ export default function SimplePolygonDrawer({
   focusTarget
 }: SimplePolygonDrawerProps) {
   const mapRef = useRef<MapRef>(null);
+  const { manualUserInteraction, triggerManualInteraction } = useMapAnimationState(mapRef);
   const drawRef = useRef<any>(null);
   
   // Basemap switcher state: streets vs satellite

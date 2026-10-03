@@ -38,6 +38,7 @@ import { InvestmentDetailModal } from "./InvestmentDetailModal";
 import { lazyWithRetry } from "../utils/lazyWithRetry";
 const SpatialBufferAiModal = lazyWithRetry(() => import("./SpatialBufferAiModal"));
 import HoverTooltip from "./HoverTooltip";
+import { useMapAnimationState } from "../hooks/useMapAnimationState";
 import AutoTranslatedText from "./AutoTranslatedText";
 
 const ICON_DICT: Record<string, string> = {
@@ -761,6 +762,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
   }, [props.isAiPanelOpen]);
 
     const [isAutoFollowEnabled, setIsAutoFollowEnabled] = useState(true);
+  const { manualUserInteraction, triggerManualInteraction } = useMapAnimationState(mapRef);
   const [localMapMode, setLocalMapMode] = useState<"osm" | "light" | "dark" | "satellite" | "google_satellite" | "google_street">(props.mapMode || "osm");
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [mapTransitionNotification, setMapTransitionNotification] = useState<{ text: string; type: "mode" | "district" } | null>(null);
@@ -3506,6 +3508,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
 
   const handleToggle3D = () => {
     if (!mapRef.current) return;
+    triggerManualInteraction();
     const map = mapRef.current.getMap();
     if (!map) return;
     
@@ -3529,18 +3532,21 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
   };
 
   const handleZoomIn = () => {
+    triggerManualInteraction();
     if (mapRef.current) {
       mapRef.current.zoomIn({ duration: 300 });
     }
   };
 
   const handleZoomOut = () => {
+    triggerManualInteraction();
     if (mapRef.current) {
       mapRef.current.zoomOut({ duration: 300 });
     }
   };
 
   const handleResetBearing = () => {
+    triggerManualInteraction();
     if (mapRef.current) {
       mapRef.current.flyTo({
         bearing: 0,
@@ -3552,6 +3558,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
   };
 
   const handleZoomToFitLuwu = (e?: React.MouseEvent) => {
+    triggerManualInteraction();
     if (e) {
       e.stopPropagation();
       e.preventDefault();
