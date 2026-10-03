@@ -1,0 +1,6 @@
+{
+  "name": "Smart Invetment Luwu",
+  "description": "Enterprise WebGIS platform for investment mapping, spatial analytics, and geospatial recommendation engines in Luwu Regency.",
+  "requestFramePermissions": ["geolocation", "camera", "clipboard-write", "clipboard-read", "fullscreen"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

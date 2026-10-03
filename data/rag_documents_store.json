@@ -1,0 +1,57 @@
+[
+  {
+    "id": "doc-rtrw-luwu-06-2011",
+    "title": "Peraturan Daerah Kabupaten Luwu Nomor 6 Tahun 2011 tentang Rencana Tata Ruang Wilayah (RTRW) Kabupaten Luwu Tahun 2011-2031",
+    "category": "tata_ruang",
+    "source_agency": "Bappelitbangda & Dinas PUPR Kabupaten Luwu",
+    "publication_year": 2011,
+    "status": "completed",
+    "is_active": true,
+    "created_at": "2026-09-13T04:44:04.903Z",
+    "chunk_count": 5
+  },
+  {
+    "id": "doc-perbub-53-2011",
+    "title": "Peraturan Bupati Luwu Nomor 53 Tahun 2011 tentang Petunjuk Teknis Pelaksanaan & Pengendalian Pemanfaatan Ruang",
+    "category": "regulasi",
+    "source_agency": "Dinas PUPR & DPMPTSP Kabupaten Luwu",
+    "publication_year": 2011,
+    "status": "completed",
+    "is_active": true,
+    "created_at": "2026-09-13T04:44:04.907Z",
+    "chunk_count": 3
+  },
+  {
+    "id": "doc-ipro-rumput-laut-luwu",
+    "title": "Proposal IPRO (Investment Project Ready to Offer) Kabupaten Luwu: Industri Pengolahan Rumput Laut Terpadu Luwu",
+    "category": "ekonomi",
+    "source_agency": "Dinas Penanaman Modal dan PTSP / Dinas Perikanan Kabupaten Luwu",
+    "publication_year": 2024,
+    "status": "completed",
+    "is_active": true,
+    "created_at": "2026-09-13T04:44:04.908Z",
+    "chunk_count": 3
+  },
+  {
+    "id": "doc-rpjmd-luwu-03-2021",
+    "title": "Peraturan Daerah Kabupaten Luwu Nomor 3 Tahun 2021 tentang Perubahan RPJMD Kabupaten Luwu & Roadmap Hilirisasi 2026",
+    "category": "ekonomi",
+    "source_agency": "Bappelitbangda Kabupaten Luwu",
+    "publication_year": 2021,
+    "status": "completed",
+    "is_active": true,
+    "created_at": "2026-09-13T04:44:04.909Z",
+    "chunk_count": 3
+  },
+  {
+    "id": "doc-insentif-dpmptsp-2025",
+    "title": "Keputusan Kepala DPMPTSP Kabupaten Luwu tentang Kebijakan Insentif Penanaman Modal & Pelayanan Prima MPP Belopa",
+    "category": "regulasi",
+    "source_agency": "Dinas Penanaman Modal dan PTSP Kabupaten Luwu",
+    "publication_year": 2025,
+    "status": "completed",
+    "is_active": true,
+    "created_at": "2026-09-13T04:44:04.911Z",
+    "chunk_count": 3
+  }
+]
