@@ -4611,7 +4611,7 @@ export default function MasyarakatDashboard({
                                 Swal.fire({
                                   icon: "warning",
                                   title: "Desa / Kelurahan Belum Dipilih",
-                                  text: "Harap pilih Desa / Kelurahan lokasi lahan terlebih dahulu agar peta dapat melakukan Auto-Zoom presisi ke lokasi desa.",
+                                  text: "Harap pilih Desa / Kelurahan lokasi lahan terlebih dahulu.",
                                   toast: true,
                                   position: "top-end",
                                   showConfirmButton: false,
@@ -4646,7 +4646,7 @@ export default function MasyarakatDashboard({
                               Swal.fire({
                                 icon: "warning",
                                 title: "Desa / Kelurahan Belum Dipilih",
-                                text: "Harap pilih Desa / Kelurahan lokasi lahan terlebih dahulu agar peta dapat melakukan Auto-Zoom presisi ke lokasi desa.",
+                                text: "Harap pilih Desa / Kelurahan lokasi lahan terlebih dahulu.",
                                 toast: true,
                                 position: "top-end",
                                 showConfirmButton: false,
@@ -4664,7 +4664,7 @@ export default function MasyarakatDashboard({
                           <div className="text-left">
                             <span className="block font-black text-sm">Buka Peta Digitasi Spasial Lahan</span>
                             <span className="block text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-                              {pkkprDesa ? `Auto-Zoom & Kliping Wilayah ke Desa ${pkkprDesa}` : pkkprKecamatan ? `Auto-Zoom ke Kec. ${pkkprKecamatan}` : "Peta akan secara otomatis terkliping ke lokasi pilihan"}
+                              {pkkprDesa ? `Wilayah Terpilih: Desa ${pkkprDesa}, Kec. ${pkkprKecamatan}` : pkkprKecamatan ? `Wilayah Terpilih: Kec. ${pkkprKecamatan}` : "Peta Digitasi Spasial Lahan"}
                             </span>
                           </div>
                         </button>

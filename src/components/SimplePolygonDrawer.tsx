@@ -419,74 +419,8 @@ export default function SimplePolygonDrawer({
     }
   }, [activeBoundaryFeature]);
 
-  // ─── CAMERA BOUNDS SYNCHRONIZATION ───
+  // ─── USER DRAWING STATE (CAMERA AUTO-FLY PERMANENTLY REMOVED) ───
   const userIsDrawingRef = useRef<boolean>(false);
-  const lastAppliedBoundsKeyRef = useRef<string>("");
-
-  const triggerAutoFlyTo = useCallback((force = false) => {
-    // Disable automatic camera movement animations (auto-fly) unless manually forced (e.g., clicking 'Fokus Wilayah')
-    if (!force) return;
-    if (!mapRef.current) return;
-    const map = mapRef.current.getMap ? mapRef.current.getMap() : (mapRef.current as any);
-    if (!map) return;
-
-    // Do NOT move camera if user is actively drawing unless forced
-    if (userIsDrawingRef.current && !force) {
-      return;
-    }
-
-    lastAppliedBoundsKeyRef.current = activeGeometryBounds.key;
-
-    // Calculate distance between current map center and new target center
-    let isSubtleUpdate = true;
-    try {
-      const currentCenter = map.getCenter();
-      if (currentCenter && activeGeometryBounds.center) {
-        const distDeg = Math.hypot(currentCenter.lng - activeGeometryBounds.center[0], currentCenter.lat - activeGeometryBounds.center[1]);
-        if (distDeg > 0.008) { // > ~800 meters difference
-          isSubtleUpdate = false;
-        }
-      }
-    } catch (e) {}
-
-    const animDuration = isSubtleUpdate ? 0 : 800;
-
-    requestAnimationFrame(() => {
-      try {
-        map.resize();
-        if (activeGeometryBounds.bbox) {
-          const b = activeGeometryBounds.bbox;
-          map.fitBounds([[b[0], b[1]], [b[2], b[3]]], {
-            padding: 70,
-            maxZoom: Math.min(activeGeometryBounds.recommendedZoom + 0.7, 16.5),
-            duration: animDuration
-          });
-        } else if (activeGeometryBounds.center) {
-          if (animDuration === 0) {
-            map.jumpTo({
-              center: activeGeometryBounds.center,
-              zoom: activeGeometryBounds.recommendedZoom
-            });
-          } else {
-            map.easeTo({
-              center: activeGeometryBounds.center,
-              zoom: activeGeometryBounds.recommendedZoom,
-              duration: animDuration
-            });
-          }
-        }
-      } catch (e) {
-        console.warn("Error applying activeGeometryBounds to map camera:", e);
-      }
-    });
-  }, [activeGeometryBounds]);
-
-  // Sync camera ONLY when activeGeometryBounds.key changes
-  useEffect(() => {
-    if (lastAppliedBoundsKeyRef.current !== activeGeometryBounds.key && !userIsDrawingRef.current) {
-      triggerAutoFlyTo();
-    }
-  }, [activeGeometryBounds.key, triggerAutoFlyTo]);
 
   // ─── LIVE ESG RADAR & BOUNDARY ENFORCEMENT (DECOUPLED FROM CAMERA) ───
   const handleDrawEvent = useCallback((evt: any) => {
@@ -634,16 +568,15 @@ export default function SimplePolygonDrawer({
         console.error("Gagal load initial geometry", err);
       }
     } else {
-      triggerAutoFlyTo();
       setTimeout(() => {
         try {
           if (drawRef.current) {
             drawRef.current.changeMode("draw_polygon");
           }
         } catch(e) {}
-      }, 400);
+      }, 300);
     }
-  }, [initialGeometry, triggerAutoFlyTo]);
+  }, [initialGeometry]);
 
   const handleSave = () => {
     if (!drawRef.current) return;
@@ -737,15 +670,6 @@ export default function SimplePolygonDrawer({
         </div>
         
         <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={() => triggerAutoFlyTo(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-semibold transition cursor-pointer"
-            title="Fokus Ulang Peta ke Lokasi Desa/Kecamatan"
-          >
-            <Compass className="h-3.5 w-3.5 text-emerald-400" /> Fokus Wilayah
-          </button>
-
           <button
             onClick={handleReset}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-semibold transition cursor-pointer"
