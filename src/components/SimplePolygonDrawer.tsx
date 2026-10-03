@@ -873,7 +873,7 @@ export default function SimplePolygonDrawer({
           minZoom={5}
           transformRequest={(url) => {
             if (url.includes('cartocdn.com') || url.includes('openstreetmap.org') || url.includes('google') || url.includes('arcgisonline.com')) {
-              return { url, headers: {} };
+              return { url };
             }
             return { url };
           }}
@@ -882,18 +882,23 @@ export default function SimplePolygonDrawer({
               ? {
                   version: 8,
                   sources: {
-                    "esri-light": {
+                    "google-street": {
                       type: "raster",
-                      tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"],
+                      tiles: [
+                        "https://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
+                        "https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
+                        "https://mt2.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
+                        "https://mt3.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+                      ],
                       tileSize: 256,
-                      attribution: "Tiles © Esri"
+                      attribution: "© Google Maps"
                     }
                   },
                   layers: [
                     {
-                      id: "esri-light-layer",
+                      id: "google-street-layer",
                       type: "raster",
-                      source: "esri-light",
+                      source: "google-street",
                       minzoom: 0,
                       maxzoom: 22
                     }
@@ -902,18 +907,23 @@ export default function SimplePolygonDrawer({
               : {
                   version: 8,
                   sources: {
-                    "esri-satellite": {
+                    "google-satellite": {
                       type: "raster",
-                      tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"],
+                      tiles: [
+                        "https://mt0.google.com/vt/lyrs=y&x={x}&y={y}&z={z}",
+                        "https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}",
+                        "https://mt2.google.com/vt/lyrs=y&x={x}&y={y}&z={z}",
+                        "https://mt3.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
+                      ],
                       tileSize: 256,
-                      attribution: "Tiles © Esri"
+                      attribution: "© Google Earth / Satelit"
                     }
                   },
                   layers: [
                     {
-                      id: "esri-satellite-layer",
+                      id: "google-satellite-layer",
                       type: "raster",
-                      source: "esri-satellite",
+                      source: "google-satellite",
                       minzoom: 0,
                       maxzoom: 22
                     }

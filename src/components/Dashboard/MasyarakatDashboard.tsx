@@ -892,7 +892,14 @@ export default function MasyarakatDashboard({
       }
 
       if (authErr || !user) {
+        if (typeof document !== 'undefined') {
+          document.cookie = 'sb-access-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=None; Secure;';
+        }
         if (typeof window !== "undefined") {
+          try {
+            sessionStorage.removeItem("sb-access-token");
+            localStorage.removeItem("sb-access-token");
+          } catch (e) {}
           window.location.href = "/login";
         }
         return null;

@@ -65,8 +65,14 @@ export function useProfile() {
       }
 
       if (authErr || !user) {
-        if (authErr && (authErr.message?.toLowerCase().includes('refresh token') || authErr.status === 400)) {
-          clearAuthSessionToken();
+        if (authErr && (authErr.message?.toLowerCase().includes('refresh token') || authErr.message?.toLowerCase().includes('jwt') || authErr.status === 400 || authErr.status === 401 || authErr.status === 403)) {
+          if (typeof document !== 'undefined') {
+            document.cookie = 'sb-access-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=None; Secure;';
+          }
+          try {
+            sessionStorage.removeItem(PROFILE_CACHE_KEY);
+            localStorage.removeItem('sb-access-token');
+          } catch (e) {}
         }
         saveProfileToCache(null);
         return null;
