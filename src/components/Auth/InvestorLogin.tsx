@@ -433,7 +433,7 @@ export default function InvestorLogin() {
       const citizenData = data.citizen || citizenFound || { nik: otpNik, full_name: otpFullName };
       const citizenName = citizenData.full_name || otpFullName || 'Warga Kab. Luwu';
 
-      // Persist session directly via Supabase Auth
+      // Persist session directly via Supabase Auth & Session Storage
       const accessToken = data.session?.access_token || data.accessToken || data.sessionToken;
       const refreshToken = data.session?.refresh_token || data.refreshToken || accessToken;
       if (accessToken) {
@@ -442,9 +442,15 @@ export default function InvestorLogin() {
             access_token: accessToken,
             refresh_token: refreshToken
           });
-          document.cookie = `sb-access-token=${accessToken}; path=/; max-age=86400; SameSite=None; Secure`;
         } catch (setErr) {
           console.warn("Could not set supabase auth session from OTP token:", setErr);
+        }
+        if (typeof document !== 'undefined') {
+          document.cookie = `sb-access-token=${accessToken}; path=/; max-age=604800; SameSite=Lax`;
+        }
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem("sb-access-token", accessToken);
+          localStorage.setItem("sb-access-token", accessToken);
         }
       }
 
@@ -452,12 +458,6 @@ export default function InvestorLogin() {
       try {
         sessionStorage.removeItem("luwu_cached_profile_data");
       } catch (e) {}
-
-      // Bersihkan stale session di localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem("luwu_session_token");
-        localStorage.removeItem("luwu_user_role");
-      }
 
       setIsSuccess(true);
       setTimeout(() => {

@@ -775,16 +775,39 @@ export default function MasyarakatDashboard({
     try {
       let { data: { user }, error: authErr } = await supabase.auth.getUser();
 
-      // If initial in-memory getUser is null, check sb-access-token cookie to restore session
+      let prof: any = null;
+
+      // If initial in-memory getUser is null, check sb-access-token from session/cookie and verify with backend
       if (!user) {
-        const match = typeof document !== 'undefined' ? document.cookie.match(/(?:^|;\s*)sb-access-token=([^;]+)/) : null;
-        if (match && match[1]) {
+        const cookieMatch = typeof document !== 'undefined' ? document.cookie.match(/(?:^|;\s*)sb-access-token=([^;]+)/) : null;
+        const storedToken = cookieMatch ? cookieMatch[1] : (typeof window !== 'undefined' ? (sessionStorage.getItem("sb-access-token") || localStorage.getItem("sb-access-token")) : null);
+        
+        if (storedToken) {
           try {
-            await supabase.auth.setSession({ access_token: match[1], refresh_token: match[1] });
+            await supabase.auth.setSession({ access_token: storedToken, refresh_token: storedToken });
             const retryRes = await supabase.auth.getUser();
             user = retryRes?.data?.user || null;
             if (user) authErr = null;
           } catch (e) {}
+
+          // Fallback verify with backend /api/auth/me (Supports verified WhatsApp OTP sessions)
+          if (!user) {
+            try {
+              const verifyRes = await fetch("/api/auth/me", {
+                headers: { "Authorization": `Bearer ${storedToken}` }
+              });
+              if (verifyRes.ok) {
+                const authData = await verifyRes.json();
+                if (authData?.success && authData?.user) {
+                  user = authData.user;
+                  authErr = null;
+                  if (authData.profile) {
+                    prof = authData.profile;
+                  }
+                }
+              }
+            } catch (apiErr) {}
+          }
         }
       }
 
@@ -797,8 +820,6 @@ export default function MasyarakatDashboard({
 
       const effectiveEmail = user.email || "";
       const effectiveId = user.id;
-
-      let prof: any = null;
 
       // Step 1: Query public.profiles strictly by user.id
       try {

@@ -4072,6 +4072,71 @@ app.post("/api/auth/login", async (req, res) => {
   });
 });
 
+// GET /api/auth/me - Verifikasi Sesi Token Pengguna Aktif & Ekstraksi Profil
+app.get("/api/auth/me", async (req, res) => {
+  try {
+    const verifiedUser = extractAndVerifyUser(req);
+    if (!verifiedUser) {
+      return res.status(401).json({ success: false, message: "Sesi tidak ditemukan atau telah kadaluarsa." });
+    }
+
+    let profileData: any = null;
+    const userNik = verifiedUser.rawPayload?.nik || (verifiedUser.rawPayload?.user_metadata?.nik) || '';
+
+    // 1. Coba cari di public.profiles
+    try {
+      let q = supabase.from("profiles").select("*");
+      if (verifiedUser.id && verifiedUser.id.length > 20 && !verifiedUser.id.startsWith("cit-")) {
+        q = q.eq("id", verifiedUser.id);
+      } else if (userNik) {
+        q = q.eq("nik", userNik);
+      } else if (verifiedUser.email) {
+        q = q.eq("email", verifiedUser.email);
+      }
+      const { data } = await q.limit(1).maybeSingle();
+      if (data) profileData = data;
+    } catch (e) {}
+
+    // 2. Jika akun masyarakat dan belum di profiles, ambil dari mpp_citizens
+    if (!profileData && userNik) {
+      try {
+        const { data: cit } = await supabase.from("mpp_citizens").select("*").eq("nik", userNik).maybeSingle();
+        if (cit) {
+          profileData = {
+            id: verifiedUser.id,
+            nik: cit.nik,
+            full_name: cit.full_name,
+            role: 'masyarakat',
+            phone_number: cit.phone_number,
+            no_whatsapp: cit.phone_number,
+            kecamatan: cit.kecamatan,
+            desa: cit.desa,
+            address: cit.address
+          };
+        }
+      } catch (e) {}
+    }
+
+    return res.json({
+      success: true,
+      user: {
+        id: verifiedUser.id,
+        email: verifiedUser.email || (userNik ? `${userNik}@warga.luwukab.go.id` : ''),
+        role: verifiedUser.role || 'masyarakat',
+        user_metadata: verifiedUser.rawPayload?.user_metadata || {
+          nik: userNik,
+          full_name: profileData?.full_name || verifiedUser.username,
+          role: verifiedUser.role || 'masyarakat'
+        }
+      },
+      profile: profileData,
+      role: verifiedUser.role || 'masyarakat'
+    });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: err?.message || err });
+  }
+});
+
 app.post("/api/auth/register-operator", async (req, res) => {
   const { name, email, password, role } = req.body;
   const currentRole = parseAndValidateRole(req);
@@ -12115,10 +12180,31 @@ app.post("/api/kiosk/verify-otp", async (req, res) => {
         const citizenPhone = userCitizen.phone_number || "";
 
         const { authSession, authUser } = await createOrAuthenticateCitizenSupabaseUser(rawNik, citizenFullName, citizenPhone);
+        const citizenId = authUser?.id || (userCitizen as any)?.id || `cit-${rawNik}`;
+        const citizenEmail = `${rawNik}@warga.luwukab.go.id`;
+
         const sessionToken = authSession?.access_token || jwt.sign(
-          { nik: rawNik, fullName: citizenFullName, phone: citizenPhone, type: "kiosk_verified_citizen" },
+          {
+            id: citizenId,
+            sub: citizenId,
+            nik: rawNik,
+            fullName: citizenFullName,
+            name: citizenFullName,
+            email: citizenEmail,
+            phone: citizenPhone,
+            role: "masyarakat",
+            type: "kiosk_verified_citizen",
+            user_metadata: {
+              id: citizenId,
+              nik: rawNik,
+              full_name: citizenFullName,
+              name: citizenFullName,
+              role: "masyarakat",
+              phone: citizenPhone
+            }
+          },
           GLOBAL_JWT_SECRET,
-          { expiresIn: "15m" }
+          { expiresIn: "7d" }
         );
 
         return res.json({
@@ -12130,7 +12216,16 @@ app.post("/api/kiosk/verify-otp", async (req, res) => {
           accessToken: authSession?.access_token || sessionToken,
           refreshToken: authSession?.refresh_token || sessionToken,
           citizen: userCitizen,
-          user: authUser || userCitizen,
+          user: authUser || {
+            id: citizenId,
+            email: citizenEmail,
+            role: 'masyarakat',
+            user_metadata: {
+              nik: rawNik,
+              full_name: citizenFullName,
+              role: 'masyarakat'
+            }
+          },
           token: sessionToken
         });
       }
@@ -12200,19 +12295,34 @@ app.post("/api/kiosk/verify-otp", async (req, res) => {
 
     const citizenFullName = updatedCitizen?.full_name || record.fullName || `Warga (${rawNik.slice(-4)})`;
     const citizenPhone = record.phone || updatedCitizen?.phone_number || "";
+    const citizenEmail = `${rawNik}@warga.luwukab.go.id`;
 
     // Generate real Supabase Auth session for citizen
     const { authSession, authUser } = await createOrAuthenticateCitizenSupabaseUser(rawNik, citizenFullName, citizenPhone);
+    const citizenId = authUser?.id || (updatedCitizen as any)?.id || `cit-${rawNik}`;
 
     const sessionToken = authSession?.access_token || jwt.sign(
       {
+        id: citizenId,
+        sub: citizenId,
         nik: rawNik,
         fullName: citizenFullName,
+        name: citizenFullName,
+        email: citizenEmail,
         phone: citizenPhone,
-        type: "kiosk_verified_citizen"
+        role: "masyarakat",
+        type: "kiosk_verified_citizen",
+        user_metadata: {
+          id: citizenId,
+          nik: rawNik,
+          full_name: citizenFullName,
+          name: citizenFullName,
+          role: "masyarakat",
+          phone: citizenPhone
+        }
       },
       GLOBAL_JWT_SECRET,
-      { expiresIn: "15m" }
+      { expiresIn: "7d" }
     );
 
     return res.json({
@@ -12223,9 +12333,14 @@ app.post("/api/kiosk/verify-otp", async (req, res) => {
       accessToken: authSession?.access_token || sessionToken,
       refreshToken: authSession?.refresh_token || sessionToken,
       user: authUser || {
-        id: `citizen-${rawNik}`,
-        email: `${rawNik}@warga.luwukab.go.id`,
-        role: 'masyarakat'
+        id: citizenId,
+        email: citizenEmail,
+        role: 'masyarakat',
+        user_metadata: {
+          nik: rawNik,
+          full_name: citizenFullName,
+          role: 'masyarakat'
+        }
       },
       citizen: updatedCitizen || {
         nik: rawNik,
