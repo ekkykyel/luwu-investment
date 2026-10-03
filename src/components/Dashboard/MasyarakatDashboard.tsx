@@ -853,7 +853,28 @@ export default function MasyarakatDashboard({
   // ─── AUTHENTICATION STATE & SESSION HYDRATION ───
   const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentSession, setCurrentSession] = useState<any>(null);
+  const [authCheckError, setAuthCheckError] = useState<any>(null);
   const [profileFetchError, setProfileFetchError] = useState<string | null>(null);
+
+  // Helper to extract active citizen NIK from storage or profile props
+  const getActiveCitizenNik = useCallback(() => {
+    if (activeProfile?.nik && /^\d{16}$/.test(String(activeProfile.nik))) {
+      return String(activeProfile.nik);
+    }
+    if (typeof window !== "undefined") {
+      const candidates = [
+        localStorage.getItem("mpp_verified_nik"),
+        localStorage.getItem("luwu_user_nik"),
+        sessionStorage.getItem("mpp_verified_nik"),
+        sessionStorage.getItem("luwu_user_nik")
+      ];
+      for (const c of candidates) {
+        if (c && /^\d{16}$/.test(c)) return c;
+      }
+    }
+    return "";
+  }, [activeProfile?.nik]);
 
   // Initialize and verify authentication state gracefully on mount
   useEffect(() => {
@@ -862,8 +883,9 @@ export default function MasyarakatDashboard({
     const initAuth = async () => {
       try {
         // 1. Check existing active session
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error: sessionErr } = await supabase.auth.getSession();
         let user = session?.user || null;
+        if (sessionErr) setAuthCheckError(sessionErr);
 
         // 2. If in-memory user is null, check stored token and setSession
         if (!user) {
@@ -872,12 +894,15 @@ export default function MasyarakatDashboard({
 
           if (storedToken) {
             try {
-              const { data: setRes } = await supabase.auth.setSession({
+              const { data: setRes, error: setErr } = await supabase.auth.setSession({
                 access_token: storedToken,
                 refresh_token: storedToken
               });
               user = setRes?.session?.user || null;
-            } catch (e) {}
+              if (setErr) setAuthCheckError(setErr);
+            } catch (e) {
+              setAuthCheckError(e);
+            }
 
             // Fallback verify with backend /api/auth/me
             if (!user) {
@@ -891,23 +916,28 @@ export default function MasyarakatDashboard({
                     user = authData.user;
                   }
                 }
-              } catch (apiErr) {}
+              } catch (apiErr) {
+                setAuthCheckError(apiErr);
+              }
             }
           }
         }
 
-        // 3. Fallback: check stored verified citizen credentials from OTP flow
-        if (!user && typeof window !== 'undefined') {
-          const verifiedNik = localStorage.getItem("mpp_verified_nik");
-          const verifiedName = localStorage.getItem("mpp_verified_name");
-          if (verifiedNik && /^\d{16}$/.test(verifiedNik)) {
+        // 3. Citizen NIK-Session Check: If citizen logged in via NIK + OTP
+        const citizenNik = getActiveCitizenNik();
+        if (citizenNik) {
+          const citizenName = (typeof window !== 'undefined' ? (localStorage.getItem("luwu_user_name") || localStorage.getItem("mpp_verified_name")) : "") || activeProfile?.full_name || 'Warga Kab. Luwu';
+          const citizenPhone = (typeof window !== 'undefined' ? (localStorage.getItem("luwu_user_phone") || localStorage.getItem("mpp_citizen_phone")) : "") || activeProfile?.phone || '';
+          
+          if (!user) {
             user = {
-              id: `cit-${verifiedNik}`,
-              email: `${verifiedNik}@warga.luwukab.go.id`,
+              id: `cit-${citizenNik}`,
+              email: `${citizenNik}@warga.luwukab.go.id`,
               user_metadata: {
-                nik: verifiedNik,
-                full_name: verifiedName || 'Warga Kab. Luwu',
-                role: 'masyarakat'
+                nik: citizenNik,
+                full_name: citizenName,
+                role: 'masyarakat',
+                phone: citizenPhone
               }
             };
           }
@@ -915,11 +945,13 @@ export default function MasyarakatDashboard({
 
         if (isMounted) {
           setCurrentUser(user);
+          setCurrentSession(session);
           setIsAuthLoading(false);
         }
       } catch (err) {
         console.warn("[MasyarakatDashboard] Auth check error:", err);
         if (isMounted) {
+          setAuthCheckError(err);
           setIsAuthLoading(false);
         }
       }
@@ -931,6 +963,7 @@ export default function MasyarakatDashboard({
       if (isMounted) {
         if (session?.user) {
           setCurrentUser(session.user);
+          setCurrentSession(session);
         }
         setIsAuthLoading(false);
       }
@@ -940,15 +973,27 @@ export default function MasyarakatDashboard({
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [getActiveCitizenNik, activeProfile]);
 
-  // Safe navigation guard: ONLY trigger navigate('/login') if isAuthLoading is false AND user is explicitly null
+  // Safe navigation guard: check active citizen NIK state instead of forcing supabase.auth.getUser() !== null
   useEffect(() => {
-    if (!isAuthLoading && currentUser === null) {
-      console.warn("[MasyarakatDashboard] Auth check completed: User is null, redirecting to /login");
+    if (isAuthLoading) return;
+
+    const citizenNik = getActiveCitizenNik();
+    const hasActiveCitizenAuth = Boolean(currentUser || citizenNik || activeProfile?.nik);
+
+    if (!hasActiveCitizenAuth) {
+      console.log("[AuthCheck]", { 
+        user: currentUser, 
+        session: currentSession, 
+        error: authCheckError, 
+        citizenNik: citizenNik, 
+        activeProfileNik: activeProfile?.nik,
+        action: "redirecting to /login" 
+      });
       navigate('/login', { replace: true });
     }
-  }, [isAuthLoading, currentUser, navigate]);
+  }, [isAuthLoading, currentUser, currentSession, authCheckError, getActiveCitizenNik, activeProfile, navigate]);
 
   // Hydrate user profile directly from Supabase session & public.profiles table (Decoupled from Auth Kickout)
   const fetchAndHydrateMasyarakatProfile = async () => {
@@ -2429,7 +2474,8 @@ export default function MasyarakatDashboard({
   }
 
   // If auth finished and user is not authenticated, render null while navigate('/login') triggers
-  if (!currentUser) {
+  const hasActiveSession = Boolean(currentUser || getActiveCitizenNik() || activeProfile?.nik);
+  if (!hasActiveSession) {
     return null;
   }
 

@@ -12153,7 +12153,7 @@ async function createOrAuthenticateCitizenSupabaseUser(rawNik: string, fullName:
     console.warn("[Citizen Supabase Auth] Error creating/signing in citizen user:", authErr);
   }
 
-  return { authSession, authUser, citizenEmail };
+  return { authSession, authUser, citizenEmail, citizenPassword };
 }
 
 // Endpoint 3: Verifikasi 4-Digit OTP
@@ -12216,6 +12216,7 @@ app.post("/api/kiosk/verify-otp", async (req, res) => {
           accessToken: authSession?.access_token || sessionToken,
           refreshToken: authSession?.refresh_token || sessionToken,
           citizen: userCitizen,
+          credentials: { email: citizenEmail, password: citizenPassword },
           user: authUser || {
             id: citizenId,
             email: citizenEmail,
@@ -12332,6 +12333,7 @@ app.post("/api/kiosk/verify-otp", async (req, res) => {
       sessionToken: sessionToken,
       accessToken: authSession?.access_token || sessionToken,
       refreshToken: authSession?.refresh_token || sessionToken,
+      credentials: { email: citizenEmail, password: citizenPassword },
       user: authUser || {
         id: citizenId,
         email: citizenEmail,

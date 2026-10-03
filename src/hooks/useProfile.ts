@@ -64,6 +64,27 @@ export function useProfile() {
         }
       }
 
+      // Check if citizen is logged in via NIK session (Prevent session kickout for OTP citizens)
+      const storedCitizenNik = typeof window !== 'undefined' ? (localStorage.getItem('luwu_user_nik') || localStorage.getItem('mpp_verified_nik') || sessionStorage.getItem('luwu_user_nik') || sessionStorage.getItem('mpp_verified_nik')) : null;
+      if (storedCitizenNik && /^\d{16}$/.test(storedCitizenNik)) {
+        const citizenName = (typeof window !== 'undefined' ? (localStorage.getItem('luwu_user_name') || localStorage.getItem('mpp_verified_name') || sessionStorage.getItem('luwu_user_name')) : "") || 'Masyarakat Luwu';
+        const citizenPhone = (typeof window !== 'undefined' ? (localStorage.getItem('luwu_user_phone') || localStorage.getItem('mpp_citizen_phone') || sessionStorage.getItem('luwu_user_phone')) : "") || '';
+        const citizenProfile = {
+          id: user?.id || `cit-${storedCitizenNik}`,
+          email: user?.email || `${storedCitizenNik}@warga.luwukab.go.id`,
+          nik: storedCitizenNik,
+          full_name: citizenName,
+          nama: citizenName,
+          role: 'masyarakat',
+          phone_number: citizenPhone,
+          phone: citizenPhone,
+          no_whatsapp: citizenPhone
+        };
+        saveProfileToCache(citizenProfile);
+        setIsProfileLoading(false);
+        return citizenProfile;
+      }
+
       if (authErr || !user) {
         if (authErr && (authErr.message?.toLowerCase().includes('refresh token') || authErr.message?.toLowerCase().includes('jwt') || authErr.status === 400 || authErr.status === 401 || authErr.status === 403)) {
           if (typeof document !== 'undefined') {

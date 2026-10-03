@@ -436,6 +436,20 @@ export default function InvestorLogin() {
       // Persist session directly via Supabase Auth & Session Storage
       const accessToken = data.session?.access_token || data.accessToken || data.sessionToken;
       const refreshToken = data.session?.refresh_token || data.refreshToken || accessToken;
+
+      // 1. Try signInWithPassword if deterministic credentials returned
+      if (data.credentials?.email && data.credentials?.password) {
+        try {
+          await supabase.auth.signInWithPassword({
+            email: data.credentials.email,
+            password: data.credentials.password
+          });
+        } catch (authErr) {
+          console.warn("[InvestorLogin] Client signInWithPassword fallback error:", authErr);
+        }
+      }
+
+      // 2. Set GoTrue session directly
       if (accessToken) {
         try {
           await supabase.auth.setSession({
@@ -443,23 +457,35 @@ export default function InvestorLogin() {
             refresh_token: refreshToken
           });
         } catch (setErr) {
-          console.warn("Could not set supabase auth session from OTP token:", setErr);
+          console.warn("[InvestorLogin] Could not set supabase auth session from OTP token:", setErr);
         }
         if (typeof document !== 'undefined') {
           document.cookie = `sb-access-token=${accessToken}; path=/; max-age=604800; SameSite=Lax`;
         }
-        if (typeof window !== 'undefined') {
-          sessionStorage.setItem("sb-access-token", accessToken);
-          localStorage.setItem("sb-access-token", accessToken);
-          localStorage.setItem("mpp_verified_nik", otpNik);
-          localStorage.setItem("mpp_verified_name", citizenName);
-          localStorage.setItem("mpp_citizen_phone", otpPhone || "");
-        }
       }
 
-      // Explicitly wait for supabase.auth.getSession() to confirm the active session before navigating
+      // 3. Persist citizen NIK and profile state across storage
+      if (typeof window !== 'undefined') {
+        if (accessToken) {
+          sessionStorage.setItem("sb-access-token", accessToken);
+          localStorage.setItem("sb-access-token", accessToken);
+        }
+        localStorage.setItem("mpp_verified_nik", otpNik);
+        localStorage.setItem("mpp_verified_name", citizenName);
+        localStorage.setItem("mpp_citizen_phone", otpPhone || "");
+        localStorage.setItem("luwu_user_nik", otpNik);
+        localStorage.setItem("luwu_user_name", citizenName);
+        localStorage.setItem("luwu_user_phone", otpPhone || "");
+        localStorage.setItem("luwu_user_role", "masyarakat");
+        localStorage.setItem("userRole", "masyarakat");
+        sessionStorage.setItem("luwu_user_nik", otpNik);
+        sessionStorage.setItem("luwu_user_name", citizenName);
+        sessionStorage.setItem("mpp_verified_nik", otpNik);
+      }
+
+      // 4. Wait for session confirmation before navigation
       let sessionConfirmed = false;
-      for (let attempt = 0; attempt < 15; attempt++) {
+      for (let attempt = 0; attempt < 10; attempt++) {
         const { data: sessionCheck } = await supabase.auth.getSession();
         if (sessionCheck?.session) {
           sessionConfirmed = true;
@@ -476,7 +502,7 @@ export default function InvestorLogin() {
       setIsSuccess(true);
       setTimeout(() => {
         window.location.replace('/masyarakat-dashboard');
-      }, 250);
+      }, 200);
     } catch (err: any) {
       setOtpError(err.message || 'Verifikasi OTP gagal. Silakan periksa kembali kode OTP Anda.');
     } finally {
