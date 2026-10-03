@@ -533,8 +533,9 @@ export const MppOtpVerificationGuard: React.FC<MppOtpVerificationGuardProps> = (
           )}
 
           {/* Action: Send OTP Button (Only in OTP Mode) */}
-          {authMethod === 'OTP' && (!isOtpSent ? (
-            <button
+          {authMethod === 'OTP' && (
+            !isOtpSent ? (
+              <button
               type="button"
               onClick={() => handleSendOtp()}
               disabled={isSendingOtp || nik.length !== 16 || phone.length < 10}
@@ -624,7 +625,7 @@ export const MppOtpVerificationGuard: React.FC<MppOtpVerificationGuardProps> = (
                 )}
               </div>
             </div>
-          )}
+          ))}
         </div>
 
       </div>

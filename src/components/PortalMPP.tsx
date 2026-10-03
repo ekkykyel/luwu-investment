@@ -12,7 +12,7 @@ import {
   HardHat, MapPin, User, Mail, Phone, X, Check, Briefcase,
   Instagram, Youtube, Facebook, Music2, Heart, MessageCircle, Share2, ExternalLink,
   Send, FileText, QrCode, Printer, Copy, RotateCcw, Download, FileCheck, Clock3, AlertCircle, Loader2
-, Globe, Map, Package, BadgeCheck, Lock, Unlock, Plus, Trash2, Volume2, VolumeX, Radio, Info, Mic, Maximize2, ZoomIn, Eye, BellRing } from 'lucide-react';
+, Globe, Map, Package, BadgeCheck, Lock, Unlock, Plus, Trash2, Volume2, VolumeX, Radio, Info, Mic, Maximize2, ZoomIn, Eye, EyeOff, BellRing } from 'lucide-react';
 import { WeatherWidget } from './WeatherWidget';
 import ThemeToggle from './ThemeToggle';
 import LanguageToggle from './LanguageToggle';
@@ -691,6 +691,7 @@ export default function PortalMPP() {
     nama: '',
     nik: '',
     phone: '',
+    password: '',
     gender: 'Laki-laki' as 'Laki-laki' | 'Perempuan',
     occupation: 'Wiraswasta / Pelaku Usaha' as string,
     agency: 'DPMPTSP',
@@ -698,6 +699,7 @@ export default function PortalMPP() {
     date: new Date().toISOString().split('T')[0],
     session: 'pagi' as 'pagi' | 'siang'
   });
+  const [showQueuePassword, setShowQueuePassword] = useState(false);
   const [queueFormErrors, setQueueFormErrors] = useState<{
     nama?: string;
     nik?: string;
@@ -1230,7 +1232,7 @@ export default function PortalMPP() {
         nama: activeTicket?.name || 'Masyarakat Luwu',
         user_type: 'masyarakat',
         instansi: surveyForm.instansi || 'DPMPTSP Kabupaten Luwu',
-        layanan: surveyForm.layanan || 'Pelayanan Terpadu Satu Pintu',
+        layanan: (surveyForm as any).layanan || 'Pelayanan Terpadu Satu Pintu',
         citizen_nik: activeTicket?.nik || undefined,
         citizen_phone: activeTicket?.phone || undefined,
         q1_persyaratan: surveyForm.q1,
@@ -1366,16 +1368,24 @@ export default function PortalMPP() {
       const cleanPhone = queueForm.phone.replace(/[^\d+]/g, '');
       const today = queueForm.date || new Date().toISOString().split('T')[0];
 
-      const queueRes = await fetch('/api/mpp/queues', {
+      const queueRes = await fetch('/api/mpp/register-citizen', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           tenant_id: tenantId,
           service_id: serviceId,
+          agency_name: queueForm.agency,
+          service_name: queueForm.service,
+          nik: queueForm.nik,
           citizen_nik: queueForm.nik,
+          nama_lengkap: queueForm.nama.trim(),
           citizen_name: queueForm.nama.trim(),
+          no_hp: cleanPhone || null,
           citizen_phone: cleanPhone || null,
+          password: queueForm.password ? queueForm.password.trim() : undefined,
+          jenis_kelamin: queueForm.gender,
           citizen_gender: queueForm.gender,
+          pekerjaan: queueForm.occupation,
           citizen_occupation: queueForm.occupation,
           queue_date: today,
           session: queueForm.session,
@@ -1388,10 +1398,10 @@ export default function PortalMPP() {
         throw new Error(queueResData.message || 'Gagal menerbitkan nomor antrean.');
       }
 
-      const issuedQueue = queueResData.data?.queue || queueResData.queue || queueResData;
+      const issuedQueue = queueResData.queue || queueResData.data?.queue || queueResData.ticket || queueResData;
       const ticketNo = issuedQueue.ticket_code;
 
-      // 4. Update UI & Local Storage
+      // 4. Update UI, Session & Local Storage
       const targetAgency = liveAgencies.find(a => a.nama === queueForm.agency);
       const counterName = targetAgency?.loket || 'Loket Pelayanan MPP';
       const estTime = queueForm.session === 'pagi' ? '09:15 - 10:00 WITA' : '13:45 - 14:30 WITA';
@@ -1411,6 +1421,17 @@ export default function PortalMPP() {
 
       setGeneratedTicket(newTicket);
       setActiveTicket(newTicket);
+
+      // Session Hydration across activeUserId, citizenNik, citizenName
+      const verifiedNik = queueForm.nik;
+      const verifiedName = queueForm.nama.trim();
+      sessionStorage.setItem('activeUserId', `cit-${verifiedNik}`);
+      sessionStorage.setItem('citizenNik', verifiedNik);
+      sessionStorage.setItem('citizenName', verifiedName);
+      sessionStorage.setItem('luwu_user_role', 'citizen');
+      localStorage.setItem('luwu_user_role', 'masyarakat');
+      localStorage.setItem('luwu_user_nik', verifiedNik);
+      localStorage.setItem('luwu_user_name', verifiedName);
 
       const ticketStr = JSON.stringify(newTicket);
       sessionStorage.setItem('mpp_active_ticket', ticketStr);
@@ -6684,6 +6705,35 @@ export default function PortalMPP() {
                         </p>
                       )}
                     </div>
+                  </div>
+
+                  {/* BUAT KATA SANDI (UNTUK LOGIN BERIKUTNYA) */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 font-sans">
+                        BUAT KATA SANDI (UNTUK LOGIN BERIKUTNYA)
+                      </label>
+                      <span className="text-[10px] text-slate-400 font-medium">Opsional / Rekomendasi</span>
+                    </div>
+                    <div className="relative">
+                      <input
+                        type={showQueuePassword ? "text" : "password"}
+                        value={queueForm.password}
+                        onChange={(e) => setQueueForm(prev => ({ ...prev, password: e.target.value }))}
+                        placeholder="Minimal 6 karakter (Opsional / Rekomendasi)"
+                        className="w-full min-h-[44px] px-3.5 py-2 pr-10 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowQueuePassword(!showQueuePassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                      >
+                        {showQueuePassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
+                      Kata sandi ini digunakan jika Anda ingin masuk tanpa kode OTP WA di kunjungan berikutnya.
+                    </p>
                   </div>
 
                   {/* Jenis Kelamin & Pekerjaan Grid */}

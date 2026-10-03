@@ -768,7 +768,7 @@ export default function SimplePolygonDrawer({
         try {
           const diff = safeDifference(polygonFeature, activeBoundaryFeature);
           if (diff && diff.geometry && diff.geometry.coordinates && diff.geometry.coordinates.length > 0) {
-            const diffArea = turf.area(diff);
+            const diffArea = (turf as any).area(diff);
             if (diffArea > 1) {
               hasOutsideArea = true;
             }

@@ -5,7 +5,7 @@ import {
   ArrowLeft, ArrowRight, Volume2, VolumeX, Sparkles, ChevronRight, 
   Search, FileText, Check, Globe, HelpCircle, KeyRound, Radio, Compass,
   Sun, Moon, Languages, Accessibility, BellRing, Share2, Download,
-  ExternalLink, Eye, Info, Ticket, CreditCard, Star, MessageSquareHeart,
+  ExternalLink, Eye, EyeOff, Info, Ticket, CreditCard, Star, MessageSquareHeart,
   MapPin, Touchpad
 } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
@@ -490,9 +490,11 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
   const [firstTimeData, setFirstTimeData] = useState({
     full_name: '',
     phone_number: '',
+    password: '',
     gender: 'Laki-laki',
     occupation: 'Wiraswasta / Pelaku Usaha'
   });
+  const [showFirstTimePassword, setShowFirstTimePassword] = useState(false);
 
   // Investor specific fields (if mode === 'investor')
   const [investorIdentifier, setInvestorIdentifier] = useState('');
@@ -1049,6 +1051,9 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
       const isInv = userMode === 'investor';
       localStorage.setItem('luwu_user_role', isInv ? 'investor' : 'masyarakat');
       if (citizenNik) {
+        sessionStorage.setItem('activeUserId', `cit-${citizenNik}`);
+        sessionStorage.setItem('citizenNik', citizenNik);
+        sessionStorage.setItem('citizenName', citizenName);
         localStorage.setItem('luwu_user_nik', citizenNik);
         localStorage.setItem(`mpp_verified_otp_${citizenNik}`, 'true');
         if (citizenPhone) {
@@ -1117,6 +1122,13 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
       }
 
       setTicketResult(data);
+      if (typeof window !== 'undefined') {
+        const vNik = (nik || verifiedCitizen?.nik || '').trim();
+        const vName = citizenFullName || 'Pemohon Layanan Mandiri';
+        sessionStorage.setItem('activeUserId', `cit-${vNik}`);
+        sessionStorage.setItem('citizenNik', vNik);
+        sessionStorage.setItem('citizenName', vName);
+      }
       playBeep('success');
       setStep(4);
 
@@ -1899,6 +1911,30 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                                   placeholder="Contoh: 081234567890"
                                   className="w-full p-2.5 sm:p-3 text-xs sm:text-sm font-mono rounded-xl border border-white/20 bg-slate-900 text-white outline-none focus:border-amber-400"
                                 />
+                              </div>
+                              <div>
+                                <label className="text-[11px] font-bold block mb-1 text-slate-300">
+                                  BUAT KATA SANDI (UNTUK LOGIN BERIKUTNYA)
+                                </label>
+                                <div className="relative">
+                                  <input
+                                    type={showFirstTimePassword ? "text" : "password"}
+                                    value={firstTimeData.password}
+                                    onChange={(e) => setFirstTimeData(prev => ({ ...prev, password: e.target.value }))}
+                                    placeholder="Minimal 6 karakter (Opsional / Rekomendasi)"
+                                    className="w-full p-2.5 sm:p-3 pr-10 text-xs sm:text-sm rounded-xl border border-white/20 bg-slate-900 text-white outline-none focus:border-amber-400"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => setShowFirstTimePassword(!showFirstTimePassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                                  >
+                                    {showFirstTimePassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                  </button>
+                                </div>
+                                <p className="text-[10px] text-slate-400 mt-1">
+                                  Kata sandi ini digunakan jika Anda ingin masuk tanpa kode OTP WA di kunjungan berikutnya.
+                                </p>
                               </div>
                             </div>
                           </div>

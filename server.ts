@@ -17,6 +17,7 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import multer from "multer";
+import bcrypt from "bcryptjs";
 import { createRequire } from "module";
 
 // Completely removed pdf-parse requirements to prevent serverless crash
@@ -4241,16 +4242,25 @@ app.post("/api/auth/citizen-login", async (req, res) => {
         .maybeSingle();
 
       if (citizen && citizen.password_hash) {
-        if (citizen.password_hash !== passHash) {
+        let isMatch = false;
+        if (citizen.password_hash.startsWith("$2a$") || citizen.password_hash.startsWith("$2b$")) {
+          isMatch = await bcrypt.compare(password, citizen.password_hash);
+        } else {
+          isMatch = (citizen.password_hash === passHash);
+        }
+        if (!isMatch) {
           return res.status(401).json({ success: false, message: "Password salah. Silakan periksa kembali NIK & Password Anda." });
         }
       } else {
-        // First-time password creation for citizen
+        // First-time password creation for citizen using bcrypt
+        const bcryptHash = await bcrypt.hash(password, 10);
         await supabase.from("mpp_citizens").upsert({
           nik: cleanNik,
           nama: name || citizen?.nama || "Warga Pemohon",
+          full_name: name || citizen?.nama || "Warga Pemohon",
           no_hp: phone || citizen?.no_hp || "-",
-          password_hash: passHash,
+          phone_number: phone || citizen?.no_hp || "-",
+          password_hash: bcryptHash,
           source: "ONLINE_HYBRID",
           last_active: new Date().toISOString()
         }, { onConflict: "nik" });
@@ -13397,6 +13407,275 @@ function validateMppOperationalHours(visitDate: string, session: string = 'pagi'
   return { isValid: true };
 }
 
+// 5B. POST /api/mpp/register-citizen - Registrasi Warga MPP & Triple-Table Atomic DB Sync (mpp_citizens, profiles, mpp_queues)
+app.post("/api/mpp/register-citizen", async (req, res) => {
+  try {
+    const {
+      nik,
+      nama_lengkap,
+      nama,
+      full_name,
+      citizen_name,
+      no_hp,
+      phone,
+      phone_number,
+      citizen_phone,
+      jenis_kelamin,
+      gender,
+      citizen_gender,
+      pekerjaan,
+      occupation,
+      citizen_occupation,
+      password,
+      tenant_id,
+      service_id,
+      agency_name,
+      service_name,
+      queue_date,
+      session,
+      is_priority,
+      kecamatan,
+      desa,
+      address,
+      create_queue
+    } = req.body;
+
+    const rawNik = String(nik || citizen_nik || "").replace(/\D/g, "");
+    if (!rawNik || rawNik.length !== 16) {
+      return res.status(400).json({ success: false, message: "NIK harus tepat 16 digit angka." });
+    }
+
+    const verifiedNik = rawNik;
+    const finalName = (nama_lengkap || nama || full_name || citizen_name || "Masyarakat Luwu").trim();
+    const finalPhone = (no_hp || phone || phone_number || citizen_phone || "").replace(/[^\d+]/g, "");
+    const finalGender = jenis_kelamin || gender || citizen_gender || "Laki-laki";
+    const finalOccupation = pekerjaan || occupation || citizen_occupation || "Wiraswasta / Pelaku Usaha";
+
+    // 1. Password Hashing (Standard bcrypt)
+    let password_hash: string | null = null;
+    if (password && typeof password === "string" && password.trim().length >= 6) {
+      password_hash = await bcrypt.hash(password.trim(), 10);
+    }
+
+    // 2. a. mpp_citizens Upsert
+    const citizenUpsertPayload: any = {
+      nik: verifiedNik,
+      nama_lengkap: finalName,
+      full_name: finalName,
+      no_hp: finalPhone || null,
+      phone_number: finalPhone || null,
+      jenis_kelamin: finalGender,
+      gender: finalGender,
+      pekerjaan: finalOccupation,
+      occupation: finalOccupation,
+      kecamatan: kecamatan || null,
+      desa: desa || null,
+      address: address || null,
+      updated_at: new Date().toISOString()
+    };
+    if (password_hash) {
+      citizenUpsertPayload.password_hash = password_hash;
+    }
+
+    const { data: citizenResult, error: citErr } = await supabase
+      .from("mpp_citizens")
+      .upsert(citizenUpsertPayload, { onConflict: "nik" })
+      .select()
+      .maybeSingle();
+
+    if (citErr) {
+      console.warn("[/api/mpp/register-citizen] Note on mpp_citizens upsert:", citErr);
+    }
+
+    // 2. b. public.profiles Upsert (id: "cit-" + verifiedNik, role: 'citizen')
+    const profileId = `cit-${verifiedNik}`;
+    const profilePayload: any = {
+      id: profileId,
+      nik: verifiedNik,
+      full_name: finalName,
+      phone: finalPhone || null,
+      phone_number: finalPhone || null,
+      no_whatsapp: finalPhone || null,
+      whatsapp: finalPhone || null,
+      role: 'citizen',
+      email: `warga_${verifiedNik}@luwukab.go.id`,
+      updated_at: new Date().toISOString()
+    };
+
+    const { data: profileResult, error: profErr } = await supabase
+      .from("profiles")
+      .upsert(profilePayload, { onConflict: "id" })
+      .select()
+      .maybeSingle();
+
+    if (profErr) {
+      console.warn("[/api/mpp/register-citizen] Note on profiles upsert:", profErr);
+    }
+
+    // 2. c. mpp_queues Insert (bound to user_id: "cit-" + verifiedNik)
+    let newQueue: any = null;
+    let resolvedTenant: any = null;
+    let resolvedService: any = null;
+
+    if (create_queue !== false && (tenant_id || agency_name)) {
+      const today = queue_date || new Date().toISOString().split("T")[0];
+      const targetSession = (session || "pagi").toLowerCase();
+
+      // Resolve Tenant
+      let tId = tenant_id;
+      let tCode = "MPP";
+      let tName = agency_name || "Loket Pelayanan MPP";
+
+      if (tId) {
+        const { data: tData } = await supabase
+          .from("mpp_tenants")
+          .select("id, code, name, floor")
+          .eq("id", tId)
+          .maybeSingle();
+        if (tData) {
+          tCode = tData.code || "MPP";
+          tName = tData.name;
+          resolvedTenant = tData;
+        }
+      } else if (agency_name) {
+        const { data: matchT } = await supabase
+          .from("mpp_tenants")
+          .select("id, code, name, floor")
+          .ilike("name", `%${agency_name}%`)
+          .limit(1)
+          .maybeSingle();
+        if (matchT) {
+          tId = matchT.id;
+          tCode = matchT.code || "MPP";
+          tName = matchT.name;
+          resolvedTenant = matchT;
+        }
+      }
+
+      if (!tId) {
+        const { data: firstT } = await supabase.from("mpp_tenants").select("id, code, name, floor").limit(1).maybeSingle();
+        if (firstT) {
+          tId = firstT.id;
+          tCode = firstT.code || "MPP";
+          tName = firstT.name;
+          resolvedTenant = firstT;
+        }
+      }
+
+      // Resolve Service
+      let sId = service_id;
+      if (sId) {
+        const { data: sData } = await supabase
+          .from("mpp_services")
+          .select("id, service_name, requirements, is_long_process")
+          .eq("id", sId)
+          .maybeSingle();
+        if (sData) resolvedService = sData;
+      } else if (tId) {
+        const { data: firstS } = await supabase
+          .from("mpp_services")
+          .select("id, service_name, requirements, is_long_process")
+          .eq("tenant_id", tId)
+          .limit(1)
+          .maybeSingle();
+        if (firstS) {
+          sId = firstS.id;
+          resolvedService = firstS;
+        }
+      }
+
+      // Get next queue number for tenant on that date
+      const { data: lastQueueList } = await supabase
+        .from("mpp_queues")
+        .select("queue_number")
+        .eq("tenant_id", tId)
+        .eq("queue_date", today)
+        .order("queue_number", { ascending: false })
+        .limit(1);
+
+      let nextNum = 1;
+      if (lastQueueList && lastQueueList.length > 0 && lastQueueList[0].queue_number) {
+        nextNum = Number(lastQueueList[0].queue_number) + 1;
+      }
+
+      const paddedNum = String(nextNum).padStart(3, "0");
+      const ticketCode = is_priority ? `P-${paddedNum}-${tCode}` : `${paddedNum}-${tCode}`;
+
+      const { data: qData, error: qErr } = await supabase
+        .from("mpp_queues")
+        .insert({
+          tenant_id: tId,
+          service_id: sId,
+          citizen_nik: verifiedNik,
+          queue_date: today,
+          queue_number: nextNum,
+          ticket_code: ticketCode,
+          status: "menunggu",
+          session: targetSession,
+          call_count: 0,
+          user_id: profileId, // BOUND TO "cit-" + verifiedNik
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (qErr) {
+        console.error("[/api/mpp/register-citizen] Error inserting mpp_queues:", qErr);
+        throw qErr;
+      }
+
+      newQueue = {
+        ...qData,
+        tenant: resolvedTenant || { id: tId, code: tCode, name: tName },
+        service: resolvedService || { id: sId, service_name: service_name || "Pelayanan Terpadu" }
+      };
+
+      // Send WhatsApp confirmation if phone is present
+      if (finalPhone) {
+        const cleanPhone = finalPhone.replace(/[^\d]/g, "").replace(/^0/, "62");
+        const ticketMsg = `🎫 *PENDAFTARAN ANTREAN DIGITAL - MPP SIMPURUSIANG LUWU*\n\n` +
+          `Yth. *${finalName}*,\n` +
+          `Pendaftaran antrean mandiri Anda telah berhasil diverifikasi dan terhubung ke akun digital:\n\n` +
+          `📌 *KODE TIKET:* *${ticketCode}*\n` +
+          `🔢 *NOMOR ANTREAN:* *${paddedNum}-${tCode}*\n` +
+          `🏢 *INSTANSI:* ${tName}\n` +
+          `📋 *LAYANAN:* ${resolvedService?.service_name || service_name || "Pelayanan Terpadu"}\n` +
+          `📅 *TANGGAL:* ${today} (${targetSession.toUpperCase()})\n` +
+          (password_hash ? `🔑 *KATA SANDI:* Tersimpan (Dapat digunakan untuk masuk langsung tanpa OTP)\n\n` : `\n`) +
+          `Silakan pantau status antrean secara langsung pada portal MPP.\n\n` +
+          `_Pemerintah Kabupaten Luwu - Mal Pelayanan Publik Simpurusiang_`;
+
+        const fonnteToken = getFonnteToken();
+        if (fonnteToken) {
+          axios.post(
+            "https://api.fonnte.com/send",
+            { target: cleanPhone, message: ticketMsg, countryCode: "62" },
+            { headers: { Authorization: fonnteToken, "Content-Type": "application/json" }, timeout: 8000 }
+          ).catch((err) => {
+            console.warn("[REGISTER CITIZEN WA] Failed to send ticket via Fonnte:", err?.response?.data || err?.message);
+          });
+        }
+      }
+    }
+
+    return res.json({
+      success: true,
+      message: "Data pemohon berhasil didaftarkan dan disinkronkan ke mpp_citizens, profiles, dan mpp_queues.",
+      activeUserId: profileId,
+      citizenNik: verifiedNik,
+      citizenName: finalName,
+      citizen: citizenResult || citizenUpsertPayload,
+      profile: profileResult || profilePayload,
+      queue: newQueue,
+      ticket: newQueue
+    });
+  } catch (err: any) {
+    console.error("[/api/mpp/register-citizen] Error:", err);
+    return res.status(500).json({ success: false, message: err?.message || "Terjadi kesalahan sistem saat registrasi warga." });
+  }
+});
+
 // 6. POST /api/mpp/queues - Booking / Registrasi Tiket Antrean (Dengan Concurrency Protection & Row-Level Locking)
 app.post("/api/mpp/queues", async (req, res) => {
   try {
@@ -13414,7 +13693,8 @@ app.post("/api/mpp/queues", async (req, res) => {
       session,
       is_priority,
       strict_hours,
-      user_id
+      user_id,
+      password
     } = req.body;
 
     if (!citizen_nik) {
@@ -13523,19 +13803,57 @@ app.post("/api/mpp/queues", async (req, res) => {
         const paddedNum = String(nextNum).padStart(3, "0");
         const ticketCode = is_priority ? `P-${paddedNum}-${tenantCode}` : `${paddedNum}-${tenantCode}`;
 
+        const finalUserId = user_id || (`cit-${citizen_nik}`);
+        let passHash: string | null = null;
+        if (password && typeof password === "string" && password.trim().length >= 6) {
+          passHash = await bcrypt.hash(password.trim(), 10);
+        }
+
         // Upsert data kependudukan warga di dalam transaksi yang sama
         if (citizen_name) {
-          await client.query(
-            `INSERT INTO mpp_citizens (nik, full_name, phone_number, gender, occupation, updated_at)
-             VALUES ($1, $2, $3, $4, $5, NOW())
-             ON CONFLICT (nik) DO UPDATE SET
-               full_name = EXCLUDED.full_name,
-               phone_number = COALESCE(EXCLUDED.phone_number, mpp_citizens.phone_number),
-               gender = COALESCE(EXCLUDED.gender, mpp_citizens.gender),
-               occupation = COALESCE(EXCLUDED.occupation, mpp_citizens.occupation),
-               updated_at = NOW()`,
-            [citizen_nik, citizen_name.trim(), citizen_phone || null, citizen_gender || null, citizen_occupation || null]
-          );
+          if (passHash) {
+            await client.query(
+              `INSERT INTO mpp_citizens (nik, full_name, phone_number, gender, occupation, password_hash, updated_at)
+               VALUES ($1, $2, $3, $4, $5, $6, NOW())
+               ON CONFLICT (nik) DO UPDATE SET
+                 full_name = EXCLUDED.full_name,
+                 phone_number = COALESCE(EXCLUDED.phone_number, mpp_citizens.phone_number),
+                 gender = COALESCE(EXCLUDED.gender, mpp_citizens.gender),
+                 occupation = COALESCE(EXCLUDED.occupation, mpp_citizens.occupation),
+                 password_hash = EXCLUDED.password_hash,
+                 updated_at = NOW()`,
+              [citizen_nik, citizen_name.trim(), citizen_phone || null, citizen_gender || null, citizen_occupation || null, passHash]
+            );
+          } else {
+            await client.query(
+              `INSERT INTO mpp_citizens (nik, full_name, phone_number, gender, occupation, updated_at)
+               VALUES ($1, $2, $3, $4, $5, NOW())
+               ON CONFLICT (nik) DO UPDATE SET
+                 full_name = EXCLUDED.full_name,
+                 phone_number = COALESCE(EXCLUDED.phone_number, mpp_citizens.phone_number),
+                 gender = COALESCE(EXCLUDED.gender, mpp_citizens.gender),
+                 occupation = COALESCE(EXCLUDED.occupation, mpp_citizens.occupation),
+                 updated_at = NOW()`,
+              [citizen_nik, citizen_name.trim(), citizen_phone || null, citizen_gender || null, citizen_occupation || null]
+            );
+          }
+        }
+
+        // Sync public.profiles to guarantee triple-table synchronization
+        try {
+          await supabase.from("profiles").upsert({
+            id: finalUserId,
+            nik: citizen_nik,
+            full_name: (citizen_name || "Masyarakat Luwu").trim(),
+            phone: citizen_phone || null,
+            phone_number: citizen_phone || null,
+            no_whatsapp: citizen_phone || null,
+            role: "citizen",
+            email: `warga_${citizen_nik}@luwukab.go.id`,
+            updated_at: new Date().toISOString()
+          }, { onConflict: "id" });
+        } catch (profErr) {
+          console.warn("[POST /api/mpp/queues] Non-fatal profiles sync error:", profErr);
         }
 
         // Insert tiket antrean baru dengan status 'menunggu' dan call_count = 0
@@ -13545,7 +13863,7 @@ app.post("/api/mpp/queues", async (req, res) => {
            VALUES 
              ($1, $2, $3, $4, $5, $6, 'menunggu', $7, 0, $8, NOW(), NOW())
            RETURNING *`,
-          [resolvedTenantId, resolvedServiceId, citizen_nik, targetDate, nextNum, ticketCode, targetSession, user_id || null]
+          [resolvedTenantId, resolvedServiceId, citizen_nik, targetDate, nextNum, ticketCode, targetSession, finalUserId]
         );
 
         await client.query("COMMIT");

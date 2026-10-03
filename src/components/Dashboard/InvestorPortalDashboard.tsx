@@ -315,7 +315,7 @@ export default function InvestorPortalDashboard() {
 
   const districtBbox = useMemo(() => {
     if (pkkprKecamatan) {
-      const matchKec = districts?.find((d) => (d.name || d.kecamatan || "").toLowerCase().includes(pkkprKecamatan.toLowerCase()));
+      const matchKec = districts?.find((d: any) => (d.name || d.kecamatan || "").toLowerCase().includes(pkkprKecamatan.toLowerCase())) as any;
       if (matchKec && (matchKec.geom || matchKec.geometry || matchKec.geojson)) {
         try {
           const g = matchKec.geom || matchKec.geometry || matchKec.geojson;
@@ -332,7 +332,7 @@ export default function InvestorPortalDashboard() {
 
   const districtCoords = useMemo(() => {
     if (pkkprKecamatan) {
-      const matchKec = districts?.find((d) => (d.name || d.kecamatan || "").toLowerCase().includes(pkkprKecamatan.toLowerCase()));
+      const matchKec = districts?.find((d: any) => (d.name || d.kecamatan || "").toLowerCase().includes(pkkprKecamatan.toLowerCase())) as any;
       if (matchKec && (matchKec.geom || matchKec.geometry || matchKec.geojson)) {
         try {
           const g = matchKec.geom || matchKec.geometry || matchKec.geojson;
@@ -477,7 +477,7 @@ export default function InvestorPortalDashboard() {
     try {
       const { data: { user }, error: authErr } = await supabase.auth.getUser();
       if (authErr || !user) {
-        setMyApplications([]);
+        setMyPkkprApplications([]);
         setIsLoadingApplications(false);
         return;
       }
@@ -3091,8 +3091,8 @@ Ulas secara mendalam:
               isLoggedIn={true}
               defaultName={hydratedCorporateProfile.namaPenanggungJawab || companyName || "Investor Luwu"}
               defaultCompany={hydratedCorporateProfile.namaPerusahaan || companyName || "Pelaku Usaha"}
-              defaultNik={hydratedCorporateProfile.nikPenanggungJawab || ""}
-              defaultPhone={hydratedCorporateProfile.teleponPerusahaan || ""}
+              defaultNik={(hydratedCorporateProfile as any).nikPenanggungJawab || ""}
+              defaultPhone={(hydratedCorporateProfile as any).teleponPerusahaan || ""}
               isDarkMode={isDarkTheme}
             />
           </div>

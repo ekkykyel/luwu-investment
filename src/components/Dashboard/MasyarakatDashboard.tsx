@@ -949,7 +949,7 @@ export default function MasyarakatDashboard({
                 role: 'masyarakat',
                 phone: citizenPhone
               }
-            };
+            } as any;
           }
         }
 
@@ -1087,8 +1087,8 @@ export default function MasyarakatDashboard({
               nik: citizenData.nik,
               full_name: prof?.full_name || citizenData.full_name,
               role: prof?.role || "masyarakat",
-              kecamatan: prof?.kecamatan || citizenData.kecamatan,
-              desa: prof?.desa || citizenData.desa,
+              kecamatan: prof?.kecamatan || (citizenData as any).kecamatan,
+              desa: prof?.desa || (citizenData as any).desa,
               phone_number: citizenData.phone_number || prof?.phone_number,
               phone: citizenData.phone_number || prof?.phone_number,
               no_whatsapp: citizenData.phone_number || prof?.phone_number,
@@ -1125,7 +1125,7 @@ export default function MasyarakatDashboard({
 
       // Resolve Full Name
       let rawNama = prof?.full_name || prof?.nama || prof?.nama_lengkap || prof?.nama_pemohon || meta.full_name || meta.nama || meta.nama_lengkap || activeProfile?.full_name || activeProfile?.nama || "";
-      let resolvedNama = resolveCleanCitizenName(rawNama, resolvedNik);
+      let resolvedNama = resolveCleanCitizenName(rawNama);
 
       // Resolve NIB & Company
       let resolvedNib = prof?.nib || prof?.no_nib || prof?.nib_oss || meta.nib || meta.no_nib || activeProfile?.nib || activeProfile?.no_nib || "";

@@ -235,6 +235,7 @@ export async function submitMppSurvey(data: {
   instansi: string;
   layanan: string;
   citizen_nik?: string;
+  citizen_phone?: string;
   user_id?: string;
   q1_persyaratan: number;
   q2_prosedur: number;

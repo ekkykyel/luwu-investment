@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Swal from 'sweetalert2';
-import { X, Building2, FileText, User, CheckCircle2, Search, ArrowRight, Loader2, Ticket, AlertCircle, Check, Accessibility, HeartHandshake, ShieldCheck, MapPin } from 'lucide-react';
+import { X, Building2, FileText, User, CheckCircle2, Search, ArrowRight, Loader2, Ticket, AlertCircle, Check, Accessibility, HeartHandshake, ShieldCheck, MapPin, Eye, EyeOff, Lock } from 'lucide-react';
 import { supabase, safeFetchLayerData } from '../lib/supabaseClient';
 import { MPPTenant, MPPService, MPPCitizen } from '../types/mpp';
 import { getPreciseServicesForAgency } from '../data/mppAgenciesData';
@@ -32,6 +32,8 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode,
     gender: 'Laki-laki',
     occupation: 'Wiraswasta / Pelaku Usaha'
   });
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isSearchingNik, setIsSearchingNik] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ticketResult, setTicketResult] = useState<any>(null);
@@ -72,59 +74,45 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode,
   useEffect(() => {
     if (isOpen) {
       const verifySessionAndInit = async () => {
-        // Form "Ambil Antrian" hanya bisa diproses jika pengguna memiliki sesi login yang aktif
-        const { data: { user }, error: authErr } = await supabase.auth.getUser();
-        if (authErr || !user) {
-          onClose();
-          Swal.fire({
-            icon: 'info',
-            title: 'Sesi Login Diperlukan',
-            text: 'Pengambilan antrean online MPP Simpurusiang memerlukan sesi login yang aktif. Silakan masuk atau daftarkan akun terlebih dahulu.',
-            confirmButtonText: 'Masuk / Daftar',
-            confirmButtonColor: '#059669',
-            showCancelButton: true,
-            cancelButtonText: 'Batal'
-          }).then((res) => {
-            if (res.isConfirmed) {
-              navigate('/login');
-            }
-          });
-          return;
+        // Cek sesi login aktif atau izinkan pendaftaran langsung mandiri
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          setActiveUserId(user.id);
         }
-
-        setActiveUserId(user.id);
         fetchTenants();
         fetchKecamatan();
         resetForm();
 
-        // Auto-hydrate form fields from user's profiles record (Single Source of Truth)
-        try {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', user.id)
-            .maybeSingle();
+        // Auto-hydrate form fields from user's profiles record jika ada
+        if (user) {
+          try {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', user.id)
+              .maybeSingle();
 
-          const meta = user.user_metadata || {};
-          const nikVal = profile?.nik || meta.nik || '';
-          if (nikVal) setNik(nikVal);
+            const meta = user.user_metadata || {};
+            const nikVal = profile?.nik || meta.nik || '';
+            if (nikVal) setNik(nikVal);
 
-          const fullNameVal = profile?.full_name || profile?.company_name || meta.full_name || meta.company_name || '';
-          const phoneVal = profile?.no_whatsapp || profile?.whatsapp || profile?.phone || meta.no_whatsapp || meta.phone || '';
-          const kecVal = profile?.kecamatan || meta.kecamatan || '';
-          const desaVal = profile?.desa || meta.desa || '';
+            const fullNameVal = profile?.full_name || profile?.company_name || meta.full_name || meta.company_name || '';
+            const phoneVal = profile?.no_whatsapp || profile?.whatsapp || profile?.phone || meta.no_whatsapp || meta.phone || '';
+            const kecVal = profile?.kecamatan || meta.kecamatan || '';
+            const desaVal = profile?.desa || meta.desa || '';
 
-          setCitizen(prev => ({
-            ...prev,
-            full_name: fullNameVal || prev.full_name,
-            phone_number: phoneVal || prev.phone_number,
-            kecamatan: kecVal || prev.kecamatan,
-            desa: desaVal || prev.desa
-          }));
-          if (kecVal) setSelectedKecamatanName(kecVal);
-          if (desaVal) setSelectedDesaName(desaVal);
-        } catch (e) {
-          console.warn('Hydration profile error:', e);
+            setCitizen(prev => ({
+              ...prev,
+              full_name: fullNameVal || prev.full_name,
+              phone_number: phoneVal || prev.phone_number,
+              kecamatan: kecVal || prev.kecamatan,
+              desa: desaVal || prev.desa
+            }));
+            if (kecVal) setSelectedKecamatanName(kecVal);
+            if (desaVal) setSelectedDesaName(desaVal);
+          } catch (e) {
+            console.warn('Hydration profile error:', e);
+          }
         }
       };
       verifySessionAndInit();
@@ -336,11 +324,10 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode,
     setSubmitError(null);
     setIsSubmitting(true);
     try {
-      // Form "Ambil Antrian" hanya bisa diproses jika pengguna memiliki sesi login yang aktif
-      const { data: { user }, error: authErr } = await supabase.auth.getUser();
-      if (authErr || !user) {
-        throw new Error("Sesi login Anda tidak aktif. Silakan masuk terlebih dahulu untuk mengambil antrian MPP.");
-      }
+      const { data: { user } } = await supabase.auth.getUser();
+      const verifiedNik = currentNik;
+      const verifiedName = currentName.trim();
+      const verifiedUserId = user?.id || `cit-${verifiedNik}`;
 
       const cleanPhone = currentPhone.replace(/[^\d+]/g, '');
       const today = new Date().toISOString().split('T')[0];
@@ -366,53 +353,67 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode,
         return;
       }
 
-      // 1. Upsert Citizen (dengan konsistensi pekerjaan & occupation, jenis_kelamin & gender, kecamatan & desa)
-      const { error: citizenError } = await supabase.from('mpp_citizens').upsert({
-        nik: currentNik,
-        full_name: currentName.trim(),
-        phone_number: cleanPhone || null,
-        gender: citizen.gender || 'Laki-laki',
-        jenis_kelamin: citizen.gender || 'Laki-laki',
-        occupation: citizen.occupation || 'Wiraswasta / Pelaku Usaha',
-        pekerjaan: citizen.occupation || 'Wiraswasta / Pelaku Usaha',
-        kecamatan: selectedKecamatanName || citizen.kecamatan || null,
-        desa: selectedDesaName || citizen.desa || null,
-        address: citizen.address || null,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'nik' });
-
-      if (citizenError) throw citizenError;
-
-      // 2. Generate Queue Number & Issue Ticket via Backend with Row-Level Locking & user_id (RLS Protected)
-      const queueRes = await fetch('/api/mpp/queues', {
+      // Triple-Table DB Sync via /api/mpp/register-citizen (mpp_citizens, profiles, mpp_queues)
+      const regRes = await fetch('/api/mpp/register-citizen', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: user.id, // WAJIB menyertakan user_id dari sesi Supabase yang aktif
+          nik: verifiedNik,
+          nama_lengkap: verifiedName,
+          no_hp: cleanPhone || null,
+          jenis_kelamin: citizen.gender || 'Laki-laki',
+          pekerjaan: citizen.occupation || 'Wiraswasta / Pelaku Usaha',
+          password: password.trim() || undefined,
           tenant_id: selectedTenant.id,
           service_id: selectedService.id,
-          citizen_nik: currentNik,
-          citizen_name: currentName.trim(),
-          citizen_phone: cleanPhone || null,
-          citizen_gender: citizen.gender || 'Laki-laki',
-          citizen_occupation: citizen.occupation || 'Wiraswasta / Pelaku Usaha',
+          agency_name: selectedTenant.name,
+          service_name: selectedService.service_name,
           queue_date: today,
           session: 'pagi',
-          is_priority: isPriorityLane
+          is_priority: isPriorityLane,
+          kecamatan: selectedKecamatanName || citizen.kecamatan || null,
+          desa: selectedDesaName || citizen.desa || null,
+          address: citizen.address || null
         })
       });
 
       let newQueue: any = null;
-
-      if (queueRes.ok) {
-        const queueResData = await queueRes.json();
-        if (queueResData.success) {
-          newQueue = queueResData.data?.queue || queueResData.queue || queueResData;
+      if (regRes.ok) {
+        const regData = await regRes.json();
+        if (regData.success) {
+          newQueue = regData.data?.queue || regData.queue || regData.ticket;
         }
       }
 
       // Direct fallback to Supabase table if API proxy was unavailable
       if (!newQueue) {
+        // Upsert citizen
+        await supabase.from('mpp_citizens').upsert({
+          nik: verifiedNik,
+          nama_lengkap: verifiedName,
+          full_name: verifiedName,
+          no_hp: cleanPhone || null,
+          phone_number: cleanPhone || null,
+          jenis_kelamin: citizen.gender || 'Laki-laki',
+          gender: citizen.gender || 'Laki-laki',
+          pekerjaan: citizen.occupation || 'Wiraswasta / Pelaku Usaha',
+          occupation: citizen.occupation || 'Wiraswasta / Pelaku Usaha',
+          kecamatan: selectedKecamatanName || citizen.kecamatan || null,
+          desa: selectedDesaName || citizen.desa || null,
+          address: citizen.address || null,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'nik' });
+
+        // Upsert profile
+        await supabase.from('profiles').upsert({
+          id: verifiedUserId,
+          nik: verifiedNik,
+          full_name: verifiedName,
+          phone: cleanPhone || null,
+          role: 'citizen',
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'id' });
+
         const { data: lastQueue } = await supabase
           .from('mpp_queues')
           .select('queue_number')
@@ -429,10 +430,10 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode,
         const { data: directQ, error: directErr } = await supabase
           .from('mpp_queues')
           .insert({
-            user_id: user.id, // Sesi aktif user_id
+            user_id: verifiedUserId,
             tenant_id: selectedTenant.id,
             service_id: selectedService.id,
-            citizen_nik: currentNik,
+            citizen_nik: verifiedNik,
             queue_date: today,
             queue_number: nextNum,
             ticket_code: ticketCode,
@@ -446,6 +447,15 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode,
         if (directErr) throw directErr;
         newQueue = directQ;
       }
+
+      // Session Hydration
+      sessionStorage.setItem('activeUserId', verifiedUserId);
+      sessionStorage.setItem('citizenNik', verifiedNik);
+      sessionStorage.setItem('citizenName', verifiedName);
+      sessionStorage.setItem('luwu_user_role', 'citizen');
+      localStorage.setItem('luwu_user_role', 'masyarakat');
+      localStorage.setItem('luwu_user_nik', verifiedNik);
+      localStorage.setItem('luwu_user_name', verifiedName);
 
       const ticketCode = newQueue.ticket_code;
       const paddedNum = String(newQueue.queue_number).padStart(3, '0');
@@ -777,6 +787,37 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode,
                       ) : (
                         <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Awalan 08/628</p>
                       )}
+                    </div>
+
+                    {/* BUAT KATA SANDI (UNTUK LOGIN BERIKUTNYA) */}
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                          BUAT KATA SANDI (UNTUK LOGIN BERIKUTNYA)
+                        </label>
+                        <span className="text-[10px] text-slate-400 font-medium">Opsional / Rekomendasi</span>
+                      </div>
+                      <div className="relative">
+                        <input 
+                          type={showPassword ? "text" : "password"}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="Minimal 6 karakter (Opsional / Rekomendasi)"
+                          className={`w-full px-4 py-2 pr-10 rounded-xl border text-sm font-sans focus:outline-none transition-all ${
+                            isDarkMode ? 'bg-slate-800 border-slate-700 focus:ring-2 focus:ring-indigo-500' : 'bg-white border-slate-300 focus:ring-2 focus:ring-indigo-500'
+                          }`}
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                        >
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                        Kata sandi ini digunakan jika Anda ingin masuk tanpa kode OTP WA di kunjungan berikutnya.
+                      </p>
                     </div>
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1">
