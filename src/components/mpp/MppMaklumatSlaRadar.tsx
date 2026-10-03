@@ -208,10 +208,10 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
         </p>
       </div>
 
-      {/* Parent Grid Container for Desktop Symmetrical Alignment */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch mb-10 w-full">
-        {/* Left Card: Official Government Pledge Card (Maklumat Pelayanan Publik) */}
-        <div className={`p-6 sm:p-8 rounded-3xl border transition-all relative overflow-hidden w-full h-full flex flex-col justify-between ${
+      {/* Centered Vertical Stack for Maklumat & Zona Integritas (Top-to-Bottom) */}
+      <div className="w-full max-w-5xl mx-auto flex flex-col gap-8 mb-12">
+        {/* Top Card: Official Government Pledge Card (Maklumat Pelayanan Publik) */}
+        <div className={`p-6 sm:p-8 rounded-3xl border transition-all relative overflow-hidden w-full ${
           isDark 
             ? 'bg-gradient-to-br from-slate-900 via-slate-900/95 to-emerald-950/40 border-emerald-500/30 shadow-2xl shadow-emerald-950/30' 
             : 'bg-gradient-to-br from-white via-emerald-50/40 to-teal-50/50 border-emerald-200/80 shadow-xl shadow-emerald-500/5'
@@ -322,11 +322,11 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
           </div>
         </div>
 
-        {/* Right Card: Spanduk & Komitmen Zona Integritas Anti-Korupsi, Stop Gratifikasi, Stop Pungli */}
-        <div className="w-full h-full flex flex-col justify-between">
+        {/* Bottom Card: Spanduk & Komitmen Zona Integritas */}
+        <div className="w-full">
           <AntiCorruptionBanner 
             isDark={isDark} 
-            className="w-full h-full max-w-none p-0 px-0 sm:px-0 lg:px-0 pt-0 pb-0 shadow-none border-none bg-transparent"
+            className="w-full max-w-none px-0 pt-0 pb-0 shadow-none border-none bg-transparent"
           />
         </div>
       </div>
