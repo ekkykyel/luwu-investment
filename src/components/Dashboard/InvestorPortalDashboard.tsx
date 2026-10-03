@@ -56,8 +56,10 @@ import {
   Wheat,
   Sliders,
   Search,
-  Zap
+  Zap,
+  Ticket
 } from 'lucide-react';
+import MppQueueRegistrationModal from '../MppQueueRegistrationModal';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid, ReferenceLine, Legend } from 'recharts';
 import Swal from 'sweetalert2';
 import { area } from '@turf/turf';
@@ -318,61 +320,25 @@ export default function InvestorPortalDashboard() {
   // Auto-Hydrate Corporate Identity directly from Supabase session & profiles table
   const fetchAndHydrateCorporateProfile = async () => {
     try {
-      // 1. Restore session manually from cookie or localStorage to bypass iframe / container restrictions
-      let sbToken = null;
-      const match = document.cookie.match(/(?:^|;\s*)sb-access-token=([^;]+)/);
-      if (match) sbToken = match[1];
-      if (!sbToken) sbToken = localStorage.getItem("luwu_session_token");
-
-      const { data: { user } } = await supabase.auth.getUser();
-      const effectiveEmail = user?.email || localStorage.getItem("luwu_user_email") || "";
-      const effectiveId = user?.id || "";
+      const { data: { user }, error: authErr } = await supabase.auth.getUser();
+      if (authErr || !user) {
+        navigate("/login", { replace: true });
+        return null;
+      }
+      const effectiveEmail = user.email || "";
+      const effectiveId = user.id;
 
       let prof: any = null;
+      try {
+        const { data } = await supabase
+          .from("profiles")
+          .select("id, email, full_name, company_name, role, nib, kecamatan, desa")
+          .eq("id", effectiveId)
+          .maybeSingle();
+        if (data) prof = data;
+      } catch (e) {}
 
-      if (effectiveId && effectiveId !== "offline-user") {
-        try {
-          const res = await fetch(`/api/profiles?id=${encodeURIComponent(effectiveId)}`, { credentials: 'same-origin' });
-          if (res.ok) {
-            const resJson = await res.json();
-            if (resJson.data) prof = resJson.data;
-          }
-        } catch (e) {}
-
-        if (!prof) {
-          try {
-            const { data } = await supabase
-              .from("profiles")
-              .select("id, email, full_name, company_name, role, nib, kecamatan, desa")
-              .eq("id", effectiveId)
-              .maybeSingle();
-            if (data) prof = data;
-          } catch (e) {}
-        }
-      }
-
-      if (!prof && effectiveEmail) {
-        try {
-          const res = await fetch(`/api/profiles?email=${encodeURIComponent(effectiveEmail)}`, { credentials: 'same-origin' });
-          if (res.ok) {
-            const resJson = await res.json();
-            if (resJson.data) prof = resJson.data;
-          }
-        } catch (e) {}
-
-        if (!prof) {
-          try {
-            const { data } = await supabase
-              .from("profiles")
-              .select("id, email, full_name, company_name, role, nib, kecamatan, desa")
-              .eq("email", effectiveEmail)
-              .maybeSingle();
-            if (data) prof = data;
-          } catch (e) {}
-        }
-      }
-
-      const meta = user?.user_metadata || {};
+      const meta = user.user_metadata || {};
       const isBadCorporateName = (n?: string | null) => {
         if (!n) return true;
         const lower = n.toLowerCase();
@@ -381,17 +347,11 @@ export default function InvestorPortalDashboard() {
 
       let pNama = prof?.full_name || prof?.nama || prof?.nama_penanggung_jawab || prof?.nama_lengkap || meta.full_name || meta.nama || meta.nama_penanggung_jawab || meta.nama_lengkap || "";
       if (isBadCorporateName(pNama)) {
-        pNama = localStorage.getItem("luwu_user_name") || "";
-        if (isBadCorporateName(pNama)) {
-          pNama = "";
-        }
+        pNama = "";
       }
 
-      let pPerusahaan = prof?.company_name || prof?.perusahaan || prof?.nama_perusahaan || meta.company_name || meta.perusahaan || meta.nama_perusahaan || "";
-      if (!pPerusahaan) {
-        pPerusahaan = localStorage.getItem("luwu_company_name") || companyName || "";
-      }
-      let pNib = prof?.nib || prof?.no_nib || meta.nib || meta.no_nib || localStorage.getItem("luwu_user_nib") || "";
+      let pPerusahaan = prof?.company_name || prof?.perusahaan || prof?.nama_perusahaan || meta.company_name || meta.perusahaan || meta.nama_perusahaan || companyName || "";
+      let pNib = prof?.nib || prof?.no_nib || meta.nib || meta.no_nib || "";
       let pEmail = prof?.email || effectiveEmail || "";
 
       const profileData = {
@@ -409,25 +369,29 @@ export default function InvestorPortalDashboard() {
     return null;
   };
 
-  // Fetch real investor PKKPR applications from Supabase gis_pkkpr & investments tables
+  // Fetch real investor PKKPR applications from Supabase gis_pkkpr & investments tables (RLS Protected)
   const fetchInvestorApplications = async () => {
     setIsLoadingApplications(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      const storedNib = hydratedCorporateProfile.nib || localStorage.getItem("luwu_user_nib") || "";
-      const storedEmail = user?.email || hydratedCorporateProfile.emailPerusahaan || localStorage.getItem("luwu_user_email") || "";
-      const storedCompany = hydratedCorporateProfile.namaPerusahaan || localStorage.getItem("luwu_company_name") || "";
+      const { data: { user }, error: authErr } = await supabase.auth.getUser();
+      if (authErr || !user) {
+        setMyApplications([]);
+        setIsLoadingApplications(false);
+        return;
+      }
 
-      // 1. Fetch from gis_pkkpr
+      // 1. Fetch from gis_pkkpr strictly for this authenticated investor (user_id)
       const { data: pkkprRows } = await supabase
         .from('gis_pkkpr')
         .select('*')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      // 2. Fetch from investments table
+      // 2. Fetch from investments table strictly for this authenticated investor (user_id)
       const { data: invRows } = await supabase
         .from('investments')
         .select('*')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       const combined: any[] = [];
@@ -896,12 +860,16 @@ export default function InvestorPortalDashboard() {
 
     setIsSubmittingCorporatePkkpr(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user }, error: authErr } = await supabase.auth.getUser();
+      if (authErr || !user) {
+        navigate("/login", { replace: true });
+        return;
+      }
 
       const trackingCode = `PKKPR-CORP-${Date.now().toString().slice(-6)}`;
       const payload = {
         nomor_permohonan: trackingCode,
-        user_id: user?.id,
+        user_id: user.id,
         nama_pemohon: hydratedCorporateProfile.namaPenanggungJawab,
         email_pemohon: hydratedCorporateProfile.emailPerusahaan,
         perusahaan: hydratedCorporateProfile.namaPerusahaan,
@@ -962,7 +930,7 @@ export default function InvestorPortalDashboard() {
           file_alas_hak_url: pkkprFileAlasHakUrl || null,
           sertifikat_tanah_url: pkkprFileAlasHakUrl || null,
           bukti_tanah: pkkprJenisAlasHak,
-          user_id: user?.id || null,
+          user_id: user.id,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         });
@@ -991,7 +959,8 @@ export default function InvestorPortalDashboard() {
           sertifikat_tanah_url: pkkprFileAlasHakUrl || null,
           certificate_number: `ALAS-HAK-${trackingCode}`,
           description: formattedCatatan,
-          esg_environmental_risk: pkkprEsgAnalysis?.esgRiskStatus || "CLEAR"
+          esg_environmental_risk: pkkprEsgAnalysis?.esgRiskStatus || "CLEAR",
+          user_id: user.id
         });
         if (error) insertErr = error;
 
@@ -1049,65 +1018,52 @@ export default function InvestorPortalDashboard() {
     setIsCorporatePkkprModalOpen(true);
   };
 
-  // Strict Protected Route & Role Validation
+  const [isQueueModalOpen, setIsQueueModalOpen] = useState(false);
+
+  // Strict Protected Route & Role Validation (Anti Ghost-Session)
   useEffect(() => {
     const loadUserSession = async () => {
       setIsAuthLoading(true);
       try {
-        // Restore session manually from cookie or localStorage to bypass iframe restrictions kawan!
-        let token = localStorage.getItem("luwu_session_token");
-        let sbToken = null;
-        const match = document.cookie.match(/(?:^|;\s*)sb-access-token=([^;]+)/);
-        if (match) sbToken = match[1];
-        
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session?.user) {
-          navigate("/login");
-          return;
-        }
-        
-        // Role Validation with fallback
-        const effectiveId = session.user.id;
-        if (effectiveId === "offline-user") {
-          navigate("/login");
+        const { data: { user }, error: authErr } = await supabase.auth.getUser();
+        if (authErr || !user) {
+          navigate("/login", { replace: true });
           return;
         }
 
-        const { data: profile } = await supabase.from('profiles').select('role, full_name, company_name').eq('id', effectiveId).maybeSingle();
-        const storedRole = (localStorage.getItem("luwu_user_role") || "").toLowerCase().trim();
-        const effectiveRole = (profile?.role || session.user.user_metadata?.role || storedRole || 'investor').toLowerCase().trim();
+        const effectiveId = user.id;
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role, full_name, company_name')
+          .eq('id', effectiveId)
+          .maybeSingle();
 
-        if (effectiveRole) setUserRole(effectiveRole);
+        const effectiveRole = (profile?.role || user.user_metadata?.role || 'investor').toLowerCase().trim();
 
-        // Auto-upsert profile if missing
-        if (!profile && effectiveId) {
-          try {
-            await supabase.from('profiles').upsert({
-              id: effectiveId,
-              role: effectiveRole,
-              full_name: session.user.user_metadata?.company_name || session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || ''
-            });
-          } catch (e) {}
+        if (effectiveRole === 'masyarakat') {
+          navigate("/masyarakat-dashboard", { replace: true });
+          return;
         }
+
+        setUserRole(effectiveRole);
 
         const validInvestorRoles = ['investor', 'superadmin', 'admin_dalak', 'admin_oss', 'admin_promosi', 'admin_data', 'operator'];
         if (!validInvestorRoles.includes(effectiveRole)) {
-          navigate("/403-forbidden");
+          navigate("/403-forbidden", { replace: true });
           return;
         }
 
-        const u = session.user;
-        const meta = u.user_metadata || {};
-        const name = meta.company_name || meta.full_name || profile?.company_name || profile?.full_name || u.email?.split('@')[0] || "";
+        const meta = user.user_metadata || {};
+        const name = meta.company_name || meta.full_name || profile?.company_name || profile?.full_name || user.email?.split('@')[0] || "";
         setCompanyName(name);
         setTestiCompany(name);
         setIsAuthLoading(false);
       } catch {
-        window.location.replace("/login");
+        navigate("/login", { replace: true });
       }
     };
     loadUserSession();
-  }, []);
+  }, [navigate]);
 
   // ROI Flash Effect State & Effect
   const [roiFlash, setRoiFlash] = useState(false);
@@ -1449,7 +1405,17 @@ Ulas secara mendalam:
             })}
           </div>
 
-          <div className="p-4 border-t border-slate-200 dark:border-slate-800">
+          <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
+            <button
+              onClick={() => setIsQueueModalOpen(true)}
+              className="w-full flex items-center justify-between px-4 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white rounded-xl font-bold shadow-md shadow-indigo-600/20 transition-all cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <Ticket size={18} />
+                <span className="text-sm">Ambil Antrian MPP</span>
+              </div>
+              <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-bold uppercase">ONLINE</span>
+            </button>
             <button 
               onClick={async () => {
                 try {
@@ -1464,9 +1430,6 @@ Ulas secara mendalam:
                   console.warn("[Logout] Supabase signOut failed, continuing with client clearance:", err);
                 }
                 document.cookie = 'sb-access-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=None; Secure;';
-                localStorage.removeItem("luwu_session_token");
-                localStorage.removeItem("sb-access-token");
-                localStorage.removeItem("luwu_user_role");
                 exitSmartFullscreen();
                 navigate('/');
               }}
@@ -1505,6 +1468,13 @@ Ulas secara mendalam:
           </div>
           <div className="flex items-center gap-3">
             <CrossOpdNotificationBell currentRole="PEMOHON" />
+            <button
+              onClick={() => setIsQueueModalOpen(true)}
+              className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-black flex items-center gap-2 shadow-md hover:shadow-indigo-500/20 transition-all cursor-pointer"
+            >
+              <Ticket className="w-4 h-4" />
+              <span>Ambil Antrian MPP</span>
+            </button>
             <button
               onClick={openCorporatePkkprModal}
               className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black flex items-center gap-2 shadow-md hover:shadow-emerald-500/20 transition-all cursor-pointer"
@@ -3822,6 +3792,25 @@ Ulas secara mendalam:
             }
             setPkkprLuasM2(areaSqM);
             setIsDrawerOpen(false);
+          }}
+        />
+      )}
+
+      {/* MODAL AMBIL ANTREAN MPP UNTUK INVESTOR TERDAFTAR */}
+      {isQueueModalOpen && (
+        <MppQueueRegistrationModal
+          isOpen={isQueueModalOpen}
+          onClose={() => setIsQueueModalOpen(false)}
+          isDarkMode={isDarkTheme}
+          onSuccess={(ticket) => {
+            setIsQueueModalOpen(false);
+            Swal.fire({
+              icon: 'success',
+              title: 'Antrean MPP Berhasil Diambil!',
+              html: `Nomor Antrean Anda: <b class="text-indigo-600 text-lg">${ticket?.ticket_code || 'MPP-QUE'}</b><br/><span class="text-xs text-slate-500">Anda telah kembali ke Dashboard Investor. Silakan tunjukkan tiket ke petugas loket MPP.</span>`,
+              confirmButtonText: 'Kembali ke Dashboard Investor',
+              confirmButtonColor: '#059669'
+            });
           }}
         />
       )}

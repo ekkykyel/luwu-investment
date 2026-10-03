@@ -12972,7 +12972,8 @@ app.post("/api/mpp/queues", async (req, res) => {
       queue_date, 
       session,
       is_priority,
-      strict_hours
+      strict_hours,
+      user_id
     } = req.body;
 
     if (!citizen_nik) {
@@ -13099,11 +13100,11 @@ app.post("/api/mpp/queues", async (req, res) => {
         // Insert tiket antrean baru dengan status 'menunggu' dan call_count = 0
         const insertRes = await client.query(
           `INSERT INTO mpp_queues 
-             (tenant_id, service_id, citizen_nik, queue_date, queue_number, ticket_code, status, session, call_count, created_at, updated_at)
+             (tenant_id, service_id, citizen_nik, queue_date, queue_number, ticket_code, status, session, call_count, user_id, created_at, updated_at)
            VALUES 
-             ($1, $2, $3, $4, $5, $6, 'menunggu', $7, 0, NOW(), NOW())
+             ($1, $2, $3, $4, $5, $6, 'menunggu', $7, 0, $8, NOW(), NOW())
            RETURNING *`,
-          [resolvedTenantId, resolvedServiceId, citizen_nik, targetDate, nextNum, ticketCode, targetSession]
+          [resolvedTenantId, resolvedServiceId, citizen_nik, targetDate, nextNum, ticketCode, targetSession, user_id || null]
         );
 
         await client.query("COMMIT");
@@ -13141,6 +13142,8 @@ app.post("/api/mpp/queues", async (req, res) => {
       tenantId: resolvedTenantId,
       serviceId: resolvedServiceId || "",
       citizenNik: citizen_nik,
+      userId: user_id || null,
+      user_id: user_id || null,
       citizenName: citizen_name,
       citizenPhone: citizen_phone,
       citizenGender: citizen_gender,

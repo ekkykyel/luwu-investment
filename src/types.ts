@@ -71,6 +71,7 @@ export interface Village {
 
 export interface Investment {
   id: string;
+  user_id?: string | null;
   name: string;
   locationName?: string;
   sector: SektorInvestasi;
@@ -245,5 +246,37 @@ export interface KnowledgeDocument {
 
 export type { PKKPRStatus } from './types/pkkprWorkflow';
 export { normalizePKKPRStatus } from './types/pkkprWorkflow';
+
+export interface GisPkkpr {
+  id: string;
+  user_id?: string | null;
+  jenis_permohonan?: string | null;
+  nama_permohonan?: string | null;
+  nib_oss?: string | null;
+  nama_badan_usaha?: string | null;
+  nama_pemohon?: string | null;
+  nik_pemohon?: string | null;
+  no_whatsapp?: string | null;
+  sektor?: string | null;
+  jenis_pengajuan_pkkpr?: string | null;
+  kategori_pengajuan?: string | null;
+  file_siteplan_url?: string | null;
+  rencana_luas_bgn?: number | null;
+  luas_bangunan?: number | null;
+  kecamatan?: string | null;
+  desa_kelurahan?: string | null;
+  luas_m2?: number | null;
+  luas_ha?: number | null;
+  geom?: any;
+  geometry_json?: any;
+  status_pkkpr?: string | null;
+  catatan_teknis?: string | null;
+  jenis_alas_hak?: string | null;
+  file_alas_hak_url?: string | null;
+  sertifikat_tanah_url?: string | null;
+  bukti_tanah?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
 
 

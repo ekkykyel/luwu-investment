@@ -433,29 +433,23 @@ export default function InvestorLogin() {
       const citizenData = data.citizen || citizenFound || { nik: otpNik, full_name: otpFullName };
       const citizenName = citizenData.full_name || otpFullName || 'Warga Kab. Luwu';
 
-      // Persist citizen session
+      // Persist session directly via Supabase Auth
       if (data.sessionToken) {
-        document.cookie = `sb-access-token=${data.sessionToken}; path=/; max-age=86400; SameSite=None; Secure`;
-        localStorage.setItem("luwu_session_token", data.sessionToken);
+        try {
+          await supabase.auth.setSession({
+            access_token: data.sessionToken,
+            refresh_token: data.refreshToken || data.sessionToken
+          });
+        } catch (setErr) {
+          console.warn("Could not set supabase auth session from OTP token:", setErr);
+        }
       }
-      localStorage.setItem("luwu_user_role", "masyarakat");
-      localStorage.setItem("luwu_user_nik", otpNik);
-      localStorage.setItem("luwu_user_name", citizenName);
-      localStorage.setItem("luwu_citizen_data", JSON.stringify(citizenData));
-      localStorage.setItem(`mpp_verified_otp_${otpNik}`, 'true');
-      localStorage.setItem(`mpp_verified_otp_phone_${otpNik}`, citizenData.phone_number || otpPhone);
-      localStorage.setItem(`mpp_citizen_name_${otpNik}`, citizenName);
 
-      // Auto update active profile context
-      setActiveProfile({
-        id: `citizen-${otpNik}`,
-        role: "masyarakat",
-        nik: otpNik,
-        full_name: citizenName,
-        phone: citizenData.phone_number || otpPhone,
-        whatsapp: citizenData.phone_number || otpPhone,
-        ...citizenData
-      });
+      // Bersihkan stale session di localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem("luwu_session_token");
+        localStorage.removeItem("luwu_user_role");
+      }
 
       setIsSuccess(true);
       setTimeout(() => {
@@ -589,22 +583,21 @@ export default function InvestorLogin() {
 
       if (signInError) throw signInError;
 
-      if (data?.session) {
-        // Query user's profile to verify actual role post-auth
+      const authUser = data?.user || (data?.session ? data.session.user : null);
+
+      if (authUser) {
+        // Query user's profile directly from Supabase profiles using user.id
         const { data: profile } = await supabase
           .from('profiles')
-          .select('role, full_name')
-          .eq('id', data.session.user.id)
+          .select('role, full_name, email, nik')
+          .eq('id', authUser.id)
           .maybeSingle();
 
-        const activeRole = profile?.role || data.session.user.user_metadata?.role || effectiveRole;
+        const activeRole = profile?.role || authUser.user_metadata?.role || effectiveRole;
 
         // Post-auth validation against chosen role barometer
         if (mainRoleCategory === 'investor' && activeRole && activeRole.startsWith('admin_')) {
           await supabase.auth.signOut();
-          localStorage.removeItem("luwu_session_token");
-          localStorage.removeItem("luwu_user_role");
-          localStorage.removeItem("luwu_user_email");
           const adminLabel = ADMIN_ROLE_DETAILS[activeRole]?.label || 'Administrator OPD';
           notifyRoleMismatch({
             message: `Akun Anda terverifikasi sebagai ${adminLabel}. Silahkan sesuaikan role Anda dengan memilih tab Admin.`,
@@ -618,9 +611,6 @@ export default function InvestorLogin() {
         if (mainRoleCategory === 'admin') {
           if (activeRole === 'investor') {
             await supabase.auth.signOut();
-            localStorage.removeItem("luwu_session_token");
-            localStorage.removeItem("luwu_user_role");
-            localStorage.removeItem("luwu_user_email");
             notifyRoleMismatch({
               message: `Akun Anda terdaftar sebagai Investor, bukan Administrator. Silahkan sesuaikan role Anda dengan memilih tab Investor.`,
               suggestedCategory: 'investor'
@@ -631,9 +621,6 @@ export default function InvestorLogin() {
 
           if (activeRole && activeRole.startsWith('admin_') && activeRole !== adminSpecificRole && activeRole !== 'superadmin') {
             await supabase.auth.signOut();
-            localStorage.removeItem("luwu_session_token");
-            localStorage.removeItem("luwu_user_role");
-            localStorage.removeItem("luwu_user_email");
             const chosenLabel = ADMIN_ROLE_DETAILS[adminSpecificRole]?.label || adminSpecificRole;
             const actualLabel = ADMIN_ROLE_DETAILS[activeRole]?.label || activeRole;
             notifyRoleMismatch({
@@ -646,17 +633,18 @@ export default function InvestorLogin() {
           }
         }
 
-        document.cookie = `sb-access-token=${data.session.access_token}; path=/; max-age=86400; SameSite=None; Secure`;
-        localStorage.setItem("luwu_session_token", data.session.access_token);
-        localStorage.setItem("luwu_user_role", activeRole);
-        localStorage.setItem("luwu_user_email", cleanEmail);
-        
-        await supabase.auth.setSession(data.session);
+        // Hapus Ketergantungan localStorage (Anti Ghost-Session)
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem("luwu_session_token");
+          localStorage.removeItem("sb-access-token");
+          localStorage.removeItem("luwu_user_role");
+          localStorage.removeItem("luwu_user_email");
+        }
 
         if (OFFICIAL_EMAIL_ROLE_MAP[cleanEmail] || activeRole) {
           try {
             await supabase.from('profiles').upsert({
-              id: data.session.user.id,
+              id: authUser.id,
               role: activeRole,
               full_name: activeRole === 'admin_puptr' ? 'Admin Dinas PUPTR (Tata Ruang & Studio GIS)'
                        : activeRole === 'admin_pertanian' ? 'Admin Dinas Pertanian (Lahan LP2B)'
@@ -665,13 +653,16 @@ export default function InvestorLogin() {
                        : activeRole === 'admin_promosi' ? 'Bidang Promosi & Penanaman Modal'
                        : activeRole === 'admin_oss' ? 'Bidang Penyelenggaraan Pelayanan Perizinan'
                        : activeRole === 'admin_mpp' ? 'Admin MPP (Pengelola Mal Pelayanan Publik)'
-                       : (data.session.user.user_metadata?.full_name || data.session.user.user_metadata?.company_name || cleanEmail.split('@')[0])
+                       : (authUser.user_metadata?.full_name || authUser.user_metadata?.company_name || cleanEmail.split('@')[0])
             });
           } catch (e) {}
         }
 
         setIsSuccess(true);
         setTimeout(() => {
+          // Logika Routing Dinamis Saat Login:
+          // Jika role === 'investor', arahkan pengguna ke rute <InvestorPortalDashboard/>.
+          // Jika role === 'masyarakat', arahkan pengguna ke rute <MasyarakatDashboard/>.
           if (activeRole === 'investor') {
             window.location.replace('/investor-dashboard');
           } else if (activeRole === 'masyarakat') {

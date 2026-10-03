@@ -45,8 +45,15 @@ export default function InvestorRegistrationForm() {
     };
   }, []);
 
-  // Form states for Investor Registration
+  // Role selection: 'investor' | 'masyarakat'
+  const [roleType, setRoleType] = useState<'investor' | 'masyarakat'>(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('tab') === 'masyarakat' || params.get('role') === 'masyarakat' ? 'masyarakat' : 'investor';
+  });
+
+  // Form states
   const [fullName, setFullName] = useState('');
+  const [nik, setNik] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [negara, setNegara] = useState('Indonesia');
   const [email, setEmail] = useState('');
@@ -67,10 +74,23 @@ export default function InvestorRegistrationForm() {
     if (!fullName.trim()) return true;
     if (!password || password.length < 6) return true;
     if (!email.trim() || !email.includes('@')) return true;
-    if (!companyName.trim()) return true;
-    if (nib.replace(/\D/g, '').length !== 13) return true;
+    if (nik.replace(/\D/g, '').length !== 16) return true;
+    if (roleType === 'investor') {
+      if (!companyName.trim()) return true;
+      if (nib.replace(/\D/g, '').length !== 13) return true;
+    }
     return false;
-  }, [isSubmitting, fullName, password, email, companyName, nib]);
+  }, [isSubmitting, fullName, password, email, nik, roleType, companyName, nib]);
+
+  const handleValidateNik = (val: string) => {
+    const cleanVal = val.replace(/\D/g, '').slice(0, 16);
+    setNik(cleanVal);
+    if (cleanVal.length > 0 && cleanVal.length !== 16) {
+      setError('NIK harus tepat 16 digit angka sesuai KTP.');
+    } else {
+      setError('');
+    }
+  };
 
   const handleValidateNib = (val: string) => {
     const cleanVal = val.replace(/\D/g, '').slice(0, 13);
@@ -86,18 +106,25 @@ export default function InvestorRegistrationForm() {
     e.preventDefault();
 
     const finalEmail = email.trim().toLowerCase();
+    const cleanNik = nik.replace(/\D/g, '').slice(0, 16);
 
     if (!finalEmail || !finalEmail.includes('@')) {
       setError('Harap masukkan alamat email yang valid.');
       return;
     }
-    if (nib.replace(/\D/g, '').length !== 13) {
-      setError(t('nibVerification.errorNibLength', 'NIB Perusahaan harus tepat 13 digit.'));
+    if (cleanNik.length !== 16) {
+      setError('NIK wajib 16 digit angka sesuai KTP.');
       return;
     }
-    if (!companyName.trim()) {
-      setError('Nama Perusahaan wajib diisi.');
-      return;
+    if (roleType === 'investor') {
+      if (nib.replace(/\D/g, '').length !== 13) {
+        setError(t('nibVerification.errorNibLength', 'NIB Perusahaan harus tepat 13 digit dari OSS-RBA.'));
+        return;
+      }
+      if (!companyName.trim()) {
+        setError('Nama Perusahaan / Institusi wajib diisi.');
+        return;
+      }
     }
     if (password.length < 6) {
       setError(t('register.errorPassword', 'Kata sandi minimal 6 karakter.'));
@@ -108,68 +135,48 @@ export default function InvestorRegistrationForm() {
     setIsSubmitting(true);
 
     try {
-      const metaData = {
-        full_name: fullName.trim().toUpperCase(),
-        role: 'investor',
-        email: finalEmail,
-        company_name: companyName.trim(),
-        nib: nib.trim(),
-        negara_asal: negara,
-        status_modal: statusModal,
-        whatsapp: whatsapp.trim(),
-        no_whatsapp: whatsapp.trim()
-      };
+      // Pemisahan Jalur Registrasi (Role-Based)
+      // Investor: wajib mengirimkan options: { data: { full_name: nama, nik: nik, role: 'investor' } }
+      // Masyarakat: tidak perlu menyertakan metadata role (trigger database otomatis assign 'masyarakat')
+      const signUpOptions = roleType === 'investor' 
+        ? {
+            data: {
+              full_name: fullName.trim().toUpperCase(),
+              nik: cleanNik,
+              role: 'investor',
+              company_name: companyName.trim(),
+              nib: nib.trim(),
+              negara_asal: negara,
+              status_modal: statusModal,
+              whatsapp: whatsapp.trim(),
+              no_whatsapp: whatsapp.trim()
+            }
+          }
+        : {
+            data: {
+              full_name: fullName.trim().toUpperCase(),
+              nik: cleanNik,
+              phone: whatsapp.trim(),
+              whatsapp: whatsapp.trim(),
+              no_whatsapp: whatsapp.trim()
+            }
+          };
 
       const { data, error: signUpErr } = await supabase.auth.signUp({
         email: finalEmail,
         password: password,
-        options: {
-          data: metaData
-        }
+        options: signUpOptions
       });
 
       if (signUpErr) {
         throw signUpErr;
       }
 
-      if (data?.user) {
-        const profilePayload = {
-          id: data.user.id,
-          full_name: fullName.trim().toUpperCase(),
-          role: 'investor',
-          email: finalEmail,
-          company_name: companyName.trim(),
-          nib: nib.trim(),
-          negara_asal: negara,
-          status_modal: statusModal,
-          whatsapp: whatsapp.trim(),
-          no_whatsapp: whatsapp.trim()
-        };
-
-        try {
-          await fetch('/api/profiles', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(profilePayload)
-          });
-        } catch {
-          try {
-            await supabase.from('profiles').upsert(profilePayload);
-          } catch (profErr) {
-            console.warn('Profile upsert warning:', profErr);
-          }
-        }
-      }
-
-      if (data?.session) {
-        document.cookie = `sb-access-token=${data.session.access_token}; path=/; max-age=86400; SameSite=None; Secure`;
-        localStorage.setItem("luwu_session_token", data.session.access_token);
-        localStorage.setItem("luwu_user_role", 'investor');
-        localStorage.setItem("luwu_user_email", finalEmail);
-        localStorage.setItem("luwu_user_name", fullName.trim().toUpperCase());
-        localStorage.setItem("luwu_company_name", companyName.trim());
-        localStorage.setItem("luwu_user_phone", whatsapp.trim());
-        localStorage.setItem("luwu_user_nib", nib.trim());
+      // Bersihkan semua stale session di localStorage (Anti Ghost-Session)
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem("luwu_session_token");
+        localStorage.removeItem("luwu_user_role");
+        localStorage.removeItem("luwu_user_email");
       }
 
       setIsSubmitting(false);
@@ -177,7 +184,7 @@ export default function InvestorRegistrationForm() {
     } catch (err: any) {
       let errMsg = err?.message || t('register.errorDefault', 'Gagal melakukan registrasi, periksa kembali data Anda.');
       if (typeof errMsg === 'string' && (errMsg.toLowerCase().includes('already registered') || errMsg.toLowerCase().includes('already exists'))) {
-        errMsg = 'Akun dengan email ini sudah terdaftar. Silakan masuk ke portal.';
+        errMsg = 'Akun dengan email ini sudah terdaftar. Silakan masuk ke portal login.';
       }
       setError(errMsg);
       setIsSubmitting(false);
@@ -214,10 +221,12 @@ export default function InvestorRegistrationForm() {
           </motion.div>
         </div>
         <h2 id="registration-title" className="text-center text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white mb-1">
-          {t('register.title', 'Registrasi Akun Investor / Pelaku Usaha')}
+          {roleType === 'investor' ? t('register.title', 'Registrasi Akun Investor / Pelaku Usaha') : 'Registrasi Akun Masyarakat / Pemohon'}
         </h2>
         <p id="registration-subtitle" className="text-center text-xs text-slate-600 dark:text-slate-400 font-medium max-w-xs sm:max-w-sm mx-auto px-2">
-          {t('register.subtitle', 'Akses fasilitas perizinan investasi corporate, data spasial terpadu, dan pendampingan DPMPTSP Kabupaten Luwu.')}
+          {roleType === 'investor' 
+            ? t('register.subtitle', 'Akses fasilitas perizinan investasi corporate, data spasial terpadu, dan pendampingan DPMPTSP Kabupaten Luwu.')
+            : 'Pendaftaran mandiri untuk antrian pelayanan publik MPP dan pengajuan permohonan ruang / PKKPR non-komersial.'}
         </p>
       </div>
 
@@ -244,29 +253,57 @@ export default function InvestorRegistrationForm() {
                 <CheckCircle2 size={52} className="text-emerald-600 dark:text-emerald-400 animate-bounce" id="success-check-icon" />
               </div>
               <h3 id="success-title" className="text-lg font-bold text-slate-900 dark:text-white mb-1.5">
-                {t('register.successTitle', 'Registrasi Akun Investor Berhasil!')}
+                {roleType === 'investor' ? 'Registrasi Akun Investor Berhasil!' : 'Registrasi Akun Masyarakat Berhasil!'}
               </h3>
               <p id="success-desc" className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-5">
-                {t('register.successDescInvestor', 'Akun investor Anda telah aktif. Masuk ke portal untuk mulai mengurus perizinan dan investasi.')}
+                {roleType === 'investor' 
+                  ? 'Akun investor Anda telah terdaftar. Silakan masuk untuk mengakses portal investasi & PKKPR Berusaha.'
+                  : 'Akun masyarakat Anda telah aktif. Silakan masuk untuk mengambil antrian MPP atau mengajukan permohonan.'}
               </p>
               <button
                 id="btn-go-to-portal"
                 onClick={() => {
-                  window.location.replace('/dashboard');
+                  window.location.replace(roleType === 'investor' ? '/investor-dashboard' : '/masyarakat-dashboard');
                 }}
                 className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold transition-all active:scale-95 cursor-pointer shadow-md shadow-emerald-900/20"
               >
-                <span>{t('register.btnGoDashboard', 'Masuk ke Dashboard')}</span>
+                <span>{roleType === 'investor' ? 'Masuk ke Dashboard Investor' : 'Masuk ke Dashboard Masyarakat'}</span>
                 <ChevronRight size={16} />
               </button>
             </motion.div>
           ) : (
             <form id="investor-registration-form" className="space-y-4 sm:space-y-4.5" onSubmit={handleSubmit}>
 
+              {/* Role Selection Tabs */}
+              <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+                <button
+                  type="button"
+                  onClick={() => setRoleType('investor')}
+                  className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                    roleType === 'investor'
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  🏢 Investor (Pelaku Usaha)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRoleType('masyarakat')}
+                  className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                    roleType === 'masyarakat'
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  👤 Masyarakat (Warga)
+                </button>
+              </div>
+
               {/* 1. Full Name */}
               <div>
                 <label htmlFor="reg-full-name" className="block text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">
-                  {t('register.fullName', 'Nama Lengkap Pimpinan / Pemohon')} <span className="text-rose-500">*</span>
+                  {roleType === 'investor' ? t('register.fullName', 'Nama Lengkap Pimpinan / Pemohon') : 'Nama Lengkap (Sesuai KTP)'} <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
@@ -284,108 +321,109 @@ export default function InvestorRegistrationForm() {
                 </div>
               </div>
 
-              {/* 2. Company Name */}
+              {/* 2. NIK (16 Digit Wajib) */}
               <div>
-                <label htmlFor="reg-company-name" className="block text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">
-                  {t('register.companyName', 'Nama Perusahaan / Institusi')} <span className="text-rose-500">*</span>
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-                    <Building2 className="h-4 w-4 sm:h-5 sm:w-5" />
-                  </div>
-                  <input
-                    id="reg-company-name"
-                    type="text"
-                    required
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                    className="block w-full pl-10 pr-3.5 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors text-xs sm:text-sm"
-                    placeholder="PT. Luwu Maju Sejahtera"
-                  />
-                </div>
-              </div>
-
-              {/* 3. Field Negara Asal & Status PMA/PMDN */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="block text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
-                    {t('investor_origin', 'Asal Negara')}
-                  </label>
-                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
-                    statusModal === 'PMDN' 
-                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/30' 
-                      : 'bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-300 border border-blue-300 dark:border-blue-500/30'
-                  }`}>
-                    {statusModal === 'PMDN' ? '🇮🇩 PMDN (Dalam Negeri)' : '🌐 PMA (Penanaman Modal Asing)'}
-                  </span>
-                </div>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-                    <Globe className="h-4 w-4 sm:h-5 sm:w-5" />
-                  </div>
-                  <select
-                    value={negara}
-                    onChange={(e) => setNegara(e.target.value)}
-                    className="block w-full pl-10 pr-3.5 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors text-xs sm:text-sm font-medium cursor-pointer"
-                  >
-                    {daftarNegara.map((n) => (
-                      <option key={n} value={n}>{n}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* 4. Email Perusahaan */}
-              <div>
-                <label htmlFor="reg-email" className="block text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">
-                  {t('register.email', 'Email Perusahaan / Korespondensi')} <span className="text-rose-500">*</span>
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-                    <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600 dark:text-emerald-400" />
-                  </div>
-                  <input
-                    id="reg-email"
-                    name="email"
-                    type="email"
-                    inputMode="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full pl-10 pr-3.5 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors text-xs sm:text-sm"
-                    placeholder="investor@perusahaan.com"
-                  />
-                </div>
-              </div>
-
-              {/* 5. NIB */}
-              <div>
-                <label htmlFor="reg-nib" className="block text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">
-                  {t('register.nib', 'Nomor Induk Berusaha (NIB) Perusahaan')} <span className="text-rose-500">*</span>
+                <label htmlFor="reg-nik" className="block text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">
+                  Nomor Induk Kependudukan (NIK 16 Digit) <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
                     <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   <input
-                    id="reg-nib"
+                    id="reg-nik"
                     type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
                     required
-                    maxLength={13}
-                    value={nib}
-                    onChange={(e) => handleValidateNib(e.target.value)}
-                    className="block w-full pl-10 pr-3.5 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors text-xs sm:text-sm"
-                    placeholder="Contoh: 1234567890123 (13 Digit)"
+                    maxLength={16}
+                    value={nik}
+                    onChange={(e) => handleValidateNik(e.target.value)}
+                    className="block w-full pl-10 pr-3.5 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors text-xs sm:text-sm font-mono tracking-wider"
+                    placeholder="7317xxxxxxxxxxxx"
                   />
                 </div>
-                <p id="nib-help-text" className="mt-1 text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                  <ShieldCheck size={12} className="text-emerald-500 shrink-0" />
-                  <span>Wajib 13 digit angka resmi terbitan OSS RBA untuk perizinan investasi & tata ruang.</span>
-                </p>
               </div>
+
+              {/* Investor Specific: Company Name, Asal Negara, NIB */}
+              {roleType === 'investor' && (
+                <>
+                  {/* Company Name */}
+                  <div>
+                    <label htmlFor="reg-company-name" className="block text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">
+                      {t('register.companyName', 'Nama Perusahaan / Institusi')} <span className="text-rose-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+                        <Building2 className="h-4 w-4 sm:h-5 sm:w-5" />
+                      </div>
+                      <input
+                        id="reg-company-name"
+                        type="text"
+                        required
+                        value={companyName}
+                        onChange={(e) => setCompanyName(e.target.value)}
+                        className="block w-full pl-10 pr-3.5 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors text-xs sm:text-sm"
+                        placeholder="PT. Luwu Maju Sejahtera"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Asal Negara */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
+                        {t('investor_origin', 'Asal Negara')}
+                      </label>
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
+                        statusModal === 'PMDN' 
+                          ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/30' 
+                          : 'bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-300 border border-blue-300 dark:border-blue-500/30'
+                      }`}>
+                        {statusModal === 'PMDN' ? '🇮🇩 PMDN (Dalam Negeri)' : '🌐 PMA (Penanaman Modal Asing)'}
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+                        <Globe className="h-4 w-4 sm:h-5 sm:w-5" />
+                      </div>
+                      <select
+                        value={negara}
+                        onChange={(e) => setNegara(e.target.value)}
+                        className="block w-full pl-10 pr-3.5 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors text-xs sm:text-sm font-medium cursor-pointer"
+                      >
+                        {daftarNegara.map((n) => (
+                          <option key={n} value={n}>{n}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* NIB (13 Digit) */}
+                  <div>
+                    <label htmlFor="reg-nib" className="block text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">
+                      {t('register.nib', 'Nomor Induk Berusaha (NIB) Perusahaan')} <span className="text-rose-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+                        <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600 dark:text-emerald-400" />
+                      </div>
+                      <input
+                        id="reg-nib"
+                        type="text"
+                        required
+                        maxLength={13}
+                        value={nib}
+                        onChange={(e) => handleValidateNib(e.target.value)}
+                        className="block w-full pl-10 pr-3.5 py-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-950/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors text-xs sm:text-sm font-mono tracking-wider"
+                        placeholder="Contoh: 1234567890123"
+                      />
+                    </div>
+                    <p id="nib-help-text" className="mt-1 text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                      <ShieldCheck size={12} className="text-emerald-500 shrink-0" />
+                      <span>Wajib 13 digit angka resmi terbitan OSS RBA untuk perizinan investasi & tata ruang.</span>
+                    </p>
+                  </div>
+                </>
+              )}
 
               {/* 6. WhatsApp Kontak */}
               <div>

@@ -77,7 +77,7 @@ export const TABLE_COLUMN_WHITELISTS: Record<string, string[]> = {
   gis_lahankeringprimer: ['id', 'name', 'description', 'styleurl', 'fill_opacity', 'fill', 'stroke_opacity', 'stroke', 'geom'],
   gis_lahankeringsekunder: ['id', 'name', 'description', 'styleurl', 'fill_opacity', 'fill', 'stroke_opacity', 'stroke', 'geom'],
   gis_infrastruktur: ['id', 'geom', 'nama_infrastruktur', 'kategori', 'keterangan_singkat', 'status', 'updated_at', 'created_at'],
-  gis_pkkpr: ['id', 'jenis_permohonan', 'nama_permohonan', 'nib_oss', 'nama_badan_usaha', 'nama_pemohon', 'nik_pemohon', 'no_whatsapp', 'sektor', 'kecamatan', 'desa_kelurahan', 'luas_m2', 'luas_ha', 'geom', 'geometry_json', 'status_pkkpr', 'catatan_teknis', 'updated_at', 'created_at'],
+  gis_pkkpr: ['id', 'user_id', 'jenis_permohonan', 'nama_permohonan', 'nib_oss', 'nama_badan_usaha', 'nama_pemohon', 'nik_pemohon', 'no_whatsapp', 'sektor', 'kecamatan', 'desa_kelurahan', 'luas_m2', 'luas_ha', 'geom', 'geometry_json', 'status_pkkpr', 'catatan_teknis', 'updated_at', 'created_at'],
   gis_potensi_investasi: ['id', 'geom', 'nama_potensi', 'slug', 'sektor_utama', 'sub_sektor', 'deskripsi_singkat', 'luas_lahan', 'kesesuaian_rtrw', 'status_pkkpr', 'updated_at']
 };
 

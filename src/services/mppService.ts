@@ -252,6 +252,8 @@ export const mppService = {
     tenantId: string;
     serviceId: string;
     citizenNik: string;
+    userId?: string | null;
+    user_id?: string | null;
     session?: string;
     queueDate?: string;
     isPriority?: boolean;
@@ -323,7 +325,9 @@ export const mppService = {
       }, { onConflict: 'nik' });
     }
 
+    const effectiveUserId = params.userId || params.user_id || null;
     const newQueuePayload = {
+      user_id: effectiveUserId,
       tenant_id: params.tenantId,
       service_id: params.serviceId,
       citizen_nik: params.citizenNik,

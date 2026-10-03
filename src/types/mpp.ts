@@ -63,6 +63,7 @@ export type QueueStatus = 'menunggu' | 'dipanggil' | 'dilayani' | 'selesai_langs
 
 export interface MPPQueue {
   id: string;
+  user_id?: string | null;
   tenant_id: string;
   service_id: string;
   citizen_nik: string;

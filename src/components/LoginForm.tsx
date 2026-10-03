@@ -130,23 +130,6 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
         } catch (e) {}
       }
 
-      if (data.token) {
-        localStorage.setItem("luwu_session_token", data.token);
-      }
-      localStorage.setItem("luwu_user_role", effectiveRoleKey);
-      localStorage.setItem("luwu_user_email", username.trim().toLowerCase());
-
-      // Warm up fresh profile cache immediately
-      const initialProfile = {
-        id: data.user?.id || (effectiveRoleKey === 'masyarakat' ? 'citizen-user' : 'admin-user'),
-        email: username.trim().toLowerCase(),
-        role: effectiveRoleKey,
-        full_name: currentRoleObj?.label || 'Pengguna Terverifikasi',
-      };
-      try {
-        sessionStorage.setItem("luwu_cached_profile_data", JSON.stringify(initialProfile));
-      } catch (e) {}
-      
       // Explicitly set the session on the frontend client if provided
       if (data.session) {
         await supabase.auth.setSession({
@@ -158,11 +141,39 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
         document.cookie = `sb-access-token=${data.session.access_token}; path=/; max-age=86400; SameSite=None; Secure`;
       }
 
-      const targetUrl = currentRoleObj?.targetUrl || (effectiveRoleKey === "masyarakat" ? "/masyarakat-dashboard" : effectiveRoleKey === "investor" ? "/investor-dashboard" : "/dashboard");
+      // Dynamic role verification via Supabase profiles table using user.id
+      let resolvedRole = effectiveRoleKey;
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        const effectiveUserId = user?.id || data.user?.id;
+        if (effectiveUserId) {
+          const { data: prof } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', effectiveUserId)
+            .maybeSingle();
+          if (prof?.role) {
+            resolvedRole = prof.role;
+          }
+        }
+      } catch (e) {}
+
+      // Clean up localStorage tokens (Anti Ghost-Session)
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem("luwu_session_token");
+        localStorage.removeItem("luwu_user_role");
+        localStorage.removeItem("luwu_user_email");
+      }
+
+      const targetUrl = resolvedRole === "masyarakat"
+        ? "/masyarakat-dashboard"
+        : resolvedRole === "investor"
+        ? "/investor-dashboard"
+        : currentRoleObj?.targetUrl || "/dashboard";
       
       onLogin(data.role as Role || selectedRole);
       
-      // Navigate to respective dashboard
+      // Navigate dynamically based on verified database role
       setTimeout(() => {
         window.location.replace(targetUrl);
       }, 300);

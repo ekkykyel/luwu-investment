@@ -10,8 +10,10 @@ import {
   Loader2, AlertOctagon, HelpCircle, Check, Eye, ChevronRight, Info,
   Sun, Moon, Star, Filter, Image as ImageIcon, Briefcase, Home, Plus,
   Clock, Sparkles, Lock, FileCode, UploadCloud, Globe, CreditCard,
-  FileCheck, Trash2, Paperclip, Layers, AlertTriangle, ShieldAlert, Download
+  FileCheck, Trash2, Paperclip, Layers, AlertTriangle, ShieldAlert, Download,
+  Ticket
 } from "lucide-react";
+import MppQueueRegistrationModal from "../MppQueueRegistrationModal";
 import Swal from "sweetalert2";
 import { supabase, safeFetchLayerData } from "../../lib/supabaseClient";
 import { District, PKKPRStatus } from "../../types";
@@ -202,45 +204,19 @@ export default function MasyarakatDashboard({
     );
   };
 
-  const resolveCleanCitizenName = (raw?: string | null, fallbackNik?: string) => {
+  const resolveCleanCitizenName = (raw?: string | null) => {
     if (raw && !isAdministrativeTitle(raw)) {
       return raw;
-    }
-    if (typeof window !== "undefined") {
-      try {
-        const targetNik = fallbackNik || localStorage.getItem("luwu_user_nik") || "";
-        if (targetNik) {
-          const nName = localStorage.getItem(`mpp_citizen_name_${targetNik}`);
-          if (nName && !isAdministrativeTitle(nName)) {
-            return nName;
-          }
-        }
-
-        const rawCit = localStorage.getItem("luwu_citizen_data");
-        if (rawCit) {
-          const parsed = JSON.parse(rawCit);
-          if (parsed?.full_name && !isAdministrativeTitle(parsed.full_name)) {
-            return parsed.full_name;
-          }
-        }
-
-        const uName = localStorage.getItem("luwu_user_name");
-        if (uName && !isAdministrativeTitle(uName)) {
-          return uName;
-        }
-      } catch (e) {}
     }
     return "";
   };
 
   // Form states
   const [nama, setNama] = useState(() => {
-    return resolveCleanCitizenName(activeProfile?.full_name, activeProfile?.nik);
+    return resolveCleanCitizenName(activeProfile?.full_name);
   });
   const [kontak, setKontak] = useState(() => {
-    const p = extractPhone(activeProfile);
-    if (p) return p;
-    return typeof window !== "undefined" ? localStorage.getItem("luwu_user_phone") || "" : "";
+    return extractPhone(activeProfile) || "";
   });
   const [kecamatan, setKecamatan] = useState(activeProfile?.kecamatan || "");
   const [desa, setDesa] = useState(activeProfile?.desa || "");
@@ -252,7 +228,7 @@ export default function MasyarakatDashboard({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [userNik, setUserNik] = useState<string>(() => {
-    return activeProfile?.nik || (typeof window !== "undefined" ? localStorage.getItem("luwu_user_nik") || "" : "");
+    return activeProfile?.nik || "";
   });
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [isDownloadingSkId, setIsDownloadingSkId] = useState<string | null>(null);
@@ -794,173 +770,87 @@ export default function MasyarakatDashboard({
   const [pkkprNamaPemohon, setPkkprNamaPemohon] = useState("");
   const [pkkprNikPemohon, setPkkprNikPemohon] = useState("");
 
-  // Hydrate user profile from activeProfile & Supabase session + public.profiles table
+  // Hydrate user profile directly from Supabase session & public.profiles table (Anti Ghost-Session)
   const fetchAndHydrateMasyarakatProfile = async () => {
     try {
-      // 1. Restore session manually from cookie or localStorage to bypass iframe / container restrictions
-      let sbToken = null;
-      const match = document.cookie.match(/(?:^|;\s*)sb-access-token=([^;]+)/);
-      if (match) sbToken = match[1];
-      if (!sbToken) sbToken = localStorage.getItem("luwu_session_token");
-
-      let user: any = null;
-      if (sbToken) {
-        try {
-          const userRes = await supabase.auth.getUser();
-          user = userRes?.data?.user || null;
-        } catch (authErr) {
-          // silent token error
+      const { data: { user }, error: authErr } = await supabase.auth.getUser();
+      if (authErr || !user) {
+        if (typeof window !== "undefined") {
+          window.location.href = "/login";
         }
+        return null;
       }
-      const effectiveEmail = user?.email || activeProfile?.email || localStorage.getItem("luwu_user_email") || "";
-      const effectiveId = user?.id || activeProfile?.id || "";
+
+      const effectiveEmail = user.email || "";
+      const effectiveId = user.id;
 
       let prof: any = null;
 
-      // Step 1: Detect potential NIK from stored session or email
-      const cleanNikFromEmail = (effectiveEmail.includes("@warga.luwukab.go.id") || !effectiveEmail.includes("@"))
-        ? effectiveEmail.split("@")[0].trim()
-        : "";
-      const storedNik = (typeof window !== "undefined" ? localStorage.getItem("luwu_user_nik") : "") || "";
-      const potentialNik = (/^\d{16}$/.test(storedNik) ? storedNik : "") || activeProfile?.nik || (/^\d{16}$/.test(cleanNikFromEmail) ? cleanNikFromEmail : "");
+      // Step 1: Query public.profiles strictly by user.id
+      try {
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("id, email, full_name, company_name, role, nik, kecamatan, desa, phone_number, no_whatsapp")
+          .eq("id", effectiveId)
+          .maybeSingle();
 
-      // Step 2: Query mpp_citizens FIRST if NIK is available (Single Source of Truth for Citizen/MPP Data)
-      if (potentialNik && /^\d{16}$/.test(potentialNik)) {
+        if (profileData && !isAdministrativeTitle(profileData.full_name)) {
+          prof = profileData;
+        }
+      } catch (e) {}
+
+      // Step 2: Query by email if not resolved
+      if (!prof && effectiveEmail) {
+        try {
+          const { data: profileByEmail } = await supabase
+            .from("profiles")
+            .select("id, email, full_name, company_name, role, nik, kecamatan, desa, phone_number, no_whatsapp")
+            .eq("email", effectiveEmail)
+            .maybeSingle();
+
+          if (profileByEmail && !isAdministrativeTitle(profileByEmail.full_name)) {
+            prof = profileByEmail;
+          }
+        } catch (e) {}
+      }
+
+      const meta = user.user_metadata || {};
+
+      // Step 3: Check mpp_citizens if NIK is in metadata or profile
+      const candidateNik = prof?.nik || meta.nik || meta.no_ktp || "";
+      if (candidateNik && /^\d{16}$/.test(candidateNik)) {
         try {
           const { data: citizenData } = await supabase
             .from("mpp_citizens")
             .select("nik, full_name, phone_number, gender, jenis_kelamin, occupation, pekerjaan, kecamatan, desa, address")
-            .eq("nik", potentialNik)
+            .eq("nik", candidateNik)
             .maybeSingle();
 
           if (citizenData && citizenData.full_name) {
             prof = {
-              id: `citizen-${citizenData.nik}`,
+              ...(prof || {}),
+              id: prof?.id || effectiveId,
               nik: citizenData.nik,
-              full_name: citizenData.full_name,
-              role: "masyarakat",
-              kecamatan: citizenData.kecamatan,
-              desa: citizenData.desa,
-              no_whatsapp: citizenData.phone_number,
-              phone: citizenData.phone_number,
+              full_name: prof?.full_name || citizenData.full_name,
+              role: prof?.role || "masyarakat",
+              kecamatan: prof?.kecamatan || citizenData.kecamatan,
+              desa: prof?.desa || citizenData.desa,
+              no_whatsapp: prof?.no_whatsapp || citizenData.phone_number,
+              phone: prof?.phone_number || citizenData.phone_number,
               address: citizenData.address
             };
           }
         } catch (e) {}
-
-        // Query gis_pkkpr if still not found in mpp_citizens
-        if (!prof) {
-          try {
-            const { data: pkkprCitizen } = await supabase
-              .from("gis_pkkpr")
-              .select("nik_pemohon, nama_pemohon, no_whatsapp, kecamatan, desa_kelurahan")
-              .eq("nik_pemohon", potentialNik)
-              .order("created_at", { ascending: false })
-              .limit(1)
-              .maybeSingle();
-
-            if (pkkprCitizen && pkkprCitizen.nama_pemohon && !isAdministrativeTitle(pkkprCitizen.nama_pemohon)) {
-              prof = {
-                id: `citizen-${pkkprCitizen.nik_pemohon}`,
-                nik: pkkprCitizen.nik_pemohon,
-                full_name: pkkprCitizen.nama_pemohon,
-                role: "masyarakat",
-                kecamatan: pkkprCitizen.kecamatan,
-                desa: pkkprCitizen.desa_kelurahan,
-                no_whatsapp: pkkprCitizen.no_whatsapp,
-                phone: pkkprCitizen.no_whatsapp
-              };
-            }
-          } catch (e) {}
-        }
       }
-
-      // Step 3: Query profiles table if not resolved yet
-      if (!prof && effectiveId && effectiveId !== "offline-user") {
-        try {
-          const res = await fetch(`/api/profiles?id=${encodeURIComponent(effectiveId)}`, { credentials: 'same-origin' });
-          if (res.ok) {
-            const resJson = await res.json();
-            if (resJson.data && !isAdministrativeTitle(resJson.data.full_name)) prof = resJson.data;
-          }
-        } catch (e) {}
-
-        if (!prof) {
-          try {
-            const { data } = await supabase
-              .from("profiles")
-              .select("id, email, full_name, company_name, role, nik, kecamatan, desa")
-              .eq("id", effectiveId)
-              .maybeSingle();
-            if (data && !isAdministrativeTitle(data.full_name)) prof = data;
-          } catch (e) {}
-        }
-      }
-
-      // Step 4: Query profiles by Email or NIK
-      if (!prof && effectiveEmail) {
-        try {
-          const res = await fetch(`/api/profiles?email=${encodeURIComponent(effectiveEmail)}`, { credentials: 'same-origin' });
-          if (res.ok) {
-            const resJson = await res.json();
-            if (resJson.data && !isAdministrativeTitle(resJson.data.full_name)) prof = resJson.data;
-          }
-        } catch (e) {}
-
-        if (!prof) {
-          try {
-            const { data } = await supabase
-              .from("profiles")
-              .select("id, email, full_name, company_name, role, nik, kecamatan, desa")
-              .eq("email", effectiveEmail)
-              .maybeSingle();
-            if (data && !isAdministrativeTitle(data.full_name)) prof = data;
-          } catch (e) {}
-        }
-      }
-
-      if (!prof && potentialNik && /^\d{16}$/.test(potentialNik)) {
-        try {
-          const { data } = await supabase
-            .from("profiles")
-            .select("id, email, full_name, company_name, role, nik, kecamatan, desa")
-            .eq("nik", potentialNik)
-            .maybeSingle();
-          if (data && !isAdministrativeTitle(data.full_name)) prof = data;
-        } catch (e) {}
-      }
-
-      // Step 5: Fallback from localStorage luwu_citizen_data
-      if (!prof && typeof window !== "undefined") {
-        try {
-          const rawCit = localStorage.getItem("luwu_citizen_data");
-          if (rawCit) {
-            const cit = JSON.parse(rawCit);
-            if (cit && cit.full_name && !isAdministrativeTitle(cit.full_name)) {
-              prof = {
-                id: `citizen-${cit.nik || 'local'}`,
-                nik: cit.nik || storedNik,
-                full_name: cit.full_name,
-                role: "masyarakat",
-                kecamatan: cit.kecamatan,
-                desa: cit.desa,
-                no_whatsapp: cit.phone_number || cit.whatsapp,
-                phone: cit.phone_number || cit.whatsapp
-              };
-            }
-          }
-        } catch (e) {}
-      }
-
-      const meta = user?.user_metadata || {};
 
       // Resolve NIK
       let resolvedNik = prof?.nik || prof?.no_ktp || prof?.no_nik || meta.nik || meta.no_ktp || activeProfile?.nik || activeProfile?.no_ktp || "";
       if (!resolvedNik || !/^\d{16}$/.test(resolvedNik)) {
+        const cleanNikFromEmail = (effectiveEmail.includes("@warga.luwukab.go.id") || !effectiveEmail.includes("@"))
+          ? effectiveEmail.split("@")[0].trim()
+          : "";
         if (/^\d{16}$/.test(cleanNikFromEmail)) {
           resolvedNik = cleanNikFromEmail;
-        } else if (/^\d{16}$/.test(storedNik)) {
-          resolvedNik = storedNik;
         }
       }
 
@@ -1336,103 +1226,50 @@ export default function MasyarakatDashboard({
   const [myPkkprApplications, setMyPkkprApplications] = useState<any[]>([]);
   const [loadingPkkprApps, setLoadingPkkprApps] = useState(false);
 
-  // Fetch User's PKKPR Applications from Supabase & Local Cache
+  // Fetch User's PKKPR Applications strictly from Supabase gis_pkkpr & investments (Zero Dummy & RLS Protected)
   const fetchMyPkkprApplications = useCallback(async () => {
     setLoadingPkkprApps(true);
     try {
-      const stored = localStorage.getItem("luwu_pkkpr_my_apps");
-      let localApps: any[] = [];
-      if (stored) {
-        try { localApps = JSON.parse(stored); } catch (e) {}
-      } else {
-        // Default seed society submissions (Non-Berusaha Church & Berusaha Factory) for instant preview
-        const seedApps = [
-          {
-            id: "PKKPR-LUWU-892101",
-            pkkpr_doc_number: "600.1.15/089/BAP-PKKPR-NB/PUPTR-TR/LUWU/2026",
-            category: "Non-Berusaha",
-            jenis_permohonan: "Non-Berusaha",
-            title: "Pembangunan Gereja Toraja Jemaat Ranteballa",
-            fungsi_bangunan: "Pembangunan Rumah Ibadah (Gereja)",
-            nama_lembaga: "Panitia Pembangunan Gereja Toraja Jemaat Ranteballa",
-            nama_pemohon: "Pdt. Markus Sampe, S.Th.",
-            nik: "7317011909890001",
-            no_whatsapp: "081234567890",
-            kecamatan: "Latimojong",
-            desa: "Ranteballa",
-            luas_m2: 2450,
-            luas_bangunan_m2: 480,
-            bukti_tanah: "Sertipikat Hak Milik (SHM) No. 00214 & Surat Hibah Tanah Tempat Ibadah",
-            geometry: {
-              type: "FeatureCollection",
-              features: [{
-                type: "Feature",
-                geometry: {
-                  type: "Polygon",
-                  coordinates: [[[120.1539, -3.3033], [120.1549, -3.3029], [120.1545, -3.3022], [120.1535, -3.3027], [120.1539, -3.3033]]]
-                },
-                properties: {}
-              }]
-            },
-            status: "APPROVED",
-            pkkpr_status: "Dokumen Terverifikasi & Disetujui PUPTR",
-            created_at: new Date(Date.now() - 86400000 * 2).toISOString()
-          },
-          {
-            id: "PKKPR-LUWU-321183",
-            pkkpr_doc_number: "600.1.15/042/BAP-PKKPR-B/PUPTR-TR/LUWU/2026",
-            category: "Berusaha",
-            jenis_permohonan: "Berusaha",
-            title: "Industri Pengolahan Kakao Terpadu & Pergudangan Modern",
-            nama_badan_usaha: "PT. LUWU AGRO INDUSTRI NUSANTARA",
-            perusahaan: "PT. LUWU AGRO INDUSTRI NUSANTARA",
-            nib: "0220108392182",
-            nama_pemohon: "Ir. Muhammad Arsyad Al-Fatih, M.T.",
-            nik: "7317011909890001",
-            no_whatsapp: "081234567890",
-            kecamatan: "Bua",
-            desa: "Karang-Karangan",
-            luas_m2: 254800,
-            luas_bangunan_m2: 12500,
-            bukti_tanah: "Sertipikat Hak Milik (SHM) No. 00412 & Surat Keterangan Penguasaan Fisik Tanah",
-            geometry: {
-              type: "FeatureCollection",
-              features: [{
-                type: "Feature",
-                geometry: {
-                  type: "Polygon",
-                  coordinates: [[[120.3067, -2.9783], [120.3089, -2.9773], [120.3098, -2.9749], [120.3135, -2.9736], [120.3067, -2.9783]]]
-                },
-                properties: {}
-              }]
-            },
-            status: "APPROVED",
-            pkkpr_status: "Dokumen Terverifikasi & Disetujui PUPTR",
-            created_at: new Date(Date.now() - 86400000 * 5).toISOString()
-          }
-        ];
-        localStorage.setItem("luwu_pkkpr_my_apps", JSON.stringify(seedApps));
-        localApps = seedApps;
+      const { data: { user }, error: authErr } = await supabase.auth.getUser();
+      if (authErr || !user) {
+        setMyPkkprApplications([]);
+        return;
       }
 
-      let user: any = null;
-      try {
-        const userRes = await supabase.auth.getUser();
-        user = userRes?.data?.user || null;
-      } catch (e) {}
-      let remoteApps: any[] = [];
-      if (user) {
-        const { data, error } = await supabase
-          .from("investments")
-          .select("*")
-          .or(`created_by.eq.${user.id},user_id.eq.${user.id}`);
-        if (!error && data) {
-          remoteApps = data;
-        }
+      // Query gis_pkkpr strictly for this authenticated user (Single Source of Truth)
+      const { data: pkkprRows, error: pkkprErr } = await supabase
+        .from("gis_pkkpr")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+      if (pkkprErr) {
+        console.warn("Notice querying gis_pkkpr:", pkkprErr);
       }
+
+      // Query investments strictly for this user
+      const { data: remoteApps } = await supabase
+        .from("investments")
+        .select("*")
+        .or(`created_by.eq.${user.id},user_id.eq.${user.id}`)
+        .order("created_at", { ascending: false });
 
       const mergedMap = new Map();
-      [...localApps, ...remoteApps].forEach((app) => {
+      (pkkprRows || []).forEach((app: any) => {
+        const key = app.id || app.pkkpr_doc_number || app.sk_pkkpr_num || app.created_at;
+        if (key && !mergedMap.has(key)) {
+          mergedMap.set(key, {
+            ...app,
+            category: app.kategori_pkkpr || (app.nama_badan_usaha ? "Berusaha" : "Non-Berusaha"),
+            title: app.judul_kegiatan || app.nama_kegiatan || app.nama_badan_usaha || "Pengajuan PKKPR",
+            status: app.status_pkkpr || "Pending Spatial Check",
+            kecamatan: app.kecamatan,
+            desa: app.desa_kelurahan || app.desa
+          });
+        }
+      });
+
+      (remoteApps || []).forEach((app: any) => {
         const key = app.id || app.pkkpr_doc_number || app.title || app.created_at;
         if (key && !mergedMap.has(key)) {
           mergedMap.set(key, app);
@@ -1442,6 +1279,7 @@ export default function MasyarakatDashboard({
       setMyPkkprApplications(Array.from(mergedMap.values()));
     } catch (err) {
       console.warn("Error fetching PKKPR apps:", err);
+      setMyPkkprApplications([]);
     } finally {
       setLoadingPkkprApps(false);
     }
@@ -1671,11 +1509,17 @@ export default function MasyarakatDashboard({
     setIsSubmittingPkkpr(true);
     try {
       const docNumber = `PKKPR-LUWU-${Date.now().toString().slice(-6)}`;
-      let user: any = null;
-      try {
-        const userRes = await supabase.auth.getUser();
-        user = userRes?.data?.user || null;
-      } catch (e) {}
+      // 1. Validasi sesi aktif wajib (Anti Ghost-Session & RLS Protected)
+      const { data: { user }, error: userAuthErr } = await supabase.auth.getUser();
+      if (userAuthErr || !user) {
+        Swal.fire({
+          icon: "warning",
+          title: "Sesi Login Diperlukan",
+          text: "Sesi login Anda tidak aktif. Silakan masuk terlebih dahulu untuk mengajukan permohonan PKKPR.",
+          confirmButtonColor: "#10b981"
+        });
+        return;
+      }
 
       // Auto-generate merged PDF if not generated manually yet
       let finalMergedPdfDataUrl = mergedPdfResult?.dataUrl || null;
@@ -1840,9 +1684,8 @@ export default function MasyarakatDashboard({
         console.warn("Supabase insert warning:", err);
       }
 
-      const existing = JSON.parse(localStorage.getItem("luwu_pkkpr_my_apps") || "[]");
-      const updated = [newPkkprApp, ...existing];
-      localStorage.setItem("luwu_pkkpr_my_apps", JSON.stringify(updated));
+      // Refresh real applications directly from Supabase (Zero Dummy Policy)
+      await fetchMyPkkprApplications();
 
       // Trigger Cross-OPD Notification to Admin Dinas PUPTR
       addCrossOpdNotification({

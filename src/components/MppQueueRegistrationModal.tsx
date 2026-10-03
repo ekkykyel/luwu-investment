@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import Swal from 'sweetalert2';
 import { X, Building2, FileText, User, CheckCircle2, Search, ArrowRight, Loader2, Ticket, AlertCircle, Check, Accessibility, HeartHandshake, ShieldCheck, MapPin } from 'lucide-react';
 import { supabase, safeFetchLayerData } from '../lib/supabaseClient';
 import { MPPTenant, MPPService, MPPCitizen } from '../types/mpp';
@@ -8,10 +10,12 @@ import { getPreciseServicesForAgency } from '../data/mppAgenciesData';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  isDarkMode: boolean;
+  isDarkMode?: boolean;
+  onSuccess?: (queue: any) => void;
 }
 
-export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode }: Props) {
+export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode, onSuccess }: Props) {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const [step, setStep] = useState(1);
   const [tenants, setTenants] = useState<MPPTenant[]>([]);
@@ -20,6 +24,7 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode 
   const [selectedTenant, setSelectedTenant] = useState<MPPTenant | null>(null);
   const [selectedService, setSelectedService] = useState<MPPService | null>(null);
   
+  const [activeUserId, setActiveUserId] = useState<string | null>(null);
   const [nik, setNik] = useState('');
   const [isPriorityLane, setIsPriorityLane] = useState(false);
   const [priorityType, setPriorityType] = useState<'disabilitas' | 'lansia' | 'ibu_hamil' | 'balita'>('disabilitas');
@@ -66,9 +71,63 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode 
 
   useEffect(() => {
     if (isOpen) {
-      fetchTenants();
-      fetchKecamatan();
-      resetForm();
+      const verifySessionAndInit = async () => {
+        // Form "Ambil Antrian" hanya bisa diproses jika pengguna memiliki sesi login yang aktif
+        const { data: { user }, error: authErr } = await supabase.auth.getUser();
+        if (authErr || !user) {
+          onClose();
+          Swal.fire({
+            icon: 'info',
+            title: 'Sesi Login Diperlukan',
+            text: 'Pengambilan antrean online MPP Simpurusiang memerlukan sesi login yang aktif. Silakan masuk atau daftarkan akun terlebih dahulu.',
+            confirmButtonText: 'Masuk / Daftar',
+            confirmButtonColor: '#059669',
+            showCancelButton: true,
+            cancelButtonText: 'Batal'
+          }).then((res) => {
+            if (res.isConfirmed) {
+              navigate('/login');
+            }
+          });
+          return;
+        }
+
+        setActiveUserId(user.id);
+        fetchTenants();
+        fetchKecamatan();
+        resetForm();
+
+        // Auto-hydrate form fields from user's profiles record (Single Source of Truth)
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .maybeSingle();
+
+          const meta = user.user_metadata || {};
+          const nikVal = profile?.nik || meta.nik || '';
+          if (nikVal) setNik(nikVal);
+
+          const fullNameVal = profile?.full_name || profile?.company_name || meta.full_name || meta.company_name || '';
+          const phoneVal = profile?.no_whatsapp || profile?.whatsapp || profile?.phone || meta.no_whatsapp || meta.phone || '';
+          const kecVal = profile?.kecamatan || meta.kecamatan || '';
+          const desaVal = profile?.desa || meta.desa || '';
+
+          setCitizen(prev => ({
+            ...prev,
+            full_name: fullNameVal || prev.full_name,
+            phone_number: phoneVal || prev.phone_number,
+            kecamatan: kecVal || prev.kecamatan,
+            desa: desaVal || prev.desa
+          }));
+          if (kecVal) setSelectedKecamatanName(kecVal);
+          if (desaVal) setSelectedDesaName(desaVal);
+        } catch (e) {
+          console.warn('Hydration profile error:', e);
+        }
+      };
+      verifySessionAndInit();
     }
   }, [isOpen]);
 
@@ -277,6 +336,12 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode 
     setSubmitError(null);
     setIsSubmitting(true);
     try {
+      // Form "Ambil Antrian" hanya bisa diproses jika pengguna memiliki sesi login yang aktif
+      const { data: { user }, error: authErr } = await supabase.auth.getUser();
+      if (authErr || !user) {
+        throw new Error("Sesi login Anda tidak aktif. Silakan masuk terlebih dahulu untuk mengambil antrian MPP.");
+      }
+
       const cleanPhone = currentPhone.replace(/[^\d+]/g, '');
       const today = new Date().toISOString().split('T')[0];
 
@@ -318,55 +383,12 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode 
 
       if (citizenError) throw citizenError;
 
-      // Store authentic citizen info locally
-      try {
-        localStorage.setItem('luwu_user_nik', currentNik);
-        localStorage.setItem('luwu_user_name', currentName.trim());
-        if (cleanPhone) localStorage.setItem('luwu_user_phone', cleanPhone);
-        localStorage.setItem(`mpp_citizen_name_${currentNik}`, currentName.trim());
-        localStorage.setItem(`mpp_verified_otp_${currentNik}`, 'true');
-        if (cleanPhone) localStorage.setItem(`mpp_verified_otp_phone_${currentNik}`, cleanPhone);
-        localStorage.setItem('luwu_citizen_data', JSON.stringify({
-          nik: currentNik,
-          full_name: currentName.trim(),
-          phone_number: cleanPhone,
-          gender: citizen.gender || 'Laki-laki',
-          occupation: citizen.occupation || 'Wiraswasta / Pelaku Usaha',
-          kecamatan: selectedKecamatanName || citizen.kecamatan || '',
-          desa: selectedDesaName || citizen.desa || '',
-          address: citizen.address || ''
-        }));
-        window.dispatchEvent(new Event('mpp_citizen_registered'));
-      } catch (locErr) {
-        console.warn('Silent local storage write error:', locErr);
-      }
-
-      // --- Seamless Single Sign-On (Auto-Provisioning) via Proxy ---
-      try {
-        await fetch('/api/profiles', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            id: `citizen-${currentNik}`,
-            email: `warga_${currentNik}@luwukab.go.id`,
-            full_name: currentName.trim(),
-            nik: currentNik,
-            no_whatsapp: cleanPhone,
-            whatsapp: cleanPhone,
-            kecamatan: selectedKecamatanName || citizen.kecamatan || null,
-            desa: selectedDesaName || citizen.desa || null,
-            role: "masyarakat"
-          })
-        });
-      } catch (profErr) {
-        console.warn("Silent profile auto-provision error:", profErr);
-      }
-
-      // 2. Generate Queue Number & Issue Ticket via Backend with Row-Level Locking & WITA Validation
+      // 2. Generate Queue Number & Issue Ticket via Backend with Row-Level Locking & user_id (RLS Protected)
       const queueRes = await fetch('/api/mpp/queues', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          user_id: user.id, // WAJIB menyertakan user_id dari sesi Supabase yang aktif
           tenant_id: selectedTenant.id,
           service_id: selectedService.id,
           citizen_nik: currentNik,
@@ -380,12 +402,51 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode 
         })
       });
 
-      const queueResData = await queueRes.json();
-      if (!queueRes.ok || !queueResData.success) {
-        throw new Error(queueResData.message || 'Gagal menerbitkan antrean.');
+      let newQueue: any = null;
+
+      if (queueRes.ok) {
+        const queueResData = await queueRes.json();
+        if (queueResData.success) {
+          newQueue = queueResData.data?.queue || queueResData.queue || queueResData;
+        }
       }
 
-      const newQueue = queueResData.data?.queue || queueResData.queue || queueResData;
+      // Direct fallback to Supabase table if API proxy was unavailable
+      if (!newQueue) {
+        const { data: lastQueue } = await supabase
+          .from('mpp_queues')
+          .select('queue_number')
+          .eq('tenant_id', selectedTenant.id)
+          .eq('queue_date', today)
+          .order('queue_number', { ascending: false })
+          .limit(1);
+
+        const nextNum = (lastQueue && lastQueue.length > 0 && lastQueue[0].queue_number) ? lastQueue[0].queue_number + 1 : 1;
+        const paddedNum = String(nextNum).padStart(3, '0');
+        const tenantCode = (selectedTenant.code || 'MPP').toUpperCase();
+        const ticketCode = isPriorityLane ? `P-${paddedNum}-${tenantCode}` : `${paddedNum}-${tenantCode}`;
+
+        const { data: directQ, error: directErr } = await supabase
+          .from('mpp_queues')
+          .insert({
+            user_id: user.id, // Sesi aktif user_id
+            tenant_id: selectedTenant.id,
+            service_id: selectedService.id,
+            citizen_nik: currentNik,
+            queue_date: today,
+            queue_number: nextNum,
+            ticket_code: ticketCode,
+            status: 'menunggu',
+            session: 'pagi',
+            call_count: 0
+          })
+          .select('*, tenant:mpp_tenants(*), service:mpp_services(*)')
+          .single();
+
+        if (directErr) throw directErr;
+        newQueue = directQ;
+      }
+
       const ticketCode = newQueue.ticket_code;
       const paddedNum = String(newQueue.queue_number).padStart(3, '0');
 
@@ -405,7 +466,7 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode 
             status_description: isPriorityLane
               ? `Pengambilan tiket PRIORITAS nomor ${paddedNum} di Loket ${selectedTenant.name} (Asistensi Siap)`
               : `Pengambilan tiket antrean nomor ${paddedNum} di Loket ${selectedTenant.name}`,
-            updated_by: null
+            updated_by: user.id
           });
         }
       } catch (trackInitErr) {
@@ -947,20 +1008,18 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode 
               </div>
 
               <div className="pt-6 flex flex-col sm:flex-row items-center gap-3 w-full max-w-sm mx-auto">
-                {selectedTenant?.code === 'DPMPTSP' && (
-                  <button 
-                    onClick={() => window.location.href = '/masyarakat-dashboard'}
-                    className="w-full px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2"
-                  >
-                    Lengkapi Dokumen Izin
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                )}
                 <button 
-                  onClick={onClose}
-                  className="w-full px-4 py-3 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-xl font-medium transition-colors"
+                  onClick={() => {
+                    if (onSuccess) {
+                      onSuccess(ticketResult);
+                    } else {
+                      onClose();
+                    }
+                  }}
+                  className="w-full px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  Tutup
+                  <Check className="w-4 h-4" />
+                  Selesai & Kembali ke Dashboard
                 </button>
               </div>
             </div>
