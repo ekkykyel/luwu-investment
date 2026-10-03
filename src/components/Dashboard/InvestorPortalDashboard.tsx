@@ -2940,8 +2940,10 @@ Ulas secara mendalam:
             <MppCitizenSurveyMenu
               userType="investor"
               isLoggedIn={true}
-              defaultName={hydratedCorporateProfile.namaPenanggungJawab || companyName || ""}
-              defaultCompany={hydratedCorporateProfile.namaPerusahaan || companyName || ""}
+              defaultName={hydratedCorporateProfile.namaPenanggungJawab || companyName || "Investor Luwu"}
+              defaultCompany={hydratedCorporateProfile.namaPerusahaan || companyName || "Pelaku Usaha"}
+              defaultNik={hydratedCorporateProfile.nikPenanggungJawab || ""}
+              defaultPhone={hydratedCorporateProfile.teleponPerusahaan || ""}
               isDarkMode={isDarkTheme}
             />
           </div>

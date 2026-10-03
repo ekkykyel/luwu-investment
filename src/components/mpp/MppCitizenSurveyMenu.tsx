@@ -440,6 +440,8 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
         user_type: userType,
         instansi,
         layanan: layanan.trim() || (availableServices[0] || 'Pelayanan Terpadu Satu Pintu'),
+        citizen_nik: nik.trim() || defaultNik.trim() || undefined,
+        citizen_phone: defaultPhone.trim() || undefined,
         q1_persyaratan: ratings.q1_persyaratan,
         q2_prosedur: ratings.q2_prosedur,
         q3_waktu: ratings.q3_waktu,

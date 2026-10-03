@@ -73,6 +73,7 @@ import { MppCommandPalette } from './mpp/MppCommandPalette';
 import { PkkprTechnicalRecommendationModal, PkkprRecommendationData } from './mpp/PkkprTechnicalRecommendationModal';
 import { LUWU_LOGO_BASE64 } from '../lib/logoBase64';
 import { supabase } from '../lib/supabaseClient';
+import { submitMppSurvey } from '../services/mppFeedbackService';
 import { 
   LOCALIZED_AGENCIES, 
   LOCALIZED_REVIEWS, 
@@ -806,7 +807,7 @@ export default function PortalMPP() {
     try {
       const { data: skmList, error } = await supabase
         .from('mpp_skm')
-        .select('*')
+        .select('*, tenant:mpp_tenants(name, code), citizen:mpp_citizens(full_name, occupation)')
         .order('created_at', { ascending: false });
 
       if (!error && Array.isArray(skmList)) {
@@ -824,7 +825,7 @@ export default function PortalMPP() {
           const sumQ8 = skmList.reduce((acc, c) => acc + (Number(c.q8_sarpras) || 0), 0);
           const sumQ9 = skmList.reduce((acc, c) => acc + (Number(c.q9_pengaduan) || 0), 0);
 
-          const calcScore = (sum: number) => Number(((sum / count) * 25).toFixed(1));
+          const calcScore = (sum: number) => Number(((sum / (count * 4)) * 100).toFixed(1));
 
           const scores = {
             persyaratan: calcScore(sumQ1),
@@ -865,8 +866,8 @@ export default function PortalMPP() {
           .filter(item => item.feedback && String(item.feedback).trim().length > 0)
           .map((item, idx) => ({
             id: item.id || `skm-${idx}`,
-            nama: item.citizen_nik ? `Warga Pemohon (${String(item.citizen_nik).slice(0, 4)}...${String(item.citizen_nik).slice(-4)})` : 'Masyarakat Pemohon',
-            layanan: 'Pelayanan MPP Simpurusiang',
+            nama: item.citizen?.full_name || (item.citizen_nik ? `Pemohon (${String(item.citizen_nik).slice(0, 4)}...${String(item.citizen_nik).slice(-4)})` : 'Masyarakat Pemohon'),
+            layanan: item.tenant?.name ? (item.tenant.name.startsWith('Dinas') || item.tenant.name.startsWith('DPMPTSP') || item.tenant.name.startsWith('Badan') ? item.tenant.name : `Gerai ${item.tenant.name}`) : 'Pelayanan Terpadu MPP',
             rating: item.rating || 5,
             status: (item.rating || 5) >= 4 ? 'Sangat Puas' : 'Puas',
             teks: item.feedback,
@@ -1224,95 +1225,30 @@ export default function PortalMPP() {
     }
 
     try {
-      // Calculate average rating based on 9 questions (each 1-4)
-      const sum = surveyForm.q1 + surveyForm.q2 + surveyForm.q3 + surveyForm.q4 + surveyForm.q5 + surveyForm.q6 + surveyForm.q7 + surveyForm.q8 + surveyForm.q9;
-      // Convert 1-4 scale to 1-5 scale
-      const avg1to4 = sum / 9;
-      const convertedRating = Math.min(5, Math.max(1, Math.round(((avg1to4 - 1) / 3) * 4 + 1))) || 5;
+      await submitMppSurvey({
+        nama: activeTicket?.name || 'Masyarakat Luwu',
+        user_type: 'masyarakat',
+        instansi: surveyForm.instansi || 'DPMPTSP Kabupaten Luwu',
+        layanan: surveyForm.layanan || 'Pelayanan Terpadu Satu Pintu',
+        citizen_nik: activeTicket?.nik || undefined,
+        citizen_phone: activeTicket?.phone || undefined,
+        q1_persyaratan: surveyForm.q1,
+        q2_prosedur: surveyForm.q2,
+        q3_waktu: surveyForm.q3,
+        q4_biaya: surveyForm.q4,
+        q5_produk: surveyForm.q5,
+        q6_kompetensi: surveyForm.q6,
+        q7_perilaku: surveyForm.q7,
+        q8_sarpras: surveyForm.q8,
+        q9_pengaduan: surveyForm.q9,
+        feedback: surveyForm.feedback || ''
+      });
 
-      // Find tenant_id if matching agency name
-      let matchingTenantId: string | null = null;
-      if (surveyForm.instansi) {
-        const { data: tenantData } = await supabase
-          .from('mpp_tenants')
-          .select('id')
-          .ilike('name', `%${surveyForm.instansi}%`)
-          .limit(1);
-        if (tenantData && tenantData.length > 0) {
-          matchingTenantId = tenantData[0].id;
-        }
-      }
-
-      // Resolve or create queue_id to satisfy NOT NULL foreign key constraint
-      let queueId: string | null = null;
-      const activeTicketCode = activeTicket?.number;
-      if (activeTicketCode) {
-        const { data: qData } = await supabase
-          .from('mpp_queues')
-          .select('id, tenant_id')
-          .eq('ticket_code', activeTicketCode)
-          .maybeSingle();
-        if (qData) {
-          queueId = qData.id;
-          if (!matchingTenantId && qData.tenant_id) matchingTenantId = qData.tenant_id;
-        }
-      }
-
-      if (!queueId && matchingTenantId) {
-        const { data: latestQ } = await supabase
-          .from('mpp_queues')
-          .select('id')
-          .eq('tenant_id', matchingTenantId)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-        if (latestQ) queueId = latestQ.id;
-      }
-
-      if (!queueId) {
-        const today = new Date().toISOString().split('T')[0];
-        const { data: anyTenant } = await supabase.from('mpp_tenants').select('id, code').limit(1).maybeSingle();
-        const effectiveTenantId = matchingTenantId || anyTenant?.id;
-        if (effectiveTenantId) {
-          const { data: anyService } = await supabase.from('mpp_services').select('id').eq('tenant_id', effectiveTenantId).limit(1).maybeSingle();
-          const { data: newQ } = await supabase.from('mpp_queues').insert({
-            tenant_id: effectiveTenantId,
-            service_id: anyService?.id || null,
-            citizen_nik: activeTicket?.nik || '7317000000000001',
-            queue_date: today,
-            queue_number: 1,
-            ticket_code: `SKM-${Date.now().toString().slice(-6)}`,
-            status: 'selesai'
-          }).select('id').maybeSingle();
-          if (newQ) {
-            queueId = newQ.id;
-            matchingTenantId = effectiveTenantId;
-          }
-        }
-      }
-
-      if (queueId) {
-        await supabase.from('mpp_skm').insert({
-          queue_id: queueId,
-          tenant_id: matchingTenantId,
-          citizen_nik: activeTicket?.nik || null,
-          rating: convertedRating,
-          q1_persyaratan: surveyForm.q1,
-          q2_prosedur: surveyForm.q2,
-          q3_waktu: surveyForm.q3,
-          q4_biaya: surveyForm.q4,
-          q5_produk: surveyForm.q5,
-          q6_kompetensi: surveyForm.q6,
-          q7_perilaku: surveyForm.q7,
-          q8_sarpras: surveyForm.q8,
-          q9_pengaduan: surveyForm.q9,
-          feedback: surveyForm.feedback || null
-        });
-      }
       // Setelah submit, hapus tiket karena pelayanan telah selesai seutuhnya
       sessionStorage.removeItem('mpp_active_ticket');
       localStorage.removeItem('mpp_active_ticket');
       setActiveTicket(null);
+      await fetchSkmData();
     } catch (error) {
       console.error('Gagal menyimpan SKM:', error);
     }

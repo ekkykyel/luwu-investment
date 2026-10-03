@@ -231,9 +231,11 @@ export async function getMppTestimonials(): Promise<MppTestimonial[]> {
  */
 export async function submitMppSurvey(data: {
   nama: string;
-  user_type: 'masyarakat' | 'investor';
+  user_type?: 'masyarakat' | 'investor';
   instansi: string;
-  layanan?: string;
+  layanan: string;
+  citizen_nik?: string;
+  user_id?: string;
   q1_persyaratan: number;
   q2_prosedur: number;
   q3_waktu: number;
@@ -260,6 +262,15 @@ export async function submitMppSurvey(data: {
   const convertedRating = Math.round(((avg1to4 - 1) / 3) * 4 + 1) || 5;
   const nowIso = new Date().toISOString();
 
+  // Ambil user.id dari sesi aktif jika ada
+  let currentUserId = data.user_id || null;
+  if (!currentUserId) {
+    try {
+      const { data: userRes } = await supabase.auth.getUser();
+      currentUserId = userRes?.user?.id || null;
+    } catch (e) {}
+  }
+
   const newSurvey: MppSurveyItem = {
     id: 'survey-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
     nama: data.nama.trim() || (data.user_type === 'investor' ? 'Pelaku Usaha / Investor' : 'Warga Luwu'),
@@ -280,58 +291,52 @@ export async function submitMppSurvey(data: {
     created_at: nowIso
   };
 
-  // 1. Save to localStorage
-  try {
-    const existing = JSON.parse(localStorage.getItem(SURVEYS_STORAGE_KEY) || '[]');
-    const updated = [newSurvey, ...existing];
-    localStorage.setItem(SURVEYS_STORAGE_KEY, JSON.stringify(updated));
-  } catch (e) {
-    console.warn('Failed saving survey to localStorage', e);
+  // 1. Submit ke backend endpoint /api/mpp/skm (Service Role Protected)
+  const apiRes = await fetch('/api/mpp/skm', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      nama: newSurvey.nama,
+      user_type: newSurvey.user_type,
+      instansi: newSurvey.instansi,
+      agency_name: newSurvey.instansi,
+      layanan: newSurvey.layanan,
+      service_name: newSurvey.layanan,
+      citizen_nik: data.citizen_nik || null,
+      citizen_phone: data.citizen_phone || null,
+      user_id: currentUserId,
+      q1_persyaratan: newSurvey.q1_persyaratan,
+      q2_prosedur: newSurvey.q2_prosedur,
+      q3_waktu: newSurvey.q3_waktu,
+      q4_biaya: newSurvey.q4_biaya,
+      q5_produk: newSurvey.q5_produk,
+      q6_kompetensi: newSurvey.q6_kompetensi,
+      q7_perilaku: newSurvey.q7_perilaku,
+      q8_sarpras: newSurvey.q8_sarpras,
+      q9_pengaduan: newSurvey.q9_pengaduan,
+      rating: newSurvey.rating,
+      feedback: newSurvey.feedback
+    })
+  });
+
+  const resJson = await apiRes.json().catch(() => ({}));
+  if (!apiRes.ok || resJson.success === false) {
+    console.error('[mppFeedbackService] Failed calling /api/mpp/skm:', resJson);
+    throw new Error(resJson.error || resJson.message || 'Gagal menyimpan survei SKM ke database.');
   }
 
-  // 2. Insert to Supabase mpp_skm
-  try {
-    await supabase.from('mpp_skm').insert([
-      {
-        agency_name: newSurvey.instansi,
-        rating: newSurvey.rating,
-        q1_persyaratan: newSurvey.q1_persyaratan,
-        q2_prosedur: newSurvey.q2_prosedur,
-        q3_waktu: newSurvey.q3_waktu,
-        q4_biaya: newSurvey.q4_biaya,
-        q5_produk: newSurvey.q5_produk,
-        q6_kompetensi: newSurvey.q6_kompetensi,
-        q7_perilaku: newSurvey.q7_perilaku,
-        q8_sarpras: newSurvey.q8_sarpras,
-        q9_pengaduan: newSurvey.q9_pengaduan,
-        feedback: newSurvey.feedback,
-        submitted_at: nowIso
-      }
-    ]);
-  } catch (err) {
-    console.warn('Supabase mpp_skm insert notice:', err);
-  }
+  const savedSurvey = resJson.data ? {
+    ...newSurvey,
+    id: resJson.data.id || newSurvey.id,
+    created_at: resJson.data.created_at || newSurvey.created_at
+  } : newSurvey;
 
-  // If user provided a positive feedback string, also automatically register it as a citizen review if none exists
-  if (newSurvey.feedback && newSurvey.feedback.length >= 10) {
-    try {
-      await submitMppTestimonial({
-        nama: newSurvey.nama,
-        layanan: `${newSurvey.instansi} - ${newSurvey.layanan}`,
-        teks: newSurvey.feedback,
-        rating: newSurvey.rating,
-        status: newSurvey.rating >= 4 ? 'Sangat Puas' : 'Puas',
-        user_type: newSurvey.user_type
-      });
-    } catch {}
-  }
-
-  // 3. Dispatch event
+  // 2. Dispatch global real-time event untuk memperbarui statistik SKM di seluruh halaman
   if (typeof window !== 'undefined') {
-    window.dispatchEvent(new CustomEvent('mpp_feedback_updated', { detail: { type: 'survey', item: newSurvey } }));
+    window.dispatchEvent(new CustomEvent('mpp_feedback_updated', { detail: { type: 'survey', item: savedSurvey } }));
   }
 
-  return { success: true, data: newSurvey };
+  return { success: true, data: savedSurvey };
 }
 
 export interface MppSurveySummary {
@@ -343,17 +348,41 @@ export interface MppSurveySummary {
 }
 
 /**
- * Get all surveys and aggregated stats
+ * Get all surveys and aggregated stats directly from Supabase mpp_skm
  */
 export async function getMppSurveys(): Promise<MppSurveySummary> {
-  const localSurveys: MppSurveyItem[] = [];
+  let dbSurveys: MppSurveyItem[] = [];
+
   try {
-    const raw = localStorage.getItem(SURVEYS_STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) localSurveys.push(...parsed);
+    const { data: skmRows, error } = await supabase
+      .from('mpp_skm')
+      .select('*, tenant:mpp_tenants(name, code), citizen:mpp_citizens(full_name, phone_number, occupation)')
+      .order('created_at', { ascending: false });
+
+    if (!error && Array.isArray(skmRows)) {
+      dbSurveys = skmRows.map((r: any) => ({
+        id: r.id || 'survey-' + r.created_at,
+        nama: r.citizen?.full_name || (r.citizen_nik ? `Pemohon (${r.citizen_nik.slice(0, 4)}...${r.citizen_nik.slice(-4)})` : 'Warga / Investor'),
+        user_type: r.citizen?.occupation?.toLowerCase()?.includes('investor') ? 'investor' : (r.user_type || 'masyarakat'),
+        instansi: r.tenant?.name || r.agency_name || r.instansi || 'DPMPTSP Kabupaten Luwu',
+        layanan: r.service_name || r.layanan || 'Pelayanan Terpadu Satu Pintu',
+        q1_persyaratan: Number(r.q1_persyaratan || 4),
+        q2_prosedur: Number(r.q2_prosedur || 4),
+        q3_waktu: Number(r.q3_waktu || 4),
+        q4_biaya: Number(r.q4_biaya || 4),
+        q5_produk: Number(r.q5_produk || 4),
+        q6_kompetensi: Number(r.q6_kompetensi || 4),
+        q7_perilaku: Number(r.q7_perilaku || 4),
+        q8_sarpras: Number(r.q8_sarpras || 4),
+        q9_pengaduan: Number(r.q9_pengaduan || 4),
+        rating: Number(r.rating || 5),
+        feedback: r.feedback || '',
+        created_at: r.created_at || r.submitted_at || new Date().toISOString()
+      }));
     }
-  } catch {}
+  } catch (fetchErr) {
+    console.warn('Error fetching surveys from Supabase:', fetchErr);
+  }
 
   // Baseline standard values for 9 indicators (PermenPAN-RB No. 14/2017)
   const baseline = [
@@ -368,8 +397,7 @@ export async function getMppSurveys(): Promise<MppSurveySummary> {
     { key: 'pengaduan', label: 'Penanganan Pengaduan', score: 87.2, qKey: 'q9_pengaduan' as const }
   ];
 
-  // If there are real surveys submitted, compute weighted average
-  const newCount = localSurveys.length;
+  const newCount = dbSurveys.length;
   const baselineCount = 12076;
   const totalRespondents = baselineCount + newCount;
 
@@ -377,7 +405,7 @@ export async function getMppSurveys(): Promise<MppSurveySummary> {
     if (newCount === 0) return { key: b.key, label: b.label, score: b.score };
 
     // Scale 1-4 to 25-100%
-    const surveyScores = localSurveys.map(s => {
+    const surveyScores = dbSurveys.map(s => {
       const val = (s as any)[b.qKey] || 4;
       return (val / 4) * 100;
     });
@@ -401,7 +429,7 @@ export async function getMppSurveys(): Promise<MppSurveySummary> {
   );
 
   return {
-    surveys: localSurveys,
+    surveys: dbSurveys,
     totalRespondents,
     averageScore,
     indicators,
