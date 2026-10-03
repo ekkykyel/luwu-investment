@@ -1912,7 +1912,7 @@ export default function MasyarakatDashboard({
         if (!val) return false;
         return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
       };
-      const validUserId = (user?.id && isUuid(user.id)) ? user.id : null;
+      const validUserId = (user?.id && isUuid(user.id)) ? user.id : (finalNik ? `cit-${finalNik}` : null);
 
       const newPkkprApp = {
         id: `pkkpr_${Date.now()}`,

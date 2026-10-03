@@ -4216,6 +4216,65 @@ app.post("/api/auth/register-operator", async (req, res) => {
   return res.json({ success: true, message: "Berhasil membuat operator baru." });
 });
 
+app.post("/api/auth/citizen-login", async (req, res) => {
+  try {
+    const { nik, password, mode, phone, name } = req.body;
+    const cleanNik = String(nik || "").replace(/\D/g, "");
+
+    if (!cleanNik || cleanNik.length !== 16) {
+      return res.status(400).json({ success: false, message: "NIK harus tepat 16 digit angka." });
+    }
+
+    if (mode === "PASSWORD" || password) {
+      if (!password || password.trim().length < 4) {
+        return res.status(400).json({ success: false, message: "Password minimal 4 karakter." });
+      }
+
+      const crypto = require("crypto");
+      const passHash = crypto.createHash("sha256").update(password).digest("hex");
+
+      // Check existing citizen
+      const { data: citizen } = await supabase
+        .from("mpp_citizens")
+        .select("*")
+        .eq("nik", cleanNik)
+        .maybeSingle();
+
+      if (citizen && citizen.password_hash) {
+        if (citizen.password_hash !== passHash) {
+          return res.status(401).json({ success: false, message: "Password salah. Silakan periksa kembali NIK & Password Anda." });
+        }
+      } else {
+        // First-time password creation for citizen
+        await supabase.from("mpp_citizens").upsert({
+          nik: cleanNik,
+          nama: name || citizen?.nama || "Warga Pemohon",
+          no_hp: phone || citizen?.no_hp || "-",
+          password_hash: passHash,
+          source: "ONLINE_HYBRID",
+          last_active: new Date().toISOString()
+        }, { onConflict: "nik" });
+      }
+
+      return res.json({
+        success: true,
+        message: "Autentikasi NIK & Password Berhasil.",
+        citizen: {
+          nik: cleanNik,
+          userId: `cit-${cleanNik}`,
+          nama: citizen?.nama || name || "Warga Pemohon",
+          no_hp: citizen?.no_hp || phone || "-"
+        }
+      });
+    }
+
+    return res.status(400).json({ success: false, message: "Format autentikasi tidak valid." });
+  } catch (err: any) {
+    console.error("[/api/auth/citizen-login] Error:", err);
+    return res.status(500).json({ success: false, message: err.message || "Gagal autentikasi warga." });
+  }
+});
+
 app.post("/api/admin/delete-operator", async (req, res) => {
   const { user_id } = req.body;
   const currentRole = parseAndValidateRole(req);

@@ -57,7 +57,71 @@ export const MppOtpVerificationGuard: React.FC<MppOtpVerificationGuardProps> = (
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
 
-  // Check initial verification status on mount or when defaultNik changes
+  const [authMethod, setAuthMethod] = useState<'OTP' | 'PASSWORD'>('OTP');
+  const [password, setPassword] = useState('');
+  const [isLoggingInPassword, setIsLoggingInPassword] = useState(false);
+
+  // Handle NIK + Password direct authentication
+  const handlePasswordLogin = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    const cleanNik = nik.replace(/\D/g, '');
+    if (cleanNik.length !== 16) {
+      setErrorMessage('Nomor Induk Kependudukan (NIK) harus tepat 16 digit angka.');
+      return;
+    }
+
+    if (!password || password.length < 4) {
+      setErrorMessage('Masukkan password Anda (minimal 4 karakter).');
+      return;
+    }
+
+    setIsLoggingInPassword(true);
+
+    try {
+      const res = await fetch('/api/auth/citizen-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nik: cleanNik,
+          password: password,
+          mode: 'PASSWORD',
+          phone: phone.trim(),
+          name: name.trim()
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'NIK atau Password tidak cocok.');
+      }
+
+      // Login Success!
+      setIsVerified(true);
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('citizen_nik', cleanNik);
+        sessionStorage.setItem('citizen_token', `cit_${cleanNik}`);
+        localStorage.setItem(`mpp_verified_otp_${cleanNik}`, 'true');
+        localStorage.setItem(`mpp_verified_nik`, cleanNik);
+        if (phone) localStorage.setItem(`mpp_verified_otp_phone_${cleanNik}`, phone);
+        if (name) localStorage.setItem(`mpp_citizen_name_${cleanNik}`, name);
+      }
+
+      setSuccessMessage('Autentikasi NIK & Password Berhasil! Sesi terhubung.');
+
+      if (onVerified) {
+        onVerified(cleanNik, phone || '');
+      }
+    } catch (err: any) {
+      console.error('Password login error:', err);
+      setErrorMessage(err?.message || 'Gagal masuk dengan Password. Periksa NIK dan Password Anda.');
+    } finally {
+      setIsLoggingInPassword(false);
+    }
+  };
   useEffect(() => {
     const fallbackNik = typeof window !== 'undefined' ? localStorage.getItem('luwu_user_nik') || '' : '';
     const cleanNik = (defaultNik || nik || fallbackNik).trim();
@@ -318,8 +382,36 @@ export const MppOtpVerificationGuard: React.FC<MppOtpVerificationGuardProps> = (
           </div>
         )}
 
+        {/* Mode Selector Tabs */}
+        <div className="mt-4 flex rounded-2xl p-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <button
+            type="button"
+            onClick={() => setAuthMethod('OTP')}
+            className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+              authMethod === 'OTP'
+                ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm'
+                : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <Smartphone className="w-3.5 h-3.5" />
+            <span>Kirim Kode OTP WA</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setAuthMethod('PASSWORD')}
+            className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+              authMethod === 'PASSWORD'
+                ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm'
+                : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <Lock className="w-3.5 h-3.5" />
+            <span>Masuk via Password</span>
+          </button>
+        </div>
+
         {/* Form Inputs */}
-        <div className="mt-6 space-y-4">
+        <div className="mt-4 space-y-4">
           {/* 1. NIK 16-Digit */}
           <div>
             <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
@@ -343,7 +435,7 @@ export const MppOtpVerificationGuard: React.FC<MppOtpVerificationGuardProps> = (
               />
             </div>
             <span className="text-[10px] text-slate-400 mt-1 block">
-              Harus 16 digit angka sesuai KTP Anda.
+              Harus 16 digit angka sesuai e-KTP Anda.
             </span>
           </div>
 
@@ -365,34 +457,83 @@ export const MppOtpVerificationGuard: React.FC<MppOtpVerificationGuardProps> = (
             />
           </div>
 
-          {/* 3. Nomor WhatsApp Aktif */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-              Nomor WhatsApp Aktif <span className="text-rose-500">*</span>
-            </label>
-            <div className="relative">
-              <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-                <Phone className="w-4 h-4" />
+          {/* Mode A: WhatsApp OTP Inputs */}
+          {authMethod === 'OTP' && (
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                Nomor WhatsApp Aktif <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                  <Phone className="w-4 h-4" />
+                </div>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                  placeholder="0812xxxxxxxx"
+                  className={`w-full min-h-[48px] pl-10 pr-3.5 py-2.5 rounded-2xl text-xs sm:text-sm font-mono border outline-none transition-all ${
+                    isDarkMode 
+                      ? 'bg-slate-800/80 border-slate-700 text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20' 
+                      : 'bg-slate-50 border-slate-300 text-slate-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
+                  }`}
+                />
               </div>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                placeholder="0812xxxxxxxx"
-                className={`w-full min-h-[48px] pl-10 pr-3.5 py-2.5 rounded-2xl text-xs sm:text-sm font-mono border outline-none transition-all ${
-                  isDarkMode 
-                    ? 'bg-slate-800/80 border-slate-700 text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20' 
-                    : 'bg-slate-50 border-slate-300 text-slate-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
-                }`}
-              />
+              <span className="text-[10px] text-slate-400 mt-1 block">
+                Kode OTP 4-digit akan dikirimkan langsung ke nomor WhatsApp ini.
+              </span>
             </div>
-            <span className="text-[10px] text-slate-400 mt-1 block">
-              Kode OTP 4-digit akan dikirimkan langsung ke nomor WhatsApp ini.
-            </span>
-          </div>
+          )}
 
-          {/* Action: Send OTP Button */}
-          {!isOtpSent ? (
+          {/* Mode B: Password Input */}
+          {authMethod === 'PASSWORD' && (
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                Password Akun Warga <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                  <Lock className="w-4 h-4" />
+                </div>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Masukkan password akun Anda"
+                  className={`w-full min-h-[48px] pl-10 pr-3.5 py-2.5 rounded-2xl text-xs sm:text-sm border outline-none transition-all ${
+                    isDarkMode 
+                      ? 'bg-slate-800/80 border-slate-700 text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20' 
+                      : 'bg-slate-50 border-slate-300 text-slate-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20'
+                  }`}
+                />
+              </div>
+              <span className="text-[10px] text-slate-400 mt-1 block">
+                Gunakan NIK dan Password yang telah Anda daftarkan sebelumnya.
+              </span>
+
+              <button
+                type="button"
+                onClick={() => handlePasswordLogin()}
+                disabled={isLoggingInPassword || nik.length !== 16 || password.length < 4}
+                className="w-full min-h-[50px] mt-3 py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoggingInPassword ? (
+                  <div className="flex items-center gap-2">
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>Memverifikasi Password...</span>
+                  </div>
+                ) : (
+                  <>
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>Masuk Dengan NIK + Password</span>
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+
+          {/* Action: Send OTP Button (Only in OTP Mode) */}
+          {authMethod === 'OTP' && (!isOtpSent ? (
             <button
               type="button"
               onClick={() => handleSendOtp()}
