@@ -650,6 +650,9 @@ export default function PortalMPP() {
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false);
   const [isAgenciesCatalogOpen, setIsAgenciesCatalogOpen] = useState(false);
   const [isServicesMatrixOpen, setIsServicesMatrixOpen] = useState(false);
+  const [servicesMatrixInitialCategory, setServicesMatrixInitialCategory] = useState<string>('all');
+  const [servicesMatrixInitialSearch, setServicesMatrixInitialSearch] = useState<string>('');
+  const [activeRequirementService, setActiveRequirementService] = useState<string>('KTP_DUKCAPIL');
 
   // --- State Fase 3 (Fitur 6: Modal Survey SKM & Fitur 7: Modal Alur Pelayanan) ---
   const [isSurveyModalOpen, setIsSurveyModalOpen] = useState(false);
@@ -2784,7 +2787,20 @@ export default function PortalMPP() {
 
           {/* Seksi AI Requirement Assistant & Interactive Progressive Stepper */}
           <div id="syarat-dokumen" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 space-y-8 scroll-mt-28">
-            <InteractiveRequirementStepper />
+            <InteractiveRequirementStepper 
+              initialService={activeRequirementService}
+              onOpenQueueBooking={(serviceName, agencyName) => {
+                if (serviceName || agencyName) {
+                  setQueueForm(prev => ({
+                    ...prev,
+                    service: serviceName || prev.service,
+                    agency: agencyName || prev.agency
+                  }));
+                }
+                setIsQueueBookingOpen(true);
+              }}
+              isDark={isDark}
+            />
             <SmartRequirementAssistant isDark={isDark} />
           </div>
 
@@ -7124,10 +7140,29 @@ export default function PortalMPP() {
         {/* Modal Smart Matrix & Finder Layanan Publik 360° */}
         <MppServicesMatrixModal
           isOpen={isServicesMatrixOpen}
-          onClose={() => setIsServicesMatrixOpen(false)}
+          initialCategory={servicesMatrixInitialCategory}
+          initialSearch={servicesMatrixInitialSearch}
+          onClose={() => {
+            setIsServicesMatrixOpen(false);
+            setServicesMatrixInitialCategory('all');
+            setServicesMatrixInitialSearch('');
+          }}
           onSelectRequirement={(serviceName) => {
-            const el = document.getElementById('syarat-dokumen');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
+            setIsServicesMatrixOpen(false);
+            const sLower = (serviceName || '').toLowerCase();
+            let sKey = 'NIB_OSS';
+            if (sLower.includes('ktp') || sLower.includes('dukcapil') || sLower.includes('kk')) sKey = 'KTP_DUKCAPIL';
+            else if (sLower.includes('pkkpr') || sLower.includes('tata ruang')) sKey = 'GIS_PKKPR';
+            else if (sLower.includes('pbg') || sLower.includes('bangunan') || sLower.includes('imb')) sKey = 'PBG_BANGUNAN';
+            else if (sLower.includes('paspor') || sLower.includes('imigrasi')) sKey = 'PASPOR_IMIGRASI';
+            else if (sLower.includes('skck') || sLower.includes('polres')) sKey = 'SKCK_POLRES';
+            
+            setActiveRequirementService(sKey);
+            window.dispatchEvent(new CustomEvent('select-mpp-requirement-service', { detail: { service: sKey } }));
+            setTimeout(() => {
+              const el = document.getElementById('syarat-dokumen');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }, 150);
           }}
           isDark={isDark}
         />
@@ -7216,8 +7251,21 @@ export default function PortalMPP() {
           isDark={isDark}
           activePersona={activePersona}
           onSelectPersona={(persona) => setActivePersona(persona)}
-          onOpenQueueBooking={() => setIsQueueBookingOpen(true)}
-          onOpenRequirements={() => {
+          onOpenQueueBooking={(serviceName, agencyName) => {
+            if (serviceName || agencyName) {
+              setQueueForm(prev => ({
+                ...prev,
+                service: serviceName || prev.service,
+                agency: agencyName || prev.agency
+              }));
+            }
+            setIsQueueBookingOpen(true);
+          }}
+          onOpenRequirements={(serviceKey) => {
+            if (serviceKey) {
+              setActiveRequirementService(serviceKey);
+              window.dispatchEvent(new CustomEvent('select-mpp-requirement-service', { detail: { service: serviceKey } }));
+            }
             const el = document.getElementById('syarat-dokumen');
             if (el) el.scrollIntoView({ behavior: 'smooth' });
           }}
@@ -7225,7 +7273,11 @@ export default function PortalMPP() {
             window.dispatchEvent(new CustomEvent('open-mpp-voice-assistant'));
           }}
           onOpenAgenciesCatalog={() => setIsAgenciesCatalogOpen(true)}
-          onOpenServicesCatalog={() => setIsServicesMatrixOpen(true)}
+          onOpenServicesCatalog={(category, searchQuery) => {
+            setServicesMatrixInitialCategory(category || 'all');
+            setServicesMatrixInitialSearch(searchQuery || '');
+            setIsServicesMatrixOpen(true);
+          }}
         />
 
         {/* Modal Rekomendasi Teknis PKKPR Dinas PUPTR / Berita Acara Forum Penataan Ruang */}

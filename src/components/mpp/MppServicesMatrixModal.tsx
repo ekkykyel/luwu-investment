@@ -26,6 +26,8 @@ interface MppServicesMatrixModalProps {
   onClose: () => void;
   onSelectRequirement?: (serviceName: string) => void;
   isDark?: boolean;
+  initialCategory?: string;
+  initialSearch?: string;
 }
 
 export const MppServicesMatrixModal: React.FC<MppServicesMatrixModalProps> = ({
@@ -33,14 +35,24 @@ export const MppServicesMatrixModal: React.FC<MppServicesMatrixModalProps> = ({
   onClose,
   onSelectRequirement,
   isDark = false,
+  initialCategory = 'all',
+  initialSearch = '',
 }) => {
   const { t, i18n } = useTranslation();
   const currentLang = i18n?.language || 'id';
   const isEn = currentLang.startsWith('en');
   const isZh = currentLang.startsWith('zh');
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
+  const [activeCategory, setActiveCategory] = useState<string>(initialCategory);
+
+  // Sync state when modal opens with new category or query
+  React.useEffect(() => {
+    if (isOpen) {
+      if (initialCategory) setActiveCategory(initialCategory);
+      if (initialSearch !== undefined) setSearchQuery(initialSearch);
+    }
+  }, [isOpen, initialCategory, initialSearch]);
 
   // Real Luwu MPP Public Services Catalog
   const allServices = useMemo(() => {

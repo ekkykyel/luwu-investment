@@ -43,11 +43,11 @@ interface MppCommandPaletteProps {
   isDark: boolean;
   activePersona: 'warga' | 'investor' | 'semua';
   onSelectPersona: (persona: 'warga' | 'investor' | 'semua') => void;
-  onOpenQueueBooking: () => void;
-  onOpenRequirements: () => void;
+  onOpenQueueBooking: (serviceName?: string, agencyName?: string) => void;
+  onOpenRequirements: (serviceKey?: string) => void;
   onOpenVoiceAssistant?: () => void;
   onOpenAgenciesCatalog: () => void;
-  onOpenServicesCatalog: () => void;
+  onOpenServicesCatalog: (category?: string, searchQuery?: string) => void;
   initialQuery?: string;
 }
 
@@ -103,6 +103,30 @@ export const MppCommandPalette: React.FC<MppCommandPaletteProps> = ({
     }, 150);
   };
 
+  // Helper to dynamically detect requirement context from search keyword
+  const detectedService = useMemo<string>(() => {
+    const q = (query || '').toLowerCase().trim();
+    if (q.includes('ktp') || q.includes('dukcapil') || q.includes('kk') || q.includes('kependudukan') || q.includes('ikd') || q.includes('akta') || q.includes('nik')) {
+      return 'KTP_DUKCAPIL';
+    }
+    if (q.includes('pkkpr') || q.includes('tata ruang') || q.includes('ruang') || q.includes('rdtr') || q.includes('rtrw') || q.includes('zonasi') || q.includes('lahan') || q.includes('gis')) {
+      return 'GIS_PKKPR';
+    }
+    if (q.includes('pbg') || q.includes('imb') || q.includes('bangunan') || q.includes('gedung') || q.includes('slf')) {
+      return 'PBG_BANGUNAN';
+    }
+    if (q.includes('paspor') || q.includes('passport') || q.includes('imigrasi') || q.includes('visa')) {
+      return 'PASPOR_IMIGRASI';
+    }
+    if (q.includes('skck') || q.includes('polres') || q.includes('polisi') || q.includes('kehilangan')) {
+      return 'SKCK_POLRES';
+    }
+    if (q.includes('nib') || q.includes('oss') || q.includes('investasi') || q.includes('usaha') || q.includes('kbli')) {
+      return 'NIB_OSS';
+    }
+    return 'NIB_OSS';
+  }, [query]);
+
   // Static indexed catalog of MPP Simpurusiang
   const allCommands = useMemo<MppCommandItem[]>(() => [
     // --- AKSI UTAMA & FITUR CEPAT ---
@@ -147,15 +171,49 @@ export const MppCommandPalette: React.FC<MppCommandPaletteProps> = ({
     },
     {
       id: 'action-requirements',
-      title: 'Cek Persyaratan & Checklist Dokumen',
-      description: 'Panduan syarat resmi KTP, PBG, Paspor, SKCK, dan izin usaha',
+      title: detectedService === 'KTP_DUKCAPIL'
+        ? 'Cek Persyaratan: Perekaman & Cetak KTP-el / IKD'
+        : detectedService === 'GIS_PKKPR'
+        ? 'Cek Persyaratan: Kesesuaian Tata Ruang (PKKPR)'
+        : detectedService === 'PBG_BANGUNAN'
+        ? 'Cek Persyaratan: Persetujuan Bangunan Gedung (PBG & SLF)'
+        : detectedService === 'PASPOR_IMIGRASI'
+        ? 'Cek Persyaratan: Paspor RI Baru & Penggantian'
+        : detectedService === 'SKCK_POLRES'
+        ? 'Cek Persyaratan: Penerbitan SKCK Kepolisian'
+        : 'Cek Persyaratan & Checklist Dokumen',
+      description: detectedService === 'KTP_DUKCAPIL'
+        ? 'Panduan berkas resmi Disdukcapil (KK, Surat Kehilangan/KTP Rusak, Pasfoto & WhatsApp)'
+        : detectedService === 'GIS_PKKPR'
+        ? 'Panduan syarat teknis kesesuaian ruang RTRW Luwu No. 3/2024 dan BAP Dinas PUPTR'
+        : detectedService === 'PBG_BANGUNAN'
+        ? 'Panduan syarat teknis gambar arsitektur, perhitungan struktur, dan SIMBG'
+        : detectedService === 'PASPOR_IMIGRASI'
+        ? 'Panduan berkas Kantor Imigrasi (KTP, KK, Akta/Ijazah, dan antrean M-Paspor)'
+        : detectedService === 'SKCK_POLRES'
+        ? 'Panduan syarat SKCK Sentra Polres Luwu di MPP Simpurusiang'
+        : 'Panduan syarat resmi KTP, PBG, Paspor, SKCK, dan izin usaha',
       category: 'aksi',
       categoryLabel: 'Aksi Cepat',
       icon: FileCheck2,
-      keywords: ['syarat', 'checklist', 'dokumen', 'berkas', 'ktp', 'pbg', 'persyaratan'],
+      badge: detectedService === 'KTP_DUKCAPIL'
+        ? 'Dukcapil'
+        : detectedService === 'GIS_PKKPR'
+        ? 'PUPTR'
+        : detectedService === 'PBG_BANGUNAN'
+        ? 'PUTR'
+        : detectedService === 'PASPOR_IMIGRASI'
+        ? 'Imigrasi'
+        : detectedService === 'SKCK_POLRES'
+        ? 'Polres Luwu'
+        : 'Checklist Dinamis',
+      keywords: ['syarat', 'checklist', 'dokumen', 'berkas', 'ktp', 'dukcapil', 'kk', 'pkkpr', 'tata ruang', 'pbg', 'imb', 'paspor', 'skck', 'persyaratan', 'oss', 'nib'],
       action: () => {
         onClose();
-        setTimeout(onOpenRequirements, 150);
+        window.dispatchEvent(new CustomEvent('select-mpp-requirement-service', { detail: { service: detectedService } }));
+        if (onOpenRequirements) {
+          setTimeout(() => onOpenRequirements(detectedService), 150);
+        }
       }
     },
     {
@@ -234,7 +292,15 @@ export const MppCommandPalette: React.FC<MppCommandPaletteProps> = ({
       icon: Building2,
       badge: 'Gerai 01',
       keywords: ['disdukcapil', 'dukcapil', 'ktp', 'kk', 'akta', 'ikd', 'nik', 'kependudukan'],
-      action: () => scrollToSection('instansi')
+      action: () => {
+        onClose();
+        window.dispatchEvent(new CustomEvent('select-mpp-requirement-service', { detail: { service: 'KTP_DUKCAPIL' } }));
+        if (onOpenServicesCatalog) {
+          setTimeout(() => onOpenServicesCatalog('dukcapil', 'KTP'), 150);
+        } else {
+          scrollToSection('instansi');
+        }
+      }
     },
     {
       id: 'instansi-dpmptsp',
@@ -355,10 +421,15 @@ export const MppCommandPalette: React.FC<MppCommandPaletteProps> = ({
       category: 'layanan',
       categoryLabel: 'Layanan Populer',
       icon: FileCheck2,
-      keywords: ['ktp', 'ktp elektronik', 'perekaman', 'identitas kependudukan digital', 'ikd'],
+      keywords: ['ktp', 'ktp elektronik', 'perekaman', 'identitas kependudukan digital', 'ikd', 'dukcapil', 'kk'],
       action: () => {
         onClose();
-        setTimeout(onOpenServicesCatalog, 150);
+        window.dispatchEvent(new CustomEvent('select-mpp-requirement-service', { detail: { service: 'KTP_DUKCAPIL' } }));
+        if (onOpenServicesCatalog) {
+          setTimeout(() => onOpenServicesCatalog('dukcapil', 'KTP-el'), 150);
+        } else if (onOpenRequirements) {
+          setTimeout(() => onOpenRequirements('KTP_DUKCAPIL'), 150);
+        }
       }
     },
     {
@@ -371,7 +442,12 @@ export const MppCommandPalette: React.FC<MppCommandPaletteProps> = ({
       keywords: ['pbg', 'imb', 'slf', 'bangunan', 'gedung', 'arsitektur', 'retribusi bangunan'],
       action: () => {
         onClose();
-        setTimeout(onOpenServicesCatalog, 150);
+        window.dispatchEvent(new CustomEvent('select-mpp-requirement-service', { detail: { service: 'PBG_BANGUNAN' } }));
+        if (onOpenServicesCatalog) {
+          setTimeout(() => onOpenServicesCatalog('perizinan', 'PBG'), 150);
+        } else if (onOpenRequirements) {
+          setTimeout(() => onOpenRequirements('PBG_BANGUNAN'), 150);
+        }
       }
     },
     {
@@ -384,7 +460,12 @@ export const MppCommandPalette: React.FC<MppCommandPaletteProps> = ({
       keywords: ['nib', 'oss', 'izin usaha', 'umkm', 'legalitas', 'kbli'],
       action: () => {
         onClose();
-        setTimeout(onOpenServicesCatalog, 150);
+        window.dispatchEvent(new CustomEvent('select-mpp-requirement-service', { detail: { service: 'NIB_OSS' } }));
+        if (onOpenServicesCatalog) {
+          setTimeout(() => onOpenServicesCatalog('perizinan', 'NIB'), 150);
+        } else if (onOpenRequirements) {
+          setTimeout(() => onOpenRequirements('NIB_OSS'), 150);
+        }
       }
     },
     {
@@ -397,7 +478,12 @@ export const MppCommandPalette: React.FC<MppCommandPaletteProps> = ({
       keywords: ['paspor', 'passport', 'm-paspor', 'imigrasi', 'keluar negeri'],
       action: () => {
         onClose();
-        setTimeout(onOpenServicesCatalog, 150);
+        window.dispatchEvent(new CustomEvent('select-mpp-requirement-service', { detail: { service: 'PASPOR_IMIGRASI' } }));
+        if (onOpenServicesCatalog) {
+          setTimeout(() => onOpenServicesCatalog('all', 'Paspor'), 150);
+        } else if (onOpenRequirements) {
+          setTimeout(() => onOpenRequirements('PASPOR_IMIGRASI'), 150);
+        }
       }
     },
     {
@@ -410,7 +496,12 @@ export const MppCommandPalette: React.FC<MppCommandPaletteProps> = ({
       keywords: ['skck', 'polisi', 'catatan kepolisian', 'lamaran kerja', 'cpns'],
       action: () => {
         onClose();
-        setTimeout(onOpenServicesCatalog, 150);
+        window.dispatchEvent(new CustomEvent('select-mpp-requirement-service', { detail: { service: 'SKCK_POLRES' } }));
+        if (onOpenServicesCatalog) {
+          setTimeout(() => onOpenServicesCatalog('kepolisian', 'SKCK'), 150);
+        } else if (onOpenRequirements) {
+          setTimeout(() => onOpenRequirements('SKCK_POLRES'), 150);
+        }
       }
     },
 
