@@ -16,7 +16,8 @@ import {
   Moon,
   Sun,
   Globe,
-  ArrowLeft
+  ArrowLeft,
+  Cpu
 } from 'lucide-react';
 
 export interface PortalLayoutProps {
@@ -238,6 +239,16 @@ export const PortalLayout: React.FC<PortalLayoutProps> = ({
             {/* Right Action Cluster */}
             <div className="flex items-center gap-2 sm:gap-2.5">
               {rightActions}
+
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent('open-grp-architecture-modal'))}
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+                title="Buka Inspektur Arsitektur GRP & Kepatuhan SPBE untuk Penguji"
+              >
+                <Cpu className="w-3.5 h-3.5 text-emerald-500" />
+                <span>✦ Inspektur GRP & SPBE</span>
+              </button>
 
               {/* Quick Command Trigger Button */}
               {onOpenCommandPalette && (

@@ -50,6 +50,7 @@ import { AnimatedSectionHeader } from './common/AnimatedSectionHeader';
 import { TiltCard } from './common/TiltCard';
 import { SpotlightCard } from './common/SpotlightCard';
 import { SuperHeroSearch } from './mpp/SuperHeroSearch';
+import { GRPArchitectureModal } from './mpp/GRPArchitectureModal';
 import { PriorityShowcaseCarousel } from './mpp/PriorityShowcaseCarousel';
 import { BentoLiveQueueRadar } from './mpp/BentoLiveQueueRadar';
 import { InteractiveRequirementStepper } from './mpp/InteractiveRequirementStepper';
@@ -1471,6 +1472,14 @@ export default function PortalMPP() {
 
     window.addEventListener('open-mpp-ai-modal', handleOpenAiModal);
     return () => window.removeEventListener('open-mpp-ai-modal', handleOpenAiModal);
+  }, []);
+
+  // Listener untuk membuka GRPArchitectureModal (Inspektur Arsitektur GRP & SPBE)
+  const [isGrpModalOpen, setIsGrpModalOpen] = useState(false);
+  useEffect(() => {
+    const handleOpenGrp = () => setIsGrpModalOpen(true);
+    window.addEventListener('open-grp-architecture-modal', handleOpenGrp);
+    return () => window.removeEventListener('open-grp-architecture-modal', handleOpenGrp);
   }, []);
 
   // Realtime Listener untuk status antrean (jika tiket aktif)
@@ -7178,6 +7187,13 @@ export default function PortalMPP() {
           }}
           isDark={isDark}
           initialData={pkkprInitialData}
+        />
+
+        {/* Modal Inspektur Arsitektur GRP & SPBE */}
+        <GRPArchitectureModal
+          isOpen={isGrpModalOpen}
+          onClose={() => setIsGrpModalOpen(false)}
+          isDarkMode={isDark}
         />
 
         {/* Material Design 3 Desktop Super-App Global Helpdesk Floating Action Button */}

@@ -21,7 +21,8 @@ import {
   FileCheck2,
   Wheat,
   Compass,
-  Printer
+  Printer,
+  Cpu
 } from 'lucide-react';
 import { LuwuLogo } from '../LuwuLogo.js';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -120,6 +121,7 @@ export const getMenusByRole = (role: string): MenuGroup[] => {
     {
       group: 'Administrator & Sistem AI',
       items: [
+        { id: 'grp_architecture', name: 'Inspektur Arsitektur GRP & SPBE', icon: Cpu },
         { id: 'manage_users', name: 'Manajemen Pemohon & Helpdesk', icon: Users },
         { id: 'rag_injection', name: 'Injek Pengetahuan AI (RAG)', icon: Sparkles },
         { id: 'manage_operators', name: 'Tambah & Kelola Operator', icon: Users },

@@ -87,6 +87,7 @@ import EstafetHandoverModal from './EstafetHandoverModal';
 import EstafetProgressBanner from './EstafetProgressBanner';
 import AdminLayout from '../Admin/AdminLayout';
 import AdminUserManagement from '../Admin/Views/AdminUserManagement';
+import { GRPArchitectureModal } from '../mpp/GRPArchitectureModal';
 import SmartInvestmentFormEngine from '../SmartInvestmentFormEngine';
 import TataRuangInvestasi from '../Admin/Views/TataRuangInvestasi';
 import UploadGeoJsonPanel from '../UploadGeoJsonPanel';
@@ -5664,6 +5665,8 @@ Ulas secara mendalam:
               <ManageOperatorsModal onClose={() => setActiveTab('overview')} />
             </div>
           </div>
+        ) : activeTab === 'grp_architecture' ? (
+          <GRPArchitectureModal isOpen={true} onClose={() => setActiveTab('overview')} isDarkMode={true} />
         ) : (activeTab === 'manage_users' || activeTab === 'citizen_management' || activeTab === 'helpdesk_users' || activeTab === 'user_management') ? (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <AdminUserManagement isDarkMode={true} />
