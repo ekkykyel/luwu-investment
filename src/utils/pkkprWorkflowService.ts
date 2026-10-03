@@ -981,12 +981,19 @@ export async function dispatchNonBerusahaPkkprToPuptrQueue(payload: {
     updated_at: timestamp
   };
 
-  // Execute Promise.allSettled for maximum database resilience
-  await Promise.allSettled([
+  // Execute strict atomic writes to Supabase database
+  const [qRes, gisRes, invRes] = await Promise.all([
     supabase.from('mpp_queues').upsert([queuePayload]),
     supabase.from('gis_pkkpr').upsert([gisPayload]),
     supabase.from('investments').upsert([invPayload])
   ]);
+
+  if (gisRes.error) {
+    throw new Error(`GIS_PKKPR Insert Failed: ${gisRes.error.message}`);
+  }
+  if (qRes.error) {
+    throw new Error(`mpp_queues Sync Failed: ${qRes.error.message}`);
+  }
 
   // Send Cross-OPD notification to PUPTR Admin
   addCrossOpdNotification({

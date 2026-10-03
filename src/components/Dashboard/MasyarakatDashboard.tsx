@@ -1517,11 +1517,15 @@ export default function MasyarakatDashboard({
       let query = supabase.from("gis_pkkpr").select("*");
       
       const filters: string[] = [];
-      if (user?.id && isUuid(user.id)) {
+      if (user?.id) {
         filters.push(`user_id.eq.${user.id}`);
+        filters.push(`applicant_id.eq.${user.id}`);
       }
       if (currentCitizenNik) {
         filters.push(`nik_pemohon.eq.${currentCitizenNik}`);
+        filters.push(`user_id.eq.cit-${currentCitizenNik}`);
+        filters.push(`applicant_nik.eq.${currentCitizenNik}`);
+        filters.push(`applicant_id.eq.cit-${currentCitizenNik}`);
       }
 
       if (filters.length > 0) {
@@ -1963,97 +1967,106 @@ export default function MasyarakatDashboard({
         console.warn('[Guest Mode] mpp_citizens exception:', cErr);
       }
 
-      // Step 2: Create Virtual Queue Ticket for MPP Front Office & PUPTR Dispatch
-      try {
-        const queuePayload = sanitizeSupabasePayload({
-          id: docNumber,
-          ticket_code: virtualTicket,
-          instansi_code: 'PUPTR',
-          target_department: 'PUPTR',
-          user_id: validUserId,
-          citizen_nik: finalNik,
-          nik_pemohon: finalNik,
-          nama_pemohon: finalNama || 'Pemohon Online',
-          service_type: 'PKKPR',
-          service_name: `Izin PKKPR Tata Ruang (${pkkprCategory})`,
-          status: 'WAITING_PUPTR_VERIFICATION',
-          category: pkkprCategory,
-          source: 'ONLINE',
-          geometry_json: normalizedGeom,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        });
-        const { error: queueErr } = await supabase
-          .from('mpp_queues')
-          .insert(queuePayload);
-        if (queueErr) console.warn('[Guest Mode] mpp_queues insert note:', queueErr);
-      } catch (qErr) {
-        console.warn('[Guest Mode] mpp_queues exception:', qErr);
+      // Step 2: Create Virtual Queue Ticket for MPP Front Office & PUPTR Dispatch (Strict Error Checked)
+      const queuePayload = sanitizeSupabasePayload({
+        id: docNumber,
+        ticket_code: virtualTicket,
+        instansi_code: 'PUPTR',
+        target_department: 'PUPTR',
+        user_id: validUserId,
+        citizen_nik: finalNik,
+        nik_pemohon: finalNik,
+        nama_pemohon: finalNama || 'Pemohon Online',
+        service_type: 'PKKPR',
+        service_name: `Izin PKKPR Tata Ruang (${pkkprCategory})`,
+        status: 'WAITING_PUPTR_VERIFICATION',
+        category: pkkprCategory,
+        source: 'ONLINE',
+        geometry_json: normalizedGeom,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
+
+      const { error: queueErr } = await supabase
+        .from('mpp_queues')
+        .insert([queuePayload]);
+
+      if (queueErr) {
+        throw new Error(`Gagal menyimpan tiket antrean ke database (mpp_queues): ${queueErr.message}`);
       }
 
+      // Step 3: Insert Spatial & Legal Details into gis_pkkpr (Primary PostGIS Table)
+      const isIntersectLP2B = await checkLp2bIntersection(normalizedGeom);
+      const initialStatusPkkpr: PKKPRStatus = isIntersectLP2B ? 'VERIFIKASI_PERTANIAN' : 'BYPASS_PERTANIAN';
+
+      const formattedCatatanTeknis = [
+        `[Tiket Virtual FO: ${virtualTicket}]`,
+        `[Kategori: ${pkkprKategoriPengajuan === 'BANGUNAN' ? 'Konstruksi Bangunan Fisik' : 'Parsil Tanah Murni / ATR-BPN'}]`,
+        `[Jenis Pengajuan: ${pkkprJenisPengajuan}]`,
+        pkkprFungsiBangunan ? `[Fungsi: ${pkkprFungsiBangunan}]` : (pkkprCategory === "Berusaha" ? `[Fungsi: Komersial / Usaha ${pkkprKbli || ''}]` : ''),
+        pkkprBuktiTanahJenis ? `[Penguasaan Tanah: ${pkkprBuktiTanahJenis}${pkkprBuktiTanahNomor ? ` No. ${pkkprBuktiTanahNomor}` : ''}]` : '',
+        pkkprKategoriPengajuan === 'BANGUNAN' && pkkprLuasBangunan ? `[Rencana Luas Bangunan: ${pkkprLuasBangunan} m²]` : '',
+        `[Alamat Pemohon: ${(hydratedProfile as any).address || (pkkprDesa && pkkprKecamatan ? `Desa ${pkkprDesa}, Kec. ${pkkprKecamatan}, Kab. Luwu` : 'Kabupaten Luwu')}]`,
+        `[Lokasi Dimohon: Desa ${pkkprDesa}, Kec. ${pkkprKecamatan}, Kab. Luwu]`,
+        isIntersectLP2B ? '[Kajian LP2B: Beririsan Kawasan LP2B - Memerlukan Verifikasi Dinas Pertanian]' : '[Smart Spatial Bypass: Bebas LP2B - Langsung Menuju Verifikasi PUPTR]',
+        "Dalam proses analisis spasial tata ruang PUPTR."
+      ].filter(Boolean).join(" ");
+
+      const gisPayload = sanitizeSupabasePayload({
+        id: docNumber,
+        nomor_tiket: virtualTicket,
+        jenis_permohonan: pkkprCategory, // 'Berusaha' | 'Non-Berusaha'
+        nama_permohonan: pkkprTitle || (pkkprCategory === "Berusaha" ? "Permohonan PKKPR Usaha/Komersial" : "Permohonan PKKPR Rumah Tinggal / Fasos"),
+        nib_oss: pkkprCategory === "Berusaha" ? (pkkprNib || null) : null,
+        nama_badan_usaha: pkkprCategory === "Berusaha" ? (pkkprPerusahaan || null) : (pkkprNamaLembaga || null),
+        nama_pemohon: finalNama,
+        nik_pemohon: finalNik,
+        applicant_nik: finalNik,
+        applicant_id: validUserId,
+        no_whatsapp: kontak || null,
+        sektor: pkkprCategory === "Berusaha" ? "Komersial / Usaha" : "Non-Komersial / Perumahan",
+        jenis_pengajuan_pkkpr: pkkprJenisPengajuan,
+        kategori_pengajuan: pkkprKategoriPengajuan,
+        file_siteplan_url: pkkprKategoriPengajuan === 'BANGUNAN' ? (finalSiteplanUrl || null) : null,
+        rencana_luas_bgn: pkkprKategoriPengajuan === 'BANGUNAN' ? (Number(pkkprLuasBangunan) || null) : null,
+        luas_bangunan: pkkprKategoriPengajuan === 'BANGUNAN' ? (Number(pkkprLuasBangunan) || null) : null,
+        kecamatan: pkkprKecamatan,
+        desa_kelurahan: pkkprDesa,
+        luas_m2: pkkprLuasM2 || 500,
+        luas_ha: pkkprLuasM2 ? Number((pkkprLuasM2 / 10000).toFixed(4)) : 0.05,
+        geom: null,
+        geometry_json: normalizedGeom,
+        nama_berkas_kmz: "Batas_Poligon_Lokasi.kmz",
+        berkas_kmz_url: null,
+        status_pkkpr: initialStatusPkkpr,
+        status_permohonan: 'REVIEW_PUPTR',
+        tahap_proses: 'TAHAP 1: VERIFIKASI BERKAS & TATA RUANG (PUPTR)',
+        pertek_puptr_num: null,
+        berita_acara_pertanian_num: null,
+        sk_pkkpr_num: null,
+        catatan_teknis: formattedCatatanTeknis,
+        jenis_alas_hak: pkkprBuktiTanahJenis || "Sertipikat Hak Milik (SHM)",
+        file_alas_hak_url: finalSertifikatUrl || null,
+        bukti_tanah: `${pkkprBuktiTanahJenis}${pkkprBuktiTanahNomor ? ` (No. ${pkkprBuktiTanahNomor})` : ''}`,
+        user_id: validUserId,
+        created_by: validUserId,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        sertifikat_tanah_url: finalSertifikatUrl,
+        surat_pengantar_desa_url: finalSuratPengantarUrl,
+        berkas_legalitas_gabungan_url: finalBerkasGabunganUrl
+      });
+
+      const { error: gisErr } = await supabase
+        .from("gis_pkkpr")
+        .insert([gisPayload]);
+
+      if (gisErr) {
+        throw new Error(`Gagal menyimpan data spasial PKKPR ke database (gis_pkkpr): ${gisErr.message}`);
+      }
+
+      // Step 4: Insert into investments table (Secondary Fallback Table)
       try {
-        const isIntersectLP2B = await checkLp2bIntersection(normalizedGeom);
-        const initialStatusPkkpr: PKKPRStatus = isIntersectLP2B ? 'VERIFIKASI_PERTANIAN' : 'BYPASS_PERTANIAN';
-
-        const formattedCatatanTeknis = [
-          `[Tiket Virtual FO: ${virtualTicket}]`,
-          `[Kategori: ${pkkprKategoriPengajuan === 'BANGUNAN' ? 'Konstruksi Bangunan Fisik' : 'Parsil Tanah Murni / ATR-BPN'}]`,
-          `[Jenis Pengajuan: ${pkkprJenisPengajuan}]`,
-          pkkprFungsiBangunan ? `[Fungsi: ${pkkprFungsiBangunan}]` : (pkkprCategory === "Berusaha" ? `[Fungsi: Komersial / Usaha ${pkkprKbli || ''}]` : ''),
-          pkkprBuktiTanahJenis ? `[Penguasaan Tanah: ${pkkprBuktiTanahJenis}${pkkprBuktiTanahNomor ? ` No. ${pkkprBuktiTanahNomor}` : ''}]` : '',
-          pkkprKategoriPengajuan === 'BANGUNAN' && pkkprLuasBangunan ? `[Rencana Luas Bangunan: ${pkkprLuasBangunan} m²]` : '',
-          `[Alamat Pemohon: ${(hydratedProfile as any).address || (pkkprDesa && pkkprKecamatan ? `Desa ${pkkprDesa}, Kec. ${pkkprKecamatan}, Kab. Luwu` : 'Kabupaten Luwu')}]`,
-          `[Lokasi Dimohon: Desa ${pkkprDesa}, Kec. ${pkkprKecamatan}, Kab. Luwu]`,
-          isIntersectLP2B ? '[Kajian LP2B: Beririsan Kawasan LP2B - Memerlukan Verifikasi Dinas Pertanian]' : '[Smart Spatial Bypass: Bebas LP2B - Langsung Menuju Verifikasi PUPTR]',
-          "Dalam proses analisis spasial tata ruang PUPTR."
-        ].filter(Boolean).join(" ");
-
-        // 3. Insert into gis_pkkpr table (Primary PostGIS Spatial Table)
-        const gisPayload = sanitizeSupabasePayload({
-          id: docNumber,
-          nomor_tiket: virtualTicket,
-          jenis_permohonan: pkkprCategory, // 'Berusaha' | 'Non-Berusaha'
-          nama_permohonan: pkkprTitle || (pkkprCategory === "Berusaha" ? "Permohonan PKKPR Usaha/Komersial" : "Permohonan PKKPR Rumah Tinggal / Fasos"),
-          nib_oss: pkkprCategory === "Berusaha" ? (pkkprNib || null) : null,
-          nama_badan_usaha: pkkprCategory === "Berusaha" ? (pkkprPerusahaan || null) : (pkkprNamaLembaga || null),
-          nama_pemohon: finalNama,
-          nik_pemohon: finalNik,
-          no_whatsapp: kontak || null,
-          sektor: pkkprCategory === "Berusaha" ? "Komersial / Usaha" : "Non-Komersial / Perumahan",
-          jenis_pengajuan_pkkpr: pkkprJenisPengajuan,
-          kategori_pengajuan: pkkprKategoriPengajuan,
-          file_siteplan_url: pkkprKategoriPengajuan === 'BANGUNAN' ? (finalSiteplanUrl || null) : null,
-          rencana_luas_bgn: pkkprKategoriPengajuan === 'BANGUNAN' ? (Number(pkkprLuasBangunan) || null) : null,
-          luas_bangunan: pkkprKategoriPengajuan === 'BANGUNAN' ? (Number(pkkprLuasBangunan) || null) : null,
-          kecamatan: pkkprKecamatan,
-          desa_kelurahan: pkkprDesa,
-          luas_m2: pkkprLuasM2 || 500,
-          luas_ha: pkkprLuasM2 ? Number((pkkprLuasM2 / 10000).toFixed(4)) : 0.05,
-          geom: null,
-          geometry_json: normalizedGeom,
-          nama_berkas_kmz: "Batas_Poligon_Lokasi.kmz",
-          berkas_kmz_url: null,
-          status_pkkpr: initialStatusPkkpr,
-          status_permohonan: 'REVIEW_PUPTR',
-          tahap_proses: 'TAHAP 1: VERIFIKASI BERKAS & TATA RUANG (PUPTR)',
-          pertek_puptr_num: null,
-          berita_acara_pertanian_num: null,
-          sk_pkkpr_num: null,
-          catatan_teknis: formattedCatatanTeknis,
-          jenis_alas_hak: pkkprBuktiTanahJenis || "Sertipikat Hak Milik (SHM)",
-          file_alas_hak_url: finalSertifikatUrl || null,
-          bukti_tanah: `${pkkprBuktiTanahJenis}${pkkprBuktiTanahNomor ? ` (No. ${pkkprBuktiTanahNomor})` : ''}`,
-          user_id: validUserId,
-          created_by: validUserId,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          sertifikat_tanah_url: finalSertifikatUrl,
-          surat_pengantar_desa_url: finalSuratPengantarUrl,
-          berkas_legalitas_gabungan_url: finalBerkasGabunganUrl
-        });
-        await supabase.from("gis_pkkpr").insert(gisPayload);
-
-        // 4. Insert into investments table (Secondary Fallback Table)
         const invPayload = sanitizeSupabasePayload({
           id: docNumber,
           pkkpr_doc_number: virtualTicket,
@@ -2084,13 +2097,14 @@ export default function MasyarakatDashboard({
           created_by: validUserId,
           created_at: new Date().toISOString()
         });
-        await supabase.from("investments").insert(invPayload);
-      } catch (err) {
-        console.warn("Supabase insert warning:", err);
+        await supabase.from("investments").insert([invPayload]);
+      } catch (invErr) {
+        console.warn("Secondary investments table note:", invErr);
       }
 
-      // Refresh real applications directly from Supabase (Zero Dummy Policy)
+      // Immediate Realtime Refresh for Citizen History
       await fetchMyPkkprApplications();
+      setActiveTab("history");
 
       // Trigger Cross-OPD Notification to Admin Dinas PUPTR
       addCrossOpdNotification({
