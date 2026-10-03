@@ -38,7 +38,7 @@ import { InvestmentDetailModal } from "./InvestmentDetailModal";
 import { lazyWithRetry } from "../utils/lazyWithRetry";
 const SpatialBufferAiModal = lazyWithRetry(() => import("./SpatialBufferAiModal"));
 import HoverTooltip from "./HoverTooltip";
-import { useMapAnimationState } from "../hooks/useMapAnimationState";
+import { useMapAnimationState, getMapInstance } from "../hooks/useMapAnimationState";
 import AutoTranslatedText from "./AutoTranslatedText";
 
 const ICON_DICT: Record<string, string> = {
@@ -402,7 +402,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
   const updateViewportBounds = useCallback(() => {
     if (!mapRef.current) return;
     try {
-      const map = mapRef.current.getMap();
+      const map = getMapInstance(mapRef);
       if (!map) return;
       const bounds = map.getBounds();
       if (bounds) {
@@ -449,21 +449,23 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
   useImperativeHandle(ref, () => ({
     getCanvas: () => {
       try {
-        return mapRef.current?.getMap().getCanvas() || null;
+        const m = getMapInstance(mapRef);
+        return m?.getCanvas?.() || null;
       } catch (e) {
         return null;
       }
     },
     getMapInstance: () => {
       try {
-        return mapRef.current?.getMap() || null;
+        return getMapInstance(mapRef) || null;
       } catch (e) {
         return null;
       }
     },
     resizeMap: () => {
       try {
-        mapRef.current?.getMap()?.resize();
+        const m = getMapInstance(mapRef);
+        m?.resize?.();
       } catch (e) {
         undefined;
       }
@@ -493,9 +495,9 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
       }
     },
     fitBounds: (bounds: [number, number, number, number] | [[number, number], [number, number]], options?: any) => {
-      if (mapRef.current) {
+      const mapInstance = getMapInstance(mapRef);
+      if (mapInstance && typeof mapInstance.fitBounds === 'function') {
         try {
-          const mapInstance = (mapRef.current as any).getMap ? (mapRef.current as any).getMap() : mapRef.current;
           mapInstance.fitBounds(bounds, {
             padding: 50,
             duration: 1500,
@@ -504,17 +506,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
             ...options
           });
         } catch (e) {
-          try {
-            mapRef.current.fitBounds(bounds as any, {
-              padding: 50,
-              duration: 1500,
-              essential: true,
-              maxZoom: 15,
-              ...options
-            });
-          } catch (err) {
-            undefined;
-          }
+          console.warn("[MaplibreComponent] fitBounds error:", e);
         }
       }
     },
@@ -543,7 +535,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
     },
     setLayerVisibility: (layerId: string, isVisible: boolean) => {
       try {
-        const map = mapRef.current?.getMap();
+        const map = getMapInstance(mapRef);
         if (!map) return;
         const candidateLayerIds = [
           layerId,
@@ -612,7 +604,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
     },
     hasSource: (sourceId: string) => {
       try {
-        const map = mapRef.current?.getMap();
+        const map = getMapInstance(mapRef);
         if (!map) return false;
         return !!(map.getSource(sourceId) || map.getSource(`spatial-source-${sourceId}`));
       } catch (e) {
@@ -750,8 +742,8 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
   // Re-size MapLibre strictly when layout dimension shifts due to AI panel toggle
   useEffect(() => {
     if (mapRef.current) {
-      const map = mapRef.current.getMap();
-      if (map) {
+      const map = getMapInstance(mapRef);
+      if (map && typeof map.resize === 'function') {
         // Delay slighty to align with CSS transition (300ms) completion
         const timerId = setTimeout(() => {
           map.resize();
@@ -1262,7 +1254,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
 
   // Thematic Layer Tooltip Popup Engine (Lahan Basah, Sawah, Mangrove, Tambak, Tanah Kering Primer/Sekunder, Zonasi, Jalan)
   useEffect(() => {
-    const map = mapRef.current?.getMap();
+    const map = getMapInstance(mapRef);
     if (!map || !isMapLoaded) return;
 
     // @ts-ignore
@@ -1441,7 +1433,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
 
   // Dynamically position screen observer target elements based on their geo bounding box kawan
   const updateObserverPositions = useCallback(() => {
-    const map = mapRef.current?.getMap();
+    const map = getMapInstance(mapRef);
     if (!map) return;
 
     props.spatialLayers.forEach(layer => {
@@ -1492,7 +1484,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
           setDetailModalInvestmentId(urlId);
           
           // Trigger smooth map coordinates fly-to animation
-          const map = mapRef.current?.getMap();
+          const map = getMapInstance(mapRef);
           if (map) {
              map.flyTo({
                center: [found.longitude || (found as any).lng, found.latitude || (found as any).lat],
@@ -1557,7 +1549,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
 
   // Add direct map event listeners for high-frequency position updating kawan
   useEffect(() => {
-    const map = mapRef.current?.getMap();
+    const map = getMapInstance(mapRef);
     if (!map) return;
 
     let throttleTimer: any = null;
@@ -2162,7 +2154,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
   // Synchronize layers control visibility direct mapping to map libre styles using setLayoutProperty safely
   useEffect(() => {
     if (!isMapLoaded) return;
-    const map = mapRef.current?.getMap();
+    const map = getMapInstance(mapRef);
     if (!map) return;
     
     // Auto-arrange Z-Index so 'layer-jalan' is always on top of all polygons
@@ -2297,7 +2289,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
   const proximityAnimRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
-    const map = mapRef.current?.getMap();
+    const map = getMapInstance(mapRef);
     if (!props.proximityLineString || !map) {
       if (proximityAnimRef.current) cancelAnimationFrame(proximityAnimRef.current);
       return;
@@ -3004,7 +2996,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
       return;
     }
 
-    const map = mapRef.current?.getMap();
+    const map = getMapInstance(mapRef);
     if (!map) return;
 
     // Clear any active tooltip when clicking kawan!
@@ -3303,7 +3295,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
   // Unified Native Click Listener + Android Touch Listener for 100% cross-device tap response kawan!
   useEffect(() => {
     if (!isMapLoaded) return;
-    const map = mapRef.current?.getMap();
+    const map = getMapInstance(mapRef);
     if (!map) return;
 
     const handleNativeClick = (e: any) => {
@@ -3509,7 +3501,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
   const handleToggle3D = () => {
     if (!mapRef.current) return;
     triggerManualInteraction();
-    const map = mapRef.current.getMap();
+    const map = getMapInstance(mapRef);
     if (!map) return;
     
     const currentPitch = map.getPitch();
@@ -4033,13 +4025,13 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
         interactiveLayerIds={dynamicInteractiveLayerIds}
         onMouseEnter={(e) => {
           if (e.features && e.features.length > 0) {
-            const map = mapRef.current?.getMap();
-            if (map) map.getCanvas().style.cursor = 'pointer';
+            const map = getMapInstance(mapRef);
+            if (map && map.getCanvas) map.getCanvas().style.cursor = 'pointer';
           }
         }}
         onMouseLeave={() => {
-          const map = mapRef.current?.getMap();
-          if (map) map.getCanvas().style.cursor = '';
+          const map = getMapInstance(mapRef);
+          if (map && map.getCanvas) map.getCanvas().style.cursor = '';
         }}
         onLoad={(evt) => {
           const map = evt.target;

@@ -27,7 +27,7 @@ import { Check, X, MapPin, AlertCircle, RefreshCcw, AlertTriangle, Layers, Eye, 
 import Swal from "sweetalert2";
 import { supabase, safeFetchLayerData } from "../lib/supabaseClient";
 import { DEFAULT_LUWU_ZONING_GEOJSON } from "../utils/geoUtils";
-import { useMapAnimationState } from "../hooks/useMapAnimationState";
+import { useMapAnimationState, getMapInstance } from "../hooks/useMapAnimationState";
 
 interface SimplePolygonDrawerProps {
   onSave: (
@@ -545,8 +545,8 @@ export default function SimplePolygonDrawer({
   }, [activeBoundaryFeature, activeZoningData]);
 
   useEffect(() => {
-    const map = mapRef.current?.getMap();
-    if (map) {
+    const map = getMapInstance(mapRef);
+    if (map && typeof map.on === 'function') {
       map.on("draw.create", handleDrawEvent);
       map.on("draw.update", handleDrawEvent);
       map.on("draw.delete", handleDrawEvent);
@@ -554,7 +554,7 @@ export default function SimplePolygonDrawer({
       map.on("draw.modechange", handleDrawEvent);
     }
     return () => {
-      if (map) {
+      if (map && typeof map.off === 'function') {
         map.off("draw.create", handleDrawEvent);
         map.off("draw.update", handleDrawEvent);
         map.off("draw.delete", handleDrawEvent);
@@ -679,9 +679,9 @@ export default function SimplePolygonDrawer({
     setTimeout(() => {
       requestAnimationFrame(() => {
         try {
-          if (mapRef.current) {
-            const m = mapRef.current.getMap ? mapRef.current.getMap() : (mapRef.current as any);
-            m?.resize();
+          const m = getMapInstance(mapRef);
+          if (m && typeof m.resize === 'function') {
+            m.resize();
           }
         } catch (e) {}
       });

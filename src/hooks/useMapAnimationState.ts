@@ -1,5 +1,28 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 
+/**
+ * Safe helper to retrieve the raw MapLibre GL Map instance from various React ref or instance wrappers.
+ * Handles:
+ * 1. Direct MapLibre GL map instances (having .on, .flyTo, etc.)
+ * 2. React refs (e.g. useRef<MapRef> -> ref.current)
+ * 3. react-map-gl wrapper instances (having .getMap())
+ * 4. null / undefined safely
+ */
+export function getMapInstance(mapRefOrInstance: any): any {
+  if (!mapRefOrInstance) return null;
+  const target = mapRefOrInstance.current !== undefined ? mapRefOrInstance.current : mapRefOrInstance;
+  if (!target) return null;
+  if (typeof target.getMap === 'function') {
+    try {
+      const inner = target.getMap();
+      return inner || target;
+    } catch (e) {
+      return target;
+    }
+  }
+  return target;
+}
+
 export interface UseMapAnimationStateOptions {
   /**
    * Duration in milliseconds that manualUserInteraction stays active after a mouse or touch event.
@@ -56,8 +79,8 @@ export function useMapAnimationState(
   const wrapMapInstance = useCallback((map: any) => {
     if (!map) return map;
 
-    // Resolve MapLibre instance if react-map-gl ref is passed
-    const rawMap = typeof map.getMap === 'function' ? map.getMap() : map;
+    // Resolve MapLibre instance safely
+    const rawMap = getMapInstance(map);
     if (!rawMap || typeof rawMap.on !== 'function') return map;
 
     // Prevent double-wrapping
@@ -103,12 +126,7 @@ export function useMapAnimationState(
   useEffect(() => {
     if (!mapInstanceOrRef) return;
 
-    const rawMap = typeof mapInstanceOrRef.getMap === 'function' 
-      ? mapInstanceOrRef.getMap() 
-      : (mapInstanceOrRef.current 
-          ? (typeof mapInstanceOrRef.current.getMap === 'function' ? mapInstanceOrRef.current.getMap() : mapInstanceOrRef.current)
-          : mapInstanceOrRef);
-
+    const rawMap = getMapInstance(mapInstanceOrRef);
     if (!rawMap || typeof rawMap.on !== 'function') return;
 
     // Wrap the map methods
