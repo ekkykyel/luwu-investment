@@ -3,7 +3,7 @@ import { requestSmartFullscreen, exitSmartFullscreen } from "../../utils/fullscr
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { booleanPointInPolygon, point, area as turfArea, center as turfCenter, feature as turfFeature } from '@turf/turf';
+import { booleanPointInPolygon, point, area as turfArea, center as turfCenter, feature as turfFeature, bbox as turfBbox } from '@turf/turf';
 import { 
   X, Send, MapPin, Building2, Phone, User, AlertCircle, Camera, 
   Upload, LogOut, RefreshCw, CheckCircle2, Shield, ShieldCheck, FileText, 
@@ -681,6 +681,21 @@ export default function MasyarakatDashboard({
   const [pkkprSelectedDesaId, setPkkprSelectedDesaId] = useState("");
   const [pkkprSelectedDesaGeom, setPkkprSelectedDesaGeom] = useState<any>(null);
 
+  const villageBbox = useMemo(() => {
+    if (pkkprSelectedDesaGeom) {
+      try {
+        const feat = pkkprSelectedDesaGeom.type === 'Feature'
+          ? pkkprSelectedDesaGeom
+          : turfFeature(pkkprSelectedDesaGeom.geometry || pkkprSelectedDesaGeom.geom || pkkprSelectedDesaGeom);
+        const box = turfBbox(feat);
+        if (box && box.length === 4 && !box.some(isNaN) && box[0] >= 118 && box[2] <= 122 && box[1] >= -5 && box[3] <= -1) {
+          return box as [number, number, number, number];
+        }
+      } catch (e) {}
+    }
+    return undefined;
+  }, [pkkprSelectedDesaGeom]);
+
   const villageCoords = useMemo(() => {
     if (pkkprSelectedDesaGeom) {
       try {
@@ -700,6 +715,24 @@ export default function MasyarakatDashboard({
     }
     return undefined;
   }, [pkkprSelectedDesaGeom]);
+
+  const districtBbox = useMemo(() => {
+    if (pkkprKecamatan) {
+      const matchKec = kecamatanList.find((k) => isSameDistrict(k.name || k.kecamatan || k.nama_kecamatan || "", pkkprKecamatan)) ||
+                       districts?.find((d) => isSameDistrict(d.name || "", pkkprKecamatan));
+      if (matchKec && (matchKec.geom || matchKec.geometry || matchKec.geojson)) {
+        try {
+          const g = matchKec.geom || matchKec.geometry || matchKec.geojson;
+          const feat = g.type === 'Feature' ? g : turfFeature(g.geometry || g);
+          const box = turfBbox(feat);
+          if (box && box.length === 4 && !box.some(isNaN) && box[0] >= 118 && box[2] <= 122 && box[1] >= -5 && box[3] <= -1) {
+            return box as [number, number, number, number];
+          }
+        } catch (e) {}
+      }
+    }
+    return undefined;
+  }, [pkkprKecamatan, kecamatanList, districts]);
 
   const districtCoords = useMemo(() => {
     if (pkkprKecamatan) {
@@ -728,11 +761,13 @@ export default function MasyarakatDashboard({
     districtName: pkkprKecamatan,
     districtId: pkkprSelectedKecId,
     districtCoords,
+    districtBbox,
     villageName: pkkprDesa,
     villageId: pkkprSelectedDesaId,
     villageCoords,
+    villageBbox,
     villageGeojson: pkkprSelectedDesaGeom
-  }), [pkkprKecamatan, pkkprSelectedKecId, districtCoords, pkkprDesa, pkkprSelectedDesaId, villageCoords, pkkprSelectedDesaGeom]);
+  }), [pkkprKecamatan, pkkprSelectedKecId, districtCoords, districtBbox, pkkprDesa, pkkprSelectedDesaId, villageCoords, villageBbox, pkkprSelectedDesaGeom]);
 
   // Spatial Read-Only Lock State for KML/KMZ Auto-Detection
   const [isPkkprLocationLocked, setIsPkkprLocationLocked] = useState(false);

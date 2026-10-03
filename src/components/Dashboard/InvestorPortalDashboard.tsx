@@ -62,7 +62,7 @@ import {
 import MppQueueRegistrationModal from '../MppQueueRegistrationModal';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid, ReferenceLine, Legend } from 'recharts';
 import Swal from 'sweetalert2';
-import { area, center as turfCenter, feature as turfFeature } from '@turf/turf';
+import { area, center as turfCenter, feature as turfFeature, bbox as turfBbox } from '@turf/turf';
 import { supabase, handleSupabaseError } from '../../lib/supabaseClient';
 import { Investment, SektorInvestasi, District } from '../../types.js';
 import { SECTOR_COLORS } from '../../lib/constants.js';
@@ -276,6 +276,21 @@ export default function InvestorPortalDashboard() {
   const [pkkprSelectedDesaId, setPkkprSelectedDesaId] = useState("");
   const [pkkprSelectedDesaGeom, setPkkprSelectedDesaGeom] = useState<any>(null);
 
+  const villageBbox = useMemo(() => {
+    if (pkkprSelectedDesaGeom) {
+      try {
+        const feat = pkkprSelectedDesaGeom.type === 'Feature'
+          ? pkkprSelectedDesaGeom
+          : turfFeature(pkkprSelectedDesaGeom.geometry || pkkprSelectedDesaGeom.geom || pkkprSelectedDesaGeom);
+        const box = turfBbox(feat);
+        if (box && box.length === 4 && !box.some(isNaN) && box[0] >= 118 && box[2] <= 122 && box[1] >= -5 && box[3] <= -1) {
+          return box as [number, number, number, number];
+        }
+      } catch (e) {}
+    }
+    return undefined;
+  }, [pkkprSelectedDesaGeom]);
+
   const villageCoords = useMemo(() => {
     if (pkkprSelectedDesaGeom) {
       try {
@@ -295,6 +310,23 @@ export default function InvestorPortalDashboard() {
     }
     return undefined;
   }, [pkkprSelectedDesaGeom]);
+
+  const districtBbox = useMemo(() => {
+    if (pkkprKecamatan) {
+      const matchKec = districts?.find((d) => (d.name || d.kecamatan || "").toLowerCase().includes(pkkprKecamatan.toLowerCase()));
+      if (matchKec && (matchKec.geom || matchKec.geometry || matchKec.geojson)) {
+        try {
+          const g = matchKec.geom || matchKec.geometry || matchKec.geojson;
+          const feat = g.type === 'Feature' ? g : turfFeature(g.geometry || g);
+          const box = turfBbox(feat);
+          if (box && box.length === 4 && !box.some(isNaN) && box[0] >= 118 && box[2] <= 122 && box[1] >= -5 && box[3] <= -1) {
+            return box as [number, number, number, number];
+          }
+        } catch (e) {}
+      }
+    }
+    return undefined;
+  }, [pkkprKecamatan, districts]);
 
   const districtCoords = useMemo(() => {
     if (pkkprKecamatan) {
@@ -322,11 +354,13 @@ export default function InvestorPortalDashboard() {
     districtName: pkkprKecamatan,
     districtId: pkkprSelectedKecId,
     districtCoords,
+    districtBbox,
     villageName: pkkprDesa,
     villageId: pkkprSelectedDesaId,
     villageCoords,
+    villageBbox,
     villageGeojson: pkkprSelectedDesaGeom
-  }), [pkkprKecamatan, pkkprSelectedKecId, districtCoords, pkkprDesa, pkkprSelectedDesaId, villageCoords, pkkprSelectedDesaGeom]);
+  }), [pkkprKecamatan, pkkprSelectedKecId, districtCoords, districtBbox, pkkprDesa, pkkprSelectedDesaId, villageCoords, villageBbox, pkkprSelectedDesaGeom]);
 
   // Spatial Read-Only Lock State for Corporate KML/KMZ Auto-Detection
   const [isPkkprLocationLocked, setIsPkkprLocationLocked] = useState(false);

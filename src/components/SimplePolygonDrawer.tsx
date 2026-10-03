@@ -48,10 +48,12 @@ interface SimplePolygonDrawerProps {
     districtId?: string;
     districtName?: string;
     districtCoords?: [number, number];
+    districtBbox?: [number, number, number, number];
     districtGeojson?: any;
     villageId?: string;
     villageName?: string;
     villageCoords?: [number, number];
+    villageBbox?: [number, number, number, number];
     villageGeojson?: any;
   };
 }
@@ -96,6 +98,8 @@ export default function SimplePolygonDrawer({
   
   // Layer visibility controls
   const [showInvertedMask, setShowInvertedMask] = useState<boolean>(true);
+  const [showKecamatanLayer, setShowKecamatanLayer] = useState<boolean>(true);
+  const [showDesaLayer, setShowDesaLayer] = useState<boolean>(true);
   const [showZoningLayer, setShowZoningLayer] = useState<boolean>(true);
   const [showSawahLayer, setShowSawahLayer] = useState<boolean>(true);
   const [showTambakLayer, setShowTambakLayer] = useState<boolean>(true);
@@ -129,18 +133,28 @@ export default function SimplePolygonDrawer({
       return [c1, c2];
     };
 
-    const center = getCorrectedCenter(focusTarget?.villageCoords) ||
-                   getCorrectedCenter(focusTarget?.districtCoords) ||
-                   [120.252, -3.203];
+    let center: [number, number] | null = null;
+
+    if (focusTarget?.villageBbox) {
+      const b = focusTarget.villageBbox;
+      center = [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2];
+    } else if (focusTarget?.districtBbox) {
+      const b = focusTarget.districtBbox;
+      center = [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2];
+    } else {
+      center = getCorrectedCenter(focusTarget?.villageCoords) ||
+               getCorrectedCenter(focusTarget?.districtCoords) ||
+               [120.252, -3.203];
+    }
 
     return {
       longitude: center[0],
       latitude: center[1],
-      zoom: (focusTarget?.villageCoords || focusTarget?.villageId || focusTarget?.villageName) ? 14.5 : (focusTarget?.districtCoords || focusTarget?.districtId || focusTarget?.districtName) ? 12.5 : 11,
+      zoom: (focusTarget?.villageBbox || focusTarget?.villageCoords || focusTarget?.villageId || focusTarget?.villageName) ? 14.8 : (focusTarget?.districtBbox || focusTarget?.districtCoords || focusTarget?.districtId || focusTarget?.districtName) ? 12.8 : 11,
       pitch: 0,
       bearing: 0
     };
-  }, [focusTarget?.villageCoords, focusTarget?.districtCoords, focusTarget?.villageId, focusTarget?.districtId, focusTarget?.villageName, focusTarget?.districtName]);
+  }, [focusTarget?.villageBbox, focusTarget?.districtBbox, focusTarget?.villageCoords, focusTarget?.districtCoords, focusTarget?.villageId, focusTarget?.districtId, focusTarget?.villageName, focusTarget?.districtName]);
 
   const [zoningDataState, setZoningDataState] = useState<any>(null);
 
@@ -792,6 +806,36 @@ export default function SimplePolygonDrawer({
             <span>Kliping Masker</span>
           </button>
 
+          {/* Batas Kecamatan */}
+          <button
+            type="button"
+            onClick={() => setShowKecamatanLayer(!showKecamatanLayer)}
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer border ${
+              showKecamatanLayer
+                ? "bg-amber-600/30 text-amber-300 border-amber-500/50"
+                : "bg-slate-800 text-slate-400 border-slate-700 hover:text-slate-200"
+            }`}
+            title="Toggle Overlay Batas Kecamatan"
+          >
+            <MapPin className="w-3.5 h-3.5 text-amber-400" />
+            <span>Kecamatan</span>
+          </button>
+
+          {/* Batas Desa */}
+          <button
+            type="button"
+            onClick={() => setShowDesaLayer(!showDesaLayer)}
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer border ${
+              showDesaLayer
+                ? "bg-teal-600/30 text-teal-300 border-teal-500/50"
+                : "bg-slate-800 text-slate-400 border-slate-700 hover:text-slate-200"
+            }`}
+            title="Toggle Overlay Batas Desa"
+          >
+            <Compass className="w-3.5 h-3.5 text-teal-400" />
+            <span>Desa</span>
+          </button>
+
           <div className="h-4 w-[1px] bg-white/20" />
 
           {/* Zonasi Pemanfaatan Lahan */}
@@ -943,8 +987,55 @@ export default function SimplePolygonDrawer({
         >
           <NavigationControl position="top-right" />
           
-          {/* ── 1. CONTEXTUAL THEMATIC LAYERS (VISIBLE INSIDE UNMASKED HOLE) ── */}
-          
+          {/* ── 1. ADMINISTRATIVE & CONTEXTUAL THEMATIC LAYERS ── */}
+
+          {/* Layer Administrative: Kecamatan Boundaries */}
+          {showKecamatanLayer && kecamatanData && (
+            <Source id="kecamatan-layer-source" type="geojson" data={kecamatanData}>
+              <Layer
+                id="kecamatan-layer-fill"
+                type="fill"
+                paint={{
+                  "fill-color": "#f59e0b",
+                  "fill-opacity": 0.05
+                }}
+              />
+              <Layer
+                id="kecamatan-layer-stroke"
+                type="line"
+                paint={{
+                  "line-color": "#f59e0b",
+                  "line-width": 2,
+                  "line-dasharray": [2, 2],
+                  "line-opacity": 0.85
+                }}
+              />
+            </Source>
+          )}
+
+          {/* Layer Administrative: Desa Boundaries & Labels */}
+          {showDesaLayer && desaData && (
+            <Source id="desa-layer-source" type="geojson" data={desaData}>
+              <Layer
+                id="desa-layer-fill"
+                type="fill"
+                paint={{
+                  "fill-color": "#14b8a6",
+                  "fill-opacity": 0.08
+                }}
+              />
+              <Layer
+                id="desa-layer-stroke"
+                type="line"
+                paint={{
+                  "line-color": "#0d9488",
+                  "line-width": 1.5,
+                  "line-opacity": 0.9
+                }}
+              />
+            </Source>
+          )}
+
           {/* Layer 1: Zonasi Kawasan (RTRW / Perda 06/2011) */}
           {showZoningLayer && activeZoningData && (
             <Source id="zoning-source" type="geojson" data={activeZoningData}>
