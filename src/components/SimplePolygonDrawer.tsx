@@ -42,6 +42,10 @@ interface SimplePolygonDrawerProps {
   onCancel: () => void;
   initialGeometry?: any;
   isDarkMode?: boolean;
+  selectedKecId?: string;
+  selectedDesaId?: string;
+  kecamatanName?: string;
+  desaName?: string;
   roadGeojson?: any;
   zoningGeojson?: any;
   sawahGeojson?: any;
@@ -86,6 +90,10 @@ export default function SimplePolygonDrawer({
   onCancel,
   initialGeometry,
   isDarkMode = false,
+  selectedKecId,
+  selectedDesaId,
+  kecamatanName,
+  desaName,
   roadGeojson,
   zoningGeojson,
   sawahGeojson,
@@ -96,6 +104,27 @@ export default function SimplePolygonDrawer({
   const mapRef = useRef<MapRef>(null);
   const { manualUserInteraction, triggerManualInteraction } = useMapAnimationState(mapRef);
   const drawRef = useRef<any>(null);
+
+  // ─── ONE-TIME INITIALIZATION FLAG ───
+  const hasCenteredRef = useRef<boolean>(false);
+
+  // Extract stable primitive strings to prevent non-memoized object re-renders
+  const targetKecId = selectedKecId || focusTarget?.districtId || "";
+  const targetKecName = kecamatanName || focusTarget?.districtName || "";
+  const targetDesaId = selectedDesaId || focusTarget?.villageId || "";
+  const targetDesaName = desaName || focusTarget?.villageName || "";
+
+  // Reset hasCenteredRef only when the drawer/modal closes or unmounts
+  useEffect(() => {
+    return () => {
+      hasCenteredRef.current = false;
+    };
+  }, []);
+
+  const handleClose = useCallback(() => {
+    hasCenteredRef.current = false;
+    onCancel();
+  }, [onCancel]);
   
   // Basemap switcher state: streets vs satellite
   const [basemap, setBasemap] = useState<"streets" | "satellite">("satellite");
@@ -128,19 +157,19 @@ export default function SimplePolygonDrawer({
 
   const [fetchedBoundaryGeojson, setFetchedBoundaryGeojson] = useState<any>(null);
 
-  // ─── DYNAMIC SUPABASE FETCH FOR BOUNDARY CLIPPING ───
+  // ─── DYNAMIC SUPABASE FETCH FOR BOUNDARY CLIPPING (PRIMITIVE DEPENDENCIES) ───
   useEffect(() => {
     let isMounted = true;
     const fetchBoundary = async () => {
       // 1. Try to fetch Village Boundary
-      if (focusTarget?.villageId || focusTarget?.villageName) {
-        if (!focusTarget.villageGeojson) {
+      if (targetDesaId || targetDesaName) {
+        if (!focusTarget?.villageGeojson) {
           const data = await safeFetchLayerData("gis_desa");
           if (data && isMounted) {
             const features = data.type === 'FeatureCollection' ? data.features : data;
             const match = features.find((f: any) => 
-              String(f.properties?.ID_DESA || f.properties?.id) === String(focusTarget.villageId) ||
-              (f.properties?.DESA || f.properties?.desa || f.properties?.NAME || "").toLowerCase().includes((focusTarget.villageName || "___INVALID___").toLowerCase())
+              String(f.properties?.ID_DESA || f.properties?.id) === targetDesaId ||
+              (f.properties?.DESA || f.properties?.desa || f.properties?.NAME || "").toLowerCase().includes(targetDesaName.toLowerCase())
             );
             if (match) {
               setFetchedBoundaryGeojson({ type: "Feature", geometry: match.geometry || match.geom, properties: match.properties });
@@ -151,14 +180,14 @@ export default function SimplePolygonDrawer({
       }
       
       // 2. Fallback to fetch District Boundary
-      if (focusTarget?.districtId || focusTarget?.districtName) {
-        if (!focusTarget.districtGeojson) {
+      if (targetKecId || targetKecName) {
+        if (!focusTarget?.districtGeojson) {
           const data = await safeFetchLayerData("gis_kecamatan");
           if (data && isMounted) {
             const features = data.type === 'FeatureCollection' ? data.features : data;
             const match = features.find((f: any) => 
-              String(f.properties?.ID_KEC || f.properties?.id) === String(focusTarget.districtId) ||
-              (f.properties?.KECAMATAN || f.properties?.kecamatan || f.properties?.NAME || "").toLowerCase().includes((focusTarget.districtName || "___INVALID___").toLowerCase())
+              String(f.properties?.ID_KEC || f.properties?.id) === targetKecId ||
+              (f.properties?.KECAMATAN || f.properties?.kecamatan || f.properties?.NAME || "").toLowerCase().includes(targetKecName.toLowerCase())
             );
             if (match) {
               setFetchedBoundaryGeojson({ type: "Feature", geometry: match.geometry || match.geom, properties: match.properties });
@@ -170,9 +199,9 @@ export default function SimplePolygonDrawer({
     };
     fetchBoundary();
     return () => { isMounted = false; };
-  }, [focusTarget?.villageId, focusTarget?.villageName, focusTarget?.districtId, focusTarget?.districtName]);
+  }, [targetDesaId, targetDesaName, targetKecId, targetKecName]);
 
-  // ─── ACTIVE ADMINISTRATIVE BOUNDARY EXTRACTION ───
+  // ─── ACTIVE ADMINISTRATIVE BOUNDARY EXTRACTION (STABILIZED DEPENDENCIES) ───
   const activeBoundaryFeature = useMemo(() => {
     // Priority 0: Dynamically fetched boundary from Supabase
     if (fetchedBoundaryGeojson) {
@@ -187,12 +216,12 @@ export default function SimplePolygonDrawer({
     }
 
     // Priority 2: Match Village from loaded desaData
-    if (desaData && desaData.features && focusTarget?.villageId) {
+    if (desaData && desaData.features && targetDesaId) {
       const match = desaData.features.find((f: any) => {
         const name = (f.properties?.DESA || f.properties?.desa || f.properties?.NAME || "").toLowerCase();
         const id = (f.properties?.ID_DESA || f.properties?.id || "").toLowerCase();
-        return id === focusTarget.villageId.toLowerCase() ||
-               name.includes(focusTarget.villageName?.toLowerCase() || "___INVALID___");
+        return id === targetDesaId.toLowerCase() ||
+               (targetDesaName && name.includes(targetDesaName.toLowerCase()));
       });
       if (match) return match;
     }
@@ -205,19 +234,19 @@ export default function SimplePolygonDrawer({
     }
 
     // Priority 4: Match District from loaded kecamatanData
-    if (kecamatanData && kecamatanData.features && focusTarget?.districtId) {
+    if (kecamatanData && kecamatanData.features && targetKecId) {
       const match = kecamatanData.features.find((f: any) => {
         const rawName = f.properties?.KECAMATAN || f.properties?.kecamatan || f.properties?.NAME || "";
         const cleanName = rawName.toLowerCase().replace(/kec\.\s*/i, "").trim().replace(/\s+/g, "_");
         const idFromName = `dist_${cleanName}`;
-        return idFromName === String(focusTarget.districtId || "").toLowerCase() ||
-               rawName.toLowerCase().includes(String(focusTarget.districtName || "").toLowerCase() || "___INVALID___");
+        return idFromName === targetKecId.toLowerCase() ||
+               (targetKecName && rawName.toLowerCase().includes(targetKecName.toLowerCase()));
       });
       if (match) return match;
     }
 
     return null;
-  }, [focusTarget, desaData, kecamatanData, fetchedBoundaryGeojson]);
+  }, [targetDesaId, targetDesaName, targetKecId, targetKecName, desaData, kecamatanData, fetchedBoundaryGeojson, focusTarget?.villageGeojson, focusTarget?.districtGeojson]);
 
   // ─── MEMOIZED BOUNDING BOX & CENTROID STORE ───
   const activeGeometryBounds = useMemo(() => {
@@ -519,10 +548,111 @@ export default function SimplePolygonDrawer({
     };
   }, [handleDrawEvent]);
 
+  // ─── ONE-TIME INSTANT CAMERA CENTERING (JUMPTO ONLY - NO FLYTO/EASETO ANIMATION) ───
+  const centerMapOnce = useCallback((map: any) => {
+    if (!map || hasCenteredRef.current) return;
+
+    try {
+      // 1. Priority: initialGeometry (if editing existing saved polygon)
+      if (initialGeometry && initialGeometry.coordinates && initialGeometry.coordinates.length > 0) {
+        const featureObj = { type: "Feature" as const, properties: {}, geometry: initialGeometry };
+        const box = turf.bbox(featureObj);
+        if (box && box.length === 4 && !box.some(isNaN) && box[0] >= 118 && box[2] <= 122 && box[1] >= -5 && box[3] <= -1) {
+          const centerLng = (box[0] + box[2]) / 2;
+          const centerLat = (box[1] + box[3]) / 2;
+          map.jumpTo({
+            center: [centerLng, centerLat],
+            zoom: 15,
+            pitch: 0,
+            bearing: 0
+          });
+          hasCenteredRef.current = true;
+          return;
+        }
+      }
+
+      // 2. Priority: Pre-computed villageBbox / villageCoords
+      if (focusTarget?.villageBbox && Array.isArray(focusTarget.villageBbox) && focusTarget.villageBbox.length === 4) {
+        const box = focusTarget.villageBbox;
+        const centerLng = (box[0] + box[2]) / 2;
+        const centerLat = (box[1] + box[3]) / 2;
+        map.jumpTo({
+          center: [centerLng, centerLat],
+          zoom: 14.5,
+          pitch: 0,
+          bearing: 0
+        });
+        hasCenteredRef.current = true;
+        return;
+      }
+
+      if (focusTarget?.villageCoords && Array.isArray(focusTarget.villageCoords) && focusTarget.villageCoords.length === 2) {
+        const [cLng, cLat] = focusTarget.villageCoords;
+        if (cLng >= 118 && cLng <= 122 && cLat >= -5 && cLat <= -1) {
+          map.jumpTo({
+            center: [cLng, cLat],
+            zoom: 14,
+            pitch: 0,
+            bearing: 0
+          });
+          hasCenteredRef.current = true;
+          return;
+        }
+      }
+
+      // 3. Priority: Pre-computed districtCoords / districtBbox
+      if (focusTarget?.districtBbox && Array.isArray(focusTarget.districtBbox) && focusTarget.districtBbox.length === 4) {
+        const box = focusTarget.districtBbox;
+        const centerLng = (box[0] + box[2]) / 2;
+        const centerLat = (box[1] + box[3]) / 2;
+        map.jumpTo({
+          center: [centerLng, centerLat],
+          zoom: 12.5,
+          pitch: 0,
+          bearing: 0
+        });
+        hasCenteredRef.current = true;
+        return;
+      }
+
+      if (focusTarget?.districtCoords && Array.isArray(focusTarget.districtCoords) && focusTarget.districtCoords.length === 2) {
+        const [cLng, cLat] = focusTarget.districtCoords;
+        if (cLng >= 118 && cLng <= 122 && cLat >= -5 && cLat <= -1) {
+          map.jumpTo({
+            center: [cLng, cLat],
+            zoom: 12,
+            pitch: 0,
+            bearing: 0
+          });
+          hasCenteredRef.current = true;
+          return;
+        }
+      }
+
+      // 4. Default Luwu center
+      map.jumpTo({
+        center: [120.252, -3.203],
+        zoom: 11,
+        pitch: 0,
+        bearing: 0
+      });
+      hasCenteredRef.current = true;
+    } catch (e) {
+      console.warn("[SimplePolygonDrawer] Error in centerMapOnce:", e);
+      hasCenteredRef.current = true;
+    }
+  }, [initialGeometry, focusTarget?.villageCoords, focusTarget?.villageBbox, focusTarget?.districtCoords, focusTarget?.districtBbox]);
+
   const onMapLoad = useCallback((e: any) => {
     const map = e.target;
     if (!map) return;
     mapRef.current = map;
+
+    // Trigger one-time instant camera centering
+    if (!hasCenteredRef.current) {
+      centerMapOnce(map);
+      hasCenteredRef.current = true;
+    }
 
     // Trigger map.resize() smoothly in next animation frame after modal transition completes
     setTimeout(() => {
@@ -692,7 +822,7 @@ export default function SimplePolygonDrawer({
           </button>
           
           <button
-            onClick={onCancel}
+            onClick={handleClose}
             className="flex items-center gap-1 px-3 py-1.5 bg-rose-600/20 text-rose-400 hover:bg-rose-600/30 border border-rose-500/30 rounded-lg text-xs font-semibold transition"
             title="Batal"
           >

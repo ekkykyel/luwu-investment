@@ -3884,6 +3884,10 @@ Ulas secara mendalam:
         <SimplePolygonDrawer
           isDarkMode={isDarkTheme}
           onCancel={() => setIsDrawerOpen(false)}
+          selectedKecId={pkkprSelectedKecId}
+          selectedDesaId={pkkprSelectedDesaId}
+          kecamatanName={pkkprKecamatan}
+          desaName={pkkprDesa}
           focusTarget={drawerFocusTarget}
           initialGeometry={pkkprGeometry}
           onSave={(geom, esg) => {

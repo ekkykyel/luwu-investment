@@ -720,14 +720,12 @@ export default function PuptrSpatialEditorDashboard({
     setFeatureProperties(updatedProps);
     setIsDirty(true);
 
-    // 4. Otomatisasi flyTo ke Kecamatan yang dipilih
+    // 4. Update kamera instan ke Kecamatan yang dipilih
     if (mapRef.current) {
-      mapRef.current.flyTo({
+      mapRef.current.jumpTo({
         center: [kecInfo.lng, kecInfo.lat],
         zoom: 13.5,
-        duration: 1800,
-        pitch: 20,
-        essential: true
+        pitch: 20
       });
     }
 
@@ -814,16 +812,14 @@ export default function PuptrSpatialEditorDashboard({
     setFeatureProperties(updatedProps);
     setIsDirty(true);
 
-    // Otomatisasi flyTo ke Desa / Kelurahan yang dipilih
+    // Update kamera instan ke Desa / Kelurahan yang dipilih
     const desaLookupKey = `${currentKec}_${newDesa}`.toLowerCase();
     const desaInfo = (LUWU_DESA_COORDINATES as any)[desaLookupKey] || (LUWU_DESA_COORDINATES as any)[newDesa.toLowerCase()];
     if (desaInfo && mapRef.current) {
-      mapRef.current.flyTo({
+      mapRef.current.jumpTo({
         center: [desaInfo.lng, desaInfo.lat],
         zoom: 14.6,
-        duration: 1600,
-        pitch: 20,
-        essential: true
+        pitch: 20
       });
     }
   };
@@ -839,10 +835,9 @@ export default function PuptrSpatialEditorDashboard({
     handleSelectTool('polygon');
 
     if (mapRef.current) {
-      mapRef.current.flyTo({
+      mapRef.current.jumpTo({
         center: [kecInfo.lng, kecInfo.lat],
-        zoom: 13.5,
-        duration: 1200
+        zoom: 13.5
       });
     }
   };

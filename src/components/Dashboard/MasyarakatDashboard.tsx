@@ -5104,6 +5104,10 @@ export default function MasyarakatDashboard({
               <SimplePolygonDrawer
                 isDarkMode={isDarkMode}
                 onCancel={() => setIsDrawerOpen(false)}
+                selectedKecId={pkkprSelectedKecId}
+                selectedDesaId={pkkprSelectedDesaId}
+                kecamatanName={pkkprKecamatan}
+                desaName={pkkprDesa}
                 focusTarget={drawerFocusTarget}
                 initialGeometry={pkkprGeometry}
                 onSave={(geom, esg) => {

@@ -136,6 +136,7 @@ function ComplaintPin({ color, pulse }: { color: string; pulse: boolean }) {
 export default function DalakMap({ isDarkMode = true, complaints = [] }: DalakMapProps) {
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
   const mapRef = useRef<any>(null);
+  const hasCenteredRef = useRef<boolean>(false);
 
   // Only render pins that have valid GPS coordinates
   const mappableComplaints = complaints.filter(
@@ -146,20 +147,19 @@ export default function DalakMap({ isDarkMode = true, complaints = [] }: DalakMa
       !isNaN(Number(c.longitude))
   );
 
-  // Auto-fit map bounds to all complaint markers when data loads
+  // Auto-fit map bounds to all complaint markers only once when data loads
   useEffect(() => {
-    if (!mapRef.current || mappableComplaints.length === 0) return;
+    if (!mapRef.current || mappableComplaints.length === 0 || hasCenteredRef.current) return;
     const map = (mapRef.current as any).getMap?.() ?? mapRef.current;
     if (!map) return;
 
     if (mappableComplaints.length === 1) {
       const c = mappableComplaints[0];
-      map.flyTo({
+      map.jumpTo({
         center: [Number(c.longitude), Number(c.latitude)],
         zoom: 12,
-        duration: 1400,
-        essential: true,
       });
+      hasCenteredRef.current = true;
       return;
     }
 
@@ -171,8 +171,9 @@ export default function DalakMap({ isDarkMode = true, complaints = [] }: DalakMa
           [Math.min(...lngs) - 0.05, Math.min(...lats) - 0.05],
           [Math.max(...lngs) + 0.05, Math.max(...lats) + 0.05],
         ],
-        { padding: 60, duration: 1400, maxZoom: 13 }
+        { padding: 60, maxZoom: 13, animate: false }
       );
+      hasCenteredRef.current = true;
     } catch {
       // map may not be ready yet — ignore
     }
