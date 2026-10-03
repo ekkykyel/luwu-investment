@@ -110,28 +110,28 @@ export const KiosMandiriSection: React.FC<KiosMandiriSectionProps> = ({
       )}
 
       {/* 2. HERO WELCOME & TOUCH INSTRUCTION BANNER */}
-      <main className={className || "w-full max-w-xl mx-auto px-4 pt-6 pb-24 space-y-6 text-slate-100"}>
-        <div className="space-y-3">
+      <main className={className || "w-full max-w-5xl mx-auto px-4 pt-28 sm:pt-32 pb-24 space-y-8 text-slate-100 text-center"}>
+        <div className="space-y-3 max-w-2xl mx-auto">
           {/* Animated Touch Prompt Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-400 text-xs font-extrabold shadow-sm animate-pulse">
-            <Touchpad className="w-4 h-4" />
-            <span>Sentuh Layar Untuk Memulai Layanan</span>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/15 border border-emerald-500/40 rounded-full text-emerald-300 text-xs font-mono font-extrabold shadow-sm animate-pulse">
+            <Touchpad className="w-4 h-4 text-emerald-400" />
+            <span>✦ SENTUH LAYAR UNTUK MEMULAI LAYANAN</span>
           </div>
 
           {/* Welcome Title & Subtitle */}
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-snug">
-              Selamat Datang di <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Layanan Mandiri</span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight font-sans">
+              Selamat Datang di <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-300">Layanan Mandiri</span>
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed mt-1.5">
+            <p className="text-xs sm:text-sm md:text-base text-slate-400 leading-relaxed mt-2 max-w-xl mx-auto font-medium">
               Silakan tentukan jalur layanan Anda untuk mendapatkan prioritas dan antrean yang tepat.
             </p>
           </div>
         </div>
 
-        {/* 3. INTERACTIVE SERVICE ROUTE CARDS (FULL-CARD TOUCH TARGET) */}
-        <div className="space-y-4">
-          {/* Card 1: Jalur Umum (Warga / Masyarakat) */}
+        {/* 3. INTERACTIVE SERVICE ROUTE CARDS (DUAL-TERMINAL AIRPORT M-KIOSK GRID) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto items-stretch">
+          {/* Terminal A: Jalur Umum (Warga / Masyarakat) */}
           <div
             onClick={() => handleLaneClick('citizen')}
             role="button"
@@ -141,42 +141,45 @@ export const KiosMandiriSection: React.FC<KiosMandiriSectionProps> = ({
                 handleLaneClick('citizen');
               }
             }}
-            className="group relative p-5 sm:p-6 rounded-3xl bg-slate-900/80 border border-emerald-500/30 hover:border-emerald-400 shadow-xl transition-all duration-300 space-y-4 overflow-hidden cursor-pointer active:scale-[0.99]"
+            className="group relative p-6 sm:p-8 rounded-3xl bg-slate-900/90 backdrop-blur-xl border border-emerald-500/40 hover:border-emerald-400 shadow-2xl shadow-emerald-950/50 transition-all duration-300 flex flex-col justify-between space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left"
           >
             {/* Background Subtle Glow */}
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all pointer-events-none" />
+            <div className="absolute -top-12 -right-12 w-40 h-40 bg-emerald-500/15 rounded-full blur-3xl group-hover:bg-emerald-500/25 transition-all pointer-events-none" />
 
-            {/* Card Header & Badge */}
-            <div className="flex items-center justify-between gap-2">
-              <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                <User className="w-6 h-6" />
+            <div className="space-y-4">
+              {/* Card Header & Badge */}
+              <div className="flex items-center justify-between gap-2">
+                <div className="p-3.5 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 shadow-inner">
+                  <User className="w-7 h-7" />
+                </div>
+                <span className="px-3.5 py-1.5 bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 font-mono font-extrabold text-xs uppercase tracking-wider rounded-full flex items-center gap-1.5 shadow-xs">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                  <span>🟢 TERMINAL A</span>
+                </span>
               </div>
-              <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[11px] font-black uppercase tracking-wider rounded-full">
-                Terminal A
-              </span>
+
+              {/* Card Content */}
+              <div className="space-y-1.5">
+                <p className="text-xs font-mono font-extrabold text-emerald-400 uppercase tracking-widest">
+                  Jalur Umum
+                </p>
+                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                  Warga / Masyarakat
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-400 leading-relaxed pt-1">
+                  Pengurusan KTP-el, Kartu Keluarga, Akta Kelahiran, Pajak PBB, Samsat, BPJS, dan Surat Rekomendasi.
+                </p>
+              </div>
             </div>
 
-            {/* Card Content */}
-            <div className="space-y-1">
-              <p className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">
-                Jalur Umum
-              </p>
-              <h3 className="text-lg sm:text-xl font-extrabold text-white">
-                Warga / Masyarakat
-              </h3>
-              <p className="text-xs text-slate-400 leading-relaxed pt-1">
-                Pengurusan KTP-el, Kartu Keluarga, Akta Kelahiran, Pajak PBB, Samsat, BPJS, dan Surat Rekomendasi.
-              </p>
-            </div>
-
-            {/* Full Width Action Button (Bottom) */}
-            <div className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm rounded-xl flex items-center justify-between transition-all group-hover:shadow-lg group-hover:shadow-emerald-900/40">
+            {/* Touch-Optimized Large Full Width Action Button */}
+            <div className="w-full h-14 sm:h-16 px-6 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm sm:text-base rounded-2xl flex items-center justify-between transition-all active:scale-95 shadow-lg shadow-emerald-950/40 cursor-pointer">
               <span>Masuk Jalur Warga</span>
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1.5" />
             </div>
           </div>
 
-          {/* Card 2: Jalur Bisnis & Investasi (Pusat Investor) */}
+          {/* Terminal B: Jalur Bisnis & Investasi (Pebisnis / Investor) */}
           <div
             onClick={() => handleLaneClick('investor')}
             role="button"
@@ -186,46 +189,49 @@ export const KiosMandiriSection: React.FC<KiosMandiriSectionProps> = ({
                 handleLaneClick('investor');
               }
             }}
-            className="group relative p-5 sm:p-6 rounded-3xl bg-slate-900/80 border border-amber-500/30 hover:border-amber-400 shadow-xl transition-all duration-300 space-y-4 overflow-hidden cursor-pointer active:scale-[0.99]"
+            className="group relative p-6 sm:p-8 rounded-3xl bg-slate-900/90 backdrop-blur-xl border border-amber-500/40 hover:border-amber-400 shadow-2xl shadow-amber-950/50 transition-all duration-300 flex flex-col justify-between space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left"
           >
             {/* Background Subtle Glow */}
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all pointer-events-none" />
+            <div className="absolute -top-12 -right-12 w-40 h-40 bg-amber-500/15 rounded-full blur-3xl group-hover:bg-amber-500/25 transition-all pointer-events-none" />
 
-            {/* Card Header & Badge */}
-            <div className="flex items-center justify-between gap-2">
-              <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
-                <Briefcase className="w-6 h-6" />
+            <div className="space-y-4">
+              {/* Card Header & Badge */}
+              <div className="flex items-center justify-between gap-2">
+                <div className="p-3.5 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 shadow-inner">
+                  <Briefcase className="w-7 h-7" />
+                </div>
+                <span className="px-3.5 py-1.5 bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-extrabold text-xs uppercase tracking-wider rounded-full flex items-center gap-1.5 shadow-xs">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                  <span>🟧 TERMINAL B</span>
+                </span>
               </div>
-              <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] font-black uppercase tracking-wider rounded-full">
-                Terminal B
-              </span>
+
+              {/* Card Content */}
+              <div className="space-y-1.5">
+                <p className="text-xs font-mono font-extrabold text-amber-400 uppercase tracking-widest">
+                  Jalur Bisnis & Investasi
+                </p>
+                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                  Pebisnis / Investor
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-400 leading-relaxed pt-1">
+                  Penerbitan NIB OSS-RBA, Kesesuaian Tata Ruang (KKPR), Persetujuan Bangunan Gedung (PBG), dan Konsultasi Insentif Investasi.
+                </p>
+              </div>
             </div>
 
-            {/* Card Content */}
-            <div className="space-y-1">
-              <p className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
-                Jalur Bisnis & Investasi
-              </p>
-              <h3 className="text-lg sm:text-xl font-extrabold text-white">
-                Pebisnis / Investor
-              </h3>
-              <p className="text-xs text-slate-400 leading-relaxed pt-1">
-                Penerbitan NIB OSS-RBA, Kesesuaian Tata Ruang (KKPR), Persetujuan Bangunan Gedung (PBG), dan Konsultasi Insentif Investasi.
-              </p>
-            </div>
-
-            {/* Full Width Action Button (Bottom) */}
-            <div className="w-full py-3 px-4 bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs sm:text-sm rounded-xl flex items-center justify-between transition-all group-hover:shadow-lg group-hover:shadow-amber-900/40">
+            {/* Touch-Optimized Large Full Width Action Button */}
+            <div className="w-full h-14 sm:h-16 px-6 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-extrabold text-sm sm:text-base rounded-2xl flex items-center justify-between transition-all active:scale-95 shadow-lg shadow-amber-950/40 cursor-pointer">
               <span>Masuk Investor Corner</span>
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1.5" />
             </div>
           </div>
         </div>
 
         {/* 4. SLEEK FOOTER BANNER */}
         {showFooter && (
-          <footer className="pt-6 border-t border-slate-800 text-center space-y-1">
-            <p className="text-xs font-semibold text-slate-400">
+          <footer className="pt-8 border-t border-slate-800 text-center space-y-1">
+            <p className="text-xs font-semibold text-slate-400 font-mono">
               DPMPTSP KABUPATEN LUWU © 2026
             </p>
             <p className="text-[10px] text-slate-600">
