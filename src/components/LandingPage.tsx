@@ -2411,7 +2411,7 @@ export default function LandingPage({
             : 'bg-gradient-to-b from-white/90 via-slate-50/80 to-slate-100/95'
           } pointer-events-none`} />
 
-          <div className="container max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 relative z-20">
+          <div className="container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 relative z-20">
             <motion.div className="flex flex-col items-center text-center max-w-4xl mx-auto" style={{ y: yText, opacity: opacityText }}>
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
@@ -2735,7 +2735,7 @@ export default function LandingPage({
         <section
           className={`pt-12 pb-8 sm:pt-16 sm:pb-12 md:pt-20 md:pb-14 border-b relative z-20 ${isDark ? "bg-slate-950/40 border-slate-800/80" : "bg-slate-50/60 border-slate-200/80"}`}
         >
-          <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
             <div
               ref={statsScrollContainerRef}
               onScroll={handleStatsScroll}
@@ -2981,7 +2981,7 @@ export default function LandingPage({
         {/* 2. DAFTAR POTENSI INVESTASI - BENTO GRID */}
         <div
           id="potensi-section"
-          className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 md:py-12 lg:py-16 min-h-[44px] border-t border-slate-200/60 dark:border-slate-800/60"
+          className="container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-10 md:py-12 lg:py-16 min-h-[44px] border-t border-slate-200/60 dark:border-slate-800/60"
         >
           {/* Section Header with Slider Navigation Controls */}
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
@@ -3507,7 +3507,7 @@ export default function LandingPage({
         {/* 3. LITERASI & KEUNTUNGAN LUTIM */}
         <div
           id="keuntungan-section"
-          className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 md:py-14 lg:py-18"
+          className="container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10 md:py-14 lg:py-18"
         >
           <div className="text-center mb-8 sm:mb-12 md:mb-16">
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2 text-balance break-words">
@@ -3613,7 +3613,7 @@ export default function LandingPage({
         {/* 4.5 FASILITAS PENUNJANG INFRASTRUKTUR */}
         <div
           id="infrastruktur-section"
-          className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 md:py-14 lg:py-18 relative min-h-[44px]"
+          className="container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10 md:py-14 lg:py-18 relative min-h-[44px]"
         >
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-[20%] right-[10%] w-[50vw] h-[50vw] rounded-full bg-blue-500/5 blur-[120px] mix-blend-screen" />
@@ -3823,7 +3823,7 @@ export default function LandingPage({
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-blue-500/5 dark:bg-blue-400/10 rounded-full blur-[120px] pointer-events-none" />
           <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-emerald-500/5 dark:bg-emerald-400/10 rounded-full blur-[140px] pointer-events-none" />
 
-          <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 relative z-10">
             {/* Header */}
             <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
               <span className={`inline-flex items-center gap-2 px-4 py-1.5 min-h-[44px] rounded-full text-xs font-bold uppercase tracking-wider mb-4 border backdrop-blur-md shadow-xs ${isDark ? "bg-sky-500/10 text-sky-400 border-sky-500/30" : "bg-sky-50 text-sky-700 border-sky-200"}`}>
@@ -4217,7 +4217,7 @@ export default function LandingPage({
           <div className="absolute top-1/4 left-1/12 w-[500px] h-[500px] bg-emerald-500/10 dark:bg-emerald-400/20 rounded-full blur-[130px] pointer-events-none" />
           <div className="absolute bottom-10 right-1/12 w-[600px] h-[600px] bg-sky-500/10 dark:bg-sky-400/15 rounded-full blur-[140px] pointer-events-none" />
 
-          <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 relative z-10">
             {/* Top Sovereign Header Badge */}
             <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
               <span className={`inline-flex items-center gap-2 px-4 py-1.5 min-h-[44px] rounded-full text-xs font-bold uppercase tracking-wider mb-4 border backdrop-blur-md shadow-xs ${
@@ -4539,7 +4539,7 @@ export default function LandingPage({
             <div className="absolute top-[10%] left-[20%] w-[40vw] h-[40vw] rounded-full bg-indigo-500/5 blur-[120px] mix-blend-screen" />
             <div className="absolute bottom-[20%] right-[10%] w-[35vw] h-[35vw] rounded-full bg-blue-500/5 blur-[100px] mix-blend-screen" />
           </div>
-          <div className="container max-w-7xl mx-auto px-2 sm:px-2 sm:px-4 lg:px-6 relative z-10">
+          <div className="container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 md:mb-16">
               <span
                 className={`inline-flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-full text-xs font-bold uppercase tracking-wider mb-4 backdrop-blur-xl border animate-fade-in-up ${isDark ? "bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-indigo-200 border-indigo-400/30 shadow-sm" : "bg-gradient-to-r from-indigo-500/10 to-purple-500/10 text-indigo-700 border-indigo-300 shadow-sm shadow-indigo-500/10"}`}
@@ -5679,7 +5679,7 @@ export default function LandingPage({
 
         
                         {/* CTA LOGIN INVESTOR POST ROI SIMULATOR */}
-        <div className="container max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 mb-16">
+        <div className="container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mb-16">
           <div className="flex justify-center w-full">
             <motion.button
               whileHover={{ scale: 1.03 }}
@@ -5800,7 +5800,7 @@ export default function LandingPage({
 
         {/* Ekosistem DPMPTSP (Sovereign Glass Pavilion Style) */}
         <section className={`relative py-16 sm:py-24 border-t ${isDark ? "bg-[#03060f] border-slate-800/80" : "bg-white border-slate-200"}`}>
-          <div className="container mx-auto px-3 sm:px-4 lg:px-6 relative z-10 max-w-6xl">
+          <div className="container mx-auto px-3 sm:px-6 lg:px-8 relative z-10 max-w-6xl">
             <div className="text-center mb-12 sm:mb-16">
               <motion.span 
                 initial={{ opacity: 0, y: 30 }}
