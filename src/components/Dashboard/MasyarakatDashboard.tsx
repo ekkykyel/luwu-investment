@@ -856,6 +856,7 @@ export default function MasyarakatDashboard({
   const [currentSession, setCurrentSession] = useState<any>(null);
   const [authCheckError, setAuthCheckError] = useState<any>(null);
   const [profileFetchError, setProfileFetchError] = useState<string | null>(null);
+  const [isServerError, setIsServerError] = useState<boolean>(false);
 
   // Helper to extract active citizen NIK from storage or profile props
   const getActiveCitizenNik = useCallback(() => {
@@ -904,19 +905,39 @@ export default function MasyarakatDashboard({
               setAuthCheckError(e);
             }
 
-            // Fallback verify with backend /api/auth/me
+            // Fallback verify with backend /api/auth/me (Differentiate 401 vs 500)
             if (!user) {
               try {
                 const verifyRes = await fetch("/api/auth/me", {
                   headers: { "Authorization": `Bearer ${storedToken}` }
                 });
+
                 if (verifyRes.ok) {
                   const authData = await verifyRes.json();
                   if (authData?.success && authData?.user) {
                     user = authData.user;
                   }
+                } else if (verifyRes.status === 401) {
+                  console.warn("[MasyarakatDashboard] /api/auth/me returned 401 Unauthorized (No active session)");
+                  // Expected if token expired or missing
+                } else if (verifyRes.status >= 500) {
+                  console.error("[MasyarakatDashboard] /api/auth/me returned 500 Internal Server Error - protecting citizen session");
+                  if (isMounted) setIsServerError(true);
+                  if (typeof window !== "undefined") {
+                    Swal.fire({
+                      toast: true,
+                      position: 'top-end',
+                      icon: 'warning',
+                      title: 'Koneksi Server Terkendala',
+                      text: 'Gagal terhubung ke server. Silakan muat ulang halaman.',
+                      showConfirmButton: false,
+                      timer: 5000
+                    });
+                  }
                 }
               } catch (apiErr) {
+                console.warn("[MasyarakatDashboard] Network error contacting /api/auth/me:", apiErr);
+                if (isMounted) setIsServerError(true);
                 setAuthCheckError(apiErr);
               }
             }
@@ -979,6 +1000,12 @@ export default function MasyarakatDashboard({
   useEffect(() => {
     if (isAuthLoading) return;
 
+    // CRITICAL: If server returned 500 or network error, DO NOT redirect to /login!
+    if (isServerError) {
+      console.warn("[AuthCheck] Server error detected (HTTP 500/Network). Suppressing redirect to /login to protect citizen session.");
+      return;
+    }
+
     const citizenNik = getActiveCitizenNik();
     const hasActiveCitizenAuth = Boolean(currentUser || citizenNik || activeProfile?.nik);
 
@@ -993,7 +1020,7 @@ export default function MasyarakatDashboard({
       });
       navigate('/login', { replace: true });
     }
-  }, [isAuthLoading, currentUser, currentSession, authCheckError, getActiveCitizenNik, activeProfile, navigate]);
+  }, [isAuthLoading, isServerError, currentUser, currentSession, authCheckError, getActiveCitizenNik, activeProfile, navigate]);
 
   // Hydrate user profile directly from Supabase session & public.profiles table (Decoupled from Auth Kickout)
   const fetchAndHydrateMasyarakatProfile = async () => {
@@ -2474,13 +2501,26 @@ export default function MasyarakatDashboard({
   }
 
   // If auth finished and user is not authenticated, render null while navigate('/login') triggers
-  const hasActiveSession = Boolean(currentUser || getActiveCitizenNik() || activeProfile?.nik);
+  const hasActiveSession = Boolean(currentUser || getActiveCitizenNik() || activeProfile?.nik || isServerError);
   if (!hasActiveSession) {
     return null;
   }
 
   return (
     <div className={`min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200 ${isDarkMode ? "dark" : ""} font-sans pb-12`}>
+      {/* Server Connectivity Alert Banner */}
+      {isServerError && (
+        <div className="bg-amber-500/15 border-b border-amber-500/30 px-4 py-2 text-center text-xs font-medium text-amber-600 dark:text-amber-400 flex items-center justify-center gap-2 relative z-50">
+          <span>⚠️ Koneksi ke server utama terhambat. Sesi dan data lokal Anda tetap aman.</span>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="underline font-bold hover:text-amber-700 dark:hover:text-amber-300 ml-1 cursor-pointer"
+          >
+            Muat Ulang Halaman
+          </button>
+        </div>
+      )}
+
       {/* Background Ambience */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-3xl" />
