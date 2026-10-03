@@ -58,7 +58,7 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
   return (
     <section 
       id="investor-desk"
-      className={className || "w-full max-w-7xl mx-auto px-0.5 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-5 sm:space-y-6 text-slate-900 dark:text-slate-100 scroll-mt-28"}
+      className={className || "w-full max-w-7xl mx-auto px-0 py-6 sm:py-10 space-y-5 sm:space-y-6 text-slate-900 dark:text-slate-100 scroll-mt-28"}
     >
       {/* 1. Standardized Section Header */}
       <div className="text-center space-y-2">
