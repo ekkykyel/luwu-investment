@@ -811,3 +811,41 @@ export function getKategoriPengajuan(jenis: string | null | undefined): Kategori
   return 'BANGUNAN';
 }
 
+/**
+ * Null-Safety Guard on Auth Handlers & Workflow Permissions:
+ * Ensures password validation is skipped when authMode === 'OTP' or when password is null/empty.
+ */
+export function validateCitizenAuthMode(payload: {
+  nik?: string;
+  phone?: string;
+  password?: string | null;
+  authMode?: 'OTP' | 'PASSWORD' | string;
+}): { isValid: boolean; skipPasswordCheck: boolean; error?: string } {
+  const isOtpMode = payload.authMode === 'OTP' || !payload.password || payload.password.trim() === '';
+  if (isOtpMode) {
+    return { isValid: true, skipPasswordCheck: true };
+  }
+  if (!payload.password || payload.password.trim().length < 4) {
+    return { isValid: false, skipPasswordCheck: false, error: 'Password minimal 4 karakter.' };
+  }
+  return { isValid: true, skipPasswordCheck: false };
+}
+
+/**
+ * Construct safe citizen auth payload with fallback for undefined citizenPassword
+ */
+export function createSafeCitizenAuthPayload(
+  verifiedNik: string,
+  phoneNumber: string,
+  citizenPassword?: string | null,
+  authMode: 'OTP' | 'PASSWORD' = 'OTP'
+) {
+  return {
+    nik: verifiedNik,
+    phone: phoneNumber,
+    password: typeof citizenPassword !== 'undefined' && citizenPassword ? citizenPassword : null,
+    authMode: authMode
+  };
+}
+
+

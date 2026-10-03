@@ -471,6 +471,7 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [authMode, setAuthMode] = useState<'otp' | 'password'>('otp');
   const [passwordInput, setPasswordInput] = useState('');
+  const [citizenPassword, setCitizenPassword] = useState<string>('');
   const [otpCode, setOtpCode] = useState('');
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [otpCooldown, setOtpCooldown] = useState(0);
@@ -764,11 +765,20 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
     if (step === 2 && !isOtpSent) {
       if (authMode === 'password') {
         if (char === 'backspace') {
-          setPasswordInput(prev => prev.slice(0, -1));
+          setPasswordInput(prev => {
+            const next = prev.slice(0, -1);
+            setCitizenPassword(next);
+            return next;
+          });
         } else if (char === 'clear') {
           setPasswordInput('');
+          setCitizenPassword('');
         } else if (/^\d$/.test(char)) {
-          setPasswordInput(prev => prev + char);
+          setPasswordInput(prev => {
+            const next = prev + char;
+            setCitizenPassword(next);
+            return next;
+          });
         }
         return;
       }
@@ -997,18 +1007,42 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
     setIsVerifyingOtp(true);
     setOtpError(null);
     try {
+      const payload = {
+        nik,
+        otp: code,
+        phone: detectedCitizen?.phone_number || firstTimeData.phone_number || '',
+        password: typeof citizenPassword !== 'undefined' && citizenPassword ? citizenPassword : (firstTimeData.password || null),
+        authMode: 'OTP',
+        citizenData: isFirstTimeUser ? {
+          ...firstTimeData,
+          password: typeof citizenPassword !== 'undefined' && citizenPassword ? citizenPassword : (firstTimeData.password || null)
+        } : undefined
+      };
+
       const res = await fetch('/api/kiosk/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nik,
-          otp: code,
-          citizenData: isFirstTimeUser ? firstTimeData : undefined
-        })
+        body: JSON.stringify(payload)
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
         throw new Error(data.message || 'Kode OTP tidak valid.');
+      }
+
+      if (data.credentials?.password) {
+        setCitizenPassword(data.credentials.password);
+      }
+
+      // If Supabase Auth credentials provided, auto authenticate client session
+      if (data.credentials?.email && data.credentials?.password) {
+        try {
+          await supabase.auth.signInWithPassword({
+            email: data.credentials.email,
+            password: data.credentials.password
+          });
+        } catch (authErr) {
+          console.warn("[Kiosk] Client signInWithPassword fallback notice:", authErr);
+        }
       }
 
       setSessionToken(data.sessionToken);
@@ -1836,7 +1870,11 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                               <input
                                 type="password"
                                 value={passwordInput}
-                                onChange={(e) => setPasswordInput(e.target.value)}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setPasswordInput(val);
+                                  setCitizenPassword(val);
+                                }}
                                 placeholder="Masukkan kata sandi NIK..."
                                 className="w-full bg-transparent text-base sm:text-lg font-mono font-bold text-white outline-none placeholder:text-slate-600"
                               />
@@ -1920,7 +1958,11 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                                   <input
                                     type={showFirstTimePassword ? "text" : "password"}
                                     value={firstTimeData.password}
-                                    onChange={(e) => setFirstTimeData(prev => ({ ...prev, password: e.target.value }))}
+                                    onChange={(e) => {
+                                      const val = e.target.value;
+                                      setFirstTimeData(prev => ({ ...prev, password: val }));
+                                      setCitizenPassword(val);
+                                    }}
                                     placeholder="Minimal 6 karakter (Opsional / Rekomendasi)"
                                     className="w-full p-2.5 sm:p-3 pr-10 text-xs sm:text-sm rounded-xl border border-white/20 bg-slate-900 text-white outline-none focus:border-amber-400"
                                   />

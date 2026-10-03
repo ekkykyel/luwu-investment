@@ -131,6 +131,7 @@ export default function InvestorLogin() {
   const [isSendingOtp, setIsSendingOtp] = useState(false);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [otpError, setOtpError] = useState<string | null>(null);
+  const [citizenPassword, setCitizenPassword] = useState<string>('');
 
   // Countdown timer effect
   useEffect(() => {
@@ -416,18 +417,27 @@ export default function InvestorLogin() {
         return;
       }
 
+      const payload = {
+        nik: otpNik,
+        otp: otpCode.trim(),
+        phone: otpPhone || '',
+        password: typeof citizenPassword !== 'undefined' && citizenPassword ? citizenPassword : null,
+        authMode: 'OTP'
+      };
+
       const res = await fetch('/api/kiosk/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nik: otpNik,
-          otp: otpCode.trim()
-        })
+        body: JSON.stringify(payload)
       });
 
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.message || data.error || 'Kode OTP salah atau telah kadaluarsa');
+      }
+
+      if (data.credentials?.password) {
+        setCitizenPassword(data.credentials.password);
       }
 
       const citizenData = data.citizen || citizenFound || { nik: otpNik, full_name: otpFullName };

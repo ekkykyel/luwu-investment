@@ -14,6 +14,7 @@ import {
   MessageSquareHeart,
   Smartphone
 } from 'lucide-react';
+import { supabase } from '../../lib/supabaseClient';
 
 interface MppOtpVerificationGuardProps {
   isDarkMode?: boolean;
@@ -59,6 +60,7 @@ export const MppOtpVerificationGuard: React.FC<MppOtpVerificationGuardProps> = (
 
   const [authMethod, setAuthMethod] = useState<'OTP' | 'PASSWORD'>('OTP');
   const [password, setPassword] = useState('');
+  const [citizenPassword, setCitizenPassword] = useState<string>('');
   const [isLoggingInPassword, setIsLoggingInPassword] = useState(false);
 
   // Handle NIK + Password direct authentication
@@ -66,6 +68,7 @@ export const MppOtpVerificationGuard: React.FC<MppOtpVerificationGuardProps> = (
     if (e) e.preventDefault();
     setErrorMessage(null);
     setSuccessMessage(null);
+    setCitizenPassword(password);
 
     const cleanNik = nik.replace(/\D/g, '');
     if (cleanNik.length !== 16) {
@@ -230,23 +233,43 @@ export const MppOtpVerificationGuard: React.FC<MppOtpVerificationGuardProps> = (
     setIsVerifyingOtp(true);
 
     try {
+      const payload = {
+        nik: cleanNik,
+        otp: cleanOtp,
+        phone: phone.trim(),
+        password: typeof citizenPassword !== 'undefined' && citizenPassword ? citizenPassword : (password || null),
+        authMode: 'OTP',
+        citizenData: {
+          full_name: name.trim() || (userType === 'investor' ? 'Investor Luwu' : 'Warga Pemohon'),
+          phone_number: phone.trim()
+        }
+      };
+
       const res = await fetch('/api/kiosk/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nik: cleanNik,
-          otp: cleanOtp,
-          citizenData: {
-            full_name: name.trim() || (userType === 'investor' ? 'Investor Luwu' : 'Warga Pemohon'),
-            phone_number: phone.trim()
-          }
-        })
+        body: JSON.stringify(payload)
       });
 
       const data = await res.json();
 
       if (!res.ok || !data.success) {
         throw new Error(data.message || 'Kode OTP tidak valid atau telah kadaluarsa.');
+      }
+
+      if (data.credentials?.password) {
+        setCitizenPassword(data.credentials.password);
+      }
+
+      if (data.credentials?.email && data.credentials?.password) {
+        try {
+          await supabase.auth.signInWithPassword({
+            email: data.credentials.email,
+            password: data.credentials.password
+          });
+        } catch (authErr) {
+          console.warn("[MppOtpVerificationGuard] Client signInWithPassword fallback notice:", authErr);
+        }
       }
 
       // Verification Success!
