@@ -553,12 +553,17 @@ export default function SimplePolygonDrawer({
     if (!map) return;
     mapRef.current = map;
 
-    // Trigger map.resize() after modal DOM render and transition animation complete
+    // Trigger map.resize() smoothly in next animation frame after modal transition completes
     setTimeout(() => {
-      try {
-        map.resize();
-      } catch (e) {}
-    }, 200);
+      requestAnimationFrame(() => {
+        try {
+          if (mapRef.current) {
+            const m = mapRef.current.getMap ? mapRef.current.getMap() : (mapRef.current as any);
+            m?.resize();
+          }
+        } catch (e) {}
+      });
+    }, 250);
     
     // Inisialisasi MaplibreDraw (Polygon Mode)
     const draw = new MaplibreDraw({

@@ -10,8 +10,26 @@ import './i18n.ts';
 import './index.css';
 
 
+// 1. Immediate suppression of benign ResizeObserver loop notifications via window.onerror
+const existingOnError = window.onerror;
+window.onerror = function (message, source, lineno, colno, error) {
+  const msg = String(message || error?.message || '');
+  if (
+    msg.includes('ResizeObserver') ||
+    msg.includes('ResizeObserver loop completed with undelivered notifications') ||
+    msg.includes('ResizeObserver loop limit exceeded')
+  ) {
+    return true; // Suppress harmless browser notification
+  }
+  if (existingOnError) {
+    return existingOnError.apply(this, arguments as any);
+  }
+  return false;
+};
+
+// 2. Capture phase error listener for ResizeObserver
 window.addEventListener('error', (event) => {
-  const msg = event.message || '';
+  const msg = String(event.message || event.error?.message || '');
   if (
     msg.includes('ResizeObserver') ||
     msg.includes('ResizeObserver loop completed with undelivered notifications') ||
@@ -20,10 +38,10 @@ window.addEventListener('error', (event) => {
     event.stopImmediatePropagation();
     event.preventDefault();
   }
-});
+}, true);
 
 window.addEventListener('unhandledrejection', (event) => {
-  const msg = event.reason?.message || '';
+  const msg = String(event.reason?.message || event.reason || '');
   if (
     msg.includes('Failed to fetch') ||
     msg.includes('AJAXError') ||
