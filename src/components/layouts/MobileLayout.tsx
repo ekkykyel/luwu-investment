@@ -122,7 +122,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
                     MPP Simpurusiang
                   </h1>
                   <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold font-sans truncate">
-                    Kabupaten Luwu
+                    Regional GRP Platform • Pemkab Luwu
                   </span>
                 </div>
               )}
