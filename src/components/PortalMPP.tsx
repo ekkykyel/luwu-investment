@@ -2113,7 +2113,7 @@ export default function PortalMPP() {
         <main className="w-full max-w-[1440px] mx-auto px-0 pt-2 sm:pt-3 pb-28 sm:pb-32 md:py-12 flex flex-col gap-0 overflow-x-clip">
           
           {/* Hero Section */}
-          <section id="hero" className="relative w-full overflow-hidden px-6 sm:px-8 lg:px-12 pt-6 pb-24 sm:pb-12 flex flex-col items-center text-center scroll-mt-24">
+          <section id="hero" className="relative w-full overflow-hidden px-3 sm:px-8 lg:px-12 pt-6 pb-24 sm:pb-12 flex flex-col items-center text-center scroll-mt-24">
             <div id="beranda" className="absolute -top-24 left-0 w-0 h-0 pointer-events-none" />
 
             {/* Ambient Radial Mesh Glow (Atmospheric Depth for Executive GovTech) */}
@@ -2383,7 +2383,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto flex flex-col items-center text-center py-10 sm:py-16 md:py-24 px-6 sm:px-8 lg:px-12 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto flex flex-col items-center text-center py-10 sm:py-16 md:py-24 px-3 sm:px-8 lg:px-12 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi - Staggered Fade-Up & MPP Badung Visuals */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
@@ -2455,12 +2455,12 @@ export default function PortalMPP() {
           </motion.section>
 
           {/* Seksi VIP Investor Fast-Track Concierge (Full Width on Android & Desktop) */}
-          <div id="investor-vip" className="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-16 md:py-24 scroll-mt-28">
+          <div id="investor-vip" className="w-full max-w-7xl mx-auto px-3 sm:px-8 lg:px-12 py-10 sm:py-16 md:py-24 scroll-mt-28">
             <VipInvestorConcierge isDark={isDark} />
           </div>
 
           {/* Seksi Operational Status Banner & Heatmap Jam Ramai vs Sepi */}
-          <div id="operasional-heatmap" className="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-16 md:py-24 scroll-mt-28">
+          <div id="operasional-heatmap" className="w-full max-w-7xl mx-auto px-3 sm:px-8 lg:px-12 py-10 sm:py-16 md:py-24 scroll-mt-28">
             <div id="peta-jam-ramai" className="scroll-mt-28">
               <OperationalHeatmap isDark={isDark} />
             </div>
@@ -2470,7 +2470,7 @@ export default function PortalMPP() {
           <MppMaklumatSlaRadar isDark={isDark} />
 
           {/* Seksi Bento Live Queue & Loket Radar (Material Design 3 Asymmetrical Bento Grid) */}
-          <div id="smart-live-queue" className="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-16 md:py-24 scroll-mt-28">
+          <div id="smart-live-queue" className="w-full max-w-7xl mx-auto px-3 sm:px-8 lg:px-12 py-10 sm:py-16 md:py-24 scroll-mt-28">
             <BentoLiveQueueRadar 
               isDark={isDark} 
               onRegisterQueue={(agencyName) => {
@@ -2505,7 +2505,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1 }} 
             transition={{ duration: 0.45, ease: "easeOut" }} 
             viewport={{ once: true, amount: 0.1 }} 
-            className="w-full max-w-6xl mx-auto py-8 sm:py-14 md:py-20 px-6 sm:px-8 lg:px-12"
+            className="w-full max-w-6xl mx-auto py-8 sm:py-14 md:py-20 px-3 sm:px-8 lg:px-12"
           >
             <SpotlightCard 
               spotlightColor={isDark ? "rgba(16, 185, 129, 0.2)" : "rgba(16, 185, 129, 0.15)"}
@@ -2551,7 +2551,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto scroll-mt-28 py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto scroll-mt-28 py-10 sm:py-16 md:py-24 px-3 sm:px-6 lg:px-8 relative before:bg-slate-100 dark:before:bg-slate-900/50 before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Section Header Terpusat - Staggered Fade-Up */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words">
@@ -2786,7 +2786,7 @@ export default function PortalMPP() {
           </motion.section>
 
           {/* Seksi AI Requirement Assistant & Interactive Progressive Stepper */}
-          <div id="syarat-dokumen" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 space-y-8 scroll-mt-28">
+          <div id="syarat-dokumen" className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 space-y-8 scroll-mt-28">
             <InteractiveRequirementStepper 
               initialService={activeRequirementService}
               onOpenQueueBooking={(serviceName, agencyName) => {
@@ -2811,7 +2811,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-7xl mx-auto flex flex-col gap-6 lg:gap-8 scroll-mt-28 py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-7xl mx-auto flex flex-col gap-6 lg:gap-8 scroll-mt-28 py-10 sm:py-16 md:py-24 px-3 sm:px-6 lg:px-8 relative before:bg-slate-50 dark:before:bg-[#0B1120] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Terpusat - Standardized Dual-Tone Pattern */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words space-y-2">
@@ -3244,7 +3244,7 @@ export default function PortalMPP() {
           </motion.section>
 
           {/* Seksi Denah & Navigasi Spasial Interaktif Canvas */}
-          <div id="denah-interaktif" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 space-y-8 scroll-mt-28">
+          <div id="denah-interaktif" className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 space-y-8 scroll-mt-28">
             {/* A. WIDGET ATAS: Asisten Pencarian & Direktori Layanan Cepat */}
             <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-7 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 shadow-xl">
               <SmartServiceFinder 
@@ -3281,7 +3281,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-28 py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative"
+            className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-28 py-10 sm:py-16 md:py-24 px-3 sm:px-6 lg:px-8 relative"
           >
             {/* Header Seksi */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 space-y-2">
@@ -3744,7 +3744,7 @@ export default function PortalMPP() {
           </AnimatePresence>
 
           {/* Seksi Pelacakan Berkas Perizinan Real-Time (Smart Document Tracker) */}
-          <div id="tracking-berkas" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 scroll-mt-28">
+          <div id="tracking-berkas" className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 scroll-mt-28">
             <SmartDocumentTracker isDark={isDark} />
           </div>
 
@@ -5186,7 +5186,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="w-full max-w-6xl mx-auto scroll-mt-28 py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 font-sans"
+            className="w-full max-w-6xl mx-auto scroll-mt-28 py-10 sm:py-16 md:py-24 px-3 sm:px-6 lg:px-8 font-sans"
           >
             <div className={`rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-7 md:p-9 relative overflow-hidden shadow-xl sm:shadow-2xl flex flex-col md:flex-row items-center gap-6 sm:gap-10 border transition-all ${
               isDark
@@ -5256,7 +5256,7 @@ export default function PortalMPP() {
           </motion.section>
 
           {/* Seksi Tanya Jawab (FAQ) Interaktif - Material 3 Smooth Accordion */}
-          <div id="faq" className="w-full max-w-6xl mx-auto py-10 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 font-sans scroll-mt-28">
+          <div id="faq" className="w-full max-w-6xl mx-auto py-10 sm:py-16 md:py-24 px-3 sm:px-6 lg:px-8 font-sans scroll-mt-28">
             <FaqAccordion />
           </div>
 

@@ -152,7 +152,7 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
   return (
     <section 
       id={id} 
-      className={className || "w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 space-y-8 text-slate-900 dark:text-slate-100 scroll-mt-28"}
+      className={className || "w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 space-y-8 text-slate-900 dark:text-slate-100 scroll-mt-28"}
     >
       {/* 1. SECTION HEADER (STANDARDIZED TYPOGRAPHY & DUAL TONE) */}
       <div className="text-center space-y-2 max-w-3xl mx-auto">
