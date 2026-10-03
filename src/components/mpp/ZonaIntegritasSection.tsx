@@ -115,7 +115,15 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
   return (
     <section 
       id="zona-integritas"
-      className={`w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-24 sm:pb-12 scroll-mt-28 ${className}`}
+      className={`w-full mx-auto scroll-mt-28 ${
+        className.includes('max-w-') ? '' : 'max-w-5xl'
+      } ${
+        className.includes('px-') ? '' : 'px-4 sm:px-6 lg:px-8'
+      } ${
+        className.includes('pt-') ? '' : 'pt-6'
+      } ${
+        className.includes('pb-') ? '' : 'pb-24 sm:pb-12'
+      } ${className}`}
     >
       {/* 1. GLOBAL CONTAINER: DESKTOP SYMMETRY & MOBILE STACKING */}
       <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch gap-6 lg:gap-8 w-full">
@@ -196,7 +204,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
         <div className="w-full h-full flex flex-col justify-between">
           
           {/* Material Design 3 Card Aesthetics: h-full flex flex-col justify-between */}
-          <div className="w-full h-full bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 p-5 sm:p-6 lg:p-7 flex flex-col justify-between border-l-4 border-l-red-500 font-sans transition-all duration-300 space-y-4">
+          <div className="w-full h-full bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 p-6 sm:p-8 flex flex-col justify-between border-l-4 border-l-red-500 font-sans transition-all duration-300 space-y-4">
             
             {/* Kicker Badge Header */}
             <div className="flex items-center justify-between gap-2 flex-wrap">

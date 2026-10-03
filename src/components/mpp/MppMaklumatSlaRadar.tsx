@@ -185,7 +185,7 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
   return (
     <section 
       id="maklumat-pelayanan-sla"
-      className="w-full max-w-6xl mx-auto py-10 sm:py-14 px-4 sm:px-6 lg:px-8 relative scroll-mt-24"
+      className="w-full max-w-6xl mx-auto py-10 sm:py-14 px-3 sm:px-6 lg:px-8 relative scroll-mt-24"
     >
       {/* Header Section */}
       <div className="w-full max-w-3xl mx-auto text-center mb-8 sm:mb-12">
@@ -208,121 +208,127 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
         </p>
       </div>
 
-      {/* 1. Official Government Pledge Card (Maklumat Pelayanan Publik) */}
-      <div className={`p-6 sm:p-8 rounded-3xl border transition-all mb-10 relative overflow-hidden ${
-        isDark 
-          ? 'bg-gradient-to-br from-slate-900 via-slate-900/95 to-emerald-950/40 border-emerald-500/30 shadow-2xl shadow-emerald-950/30' 
-          : 'bg-gradient-to-br from-white via-emerald-50/40 to-teal-50/50 border-emerald-200/80 shadow-xl shadow-emerald-500/5'
-      }`}>
-        {/* Subtle Ambient Radial Lighting */}
-        <div className="absolute -top-20 -right-20 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Parent Grid Container for Desktop Symmetrical Alignment */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch mb-10 w-full">
+        {/* Left Card: Official Government Pledge Card (Maklumat Pelayanan Publik) */}
+        <div className={`p-6 sm:p-8 rounded-3xl border transition-all relative overflow-hidden w-full h-full flex flex-col justify-between ${
+          isDark 
+            ? 'bg-gradient-to-br from-slate-900 via-slate-900/95 to-emerald-950/40 border-emerald-500/30 shadow-2xl shadow-emerald-950/30' 
+            : 'bg-gradient-to-br from-white via-emerald-50/40 to-teal-50/50 border-emerald-200/80 shadow-xl shadow-emerald-500/5'
+        }`}>
+          {/* Subtle Ambient Radial Lighting */}
+          <div className="absolute -top-20 -right-20 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-emerald-500/20">
-            <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow-inner">
-                <Scale className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+          <div className="relative z-10 w-full h-full flex flex-col justify-between">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-emerald-500/20">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow-inner">
+                  <Scale className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 block font-mono">
+                    {isEn ? 'OFFICIAL PLEDGE OF LUWU REGENCY GOVERNMENT' : isZh ? '印尼鲁乌县政府官方政务公开承诺公报' : 'DOKUMEN RESMI PEMERINTAH DAERAH KABUPATEN LUWU'}
+                  </span>
+                  <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white font-sans">
+                    {isEn ? 'Public Service Delivery Charter' : isZh ? '公共政务综合服务履职公开承诺书' : 'Maklumat Penyelenggaraan Pelayanan Publik'}
+                  </h3>
+                </div>
               </div>
-              <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 block font-mono">
-                  {isEn ? 'OFFICIAL PLEDGE OF LUWU REGENCY GOVERNMENT' : isZh ? '印尼鲁乌县政府官方政务公开承诺公报' : 'DOKUMEN RESMI PEMERINTAH DAERAH KABUPATEN LUWU'}
+
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold font-mono">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  {isEn ? `SLA: ${avgCompliance}%` : isZh ? `SLA: ${avgCompliance}%` : `SLA: ${avgCompliance}%`}
                 </span>
-                <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white font-sans">
-                  {isEn ? 'Public Service Delivery Charter' : isZh ? '公共政务综合服务履职公开承诺书' : 'Maklumat Penyelenggaraan Pelayanan Publik'}
-                </h3>
+                <button
+                  type="button"
+                  onClick={() => setIsMaklumatModalOpen(true)}
+                  className="min-h-[38px] px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white active:scale-95 transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
+                >
+                  <FileText className="w-3.5 h-3.5 shrink-0" />
+                  <span>{isEn ? 'Modal' : isZh ? '弹窗' : 'Modal'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsMaklumatExpanded(!isMaklumatExpanded)}
+                  className="min-h-[38px] px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-emerald-500 hover:text-white dark:hover:text-slate-950 active:scale-95 transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
+                >
+                  <Eye className="w-3.5 h-3.5 shrink-0" />
+                  <span>{isMaklumatExpanded ? (isEn ? 'Collapse' : isZh ? '收起' : 'Ringkas') : (isEn ? 'Read' : isZh ? '查看' : 'Baca Teks')}</span>
+                </button>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold font-mono">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                {isEn ? `SLA Compliance: ${avgCompliance}% Excellent` : isZh ? `SLA达标率: ${avgCompliance}% 优秀` : `Kepatuhan SLA: ${avgCompliance}% Prima`}
-              </span>
-              <button
-                type="button"
-                onClick={() => setIsMaklumatModalOpen(true)}
-                className="min-h-[38px] px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white active:scale-95 transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
-              >
-                <FileText className="w-3.5 h-3.5 shrink-0" />
-                <span>{isEn ? 'Modal Charter' : isZh ? '弹窗查看承诺' : 'Maklumat Modal'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsMaklumatExpanded(!isMaklumatExpanded)}
-                className="min-h-[38px] px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-emerald-500 hover:text-white dark:hover:text-slate-950 active:scale-95 transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
-              >
-                <Eye className="w-3.5 h-3.5 shrink-0" />
-                <span>{isMaklumatExpanded ? (isEn ? 'Collapse' : isZh ? '收起' : 'Ringkas') : (isEn ? 'Read Full Pledge' : isZh ? '查看承诺全文' : 'Baca Teks Lengkap')}</span>
-              </button>
+            {/* Official Pledge Text */}
+            <div className="pt-5 space-y-3 flex-1 flex flex-col justify-between">
+              <div className="relative">
+                <blockquote className="text-xs sm:text-sm md:text-base font-serif italic text-slate-800 dark:text-slate-100 leading-relaxed bg-white/60 dark:bg-slate-950/60 p-4 sm:p-6 rounded-2xl border border-emerald-500/25 shadow-inner">
+                  <span className="text-2xl text-emerald-500 dark:text-emerald-400 font-serif leading-none mr-1 select-none">“</span>
+                  {isEn 
+                    ? 'Herewith, we the leadership and all personnel of Mal Pelayanan Publik (MPP) Simpurusiang Luwu Regency solemnly pledge and state our capability to deliver services in strict compliance with established Standards, ensuring ease, transparency, and time certainty. If we fail to fulfill this promise, we are fully prepared to accept sanctions in accordance with applicable laws.'
+                    : isZh
+                    ? '在此，鲁乌县辛普鲁西亚公共服务大厅领导班子与全体工作人员庄严承诺：严格依照法定服务标准开展各项政务与行政审批，确保办事便捷、流程透明、时效确定。若未履行政诺，愿依法依规接受严格惩戒。'
+                    : 'Dengan ini, kami pimpinan dan segenap aparatur Mal Pelayanan Publik (MPP) Simpurusiang Kabupaten Luwu berjanji dan menyatakan sanggup menyelenggarakan pelayanan sesuai Standar Pelayanan yang telah ditetapkan, memberikan kemudahan, transparansi, serta kepastian waktu, dan apabila kami tidak menepati janji ini, kami siap menerima sanksi sesuai dengan peraturan perundang-undangan yang berlaku.'}
+                  <span className="text-2xl text-emerald-500 dark:text-emerald-400 font-serif leading-none ml-1 select-none">”</span>
+                </blockquote>
+              </div>
+
+              <AnimatePresence>
+                {isMaklumatExpanded && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="space-y-3 pt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300"
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                      <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                        <strong className="text-emerald-700 dark:text-emerald-300 block mb-1">
+                          {isEn ? '1. Zero-Fee Transparency' : isZh ? '1. 规范零规费与价格透明' : '1. Anti-Pungli & Transparansi Biaya'}
+                        </strong>
+                        <p className="text-[11px] leading-relaxed">
+                          {isEn ? 'All core permits are Rp 0,- (Free). Official tax & non-tax revenues are processed solely via bank counters or verified QRIS/VA channels.' : isZh ? '基础行政审批均为零收费（免费）。法定税费一律由银行窗口 or 官方QRIS/虚拟账户收缴。' : 'Seluruh proses perizinan dasar berbiaya Rp 0,- (Gratis). Pembayaran retribusi/PNBP resmi hanya melalui loket kas bank atau kanal QRIS/VA resmi.'}
+                        </p>
+                      </div>
+
+                      <div className="p-3 rounded-xl bg-teal-500/10 border border-teal-500/20">
+                        <strong className="text-teal-700 dark:text-teal-300 block mb-1">
+                          {isEn ? '2. SLA Time Guarantee' : isZh ? '2. 时限超期兜底保障 (SLA)' : '2. Jaminan Batas Waktu (SLA)'}
+                        </strong>
+                        <p className="text-[11px] leading-relaxed">
+                          {isEn ? 'If complete applications exceed the SLA deadline, the applicant receives priority resolution and document home-delivery compensation.' : isZh ? '如申报材料齐全但超时未办结，申请人将享受专班特快通道及纸质批件免费寄送到家补偿。' : 'Apabila permohonan yang berkasnya lengkap melampaui batas SLA, pemohon berhak mendapatkan prioritas penyelesaian khusus dan kompensasi pengantaran dokumen ke rumah.'}
+                        </p>
+                      </div>
+
+                      <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                        <strong className="text-blue-700 dark:text-blue-300 block mb-1">
+                          {isEn ? '3. Inclusive & Barrier-Free' : isZh ? '3. 无障碍包容性无差别服务' : '3. Layanan Inklusif & Bebas Diskriminasi'}
+                        </strong>
+                        <p className="text-[11px] leading-relaxed">
+                          {isEn ? 'Persons with disabilities, seniors 60+, and pregnant mothers are granted dedicated counters, tactile tracks, and direct assistance.' : isZh ? '为残障人士、60岁以上长者及孕妇提供低位窗口、盲道指引及免排队直通帮办服务。' : 'Penyandang disabilitas, lansia di atas 60 tahun, dan ibu hamil mendapatkan fasilitas loket meja rendah, jalur pemandu, serta asistensi petugas tanpa antrean umum.'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-800">
+                      <span>{isEn ? 'Signed by: Head of DPMPTSP Luwu Regency' : isZh ? '签署人：印尼鲁乌县投资与一站式服务局局长' : 'Tertanda: Kepala Dinas PMPTSP Kabupaten Luwu'}</span>
+                      <span>{isEn ? 'Updated according to Regent of Luwu Service Standards Decree' : isZh ? '依据鲁乌县长公共服务标准令定期更新' : 'Diperbarui secara berkala sesuai SK Bupati Luwu Standar Pelayanan'}</span>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          </div>
-
-          {/* Official Pledge Text */}
-          <div className="pt-5 space-y-3">
-            <div className="relative">
-              <blockquote className="text-xs sm:text-sm md:text-base font-serif italic text-slate-800 dark:text-slate-100 leading-relaxed bg-white/60 dark:bg-slate-950/60 p-4 sm:p-6 rounded-2xl border border-emerald-500/25 shadow-inner">
-                <span className="text-2xl text-emerald-500 dark:text-emerald-400 font-serif leading-none mr-1 select-none">“</span>
-                {isEn 
-                  ? 'Herewith, we the leadership and all personnel of Mal Pelayanan Publik (MPP) Simpurusiang Luwu Regency solemnly pledge and state our capability to deliver services in strict compliance with established Standards, ensuring ease, transparency, and time certainty. If we fail to fulfill this promise, we are fully prepared to accept sanctions in accordance with applicable laws.'
-                  : isZh
-                  ? '在此，鲁乌县辛普鲁西亚公共服务大厅领导班子与全体工作人员庄严承诺：严格依照法定服务标准开展各项政务与行政审批，确保办事便捷、流程透明、时效确定。若未履行政诺，愿依法依规接受严格惩戒。'
-                  : 'Dengan ini, kami pimpinan dan segenap aparatur Mal Pelayanan Publik (MPP) Simpurusiang Kabupaten Luwu berjanji dan menyatakan sanggup menyelenggarakan pelayanan sesuai Standar Pelayanan yang telah ditetapkan, memberikan kemudahan, transparansi, serta kepastian waktu, dan apabila kami tidak menepati janji ini, kami siap menerima sanksi sesuai dengan peraturan perundang-undangan yang berlaku.'}
-                <span className="text-2xl text-emerald-500 dark:text-emerald-400 font-serif leading-none ml-1 select-none">”</span>
-              </blockquote>
-            </div>
-
-            <AnimatePresence>
-              {isMaklumatExpanded && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="space-y-3 pt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300"
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                    <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                      <strong className="text-emerald-700 dark:text-emerald-300 block mb-1">
-                        {isEn ? '1. Zero-Fee Transparency' : isZh ? '1. 规范零规费与价格透明' : '1. Anti-Pungli & Transparansi Biaya'}
-                      </strong>
-                      <p className="text-[11px] leading-relaxed">
-                        {isEn ? 'All core permits are Rp 0,- (Free). Official tax & non-tax revenues are processed solely via bank counters or verified QRIS/VA channels.' : isZh ? '基础行政审批均为零收费（免费）。法定税费一律由银行窗口或官方QRIS/虚拟账户收缴。' : 'Seluruh proses perizinan dasar berbiaya Rp 0,- (Gratis). Pembayaran retribusi/PNBP resmi hanya melalui loket kas bank atau kanal QRIS/VA resmi.'}
-                      </p>
-                    </div>
-
-                    <div className="p-3 rounded-xl bg-teal-500/10 border border-teal-500/20">
-                      <strong className="text-teal-700 dark:text-teal-300 block mb-1">
-                        {isEn ? '2. SLA Time Guarantee' : isZh ? '2. 时限超期兜底保障 (SLA)' : '2. Jaminan Batas Waktu (SLA)'}
-                      </strong>
-                      <p className="text-[11px] leading-relaxed">
-                        {isEn ? 'If complete applications exceed the SLA deadline, the applicant receives priority resolution and document home-delivery compensation.' : isZh ? '如申报材料齐全但超时未办结，申请人将享受专班特快通道及纸质批件免费寄送到家补偿。' : 'Apabila permohonan yang berkasnya lengkap melampaui batas SLA, pemohon berhak mendapatkan prioritas penyelesaian khusus dan kompensasi pengantaran dokumen ke rumah.'}
-                      </p>
-                    </div>
-
-                    <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
-                      <strong className="text-blue-700 dark:text-blue-300 block mb-1">
-                        {isEn ? '3. Inclusive & Barrier-Free' : isZh ? '3. 无障碍包容性无差别服务' : '3. Layanan Inklusif & Bebas Diskriminasi'}
-                      </strong>
-                      <p className="text-[11px] leading-relaxed">
-                        {isEn ? 'Persons with disabilities, seniors 60+, and pregnant mothers are granted dedicated counters, tactile tracks, and direct assistance.' : isZh ? '为残障人士、60岁以上长者及孕妇提供低位窗口、盲道指引及免排队直通帮办服务。' : 'Penyandang disabilitas, lansia di atas 60 tahun, dan ibu hamil mendapatkan fasilitas loket meja rendah, jalur pemandu, serta asistensi petugas tanpa antrean umum.'}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-800">
-                    <span>{isEn ? 'Signed by: Head of DPMPTSP Luwu Regency' : isZh ? '签署人：印尼鲁乌县投资与一站式服务局局长' : 'Tertanda: Kepala Dinas PMPTSP Kabupaten Luwu'}</span>
-                    <span>{isEn ? 'Updated according to Regent of Luwu Service Standards Decree' : isZh ? '依据鲁乌县长公共服务标准令定期更新' : 'Diperbarui secara berkala sesuai SK Bupati Luwu Standar Pelayanan'}</span>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
         </div>
-      </div>
 
-      {/* Spanduk & Komitmen Zona Integritas Anti-Korupsi, Stop Gratifikasi, Stop Pungli */}
-      <div className="mb-10">
-        <AntiCorruptionBanner isDark={isDark} />
+        {/* Right Card: Spanduk & Komitmen Zona Integritas Anti-Korupsi, Stop Gratifikasi, Stop Pungli */}
+        <div className="w-full h-full flex flex-col justify-between">
+          <AntiCorruptionBanner 
+            isDark={isDark} 
+            className="w-full h-full max-w-none p-0 px-0 sm:px-0 lg:px-0 pt-0 pb-0 shadow-none border-none bg-transparent"
+          />
+        </div>
       </div>
 
       {/* 2. SLA Radar (Standar Waktu Nyata Matrix) */}
