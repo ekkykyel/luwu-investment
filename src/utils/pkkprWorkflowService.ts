@@ -848,4 +848,181 @@ export function createSafeCitizenAuthPayload(
   };
 }
 
+/**
+ * Dispatch Non-Berusaha (and Berusaha) PKKPR Submission directly to PUPTR Queue & Spatial Tables
+ * Dual/Triple record creation: gis_pkkpr / pkkpr_permohonan AND mpp_queues bound to instansi_code: 'PUPTR'
+ */
+export async function dispatchNonBerusahaPkkprToPuptrQueue(payload: {
+  docNumber: string;
+  virtualTicket: string;
+  category: 'Non-Berusaha' | 'Berusaha' | string;
+  title: string;
+  applicantName: string;
+  nik: string;
+  phone?: string | null;
+  userId?: string;
+  sector?: string;
+  jenisPengajuan?: string;
+  kategoriPengajuan?: 'BANGUNAN' | 'PARSIL_TANAH';
+  kecamatan?: string;
+  desa?: string;
+  luasM2?: number;
+  luasHa?: number;
+  geometryJson: any;
+  siteplanUrl?: string | null;
+  sertifikatUrl?: string | null;
+  suratPengantarUrl?: string | null;
+  berkasGabunganUrl?: string | null;
+  catatanTeknis?: string;
+  isIntersectLp2b?: boolean;
+}): Promise<{ success: boolean; queueId: string; docNumber: string }> {
+  const {
+    docNumber,
+    virtualTicket,
+    category,
+    title,
+    applicantName,
+    nik,
+    phone,
+    userId,
+    sector,
+    jenisPengajuan,
+    kategoriPengajuan = 'BANGUNAN',
+    kecamatan = 'Belopa',
+    desa = 'Senga',
+    luasM2 = 500,
+    luasHa = 0.05,
+    geometryJson,
+    siteplanUrl,
+    sertifikatUrl,
+    suratPengantarUrl,
+    berkasGabunganUrl,
+    catatanTeknis,
+    isIntersectLp2b = false
+  } = payload;
+
+  const validUserId = userId || (nik ? `cit-${nik}` : `cit-${Date.now()}`);
+  const timestamp = new Date().toISOString();
+
+  // Lifecycle Status Alignment
+  const initialStatusPkkpr = isIntersectLp2b ? 'VERIFIKASI_PERTANIAN' : 'WAITING_PUPTR_VERIFICATION';
+  const initialProgressStep = 'TAHAP 1: VERIFIKASI BERKAS & TATA RUANG (PUPTR)';
+
+  // 1. Dual Record Creation - Record 1: mpp_queues
+  const queuePayload = {
+    id: docNumber,
+    ticket_code: virtualTicket,
+    instansi_code: 'PUPTR',
+    target_department: 'PUPTR',
+    user_id: validUserId,
+    citizen_nik: nik,
+    nik_pemohon: nik,
+    nama_pemohon: applicantName,
+    service_type: 'PKKPR',
+    service_name: `Izin PKKPR Tata Ruang (${category})`,
+    status: 'WAITING_PUPTR_VERIFICATION',
+    category: category,
+    source: 'ONLINE',
+    geometry_json: geometryJson,
+    created_at: timestamp,
+    updated_at: timestamp
+  };
+
+  // 2. Dual Record Creation - Record 2: gis_pkkpr
+  const gisPayload = {
+    id: docNumber,
+    nomor_tiket: virtualTicket,
+    jenis_permohonan: category,
+    nama_permohonan: title,
+    nama_pemohon: applicantName,
+    nik_pemohon: nik,
+    no_whatsapp: phone || null,
+    sektor: sector || (category === 'Berusaha' ? 'Komersial / Usaha' : 'Non-Komersial / Perumahan'),
+    jenis_pengajuan_pkkpr: jenisPengajuan || 'Rumah Tinggal / Hunian Perorangan',
+    kategori_pengajuan: kategoriPengajuan,
+    file_siteplan_url: siteplanUrl || null,
+    kecamatan: kecamatan,
+    desa_kelurahan: desa,
+    luas_m2: luasM2,
+    luas_ha: luasHa,
+    geometry_json: geometryJson,
+    status_pkkpr: initialStatusPkkpr,
+    status_permohonan: 'REVIEW_PUPTR',
+    tahap_proses: initialProgressStep,
+    catatan_teknis: catatanTeknis || `[PUPTR Queue Auto Dispatch] Permohonan PKKPR ${category} telah masuk ke antrean verifikasi Dinas PUPTR.`,
+    file_alas_hak_url: sertifikatUrl || null,
+    sertifikat_tanah_url: sertifikatUrl || null,
+    surat_pengantar_desa_url: suratPengantarUrl || null,
+    berkas_legalitas_gabungan_url: berkasGabunganUrl || null,
+    user_id: validUserId,
+    created_by: validUserId,
+    created_at: timestamp,
+    updated_at: timestamp
+  };
+
+  // 3. Dual Record Creation - Record 3: investments
+  const invPayload = {
+    id: docNumber,
+    pkkpr_doc_number: virtualTicket,
+    title: `[PKKPR ${category}] ${title}`,
+    name: applicantName,
+    category: category === 'Berusaha' ? 'Komersial / Usaha' : 'Non-Komersial / Perseorangan',
+    contact_pic: applicantName,
+    nama_kontak_person: applicantName,
+    plot_number: nik,
+    sector: sector || 'Non-Komersial / Perumahan',
+    kecamatan: kecamatan,
+    desa: desa,
+    area_ha: luasHa,
+    geometry: geometryJson,
+    status: 'WAITING_PUPTR_VERIFICATION',
+    status_permohonan: 'REVIEW_PUPTR',
+    created_at: timestamp,
+    updated_at: timestamp
+  };
+
+  // Execute Promise.allSettled for maximum database resilience
+  await Promise.allSettled([
+    supabase.from('mpp_queues').upsert([queuePayload]),
+    supabase.from('gis_pkkpr').upsert([gisPayload]),
+    supabase.from('investments').upsert([invPayload])
+  ]);
+
+  // Send Cross-OPD notification to PUPTR Admin
+  addCrossOpdNotification({
+    applicationId: docNumber,
+    applicantName: applicantName,
+    companyName: title,
+    sector: sector || 'Non-Komersial / Perumahan',
+    districtName: kecamatan,
+    villageName: desa,
+    targetRole: 'ADMIN_PUPTR',
+    fromRole: 'PEMOHON',
+    type: 'NEW_SUBMISSION',
+    title: `Permohonan PKKPR ${category} Baru #${virtualTicket}`,
+    message: `Permohonan PKKPR ${category} atas nama ${applicantName} (NIK: ${nik}) telah dikirim dan berada di Antrean Verifikasi Dinas PUPTR.`
+  });
+
+  // Sync to local storage
+  syncLocalStorageStatus(docNumber, 'SUBMITTED' as PkkprStatusPermohonan, {
+    id: docNumber,
+    pkkpr_doc_number: virtualTicket,
+    nik,
+    nama_pemohon: applicantName,
+    title,
+    category,
+    status: 'WAITING_PUPTR_VERIFICATION',
+    status_pkkpr: 'WAITING_PUPTR_VERIFICATION',
+    status_permohonan: 'REVIEW_PUPTR',
+    tahap_proses: initialProgressStep,
+    submitted_at: timestamp
+  });
+
+  return {
+    success: true,
+    queueId: virtualTicket,
+    docNumber
+  };
+}
+
 

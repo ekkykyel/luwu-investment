@@ -1507,13 +1507,38 @@ export default function SmartInvestmentFormEngine({
                 luas_m2: luasM2Val,
                 luas_ha: areaHaVal,
                 geometry_json: normalizedGeom,
-                status_pkkpr: 'SUBMITTED',
+                status_pkkpr: 'WAITING_PUPTR_VERIFICATION',
+                status_permohonan: 'REVIEW_PUPTR',
+                tahap_proses: 'TAHAP 1: VERIFIKASI BERKAS & TATA RUANG (PUPTR)',
                 catatan_teknis: formData.shortDesc || formData.longDesc || 'Permohonan izin PKKPR baru.',
                 updated_at: new Date().toISOString()
               });
+
+              const pkkprCategoryVal = rawAny.nib ? 'Berusaha' : 'Non-Berusaha';
+              const pkkprNikVal = rawAny.nik || rawAny.nib || '7317000000000000';
+              const pkkprQueuePayload = sanitizeSupabasePayload({
+                id: String(targetId),
+                ticket_code: `PKKPR-${String(targetId).slice(-6)}`,
+                instansi_code: 'PUPTR',
+                target_department: 'PUPTR',
+                user_id: `cit-${pkkprNikVal}`,
+                citizen_nik: pkkprNikVal,
+                nik_pemohon: pkkprNikVal,
+                nama_pemohon: formData.namaKontakPerson || 'Pemohon Terdaftar',
+                service_type: 'PKKPR',
+                service_name: `Izin PKKPR Tata Ruang (${pkkprCategoryVal})`,
+                status: 'WAITING_PUPTR_VERIFICATION',
+                category: pkkprCategoryVal,
+                source: 'ONLINE',
+                geometry_json: normalizedGeom,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              });
+
               const results = await Promise.all([
                 supabase.from('investments').upsert([sanitizedInvPayload]),
-                supabase.from('gis_pkkpr').upsert([pkkprPayload])
+                supabase.from('gis_pkkpr').upsert([pkkprPayload]),
+                supabase.from('mpp_queues').upsert([pkkprQueuePayload])
               ]);
               if (results[0].error || results[1].error) {
                 const errMsg = results[0].error?.message || results[1].error?.message || "Gagal menyimpan ke database Supabase.";

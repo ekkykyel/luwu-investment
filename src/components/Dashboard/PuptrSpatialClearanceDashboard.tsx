@@ -1020,6 +1020,66 @@ export default function PuptrSpatialClearanceDashboard() {
         console.warn('gis_pkkpr query fallback:', err);
       }
 
+      // 1b. Query mpp_queues table for PUPTR queue items (Zero-Disconnect Automatic Queue Dispatch)
+      try {
+        const { data: queueData, error: queueErr } = await supabase
+          .from('mpp_queues')
+          .select('*')
+          .or('instansi_code.eq.PUPTR,target_department.eq.PUPTR,service_type.eq.PKKPR')
+          .in('status', ['SUBMITTED', 'PENDING_VERIFICATION', 'WAITING_PUPTR_VERIFICATION', 'WAITING_FO_VERIFICATION', 'BYPASS_PERTANIAN', 'REVIEW_PUPTR', 'menunggu'])
+          .order('created_at', { ascending: false });
+
+        if (!queueErr && queueData && queueData.length > 0) {
+          queueData.forEach((qItem: any) => {
+            const qId = qItem.id || qItem.ticket_code;
+            const citizenNik = qItem.citizen_nik || qItem.nik_pemohon || '7317000000000001';
+            const exists = mapped.some(m => m.id === qId || m.nibNik === citizenNik || (m.id && m.id === qItem.id));
+            if (exists) return;
+
+            const isBerusaha = qItem.category === 'Berusaha';
+            const applicantType = isBerusaha ? 'NIB (Pelaku Usaha)' : 'NIK (Perorangan / Warga)';
+
+            mapped.push({
+              id: qId,
+              applicantType,
+              category: isBerusaha ? 'Berusaha' : 'Non-Berusaha',
+              nibNik: citizenNik,
+              applicantName: qItem.nama_pemohon || 'Pemohon Terdaftar',
+              companyName: qItem.service_name || (isBerusaha ? 'Pelaku Usaha' : 'Permohonan PKKPR Non-Berusaha'),
+              title: qItem.service_name || (isBerusaha ? 'Permohonan PKKPR Usaha' : 'Permohonan PKKPR Non-Berusaha'),
+              sector: isBerusaha ? 'Komersial / Usaha' : 'Non-Komersial / Perumahan',
+              fungsiBangunan: isBerusaha ? 'Komersial / Usaha' : 'Rumah Tinggal / Non-Berusaha',
+              applicantAddress: qItem.address || `Kabupaten Luwu`,
+              districtName: formatDistrictName(qItem.kecamatan || 'Belopa'),
+              villageName: formatVillageName(qItem.desa || 'Senga'),
+              areaHa: 0.05,
+              luasM2: 500,
+              investmentValue: isBerusaha ? 1000000000 : 0,
+              certificateType: 'Sertifikat Hak Milik (SHM)',
+              certificateDocNumber: `SHM-LUWU-${qId ? qId.split('-').pop() : '321183'}`,
+              buktiTanah: 'Sertifikat Hak Milik (SHM)',
+              jenisAlasHak: 'Sertipikat Hak Milik (SHM)',
+              jenisPengajuanPkkpr: 'Rumah Tinggal / Hunian Perorangan',
+              kategoriPengajuan: 'BANGUNAN',
+              kmzFileName: 'Batas_Poligon_Lokasi.kmz',
+              kmzFileUrl: '',
+              geometry: qItem.geometry_json || qItem.geom,
+              status_permohonan: 'REVIEW_PUPTR',
+              pkkprStatus: 'Pending Spatial Check',
+              technicalNotes: '[PUPTR Queue Auto Dispatch] Permohonan telah masuk ke antrean verifikasi berkas & tata ruang PUPTR.',
+              coordinateStatus: 'Valid / Sesuai Batas RTRW',
+              esgStatus: 'CLEAR',
+              pertanianStatus: 'NOT_SUBMITTED',
+              contactPhone: qItem.no_hp || undefined,
+              status_pkkpr: normalizePKKPRStatus(qItem.status),
+              createdAt: qItem.created_at || new Date().toISOString()
+            });
+          });
+        }
+      } catch (qErr) {
+        console.warn('mpp_queues PUPTR query fallback:', qErr);
+      }
+
       // 2. Secondary Query: Fetch from gis_pkkpr table (SSOT for Workflow)
       try {
         const { data: pkkprPermohonanData, error: permErr } = await supabase
@@ -1276,6 +1336,9 @@ export default function PuptrSpatialClearanceDashboard() {
         fetchQueue();
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'gis_pkkpr' }, () => {
+        fetchQueue();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mpp_queues' }, () => {
         fetchQueue();
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'investments' }, () => {

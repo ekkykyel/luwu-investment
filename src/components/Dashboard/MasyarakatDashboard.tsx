@@ -1963,17 +1963,25 @@ export default function MasyarakatDashboard({
         console.warn('[Guest Mode] mpp_citizens exception:', cErr);
       }
 
-      // Step 2: Create Virtual Queue Ticket for MPP Front Office Tracking
+      // Step 2: Create Virtual Queue Ticket for MPP Front Office & PUPTR Dispatch
       try {
         const queuePayload = sanitizeSupabasePayload({
-          nomor_tiket: virtualTicket,
+          id: docNumber,
+          ticket_code: virtualTicket,
+          instansi_code: 'PUPTR',
+          target_department: 'PUPTR',
+          user_id: validUserId,
+          citizen_nik: finalNik,
           nik_pemohon: finalNik,
           nama_pemohon: finalNama || 'Pemohon Online',
           service_type: 'PKKPR',
-          service_name: 'Izin PKKPR Tata Ruang',
-          status: 'WAITING_FO_VERIFICATION',
+          service_name: `Izin PKKPR Tata Ruang (${pkkprCategory})`,
+          status: 'WAITING_PUPTR_VERIFICATION',
+          category: pkkprCategory,
           source: 'ONLINE',
-          created_at: new Date().toISOString()
+          geometry_json: normalizedGeom,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         });
         const { error: queueErr } = await supabase
           .from('mpp_queues')
@@ -2026,6 +2034,8 @@ export default function MasyarakatDashboard({
           nama_berkas_kmz: "Batas_Poligon_Lokasi.kmz",
           berkas_kmz_url: null,
           status_pkkpr: initialStatusPkkpr,
+          status_permohonan: 'REVIEW_PUPTR',
+          tahap_proses: 'TAHAP 1: VERIFIKASI BERKAS & TATA RUANG (PUPTR)',
           pertek_puptr_num: null,
           berita_acara_pertanian_num: null,
           sk_pkkpr_num: null,
