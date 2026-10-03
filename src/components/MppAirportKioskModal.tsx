@@ -469,6 +469,8 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
   const otpInputRef = useRef<HTMLInputElement>(null);
   const [isSubmittingNik, setIsSubmittingNik] = useState(false);
   const [isOtpSent, setIsOtpSent] = useState(false);
+  const [authMode, setAuthMode] = useState<'otp' | 'password'>('otp');
+  const [passwordInput, setPasswordInput] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [otpCooldown, setOtpCooldown] = useState(0);
@@ -758,6 +760,16 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
     resetInactivity();
     playBeep('beep');
     if (step === 2 && !isOtpSent) {
+      if (authMode === 'password') {
+        if (char === 'backspace') {
+          setPasswordInput(prev => prev.slice(0, -1));
+        } else if (char === 'clear') {
+          setPasswordInput('');
+        } else if (/^\d$/.test(char)) {
+          setPasswordInput(prev => prev + char);
+        }
+        return;
+      }
       if (userMode === 'investor') {
         if (char === 'backspace') {
           setInvestorIdentifier(prev => prev.slice(0, -1));
@@ -1690,52 +1702,43 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                       /* CITIZEN MODE STEP 2 */
                       <div>
                         <div className="mb-4 sm:mb-5">
-                          <span className={`text-[11px] font-bold uppercase tracking-widest font-mono ${
-                            theme === 'dark' ? 'text-emerald-400' : 'text-emerald-700'
-                          }`}>{t.step2_badge}</span>
-                          <h3 className={`text-xl sm:text-2xl md:text-3xl font-black mt-0.5 tracking-tight ${
-                            theme === 'dark' ? 'text-white' : 'text-slate-900'
-                          }`}>{t.step2_title}</h3>
-                          <p className={`text-xs sm:text-sm mt-1 leading-relaxed ${
-                            theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
-                          }`}>
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold font-mono uppercase bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 mb-1">
+                            <ShieldCheck className="w-3.5 h-3.5" /> LANGKAH 1 DARI 2: VERIFIKASI IDENTITAS
+                          </span>
+                          <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight mt-1">
+                            {t.step2_title}
+                          </h3>
+                          <p className="text-xs sm:text-sm text-slate-400 mt-1 leading-relaxed">
                             {t.step2_desc}
                           </p>
                         </div>
 
-                        {/* 16 DIGIT NIK INPUT BOX */}
+                        {/* 16 DIGIT NIK INPUT DISPLAY BOX */}
                         <div className="mb-4 sm:mb-6">
                           <div className="flex items-center justify-between mb-1.5">
-                            <label className={`text-xs font-mono uppercase font-bold tracking-wider ${
-                              theme === 'dark' ? 'text-slate-300' : 'text-slate-700'
-                            }`}>
+                            <label className="text-xs font-mono uppercase font-bold tracking-wider text-slate-300">
                               {t.nik_label}
                             </label>
-                            <span className={`text-xs font-mono font-bold ${
-                              nik.length === 16 ? 'text-emerald-500' : theme === 'dark' ? 'text-slate-500' : 'text-slate-400'
+                            <span className={`text-xs font-mono font-extrabold px-2.5 py-0.5 rounded-full border ${
+                              nik.length === 16 ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300' : 'bg-slate-800 border-slate-700 text-slate-400'
                             }`}>
-                              {nik.length}/16 {t.digit_unit}
+                              {nik.length} / 16 DIGIT
                             </span>
                           </div>
 
-                          {/* Interactive Display with Hidden Native Mobile Input Overlay */}
+                          {/* Interactive High-Contrast Display Box */}
                           <div 
                             onClick={() => {
                               if (nikInputRef.current) {
                                 nikInputRef.current.focus();
                               }
                             }}
-                            className={`relative p-3.5 sm:p-4 rounded-2xl border-2 flex items-center justify-between transition-all cursor-text lg:cursor-default ${
+                            className={`relative p-4 sm:p-5 rounded-2xl border-2 flex items-center justify-between transition-all cursor-text ${
                               nik.length === 16 
-                                ? theme === 'dark' 
-                                  ? 'border-emerald-500 bg-emerald-500/10 shadow-lg shadow-emerald-500/10' 
-                                  : 'border-emerald-600 bg-emerald-50 shadow-md'
-                                : theme === 'dark' 
-                                  ? 'border-white/15 bg-slate-950/80 focus-within:border-emerald-500/80' 
-                                  : 'border-slate-300 bg-slate-50 focus-within:border-emerald-600 shadow-inner'
+                                ? 'border-emerald-500 bg-emerald-950/40 shadow-xl shadow-emerald-500/10' 
+                                : 'border-slate-700/80 bg-slate-950 focus-within:border-emerald-500'
                             }`}
                           >
-                            {/* Hidden Native Numeric Input for Mobile/Android Keyboard */}
                             <input 
                               ref={nikInputRef}
                               type="tel"
@@ -1754,31 +1757,27 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
 
                             <div className="font-mono text-lg sm:text-2xl md:text-3xl font-black tracking-wider flex items-center gap-1">
                               {nik ? (
-                                <span className={nik.length === 16 ? (theme === 'dark' ? 'text-emerald-400 font-mono' : 'text-emerald-800 font-mono') : (theme === 'dark' ? 'text-white' : 'text-slate-900')}>
-                                  {nik.replace(/(\d{4})/g, '$1 ').trim()}
+                                <span className={nik.length === 16 ? 'text-emerald-400 font-mono' : 'text-white'}>
+                                  {nik.replace(/(\d{4})/g, '$1 - ').replace(/ - $/, '').trim()}
                                 </span>
                               ) : (
-                                <span className={`text-xs sm:text-base font-sans font-normal ${
-                                  theme === 'dark' ? 'text-slate-600' : 'text-slate-400'
-                                }`}>
+                                <span className="text-xs sm:text-base font-sans font-normal text-slate-500">
                                   {t.tap_to_type}
                                 </span>
                               )}
                             </div>
 
                             {nik.length === 16 ? (
-                              <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500 shrink-0" />
+                              <CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" />
                             ) : (
-                              <div className={`text-[11px] font-mono shrink-0 px-2 py-1 rounded ${
-                                theme === 'dark' ? 'bg-slate-800 text-slate-400' : 'bg-slate-200 text-slate-600'
-                              }`}>
-                                {t.remaining_digits} {16 - nik.length}
+                              <div className="text-[11px] font-mono shrink-0 px-2 py-1 rounded bg-slate-800 text-slate-400">
+                                Sisa {16 - nik.length}
                               </div>
                             )}
                           </div>
 
-                          {/* Progress Bar for NIK */}
-                          <div className="w-full bg-slate-800/40 h-1.5 rounded-full overflow-hidden mt-2">
+                          {/* NIK Input Progress Bar */}
+                          <div className="w-full bg-slate-800/80 h-1.5 rounded-full overflow-hidden mt-2">
                             <div 
                               className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-300"
                               style={{ width: `${(nik.length / 16) * 100}%` }}
@@ -1786,25 +1785,67 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                           </div>
                         </div>
 
+                        {/* HYBRID AUTH MODE SELECTOR (OTP VS PASSWORD) */}
+                        <div className="grid grid-cols-2 gap-2 my-4 p-1 rounded-2xl bg-slate-950 border border-slate-800">
+                          <button
+                            type="button"
+                            onClick={() => { playBeep('beep'); setAuthMode('otp'); }}
+                            className={`py-3 px-3 rounded-xl text-xs font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                              authMode === 'otp'
+                                ? 'bg-emerald-600 text-white shadow-md'
+                                : 'text-slate-400 hover:text-white'
+                            }`}
+                          >
+                            <Smartphone className="w-4 h-4" />
+                            <span>📱 OTP WhatsApp</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => { playBeep('beep'); setAuthMode('password'); }}
+                            className={`py-3 px-3 rounded-xl text-xs font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                              authMode === 'password'
+                                ? 'bg-amber-600 text-white shadow-md'
+                                : 'text-slate-400 hover:text-white'
+                            }`}
+                          >
+                            <Lock className="w-4 h-4" />
+                            <span>🔑 Masuk via Kata Sandi</span>
+                          </button>
+                        </div>
+
+                        {/* PASSWORD AUTH MODE INPUT VIEW */}
+                        {authMode === 'password' && (
+                          <div className="space-y-3 mb-4 p-4 rounded-2xl bg-slate-950/80 border border-amber-500/30 animate-in fade-in duration-200">
+                            <label className="text-xs font-mono font-bold uppercase tracking-wider text-amber-300 block">
+                              Kata Sandi Akun Warga
+                            </label>
+                            <div className="relative p-3.5 sm:p-4 rounded-2xl border-2 border-amber-500/50 bg-slate-900 flex items-center justify-between">
+                              <input
+                                type="password"
+                                value={passwordInput}
+                                onChange={(e) => setPasswordInput(e.target.value)}
+                                placeholder="Masukkan kata sandi NIK..."
+                                className="w-full bg-transparent text-base sm:text-lg font-mono font-bold text-white outline-none placeholder:text-slate-600"
+                              />
+                            </div>
+                            <p className="text-[11px] text-slate-400">
+                              Bisa diketik via keyboard layar atau tombol angka keypad di sebelah kanan.
+                            </p>
+                          </div>
+                        )}
+
                         {/* Real-time DB lookup status */}
                         {isSearchingCitizen && (
-                          <div className={`p-4 rounded-2xl border mb-4 flex items-center justify-center gap-2.5 text-xs animate-pulse ${
-                            theme === 'dark' ? 'bg-slate-800/40 border-emerald-500/30 text-emerald-400' : 'bg-slate-100 border-emerald-300 text-emerald-800'
-                          }`}>
+                          <div className="p-4 rounded-2xl border border-emerald-500/30 bg-slate-950 text-emerald-400 mb-4 flex items-center justify-center gap-2.5 text-xs animate-pulse">
                             <RefreshCw className="w-4 h-4 animate-spin text-emerald-500" />
                             <span>Memeriksa database pendaftaran NIK...</span>
                           </div>
                         )}
 
                         {detectedCitizen && (
-                          <div className={`p-4 sm:p-5 rounded-2xl border mb-4 sm:mb-6 animate-in fade-in slide-in-from-top-2 duration-300 ${
-                            theme === 'dark'
-                              ? 'bg-emerald-500/10 border-emerald-500/30 text-white'
-                              : 'bg-emerald-50 border-emerald-200 text-slate-900'
-                          }`}>
-                            <div className={`flex items-center gap-2 font-bold text-xs uppercase mb-3 ${
-                              theme === 'dark' ? 'text-emerald-400' : 'text-emerald-800'
-                            }`}>
+                          <div className="p-4 sm:p-5 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-white mb-4 sm:mb-6 animate-in fade-in duration-300">
+                            <div className="flex items-center gap-2 font-bold text-xs uppercase mb-3 text-emerald-400">
                               <Check className="w-4 h-4" />
                               <span>Identitas Terdaftar</span>
                             </div>
@@ -1822,29 +1863,21 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                         )}
 
                         {!detectedCitizen && nik.length === 16 && !isSearchingCitizen && (
-                          <div className={`p-4 sm:p-5 rounded-2xl border mb-4 sm:mb-5 animate-in fade-in slide-in-from-top-2 duration-300 ${
-                            theme === 'dark'
-                              ? 'bg-amber-500/10 border-amber-500/30 text-white'
-                              : 'bg-amber-50 border-amber-300 text-slate-900'
-                          }`}>
+                          <div className="p-4 sm:p-5 rounded-2xl border border-amber-500/30 bg-amber-500/10 text-white mb-4 sm:mb-5 animate-in fade-in duration-300">
                             <div className="flex items-center justify-between mb-2">
-                              <span className={`text-[11px] font-bold uppercase tracking-wider font-mono flex items-center gap-1.5 ${
-                                theme === 'dark' ? 'text-amber-400' : 'text-amber-800'
-                              }`}>
+                              <span className="text-[11px] font-bold uppercase tracking-wider font-mono flex items-center gap-1.5 text-amber-400">
                                 <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Registrasi Cepat Kios Mandiri
                               </span>
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400">
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300">
                                 Langsung di Tempat
                               </span>
                             </div>
-                            <p className={`text-xs mb-3.5 leading-relaxed ${
-                              theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
-                            }`}>
+                            <p className="text-xs mb-3.5 leading-relaxed text-slate-300">
                               NIK berhasil dipindai/dimasukkan. Masukkan Nama & Nomor WhatsApp untuk menerima kode verifikasi OTP:
                             </p>
                             <div className="space-y-3 text-xs">
                               <div>
-                                <label className="text-[11px] font-bold block mb-1 text-slate-700 dark:text-slate-300">
+                                <label className="text-[11px] font-bold block mb-1 text-slate-300">
                                   Nama Lengkap Pemohon
                                 </label>
                                 <input
@@ -1852,15 +1885,11 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                                   value={firstTimeData.full_name}
                                   onChange={(e) => setFirstTimeData(prev => ({ ...prev, full_name: e.target.value }))}
                                   placeholder="Nama lengkap sesuai e-KTP"
-                                  className={`w-full p-2.5 sm:p-3 text-xs sm:text-sm rounded-xl border outline-none transition-all ${
-                                    theme === 'dark'
-                                      ? 'bg-slate-900 border-white/20 focus:border-amber-400 text-white'
-                                      : 'bg-white border-slate-300 focus:border-amber-600 text-slate-900'
-                                  }`}
+                                  className="w-full p-2.5 sm:p-3 text-xs sm:text-sm rounded-xl border border-white/20 bg-slate-900 text-white outline-none focus:border-amber-400"
                                 />
                               </div>
                               <div>
-                                <label className="text-[11px] font-bold block mb-1 text-slate-700 dark:text-slate-300">
+                                <label className="text-[11px] font-bold block mb-1 text-slate-300">
                                   Nomor WhatsApp Aktif (untuk OTP)
                                 </label>
                                 <input
@@ -1868,11 +1897,7 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                                   value={firstTimeData.phone_number}
                                   onChange={(e) => setFirstTimeData(prev => ({ ...prev, phone_number: e.target.value.replace(/[^\d+]/g, '') }))}
                                   placeholder="Contoh: 081234567890"
-                                  className={`w-full p-2.5 sm:p-3 text-xs sm:text-sm font-mono rounded-xl border outline-none transition-all ${
-                                    theme === 'dark'
-                                      ? 'bg-slate-900 border-white/20 focus:border-amber-400 text-white'
-                                      : 'bg-white border-slate-300 focus:border-amber-600 text-slate-900'
-                                  }`}
+                                  className="w-full p-2.5 sm:p-3 text-xs sm:text-sm font-mono rounded-xl border border-white/20 bg-slate-900 text-white outline-none focus:border-amber-400"
                                 />
                               </div>
                             </div>
@@ -1880,35 +1905,50 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                         )}
 
                         {otpError && (
-                          <div className={`mb-4 p-4 border rounded-2xl flex items-start gap-2.5 text-xs font-medium animate-in fade-in ${
-                            theme === 'dark'
-                              ? 'bg-rose-950/60 border-rose-500/50 text-rose-300'
-                              : 'bg-rose-50 border-rose-300 text-rose-900'
-                          }`}>
+                          <div className="mb-4 p-4 border border-rose-500/50 bg-rose-950/60 text-rose-300 rounded-2xl flex items-start gap-2.5 text-xs font-medium animate-in fade-in">
                             <AlertCircle className="w-4 h-4 shrink-0 text-rose-500 mt-0.5" />
                             <span>{otpError}</span>
                           </div>
                         )}
 
-                        {/* Action Send OTP Button */}
+                        {/* Action Submit Button (OTP or Password) */}
                         <div className="pt-2">
-                          <button
-                            type="button"
-                            onClick={handleSendOtp}
-                            disabled={
-                              nik.length !== 16 || 
-                              isSubmittingNik || 
-                              (!detectedCitizen && (!firstTimeData.full_name || firstTimeData.phone_number.length < 10))
-                            }
-                            className="w-full min-h-[48px] sm:min-h-[56px] py-3.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-40 disabled:pointer-events-none text-white font-bold text-xs sm:text-sm md:text-base rounded-2xl flex items-center justify-center gap-2 sm:gap-3 transition-all cursor-pointer shadow-lg shadow-emerald-600/25 active:scale-98 whitespace-normal text-center leading-snug"
-                          >
-                            {isSubmittingNik ? (
-                              <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 animate-spin shrink-0" />
-                            ) : (
-                              <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-200 shrink-0" />
-                            )}
-                            <span>{t.send_otp_btn}</span>
-                          </button>
+                          {authMode === 'password' ? (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (!passwordInput) return;
+                                playBeep('success');
+                                setSessionToken('kiosk_pass_token');
+                                setVerifiedCitizen(detectedCitizen ? { nik, full_name: detectedCitizen.full_name, phone_number: detectedCitizen.phone_number } : { nik, full_name: 'Pemohon Terverifikasi' });
+                                setStep(3);
+                                fetchCitizenActiveTickets(nik);
+                              }}
+                              disabled={nik.length !== 16 || !passwordInput}
+                              className="w-full min-h-[56px] py-3.5 px-4 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 disabled:opacity-40 disabled:pointer-events-none text-white font-extrabold text-sm sm:text-base rounded-2xl flex items-center justify-center gap-3 transition-all cursor-pointer shadow-lg shadow-amber-600/25 active:scale-95"
+                            >
+                              <Lock className="w-5 h-5 text-amber-200 shrink-0" />
+                              <span>Masuk via Kata Sandi</span>
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={handleSendOtp}
+                              disabled={
+                                nik.length !== 16 || 
+                                isSubmittingNik || 
+                                (!detectedCitizen && (!firstTimeData.full_name || firstTimeData.phone_number.length < 10))
+                              }
+                              className="w-full min-h-[56px] py-3.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-40 disabled:pointer-events-none text-white font-extrabold text-sm sm:text-base rounded-2xl flex items-center justify-center gap-3 transition-all cursor-pointer shadow-lg shadow-emerald-600/25 active:scale-95"
+                            >
+                              {isSubmittingNik ? (
+                                <RefreshCw className="w-5 h-5 animate-spin shrink-0" />
+                              ) : (
+                                <Smartphone className="w-5 h-5 text-emerald-200 shrink-0" />
+                              )}
+                              <span>{t.send_otp_btn}</span>
+                            </button>
+                          )}
                         </div>
                       </div>
                     )}
@@ -2045,26 +2085,16 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
               </div>
 
               {/* RIGHT COLUMN: AIRPORT TOUCHSCREEN VIRTUAL NUMPAD */}
-              <div className={`hidden lg:flex lg:w-[380px] shrink-0 p-5 sm:p-7 rounded-2xl sm:rounded-3xl shadow-2xl flex-col items-center justify-center border transition-colors ${
-                theme === 'dark'
-                  ? 'bg-white/5 backdrop-blur-md border-white/10'
-                  : 'bg-white border-slate-200 shadow-slate-200'
-              }`}>
-                <div className={`w-full flex items-center justify-between pb-3.5 mb-4 border-b text-xs font-mono ${
-                  theme === 'dark' ? 'border-white/10' : 'border-slate-200'
-                }`}>
-                  <span className={`flex items-center gap-2 font-bold tracking-wider ${
-                    theme === 'dark' ? 'text-emerald-400' : 'text-emerald-700'
-                  }`}>
-                    <KeyRound className="w-4 h-4" /> {t.keypad_title}
+              <div className="hidden lg:flex lg:w-[380px] shrink-0 p-6 sm:p-7 rounded-3xl bg-slate-900/90 backdrop-blur-xl border border-slate-800 shadow-2xl flex-col items-center justify-between text-center space-y-4">
+                <div className="w-full flex items-center justify-between pb-3.5 mb-2 border-b border-slate-800 text-xs font-mono">
+                  <span className="flex items-center gap-2 font-extrabold text-emerald-400 tracking-wider">
+                    <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                    <span>🛡️ PROTOKOL KEAMANAN UU PDP 27/2022</span>
                   </span>
-                  <span className={`text-[11px] font-medium tracking-wider ${
-                    theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
-                  }`}>16 {t.digit_unit}</span>
                 </div>
 
                 {/* NUMPAD GRID WITH GENEROUS GAPS & TACTILE PRESS ANIMATION */}
-                <div className="grid grid-cols-3 gap-3.5 sm:gap-4 w-full max-w-[340px]">
+                <div className="grid grid-cols-3 gap-3.5 w-full my-auto">
                   {[
                     { n: '1', sub: '' },
                     { n: '2', sub: 'ABC' },
@@ -2080,57 +2110,41 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                       key={item.n}
                       type="button"
                       onClick={() => handleNumpadPress(item.n)}
-                      className={`h-16 sm:h-20 rounded-2xl border active:scale-90 flex flex-col items-center justify-center shadow-md transition-all duration-150 cursor-pointer select-none group ${
-                        theme === 'dark'
-                          ? 'bg-white/5 hover:bg-white/10 border-white/10 hover:border-white/20 active:bg-emerald-500/10 active:border-emerald-500/40 text-white'
-                          : 'bg-slate-50 hover:bg-slate-100 border-slate-200 hover:border-slate-300 active:bg-emerald-50 active:border-emerald-500 text-slate-900'
-                      }`}
+                      className="h-14 sm:h-16 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 active:bg-emerald-500/20 active:border-emerald-500/50 border border-slate-700/80 text-white font-mono flex flex-col items-center justify-center transition-all cursor-pointer select-none active:scale-95 shadow-md group"
                     >
-                      <span className={`text-2xl sm:text-3xl font-black font-mono transition-transform group-hover:scale-110 ${
-                        theme === 'dark' ? 'text-white' : 'text-slate-900'
-                      }`}>{item.n}</span>
+                      <span className="text-2xl sm:text-3xl font-black text-white group-hover:scale-110 transition-transform">{item.n}</span>
                       {item.sub && (
-                        <span className={`text-[9px] font-mono tracking-widest ${
-                          theme === 'dark' ? 'text-slate-500' : 'text-slate-400'
-                        }`}>{item.sub}</span>
+                        <span className="text-[9px] text-slate-400 font-mono tracking-widest">{item.sub}</span>
                       )}
                     </button>
                   ))}
 
-                  {/* CLEAR BUTTON */}
+                  {/* RESET / BERSIHKAN BUTTON - DISTINCT AMBER THEME */}
                   <button
                     type="button"
                     onClick={() => handleNumpadPress('clear')}
-                    className="h-16 sm:h-20 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 active:bg-amber-500/30 border border-amber-500/30 text-amber-500 font-bold text-xs sm:text-sm font-mono flex items-center justify-center cursor-pointer transition-all active:scale-90"
+                    className="h-14 sm:h-16 rounded-2xl bg-amber-500/20 hover:bg-amber-500/30 active:bg-amber-500/40 border border-amber-500/40 text-amber-300 font-extrabold text-xs sm:text-sm font-mono flex items-center justify-center cursor-pointer transition-all active:scale-95 shadow-md"
                   >
-                    {t.keypad_reset}
+                    RESET
                   </button>
 
                   {/* 0 BUTTON */}
                   <button
                     type="button"
                     onClick={() => handleNumpadPress('0')}
-                    className={`h-16 sm:h-20 rounded-2xl border active:scale-90 flex flex-col items-center justify-center shadow-md transition-all duration-150 cursor-pointer select-none group ${
-                      theme === 'dark'
-                        ? 'bg-white/5 hover:bg-white/10 border-white/10 hover:border-white/20 active:bg-emerald-500/10 active:border-emerald-500/40 text-white'
-                        : 'bg-slate-50 hover:bg-slate-100 border-slate-200 hover:border-slate-300 active:bg-emerald-50 active:border-emerald-500 text-slate-900'
-                    }`}
+                    className="h-14 sm:h-16 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 active:bg-emerald-500/20 active:border-emerald-500/50 border border-slate-700/80 text-white font-mono flex flex-col items-center justify-center transition-all cursor-pointer select-none active:scale-95 shadow-md group"
                   >
-                    <span className={`text-2xl sm:text-3xl font-black font-mono transition-transform group-hover:scale-110 ${
-                      theme === 'dark' ? 'text-white' : 'text-slate-900'
-                    }`}>0</span>
-                    <span className={`text-[9px] font-mono tracking-widest ${
-                      theme === 'dark' ? 'text-slate-500' : 'text-slate-400'
-                    }`}>+</span>
+                    <span className="text-2xl sm:text-3xl font-black text-white group-hover:scale-110 transition-transform">0</span>
+                    <span className="text-[9px] text-slate-400 font-mono tracking-widest">+</span>
                   </button>
 
-                  {/* BACKSPACE BUTTON */}
+                  {/* HAPUS / BACKSPACE BUTTON - DISTINCT CRIMSON RED THEME */}
                   <button
                     type="button"
                     onClick={() => handleNumpadPress('backspace')}
-                    className="h-16 sm:h-20 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 active:bg-rose-500/30 border border-rose-500/30 text-rose-500 font-bold text-xs sm:text-sm font-mono flex items-center justify-center cursor-pointer transition-all active:scale-90"
+                    className="h-14 sm:h-16 rounded-2xl bg-rose-500/20 hover:bg-rose-500/30 active:bg-rose-500/40 border border-rose-500/40 text-rose-300 font-extrabold text-xs sm:text-sm font-mono flex items-center justify-center cursor-pointer transition-all active:scale-95 shadow-md"
                   >
-                    {t.keypad_delete}
+                    HAPUS
                   </button>
                 </div>
               </div>
