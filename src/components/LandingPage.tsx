@@ -511,11 +511,29 @@ export default function LandingPage({
   useEffect(() => {
     async function fetchHeroImages() {
       try {
-        const res = await fetch("/api/site-settings?keys=hero_slider_images,hero_image_url,staff_image_left,staff_image_right", {
-          credentials: "same-origin",
-          headers: { Accept: "application/json" }
-        });
-        const data = res.ok ? await res.json() : [];
+        let data: any[] = [];
+        try {
+          const res = await fetch("/api/site-settings?keys=hero_slider_images,hero_image_url,staff_image_left,staff_image_right", {
+            credentials: "same-origin",
+            headers: { Accept: "application/json" }
+          }).catch(() => null);
+          if (res && res.ok) {
+            data = await res.json().catch(() => []);
+          }
+        } catch {}
+
+        if (!data || data.length === 0) {
+          try {
+            const { data: sbData } = await supabase
+              .from("site_settings")
+              .select("*")
+              .in("setting_key", ["hero_slider_images", "hero_image_url", "staff_image_left", "staff_image_right"]);
+            if (sbData && Array.isArray(sbData)) {
+              data = sbData;
+            }
+          } catch {}
+        }
+
         if (data && data.length > 0) {
           const leftItem = data.find(
             (d: any) => d.setting_key === "staff_image_left",
@@ -554,7 +572,6 @@ export default function LandingPage({
           setHeroImages([HERO_PLACEHOLDER_SVG]);
         }
       } catch (err) {
-        undefined;
         setHeroImages([HERO_PLACEHOLDER_SVG]);
       }
     }
