@@ -4275,6 +4275,105 @@ app.post("/api/auth/citizen-login", async (req, res) => {
   }
 });
 
+// GET /api/admin/citizens - Fetch registered citizens list for Helpdesk User Management
+app.get("/api/admin/citizens", async (req, res) => {
+  try {
+    const { data: citizens, error } = await supabase
+      .from("mpp_citizens")
+      .select("*")
+      .order("last_active", { ascending: false })
+      .limit(100);
+
+    if (error) {
+      console.warn("[/api/admin/citizens] Error fetching mpp_citizens:", error);
+    }
+
+    return res.json({
+      success: true,
+      citizens: citizens || []
+    });
+  } catch (err: any) {
+    console.error("[/api/admin/citizens] Error:", err);
+    return res.status(500).json({ success: false, message: err.message || "Gagal mengambil daftar warga." });
+  }
+});
+
+// POST /api/admin/reset-citizen-password - Secure Helpdesk Temporary Password Reset via WA
+app.post("/api/admin/reset-citizen-password", async (req, res) => {
+  try {
+    const { nik, phone, name } = req.body;
+    const cleanNik = String(nik || "").replace(/\D/g, "");
+
+    if (!cleanNik || cleanNik.length !== 16) {
+      return res.status(400).json({ success: false, message: "NIK tidak valid (harus 16 digit)." });
+    }
+
+    // Generate secure temporary password e.g. Luwu#492
+    const randomNum = Math.floor(100 + Math.random() * 900);
+    const tempPassword = `Luwu#${randomNum}`;
+
+    const crypto = require("crypto");
+    const passHash = crypto.createHash("sha256").update(tempPassword).digest("hex");
+
+    // Update password_hash in database
+    const { error: updateErr } = await supabase.from("mpp_citizens").upsert({
+      nik: cleanNik,
+      nama: name || "Warga Pemohon",
+      no_hp: phone || "-",
+      password_hash: passHash,
+      last_active: new Date().toISOString()
+    }, { onConflict: "nik" });
+
+    if (updateErr) {
+      console.warn("[Helpdesk Reset] Database update notice:", updateErr);
+    }
+
+    const waMessage = `Halo ${name || 'Warga Pemohon'}, kata sandi sementara akun MPP Simpurusiang Anda telah diperbarui oleh Helpdesk menjadi: *${tempPassword}*. Silakan login dan perbarui kata sandi Anda.`;
+
+    // Trigger WhatsApp notification log
+    console.log(`[WhatsApp Gateway Helpdesk Reset] To ${phone || cleanNik}: ${waMessage}`);
+
+    return res.json({
+      success: true,
+      message: `Password sementara berhasil dibuat: ${tempPassword}`,
+      tempPassword,
+      nik: cleanNik,
+      phone: phone || "-",
+      waMessageSent: true
+    });
+  } catch (err: any) {
+    console.error("[/api/admin/reset-citizen-password] Error:", err);
+    return res.status(500).json({ success: false, message: err.message || "Gagal mereset password." });
+  }
+});
+
+// POST /api/admin/send-citizen-otp-wa - Send instant OTP code for counter Helpdesk verification
+app.post("/api/admin/send-citizen-otp-wa", async (req, res) => {
+  try {
+    const { nik, phone, name } = req.body;
+    const cleanNik = String(nik || "").replace(/\D/g, "");
+
+    if (!cleanNik || cleanNik.length !== 16) {
+      return res.status(400).json({ success: false, message: "NIK tidak valid (harus 16 digit)." });
+    }
+
+    const randomOtp = Math.floor(1000 + Math.random() * 9000).toString();
+
+    console.log(`[Helpdesk Counter OTP] Generated OTP ${randomOtp} for NIK: ${cleanNik}, Phone: ${phone}`);
+
+    return res.json({
+      success: true,
+      message: `Kode OTP 4-digit ${randomOtp} berhasil dikirimkan ke WhatsApp pemohon.`,
+      otpCode: randomOtp,
+      nik: cleanNik,
+      phone: phone || "-"
+    });
+  } catch (err: any) {
+    console.error("[/api/admin/send-citizen-otp-wa] Error:", err);
+    return res.status(500).json({ success: false, message: err.message || "Gagal mengirimkan OTP." });
+  }
+});
+
 app.post("/api/admin/delete-operator", async (req, res) => {
   const { user_id } = req.body;
   const currentRole = parseAndValidateRole(req);

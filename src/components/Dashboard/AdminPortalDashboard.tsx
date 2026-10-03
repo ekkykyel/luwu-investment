@@ -86,6 +86,7 @@ import FourBidangSyncWorkflowModal from './FourBidangSyncWorkflowModal';
 import EstafetHandoverModal from './EstafetHandoverModal';
 import EstafetProgressBanner from './EstafetProgressBanner';
 import AdminLayout from '../Admin/AdminLayout';
+import AdminUserManagement from '../Admin/Views/AdminUserManagement';
 import SmartInvestmentFormEngine from '../SmartInvestmentFormEngine';
 import TataRuangInvestasi from '../Admin/Views/TataRuangInvestasi';
 import UploadGeoJsonPanel from '../UploadGeoJsonPanel';
@@ -5662,6 +5663,10 @@ Ulas secara mendalam:
             <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/60 backdrop-blur-xl p-6">
               <ManageOperatorsModal onClose={() => setActiveTab('overview')} />
             </div>
+          </div>
+        ) : (activeTab === 'manage_users' || activeTab === 'citizen_management' || activeTab === 'helpdesk_users' || activeTab === 'user_management') ? (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <AdminUserManagement isDarkMode={true} />
           </div>
         ) : activeTab === 'mpp_portal' ? (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">

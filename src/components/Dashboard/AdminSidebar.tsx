@@ -120,6 +120,7 @@ export const getMenusByRole = (role: string): MenuGroup[] => {
     {
       group: 'Administrator & Sistem AI',
       items: [
+        { id: 'manage_users', name: 'Manajemen Pemohon & Helpdesk', icon: Users },
         { id: 'rag_injection', name: 'Injek Pengetahuan AI (RAG)', icon: Sparkles },
         { id: 'manage_operators', name: 'Tambah & Kelola Operator', icon: Users },
         { id: 'mpp_portal', name: 'Portal MPP Simpurusiang', icon: Building2 },
