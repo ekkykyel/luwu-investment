@@ -209,7 +209,7 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
       </div>
 
       {/* Centered Vertical Stack for Maklumat & Zona Integritas (Top-to-Bottom) */}
-      <div className="w-full max-w-4xl mx-auto flex flex-col gap-8 mb-12">
+      <div className="w-full max-w-5xl mx-auto flex flex-col gap-8 mb-12">
         {/* Top Card: Official Government Pledge Card (Maklumat Pelayanan Publik) */}
         <div className={`p-6 sm:p-8 rounded-3xl border transition-all relative overflow-hidden w-full ${
           isDark 
@@ -263,7 +263,7 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
             {/* Official Pledge Text */}
             <div className="pt-5 space-y-3 flex-1 flex flex-col justify-between">
               <div className="relative">
-                <blockquote className="text-xs sm:text-sm md:text-base font-serif italic text-slate-800 dark:text-slate-100 leading-relaxed bg-white/60 dark:bg-slate-950/60 px-6 py-7 sm:px-8 sm:py-8 rounded-2xl border border-emerald-500/25 shadow-inner text-center mx-auto w-full">
+                <blockquote className="text-xs sm:text-sm md:text-base font-serif italic text-slate-800 dark:text-slate-100 leading-relaxed bg-white/60 dark:bg-slate-950/60 px-6 py-7 sm:px-8 sm:py-8 rounded-2xl border border-emerald-500/25 shadow-inner text-justify mx-auto w-full">
                   <span className="text-2xl text-emerald-500 dark:text-emerald-400 font-serif leading-none mr-1 select-none">“</span>
                   {isEn 
                     ? 'Herewith, we the leadership and all personnel of Mal Pelayanan Publik (MPP) Simpurusiang Luwu Regency solemnly pledge and state our capability to deliver services in strict compliance with established Standards, ensuring ease, transparency, and time certainty. If we fail to fulfill this promise, we are fully prepared to accept sanctions in accordance with applicable laws.'
