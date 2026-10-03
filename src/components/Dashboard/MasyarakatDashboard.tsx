@@ -1513,18 +1513,28 @@ export default function MasyarakatDashboard({
   const fetchMyPkkprApplications = useCallback(async () => {
     setLoadingPkkprApps(true);
     try {
-      const { data: { user }, error: authErr } = await supabase.auth.getUser();
-      if (authErr || !user) {
+      const { data: { user } } = await supabase.auth.getUser().catch(() => ({ data: { user: null } }));
+      const currentCitizenNik = getActiveCitizenNik() || hydratedProfile.nik || (typeof window !== 'undefined' ? (sessionStorage.getItem('citizen_nik') || localStorage.getItem('citizen_nik') || localStorage.getItem('mpp_verified_nik')) : null);
+      const currentUserId = user?.id || (currentCitizenNik ? `cit-${currentCitizenNik}` : null);
+
+      if (!user && !currentCitizenNik) {
         setMyPkkprApplications([]);
         return;
       }
 
-      // Query gis_pkkpr strictly for this authenticated citizen user (Single Source of Truth)
-      const { data: pkkprRows, error: pkkprErr } = await supabase
-        .from("gis_pkkpr")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
+      // Query gis_pkkpr strictly for this authenticated citizen or OTP-verified citizen
+      let query = supabase.from("gis_pkkpr").select("*");
+      
+      const filters: string[] = [];
+      if (user?.id) filters.push(`user_id.eq.${user.id}`);
+      if (currentUserId) filters.push(`user_id.eq.${currentUserId}`);
+      if (currentCitizenNik) filters.push(`nik_pemohon.eq.${currentCitizenNik}`);
+
+      if (filters.length > 0) {
+        query = query.or(filters.join(","));
+      }
+
+      const { data: pkkprRows, error: pkkprErr } = await query.order("created_at", { ascending: false });
 
       if (pkkprErr) {
         console.warn("Notice querying gis_pkkpr:", pkkprErr);
@@ -1546,7 +1556,7 @@ export default function MasyarakatDashboard({
     } finally {
       setLoadingPkkprApps(false);
     }
-  }, []);
+  }, [getActiveCitizenNik, hydratedProfile.nik]);
 
   useEffect(() => {
     fetchMyPkkprApplications();
@@ -1772,13 +1782,16 @@ export default function MasyarakatDashboard({
     setIsSubmittingPkkpr(true);
     try {
       const docNumber = `PKKPR-LUWU-${Date.now().toString().slice(-6)}`;
-      // 1. Validasi sesi aktif wajib (Anti Ghost-Session & RLS Protected)
-      const { data: { user }, error: userAuthErr } = await supabase.auth.getUser();
-      if (userAuthErr || !user) {
+      // 1. Hybrid Session Validation: Support both Supabase Auth & OTP Citizen NIK Session
+      const { data: { user } } = await supabase.auth.getUser().catch(() => ({ data: { user: null } }));
+      const currentCitizenNik = finalNik || hydratedProfile.nik || getActiveCitizenNik() || (typeof window !== 'undefined' ? (sessionStorage.getItem('citizen_nik') || localStorage.getItem('citizen_nik') || localStorage.getItem('mpp_verified_nik')) : null);
+      const currentUserId = user?.id || (currentCitizenNik ? `cit-${currentCitizenNik}` : null);
+
+      if (!user && !currentCitizenNik) {
         Swal.fire({
           icon: "warning",
           title: "Sesi Login Diperlukan",
-          text: "Sesi login Anda tidak aktif. Silakan masuk terlebih dahulu untuk mengajukan permohonan PKKPR.",
+          text: "Sesi login Anda tidak aktif. Silakan masuk atau lengkapi identitas NIK terlebih dahulu untuk mengajukan permohonan PKKPR.",
           confirmButtonColor: "#10b981"
         });
         return;
@@ -1851,8 +1864,8 @@ export default function MasyarakatDashboard({
         status: "PENDING",
         pkkpr_status: "Menunggu Verifikasi Spasial PUPTR",
         created_at: new Date().toISOString(),
-        user_id: user?.id || null,
-        created_by: user?.id || null,
+        user_id: currentUserId || user?.id || (finalNik ? `cit-${finalNik}` : null),
+        created_by: currentUserId || user?.id || (finalNik ? `cit-${finalNik}` : null),
       };
 
       try {
@@ -1903,8 +1916,8 @@ export default function MasyarakatDashboard({
           jenis_alas_hak: pkkprBuktiTanahJenis || "Sertipikat Hak Milik (SHM)",
           file_alas_hak_url: finalSertifikatUrl || null,
           bukti_tanah: `${pkkprBuktiTanahJenis}${pkkprBuktiTanahNomor ? ` (No. ${pkkprBuktiTanahNomor})` : ''}`,
-          user_id: user?.id || null,
-          created_by: user?.id || null,
+          user_id: currentUserId || user?.id || (finalNik ? `cit-${finalNik}` : null),
+          created_by: currentUserId || user?.id || (finalNik ? `cit-${finalNik}` : null),
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
           sertifikat_tanah_url: finalSertifikatUrl,
@@ -1939,8 +1952,8 @@ export default function MasyarakatDashboard({
           land_status: pkkprBuktiTanahJenis || "Sertipikat Hak Milik (SHM)",
           certificate_number: pkkprBuktiTanahNomor || `SHM-${docNumber}`,
           description: formattedCatatanTeknis,
-          user_id: user?.id || null,
-          created_by: user?.id || null,
+          user_id: currentUserId || user?.id || (finalNik ? `cit-${finalNik}` : null),
+          created_by: currentUserId || user?.id || (finalNik ? `cit-${finalNik}` : null),
           created_at: new Date().toISOString()
         });
       } catch (err) {
@@ -1965,7 +1978,6 @@ export default function MasyarakatDashboard({
         message: `Permohonan PKKPR ${pkkprCategory} Baru dari ${finalNama} (NIK: ${finalNik}) di Desa ${pkkprDesa}, Kec. ${pkkprKecamatan} membutuhkan verifikasi spasial PUPTR.`
       });
 
-      setMyPkkprApplications(updated);
       setIsPkkprModalOpen(false);
 
       // Reset form
