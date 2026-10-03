@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { GeoJSONLayer } from '../types';
+import { safeFetchLayerData } from '../lib/supabaseClient';
 
 // In-memory cache for static GeoJSON layers across components
 const globalGeoJsonCache: Record<string, any> = {};
@@ -132,7 +133,7 @@ export function clearTechnicalSpatialCache(layerId?: string) {
   }
 }
 
-async function fetchGeoJsonLayer(url: string, id: string): Promise<any> {
+async function fetchGeoJsonLayer(urlOrTable: string, id: string): Promise<any> {
   if (globalGeoJsonCache[id]) {
     return globalGeoJsonCache[id];
   }
@@ -140,25 +141,18 @@ async function fetchGeoJsonLayer(url: string, id: string): Promise<any> {
     return pendingFetches[id];
   }
 
+  const tableName = urlOrTable.replace('/api/spatial/', '').replace('/api/spatial-layers/', '').replace(/^\//, '');
+
   const fetchPromise = (async () => {
     try {
-      let res = await fetch(url, { credentials: 'same-origin' });
-      if (!res.ok && id === 'layer_jalan') {
-        // Fallback to static if /api/gis_jalan fails
-        res = await fetch('/gis_jalan.json', { credentials: 'same-origin' });
-      }
-      if (!res.ok) {
-        console.warn(`[useTechnicalSpatialLayers] Failed to fetch ${url}: status ${res.status}`);
-        return { type: 'FeatureCollection', features: [] };
-      }
-      const _ctype = res.headers.get("content-type");
-      if (_ctype && !_ctype.includes("application/json")) throw new Error("Not JSON");
-      const data = await res.json();
+      const data = await safeFetchLayerData(tableName);
       if (data && (data.type === 'FeatureCollection' || Array.isArray(data.features))) {
-        globalGeoJsonCache[id] = data;
-        return data;
+        if (data.features && data.features.length > 0) {
+          globalGeoJsonCache[id] = data;
+          return data;
+        }
       }
-      return { type: 'FeatureCollection', features: [] };
+      return data || { type: 'FeatureCollection', features: [] };
     } catch (err) {
       console.warn(`[useTechnicalSpatialLayers] Fetch error for ${id}:`, err);
       return { type: 'FeatureCollection', features: [] };

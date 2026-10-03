@@ -4286,7 +4286,7 @@ export default function SpatialMapWorkspace() {
             }
           } catch {}
 
-          // Attempt 1: Fetch from live dynamic PostGIS API endpoint (/api/spatial/:tableName)
+          // Attempt 1: Fetch directly from Supabase PostGIS via safeFetchLayerData
           try {
             const tableMap: Record<string, string> = {
               layer_sawah: "gis_sawah",
@@ -4308,15 +4308,14 @@ export default function SpatialMapWorkspace() {
             };
             const targetTable = tableMap[layerId] || (layerId.startsWith("layer_") ? "gis_" + layerId.replace("layer_", "") : layerId);
 
-            const response = await fetch(`/api/spatial/${encodeURIComponent(targetTable)}`);
-            if (response.ok) {
-              const layerData = await response.json();
-              if (layerData && (layerData.type === "FeatureCollection" || Array.isArray(layerData.features))) {
+            const layerData = await safeFetchLayerData(targetTable);
+            if (layerData && (layerData.type === "FeatureCollection" || Array.isArray(layerData.features))) {
+              if (layerData.features && layerData.features.length > 0) {
                 fetchedGeoJSON = layerData;
               }
             }
           } catch (errApi) {
-            console.info(`[LazyLoad Info] Dynamic API fetch notice for ${layerId}, trying secondary endpoint:`, errApi);
+            console.info(`[LazyLoad Info] safeFetchLayerData notice for ${layerId}:`, errApi);
           }
 
           // Attempt 1b: Fetch from /api/spatial-layers/:id if dynamic route returned empty

@@ -60,114 +60,161 @@ export function clearLayerDataCache(tableName?: string): void {
 }
 
 /**
+ * Converts Supabase spatial rows (with geometry/geometry_json/geom/coordinates) into a standard GeoJSON FeatureCollection.
+ */
+export function convertRowsToGeoJSON(rows: any[], tableName: string): any {
+  if (!rows || !Array.isArray(rows) || rows.length === 0) {
+    return { type: "FeatureCollection", features: [] };
+  }
+
+  // If already a FeatureCollection
+  if (rows.length === 1 && rows[0]?.type === "FeatureCollection" && Array.isArray(rows[0]?.features)) {
+    return rows[0];
+  }
+
+  const features: any[] = [];
+
+  for (const row of rows) {
+    if (!row) continue;
+    if (row.type === "Feature" && row.geometry) {
+      features.push(row);
+      continue;
+    }
+
+    let geometry: any = row.geometry_json || row.geometry || row.geom || row.geojson || null;
+    if (typeof geometry === "string") {
+      try {
+        geometry = JSON.parse(geometry);
+      } catch {
+        geometry = null;
+      }
+    }
+
+    // Fallback coordinates for point tables (e.g. gis_infrastruktur, gis_potensi_investasi)
+    if (!geometry && (row.longitude || row.lng) && (row.latitude || row.lat)) {
+      const lng = Number(row.longitude || row.lng);
+      const lat = Number(row.latitude || row.lat);
+      if (!isNaN(lng) && !isNaN(lat)) {
+        geometry = {
+          type: "Point",
+          coordinates: [lng, lat]
+        };
+      }
+    }
+
+    if (!geometry || !geometry.type) {
+      continue;
+    }
+
+    const { geometry: _g, geometry_json: _gj, geom: _gm, geojson: _go, ...properties } = row;
+
+    features.push({
+      type: "Feature",
+      id: row.id || row.gid || `feat_${Math.random().toString(36).slice(2, 8)}`,
+      properties: {
+        ...properties,
+        _tableName: tableName,
+        id: row.id || row.gid,
+        name: row.name || row.nama || row.NAMOBJ || row.namobj || row.KECAMATAN || row.kecamatan || row.DESA || row.desa || row.keterangan || ""
+      },
+      geometry
+    });
+  }
+
+  return {
+    type: "FeatureCollection",
+    features
+  };
+}
+
+/**
  * Safe fetch layer data wrapper:
  * 1. Deduplikasi request (In-Memory Promise Cache) untuk mencegah infinite loop / request storm.
- * 2. Murni panggil Supabase PostGIS RPC 'get_layer_data' (Timeout 12s).
- * 3. Jika RPC tidak merespons, query langsung tabel Supabase (PostgREST) dan susun FeatureCollection.
- * 4. Jika koneksi database terputus/offline, gunakan static JSON lokal /public/${tableName}.json.
- * 5. Fallback jujur (Honest Fallback) mengembalikan array/FeatureCollection kosong [] jika semua sumber data kosong/gagal.
+ * 2. Query Supabase langsung melalui client SDK (@supabase/supabase-js) sebagai Single Source of Truth (Zero 500 Route Error).
+ * 3. Jika RPC get_layer_data tersedia, gunakan sebagai pelengkap.
+ * 4. Fallback ke static JSON lokal /public/${tableName}.json jika offline.
+ * 5. Fallback jujur (Honest Fallback) mengembalikan FeatureCollection kosong [] jika database kosong.
  */
 export async function safeFetchLayerData(tableName: string, timeoutMs = 12000): Promise<any> {
   if (!tableName) return { type: "FeatureCollection", features: [] };
 
+  const cleanTableName = tableName.replace('/api/spatial/', '').replace('/api/spatial-layers/', '').replace(/^\//, '').replace('.json', '');
+
   // Return existing in-flight / resolved request to deduplicate concurrent calls
-  if (layerDataMemoryCache[tableName]) {
-    return layerDataMemoryCache[tableName];
+  if (layerDataMemoryCache[cleanTableName]) {
+    return layerDataMemoryCache[cleanTableName];
   }
 
   const fetchPromise = (async () => {
-    // ATTEMPT 1: Ambil langsung dari Supabase PostGIS RPC ('get_layer_data')
+    // ATTEMPT 1: Query Supabase table directly via client SDK (Fast, Reliable, Zero Vercel/Proxy 500 error)
     try {
-      const rpcPromise = Promise.resolve(
-        supabase.rpc('get_layer_data', { p_table_name: tableName })
+      const queryPromise = Promise.resolve(
+        supabase.from(cleanTableName).select('*').limit(3000)
       ).catch((err) => ({ data: null, error: err }));
 
       const timeoutPromise = new Promise<{ data: any; error: any }>((resolve) =>
-        setTimeout(() => resolve({ data: null, error: new Error('RPC_TIMEOUT') }), timeoutMs)
+        setTimeout(() => resolve({ data: null, error: new Error('TABLE_QUERY_TIMEOUT') }), timeoutMs)
       );
 
-      const res = await Promise.race([rpcPromise, timeoutPromise]);
-      if (res && res.data && !res.error) {
-        const isFeatureCollection = res.data?.type === 'FeatureCollection' && Array.isArray(res.data?.features);
-        const isArray = Array.isArray(res.data);
-        const count = isFeatureCollection ? res.data.features.length : (isArray ? res.data.length : 1);
-        
-        if (count > 0) {
-          console.log(`✅ [Supabase RPC] Berhasil tarik data layer ${tableName}:`, count, 'item');
-          return res.data;
+      const res = await Promise.race([queryPromise, timeoutPromise]);
+      if (res && res.data && !res.error && Array.isArray(res.data) && res.data.length > 0) {
+        const geojson = convertRowsToGeoJSON(res.data, cleanTableName);
+        if (geojson.features && geojson.features.length > 0) {
+          console.log(`✅ [Direct Supabase Query] Berhasil tarik data layer ${cleanTableName}:`, geojson.features.length, 'fitur');
+          return geojson;
         }
       }
     } catch (err) {
-      console.warn(`[safeFetchLayerData] Supabase RPC gagal untuk ${tableName}, mencoba query tabel langsung...`);
+      console.warn(`[safeFetchLayerData] Direct query gagal untuk ${cleanTableName}, mencoba RPC...`);
     }
 
-    // ATTEMPT 2: Ambil langsung dari backend dynamic API route (/api/spatial/:tableName)
+    // ATTEMPT 2: Coba Supabase PostGIS RPC ('get_layer_data')
     try {
-      const apiRes = await safeFetchWithBackoff(`/api/spatial/${encodeURIComponent(tableName)}`, {
-        headers: { Accept: "application/json" },
-        maxRetries: 2,
-        initialDelayMs: 200
-      });
-      if (apiRes && apiRes.ok) {
-        const json = await apiRes.json();
-        if (json && (json.features?.length > 0 || (Array.isArray(json) && json.length > 0))) {
-          console.log(`✅ [Backend /api/spatial] Berhasil tarik data layer ${tableName}:`, json.features?.length || json.length, 'fitur');
-          return json;
+      const rpcPromise = Promise.resolve(
+        supabase.rpc('get_layer_data', { p_table_name: cleanTableName })
+      ).catch((err) => ({ data: null, error: err }));
+
+      const timeoutPromiseRpc = new Promise<{ data: any; error: any }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: new Error('RPC_TIMEOUT') }), 4000)
+      );
+
+      const resRpc = await Promise.race([rpcPromise, timeoutPromiseRpc]);
+      if (resRpc && resRpc.data && !resRpc.error) {
+        const isFeatureCollection = resRpc.data?.type === 'FeatureCollection' && Array.isArray(resRpc.data?.features);
+        const count = isFeatureCollection ? resRpc.data.features.length : (Array.isArray(resRpc.data) ? resRpc.data.length : 0);
+        
+        if (count > 0) {
+          console.log(`✅ [Supabase RPC] Berhasil tarik data layer ${cleanTableName}:`, count, 'item');
+          return isFeatureCollection ? resRpc.data : convertRowsToGeoJSON(resRpc.data, cleanTableName);
         }
       }
-    } catch (apiErr) {
-      console.warn(`[safeFetchLayerData] Backend /api/spatial gagal untuk ${tableName}:`, apiErr);
+    } catch (err) {
+      // quiet RPC error
     }
 
-    // ATTEMPT 3: Fallback ke local static JSON file jika Supabase dan backend proxy offline
-    const urlsToTry = [`/${tableName}.json`, `./${tableName}.json`];
+    // ATTEMPT 3: Fallback ke local static JSON file jika Supabase offline
+    const urlsToTry = [`/${cleanTableName}.json`, `./${cleanTableName}.json`];
     for (const url of urlsToTry) {
       try {
         const staticRes = await safeFetchWithBackoff(url, {
           headers: { Accept: "application/json" },
-          maxRetries: 2,
+          maxRetries: 1,
           initialDelayMs: 200
         });
         if (staticRes && staticRes.ok) {
           const json = await staticRes.json();
           if (json && (json.features?.length > 0 || (Array.isArray(json) && json.length > 0))) {
-            return json;
+            return json.type === 'FeatureCollection' ? json : convertRowsToGeoJSON(json, cleanTableName);
           }
         }
       } catch {}
     }
 
-    // ATTEMPT 3: Query Supabase PostgREST table safely for non-spatial or small tables
-    if (!tableName.startsWith("gis_jalan") && !tableName.startsWith("gis_desa") && !tableName.startsWith("gis_kecamatan")) {
-      try {
-        let selectCols = 'id, name, created_at';
-        if (tableName === 'gis_zonasi') {
-          selectCols = 'id, keterangan, rpluwu2009';
-        } else if (tableName.startsWith('gis_')) {
-          selectCols = '*';
-        }
-        const fromPromise = Promise.resolve(
-          supabase.from(tableName).select(selectCols).limit(500)
-        ).catch((err) => ({ data: null, error: err }));
-
-        const timeoutPromise2 = new Promise<{ data: any; error: any }>((resolve) =>
-          setTimeout(() => resolve({ data: null, error: new Error('TABLE_QUERY_TIMEOUT') }), 4000)
-        );
-
-        const fromRes = await Promise.race([fromPromise, timeoutPromise2]);
-        if (fromRes && fromRes.data && !fromRes.error && Array.isArray(fromRes.data) && fromRes.data.length > 0) {
-          return fromRes.data;
-        }
-      } catch (tableErr) {
-        // quiet fallback
-      }
-    }
-
-    console.warn(`⚠️ [safeFetchLayerData] Tidak ada data ditemukan untuk layer: ${tableName} (Honest Fallback)`);
+    console.warn(`⚠️ [safeFetchLayerData] Tidak ada data ditemukan untuk layer: ${cleanTableName} (Honest Fallback)`);
     return { type: "FeatureCollection", features: [] };
   })();
 
-  layerDataMemoryCache[tableName] = fetchPromise;
+  layerDataMemoryCache[cleanTableName] = fetchPromise;
   return fetchPromise;
 }
 
