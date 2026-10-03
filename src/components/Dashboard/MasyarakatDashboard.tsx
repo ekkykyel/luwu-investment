@@ -125,17 +125,19 @@ export default function MasyarakatDashboard({
   const extractPhone = useCallback((p: any) => {
     if (!p) return "";
     return (
+      p.phone_number ||
+      p.phone ||
       p.no_whatsapp ||
       p.whatsapp ||
-      p.phone ||
       p.telepon ||
       p.no_hp ||
       p.no_telepon ||
       p.contact_info ||
       p.contact ||
+      p.user_metadata?.phone_number ||
+      p.user_metadata?.phone ||
       p.user_metadata?.no_whatsapp ||
       p.user_metadata?.whatsapp ||
-      p.user_metadata?.phone ||
       p.user_metadata?.telepon ||
       p.user_metadata?.no_hp ||
       p.user_metadata?.no_telepon ||
@@ -1046,7 +1048,7 @@ export default function MasyarakatDashboard({
         try {
           const { data: profileData, error: pErr } = await supabase
             .from("profiles")
-            .select("id, email, full_name, company_name, role, nik, kecamatan, desa, phone_number, no_whatsapp")
+            .select("id, email, full_name, company_name, role, nik, kecamatan, desa, phone_number")
             .eq("id", effectiveId)
             .maybeSingle();
 
@@ -1065,7 +1067,7 @@ export default function MasyarakatDashboard({
         try {
           const { data: profileByEmail, error: emErr } = await supabase
             .from("profiles")
-            .select("id, email, full_name, company_name, role, nik, kecamatan, desa, phone_number, no_whatsapp")
+            .select("id, email, full_name, company_name, role, nik, kecamatan, desa, phone_number")
             .eq("email", effectiveEmail)
             .maybeSingle();
 
@@ -1100,8 +1102,9 @@ export default function MasyarakatDashboard({
               role: prof?.role || "masyarakat",
               kecamatan: prof?.kecamatan || citizenData.kecamatan,
               desa: prof?.desa || citizenData.desa,
-              no_whatsapp: prof?.no_whatsapp || citizenData.phone_number,
-              phone: prof?.phone_number || citizenData.phone_number,
+              phone_number: citizenData.phone_number || prof?.phone_number,
+              phone: citizenData.phone_number || prof?.phone_number,
+              no_whatsapp: citizenData.phone_number || prof?.phone_number,
               address: citizenData.address
             };
           }
@@ -1141,11 +1144,11 @@ export default function MasyarakatDashboard({
       let resolvedNib = prof?.nib || prof?.no_nib || prof?.nib_oss || meta.nib || meta.no_nib || activeProfile?.nib || activeProfile?.no_nib || "";
       let resolvedPerusahaan = prof?.company_name || prof?.perusahaan || prof?.nama_perusahaan || prof?.nama_badan_usaha || meta.company_name || meta.perusahaan || meta.nama_perusahaan || activeProfile?.company_name || activeProfile?.perusahaan || "";
 
-      // Resolve Location & Contact
+      // Resolve Location & Contact (Standardized phone_number fallback)
       let rawKec = prof?.kecamatan || meta.kecamatan || activeProfile?.kecamatan || "";
       let resolvedKec = normalizeKecamatanName(rawKec, kecamatanList, districts);
       let resolvedDesa = prof?.desa || meta.desa || activeProfile?.desa || "";
-      let resolvedWa = prof?.no_whatsapp || prof?.phone || prof?.no_hp || meta.no_whatsapp || meta.phone || activeProfile?.phone || activeProfile?.no_whatsapp || "";
+      let resolvedWa = prof?.phone_number || prof?.phone || prof?.no_whatsapp || prof?.no_hp || meta.phone_number || meta.phone || meta.no_whatsapp || activeProfile?.phone_number || activeProfile?.phone || activeProfile?.no_whatsapp || "";
 
       const updated = {
         nama: resolvedNama,
@@ -2158,43 +2161,53 @@ export default function MasyarakatDashboard({
   const [loadingComplaints, setLoadingComplaints] = useState(true);
   const [selectedComplaint, setSelectedComplaint] = useState<any | null>(null);
 
-  // Load complaints for this user
+  // Load complaints for this user (Supports VARCHAR pelapor_id: UUID, raw NIK, or cit-NIK)
   const fetchMyComplaints = useCallback(async () => {
-    if (!activeProfile?.id || activeProfile.id === "offline-user") return;
+    const rawId = activeProfile?.id || currentUser?.id || "";
+    const rawNik = userNik || activeProfile?.nik || "";
+    if (!rawId && !rawNik) {
+      setComplaints([]);
+      setLoadingComplaints(false);
+      return;
+    }
+
     setLoadingComplaints(true);
     try {
-      const { data, error } = await supabase
-        .from("pengaduan")
-        .select("*")
-        .eq("pelapor_id", activeProfile.id)
-        .order("created_at", { ascending: false });
+      const idCandidates = new Set<string>();
+      if (rawId && rawId !== "offline-user") idCandidates.add(String(rawId));
+      if (rawNik && /^\d{16}$/.test(rawNik)) {
+        idCandidates.add(rawNik);
+        idCandidates.add(`cit-${rawNik}`);
+        idCandidates.add(`citizen-${rawNik}`);
+      }
+      if (currentUser?.id) idCandidates.add(String(currentUser.id));
 
-      if (!error && data) {
+      const candidateList = Array.from(idCandidates);
+      
+      let query = supabase.from("pengaduan").select("*");
+      if (candidateList.length === 1) {
+        query = query.eq("pelapor_id", candidateList[0]);
+      } else if (candidateList.length > 1) {
+        query = query.in("pelapor_id", candidateList);
+      }
+      
+      const { data, error } = await query.order("created_at", { ascending: false });
+
+      if (!error && Array.isArray(data)) {
         setComplaints(data);
       } else {
-        const { data: allData, error: allErr } = await supabase
-          .from("pengaduan")
-          .select("*")
-          .order("created_at", { ascending: false });
-
-        if (!allErr && allData) {
-          const myComplaints = allData.filter((item: any) =>
-            String(item.pelapor_id) === String(activeProfile.id) ||
-            (activeProfile.email && String(item.kontak_pelapor || "").toLowerCase().includes(activeProfile.email.toLowerCase())) ||
-            (activeProfile.full_name && String(item.nama_pelapor || "").toLowerCase().includes(activeProfile.full_name.toLowerCase()))
-          );
-          setComplaints(myComplaints);
-        } else {
-          setComplaints([]);
+        if (error) {
+          console.warn("[MasyarakatDashboard] Non-fatal pengaduan fetch note:", error.message);
         }
+        setComplaints([]);
       }
     } catch (err: any) {
-      console.error("Gagal memuat daftar pengaduan:", err);
+      console.warn("[MasyarakatDashboard] Non-fatal catch loading pengaduan:", err);
       setComplaints([]);
     } finally {
       setLoadingComplaints(false);
     }
-  }, [activeProfile?.id, activeProfile?.email, activeProfile?.full_name]);
+  }, [activeProfile?.id, activeProfile?.nik, currentUser?.id, userNik]);
 
   useEffect(() => {
     fetchMyComplaints();

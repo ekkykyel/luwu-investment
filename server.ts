@@ -6374,13 +6374,13 @@ async function verifyInvestmentSubmissionIdentity(req: express.Request): Promise
         const filters: string[] = [];
         if (cleanSubNik) filters.push(`nik.eq.${cleanSubNik}`);
         if (cleanSubPhone) {
+          filters.push(`phone_number.eq.${cleanSubPhone}`);
           filters.push(`no_whatsapp.eq.${cleanSubPhone}`);
-          filters.push(`whatsapp.eq.${cleanSubPhone}`);
         }
 
         const { data: matchedProfiles } = await supabase
           .from("profiles")
-          .select("id, nik, no_whatsapp, whatsapp")
+          .select("id, nik, phone_number")
           .or(filters.join(","));
 
         if (matchedProfiles && matchedProfiles.length > 0) {
@@ -12419,7 +12419,7 @@ app.post("/api/kiosk/investor/lookup", async (req, res) => {
     // Query registered investors from profiles table
     const { data: investors, error } = await supabase
       .from("profiles")
-      .select("id, full_name, email, role, no_whatsapp, company_name, nib, status_modal, negara_asal, nik")
+      .select("id, full_name, email, role, phone_number, company_name, nib, status_modal, negara_asal, nik")
       .eq("role", "investor");
 
     if (error) {
@@ -12437,7 +12437,7 @@ app.post("/api/kiosk/investor/lookup", async (req, res) => {
 
     // Match by phone digits, NIB, email, or NIK
     const matched = investors.find(inv => {
-      const invPhoneClean = String(inv.no_whatsapp || "").replace(/\D/g, "");
+      const invPhoneClean = String(inv.phone_number || inv.no_whatsapp || "").replace(/\D/g, "");
       const invNibClean = String(inv.nib || "").trim();
       const invEmail = String(inv.email || "").trim().toLowerCase();
       const invNikClean = String(inv.nik || "").replace(/\D/g, "");
@@ -12475,6 +12475,7 @@ app.post("/api/kiosk/investor/lookup", async (req, res) => {
       });
     }
 
+    const matchedPhone = matched.phone_number || matched.no_whatsapp || "";
     return res.json({
       success: true,
       registered: true,
@@ -12486,9 +12487,9 @@ app.post("/api/kiosk/investor/lookup", async (req, res) => {
         email: matched.email,
         status_modal: matched.status_modal || "PMDN",
         negara_asal: matched.negara_asal || "Indonesia",
-        maskedPhone: maskPhoneNumber(matched.no_whatsapp || ""),
+        maskedPhone: maskPhoneNumber(matchedPhone),
         maskedName: maskFullName(matched.full_name),
-        hasPhone: Boolean(matched.no_whatsapp && matched.no_whatsapp.length >= 8)
+        hasPhone: Boolean(matchedPhone && matchedPhone.length >= 8)
       }
     });
   } catch (err: any) {
@@ -12510,7 +12511,7 @@ app.post("/api/kiosk/investor/send-otp", async (req, res) => {
     // Query registered investors
     const { data: investors, error } = await supabase
       .from("profiles")
-      .select("id, full_name, email, role, no_whatsapp, company_name, nib, status_modal, negara_asal, nik")
+      .select("id, full_name, email, role, phone_number, company_name, nib, status_modal, negara_asal, nik")
       .eq("role", "investor");
 
     if (error || !investors || investors.length === 0) {
@@ -12522,7 +12523,7 @@ app.post("/api/kiosk/investor/send-otp", async (req, res) => {
     }
 
     const matched = investors.find(inv => {
-      const invPhoneClean = String(inv.no_whatsapp || "").replace(/\D/g, "");
+      const invPhoneClean = String(inv.phone_number || inv.no_whatsapp || "").replace(/\D/g, "");
       const invNibClean = String(inv.nib || "").trim();
       const invEmail = String(inv.email || "").trim().toLowerCase();
       const invNikClean = String(inv.nik || "").replace(/\D/g, "");
@@ -12548,7 +12549,7 @@ app.post("/api/kiosk/investor/send-otp", async (req, res) => {
       });
     }
 
-    const rawPhone = matched.no_whatsapp || (cleanDigits.length >= 10 ? cleanDigits : "");
+    const rawPhone = matched.phone_number || matched.no_whatsapp || (cleanDigits.length >= 10 ? cleanDigits : "");
     if (!rawPhone || rawPhone.replace(/\D/g, "").length < 8) {
       return res.status(400).json({
         success: false,
@@ -12724,7 +12725,7 @@ app.post("/api/kiosk/investor/verify-otp", async (req, res) => {
     const investorId = finalKey.replace("investor_", "");
     const { data: investorProf } = await supabase
       .from("profiles")
-      .select("id, full_name, email, role, no_whatsapp, company_name, nib, status_modal, negara_asal, nik")
+      .select("id, full_name, email, role, phone_number, company_name, nib, status_modal, negara_asal, nik")
       .eq("id", investorId)
       .maybeSingle();
 

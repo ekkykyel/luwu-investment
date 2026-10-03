@@ -171,14 +171,16 @@ export function useProfile() {
       }
 
       const extractedPhone =
+        prof.phone_number ||
+        prof.phone ||
         prof.no_whatsapp ||
         prof.whatsapp ||
-        prof.phone ||
         prof.no_hp ||
         prof.telepon ||
+        meta.phone_number ||
+        meta.phone ||
         meta.no_whatsapp ||
         meta.whatsapp ||
-        meta.phone ||
         meta.no_hp ||
         meta.telepon ||
         "";
@@ -192,9 +194,10 @@ export function useProfile() {
         role: finalRole,
         full_name: prof.full_name || meta.full_name || (finalRole === 'masyarakat' ? 'Warga Kab. Luwu' : (user.email?.split('@')[0] || '')),
         nik: prof.nik || meta.nik || "",
+        phone_number: extractedPhone || prof.phone_number || meta.phone_number || "",
+        phone: extractedPhone || meta.phone || prof.phone || "",
         no_whatsapp: extractedPhone || meta.no_whatsapp || prof.no_whatsapp || "",
         whatsapp: extractedPhone || meta.whatsapp || prof.whatsapp || "",
-        phone: extractedPhone || meta.phone || prof.phone || "",
         kecamatan: prof.kecamatan || meta.kecamatan || "",
         desa: prof.desa || meta.desa || "",
       };
