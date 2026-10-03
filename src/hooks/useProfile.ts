@@ -65,16 +65,24 @@ export function useProfile() {
       }
 
       if (authErr || !user) {
+        if (authErr && (authErr.message?.toLowerCase().includes('refresh token') || authErr.status === 400)) {
+          clearAuthSessionToken();
+        }
         saveProfileToCache(null);
         return null;
       }
 
-      // Single Source of Truth: Fetch profil dari tabel profiles menggunakan user.id
-      const { data, error: profErr } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle();
+      // Single Source of Truth: Fetch profil dari tabel profiles menggunakan valid user.id UUID
+      const isValidUuid = (id?: string) => Boolean(id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
+      let data: any = null;
+      if (isValidUuid(user.id)) {
+        const res = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+        data = res.data;
+      }
 
       const meta = user.user_metadata || {};
       const prof = data || {};

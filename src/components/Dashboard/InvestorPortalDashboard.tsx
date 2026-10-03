@@ -405,16 +405,19 @@ export default function InvestorPortalDashboard() {
       }
       const effectiveEmail = user.email || "";
       const effectiveId = user.id;
+      const isValidUuid = (id?: string) => Boolean(id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
 
       let prof: any = null;
-      try {
-        const { data } = await supabase
-          .from("profiles")
-          .select("id, email, full_name, company_name, role, nib, kecamatan, desa")
-          .eq("id", effectiveId)
-          .maybeSingle();
-        if (data) prof = data;
-      } catch (e) {}
+      if (isValidUuid(effectiveId)) {
+        try {
+          const { data } = await supabase
+            .from("profiles")
+            .select("id, email, full_name, company_name, role, nib, kecamatan, desa")
+            .eq("id", effectiveId)
+            .maybeSingle();
+          if (data) prof = data;
+        } catch (e) {}
+      }
 
       const meta = user.user_metadata || {};
       const userRole = prof?.role || meta.role;
@@ -1120,11 +1123,16 @@ export default function InvestorPortalDashboard() {
         }
 
         const effectiveId = user.id;
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role, full_name, company_name')
-          .eq('id', effectiveId)
-          .maybeSingle();
+        const isValidUuid = (id?: string) => Boolean(id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
+        let profile: any = null;
+        if (isValidUuid(effectiveId)) {
+          const { data } = await supabase
+            .from('profiles')
+            .select('role, full_name, company_name')
+            .eq('id', effectiveId)
+            .maybeSingle();
+          profile = data;
+        }
 
         const effectiveRole = (profile?.role || user.user_metadata?.role || 'investor').toLowerCase().trim();
 

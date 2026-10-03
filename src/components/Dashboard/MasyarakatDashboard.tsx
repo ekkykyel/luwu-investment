@@ -900,19 +900,22 @@ export default function MasyarakatDashboard({
 
       const effectiveEmail = user.email || "";
       const effectiveId = user.id;
+      const isValidUuid = (id?: string) => Boolean(id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
 
-      // Step 1: Query public.profiles strictly by user.id
-      try {
-        const { data: profileData } = await supabase
-          .from("profiles")
-          .select("id, email, full_name, company_name, role, nik, kecamatan, desa, phone_number, no_whatsapp")
-          .eq("id", effectiveId)
-          .maybeSingle();
+      // Step 1: Query public.profiles strictly by valid UUID user.id
+      if (isValidUuid(effectiveId)) {
+        try {
+          const { data: profileData } = await supabase
+            .from("profiles")
+            .select("id, email, full_name, company_name, role, nik, kecamatan, desa, phone_number, no_whatsapp")
+            .eq("id", effectiveId)
+            .maybeSingle();
 
-        if (profileData && !isAdministrativeTitle(profileData.full_name)) {
-          prof = profileData;
-        }
-      } catch (e) {}
+          if (profileData && !isAdministrativeTitle(profileData.full_name)) {
+            prof = profileData;
+          }
+        } catch (e) {}
+      }
 
       // Step 2: Query by email if not resolved
       if (!prof && effectiveEmail) {
@@ -937,7 +940,7 @@ export default function MasyarakatDashboard({
         try {
           const { data: citizenData } = await supabase
             .from("mpp_citizens")
-            .select("nik, full_name, phone_number, gender, jenis_kelamin, occupation, pekerjaan, kecamatan, desa, address")
+            .select("nik, full_name, phone_number, gender, jenis_kelamin, occupation, pekerjaan, address")
             .eq("nik", candidateNik)
             .maybeSingle();
 
@@ -1880,9 +1883,12 @@ export default function MasyarakatDashboard({
           setUserNik((prev) => prev || uNik);
         } else {
           try {
-            const { data: prof } = await supabase.from("profiles").select("nik").eq("id", user.id).maybeSingle();
-            if (prof?.nik) {
-              setUserNik((prev) => prev || prof.nik);
+            const isValidUuid = (id?: string) => Boolean(id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
+            if (user?.id && isValidUuid(user.id)) {
+              const { data: prof } = await supabase.from("profiles").select("nik").eq("id", user.id).maybeSingle();
+              if (prof?.nik) {
+                setUserNik((prev) => prev || prof.nik);
+              }
             }
           } catch (e) {}
         }
@@ -1900,7 +1906,7 @@ export default function MasyarakatDashboard({
       try {
         const { data: invData } = await supabase
           .from("investments")
-          .select("id, name, sector, kecamatan, desa")
+          .select("id, name, sector, kecamatan")
           .limit(200);
         if (invData) {
           invData.forEach((inv: any) => {
