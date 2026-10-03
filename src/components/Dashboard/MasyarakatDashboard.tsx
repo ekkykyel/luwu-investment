@@ -1944,12 +1944,51 @@ export default function MasyarakatDashboard({
       };
 
       const normalizedGeom = ensureLuwuLngLatOrder(pkkprGeometry);
+      const virtualTicket = `V-PKKPR-${Date.now()}`;
+
+      // Step 1: Auto-register Citizen to MPP Database
+      try {
+        const citizenPayload = sanitizeSupabasePayload({
+          nik: finalNik,
+          nama: finalNama || 'Pemohon Online',
+          no_hp: kontak || '-',
+          source: 'ONLINE_GUEST',
+          last_active: new Date().toISOString()
+        });
+        const { error: citizenErr } = await supabase
+          .from('mpp_citizens')
+          .upsert(citizenPayload, { onConflict: 'nik' });
+        if (citizenErr) console.warn('[Guest Mode] mpp_citizens upsert note:', citizenErr);
+      } catch (cErr) {
+        console.warn('[Guest Mode] mpp_citizens exception:', cErr);
+      }
+
+      // Step 2: Create Virtual Queue Ticket for MPP Front Office Tracking
+      try {
+        const queuePayload = sanitizeSupabasePayload({
+          nomor_tiket: virtualTicket,
+          nik_pemohon: finalNik,
+          nama_pemohon: finalNama || 'Pemohon Online',
+          service_type: 'PKKPR',
+          service_name: 'Izin PKKPR Tata Ruang',
+          status: 'WAITING_FO_VERIFICATION',
+          source: 'ONLINE',
+          created_at: new Date().toISOString()
+        });
+        const { error: queueErr } = await supabase
+          .from('mpp_queues')
+          .insert(queuePayload);
+        if (queueErr) console.warn('[Guest Mode] mpp_queues insert note:', queueErr);
+      } catch (qErr) {
+        console.warn('[Guest Mode] mpp_queues exception:', qErr);
+      }
 
       try {
         const isIntersectLP2B = await checkLp2bIntersection(normalizedGeom);
         const initialStatusPkkpr: PKKPRStatus = isIntersectLP2B ? 'VERIFIKASI_PERTANIAN' : 'BYPASS_PERTANIAN';
 
         const formattedCatatanTeknis = [
+          `[Tiket Virtual FO: ${virtualTicket}]`,
           `[Kategori: ${pkkprKategoriPengajuan === 'BANGUNAN' ? 'Konstruksi Bangunan Fisik' : 'Parsil Tanah Murni / ATR-BPN'}]`,
           `[Jenis Pengajuan: ${pkkprJenisPengajuan}]`,
           pkkprFungsiBangunan ? `[Fungsi: ${pkkprFungsiBangunan}]` : (pkkprCategory === "Berusaha" ? `[Fungsi: Komersial / Usaha ${pkkprKbli || ''}]` : ''),
@@ -1961,9 +2000,10 @@ export default function MasyarakatDashboard({
           "Dalam proses analisis spasial tata ruang PUPTR."
         ].filter(Boolean).join(" ");
 
-        // 1. Insert into gis_pkkpr table (Primary PostGIS Spatial Table)
+        // 3. Insert into gis_pkkpr table (Primary PostGIS Spatial Table)
         const gisPayload = sanitizeSupabasePayload({
           id: docNumber,
+          nomor_tiket: virtualTicket,
           jenis_permohonan: pkkprCategory, // 'Berusaha' | 'Non-Berusaha'
           nama_permohonan: pkkprTitle || (pkkprCategory === "Berusaha" ? "Permohonan PKKPR Usaha/Komersial" : "Permohonan PKKPR Rumah Tinggal / Fasos"),
           nib_oss: pkkprCategory === "Berusaha" ? (pkkprNib || null) : null,
@@ -2003,9 +2043,10 @@ export default function MasyarakatDashboard({
         });
         await supabase.from("gis_pkkpr").insert(gisPayload);
 
-        // 2. Insert into investments table (Secondary Fallback Table)
+        // 4. Insert into investments table (Secondary Fallback Table)
         const invPayload = sanitizeSupabasePayload({
           id: docNumber,
+          pkkpr_doc_number: virtualTicket,
           title: `[PKKPR ${pkkprCategory}] ${pkkprTitle}`,
           name: pkkprCategory === "Berusaha" ? (pkkprPerusahaan || pkkprTitle) : (pkkprTitle || "Permohonan PKKPR Rumah Tinggal / Fasos"),
           category: pkkprCategory === "Berusaha" ? "Komersial / Usaha" : "Non-Komersial / Perseorangan",
@@ -2026,7 +2067,6 @@ export default function MasyarakatDashboard({
           proposal_file_name: "Batas_Poligon_Lokasi.kmz",
           geometry: normalizedGeom,
           status: "Pending Spatial Check",
-          pkkpr_doc_number: null,
           land_status: pkkprBuktiTanahJenis || "Sertipikat Hak Milik (SHM)",
           certificate_number: pkkprBuktiTanahNomor || `SHM-${docNumber}`,
           description: formattedCatatanTeknis,
@@ -2069,15 +2109,21 @@ export default function MasyarakatDashboard({
       Swal.fire({
         title: "Permohonan PKKPR Terkirim!",
         html: `
-          <div class="text-left space-y-2 text-sm">
-            <p><strong>Nomor Berkas:</strong> <span class="font-mono text-emerald-600 font-bold">${docNumber}</span></p>
-            <p><strong>Jalur Permohonan:</strong> PKKPR ${pkkprCategory}</p>
-            <p><strong>Status:</strong> <span class="text-amber-600 font-bold">Menunggu Verifikasi Spasial PUPTR</span></p>
-            <p class="text-xs text-gray-500 mt-2">Permohonan Anda telah masuk ke dalam antrean verifikasi Dinas PUPTR & Dinas Pertanian Kabupaten Luwu.</p>
+          <div class="text-left space-y-3 text-sm">
+            <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg dark:bg-emerald-950 dark:border-emerald-800">
+              <p class="text-xs text-emerald-800 dark:text-emerald-300 font-semibold uppercase tracking-wider">Nomor Tiket Antrean Virtual FO</p>
+              <p class="text-lg font-mono text-emerald-700 dark:text-emerald-400 font-extrabold">${virtualTicket}</p>
+            </div>
+            <p><strong>Nomor Berkas:</strong> <span class="font-mono text-gray-800 dark:text-gray-200 font-bold">${docNumber}</span></p>
+            <p><strong>NIK Pemohon:</strong> <span class="font-mono text-gray-800 dark:text-gray-200 font-bold">${finalNik}</span></p>
+            <p><strong>Status:</strong> <span class="text-amber-600 font-bold">Menunggu Verifikasi Front Office / PUPTR</span></p>
+            <div class="p-2.5 bg-amber-50 border border-amber-200 rounded text-xs text-amber-800 font-medium dark:bg-amber-950 dark:border-amber-800 dark:text-amber-300">
+              📌 <strong>Petunjuk Pemohon:</strong> Simpan Nomor Tiket ini. Gunakan NIK (<strong>${finalNik}</strong>) dan Nomor Tiket (<strong>${virtualTicket}</strong>) untuk mengecek status permohonan dan mengunduh SK Izin PKKPR Anda.
+            </div>
           </div>
         `,
         icon: "success",
-        confirmButtonText: "Selesai",
+        confirmButtonText: "Selesai & Simpan Tiket",
         confirmButtonColor: "#10b981",
       });
     } catch (err: any) {

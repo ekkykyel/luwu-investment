@@ -990,6 +990,45 @@ export default function InvestorPortalDashboard() {
       };
 
       let insertErr = null;
+      const virtualTicket = `V-PKKPR-${Date.now()}`;
+
+      // Step 1: Auto-register Corporate Citizen to MPP Database
+      try {
+        const citizenPayload = sanitizeSupabasePayload({
+          nik: hydratedCorporateProfile.nib,
+          nama: hydratedCorporateProfile.namaPenanggungJawab || hydratedCorporateProfile.namaPerusahaan || 'Pelaku Usaha',
+          no_hp: (hydratedCorporateProfile as any).telepon || '-',
+          source: 'ONLINE_GUEST',
+          last_active: new Date().toISOString()
+        });
+        const { error: citizenErr } = await supabase
+          .from('mpp_citizens')
+          .upsert(citizenPayload, { onConflict: 'nik' });
+        if (citizenErr) console.warn('[Corporate Guest] mpp_citizens upsert note:', citizenErr);
+      } catch (cErr) {
+        console.warn('[Corporate Guest] mpp_citizens exception:', cErr);
+      }
+
+      // Step 2: Create Virtual Queue Ticket for MPP Front Office Tracking
+      try {
+        const queuePayload = sanitizeSupabasePayload({
+          nomor_tiket: virtualTicket,
+          nik_pemohon: hydratedCorporateProfile.nib,
+          nama_pemohon: hydratedCorporateProfile.namaPenanggungJawab || hydratedCorporateProfile.namaPerusahaan || 'Pelaku Usaha',
+          service_type: 'PKKPR',
+          service_name: 'Izin PKKPR Berusaha (Corporate)',
+          status: 'WAITING_FO_VERIFICATION',
+          source: 'ONLINE',
+          created_at: new Date().toISOString()
+        });
+        const { error: queueErr } = await supabase
+          .from('mpp_queues')
+          .insert(queuePayload);
+        if (queueErr) console.warn('[Corporate Guest] mpp_queues insert note:', queueErr);
+      } catch (qErr) {
+        console.warn('[Corporate Guest] mpp_queues exception:', qErr);
+      }
+
       try {
         const normalizedGeom = ensureLuwuLngLatOrder(pkkprGeometry);
         const isIntersectLP2B = await checkLp2bIntersection(normalizedGeom);
@@ -997,6 +1036,7 @@ export default function InvestorPortalDashboard() {
 
         const areaHaVal = Number((pkkprLuasM2 / 10000).toFixed(4));
         const formattedCatatan = [
+          `[Tiket Virtual FO: ${virtualTicket}]`,
           `[Fungsi: Kegiatan Komersial / Industri ${pkkprSektor}]`,
           `[Penguasaan Tanah: ${pkkprJenisAlasHak}]`,
           `[Alamat Pemohon: ${(hydratedCorporateProfile as any).alamatPerusahaan || 'Kabupaten Luwu'}]`,
@@ -1006,9 +1046,10 @@ export default function InvestorPortalDashboard() {
           "Dalam proses analisis spasial tata ruang PUPTR."
         ].join(' ');
 
-        // 1. Insert into gis_pkkpr so PUPTR & Pertanian dashboards see corporate applications immediately
+        // 3. Insert into gis_pkkpr so PUPTR & Pertanian dashboards see corporate applications immediately
         const gisPayload = sanitizeSupabasePayload({
           id: trackingCode,
+          nomor_tiket: virtualTicket,
           jenis_permohonan: "Berusaha",
           nama_permohonan: pkkprJudulProyek,
           nib_oss: hydratedCorporateProfile.nib,
@@ -1039,9 +1080,10 @@ export default function InvestorPortalDashboard() {
         });
         await supabase.from("gis_pkkpr").insert(gisPayload);
 
-        // 2. Insert into investments table
+        // 4. Insert into investments table
         const invPayload = sanitizeSupabasePayload({
           id: trackingCode,
+          pkkpr_doc_number: virtualTicket,
           name: pkkprJudulProyek,
           title: `[PKKPR Berusaha] ${pkkprJudulProyek}`,
           sector: pkkprSektor,
@@ -1069,13 +1111,13 @@ export default function InvestorPortalDashboard() {
         const { error } = await supabase.from("investments").insert(invPayload);
         if (error) insertErr = error;
 
-        // 3. Catat juga ke investment_interests
-        await supabase.from("investment_interests").insert({
+        // 5. Catat juga ke investment_interests
+        await supabase.from("investment_interests").insert(sanitizeSupabasePayload({
           investor_name: hydratedCorporateProfile.namaPenanggungJawab,
           company_name: hydratedCorporateProfile.namaPerusahaan,
           nilai_investasi: parseFloat(pkkprNilaiInvestasi) || 0,
           status: "Diajukan"
-        });
+        }));
       } catch (err: any) {
         insertErr = err;
       }
@@ -1088,15 +1130,22 @@ export default function InvestorPortalDashboard() {
         icon: "success",
         title: "Permohonan PKKPR Corporate Berhasil Terkirim!",
         html: `
-          <div class="text-left text-xs space-y-2 p-3 bg-slate-100 dark:bg-slate-800 rounded-xl">
-            <p><strong>Nomor Registrasi SK:</strong> <span class="font-mono text-emerald-400 font-extrabold">${trackingCode}</span></p>
+          <div class="text-left text-xs space-y-2.5 p-3.5 bg-slate-100 dark:bg-slate-800 rounded-xl">
+            <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg dark:bg-emerald-950 dark:border-emerald-800">
+              <p class="text-[10px] text-emerald-800 dark:text-emerald-300 font-semibold uppercase tracking-wider">Nomor Tiket Antrean Virtual FO</p>
+              <p class="text-base font-mono text-emerald-700 dark:text-emerald-400 font-extrabold">${virtualTicket}</p>
+            </div>
+            <p><strong>Nomor Registrasi:</strong> <span class="font-mono text-emerald-600 dark:text-emerald-400 font-extrabold">${trackingCode}</span></p>
             <p><strong>Badan Usaha:</strong> ${hydratedCorporateProfile.namaPerusahaan}</p>
             <p><strong>NIB OSS:</strong> ${hydratedCorporateProfile.nib}</p>
             <p><strong>Lokasi Lahan:</strong> Desa ${pkkprDesa}, Kec. ${pkkprKecamatan}</p>
             <p><strong>Luas Poligon:</strong> ${(pkkprLuasM2 / 10000).toFixed(2)} Ha (${pkkprLuasM2.toLocaleString()} m²)</p>
+            <div class="p-2 bg-amber-50 border border-amber-200 rounded text-[11px] text-amber-800 font-medium dark:bg-amber-950 dark:border-amber-800 dark:text-amber-300">
+              📌 <strong>Petunjuk Pemohon:</strong> Simpan Nomor Tiket ini. Gunakan NIK/NIB (<strong>${hydratedCorporateProfile.nib}</strong>) dan Nomor Tiket (<strong>${virtualTicket}</strong>) untuk mengecek status permohonan dan mengunduh Izin PKKPR Anda.
+            </div>
           </div>
-          <p class="text-[11px] text-slate-500 mt-2">Permohonan Anda masuk ke antrean verifikasi DPMPTSP & PUPTR Kabupaten Luwu.</p>
         `,
+        confirmButtonText: "Selesai & Simpan Tiket",
         confirmButtonColor: "#10b981"
       });
 
