@@ -541,7 +541,7 @@ export function SmartRequirementAssistant({ isDark = false }: { isDark?: boolean
                   <div
                     key={doc.id}
                     onClick={() => toggleDocCheck(doc.id)}
-                    className={`min-h-[48px] p-3 sm:p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 active:scale-[0.98] ${
+                    className={`h-auto min-h-[5rem] p-4 sm:p-5 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-4 active:scale-[0.98] ${
                       isChecked 
                         ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-950 dark:text-emerald-200' 
                         : isDark 
@@ -549,25 +549,25 @@ export function SmartRequirementAssistant({ isDark = false }: { isDark?: boolean
                           : 'bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-800'
                     }`}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-start gap-3 sm:gap-4">
                       {isChecked ? (
-                        <CheckSquare className="w-5 h-5 text-emerald-500 shrink-0" />
+                        <CheckSquare className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                       ) : (
-                        <Square className="w-5 h-5 text-slate-400 shrink-0" />
+                        <Square className="w-5 h-5 text-slate-400 shrink-0 mt-0.5" />
                       )}
-                      <div>
+                      <div className="space-y-1.5 text-left">
                         <span className="text-xs font-semibold leading-snug block">
                           {doc.name}
                         </span>
                         {doc.templateName && (
-                          <span className="inline-flex items-center gap-1 text-[10px] text-blue-600 dark:text-blue-400 font-medium mt-0.5">
-                            <Download className="w-3 h-3 shrink-0" /> {t("mppPortal.smartRequirement.downloadTemplate", "Unduh Draf Formulir / Template")} ({doc.templateName})
+                          <span className="inline-flex items-center gap-1.5 text-[10px] text-blue-600 dark:text-blue-400 font-semibold mt-1">
+                            <Download className="w-3.5 h-3.5 shrink-0" /> {t("mppPortal.smartRequirement.downloadTemplate", "Unduh Draf Formulir / Template")} ({doc.templateName})
                           </span>
                         )}
                       </div>
                     </div>
 
-                    <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md uppercase tracking-wider shrink-0 font-sans ${
+                    <span className={`text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider shrink-0 font-sans mt-0.5 ${
                       doc.required 
                         ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20' 
                         : 'bg-slate-500/10 text-slate-500 border border-slate-500/20'
