@@ -5962,7 +5962,7 @@ export default function LandingPage({
         </section>
 
         {/* Footer Sovereign Executive */}
-        <footer className={`relative border-t pt-8 pb-20 sm:pt-12 sm:pb-12 ${isDark ? "bg-[#02050b] border-slate-800/90" : "bg-white border-slate-200"}`}>
+        <footer className={`relative border-t pt-6 pb-20 sm:pt-12 sm:pb-12 ${isDark ? "bg-slate-900/90 border-slate-800" : "bg-white border-slate-200"}`}>
           <div className="container mx-auto px-3 sm:px-6 relative max-w-6xl">
             {/* Floating Back to Top Button */}
             <button
@@ -5978,23 +5978,23 @@ export default function LandingPage({
             </button>
 
             {/* Main Footer Block */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-slate-200/80 dark:border-slate-800/80">
-              <div className="flex items-center gap-3.5 w-full md:w-auto justify-start text-left">
+            <div className="flex flex-col md:flex-row items-center md:items-center justify-between gap-6 pb-8 border-b border-slate-200/80 dark:border-slate-800/80">
+              <div className="flex flex-col md:flex-row items-center gap-3.5 w-full md:w-auto justify-center md:justify-start text-center md:text-left">
                 <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center p-1 shadow-inner shrink-0">
                   <img src={LUWU_LOGO_BASE64} alt="Logo Resmi Kabupaten Luwu" className="w-7 h-7 object-contain" />
                 </div>
-                <div className="text-left">
-                  <h3 className={`font-extrabold text-lg sm:text-xl leading-tight tracking-tight text-left ${isDark ? "text-white" : "text-slate-900"}`}>
+                <div className="flex flex-col items-center md:items-start text-center md:text-left">
+                  <h3 className={`font-extrabold text-lg sm:text-xl leading-tight tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
                     InvestLuwu Hub
                   </h3>
-                  <p className="text-[10px] sm:text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider text-left">
+                  <p className="text-[10px] sm:text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
                     {t("footer.pemkabLuwu", "Pemerintah Kabupaten Luwu")}
                   </p>
                 </div>
               </div>
 
               {/* Quick Navigation Links */}
-              <div className="grid grid-cols-2 xs:flex xs:flex-wrap items-center justify-center gap-1.5 sm:gap-3 w-full md:w-auto">
+              <div className="grid grid-cols-2 gap-3 w-full max-w-sm mx-auto md:max-w-none md:mx-0 md:flex md:flex-wrap items-center justify-center md:w-auto text-center">
                 {[
                   { name: t('nav.home', 'Beranda'), icon: Home, action: () => scrollToSection("hero-section") },
                   { name: t('nav.potensiRegional', 'Potensi Regional'), icon: Map, action: () => scrollToSection("potensi-section") },
@@ -6013,10 +6013,10 @@ export default function LandingPage({
                     <button 
                       key={link.name} 
                       onClick={link.action}
-                      className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-[10.5px] sm:text-xs font-semibold transition-all cursor-pointer border border-transparent ${
+                      className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-[10.5px] sm:text-xs font-semibold transition-all cursor-pointer border ${
                         isDark 
-                          ? "text-slate-300 hover:text-white hover:bg-slate-800/80 hover:border-slate-700" 
-                          : "text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/80 hover:border-emerald-200"
+                          ? "text-slate-300 hover:text-white bg-slate-800/40 border-slate-800 hover:bg-slate-800/80 hover:border-slate-700" 
+                          : "text-slate-700 hover:text-emerald-700 bg-slate-50 border-slate-100 hover:bg-emerald-50/80 hover:border-emerald-200"
                       }`}
                     >
                       <IconComponent className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
@@ -6028,15 +6028,16 @@ export default function LandingPage({
             </div>
 
             {/* Bottom Copyright & Security Metadata */}
-            <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] sm:text-xs font-medium text-slate-500 dark:text-slate-400">
-              <p className="text-center sm:text-left font-mono">
-                {t("footer.copyright", "@2026 Luwu Wanua Mappatuo Naewai Alena. All Rights Reserved.")}
+            <div className="pt-6 flex flex-col items-center justify-center gap-3 text-center text-xs">
+              <p className="text-center font-sans font-medium text-slate-500 dark:text-slate-400">
+                {t("footer.copyright", "© 2026 Pemerintah Kabupaten Luwu. Hak Cipta Dilindungi Undang-Undang.")}
               </p>
-              <div className="flex items-center gap-3 font-mono text-[10px]">
-                <span className="inline-flex items-center gap-1 text-emerald-500">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> PostGIS Supabase
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 font-mono text-[10px] text-slate-500 dark:text-slate-400">
+                <span className="inline-flex items-center gap-1.5 text-emerald-500 font-semibold bg-emerald-500/5 dark:bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/15">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  PostGIS Supabase Enabled
                 </span>
-                <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                <span className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                   {t("footer.version", "v2.0.1 (Precision Engine)")}
                 </span>
               </div>
