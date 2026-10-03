@@ -176,12 +176,11 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
     try {
       const records: PkkprIssuanceItem[] = [];
 
-      // 1. Primary Query: Fetch from pkkpr_permohonan (SSOT for Workflow)
+      // 1. Primary Query: Fetch from gis_pkkpr (SSOT for Workflow)
       try {
         const { data: permData, error: permErr } = await supabase
-          .from('pkkpr_permohonan')
+          .from('gis_pkkpr')
           .select('*')
-          .or('status_permohonan.eq.PROSES_OSS,status_permohonan.eq.IZIN_TERBIT,pertek_puptr_num.not.is.null,sk_pkkpr_num.not.is.null')
           .order('created_at', { ascending: false });
 
         if (!permErr && permData && permData.length > 0) {
@@ -581,12 +580,10 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
           })
           .eq('id', selectedItem.id),
         supabase
-          .from('pkkpr_permohonan')
+          .from('gis_pkkpr')
           .update({
-            status_permohonan: 'IZIN_TERBIT',
+            status_pkkpr: 'TERBIT',
             sk_pkkpr_num: generatedSkNumber,
-            is_tte_signed: true,
-            sla_realized_days: slaDays,
             updated_at: timestamp
           })
           .eq('id', selectedItem.id)
@@ -609,6 +606,7 @@ export const OssPkkprIssuanceDashboard: React.FC = () => {
             verification_url: verificationUrl
           }
         });
+        supabase.removeChannel(updateChannel);
       } catch (bcErr) {
         console.warn('[OssIssuance] Realtime broadcast error:', bcErr);
       }

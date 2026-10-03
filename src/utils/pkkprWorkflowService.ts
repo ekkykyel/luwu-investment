@@ -752,11 +752,10 @@ export async function workflowRequestRevision(params: {
         })
         .eq('id', permohonanId),
       supabase
-        .from('pkkpr_permohonan')
+        .from('gis_pkkpr')
         .update({
-          status_permohonan: 'REVISI_PEMOHON',
+          status_pkkpr: 'REVISI_PEMOHON',
           catatan_teknis: notes,
-          updated_by: actorName,
           updated_at: timestamp
         })
         .eq('id', permohonanId)

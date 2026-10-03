@@ -1567,6 +1567,22 @@ export default function MasyarakatDashboard({
 
   useEffect(() => {
     fetchMyPkkprApplications();
+
+    const channel = supabase
+      .channel('masyarakat_pkkpr_realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'gis_pkkpr' },
+        (payload) => {
+          console.log('[MasyarakatDashboard] Realtime PKKPR change:', payload.eventType);
+          fetchMyPkkprApplications();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [fetchMyPkkprApplications]);
 
   const openSpatialPkkprForm = async (category: "Berusaha" | "Non-Berusaha") => {

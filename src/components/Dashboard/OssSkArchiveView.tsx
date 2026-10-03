@@ -18,31 +18,30 @@ export const OssSkArchiveView: React.FC = () => {
     try {
       const records: any[] = [];
 
-      // 1. Fetch from pkkpr_permohonan (SSOT for workflow)
+      // 1. Fetch from gis_pkkpr (SSOT for workflow)
       try {
         const { data: permData, error: permError } = await supabase
-          .from('pkkpr_permohonan')
+          .from('gis_pkkpr')
           .select('*')
-          .or('sk_pkkpr_num.not.is.null,status_permohonan.eq.IZIN_TERBIT')
           .order('created_at', { ascending: false });
 
         if (!permError && permData && permData.length > 0) {
           permData.forEach((item: any) => {
             records.push({
               id: item.id,
-              title: item.nama_kegiatan || 'Izin Kegiatan Pemanfaatan Ruang (PKKPR)',
-              investor_name: item.pemohon_name || 'Pemohon Terdaftar',
-              nib: item.nomor_permohonan || item.nik_pemohon || item.nib_pemohon || '-',
+              title: item.nama_permohonan || item.judul_kegiatan || 'Izin Kegiatan Pemanfaatan Ruang (PKKPR)',
+              investor_name: item.nama_pemohon || item.pemohon_name || 'Pemohon Terdaftar',
+              nib: item.pkkpr_doc_number || item.nik_pemohon || item.nib_oss || '-',
               sk_pkkpr_doc_number: item.sk_pkkpr_num || `503/SK-PKKPR/DPMPTSP-LW/${item.id}`,
-              district: item.kecamatan_name || 'Kabupaten Luwu',
+              district: item.kecamatan || 'Kabupaten Luwu',
               land_area_ha: item.luas_ha ? Number(item.luas_ha) : (item.luas_m2 ? Number((item.luas_m2 / 10000).toFixed(2)) : 0.5),
               updated_at: item.updated_at || item.created_at,
-              source: 'pkkpr_permohonan'
+              source: 'gis_pkkpr'
             });
           });
         }
       } catch (err) {
-        console.warn("pkkpr_permohonan query info in OSS archive:", err);
+        console.warn("gis_pkkpr query info in OSS archive:", err);
       }
 
       // 2. Fetch from gis_pkkpr (Primary table for SK PKKPR Final documents)

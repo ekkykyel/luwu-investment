@@ -647,9 +647,9 @@ export default function PuptrSpatialClearanceDashboard() {
             })
             .or(`id.eq.${targetId},plot_number.eq.${targetNibNik},certificate_number.eq.${targetNibNik}`),
           supabase
-            .from('pkkpr_permohonan')
+            .from('gis_pkkpr')
             .update({
-              status_permohonan: 'REVISI_PEMOHON',
+              status_pkkpr: 'REVISI_PEMOHON',
               catatan_teknis: catatan,
               updated_at: timestamp
             })
@@ -1020,10 +1020,10 @@ export default function PuptrSpatialClearanceDashboard() {
         console.warn('gis_pkkpr query fallback:', err);
       }
 
-      // 2. Secondary Query: Fetch from pkkpr_permohonan table (SSOT for Workflow)
+      // 2. Secondary Query: Fetch from gis_pkkpr table (SSOT for Workflow)
       try {
         const { data: pkkprPermohonanData, error: permErr } = await supabase
-          .from('pkkpr_permohonan')
+          .from('gis_pkkpr')
           .select('*')
           .order('created_at', { ascending: false });
 
@@ -1384,9 +1384,9 @@ export default function PuptrSpatialClearanceDashboard() {
       try {
         await Promise.allSettled([
           supabase
-            .from('pkkpr_permohonan')
+            .from('gis_pkkpr')
             .update({
-              status_permohonan: 'ESCALATED_PERTANIAN',
+              status_pkkpr: 'VERIFIKASI_PERTANIAN',
               catatan_teknis: `[PERMOHONAN DITERUSKAN KE DINAS PERTANIAN]: ${forwardingJustification}`,
               updated_at: new Date().toISOString()
             })
@@ -1723,24 +1723,16 @@ export default function PuptrSpatialClearanceDashboard() {
         console.warn('gis_pkkpr update resilience:', e);
       }
 
-      // 2. Update pkkpr_permohonan
+      // 2. Update gis_pkkpr
       try {
-        if (isUuid) {
-          await supabase.from('pkkpr_permohonan').update({
-            status_permohonan: 'PROSES_OSS',
-            pertek_puptr_num: generatedDocNum,
-            catatan_teknis: technicalNotes,
-            updated_at: new Date().toISOString()
-          }).eq('id', targetId);
-        }
-        await supabase.from('pkkpr_permohonan').update({
-          status_permohonan: 'PROSES_OSS',
+        await supabase.from('gis_pkkpr').update({
+          status_pkkpr: 'PROSES_OSS',
           pertek_puptr_num: generatedDocNum,
           catatan_teknis: technicalNotes,
           updated_at: new Date().toISOString()
-        }).or(`nomor_permohonan.eq.${targetNibNik},nik_pemohon.eq.${targetNibNik},nib_pemohon.eq.${targetNibNik}`);
+        }).or(`id.eq.${targetId},pkkpr_doc_number.eq.${targetNibNik},nik_pemohon.eq.${targetNibNik}`);
       } catch (e) {
-        console.warn('pkkpr_permohonan update resilience:', e);
+        console.warn('gis_pkkpr update resilience:', e);
       }
 
       // 3. Update investments

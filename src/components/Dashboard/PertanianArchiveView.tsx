@@ -33,12 +33,11 @@ export const PertanianArchiveView: React.FC = () => {
     try {
       const records: any[] = [];
 
-      // 1. Fetch from pkkpr_permohonan (SSOT for workflow)
+      // 1. Fetch from gis_pkkpr (SSOT for workflow)
       try {
         const { data: permData, error: permError } = await supabase
-          .from('pkkpr_permohonan')
+          .from('gis_pkkpr')
           .select('*')
-          .or('berita_acara_pertanian_num.not.is.null,status_permohonan.eq.PERTEK_PERTANIAN,status_permohonan.eq.PROSES_OSS,status_permohonan.eq.IZIN_TERBIT')
           .order('created_at', { ascending: false });
 
         if (!permError && permData && permData.length > 0) {
@@ -46,24 +45,24 @@ export const PertanianArchiveView: React.FC = () => {
             records.push({
               ...item,
               id: item.id,
-              title: item.nama_kegiatan || item.nama_permohonan || 'Kesesuaian Lahan Pertanian (LP2B)',
-              investor_name: item.pemohon_name || item.nama_pemohon || 'Pemohon Terdaftar',
-              nama_pemohon: item.pemohon_name || item.nama_pemohon || 'Pemohon Terdaftar',
-              nama_perusahaan: item.nama_perusahaan || item.nama_badan_usaha || item.pemohon_name || 'Pelaku Usaha',
-              nib: item.nomor_permohonan || item.nik_pemohon || item.nib_pemohon || item.nib_oss || '-',
+              title: item.nama_permohonan || item.judul_kegiatan || 'Kesesuaian Lahan Pertanian (LP2B)',
+              investor_name: item.nama_pemohon || 'Pemohon Terdaftar',
+              nama_pemohon: item.nama_pemohon || 'Pemohon Terdaftar',
+              nama_perusahaan: item.nama_badan_usaha || 'Pelaku Usaha',
+              nib: item.pkkpr_doc_number || item.nik_pemohon || item.nib_oss || '-',
               berita_acara_doc_num: item.berita_acara_pertanian_num || `520/BA-LP2B/DISTAN-LW/${item.id}`,
               nomorSurat: item.berita_acara_pertanian_num || `520/BA-LP2B/DISTAN-LW/${item.id}`,
-              district: item.kecamatan_name || item.kecamatan || 'Kabupaten Luwu',
-              kecamatan: item.kecamatan_name || item.kecamatan || 'Kabupaten Luwu',
-              desa_kelurahan: item.desa_kelurahan || item.village_name || '-',
+              district: item.kecamatan || 'Kabupaten Luwu',
+              kecamatan: item.kecamatan || 'Kabupaten Luwu',
+              desa_kelurahan: item.desa_kelurahan || '-',
               land_area_ha: item.luas_ha ? Number(item.luas_ha) : (item.luas_m2 ? Number((item.luas_m2 / 10000).toFixed(2)) : 0.5),
               updated_at: item.updated_at || item.created_at,
-              source: 'pkkpr_permohonan'
+              source: 'gis_pkkpr'
             });
           });
         }
       } catch (err) {
-        console.warn("pkkpr_permohonan query info in Pertanian archive:", err);
+        console.warn("gis_pkkpr query info in Pertanian archive:", err);
       }
 
       // 2. Fetch from gis_pkkpr (Primary table for BAP Pertanian documents)

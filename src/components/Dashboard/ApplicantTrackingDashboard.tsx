@@ -159,7 +159,7 @@ export const ApplicantTrackingDashboard: React.FC<ApplicantTrackingDashboardProp
     setIsLoadingList(true);
     try {
       let query = supabase
-        .from('pkkpr_permohonan')
+        .from('gis_pkkpr')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -239,11 +239,11 @@ export const ApplicantTrackingDashboard: React.FC<ApplicantTrackingDashboardProp
     setIsLoadingSearch(true);
 
     try {
-      // 1. Check in pkkpr_permohonan
+      // 1. Check in gis_pkkpr
       const { data: pkkprMatches, error } = await supabase
-        .from('pkkpr_permohonan')
+        .from('gis_pkkpr')
         .select('*')
-        .or(`nomor_permohonan.ilike.%${cleanQ}%,id.eq.${cleanQ.includes('-') && cleanQ.length === 36 ? cleanQ : '00000000-0000-0000-0000-000000000000'},sk_pkkpr_num.ilike.%${cleanQ}%,pemohon_email.ilike.%${cleanQ}%`)
+        .or(`id.eq.${cleanQ},pkkpr_doc_number.ilike.%${cleanQ}%,nama_permohonan.ilike.%${cleanQ}%,sk_pkkpr_num.ilike.%${cleanQ}%`)
         .limit(1);
 
       if (!error && pkkprMatches && pkkprMatches.length > 0) {
@@ -365,7 +365,7 @@ export const ApplicantTrackingDashboard: React.FC<ApplicantTrackingDashboardProp
         {
           event: '*',
           schema: 'public',
-          table: 'pkkpr_permohonan',
+          table: 'gis_pkkpr',
           filter: `id=eq.${selectedApplication.id}`
         },
         (payload) => {

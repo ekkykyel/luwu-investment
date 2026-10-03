@@ -2437,13 +2437,11 @@ export default function PertanianLandClearanceDashboard() {
                   .eq('id', selectedApp.id);
 
                 const updatePkkpr = supabase
-                  .from('pkkpr_permohonan')
+                  .from('gis_pkkpr')
                   .update({
-                    pemohon_name: updated.namaPemohon,
-                    nama_kegiatan: updated.fungsiBangunan,
+                    nama_pemohon: updated.namaPemohon,
                     berita_acara_pertanian_num: updated.nomorSurat,
-                    surat_rekomendasi_pertanian_num: updated.nomorSuratRekomendasi,
-                    status_permohonan: updated.statusKeputusan === 'REJECTED' ? 'REJECTED_PERTANIAN' : 'PERTEK_PERTANIAN',
+                    status_pkkpr: updated.statusKeputusan === 'REJECTED' ? 'DITOLAK' : 'APPROVED_PERTANIAN',
                     updated_at: new Date().toISOString()
                   })
                   .eq('id', selectedApp.id);
@@ -2670,12 +2668,10 @@ export default function PertanianLandClearanceDashboard() {
                         updated_at: new Date().toISOString()
                       }).eq('id', selectedApp.id);
 
-                      const updatePkkpr = supabase.from('pkkpr_permohonan').update({
-                        pemohon_name: updated.namaPemohon,
-                        nama_kegiatan: updated.fungsiBangunan,
+                      const updatePkkpr = supabase.from('gis_pkkpr').update({
+                        nama_pemohon: updated.namaPemohon,
                         berita_acara_pertanian_num: updated.nomorSurat,
-                        surat_rekomendasi_pertanian_num: updated.nomorSuratRekomendasi,
-                        status_permohonan: updated.statusKeputusan === 'REJECTED' ? 'REJECTED_PERTANIAN' : 'PERTEK_PERTANIAN',
+                        status_pkkpr: updated.statusKeputusan === 'REJECTED' ? 'DITOLAK' : 'APPROVED_PERTANIAN',
                         updated_at: new Date().toISOString()
                       }).eq('id', selectedApp.id);
 
