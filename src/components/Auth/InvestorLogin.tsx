@@ -451,7 +451,21 @@ export default function InvestorLogin() {
         if (typeof window !== 'undefined') {
           sessionStorage.setItem("sb-access-token", accessToken);
           localStorage.setItem("sb-access-token", accessToken);
+          localStorage.setItem("mpp_verified_nik", otpNik);
+          localStorage.setItem("mpp_verified_name", citizenName);
+          localStorage.setItem("mpp_citizen_phone", otpPhone || "");
         }
+      }
+
+      // Explicitly wait for supabase.auth.getSession() to confirm the active session before navigating
+      let sessionConfirmed = false;
+      for (let attempt = 0; attempt < 15; attempt++) {
+        const { data: sessionCheck } = await supabase.auth.getSession();
+        if (sessionCheck?.session) {
+          sessionConfirmed = true;
+          break;
+        }
+        await new Promise((r) => setTimeout(r, 100));
       }
 
       // Invalidate profile cache to ensure fresh hydration
@@ -462,7 +476,7 @@ export default function InvestorLogin() {
       setIsSuccess(true);
       setTimeout(() => {
         window.location.replace('/masyarakat-dashboard');
-      }, 500);
+      }, 250);
     } catch (err: any) {
       setOtpError(err.message || 'Verifikasi OTP gagal. Silakan periksa kembali kode OTP Anda.');
     } finally {

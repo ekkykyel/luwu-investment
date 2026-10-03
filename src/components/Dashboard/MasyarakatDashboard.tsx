@@ -850,93 +850,161 @@ export default function MasyarakatDashboard({
   const [pkkprNamaPemohon, setPkkprNamaPemohon] = useState("");
   const [pkkprNikPemohon, setPkkprNikPemohon] = useState("");
 
-  // Hydrate user profile directly from Supabase session & public.profiles table (Anti Ghost-Session)
-  const fetchAndHydrateMasyarakatProfile = async () => {
-    try {
-      let { data: { user }, error: authErr } = await supabase.auth.getUser();
+  // ─── AUTHENTICATION STATE & SESSION HYDRATION ───
+  const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [profileFetchError, setProfileFetchError] = useState<string | null>(null);
 
-      let prof: any = null;
+  // Initialize and verify authentication state gracefully on mount
+  useEffect(() => {
+    let isMounted = true;
 
-      // If initial in-memory getUser is null, check sb-access-token from session/cookie and verify with backend
-      if (!user) {
-        const cookieMatch = typeof document !== 'undefined' ? document.cookie.match(/(?:^|;\s*)sb-access-token=([^;]+)/) : null;
-        const storedToken = cookieMatch ? cookieMatch[1] : (typeof window !== 'undefined' ? (sessionStorage.getItem("sb-access-token") || localStorage.getItem("sb-access-token")) : null);
-        
-        if (storedToken) {
-          try {
-            await supabase.auth.setSession({ access_token: storedToken, refresh_token: storedToken });
-            const retryRes = await supabase.auth.getUser();
-            user = retryRes?.data?.user || null;
-            if (user) authErr = null;
-          } catch (e) {}
+    const initAuth = async () => {
+      try {
+        // 1. Check existing active session
+        const { data: { session } } = await supabase.auth.getSession();
+        let user = session?.user || null;
 
-          // Fallback verify with backend /api/auth/me (Supports verified WhatsApp OTP sessions)
-          if (!user) {
+        // 2. If in-memory user is null, check stored token and setSession
+        if (!user) {
+          const cookieMatch = typeof document !== 'undefined' ? document.cookie.match(/(?:^|;\s*)sb-access-token=([^;]+)/) : null;
+          const storedToken = cookieMatch ? cookieMatch[1] : (typeof window !== 'undefined' ? (sessionStorage.getItem("sb-access-token") || localStorage.getItem("sb-access-token")) : null);
+
+          if (storedToken) {
             try {
-              const verifyRes = await fetch("/api/auth/me", {
-                headers: { "Authorization": `Bearer ${storedToken}` }
+              const { data: setRes } = await supabase.auth.setSession({
+                access_token: storedToken,
+                refresh_token: storedToken
               });
-              if (verifyRes.ok) {
-                const authData = await verifyRes.json();
-                if (authData?.success && authData?.user) {
-                  user = authData.user;
-                  authErr = null;
-                  if (authData.profile) {
-                    prof = authData.profile;
+              user = setRes?.session?.user || null;
+            } catch (e) {}
+
+            // Fallback verify with backend /api/auth/me
+            if (!user) {
+              try {
+                const verifyRes = await fetch("/api/auth/me", {
+                  headers: { "Authorization": `Bearer ${storedToken}` }
+                });
+                if (verifyRes.ok) {
+                  const authData = await verifyRes.json();
+                  if (authData?.success && authData?.user) {
+                    user = authData.user;
                   }
                 }
-              }
-            } catch (apiErr) {}
+              } catch (apiErr) {}
+            }
           }
         }
+
+        // 3. Fallback: check stored verified citizen credentials from OTP flow
+        if (!user && typeof window !== 'undefined') {
+          const verifiedNik = localStorage.getItem("mpp_verified_nik");
+          const verifiedName = localStorage.getItem("mpp_verified_name");
+          if (verifiedNik && /^\d{16}$/.test(verifiedNik)) {
+            user = {
+              id: `cit-${verifiedNik}`,
+              email: `${verifiedNik}@warga.luwukab.go.id`,
+              user_metadata: {
+                nik: verifiedNik,
+                full_name: verifiedName || 'Warga Kab. Luwu',
+                role: 'masyarakat'
+              }
+            };
+          }
+        }
+
+        if (isMounted) {
+          setCurrentUser(user);
+          setIsAuthLoading(false);
+        }
+      } catch (err) {
+        console.warn("[MasyarakatDashboard] Auth check error:", err);
+        if (isMounted) {
+          setIsAuthLoading(false);
+        }
+      }
+    };
+
+    initAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (isMounted) {
+        if (session?.user) {
+          setCurrentUser(session.user);
+        }
+        setIsAuthLoading(false);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  // Safe navigation guard: ONLY trigger navigate('/login') if isAuthLoading is false AND user is explicitly null
+  useEffect(() => {
+    if (!isAuthLoading && currentUser === null) {
+      console.warn("[MasyarakatDashboard] Auth check completed: User is null, redirecting to /login");
+      navigate('/login', { replace: true });
+    }
+  }, [isAuthLoading, currentUser, navigate]);
+
+  // Hydrate user profile directly from Supabase session & public.profiles table (Decoupled from Auth Kickout)
+  const fetchAndHydrateMasyarakatProfile = async () => {
+    try {
+      setProfileFetchError(null);
+      let user = currentUser;
+      if (!user) {
+        const { data: userData } = await supabase.auth.getUser();
+        user = userData?.user || null;
       }
 
-      if (authErr || !user) {
-        if (typeof document !== 'undefined') {
-          document.cookie = 'sb-access-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=None; Secure;';
-        }
-        if (typeof window !== "undefined") {
-          try {
-            sessionStorage.removeItem("sb-access-token");
-            localStorage.removeItem("sb-access-token");
-          } catch (e) {}
-          window.location.href = "/login";
-        }
+      if (!user) {
         return null;
       }
 
+      let prof: any = null;
       const effectiveEmail = user.email || "";
       const effectiveId = user.id;
       const isValidUuid = (id?: string) => Boolean(id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
 
-      // Step 1: Query public.profiles strictly by valid UUID user.id
+      // Step 1: Query public.profiles strictly by valid UUID user.id (decoupled error handling)
       if (isValidUuid(effectiveId)) {
         try {
-          const { data: profileData } = await supabase
+          const { data: profileData, error: pErr } = await supabase
             .from("profiles")
             .select("id, email, full_name, company_name, role, nik, kecamatan, desa, phone_number, no_whatsapp")
             .eq("id", effectiveId)
             .maybeSingle();
 
-          if (profileData && !isAdministrativeTitle(profileData.full_name)) {
+          if (pErr) {
+            console.warn("[MasyarakatDashboard] Non-fatal error querying profiles by ID:", pErr.message);
+          } else if (profileData && !isAdministrativeTitle(profileData.full_name)) {
             prof = profileData;
           }
-        } catch (e) {}
+        } catch (e) {
+          console.warn("[MasyarakatDashboard] Non-fatal catch querying profiles by ID:", e);
+        }
       }
 
       // Step 2: Query by email if not resolved
       if (!prof && effectiveEmail) {
         try {
-          const { data: profileByEmail } = await supabase
+          const { data: profileByEmail, error: emErr } = await supabase
             .from("profiles")
             .select("id, email, full_name, company_name, role, nik, kecamatan, desa, phone_number, no_whatsapp")
             .eq("email", effectiveEmail)
             .maybeSingle();
 
-          if (profileByEmail && !isAdministrativeTitle(profileByEmail.full_name)) {
+          if (emErr) {
+            console.warn("[MasyarakatDashboard] Non-fatal error querying profiles by email:", emErr.message);
+          } else if (profileByEmail && !isAdministrativeTitle(profileByEmail.full_name)) {
             prof = profileByEmail;
           }
-        } catch (e) {}
+        } catch (e) {
+          console.warn("[MasyarakatDashboard] Non-fatal catch querying profiles by email:", e);
+        }
       }
 
       const meta = user.user_metadata || {};
@@ -1050,11 +1118,12 @@ export default function MasyarakatDashboard({
 
   const hasHydratedRef = React.useRef(false);
   useEffect(() => {
+    if (isAuthLoading || !currentUser) return;
     if (hasHydratedRef.current && hydratedProfile) return;
     fetchAndHydrateMasyarakatProfile().then(() => {
       hasHydratedRef.current = true;
     });
-  }, [activeProfile?.email, activeProfile?.nik, kecamatanList?.length, districts?.length]);
+  }, [isAuthLoading, currentUser?.id, activeProfile?.email, activeProfile?.nik, kecamatanList?.length, districts?.length]);
 
   // Cascading Relational Dropdown: Fetch villages from gis_desa based on chosen Kecamatan
   useEffect(() => {
@@ -2341,6 +2410,28 @@ export default function MasyarakatDashboard({
       setIsSubmitting(false);
     }
   };
+
+  // ─── AUTHENTICATION LOADING SCREEN GUARD ───
+  if (isAuthLoading) {
+    return (
+      <div className={`min-h-screen flex flex-col items-center justify-center p-4 ${isDarkMode ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-800"}`}>
+        <div className="w-14 h-14 relative flex items-center justify-center mb-4">
+          <div className="w-14 h-14 rounded-full border-4 border-emerald-500/20 border-t-emerald-500 animate-spin" />
+        </div>
+        <p className="text-base font-semibold tracking-wide animate-pulse">
+          Memverifikasi Sesi Layanan Warga...
+        </p>
+        <p className="text-slate-400 text-xs mt-1">
+          Pemerintah Kabupaten Luwu - Portal Layanan Masyarakat
+        </p>
+      </div>
+    );
+  }
+
+  // If auth finished and user is not authenticated, render null while navigate('/login') triggers
+  if (!currentUser) {
+    return null;
+  }
 
   return (
     <div className={`min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200 ${isDarkMode ? "dark" : ""} font-sans pb-12`}>

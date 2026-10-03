@@ -243,9 +243,23 @@ export async function signInWithWhatsAppOtp(nik: string, otp: string): Promise<A
     const refreshToken = data.session?.refresh_token || data.refreshToken || accessToken;
 
     if (accessToken) {
-      await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+      try {
+        await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+      } catch (e) {}
       if (typeof document !== 'undefined') {
-        document.cookie = `sb-access-token=${accessToken}; path=/; max-age=86400; SameSite=None; Secure`;
+        document.cookie = `sb-access-token=${accessToken}; path=/; max-age=604800; SameSite=Lax`;
+      }
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem("sb-access-token", accessToken);
+        localStorage.setItem("sb-access-token", accessToken);
+        localStorage.setItem("mpp_verified_nik", nik.replace(/\D/g, ''));
+      }
+
+      // Explicitly wait for session to be active in Supabase client
+      for (let attempt = 0; attempt < 10; attempt++) {
+        const { data: sessionCheck } = await supabase.auth.getSession();
+        if (sessionCheck?.session) break;
+        await new Promise(r => setTimeout(r, 100));
       }
     }
 
