@@ -433,6 +433,20 @@ export default function SimplePolygonDrawer({
 
     lastAppliedBoundsKeyRef.current = activeGeometryBounds.key;
 
+    // Calculate distance between current map center and new target center
+    let isSubtleUpdate = true;
+    try {
+      const currentCenter = map.getCenter();
+      if (currentCenter && activeGeometryBounds.center) {
+        const distDeg = Math.hypot(currentCenter.lng - activeGeometryBounds.center[0], currentCenter.lat - activeGeometryBounds.center[1]);
+        if (distDeg > 0.008) { // > ~800 meters difference
+          isSubtleUpdate = false;
+        }
+      }
+    } catch (e) {}
+
+    const animDuration = isSubtleUpdate ? 0 : 800;
+
     requestAnimationFrame(() => {
       try {
         map.resize();
@@ -441,14 +455,21 @@ export default function SimplePolygonDrawer({
           map.fitBounds([[b[0], b[1]], [b[2], b[3]]], {
             padding: 70,
             maxZoom: Math.min(activeGeometryBounds.recommendedZoom + 0.7, 16.5),
-            duration: 1000
+            duration: animDuration
           });
         } else if (activeGeometryBounds.center) {
-          map.easeTo({
-            center: activeGeometryBounds.center,
-            zoom: activeGeometryBounds.recommendedZoom,
-            duration: 1000
-          });
+          if (animDuration === 0) {
+            map.jumpTo({
+              center: activeGeometryBounds.center,
+              zoom: activeGeometryBounds.recommendedZoom
+            });
+          } else {
+            map.easeTo({
+              center: activeGeometryBounds.center,
+              zoom: activeGeometryBounds.recommendedZoom,
+              duration: animDuration
+            });
+          }
         }
       } catch (e) {
         console.warn("Error applying activeGeometryBounds to map camera:", e);
