@@ -307,16 +307,16 @@ export default function SimplePolygonDrawer({
     };
   }, [initialGeometry, focusTarget, activeBoundaryFeature]);
 
-  // Uncontrolled viewState initialized once from activeGeometryBounds
+  // Uncontrolled viewState initialized once: static Luwu default overview without automatic zoom/movement
   const initialViewState = useMemo(() => {
     return {
-      longitude: activeGeometryBounds.center[0],
-      latitude: activeGeometryBounds.center[1],
-      zoom: activeGeometryBounds.recommendedZoom,
+      longitude: 120.252,
+      latitude: -3.203,
+      zoom: 11,
       pitch: 0,
       bearing: 0
     };
-  }, [activeGeometryBounds]);
+  }, []);
 
   const [zoningDataState, setZoningDataState] = useState<any>(null);
 

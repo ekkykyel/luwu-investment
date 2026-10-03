@@ -2275,108 +2275,21 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
     prevSelectedVillageIdRef.current = props.selectedVillageId;
   }, [props.selectedVillageId]);
 
-  // Smooth camera zoom/fly to layers when they are toggled ON kawan!
+  // Sync spatialLayers ref without moving camera automatically
   useEffect(() => {
-    const mapInstance = mapRef.current?.getMap ? mapRef.current.getMap() : mapRef.current;
-    if (!mapInstance || !isMapLoaded || !props.spatialLayers) return;
-
-    props.spatialLayers.forEach(layer => {
-      const prevLayer = prevLayersRef.current?.find(l => l.id === layer.id);
-      const wasActive = prevLayer ? prevLayer.isActive : false;
-      const isActive = layer.isActive;
-
-      if (isActive && !wasActive) {
-        // Layer was just toggled ON!
-        if (layer.id === "layer_kecamatan" || layer.id === "layer_desa") {
-          setCameraTargetNotice({ name: layer.name, type: "Layer Diaktifkan" });
-          const timer = setTimeout(() => setCameraTargetNotice(null), 2400);
-          mapInstance.fitBounds(LUWU_BBOX, {
-            padding: 50,
-            duration: 1500,
-            essential: true
-          });
-        } else if (layer.id === "layer_potensi") {
-          setCameraTargetNotice({ name: "Potensi Investasi", type: "Layer Diaktifkan" });
-          const timer = setTimeout(() => setCameraTargetNotice(null), 2400);
-          
-          const filteredInvestments = props.investments;
-          if (filteredInvestments.length > 0) {
-            try {
-              const features = filteredInvestments.map(i => turf.point([i.longitude, i.latitude]));
-              const bbox = turf.bbox(turf.featureCollection(features));
-              mapInstance.fitBounds(bbox as [number, number, number, number], {
-                padding: 80,
-                duration: 1600,
-                maxZoom: 13.5,
-                essential: true
-              });
-            } catch (e) {
-              mapInstance.flyTo({
-                center: [120.25, -3.15],
-                zoom: 9.5,
-                duration: 1500,
-                essential: true
-              });
-            }
-          }
-        } else if (layer.geojson && layer.geojson.features && layer.geojson.features.length > 0) {
-          // General thematic layers fit bounds kawan!
-          setCameraTargetNotice({ name: layer.name, type: "Layer Diaktifkan" });
-          const timer = setTimeout(() => setCameraTargetNotice(null), 2400);
-          try {
-            const bbox = turf.bbox(layer.geojson);
-            mapInstance.fitBounds(bbox as [number, number, number, number], {
-              padding: 60,
-              duration: 1600,
-              maxZoom: 13,
-              essential: true
-            });
-          } catch (e) {}
-        }
-      }
-    });
-
     prevLayersRef.current = props.spatialLayers;
-  }, [props.spatialLayers, isMapLoaded, props.investments]);
+  }, [props.spatialLayers]);
 
+  const prevSelectedInvIdRef = useRef<string | null>(null);
   useEffect(() => {
     if (props.selectedInvestmentId) {
       setDetailModalInvestmentId(props.selectedInvestmentId);
-      if (mapRef.current) {
-        const inv = props.investments.find(i => i.id === props.selectedInvestmentId);
-        if (inv && isAutoFollowEnabled) {
-          // Strict Bounding Box (fitBounds) based on Primary Application Geometry (Level 3)
-          if (inv.geometry) {
-            try {
-              const feat = normalizeGeoJSON(inv.geometry);
-              if (feat) {
-                const geomBbox = turf.bbox(feat);
-                const mapInst = mapRef.current.getMap ? mapRef.current.getMap() : mapRef.current;
-                mapInst.fitBounds(geomBbox as [number, number, number, number], {
-                  padding: { top: 80, bottom: 80, left: 80, right: 80 },
-                  maxZoom: 16.5,
-                  duration: 1200,
-                  essential: true
-                });
-                return;
-              }
-            } catch (bboxErr) {
-              console.warn("fitBounds geometry calculation fallback:", bboxErr);
-            }
-          }
-          mapRef.current.flyTo({
-            center: [inv.longitude, inv.latitude],
-            zoom: 14.5,
-            speed: 1.2,
-            curve: 1.42,
-            essential: true
-          });
-        }
-      }
+      prevSelectedInvIdRef.current = props.selectedInvestmentId;
     } else {
+      prevSelectedInvIdRef.current = null;
       setDetailModalInvestmentId(null);
     }
-  }, [props.selectedInvestmentId, props.investments]);
+  }, [props.selectedInvestmentId]);
 
   // ANTREAN ANIMASI: Marching ants effect untuk Proximity Line
   const proximityAnimRef = useRef<number | undefined>(undefined);
@@ -2923,81 +2836,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
     };
   }, [props.investments, props.spatialLayers, props.activeCategories]);
 
-  // Auto-Center Feature: Calculate Bounding Box of Filtered Investments
-  useEffect(() => {
-    if (!isMapLoaded || !mapRef.current) return;
-    
-    // We only want to auto-center if there's no explicitly selected investment/district/village
-    if (props.selectedInvestmentId || props.selectedDistrictId || props.selectedVillageId) {
-      return;
-    }
-
-    const potLayer = props.spatialLayers?.find((l) => l.id === "layer_potensi");
-    if (potLayer && potLayer.isActive === false) return; // Don't auto center if the layer is not active
-
-    const filteredInvestments = props.investments.filter(inv => {
-      if (props.activeCategories && !props.activeCategories.includes(inv.sector)) {
-        return false;
-      }
-      return true;
-    });
-
-    const map = mapRef.current.getMap();
-    if (!map) return;
-
-    if (filteredInvestments.length === 0) {
-      // Empty State: return to Luwu Regency center view smoothly
-      map.flyTo({
-        center: [120.2, -3.0],
-        zoom: 9,
-        duration: 1500,
-        essential: true
-      });
-      return;
-    }
-
-    if (filteredInvestments.length === 1) {
-      // Single Marker
-      const inv = filteredInvestments[0];
-      map.flyTo({
-        center: [inv.longitude, inv.latitude],
-        zoom: 14,
-        duration: 1500,
-        essential: true
-      });
-      return;
-    }
-
-    // Calculate BBox for multiple markers
-    try {
-      const features: any[] = [];
-      filteredInvestments.forEach(inv => {
-        if (inv.geometry && (inv.geometry.type === 'Polygon' || inv.geometry.type === 'MultiPolygon' || inv.geometry.type === 'LineString')) {
-           features.push({ type: 'Feature', geometry: inv.geometry });
-        }
-        // Always include the point just to be safe
-        features.push({
-           type: 'Feature',
-           geometry: { type: 'Point', coordinates: [inv.longitude, inv.latitude] }
-        });
-      });
-      
-      const featureCollection = turf.featureCollection(features);
-      const bbox = turf.bbox(featureCollection);
-
-      map.fitBounds(
-        [[bbox[0], bbox[1]], [bbox[2], bbox[3]]],
-        {
-          padding: { top: 50, bottom: 50, left: 50, right: 50 },
-          maxZoom: 15,
-          duration: 1500,
-          essential: true
-        }
-      );
-    } catch (e) {
-      undefined;
-    }
-  }, [props.investments, props.activeCategories, props.spatialLayers, isMapLoaded, props.selectedInvestmentId, props.selectedDistrictId, props.selectedVillageId]);
+  // Kamera statis: Auto-Center otomatis dinonaktifkan permanen sesuai permintaan pengguna
 
   // ROAD HEATMAP DENSITY - Menyorot jaringan jalan berdasarkan proksimitas investasi
   const highlightedRoadsGeoJSON = useMemo(() => {
