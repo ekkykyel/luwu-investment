@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { getKategoriPengajuan, PKKPR_JENIS_PENGAJUAN_OPTIONS } from '../../utils/pkkprWorkflowService';
 import { generateHeuristicRoiAnalysis, formatHeuristicRoiMarkdown } from '../../hooks/useRoiCalculation';
 import { PKKPRStatus } from '../../types';
-import { checkLp2bIntersection } from '../../utils/lp2bSpatialService';
+import { checkLp2bIntersection, ensureLuwuLngLatOrder, sanitizeSupabasePayload } from '../../utils/lp2bSpatialService';
 import { 
   LayoutDashboard, 
   ShieldCheck, 
@@ -991,7 +991,8 @@ export default function InvestorPortalDashboard() {
 
       let insertErr = null;
       try {
-        const isIntersectLP2B = await checkLp2bIntersection(pkkprGeometry);
+        const normalizedGeom = ensureLuwuLngLatOrder(pkkprGeometry);
+        const isIntersectLP2B = await checkLp2bIntersection(normalizedGeom);
         const initialStatusPkkpr: PKKPRStatus = isIntersectLP2B ? 'VERIFIKASI_PERTANIAN' : 'BYPASS_PERTANIAN';
 
         const areaHaVal = Number((pkkprLuasM2 / 10000).toFixed(4));
@@ -1006,7 +1007,7 @@ export default function InvestorPortalDashboard() {
         ].join(' ');
 
         // 1. Insert into gis_pkkpr so PUPTR & Pertanian dashboards see corporate applications immediately
-        await supabase.from("gis_pkkpr").insert({
+        const gisPayload = sanitizeSupabasePayload({
           id: trackingCode,
           jenis_permohonan: "Berusaha",
           nama_permohonan: pkkprJudulProyek,
@@ -1025,20 +1026,21 @@ export default function InvestorPortalDashboard() {
           desa_kelurahan: pkkprDesa,
           luas_m2: pkkprLuasM2,
           luas_ha: areaHaVal,
-          geometry_json: pkkprGeometry,
+          geometry_json: normalizedGeom,
           status_pkkpr: initialStatusPkkpr,
           catatan_teknis: formattedCatatan,
           jenis_alas_hak: pkkprJenisAlasHak,
           file_alas_hak_url: pkkprFileAlasHakUrl || null,
           sertifikat_tanah_url: pkkprFileAlasHakUrl || null,
           bukti_tanah: pkkprJenisAlasHak,
-          user_id: user.id,
+          user_id: user?.id || null,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         });
+        await supabase.from("gis_pkkpr").insert(gisPayload);
 
         // 2. Insert into investments table
-        const { error } = await supabase.from("investments").insert({
+        const invPayload = sanitizeSupabasePayload({
           id: trackingCode,
           name: pkkprJudulProyek,
           title: `[PKKPR Berusaha] ${pkkprJudulProyek}`,
@@ -1054,7 +1056,7 @@ export default function InvestorPortalDashboard() {
           area_ha: areaHaVal,
           investment_value: parseFloat(pkkprNilaiInvestasi) || 0,
           status: "Pending Spatial Check",
-          geometry: pkkprGeometry,
+          geometry: normalizedGeom,
           nib: hydratedCorporateProfile.nib,
           contact_pic: hydratedCorporateProfile.namaPenanggungJawab,
           land_status: pkkprJenisAlasHak,
@@ -1062,8 +1064,9 @@ export default function InvestorPortalDashboard() {
           certificate_number: `ALAS-HAK-${trackingCode}`,
           description: formattedCatatan,
           esg_environmental_risk: pkkprEsgAnalysis?.esgRiskStatus || "CLEAR",
-          user_id: user.id
+          user_id: user?.id || null
         });
+        const { error } = await supabase.from("investments").insert(invPayload);
         if (error) insertErr = error;
 
         // 3. Catat juga ke investment_interests

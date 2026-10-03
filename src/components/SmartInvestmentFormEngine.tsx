@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { supabase } from "../lib/supabaseClient";
+import { ensureLuwuLngLatOrder, sanitizeSupabasePayload } from "../utils/lp2bSpatialService";
 import { PDFKajianUploader } from "./PDFKajianUploader";
 import { X, Check, Save, Map as MapIcon, Layers, FileText, Activity, Image as ImageIcon, Sparkles, Navigation, Send, ArrowRight, ArrowLeft, Download, Edit, AlertCircle, Users, Building, Minimize2, Maximize2, ShieldAlert, Upload, AlertTriangle, AlertOctagon, Lock } from "lucide-react";
 import { 
@@ -1481,10 +1482,17 @@ export default function SmartInvestmentFormEngine({
           if (!saveSuccess) {
             const rawAny = formData as any;
             const isPkkprPermitFlow = currentRole === 'investor' || Boolean(rawAny.nib) || Boolean(rawAny.nik);
+            const normalizedGeom = ensureLuwuLngLatOrder(formData.geometry);
+
+            const sanitizedInvPayload = sanitizeSupabasePayload({
+              ...finalSupabasePayload,
+              geometry: normalizedGeom
+            });
+
             if (isPkkprPermitFlow) {
               const areaHaVal = Number(formData.areaHa) || 1.0;
               const luasM2Val = Math.round(areaHaVal * 10000);
-              const pkkprPayload = {
+              const pkkprPayload = sanitizeSupabasePayload({
                 id: String(targetId),
                 jenis_permohonan: rawAny.nib ? 'Berusaha' : 'Non-Berusaha',
                 nama_permohonan: formData.title || 'Permohonan PKKPR',
@@ -1498,13 +1506,13 @@ export default function SmartInvestmentFormEngine({
                 desa_kelurahan: formData.villageId || 'Senga',
                 luas_m2: luasM2Val,
                 luas_ha: areaHaVal,
-                geometry_json: formData.geometry,
+                geometry_json: normalizedGeom,
                 status_pkkpr: 'SUBMITTED',
                 catatan_teknis: formData.shortDesc || formData.longDesc || 'Permohonan izin PKKPR baru.',
                 updated_at: new Date().toISOString()
-              };
+              });
               const results = await Promise.all([
-                supabase.from('investments').upsert([finalSupabasePayload]),
+                supabase.from('investments').upsert([sanitizedInvPayload]),
                 supabase.from('gis_pkkpr').upsert([pkkprPayload])
               ]);
               if (results[0].error || results[1].error) {
@@ -1512,9 +1520,13 @@ export default function SmartInvestmentFormEngine({
                 throw new Error(errMsg);
               }
             } else {
+              const sanitizedPotensiPayload = sanitizeSupabasePayload({
+                ...finalGisPotensiPayload,
+                geometry_json: normalizedGeom
+              });
               const results = await Promise.all([
-                supabase.from('investments').upsert([finalSupabasePayload]),
-                supabase.from('gis_potensi_investasi').upsert([finalGisPotensiPayload])
+                supabase.from('investments').upsert([sanitizedInvPayload]),
+                supabase.from('gis_potensi_investasi').upsert([sanitizedPotensiPayload])
               ]);
               if (results[0].error || results[1].error) {
                 const errMsg = results[0].error?.message || results[1].error?.message || "Gagal menyimpan ke database Supabase.";

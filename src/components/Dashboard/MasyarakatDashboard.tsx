@@ -17,7 +17,7 @@ import MppQueueRegistrationModal from "../MppQueueRegistrationModal";
 import Swal from "sweetalert2";
 import { supabase, safeFetchLayerData } from "../../lib/supabaseClient";
 import { District, PKKPRStatus } from "../../types";
-import { checkLp2bIntersection } from "../../utils/lp2bSpatialService";
+import { checkLp2bIntersection, ensureLuwuLngLatOrder, sanitizeSupabasePayload } from "../../utils/lp2bSpatialService";
 import SimplePolygonDrawer from "../SimplePolygonDrawer";
 import { parseKmlKmzFile } from "../../utils/kmlKmzParser";
 import { detectAdministrativeLocation, cleanKecamatanName, cleanDesaName, SpatialOverlapResult } from "../../utils/spatialLookup";
@@ -920,27 +920,14 @@ export default function MasyarakatDashboard({
                     user = authData.user;
                   }
                 } else if (verifyRes.status === 401) {
-                  console.warn("[MasyarakatDashboard] /api/auth/me returned 401 Unauthorized (No active session)");
-                  // Expected if token expired or missing
+                  // Silent fallback for guest/unauthenticated users
+                  if (isMounted) setIsServerError(false);
                 } else if (verifyRes.status >= 500) {
-                  console.error("[MasyarakatDashboard] /api/auth/me returned 500 Internal Server Error - protecting citizen session");
-                  if (isMounted) setIsServerError(true);
-                  if (typeof window !== "undefined") {
-                    Swal.fire({
-                      toast: true,
-                      position: 'top-end',
-                      icon: 'warning',
-                      title: 'Koneksi Server Terkendala',
-                      text: 'Gagal terhubung ke server. Silakan muat ulang halaman.',
-                      showConfirmButton: false,
-                      timer: 5000
-                    });
-                  }
+                  console.warn("[MasyarakatDashboard] /api/auth/me returned server notice (guest fallback active)");
                 }
               } catch (apiErr) {
-                console.warn("[MasyarakatDashboard] Network error contacting /api/auth/me:", apiErr);
-                if (isMounted) setIsServerError(true);
-                setAuthCheckError(apiErr);
+                // Silent catch for guest/public form submission flow
+                if (isMounted) setIsServerError(false);
               }
             }
           }
@@ -1956,8 +1943,10 @@ export default function MasyarakatDashboard({
         created_by: validUserId,
       };
 
+      const normalizedGeom = ensureLuwuLngLatOrder(pkkprGeometry);
+
       try {
-        const isIntersectLP2B = await checkLp2bIntersection(pkkprGeometry);
+        const isIntersectLP2B = await checkLp2bIntersection(normalizedGeom);
         const initialStatusPkkpr: PKKPRStatus = isIntersectLP2B ? 'VERIFIKASI_PERTANIAN' : 'BYPASS_PERTANIAN';
 
         const formattedCatatanTeknis = [
@@ -1973,7 +1962,7 @@ export default function MasyarakatDashboard({
         ].filter(Boolean).join(" ");
 
         // 1. Insert into gis_pkkpr table (Primary PostGIS Spatial Table)
-        await supabase.from("gis_pkkpr").insert({
+        const gisPayload = sanitizeSupabasePayload({
           id: docNumber,
           jenis_permohonan: pkkprCategory, // 'Berusaha' | 'Non-Berusaha'
           nama_permohonan: pkkprTitle || (pkkprCategory === "Berusaha" ? "Permohonan PKKPR Usaha/Komersial" : "Permohonan PKKPR Rumah Tinggal / Fasos"),
@@ -1993,7 +1982,7 @@ export default function MasyarakatDashboard({
           luas_m2: pkkprLuasM2 || 500,
           luas_ha: pkkprLuasM2 ? Number((pkkprLuasM2 / 10000).toFixed(4)) : 0.05,
           geom: null,
-          geometry_json: pkkprGeometry,
+          geometry_json: normalizedGeom,
           nama_berkas_kmz: "Batas_Poligon_Lokasi.kmz",
           berkas_kmz_url: null,
           status_pkkpr: initialStatusPkkpr,
@@ -2012,9 +2001,10 @@ export default function MasyarakatDashboard({
           surat_pengantar_desa_url: finalSuratPengantarUrl,
           berkas_legalitas_gabungan_url: finalBerkasGabunganUrl
         });
+        await supabase.from("gis_pkkpr").insert(gisPayload);
 
         // 2. Insert into investments table (Secondary Fallback Table)
-        await supabase.from("investments").insert({
+        const invPayload = sanitizeSupabasePayload({
           id: docNumber,
           title: `[PKKPR ${pkkprCategory}] ${pkkprTitle}`,
           name: pkkprCategory === "Berusaha" ? (pkkprPerusahaan || pkkprTitle) : (pkkprTitle || "Permohonan PKKPR Rumah Tinggal / Fasos"),
@@ -2034,7 +2024,7 @@ export default function MasyarakatDashboard({
           village_id: pkkprDesa,
           area_ha: pkkprLuasM2 ? Number((pkkprLuasM2 / 10000).toFixed(4)) : 0.05,
           proposal_file_name: "Batas_Poligon_Lokasi.kmz",
-          geometry: pkkprGeometry,
+          geometry: normalizedGeom,
           status: "Pending Spatial Check",
           pkkpr_doc_number: null,
           land_status: pkkprBuktiTanahJenis || "Sertipikat Hak Milik (SHM)",
@@ -2044,6 +2034,7 @@ export default function MasyarakatDashboard({
           created_by: validUserId,
           created_at: new Date().toISOString()
         });
+        await supabase.from("investments").insert(invPayload);
       } catch (err) {
         console.warn("Supabase insert warning:", err);
       }

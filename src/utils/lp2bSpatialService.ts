@@ -9,6 +9,86 @@ export interface GeometryValidationResult {
 }
 
 /**
+ * Ensures GeoJSON coordinates follow the standard [longitude, latitude] format.
+ * If coordinates are detected in [lat, lng] format (e.g. Latitude ~ -3.0, Longitude ~ 120.0),
+ * this function automatically swaps them to [120.0, -3.0].
+ */
+export function ensureLuwuLngLatOrder(geom: any): any {
+  if (!geom) return null;
+  try {
+    let copy = typeof geom === 'string' ? JSON.parse(geom) : JSON.parse(JSON.stringify(geom));
+
+    const fixPoint = (pt: any): any => {
+      if (!Array.isArray(pt) || pt.length < 2) return pt;
+      const [a, b] = pt;
+      if (typeof a === 'number' && typeof b === 'number') {
+        // If first coordinate 'a' is latitude (-90 to 90) and second 'b' is longitude (> 90 to 180)
+        if (Math.abs(a) <= 90 && Math.abs(b) > 90 && Math.abs(b) <= 180) {
+          return [b, a, ...pt.slice(2)]; // Swap [lat, lng] -> [lng, lat]
+        }
+      }
+      return pt;
+    };
+
+    const fixRing = (ring: any[]): any[] => {
+      if (!Array.isArray(ring)) return ring;
+      return ring.map(fixPoint);
+    };
+
+    if (copy.type === 'Feature') {
+      copy.geometry = ensureLuwuLngLatOrder(copy.geometry);
+      return copy;
+    }
+
+    if (copy.type === 'Polygon' && Array.isArray(copy.coordinates)) {
+      copy.coordinates = copy.coordinates.map(fixRing);
+      return copy;
+    }
+
+    if (copy.type === 'MultiPolygon' && Array.isArray(copy.coordinates)) {
+      copy.coordinates = copy.coordinates.map((poly: any) =>
+        Array.isArray(poly) ? poly.map(fixRing) : poly
+      );
+      return copy;
+    }
+
+    if (copy.type === 'Point' && Array.isArray(copy.coordinates)) {
+      copy.coordinates = fixPoint(copy.coordinates);
+      return copy;
+    }
+
+    if (copy.geometry) {
+      copy.geometry = ensureLuwuLngLatOrder(copy.geometry);
+      return copy;
+    }
+
+    return copy;
+  } catch (err) {
+    return geom;
+  }
+}
+
+/**
+ * Sanitizes Supabase Insert/Update payload object:
+ * - Removes keys with `undefined` values.
+ * - Removes empty/null/undefined `id` field so PostgreSQL auto-generates primary keys.
+ */
+export function sanitizeSupabasePayload(obj: Record<string, any>): Record<string, any> {
+  if (!obj || typeof obj !== 'object') return {};
+  const clean: Record<string, any> = {};
+  for (const [key, val] of Object.entries(obj)) {
+    if (val !== undefined) {
+      clean[key] = val;
+    }
+  }
+  // Delete empty id so primary key sequence or trigger handles auto-increment/uuid
+  if (clean.id === null || clean.id === undefined || clean.id === "" || clean.id === "null" || clean.id === "undefined") {
+    delete clean.id;
+  }
+  return clean;
+}
+
+/**
  * Validates whether a spatial polygon geometry is closed, has valid coordinates,
  * and does not contain self-intersections (turf.kinks).
  */
@@ -22,10 +102,10 @@ export function validateSpatialGeometry(geometry: any): GeometryValidationResult
 
   let feat: any = null;
   try {
-    let parsedGeom = geometry;
-    if (typeof geometry === 'string') {
+    let parsedGeom = ensureLuwuLngLatOrder(geometry);
+    if (typeof parsedGeom === 'string') {
       try {
-        parsedGeom = JSON.parse(geometry);
+        parsedGeom = JSON.parse(parsedGeom);
       } catch {
         return {
           isValid: false,
