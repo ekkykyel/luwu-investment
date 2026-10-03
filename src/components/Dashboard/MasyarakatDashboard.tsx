@@ -4826,6 +4826,7 @@ export default function MasyarakatDashboard({
                       ) : (
                         <button
                           type="button"
+                          disabled={!pkkprKecamatan || !pkkprDesa}
                           onClick={() => {
                             if (!pkkprKecamatan) {
                               Swal.fire({
@@ -4853,15 +4854,27 @@ export default function MasyarakatDashboard({
                             }
                             setIsDrawerOpen(true);
                           }}
-                          className="w-full py-5 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-800 border-2 border-dashed border-emerald-500/50 hover:border-emerald-500 text-slate-800 dark:text-slate-100 font-extrabold text-sm flex items-center justify-center gap-3 transition-all cursor-pointer shadow-md group"
+                          className={`w-full py-5 px-4 rounded-2xl border-2 border-dashed font-extrabold text-sm flex items-center justify-center gap-3 transition-all shadow-md group ${
+                            !pkkprKecamatan || !pkkprDesa
+                              ? "opacity-60 cursor-not-allowed bg-slate-100 dark:bg-slate-800/40 border-slate-300 dark:border-slate-700 text-slate-400 dark:text-slate-500"
+                              : "bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-800 border-emerald-500/50 hover:border-emerald-500 text-slate-800 dark:text-slate-100 cursor-pointer"
+                          }`}
                         >
-                          <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-500 group-hover:scale-110 transition-transform">
+                          <div className={`p-2.5 rounded-xl transition-transform ${
+                            !pkkprKecamatan || !pkkprDesa 
+                              ? "bg-slate-200 dark:bg-slate-700 text-slate-400" 
+                              : "bg-emerald-500/20 text-emerald-500 group-hover:scale-110"
+                          }`}>
                             <MapPin className="w-6 h-6" />
                           </div>
                           <div className="text-left">
                             <span className="block font-black text-sm">Buka Peta Digitasi Spasial Lahan</span>
                             <span className="block text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-                              {pkkprDesa ? `Wilayah Terpilih: Desa ${pkkprDesa}, Kec. ${pkkprKecamatan}` : pkkprKecamatan ? `Wilayah Terpilih: Kec. ${pkkprKecamatan}` : "Peta Digitasi Spasial Lahan"}
+                              {pkkprDesa 
+                                ? `Wilayah Terpilih: Desa ${pkkprDesa}, Kec. ${pkkprKecamatan}` 
+                                : pkkprKecamatan 
+                                ? `Pilih Desa/Kelurahan untuk Mengaktifkan Peta (Kec. ${pkkprKecamatan})` 
+                                : "Pilih Kecamatan & Desa terlebih dahulu untuk membuka peta spasial."}
                             </span>
                           </div>
                         </button>
@@ -5298,6 +5311,8 @@ export default function MasyarakatDashboard({
                 selectedDesaId={pkkprSelectedDesaId}
                 kecamatanName={pkkprKecamatan}
                 desaName={pkkprDesa}
+                selectedDesaBoundary={pkkprSelectedDesaGeom}
+                selectedDesaName={pkkprDesa}
                 focusTarget={drawerFocusTarget}
                 initialGeometry={pkkprGeometry}
                 onSave={(geom, esg) => {

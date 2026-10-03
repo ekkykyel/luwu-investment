@@ -46,6 +46,8 @@ interface SimplePolygonDrawerProps {
   selectedDesaId?: string;
   kecamatanName?: string;
   desaName?: string;
+  selectedDesaBoundary?: any;
+  selectedDesaName?: string;
   roadGeojson?: any;
   zoningGeojson?: any;
   sawahGeojson?: any;
@@ -94,6 +96,8 @@ export default function SimplePolygonDrawer({
   selectedDesaId,
   kecamatanName,
   desaName,
+  selectedDesaBoundary,
+  selectedDesaName,
   roadGeojson,
   zoningGeojson,
   sawahGeojson,
@@ -112,7 +116,7 @@ export default function SimplePolygonDrawer({
   const targetKecId = selectedKecId || focusTarget?.districtId || "";
   const targetKecName = kecamatanName || focusTarget?.districtName || "";
   const targetDesaId = selectedDesaId || focusTarget?.villageId || "";
-  const targetDesaName = desaName || focusTarget?.villageName || "";
+  const targetDesaName = selectedDesaName || desaName || focusTarget?.villageName || "";
 
   // Reset hasCenteredRef only when the drawer/modal closes or unmounts
   useEffect(() => {
@@ -161,20 +165,21 @@ export default function SimplePolygonDrawer({
   useEffect(() => {
     let isMounted = true;
     const fetchBoundary = async () => {
+      // 0. If explicit boundary is provided, skip fetch
+      if (selectedDesaBoundary || focusTarget?.villageGeojson) return;
+
       // 1. Try to fetch Village Boundary
       if (targetDesaId || targetDesaName) {
-        if (!focusTarget?.villageGeojson) {
-          const data = await safeFetchLayerData("gis_desa");
-          if (data && isMounted) {
-            const features = data.type === 'FeatureCollection' ? data.features : data;
-            const match = features.find((f: any) => 
-              String(f.properties?.ID_DESA || f.properties?.id) === targetDesaId ||
-              (f.properties?.DESA || f.properties?.desa || f.properties?.NAME || "").toLowerCase().includes(targetDesaName.toLowerCase())
-            );
-            if (match) {
-              setFetchedBoundaryGeojson({ type: "Feature", geometry: match.geometry || match.geom, properties: match.properties });
-              return;
-            }
+        const data = await safeFetchLayerData("gis_desa");
+        if (data && isMounted) {
+          const features = data.type === 'FeatureCollection' ? data.features : data;
+          const match = features.find((f: any) => 
+            String(f.properties?.ID_DESA || f.properties?.id) === targetDesaId ||
+            (f.properties?.DESA || f.properties?.desa || f.properties?.NAME || "").toLowerCase().includes(targetDesaName.toLowerCase())
+          );
+          if (match) {
+            setFetchedBoundaryGeojson({ type: "Feature", geometry: match.geometry || match.geom, properties: match.properties });
+            return;
           }
         }
       }
@@ -199,13 +204,19 @@ export default function SimplePolygonDrawer({
     };
     fetchBoundary();
     return () => { isMounted = false; };
-  }, [targetDesaId, targetDesaName, targetKecId, targetKecName]);
+  }, [selectedDesaBoundary, targetDesaId, targetDesaName, targetKecId, targetKecName, focusTarget?.villageGeojson, focusTarget?.districtGeojson]);
 
   // ─── ACTIVE ADMINISTRATIVE BOUNDARY EXTRACTION (STABILIZED DEPENDENCIES) ───
   const activeBoundaryFeature = useMemo(() => {
-    // Priority 0: Dynamically fetched boundary from Supabase
-    if (fetchedBoundaryGeojson) {
-      return fetchedBoundaryGeojson;
+    // Priority 0: Explicit selectedDesaBoundary prop
+    if (selectedDesaBoundary) {
+      if (selectedDesaBoundary.type === "Feature") return selectedDesaBoundary;
+      if (selectedDesaBoundary.type === "FeatureCollection" && selectedDesaBoundary.features?.length > 0) {
+        return selectedDesaBoundary.features[0];
+      }
+      if (selectedDesaBoundary.geometry || selectedDesaBoundary.geom || selectedDesaBoundary.coordinates) {
+        return turf.feature(selectedDesaBoundary.geometry || selectedDesaBoundary.geom || selectedDesaBoundary);
+      }
     }
 
     // Priority 1: Direct Village GeoJSON from focusTarget
@@ -215,7 +226,12 @@ export default function SimplePolygonDrawer({
         : turf.feature(focusTarget.villageGeojson.geometry || focusTarget.villageGeojson);
     }
 
-    // Priority 2: Match Village from loaded desaData
+    // Priority 2: Dynamically fetched boundary from Supabase
+    if (fetchedBoundaryGeojson) {
+      return fetchedBoundaryGeojson;
+    }
+
+    // Priority 3: Match Village from loaded desaData
     if (desaData && desaData.features && targetDesaId) {
       const match = desaData.features.find((f: any) => {
         const name = (f.properties?.DESA || f.properties?.desa || f.properties?.NAME || "").toLowerCase();
@@ -226,14 +242,14 @@ export default function SimplePolygonDrawer({
       if (match) return match;
     }
 
-    // Priority 3: Direct District GeoJSON from focusTarget
+    // Priority 4: Direct District GeoJSON from focusTarget
     if (focusTarget?.districtGeojson) {
       return focusTarget.districtGeojson.type === "Feature"
         ? focusTarget.districtGeojson
         : turf.feature(focusTarget.districtGeojson.geometry || focusTarget.districtGeojson);
     }
 
-    // Priority 4: Match District from loaded kecamatanData
+    // Priority 5: Match District from loaded kecamatanData
     if (kecamatanData && kecamatanData.features && targetKecId) {
       const match = kecamatanData.features.find((f: any) => {
         const rawName = f.properties?.KECAMATAN || f.properties?.kecamatan || f.properties?.NAME || "";
@@ -246,7 +262,7 @@ export default function SimplePolygonDrawer({
     }
 
     return null;
-  }, [targetDesaId, targetDesaName, targetKecId, targetKecName, desaData, kecamatanData, fetchedBoundaryGeojson, focusTarget?.villageGeojson, focusTarget?.districtGeojson]);
+  }, [selectedDesaBoundary, targetDesaId, targetDesaName, targetKecId, targetKecName, desaData, kecamatanData, fetchedBoundaryGeojson, focusTarget?.villageGeojson, focusTarget?.districtGeojson]);
 
   // ─── MEMOIZED BOUNDING BOX & CENTROID STORE ───
   const activeGeometryBounds = useMemo(() => {
@@ -548,40 +564,49 @@ export default function SimplePolygonDrawer({
     };
   }, [handleDrawEvent]);
 
-  // ─── ONE-TIME INSTANT CAMERA CENTERING (JUMPTO ONLY - NO FLYTO/EASETO ANIMATION) ───
+  // ─── ONE-TIME INSTANT CAMERA CENTERING (FITBOUNDS STATIC - NO FLYTO/EASETO ANIMATION) ───
   const centerMapOnce = useCallback((map: any) => {
     if (!map || hasCenteredRef.current) return;
 
     try {
-      // 1. Priority: initialGeometry (if editing existing saved polygon)
+      // 1. Priority: selectedDesaBoundary or activeBoundaryFeature
+      if (activeBoundaryFeature) {
+        try {
+          const box = turf.bbox(activeBoundaryFeature);
+          if (box && box.length === 4 && !box.some(isNaN) && box[0] >= 118 && box[2] <= 122 && box[1] >= -5 && box[3] <= -1) {
+            map.fitBounds(
+              [[box[0], box[1]], [box[2], box[3]]],
+              { padding: 40, animate: false }
+            );
+            hasCenteredRef.current = true;
+            return;
+          }
+        } catch (bboxErr) {
+          console.warn("[centerMapOnce] fitBounds on boundary error:", bboxErr);
+        }
+      }
+
+      // 2. Priority: initialGeometry (if editing existing saved polygon)
       if (initialGeometry && initialGeometry.coordinates && initialGeometry.coordinates.length > 0) {
         const featureObj = { type: "Feature" as const, properties: {}, geometry: initialGeometry };
         const box = turf.bbox(featureObj);
         if (box && box.length === 4 && !box.some(isNaN) && box[0] >= 118 && box[2] <= 122 && box[1] >= -5 && box[3] <= -1) {
-          const centerLng = (box[0] + box[2]) / 2;
-          const centerLat = (box[1] + box[3]) / 2;
-          map.jumpTo({
-            center: [centerLng, centerLat],
-            zoom: 15,
-            pitch: 0,
-            bearing: 0
-          });
+          map.fitBounds(
+            [[box[0], box[1]], [box[2], box[3]]],
+            { padding: 40, animate: false }
+          );
           hasCenteredRef.current = true;
           return;
         }
       }
 
-      // 2. Priority: Pre-computed villageBbox / villageCoords
+      // 3. Priority: Pre-computed villageBbox / villageCoords
       if (focusTarget?.villageBbox && Array.isArray(focusTarget.villageBbox) && focusTarget.villageBbox.length === 4) {
         const box = focusTarget.villageBbox;
-        const centerLng = (box[0] + box[2]) / 2;
-        const centerLat = (box[1] + box[3]) / 2;
-        map.jumpTo({
-          center: [centerLng, centerLat],
-          zoom: 14.5,
-          pitch: 0,
-          bearing: 0
-        });
+        map.fitBounds(
+          [[box[0], box[1]], [box[2], box[3]]],
+          { padding: 40, animate: false }
+        );
         hasCenteredRef.current = true;
         return;
       }
@@ -591,7 +616,7 @@ export default function SimplePolygonDrawer({
         if (cLng >= 118 && cLng <= 122 && cLat >= -5 && cLat <= -1) {
           map.jumpTo({
             center: [cLng, cLat],
-            zoom: 14,
+            zoom: 14.5,
             pitch: 0,
             bearing: 0
           });
@@ -600,17 +625,13 @@ export default function SimplePolygonDrawer({
         }
       }
 
-      // 3. Priority: Pre-computed districtCoords / districtBbox
+      // 4. Priority: Pre-computed districtCoords / districtBbox
       if (focusTarget?.districtBbox && Array.isArray(focusTarget.districtBbox) && focusTarget.districtBbox.length === 4) {
         const box = focusTarget.districtBbox;
-        const centerLng = (box[0] + box[2]) / 2;
-        const centerLat = (box[1] + box[3]) / 2;
-        map.jumpTo({
-          center: [centerLng, centerLat],
-          zoom: 12.5,
-          pitch: 0,
-          bearing: 0
-        });
+        map.fitBounds(
+          [[box[0], box[1]], [box[2], box[3]]],
+          { padding: 40, animate: false }
+        );
         hasCenteredRef.current = true;
         return;
       }
@@ -629,7 +650,7 @@ export default function SimplePolygonDrawer({
         }
       }
 
-      // 4. Default Luwu center
+      // 5. Default Luwu center
       map.jumpTo({
         center: [120.252, -3.203],
         zoom: 11,
@@ -641,7 +662,7 @@ export default function SimplePolygonDrawer({
       console.warn("[SimplePolygonDrawer] Error in centerMapOnce:", e);
       hasCenteredRef.current = true;
     }
-  }, [initialGeometry, focusTarget?.villageCoords, focusTarget?.villageBbox, focusTarget?.districtCoords, focusTarget?.districtBbox]);
+  }, [activeBoundaryFeature, initialGeometry, focusTarget?.villageCoords, focusTarget?.villageBbox, focusTarget?.districtCoords, focusTarget?.districtBbox]);
 
   const onMapLoad = useCallback((e: any) => {
     const map = e.target;
@@ -693,8 +714,6 @@ export default function SimplePolygonDrawer({
           geometry: initialGeometry
         };
         draw.add(featureObj);
-        
-        // Remove automatic fitBounds to keep position static/unanimated per user request
         draw.changeMode("simple_select");
       } catch(err) {
         console.error("Gagal load initial geometry", err);
@@ -708,13 +727,13 @@ export default function SimplePolygonDrawer({
         } catch(e) {}
       }, 300);
     }
-  }, [initialGeometry]);
+  }, [initialGeometry, centerMapOnce]);
 
   const handleSave = () => {
     if (!drawRef.current) return;
     
     const data = drawRef.current.getAll();
-    if (data.features.length === 0) {
+    if (!data || data.features.length === 0) {
       Swal.fire({
         icon: 'warning',
         title: 'Poligon Kosong',
@@ -733,6 +752,50 @@ export default function SimplePolygonDrawer({
     if (geom.type !== "Polygon") {
       Swal.fire('Format Salah', 'Geometry yang digambar harus berupa Polygon.', 'error');
       return;
+    }
+
+    // ─── STRICT SPATIAL GEOFENCING VALIDATION (TURF.JS) ───
+    if (activeBoundaryFeature) {
+      try {
+        let isWithin = false;
+        try {
+          isWithin = turf.booleanWithin(polygonFeature as any, activeBoundaryFeature as any);
+        } catch (e) {
+          isWithin = false;
+        }
+
+        let hasOutsideArea = false;
+        try {
+          const diff = safeDifference(polygonFeature, activeBoundaryFeature);
+          if (diff && diff.geometry && diff.geometry.coordinates && diff.geometry.coordinates.length > 0) {
+            const diffArea = turf.area(diff);
+            if (diffArea > 1) {
+              hasOutsideArea = true;
+            }
+          }
+        } catch (diffErr) {
+          console.warn("safeDifference check note:", diffErr);
+        }
+
+        if (!isWithin || hasOutsideArea) {
+          setIsOutOfBounds(true);
+          const currentDesaDisplay = targetDesaName || "terpilih";
+          Swal.fire({
+            icon: 'error',
+            title: 'Di Luar Batas Wilayah Desa',
+            text: `Poligon lahan berada di luar batas wilayah Desa ${currentDesaDisplay}. Silakan sesuaikan kembali batas digitasi lahan Anda.`,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 4500,
+            background: isDarkMode ? '#0f172a' : '#ffffff',
+            color: isDarkMode ? '#f8fafc' : '#0f172a'
+          });
+          return; // BLOCK SUBMISSION
+        }
+      } catch (validationErr) {
+        console.warn("Geofencing validation error:", validationErr);
+      }
     }
 
     if (geom.coordinates && Array.isArray(geom.coordinates)) {
@@ -1263,8 +1326,8 @@ export default function SimplePolygonDrawer({
                 id="inverted-mask-fill"
                 type="fill"
                 paint={{
-                  "fill-color": isDarkMode ? "#020617" : "#090d16",
-                  "fill-opacity": 0.82
+                  "fill-color": "#000000",
+                  "fill-opacity": 0.45
                 }}
               />
             </Source>
@@ -1277,9 +1340,9 @@ export default function SimplePolygonDrawer({
                 id="active-boundary-stroke"
                 type="line"
                 paint={{
-                  "line-color": "#10b981",
+                  "line-color": "#2563eb",
                   "line-width": 2.5,
-                  "line-dasharray": [3, 2]
+                  "line-opacity": 1.0
                 }}
               />
             </Source>
