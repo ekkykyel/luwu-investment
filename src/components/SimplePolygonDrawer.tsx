@@ -122,6 +122,99 @@ export default function SimplePolygonDrawer({
 
   const [isOutOfBounds, setIsOutOfBounds] = useState(false);
 
+  const [fetchedBoundaryGeojson, setFetchedBoundaryGeojson] = useState<any>(null);
+
+  // ─── DYNAMIC SUPABASE FETCH FOR BOUNDARY CLIPPING ───
+  useEffect(() => {
+    let isMounted = true;
+    const fetchBoundary = async () => {
+      // 1. Try to fetch Village Boundary
+      if (focusTarget?.villageId || focusTarget?.villageName) {
+        if (!focusTarget.villageGeojson) {
+          const data = await safeFetchLayerData("gis_desa");
+          if (data && isMounted) {
+            const features = data.type === 'FeatureCollection' ? data.features : data;
+            const match = features.find((f: any) => 
+              String(f.properties?.ID_DESA || f.properties?.id) === String(focusTarget.villageId) ||
+              (f.properties?.DESA || f.properties?.desa || f.properties?.NAME || "").toLowerCase().includes((focusTarget.villageName || "___INVALID___").toLowerCase())
+            );
+            if (match) {
+              setFetchedBoundaryGeojson({ type: "Feature", geometry: match.geometry || match.geom, properties: match.properties });
+              return;
+            }
+          }
+        }
+      }
+      
+      // 2. Fallback to fetch District Boundary
+      if (focusTarget?.districtId || focusTarget?.districtName) {
+        if (!focusTarget.districtGeojson) {
+          const data = await safeFetchLayerData("gis_kecamatan");
+          if (data && isMounted) {
+            const features = data.type === 'FeatureCollection' ? data.features : data;
+            const match = features.find((f: any) => 
+              String(f.properties?.ID_KEC || f.properties?.id) === String(focusTarget.districtId) ||
+              (f.properties?.KECAMATAN || f.properties?.kecamatan || f.properties?.NAME || "").toLowerCase().includes((focusTarget.districtName || "___INVALID___").toLowerCase())
+            );
+            if (match) {
+              setFetchedBoundaryGeojson({ type: "Feature", geometry: match.geometry || match.geom, properties: match.properties });
+              return;
+            }
+          }
+        }
+      }
+    };
+    fetchBoundary();
+    return () => { isMounted = false; };
+  }, [focusTarget?.villageId, focusTarget?.villageName, focusTarget?.districtId, focusTarget?.districtName]);
+
+  // ─── ACTIVE ADMINISTRATIVE BOUNDARY EXTRACTION ───
+  const activeBoundaryFeature = useMemo(() => {
+    // Priority 0: Dynamically fetched boundary from Supabase
+    if (fetchedBoundaryGeojson) {
+      return fetchedBoundaryGeojson;
+    }
+
+    // Priority 1: Direct Village GeoJSON from focusTarget
+    if (focusTarget?.villageGeojson) {
+      return focusTarget.villageGeojson.type === "Feature"
+        ? focusTarget.villageGeojson
+        : turf.feature(focusTarget.villageGeojson.geometry || focusTarget.villageGeojson);
+    }
+
+    // Priority 2: Match Village from loaded desaData
+    if (desaData && desaData.features && focusTarget?.villageId) {
+      const match = desaData.features.find((f: any) => {
+        const name = (f.properties?.DESA || f.properties?.desa || f.properties?.NAME || "").toLowerCase();
+        const id = (f.properties?.ID_DESA || f.properties?.id || "").toLowerCase();
+        return id === focusTarget.villageId.toLowerCase() ||
+               name.includes(focusTarget.villageName?.toLowerCase() || "___INVALID___");
+      });
+      if (match) return match;
+    }
+
+    // Priority 3: Direct District GeoJSON from focusTarget
+    if (focusTarget?.districtGeojson) {
+      return focusTarget.districtGeojson.type === "Feature"
+        ? focusTarget.districtGeojson
+        : turf.feature(focusTarget.districtGeojson.geometry || focusTarget.districtGeojson);
+    }
+
+    // Priority 4: Match District from loaded kecamatanData
+    if (kecamatanData && kecamatanData.features && focusTarget?.districtId) {
+      const match = kecamatanData.features.find((f: any) => {
+        const rawName = f.properties?.KECAMATAN || f.properties?.kecamatan || f.properties?.NAME || "";
+        const cleanName = rawName.toLowerCase().replace(/kec\.\s*/i, "").trim().replace(/\s+/g, "_");
+        const idFromName = `dist_${cleanName}`;
+        return idFromName === String(focusTarget.districtId || "").toLowerCase() ||
+               rawName.toLowerCase().includes(String(focusTarget.districtName || "").toLowerCase() || "___INVALID___");
+      });
+      if (match) return match;
+    }
+
+    return null;
+  }, [focusTarget, desaData, kecamatanData, fetchedBoundaryGeojson]);
+
   // ─── MEMOIZED BOUNDING BOX & CENTROID STORE ───
   const activeGeometryBounds = useMemo(() => {
     // Priority 1: initialGeometry (if editing existing saved polygon)
@@ -303,99 +396,6 @@ export default function SimplePolygonDrawer({
         .catch(err => console.error("Error loading gis_mangrove.json:", err));
     }
   }, [sawahGeojson, tambakGeojson, mangroveGeojson]);
-
-  const [fetchedBoundaryGeojson, setFetchedBoundaryGeojson] = useState<any>(null);
-
-  // ─── DYNAMIC SUPABASE FETCH FOR BOUNDARY CLIPPING ───
-  useEffect(() => {
-    let isMounted = true;
-    const fetchBoundary = async () => {
-      // 1. Try to fetch Village Boundary
-      if (focusTarget?.villageId || focusTarget?.villageName) {
-        if (!focusTarget.villageGeojson) {
-          const data = await safeFetchLayerData("gis_desa");
-          if (data && isMounted) {
-            const features = data.type === 'FeatureCollection' ? data.features : data;
-            const match = features.find((f: any) => 
-              String(f.properties?.ID_DESA || f.properties?.id) === String(focusTarget.villageId) ||
-              (f.properties?.DESA || f.properties?.desa || f.properties?.NAME || "").toLowerCase().includes((focusTarget.villageName || "___INVALID___").toLowerCase())
-            );
-            if (match) {
-              setFetchedBoundaryGeojson({ type: "Feature", geometry: match.geometry || match.geom, properties: match.properties });
-              return;
-            }
-          }
-        }
-      }
-      
-      // 2. Fallback to fetch District Boundary
-      if (focusTarget?.districtId || focusTarget?.districtName) {
-        if (!focusTarget.districtGeojson) {
-          const data = await safeFetchLayerData("gis_kecamatan");
-          if (data && isMounted) {
-            const features = data.type === 'FeatureCollection' ? data.features : data;
-            const match = features.find((f: any) => 
-              String(f.properties?.ID_KEC || f.properties?.id) === String(focusTarget.districtId) ||
-              (f.properties?.KECAMATAN || f.properties?.kecamatan || f.properties?.NAME || "").toLowerCase().includes((focusTarget.districtName || "___INVALID___").toLowerCase())
-            );
-            if (match) {
-              setFetchedBoundaryGeojson({ type: "Feature", geometry: match.geometry || match.geom, properties: match.properties });
-              return;
-            }
-          }
-        }
-      }
-    };
-    fetchBoundary();
-    return () => { isMounted = false; };
-  }, [focusTarget?.villageId, focusTarget?.villageName, focusTarget?.districtId, focusTarget?.districtName]);
-
-  // ─── ACTIVE ADMINISTRATIVE BOUNDARY EXTRACTION ───
-  const activeBoundaryFeature = useMemo(() => {
-    // Priority 0: Dynamically fetched boundary from Supabase
-    if (fetchedBoundaryGeojson) {
-      return fetchedBoundaryGeojson;
-    }
-
-    // Priority 1: Direct Village GeoJSON from focusTarget
-    if (focusTarget?.villageGeojson) {
-      return focusTarget.villageGeojson.type === "Feature"
-        ? focusTarget.villageGeojson
-        : turf.feature(focusTarget.villageGeojson.geometry || focusTarget.villageGeojson);
-    }
-
-    // Priority 2: Match Village from loaded desaData
-    if (desaData && desaData.features && focusTarget?.villageId) {
-      const match = desaData.features.find((f: any) => {
-        const name = (f.properties?.DESA || f.properties?.desa || f.properties?.NAME || "").toLowerCase();
-        const id = (f.properties?.ID_DESA || f.properties?.id || "").toLowerCase();
-        return id === focusTarget.villageId.toLowerCase() ||
-               name.includes(focusTarget.villageName?.toLowerCase() || "___INVALID___");
-      });
-      if (match) return match;
-    }
-
-    // Priority 3: Direct District GeoJSON from focusTarget
-    if (focusTarget?.districtGeojson) {
-      return focusTarget.districtGeojson.type === "Feature"
-        ? focusTarget.districtGeojson
-        : turf.feature(focusTarget.districtGeojson.geometry || focusTarget.districtGeojson);
-    }
-
-    // Priority 4: Match District from loaded kecamatanData
-    if (kecamatanData && kecamatanData.features && focusTarget?.districtId) {
-      const match = kecamatanData.features.find((f: any) => {
-        const rawName = f.properties?.KECAMATAN || f.properties?.kecamatan || f.properties?.NAME || "";
-        const cleanName = rawName.toLowerCase().replace(/kec\.\s*/i, "").trim().replace(/\s+/g, "_");
-        const idFromName = `dist_${cleanName}`;
-        return idFromName === String(focusTarget.districtId || "").toLowerCase() ||
-               rawName.toLowerCase().includes(String(focusTarget.districtName || "").toLowerCase() || "___INVALID___");
-      });
-      if (match) return match;
-    }
-
-    return null;
-  }, [focusTarget, desaData, kecamatanData]);
 
   // ─── INVERTED MASKING PROTOCOL (THE CLIPPING EFFECT) ───
   const invertedMaskGeojson = useMemo(() => {
