@@ -189,7 +189,7 @@ export const PortalLayout: React.FC<PortalLayoutProps> = ({
                       MPP Simpurusiang
                     </span>
                     <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 truncate">
-                      Pemerintah Kabupaten Luwu
+                      Regional GRP Platform • Pemkab Luwu
                     </span>
                   </div>
                 </div>

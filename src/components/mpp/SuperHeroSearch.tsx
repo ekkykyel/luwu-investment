@@ -51,7 +51,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
         className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-white/70 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-700/60 shadow-xs backdrop-blur-md"
       >
         <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-        <span>Pusat Pelayanan Terpadu Satu Pintu • Kabupaten Luwu</span>
+        <span>✦ REGIONAL GRP (GOVERNMENT RESOURCE PLANNING) PLATFORM</span>
       </motion.div>
 
       {/* 2. Main Title */}
@@ -68,9 +68,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
           </span>
         </h1>
         <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-medium max-w-2xl mx-auto">
-          {activePersona === 'investor' 
-            ? 'Akses terpadu perizinan berusaha OSS-RBA, konsultasi tata ruang, dan fasilitas insentif penanaman modal Kabupaten Luwu.'
-            : 'Satu gerai digital untuk 19 instansi pemerintah, BUMN, dan kepolisian. Cepat, transparan, dan ramah untuk seluruh warga Luwu.'}
+          Portal terpadu Regional GRP (Government Resource Planning) untuk 19 instansi pemerintah, BUMN, dan kepolisian. Cepat, transparan, dan ramah untuk seluruh warga Luwu.
         </p>
       </motion.div>
 
