@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Building2, 
   Lock, 
@@ -44,6 +45,11 @@ export const PetugasGeraiLoginModal: React.FC<PetugasGeraiLoginModalProps> = ({
   onSuccess,
   isDarkMode = false
 }) => {
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n?.language || 'id';
+  const isEn = currentLang.startsWith('en');
+  const isZh = currentLang.startsWith('zh');
+
   const [tenants, setTenants] = useState<MPPTenant[]>([]);
   const [selectedTenantId, setSelectedTenantId] = useState<string>('');
   const [selectedCounter, setSelectedCounter] = useState<string>('Loket 1');
@@ -578,7 +584,7 @@ export const PetugasGeraiLoginModal: React.FC<PetugasGeraiLoginModalProps> = ({
                 </span>
               </div>
               <h2 className="text-lg sm:text-xl font-black mt-0.5 tracking-tight">
-                Login Petugas Gerai
+                {isEn ? 'Booth Officer Login' : isZh ? '窗口柜员 / 专员登录' : 'Login Petugas Gerai'}
               </h2>
             </div>
           </div>
@@ -595,7 +601,11 @@ export const PetugasGeraiLoginModal: React.FC<PetugasGeraiLoginModalProps> = ({
         {/* Modal Body / Form */}
         <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4">
           <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-            Masuk menggunakan akun petugas terdaftar pada gerai loket Anda untuk melayani antrean masyarakat & investor secara real-time.
+            {isEn 
+              ? 'Log in using your registered officer account at your booth counter to serve citizen & investor queues in real-time.' 
+              : isZh 
+              ? '使用窗口柜员注册账号登录，实时接办市民与投资者的服务排队与业务办理。' 
+              : 'Masuk menggunakan akun petugas terdaftar pada gerai loket Anda untuk melayani antrean masyarakat & investor secara real-time.'}
           </p>
 
           {errorMessage && (
@@ -616,7 +626,7 @@ export const PetugasGeraiLoginModal: React.FC<PetugasGeraiLoginModalProps> = ({
             {/* 1. Pilih Instansi / Gerai */}
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                Instansi / Gerai Loket <span className="text-rose-500">*</span>
+                {isEn ? 'Agency / Booth Counter' : isZh ? '驻驻机构 / 窗口' : 'Instansi / Gerai Loket'} <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <select
@@ -700,7 +710,7 @@ export const PetugasGeraiLoginModal: React.FC<PetugasGeraiLoginModalProps> = ({
             {/* 3. Email Dinas / NIP */}
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                Email Dinas / Akun Petugas <span className="text-rose-500">*</span>
+                {isEn ? 'Official Email / Officer Account' : isZh ? '公务邮箱 / 柜员账号' : 'Email Dinas / Akun Petugas'} <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
@@ -725,10 +735,10 @@ export const PetugasGeraiLoginModal: React.FC<PetugasGeraiLoginModalProps> = ({
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                  Kata Sandi / PIN Petugas <span className="text-rose-500">*</span>
+                  {isEn ? 'Officer Password / PIN' : isZh ? '专员密码 / PIN 码' : 'Kata Sandi / PIN Petugas'} <span className="text-rose-500">*</span>
                 </label>
                 <span className="text-[10px] text-slate-400 italic">
-                  Dikelola di Manajemen Operator
+                  {isEn ? 'Managed in Operator Mgt' : isZh ? '在专员管理中维护' : 'Dikelola di Manajemen Operator'}
                 </span>
               </div>
               <div className="relative">
@@ -740,7 +750,7 @@ export const PetugasGeraiLoginModal: React.FC<PetugasGeraiLoginModalProps> = ({
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Masukkan kata sandi / PIN Anda"
+                  placeholder={isEn ? 'Enter your password / PIN' : isZh ? '请输入您的密码 / PIN 码' : 'Masukkan kata sandi / PIN Anda'}
                   className={`w-full min-h-[48px] pl-10 pr-10 py-2.5 rounded-2xl text-xs sm:text-sm border outline-none transition-all ${
                     isDarkMode 
                       ? 'bg-slate-800/80 border-slate-700 text-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20' 
@@ -765,7 +775,7 @@ export const PetugasGeraiLoginModal: React.FC<PetugasGeraiLoginModalProps> = ({
                 className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                <span>Gunakan Kredensial Uji Coba</span>
+                <span>{isEn ? 'Use Test Credentials' : isZh ? '使用测试演示账号' : 'Gunakan Kredensial Uji Coba'}</span>
               </button>
               <span className="text-[10px] text-slate-400 font-mono">BPN: BPN2026@</span>
             </div>
@@ -781,7 +791,7 @@ export const PetugasGeraiLoginModal: React.FC<PetugasGeraiLoginModalProps> = ({
               ) : (
                 <>
                   <ShieldCheck className="w-4 h-4" />
-                  <span>Masuk ke Dashboard Loket</span>
+                  <span>{isEn ? 'Login to Counter Dashboard' : isZh ? '进入窗口柜员工作台' : 'Masuk ke Dashboard Loket'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}

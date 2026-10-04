@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { 
   Headphones, 
   X, 
@@ -22,6 +23,11 @@ export const GlobalHelpdeskFab: React.FC<GlobalHelpdeskFabProps> = ({
   onOpenAiAssistant,
   onOpenVoiceAssistant,
 }) => {
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n?.language || 'id';
+  const isEn = currentLang.startsWith('en');
+  const isZh = currentLang.startsWith('zh');
+
   const [isOpen, setIsOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -49,7 +55,7 @@ export const GlobalHelpdeskFab: React.FC<GlobalHelpdeskFabProps> = ({
             className="p-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 rounded-3xl shadow-2xl flex flex-col gap-2 min-w-[220px]"
           >
             <div className="px-3 py-1.5 border-b border-slate-100 dark:border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              Pusat Bantuan & Kontak Cepat
+              {isEn ? 'Help Center & Fast Contacts' : isZh ? '帮助中心与快捷联系' : 'Pusat Bantuan & Kontak Cepat'}
             </div>
 
             {/* Action 1: Antrean Booking */}
@@ -66,8 +72,8 @@ export const GlobalHelpdeskFab: React.FC<GlobalHelpdeskFabProps> = ({
                   <Ticket className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="font-extrabold text-slate-900 dark:text-white">Ambil Antrean</div>
-                  <div className="text-[10px] text-slate-400 font-normal">Tiket layanan tanpa antre</div>
+                  <div className="font-extrabold text-slate-900 dark:text-white">{isEn ? 'Get Queue Ticket' : isZh ? '取号排队' : 'Ambil Antrean'}</div>
+                  <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Digital ticket without waiting' : isZh ? '免排队电子排队票' : 'Tiket layanan tanpa antre'}</div>
                 </div>
               </button>
             )}
@@ -86,8 +92,8 @@ export const GlobalHelpdeskFab: React.FC<GlobalHelpdeskFabProps> = ({
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="font-extrabold text-slate-900 dark:text-white">AI Konsultasi Izin</div>
-                  <div className="text-[10px] text-slate-400 font-normal">Cek syarat & berkas instan</div>
+                  <div className="font-extrabold text-slate-900 dark:text-white">{isEn ? 'AI Permit Consultation' : isZh ? 'AI 许可咨询' : 'AI Konsultasi Izin'}</div>
+                  <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Instant requirement check' : isZh ? '即时查询审批条件' : 'Cek syarat & berkas instan'}</div>
                 </div>
               </button>
             )}
@@ -106,8 +112,8 @@ export const GlobalHelpdeskFab: React.FC<GlobalHelpdeskFabProps> = ({
                   <Mic className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="font-extrabold text-slate-900 dark:text-white">Asisten Suara AI</div>
-                  <div className="text-[10px] text-slate-400 font-normal">Tanya jawab suara</div>
+                  <div className="font-extrabold text-slate-900 dark:text-white">{isEn ? 'AI Voice Assistant' : isZh ? 'AI 语音助手' : 'Asisten Suara AI'}</div>
+                  <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Voice Q&A' : isZh ? '语音问答交互' : 'Tanya jawab suara'}</div>
                 </div>
               </button>
             )}

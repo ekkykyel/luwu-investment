@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { 
   Layers, 
   Search, 
@@ -135,6 +136,11 @@ export function MppFloorPlan({
   externalRequests,
   isDark = true
 }: MppFloorPlanProps) {
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n?.language || 'id';
+  const isEn = currentLang.startsWith('en');
+  const isZh = currentLang.startsWith('zh');
+
   // Selection & Hover State
   const [internalSelectedId, setInternalSelectedId] = useState<string | null>(null);
   const selectedId = controlledSelectedId !== undefined ? controlledSelectedId : internalSelectedId;
@@ -841,17 +847,23 @@ export function MppFloorPlan({
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
             <span className="w-2.5 h-2.5 rounded-full bg-rose-600"></span>
-            <span className={`font-semibold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>Bantuan Aktif (Alert)</span>
+            <span className={`font-semibold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
+              {isEn ? 'Active Alert (Help)' : isZh ? '求助呼叫 (Alert)' : 'Bantuan Aktif (Alert)'}
+            </span>
           </div>
 
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-            <span className={`font-semibold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>Ditanggapi (Responding)</span>
+            <span className={`font-semibold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
+              {isEn ? 'Responding' : isZh ? '接办中 (Responding)' : 'Ditanggapi (Responding)'}
+            </span>
           </div>
 
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-            <span className={`font-semibold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>Normal / Buka</span>
+            <span className={`font-semibold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
+              {isEn ? 'Normal / Open' : isZh ? '正常营业 / 开放' : 'Normal / Buka'}
+            </span>
           </div>
 
           <div className="flex items-center gap-1.5">

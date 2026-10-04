@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { 
   Headphones, 
   Lock, 
@@ -40,6 +41,11 @@ export const FoOfficerLoginModal: React.FC<FoOfficerLoginModalProps> = ({
   onSuccess,
   isDarkMode = false
 }) => {
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n?.language || 'id';
+  const isEn = currentLang.startsWith('en');
+  const isZh = currentLang.startsWith('zh');
+
   const [officers, setOfficers] = useState<FoOfficerItem[]>([]);
   const [selectedOfficerEmail, setSelectedOfficerEmail] = useState<string>('');
   const [emailInput, setEmailInput] = useState<string>('');
@@ -285,11 +291,17 @@ export const FoOfficerLoginModal: React.FC<FoOfficerLoginModalProps> = ({
                 <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-900/40 border border-rose-300/40 text-rose-100">
                   Authentication Gate
                 </span>
-                <h2 className="text-xl font-extrabold tracking-tight">Login Command Center FO</h2>
+                <h2 className="text-xl font-extrabold tracking-tight">
+                  {isEn ? 'FO Command Center Login' : isZh ? '前台 (FO) 指挥中心登录' : 'Login Command Center FO'}
+                </h2>
               </div>
             </div>
             <p className="text-xs text-rose-100/90 leading-relaxed font-medium">
-              Akses khusus Resepsionis, Concierge, & Petugas Helpdesk Front Office MPP Simpurusiang Luwu.
+              {isEn 
+                ? 'Dedicated access for Receptionists, Concierge, & Front Office Helpdesk Officers of Simpurusiang MPP Luwu.' 
+                : isZh 
+                ? '鲁乌县 Simpurusiang 政务服务大厅前台接待、礼宾与咨询台专员专用登录入口。' 
+                : 'Akses khusus Resepsionis, Concierge, & Petugas Helpdesk Front Office MPP Simpurusiang Luwu.'}
             </p>
           </div>
 
@@ -316,9 +328,9 @@ export const FoOfficerLoginModal: React.FC<FoOfficerLoginModalProps> = ({
               <label className={`text-xs font-bold flex items-center justify-between ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
                 <span className="flex items-center gap-1.5">
                   <UserCheck className="w-3.5 h-3.5 text-rose-500" />
-                  Pilih Akun Petugas FO
+                  {isEn ? 'Select FO Officer Account' : isZh ? '选择前台专员账号' : 'Pilih Akun Petugas FO'}
                 </span>
-                <span className="text-[10px] text-rose-500 font-bold">*Wajib</span>
+                <span className="text-[10px] text-rose-500 font-bold">{isEn ? '*Required' : isZh ? '*必填' : '*Wajib'}</span>
               </label>
 
               <select
@@ -335,7 +347,7 @@ export const FoOfficerLoginModal: React.FC<FoOfficerLoginModalProps> = ({
                     {op.name} ({op.email})
                   </option>
                 ))}
-                <option value="CUSTOM">+ Input Email Kustom Lainnya...</option>
+                <option value="CUSTOM">+ {isEn ? 'Input Other Custom Email...' : isZh ? '+ 输入其他自定义邮箱...' : 'Input Email Kustom Lainnya...'}</option>
               </select>
             </div>
 
@@ -344,13 +356,13 @@ export const FoOfficerLoginModal: React.FC<FoOfficerLoginModalProps> = ({
               <div className="space-y-1.5">
                 <label className={`text-xs font-bold flex items-center gap-1.5 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
                   <Mail className="w-3.5 h-3.5 text-rose-500" />
-                  Email Petugas
+                  {isEn ? 'Officer Email' : isZh ? '专员工作邮箱' : 'Email Petugas'}
                 </label>
                 <input
                   type="email"
                   value={emailInput}
                   onChange={(e) => setEmailInput(e.target.value)}
-                  placeholder="contoh: fo.officer@luwukab.go.id"
+                  placeholder="e.g. fo.officer@luwukab.go.id"
                   className={`w-full px-3.5 py-2.5 rounded-2xl text-xs font-medium border transition-all ${
                     isDarkMode
                       ? 'bg-slate-800 border-slate-700 text-white focus:border-rose-500'
@@ -366,7 +378,7 @@ export const FoOfficerLoginModal: React.FC<FoOfficerLoginModalProps> = ({
               <label className={`text-xs font-bold flex items-center justify-between ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
                 <span className="flex items-center gap-1.5">
                   <KeyRound className="w-3.5 h-3.5 text-rose-500" />
-                  PIN / Password Login FO
+                  {isEn ? 'FO Login PIN / Password' : isZh ? '前台登录 PIN 码 / 密码' : 'PIN / Password Login FO'}
                 </span>
                 <span className="text-[10px] text-slate-400 font-normal">Default: FO2026@</span>
               </label>
@@ -376,7 +388,7 @@ export const FoOfficerLoginModal: React.FC<FoOfficerLoginModalProps> = ({
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Masukkan PIN / Password Petugas FO"
+                  placeholder={isEn ? 'Enter FO PIN / Password' : isZh ? '请输入前台专员 PIN 码 / 密码' : 'Masukkan PIN / Password Petugas FO'}
                   className={`w-full px-3.5 py-2.5 pr-10 rounded-2xl text-xs font-medium border transition-all ${
                     isDarkMode
                       ? 'bg-slate-800 border-slate-700 text-white focus:border-rose-500'
@@ -405,7 +417,7 @@ export const FoOfficerLoginModal: React.FC<FoOfficerLoginModalProps> = ({
                     : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
                 }`}
               >
-                Batal
+                {isEn ? 'Cancel' : isZh ? '取消' : 'Batal'}
               </button>
 
               <button
@@ -414,10 +426,10 @@ export const FoOfficerLoginModal: React.FC<FoOfficerLoginModalProps> = ({
                 className="px-5 py-2.5 rounded-2xl text-xs font-extrabold bg-gradient-to-r from-rose-600 via-rose-500 to-amber-500 text-white shadow-lg shadow-rose-900/30 hover:opacity-95 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 {isLoading ? (
-                  <span>Memverifikasi...</span>
+                  <span>{isEn ? 'Verifying...' : isZh ? '正在验证...' : 'Memverifikasi...'}</span>
                 ) : (
                   <>
-                    <span>Masuk Command Center FO</span>
+                    <span>{isEn ? 'Enter FO Command Center' : isZh ? '进入前台指挥中心' : 'Masuk Command Center FO'}</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
