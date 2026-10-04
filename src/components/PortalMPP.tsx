@@ -419,6 +419,7 @@ export default function PortalMPP() {
 
   // --- Database Sync State: Fasilitas, UMKM, Alur, Kontak & Profil dari Supabase & API ---
   const [dbFacilities, setDbFacilities] = useState<any[]>([]);
+  const [dbQuotaRestricted, setDbQuotaRestricted] = useState<boolean>(false);
   const [mppFlowSteps, setMppFlowSteps] = useState<any[]>([]);
   const [liveContacts, setLiveContacts] = useState({
     phone: "+62 811-420-1234",
@@ -1043,8 +1044,13 @@ export default function PortalMPP() {
 
         setLiveAgencies(mapped);
       }
-    } catch (err) {
-      console.error('Error fetching live agencies from Supabase:', err);
+    } catch (err: any) {
+      const msg = String(err?.message || '');
+      const isQuotaError = msg.toLowerCase().includes('quota') || msg.toLowerCase().includes('restricted') || msg.toLowerCase().includes('egress') || msg.toLowerCase().includes('violation');
+      if (isQuotaError) {
+        setDbQuotaRestricted(true);
+      }
+      console.warn('Note fetching live agencies from Supabase:', err);
     }
   }, []);
 
@@ -1057,7 +1063,11 @@ export default function PortalMPP() {
 
       if (error) {
         const isRlsError = error.code === '42501' || error.message?.toLowerCase().includes('permission denied') || error.message?.toLowerCase().includes('row-level security');
-        console.error('[PortalMPP] Error fetching live facilities from Supabase:', {
+        const isQuotaError = error.message?.toLowerCase().includes('quota') || error.message?.toLowerCase().includes('restricted') || error.message?.toLowerCase().includes('egress') || error.message?.toLowerCase().includes('violation');
+        if (isQuotaError) {
+          setDbQuotaRestricted(true);
+        }
+        console.warn('[PortalMPP] Note fetching live facilities from Supabase:', {
           code: error.code,
           message: error.message,
           hint: error.hint,
@@ -1081,7 +1091,7 @@ export default function PortalMPP() {
               .order('created_at', { ascending: true })
               .then(res => {
                 if (res.data && res.data.length > 0) {
-                  setDbFacilities(res.data);
+                   setDbFacilities(res.data);
                 }
               });
           });
@@ -1101,7 +1111,12 @@ export default function PortalMPP() {
         });
       }
     } catch (err: any) {
-      console.error("[PortalMPP] Unexpected exception loading mpp_facilities:", err);
+      const msg = String(err?.message || '');
+      const isQuotaError = msg.toLowerCase().includes('quota') || msg.toLowerCase().includes('restricted') || msg.toLowerCase().includes('egress') || msg.toLowerCase().includes('violation');
+      if (isQuotaError) {
+        setDbQuotaRestricted(true);
+      }
+      console.warn("[PortalMPP] Unexpected exception loading mpp_facilities:", err);
     }
   }, []);
 
@@ -1790,6 +1805,14 @@ export default function PortalMPP() {
 
       
       <div className="relative z-10 pb-36 md:pb-24 w-full">
+        {/* Quota restriction status / Database connection alert banner */}
+        {dbQuotaRestricted && (
+          <div className="bg-amber-600 dark:bg-amber-700/90 text-white px-4 py-2.5 text-center text-xs font-bold font-sans flex items-center justify-center gap-2 border-b border-amber-500 shadow-sm relative z-50">
+            <AlertCircle className="w-4 h-4 shrink-0 text-amber-200" />
+            <span>Database Cloud MPP Simpurusiang sedang membatasi kuota egress bulanan (Koneksi Terputus). Beberapa fitur beralih ke mode offline lokal secara otomatis.</span>
+          </div>
+        )}
+
         {/* Inclusivity & Accessibility Bar (Mode Ramah Disabilitas, Text-to-Speech & High Contrast) */}
         <InclusivityAccessibilityBar isDark={isDark} />
 
