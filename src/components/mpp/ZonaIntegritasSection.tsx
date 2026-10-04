@@ -161,9 +161,9 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
             <button
               type="button"
               onClick={() => setIsWbsModalOpen(true)}
-              className="w-full min-h-[52px] sm:min-h-[56px] px-4 sm:px-6 py-3 rounded-xl bg-red-950/40 hover:bg-red-900/50 text-red-200 border border-red-500/30 hover:border-red-500/50 font-bold text-xs sm:text-sm transition-all duration-200 active:scale-95 flex items-center justify-center gap-2.5 cursor-pointer select-none whitespace-normal leading-tight text-center"
+              className="w-full min-h-[52px] sm:min-h-[56px] px-4 sm:px-6 py-3 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 hover:text-red-800 border border-red-200 dark:bg-red-950/40 dark:hover:bg-red-900/50 dark:text-red-200 dark:border-red-500/30 dark:hover:border-red-500/50 font-bold text-xs sm:text-sm transition-all duration-200 active:scale-95 flex items-center justify-center gap-2.5 cursor-pointer select-none whitespace-normal leading-tight text-center"
             >
-              <Megaphone className="w-5 h-5 shrink-0 text-red-400" />
+              <Megaphone className="w-5 h-5 shrink-0 text-red-600 dark:text-red-400" />
               <span className="whitespace-normal leading-tight">Lapor WBS / Whistleblowing System</span>
             </button>
 
@@ -181,17 +181,17 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
             {/* Action Block 3: Informational Alert Banner with consistent p-4 sm:p-5 padding */}
             <div 
               role="alert"
-              className="w-full bg-red-950/30 dark:bg-red-950/40 border border-red-500/30 p-4 sm:p-5 rounded-2xl shadow-xs text-left flex items-start gap-3.5"
+              className="w-full bg-red-50/90 dark:bg-red-950/40 border border-red-200 dark:border-red-500/30 p-4 sm:p-5 rounded-2xl shadow-xs text-left flex items-start gap-3.5"
             >
-              <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+              <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
               <div className="space-y-1 text-xs sm:text-sm leading-relaxed">
-                <div className="uppercase tracking-wider font-extrabold text-red-400 text-[11px] sm:text-xs font-sans">
+                <div className="uppercase tracking-wider font-extrabold text-red-700 dark:text-red-400 text-[11px] sm:text-xs font-sans">
                   Maklumat Bebas Pungutan Liar
                 </div>
-                <p className="font-bold text-slate-100 dark:text-slate-100 leading-snug">
+                <p className="font-bold text-slate-900 dark:text-slate-100 leading-snug">
                   Rp 0,- (GRATIS) KECUALI RETRIBUSI RESMI BANK BPD SULSELBAR • PETUGAS DILARANG MENERIMA UANG CASH
                 </p>
-                <p className="text-[11px] font-normal text-slate-300 dark:text-slate-300 leading-relaxed">
+                <p className="text-[11px] font-normal text-slate-600 dark:text-slate-300 leading-relaxed">
                   Seluruh pembayaran retribusi daerah yang sah wajib melalui QRIS resmi atau loket Bank BPD Sulselbar dengan bukti setoran kas daerah.
                 </p>
               </div>
