@@ -45,7 +45,7 @@ export function FacilityDetailModal({
   return (
     <AnimatePresence>
       <div 
-        className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
+        className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
         onClick={onClose}
       >
         <motion.div
@@ -53,7 +53,7 @@ export function FacilityDetailModal({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
           transition={{ type: "spring", stiffness: 320, damping: 28 }}
-          className="w-full max-w-3xl mx-auto max-h-[85vh] bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100"
+          className="w-full max-w-3xl mx-auto my-auto max-h-[85vh] sm:max-h-[88vh] bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100"
           onClick={(e) => e.stopPropagation()}
         >
           {/* 1. Header Foto Full-Bleed (Menempel Sisi Kiri, Atas, Kanan Card) */}

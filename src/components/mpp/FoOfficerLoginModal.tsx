@@ -247,13 +247,13 @@ export const FoOfficerLoginModal: React.FC<FoOfficerLoginModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans">
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className={`relative w-full max-w-md max-h-[85vh] rounded-3xl border shadow-2xl overflow-hidden flex flex-col ${
+          className={`relative w-full max-w-md my-auto max-h-[85vh] sm:max-h-[88vh] rounded-2xl sm:rounded-3xl border shadow-2xl overflow-hidden flex flex-col ${
             isDarkMode 
               ? 'bg-slate-900 border-slate-800 text-white shadow-rose-950/30' 
               : 'bg-white border-slate-200 text-slate-900 shadow-slate-300'

@@ -536,7 +536,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
     <AnimatePresence>
       <div 
         id="mpp-service-detail-backdrop"
-        className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
+        className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
         onClick={(e) => {
           if (e.target === e.currentTarget) {
             onClose();
@@ -552,7 +552,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ type: "spring", stiffness: 320, damping: 28 }}
-          className="w-full max-w-4xl max-h-[85vh] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100 border border-slate-200/80 dark:border-white/10"
+          className="w-full max-w-4xl my-auto max-h-[85vh] sm:max-h-[88vh] bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100 border border-slate-200/80 dark:border-white/10"
         >
           {/* Header Bar dengan Tombol Tutup Presisi */}
           <div className="relative z-10 px-4 sm:px-7 py-3 sm:py-4 border-b border-slate-100 dark:border-white/10 flex items-center justify-between bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shrink-0">

@@ -550,9 +550,9 @@ export const PetugasGeraiLoginModal: React.FC<PetugasGeraiLoginModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[120] flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200 overflow-hidden font-sans">
+    <div className="fixed inset-0 z-[120] flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200 overflow-y-auto font-sans">
       <div 
-        className={`w-full max-w-md max-h-[85vh] rounded-3xl shadow-2xl border flex flex-col overflow-hidden transition-all ${
+        className={`w-full max-w-md my-auto max-h-[85vh] sm:max-h-[88vh] rounded-2xl sm:rounded-3xl shadow-2xl border flex flex-col overflow-hidden transition-all ${
           isDarkMode 
             ? 'bg-slate-900 text-white border-slate-800' 
             : 'bg-white text-slate-900 border-slate-200'

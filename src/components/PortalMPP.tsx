@@ -3085,7 +3085,7 @@ export default function PortalMPP() {
             {/* Fitur 5: Modal Detail Fasilitas Publik (Full-Bleed 16:9 Header & max-w-3xl) */}
             {isFacilityModalOpen && (
               <div 
-                className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
+                className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
                 onClick={() => setIsFacilityModalOpen(false)}
               >
                 <motion.div
@@ -3093,7 +3093,7 @@ export default function PortalMPP() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 15 }}
                   transition={{ type: "spring", stiffness: 320, damping: 28 }}
-                  className="w-full max-w-3xl mx-auto max-h-[85vh] bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100"
+                  className="w-full max-w-3xl mx-auto my-auto max-h-[85vh] sm:max-h-[88vh] bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Foto Full-Bleed Header (Menempel Sisi Kiri, Atas, Kanan Card) */}
@@ -3638,7 +3638,7 @@ export default function PortalMPP() {
           <AnimatePresence>
             {selectedUMKM && (
               <div 
-                className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
+                className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
                 onClick={() => setSelectedUMKM(null)}
               >
                 <motion.div
@@ -3646,7 +3646,7 @@ export default function PortalMPP() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 30, scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                  className="w-full max-w-md max-h-[85vh] bg-white dark:bg-slate-900 rounded-3xl flex flex-col overflow-hidden shadow-2xl transition-all border border-slate-200/80 dark:border-slate-800"
+                  className="w-full max-w-md my-auto max-h-[85vh] sm:max-h-[88vh] bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl flex flex-col overflow-hidden shadow-2xl transition-all border border-slate-200/80 dark:border-slate-800"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Hero Image Full-Bleed & Overlay Controls */}
@@ -5839,7 +5839,7 @@ export default function PortalMPP() {
         {/* Fitur 8: Interactive Virtual Helpdesk Modal */}
         {isHelpdeskModalOpen && (
           <div 
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
             onClick={() => setIsHelpdeskModalOpen(false)}
           >
             <motion.div
@@ -5847,7 +5847,7 @@ export default function PortalMPP() {
               animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, scale: 0.94, y: 20, filter: "blur(4px)" }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="w-full max-w-lg max-h-[85vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-5 sm:p-8 shadow-2xl overflow-y-auto flex flex-col"
+              className="w-full max-w-lg my-auto max-h-[85vh] sm:max-h-[88vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl overflow-y-auto flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header Modal */}
@@ -6014,7 +6014,7 @@ export default function PortalMPP() {
           const activeAgency = getLocalizedAgency(selectedAgencyDetail, i18n.language);
           return (
           <div 
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
             onClick={() => setSelectedAgencyDetail(null)}
           >
             <motion.div
@@ -6022,7 +6022,7 @@ export default function PortalMPP() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.94, y: 20 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="w-full max-w-2xl max-h-[85vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-5 sm:p-7 shadow-2xl overflow-y-auto text-slate-900 dark:text-white font-sans flex flex-col"
+              className="w-full max-w-2xl my-auto max-h-[85vh] sm:max-h-[88vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-2xl overflow-y-auto text-slate-900 dark:text-white font-sans flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header Modal Detail Instansi */}
@@ -7197,7 +7197,7 @@ export default function PortalMPP() {
         <AnimatePresence>
           {isSurveyModalOpen && (
             <div 
-              className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
+              className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
               onClick={() => setIsSurveyModalOpen(false)}
             >
               <motion.div
@@ -7205,7 +7205,7 @@ export default function PortalMPP() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.96, y: 20 }}
                 transition={{ duration: 0.22, ease: "easeOut" }}
-                className="w-full max-w-5xl max-h-[85vh] bg-white dark:bg-slate-900 rounded-3xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100 shadow-2xl transition-all border border-slate-200/80 dark:border-slate-800"
+                className="w-full max-w-5xl my-auto max-h-[85vh] sm:max-h-[88vh] bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100 shadow-2xl transition-all border border-slate-200/80 dark:border-slate-800"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Header Modal */}
