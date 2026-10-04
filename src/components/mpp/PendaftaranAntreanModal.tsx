@@ -342,12 +342,12 @@ export const PendaftaranAntreanModal: React.FC<PendaftaranAntreanModalProps> = (
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden animate-in fade-in duration-200">
       <motion.div 
         initial={{ opacity: 0, scale: 0.96, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 15 }}
-        className={`w-full max-w-2xl rounded-3xl shadow-2xl border overflow-hidden my-auto flex flex-col max-h-[92vh] ${
+        className={`w-full max-w-2xl rounded-3xl shadow-2xl border overflow-hidden flex flex-col max-h-[85vh] ${
           isDarkMode 
             ? 'bg-slate-900 border-white/10 text-white' 
             : 'bg-white border-slate-200 text-slate-900'

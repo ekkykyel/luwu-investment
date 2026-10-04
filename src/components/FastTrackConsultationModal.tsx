@@ -83,16 +83,16 @@ export function FastTrackConsultationModal({
 
   return (
     <div 
-      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-hidden"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
       onClick={onClose}
     >
       <motion.div
-        initial={{ opacity: 0, y: 120, scale: 0.96 }}
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 120, scale: 0.96 }}
+        exit={{ opacity: 0, y: 30, scale: 0.95 }}
         transition={{ type: 'spring', damping: 26, stiffness: 340 }}
         onClick={(e) => e.stopPropagation()}
-        className={`w-full max-w-2xl rounded-t-3xl sm:rounded-3xl shadow-2xl border overflow-hidden my-0 sm:my-auto max-h-[92vh] flex flex-col ${
+        className={`w-full max-w-2xl max-h-[85vh] rounded-3xl shadow-2xl border overflow-hidden flex flex-col ${
           isDark 
             ? 'bg-[#0b1324] border-slate-700/80 text-white' 
             : 'bg-white border-slate-200 text-slate-900'

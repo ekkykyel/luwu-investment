@@ -419,14 +419,14 @@ export const MppMagattiAdminManager: React.FC = () => {
       {/* MODAL FORM: TAMBAH / EDIT FOTO */}
       <AnimatePresence>
         {isPhotoModalOpen && (
-          <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-md">
+          <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="w-full max-w-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden my-auto text-slate-900 dark:text-slate-100 font-sans"
+              className="w-full max-w-2xl max-h-[85vh] bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col text-slate-900 dark:text-slate-100 font-sans"
             >
-              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/80">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/80 shrink-0">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
                     <ImageIcon size={20} />
@@ -443,13 +443,13 @@ export const MppMagattiAdminManager: React.FC = () => {
 
                 <button
                   onClick={() => setIsPhotoModalOpen(false)}
-                  className="p-2 rounded-full bg-slate-200/80 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                  className="p-2 rounded-full bg-slate-200/80 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white cursor-pointer transition-colors"
                 >
                   <X size={16} />
                 </button>
               </div>
 
-              <form onSubmit={handleSavePhoto} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+              <form onSubmit={handleSavePhoto} className="p-5 sm:p-6 space-y-4 overflow-y-auto flex-1">
                 {/* Title */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
@@ -568,12 +568,12 @@ export const MppMagattiAdminManager: React.FC = () => {
       {/* MODAL SETTINGS: ANIMASI & TIMER */}
       <AnimatePresence>
         {isSettingsModalOpen && (
-          <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-md">
+          <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden p-6 space-y-5 text-slate-900 dark:text-slate-100 font-sans"
+              className="w-full max-w-md max-h-[85vh] bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-y-auto flex flex-col p-5 sm:p-6 space-y-5 text-slate-900 dark:text-slate-100 font-sans"
             >
               <div className="flex items-center justify-between border-b pb-3 border-slate-200 dark:border-slate-800">
                 <div className="flex items-center gap-2.5">

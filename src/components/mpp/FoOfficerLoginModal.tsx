@@ -247,27 +247,27 @@ export const FoOfficerLoginModal: React.FC<FoOfficerLoginModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-hidden">
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className={`relative w-full max-w-md max-h-[85vh] rounded-3xl border shadow-2xl overflow-y-auto flex flex-col ${
+          className={`relative w-full max-w-md max-h-[85vh] rounded-3xl border shadow-2xl overflow-hidden flex flex-col ${
             isDarkMode 
               ? 'bg-slate-900 border-slate-800 text-white shadow-rose-950/30' 
               : 'bg-white border-slate-200 text-slate-900 shadow-slate-300'
           }`}
         >
           {/* Header Banner */}
-          <div className="relative p-6 bg-gradient-to-br from-rose-600 via-rose-500 to-amber-500 text-white overflow-hidden">
+          <div className="relative p-5 sm:p-6 bg-gradient-to-br from-rose-600 via-rose-500 to-amber-500 text-white shrink-0">
             <div className="absolute -right-8 -bottom-8 opacity-15 pointer-events-none">
               <Headphones className="w-48 h-48 text-white" />
             </div>
 
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white/90 hover:text-white transition-colors"
+              className="absolute top-4 right-4 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white/90 hover:text-white transition-colors cursor-pointer"
               title="Tutup"
             >
               <X className="w-5 h-5" />
@@ -290,7 +290,7 @@ export const FoOfficerLoginModal: React.FC<FoOfficerLoginModalProps> = ({
           </div>
 
           {/* Form Body */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <form onSubmit={handleSubmit} className="overflow-y-auto flex-1 p-5 sm:p-6 space-y-4">
             {/* Alert Error */}
             {errorMessage && (
               <div className="p-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-semibold flex items-start gap-2.5 animate-shake">

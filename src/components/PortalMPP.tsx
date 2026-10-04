@@ -3085,7 +3085,7 @@ export default function PortalMPP() {
             {/* Fitur 5: Modal Detail Fasilitas Publik (Full-Bleed 16:9 Header & max-w-3xl) */}
             {isFacilityModalOpen && (
               <div 
-                className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-slate-950/85 backdrop-blur-md overflow-hidden font-sans"
+                className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
                 onClick={() => setIsFacilityModalOpen(false)}
               >
                 <motion.div
@@ -3093,13 +3093,13 @@ export default function PortalMPP() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 15 }}
                   transition={{ type: "spring", stiffness: 320, damping: 28 }}
-                  className="w-full max-w-3xl mx-auto max-h-[92vh] bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100"
+                  className="w-full max-w-3xl mx-auto max-h-[85vh] bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Foto Full-Bleed Header (Menempel Sisi Kiri, Atas, Kanan Card) */}
                   <div 
                     onClick={() => setIsFacilityLightboxOpen(true)}
-                    className="relative w-full overflow-hidden rounded-t-2xl aspect-[16/9] sm:aspect-[16/10] bg-slate-950 cursor-pointer group/modalimg shrink-0"
+                    className="relative w-full overflow-hidden rounded-t-3xl aspect-[16/9] sm:aspect-[16/10] bg-slate-950 cursor-pointer group/modalimg shrink-0"
                     title="Klik untuk melihat foto fasilitas dalam ukuran penuh"
                   >
                     <img
@@ -3638,22 +3638,19 @@ export default function PortalMPP() {
           <AnimatePresence>
             {selectedUMKM && (
               <div 
-                className="fixed inset-0 z-[100] flex flex-col justify-end sm:justify-center sm:items-center bg-slate-950/80 backdrop-blur-md"
+                className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
                 onClick={() => setSelectedUMKM(null)}
               >
                 <motion.div
-                  initial={{ opacity: 0, y: 50, scale: 0.98 }}
+                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 50, scale: 0.98 }}
+                  exit={{ opacity: 0, y: 30, scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                  className="w-full h-[92vh] sm:h-auto sm:max-h-[85vh] sm:max-w-md bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl flex flex-col overflow-hidden shadow-2xl transition-all border border-slate-200/80 dark:border-slate-800"
+                  className="w-full max-w-md max-h-[85vh] bg-white dark:bg-slate-900 rounded-3xl flex flex-col overflow-hidden shadow-2xl transition-all border border-slate-200/80 dark:border-slate-800"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Hero Image Full-Bleed & Overlay Controls */}
                   <div className="relative w-full h-64 sm:h-72 shrink-0 bg-slate-950 overflow-hidden">
-                    {/* Drag Handle (Mobile) */}
-                    <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-white/60 rounded-full z-10 sm:hidden" />
-
                     {/* Floating Close Button (X) */}
                     <button
                       type="button"
@@ -4250,7 +4247,7 @@ export default function PortalMPP() {
             {/* Fitur 7: Modal Detail Panduan & Prosedur Alur Pelayanan */}
             {activeAlurModal && (
               <div 
-                className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm"
+                className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
                 onClick={() => setActiveAlurModal(null)}
               >
                 <motion.div
@@ -4258,7 +4255,7 @@ export default function PortalMPP() {
                   animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
                   exit={{ opacity: 0, scale: 0.94, y: 20, filter: "blur(4px)" }}
                   transition={{ duration: 0.25, ease: "easeOut" }}
-                  className="w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-4 sm:p-8 shadow-2xl overflow-y-auto max-h-[90vh]"
+                  className="w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-5 sm:p-8 shadow-2xl overflow-y-auto max-h-[85vh] flex flex-col"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Header Modal Alur */}
@@ -5842,7 +5839,7 @@ export default function PortalMPP() {
         {/* Fitur 8: Interactive Virtual Helpdesk Modal */}
         {isHelpdeskModalOpen && (
           <div 
-            className="fixed inset-0 z-50 flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm overflow-hidden"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
             onClick={() => setIsHelpdeskModalOpen(false)}
           >
             <motion.div
@@ -5850,12 +5847,9 @@ export default function PortalMPP() {
               animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, scale: 0.94, y: 20, filter: "blur(4px)" }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="w-full max-w-lg h-full sm:h-auto sm:max-h-[90vh] bg-white dark:bg-slate-900 border-0 sm:border border-slate-200 dark:border-white/10 rounded-none sm:rounded-3xl p-5 sm:p-8 shadow-2xl overflow-y-auto flex flex-col"
+              className="w-full max-w-lg max-h-[85vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-5 sm:p-8 shadow-2xl overflow-y-auto flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Android Handle */}
-              <div className="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 sm:hidden shrink-0" />
-
               {/* Header Modal */}
               <div className="flex items-start justify-between pb-4 border-b border-slate-100 dark:border-white/10">
                 <div>
@@ -6020,7 +6014,7 @@ export default function PortalMPP() {
           const activeAgency = getLocalizedAgency(selectedAgencyDetail, i18n.language);
           return (
           <div 
-            className="fixed inset-0 z-50 flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm overflow-hidden"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
             onClick={() => setSelectedAgencyDetail(null)}
           >
             <motion.div
@@ -6028,12 +6022,9 @@ export default function PortalMPP() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.94, y: 20 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="w-full max-w-2xl h-full sm:h-auto sm:max-h-[90vh] bg-white dark:bg-slate-900 border-0 sm:border border-slate-200 dark:border-white/10 rounded-none sm:rounded-3xl p-5 sm:p-7 shadow-2xl overflow-y-auto text-slate-900 dark:text-white font-sans flex flex-col"
+              className="w-full max-w-2xl max-h-[85vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-5 sm:p-7 shadow-2xl overflow-y-auto text-slate-900 dark:text-white font-sans flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Handle Drag Bar untuk Mobile */}
-              <div className="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 sm:hidden shrink-0" />
-
               {/* Header Modal Detail Instansi */}
               <div className="flex items-start justify-between pb-4 sm:pb-5 border-b border-slate-100 dark:border-white/10 gap-3 sm:gap-4">
                 <div className="flex items-center gap-3.5 sm:gap-4 flex-1 min-w-0">
@@ -6176,7 +6167,7 @@ export default function PortalMPP() {
         {/* --- FITUR 11: MODAL BOOKING ANTREAN ONLINE & DIGITAL E-TICKET PASS --- */}
         {isQueueBookingOpen && (
           <div 
-            className="fixed inset-0 z-50 flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm overflow-hidden"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
             onClick={() => setIsQueueBookingOpen(false)}
           >
             <motion.div
@@ -6184,12 +6175,9 @@ export default function PortalMPP() {
               animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, scale: 0.94, y: 20, filter: "blur(4px)" }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="w-full max-w-lg h-full sm:h-auto sm:max-h-[90vh] bg-white dark:bg-slate-900 border-0 sm:border border-slate-200 dark:border-white/10 rounded-none sm:rounded-3xl p-5 sm:p-8 shadow-2xl overflow-y-auto flex flex-col"
+              className="w-full max-w-lg max-h-[85vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-5 sm:p-8 shadow-2xl overflow-y-auto flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Android Handle */}
-              <div className="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-3 sm:hidden shrink-0" />
-
               {/* Header Modal */}
               <div className="pb-4 border-b border-slate-100 dark:border-white/10">
                 <div className="flex items-start justify-between">
@@ -7209,7 +7197,7 @@ export default function PortalMPP() {
         <AnimatePresence>
           {isSurveyModalOpen && (
             <div 
-              className="fixed inset-0 z-[100] flex flex-col justify-end sm:justify-center sm:items-center bg-slate-950/85 backdrop-blur-md overflow-hidden p-0 sm:p-2 lg:p-4"
+              className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
               onClick={() => setIsSurveyModalOpen(false)}
             >
               <motion.div
@@ -7217,12 +7205,9 @@ export default function PortalMPP() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.96, y: 20 }}
                 transition={{ duration: 0.22, ease: "easeOut" }}
-                className="w-full h-full sm:h-auto sm:max-h-[94vh] sm:max-w-5xl md:max-w-6xl lg:max-w-7xl xl:max-w-7xl bg-white dark:bg-slate-900 rounded-none sm:rounded-3xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100 shadow-2xl transition-all border-0 sm:border border-slate-200/80 dark:border-slate-800"
+                className="w-full max-w-5xl max-h-[85vh] bg-white dark:bg-slate-900 rounded-3xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100 shadow-2xl transition-all border border-slate-200/80 dark:border-slate-800"
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* Drag Handle untuk Mobile */}
-                <div className="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto my-2 sm:hidden shrink-0" />
-
                 {/* Header Modal */}
                 <div className="flex items-start justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-100 dark:border-slate-800 shrink-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
                   <div>

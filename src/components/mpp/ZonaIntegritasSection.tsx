@@ -301,7 +301,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
       <AnimatePresence>
         {selectedPillar && (
           <div 
-            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
             onClick={() => setSelectedPillar(null)}
           >
             <motion.div
@@ -310,7 +310,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ duration: 0.2 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-lg rounded-3xl border border-rose-500/30 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl p-5 sm:p-7 relative font-sans"
+              className="w-full max-w-lg max-h-[85vh] rounded-3xl border border-rose-500/30 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl p-5 sm:p-7 relative font-sans flex flex-col overflow-y-auto"
             >
               <button
                 type="button"

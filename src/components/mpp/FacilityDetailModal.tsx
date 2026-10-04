@@ -45,7 +45,7 @@ export function FacilityDetailModal({
   return (
     <AnimatePresence>
       <div 
-        className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-slate-950/85 backdrop-blur-md overflow-hidden font-sans"
+        className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
         onClick={onClose}
       >
         <motion.div
@@ -53,13 +53,13 @@ export function FacilityDetailModal({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
           transition={{ type: "spring", stiffness: 320, damping: 28 }}
-          className="w-full max-w-3xl mx-auto max-h-[92vh] bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100"
+          className="w-full max-w-3xl mx-auto max-h-[85vh] bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100"
           onClick={(e) => e.stopPropagation()}
         >
           {/* 1. Header Foto Full-Bleed (Menempel Sisi Kiri, Atas, Kanan Card) */}
           <div 
             onClick={() => onOpenFullscreenImage?.(facility.image, facility.name)}
-            className="relative w-full overflow-hidden rounded-t-2xl aspect-[16/9] sm:aspect-[16/10] bg-slate-950 cursor-pointer group/modalimg shrink-0"
+            className="relative w-full overflow-hidden rounded-t-3xl aspect-[16/9] sm:aspect-[16/10] bg-slate-950 cursor-pointer group/modalimg shrink-0"
             title="Klik untuk melihat foto fasilitas dalam ukuran penuh"
           >
             <img

@@ -550,21 +550,16 @@ export const PetugasGeraiLoginModal: React.FC<PetugasGeraiLoginModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[120] flex flex-col items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200 overflow-hidden">
+    <div className="fixed inset-0 z-[120] flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200 overflow-hidden font-sans">
       <div 
-        className={`w-full sm:max-w-md max-h-[85vh] rounded-3xl shadow-2xl border flex flex-col overflow-hidden transition-all ${
+        className={`w-full max-w-md max-h-[85vh] rounded-3xl shadow-2xl border flex flex-col overflow-hidden transition-all ${
           isDarkMode 
             ? 'bg-slate-900 text-white border-slate-800' 
             : 'bg-white text-slate-900 border-slate-200'
         }`}
       >
-        {/* Android Top Handle bar (Mobile visual indicator) */}
-        <div className="sm:hidden w-full flex justify-center pt-3 pb-1">
-          <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" />
-        </div>
-
         {/* Modal Header */}
-        <div className="p-5 sm:p-6 pb-3 flex items-start justify-between border-b border-inherit">
+        <div className="p-5 sm:p-6 pb-4 flex items-start justify-between border-b border-inherit shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 flex items-center justify-center shrink-0 shadow-inner">
               <Building2 className="w-6 h-6" />

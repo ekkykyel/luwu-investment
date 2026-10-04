@@ -396,7 +396,7 @@ export default function ProximityDistanceMatrixModal({
 
   return (
     <div
-      className="fixed inset-0 z-[10005] flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 bg-slate-950/80 backdrop-blur-md animate-fade-in overflow-y-auto"
+      className="fixed inset-0 z-[10005] flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
       onClick={(e) => {
         e.stopPropagation();
         onClose();
@@ -404,15 +404,12 @@ export default function ProximityDistanceMatrixModal({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-full max-w-4xl rounded-t-3xl sm:rounded-3xl shadow-2xl border overflow-hidden my-0 sm:my-auto h-[95vh] sm:h-auto sm:max-h-[92vh] flex flex-col ${
+        className={`relative w-full max-w-4xl rounded-3xl shadow-2xl border overflow-hidden max-h-[85vh] flex flex-col ${
           isDark
             ? "bg-black border-neutral-800 text-white"
             : "bg-white border-slate-200 text-slate-900"
         }`}
       >
-        {/* Mobile Drag Bar Indicator */}
-        <div className={`w-12 h-1.5 rounded-full mx-auto mt-2 mb-1 sm:hidden shrink-0 ${isDark ? "bg-neutral-800" : "bg-slate-300"}`} />
-
         {/* Header Banner */}
         <div className={`relative p-3.5 sm:p-5 border-b flex items-center justify-between gap-3 shrink-0 ${
           isDark 

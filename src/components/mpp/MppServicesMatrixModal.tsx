@@ -462,7 +462,7 @@ export const MppServicesMatrixModal: React.FC<MppServicesMatrixModalProps> = ({
     <AnimatePresence>
       {isOpen && (
       <div
-        className="fixed inset-0 z-50 flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 bg-slate-900/80 backdrop-blur-sm overflow-hidden font-sans"
+        className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
         onClick={onClose}
       >
         <motion.div
@@ -470,13 +470,11 @@ export const MppServicesMatrixModal: React.FC<MppServicesMatrixModalProps> = ({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 30, scale: 0.95 }}
           transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-          className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-4xl flex flex-col bg-white dark:bg-slate-900 sm:rounded-3xl shadow-2xl overflow-hidden border-0 sm:border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100"
+          className="w-full max-w-4xl max-h-[85vh] flex flex-col bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Header Bar dengan Handle Drag Android */}
-          <div className="relative pt-2 pb-3.5 px-4 sm:px-7 border-b border-slate-200/80 dark:border-slate-800 shrink-0 bg-slate-50/90 dark:bg-slate-900/95 backdrop-blur-md">
-            {/* Handle Drag Android */}
-            <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto my-1 sm:hidden shrink-0" />
+          {/* Header Bar */}
+          <div className="relative py-4 px-4 sm:px-7 border-b border-slate-200/80 dark:border-slate-800 shrink-0 bg-slate-50/90 dark:bg-slate-900/95 backdrop-blur-md">
 
             <div className="flex items-center justify-between gap-3 mt-1 sm:mt-2">
               <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">

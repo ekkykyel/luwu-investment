@@ -969,8 +969,8 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
 
         {/* Modal Tambah/Edit Gerai */}
         {tenantModalOpen && (
-          <div className="fixed inset-0 z-[120] flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm overflow-hidden">
-            <div className={`w-full max-w-md h-full sm:h-auto sm:max-h-[92vh] p-6 rounded-none sm:rounded-2xl shadow-2xl flex flex-col overflow-y-auto ${isDarkMode ? 'bg-slate-900 text-white border-0 sm:border border-slate-800' : 'bg-white text-slate-900'}`}>
+          <div className="fixed inset-0 z-[120] flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans">
+            <div className={`w-full max-w-md max-h-[85vh] p-5 sm:p-6 rounded-3xl shadow-2xl flex flex-col overflow-y-auto ${isDarkMode ? 'bg-slate-900 text-white border border-slate-800' : 'bg-white text-slate-900 border border-slate-200'}`}>
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-bold text-lg">
                   {editingTenant ? 'Edit Profil Instansi' : 'Tambah Instansi Gerai Baru'}
@@ -2502,8 +2502,8 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
       {/* MODAL: TAMBAH / EDIT LAYANAN */}
       {/* ========================================================================= */}
       {serviceModalOpen && (
-        <div className="fixed inset-0 z-[120] flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm overflow-hidden">
-          <div className={`w-full max-w-lg h-full sm:h-auto sm:max-h-[92vh] p-6 rounded-none sm:rounded-2xl shadow-2xl flex flex-col overflow-y-auto ${isDarkMode ? 'bg-slate-900 text-white border-0 sm:border border-slate-800' : 'bg-white text-slate-900'}`}>
+        <div className="fixed inset-0 z-[120] flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans">
+          <div className={`w-full max-w-lg max-h-[85vh] p-5 sm:p-6 rounded-3xl shadow-2xl flex flex-col overflow-y-auto ${isDarkMode ? 'bg-slate-900 text-white border border-slate-800' : 'bg-white text-slate-900 border border-slate-200'}`}>
             <div className="flex justify-between items-center mb-4">
               <div>
                 <h3 className="font-bold text-lg">

@@ -152,7 +152,7 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
   return (
     <AnimatePresence>
       <div
-        className="fixed inset-0 z-50 flex flex-col items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-hidden font-sans"
+        className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
         onClick={onClose}
       >
         <motion.div
@@ -160,7 +160,7 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 100, scale: 0.95 }}
           transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-          className={`w-[calc(100%-1.5rem)] mx-3 my-auto max-h-[85vh] sm:h-auto sm:max-h-[92vh] sm:max-w-4xl flex flex-col rounded-3xl border shadow-2xl overflow-hidden ${
+          className={`w-full max-w-4xl max-h-[85vh] flex flex-col rounded-3xl border shadow-2xl overflow-hidden ${
             isDark
               ? 'bg-slate-900 border-slate-800 text-white shadow-emerald-950/40'
               : 'bg-white border-slate-200 text-slate-900 shadow-slate-300/50'
@@ -168,10 +168,7 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header Mobile Handle & Title Bar */}
-          <div className="relative pt-3 pb-4 px-5 sm:px-7 border-b border-slate-200/80 dark:border-slate-800 shrink-0 bg-slate-50/80 dark:bg-slate-900/90 backdrop-blur-md">
-            {/* Handle Drag Android */}
-            <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto mb-3 sm:hidden" />
-
+          <div className="relative py-4 sm:py-5 px-5 sm:px-7 border-b border-slate-200/80 dark:border-slate-800 shrink-0 bg-slate-50/80 dark:bg-slate-900/90 backdrop-blur-md">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-inner">

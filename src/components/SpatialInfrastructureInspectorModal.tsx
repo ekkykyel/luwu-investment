@@ -148,20 +148,17 @@ export default function SpatialInfrastructureInspectorModal({
 
   return (
     <div 
-      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 bg-slate-950/85 backdrop-blur-md overflow-hidden animate-fadeIn"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
       onClick={onClose}
     >
       <motion.div
-        initial={{ opacity: 0, y: 150 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 150 }}
+        initial={{ opacity: 0, scale: 0.95, y: 25 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ type: "spring", damping: 25, stiffness: 350 }}
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-full max-w-5xl h-[95vh] sm:h-auto sm:max-h-[92vh] flex flex-col rounded-t-3xl sm:rounded-3xl border ${cardBg} overflow-hidden shadow-2xl transition-all`}
+        className={`relative w-full max-w-5xl max-h-[85vh] flex flex-col rounded-3xl border ${cardBg} overflow-hidden shadow-2xl transition-all`}
       >
-        {/* Mobile Drag Bar Indicator */}
-        <div className={`w-12 h-1.5 rounded-full mx-auto mt-3 mb-1.5 sm:hidden shrink-0 ${isDarkMode ? "bg-neutral-850" : "bg-slate-300"}`} />
-
         {/* ── HEADER - Desain Premium Minimalis ── */}
         <div className="px-4 py-3.5 sm:px-6 sm:py-5 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/40 backdrop-blur-md shrink-0">
           <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">

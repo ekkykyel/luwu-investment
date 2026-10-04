@@ -168,7 +168,7 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
       <AnimatePresence>
         {isBookingModalOpen && (
           <div 
-            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans"
             onClick={() => setIsBookingModalOpen(false)}
           >
             <motion.div
@@ -177,7 +177,7 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-6 max-w-lg w-full max-h-[90vh] shadow-2xl space-y-4 relative flex flex-col overflow-y-auto"
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-6 max-w-lg w-full max-h-[85vh] shadow-2xl space-y-4 relative flex flex-col overflow-y-auto"
             >
               <button
                 type="button"

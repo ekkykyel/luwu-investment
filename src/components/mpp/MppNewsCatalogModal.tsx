@@ -208,7 +208,7 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 overflow-hidden">
+      <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-4 sm:p-6 overflow-hidden">
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -221,7 +221,7 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
               onClose();
             }
           }}
-          className="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
+          className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
         />
 
         {/* Modal Window Container */}
@@ -230,7 +230,7 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ type: "spring", stiffness: 300, damping: 28 }}
-          className="relative w-[calc(100%-1.5rem)] mx-3 my-auto max-h-[85vh] sm:max-w-5xl sm:h-[92vh] sm:max-h-[860px] bg-white dark:bg-[#0B1120] border border-slate-300 dark:border-slate-800 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100 font-sans"
+          className="relative w-full max-w-5xl max-h-[85vh] bg-white dark:bg-[#0B1120] border border-slate-300 dark:border-slate-800 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100 font-sans"
         >
           {/* Header Bar */}
           <div className="flex items-center justify-between px-5 sm:px-8 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-md shrink-0">
