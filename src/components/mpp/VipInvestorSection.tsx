@@ -75,17 +75,17 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
         <div className="flex justify-center mb-2">
           <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60 font-sans inline-flex items-center gap-1.5">
             <Briefcase className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-            Fasilitasi Investasi & Konsultasi Prioritas
+            {t('vipInvestor.fastTrackBadge')}
           </span>
         </div>
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white font-sans text-center">
-          Eksekutif Desk{" "}
+          {isEn ? "Executive Desk " : isZh ? "高管特设通道 " : "Eksekutif Desk "}
           <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 dark:from-emerald-400 dark:to-cyan-400 bg-clip-text text-transparent">
-            Penanaman Modal
+            {isEn ? "Investment Facilitation" : isZh ? "投资与促进" : "Penanaman Modal"}
           </span>
         </h2>
         <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto text-center leading-relaxed px-2">
-          Fasilitasi khusus dan pendampingan menyeluruh untuk penanaman modal dalam negeri (PMDN), penanaman modal asing (PMA), dan perizinan proyek strategis di Kabupaten Luwu.
+          {t('vipInvestor.subtitle')}
         </p>
       </div>
 
@@ -97,20 +97,20 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
         {/* Header Badge Group */}
         <div className="flex items-center justify-between gap-2 flex-wrap font-sans">
           <span className="px-3.5 py-1.5 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800/80 dark:text-slate-300 dark:border-slate-700/80 flex items-center gap-1.5 font-sans">
-            <Building2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Fasilitasi Eksekutif DPMPTSP
+            <Building2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> {isEn ? "DPMPTSP Executive Support" : isZh ? "投资局高管特别服务" : "Fasilitasi Eksekutif DPMPTSP"}
           </span>
           <span className="text-[10px] sm:text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-800/60 px-2.5 py-1 rounded-full flex items-center gap-1 font-sans">
             <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-            Pendampingan Personal Liaison Officer
+            {isEn ? "Personal Liaison Officer Assistance" : isZh ? "专属投资联络官协助服务" : "Pendampingan Personal Liaison Officer"}
           </span>
         </div>
 
         {/* 3. Typography & Highlight Features */}
         <div className="space-y-2 font-sans">
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight leading-tight font-sans">
-            <span className="text-slate-900 dark:text-white font-extrabold">Fasilitasi Prioritas </span>
+            <span className="text-slate-900 dark:text-white font-extrabold">{isEn ? "Priority " : isZh ? "优先 " : "Fasilitasi Prioritas "}</span>
             <span className="text-emerald-600 dark:text-emerald-400 font-extrabold">
-              Perizinan Berusaha
+              {isEn ? "Business Licensing" : isZh ? "商业许可便利化" : "Perizinan Berusaha"}
             </span>
           </h2>
 
@@ -118,15 +118,21 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
           <ul className="space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium border-y border-slate-200/80 dark:border-slate-800 py-4 my-2 font-sans">
             <li className="flex items-start gap-2.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-              <span className="text-slate-700 dark:text-slate-300 font-medium">Layanan pendampingan terpadu satu pintu di Ruang Eksekutif Lantai 2 Gedung MPP Simpurusiang (PMDN & PMA).</span>
+              <span className="text-slate-700 dark:text-slate-300 font-medium">
+                {isEn ? "Integrated one-stop concierge service at Floor 2 Executive Room, Simpurusiang MPP Building (PMDN & PMA)." : isZh ? "位于 Simpurusiang 政务服务大楼 2 楼行政高管专室的一站式礼宾协助服务（适用于内外资）。" : "Layanan pendampingan terpadu satu pintu di Ruang Eksekutif Lantai 2 Gedung MPP Simpurusiang (PMDN & PMA)."}
+              </span>
             </li>
             <li className="flex items-start gap-2.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-              <span className="text-slate-700 dark:text-slate-300 font-medium">Asistensi regulasi satu pintu & validasi kesesuaian tata ruang spasial (KKPR) terintegrasi.</span>
+              <span className="text-slate-700 dark:text-slate-300 font-medium">
+                {t('vipInvestor.pillar1Desc')}
+              </span>
             </li>
             <li className="flex items-start gap-2.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-              <span className="text-slate-700 dark:text-slate-300 font-medium">Konsultasi insentif fiskal daerah langsung dengan Kepala Dinas & Tim Teknis DPMPTSP Kabupaten Luwu.</span>
+              <span className="text-slate-700 dark:text-slate-300 font-medium">
+                {t('vipInvestor.pillar2Desc')}
+              </span>
             </li>
           </ul>
         </div>
@@ -139,7 +145,7 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
             onClick={() => setIsBookingModalOpen(true)}
             className="w-full py-3.5 px-5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-sm shadow-emerald-600/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer font-sans"
           >
-            <span>Jadwalkan Konsultasi Eksekutif</span>
+            <span>{t('vipInvestor.bookVipBtn')}</span>
             <ArrowRight className="w-4.5 h-4.5" />
           </button>
 
@@ -151,7 +157,7 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
             className="w-full py-3.5 px-5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-bold text-xs sm:text-sm rounded-2xl flex items-center justify-center gap-2 transition-all shadow-xs active:scale-[0.98] font-sans"
           >
             <MessageCircle className="w-4.5 h-4.5 text-emerald-600 dark:text-emerald-400" />
-            <span>Hotline Fasilitasi Investasi</span>
+            <span>{t('vipInvestor.contactWhatsapp')}</span>
           </a>
         </div>
 
@@ -159,17 +165,21 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
         <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl p-5 mt-6 font-sans space-y-2">
           <div className="flex items-center gap-2.5 text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm">
             <Layers className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-            <span className="font-bold">Kesesuaian Tata Ruang (PKKPR Spasial)</span>
+            <span className="font-bold">{t('vipInvestor.pillar1Title')}</span>
           </div>
           <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
-            Pengecekan instan zonasi peruntukan ruang berbasis Peta GIS RTRW dan RDTR Kabupaten Luwu untuk percepatan penerbitan NIB & PBG.
+            {isEn 
+              ? "Instant spatial land-use zoning verification based on Luwu Regency Spatial GIS Map for accelerated NIB & PBG approval." 
+              : isZh 
+              ? "基于鲁乌县 GIS 空间地图的用地规划与分区实时速查，极大缩短企业 NIB 执照与建筑许可审批周期。" 
+              : "Pengecekan instan zonasi peruntukan ruang berbasis Peta GIS RTRW dan RDTR Kabupaten Luwu untuk percepatan penerbitan NIB & PBG."}
           </p>
           <button
             type="button"
             onClick={() => navigate('/peta-spasial')}
             className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 font-semibold inline-flex items-center gap-1.5 cursor-pointer font-sans text-xs sm:text-sm pt-1"
           >
-            <span>Buka Peta Spasial GIS &rarr;</span>
+            <span>{t('vipInvestor.pillar1Action')} &rarr;</span>
           </button>
         </div>
       </div>

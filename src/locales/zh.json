@@ -3100,5 +3100,15 @@
     "statusProgress": "技术审查团队正在办理中",
     "notFound": "未查询到该受理回执号。请核对您输入的号码是否与受理凭证一致。",
     "helpPrompt": "需要协助核对材料进度？"
+  },
+  "zonaIntegritas": {
+    "title": "廉政特区与反腐败",
+    "subtitle": "Simpurusiang 政务服务大厅公平、透明与问责制的坚定承诺",
+    "regulations": "参考法律法规",
+    "detailsBtn": "法律处罚明细 →",
+    "regulationBasis": "法律依据与规章制度：",
+    "penaltyConsequences": "严厉处罚与法律后果：",
+    "mppApplication": "Simpurusiang 政务大厅执行标准：",
+    "inspektoratLabel": "鲁乌县地方监察局"
   }
 }

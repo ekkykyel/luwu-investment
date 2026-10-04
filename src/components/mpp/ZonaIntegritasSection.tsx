@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { 
   ShieldCheck, 
   Megaphone, 
@@ -33,17 +34,16 @@ export interface ZonaIntegritasSectionProps {
 /**
  * ZonaIntegritasSection Component
  * Refactored for Symmetrical Desktop Illusion and Native Android App-Like Mobile Experience.
- * 
- * Layout Directives:
- * 1. Global Container: `w-full max-w-5xl mx-auto px-4 md:px-8` with `flex flex-col lg:grid lg:grid-cols-2 lg:gap-12 items-center lg:items-start`
- * 2. Left Column: Touch-friendly large buttons (`min-h-[56px]`, `rounded-xl`, `active:scale-95`) + Informational Alert Banner (`bg-red-600 text-white font-bold p-5 rounded-2xl`)
- * 3. Right Column: Material 3 Carousel Card (`bg-white rounded-3xl shadow-sm border border-slate-100 p-6 lg:p-8`)
- * 4. Mobile Clearance: `mb-28 lg:mb-0` on the right column to clear fixed Android Bottom App Bar
  */
 export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({ 
   className = '',
   isDark = false
 }) => {
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language || 'id';
+  const isEn = currentLang.startsWith('en');
+  const isZh = currentLang.startsWith('zh');
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isWbsModalOpen, setIsWbsModalOpen] = useState(false);
   const [selectedPillar, setSelectedPillar] = useState<IntegritySlide | null>(null);
@@ -51,53 +51,53 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
   const slides: IntegritySlide[] = [
     {
       id: 'no-korupsi',
-      title: 'No Korupsi, Suap, & Pungli',
-      sub: 'Komitmen Sumpah Jabatan & Pakta Integritas ASN',
-      badge: 'UU Tipikor & Disiplin ASN',
-      tag: 'PENYELENGGARA LAYANAN • ZERO TOLERANCE',
+      title: isEn ? "No Corruption, Bribery, & Extortion" : isZh ? "坚决杜绝腐败、贿赂与索贿" : "No Korupsi, Suap, & Pungli",
+      sub: isEn ? "ASN Oath of Office & Integrity Pact Commitment" : isZh ? "公务员就职誓言与廉洁协议承诺" : "Komitmen Sumpah Jabatan & Pakta Integritas ASN",
+      badge: isEn ? "Anti-Corruption Law & ASN Discipline" : isZh ? "反腐败法与公务员纪律条例" : "UU Tipikor & Disiplin ASN",
+      tag: isEn ? "SERVICE PROVIDERS • ZERO TOLERANCE" : isZh ? "服务提供者 • 零容忍" : "PENYELENGGARA LAYANAN • ZERO TOLERANCE",
       law: 'UU No. 31/1999 jo. UU No. 20/2001 & UU No. 20/2023',
-      penalty: 'Pidana penjara seumur hidup atau 4–20 tahun, denda hingga Rp 1 Miliar, serta Pemberhentian Tidak Dengan Hormat (Pemecatan ASN).',
-      desc: 'Seluruh aparatur dan petugas loket MPP Simpurusiang terikat pakta integritas menolak segala bentuk kompromi, suap, gratifikasi, dan intervensi ilegal.',
+      penalty: isEn ? "Life imprisonment or 4–20 years, fines up to IDR 1 Billion, and Dishonorable Discharge (Dismissal of ASN)." : isZh ? "处终身监禁或4至20年有期徒刑，最高10亿印尼盾罚款，并予以开除公职（开除公务员）。" : "Pidana penjara seumur hidup atau 4–20 tahun, denda hingga Rp 1 Miliar, serta Pemberhentian Tidak Dengan Hormat (Pemecatan ASN).",
+      desc: isEn ? "All officers and counter staff at MPP Simpurusiang are bound by an integrity pact to reject any compromise, bribe, gratification, and illegal intervention." : isZh ? "Simpurusiang一站式服务大厅的所有公务人员及窗口工作人员均签署了廉洁承诺书，坚决拒绝任何形式的妥协、贿赂、礼品及非法干预。" : "Seluruh aparatur dan petugas loket MPP Simpurusiang terikat pakta integritas menolak segala bentuk kompromi, suap, gratifikasi, dan intervensi ilegal.",
     },
     {
       id: 'stop-gratifikasi',
-      title: 'Stop Gratifikasi: Tolak • Catat • Lapor',
-      sub: 'Dilarang Memberi & Menerima Uang Tips / Hadiah',
-      badge: 'UPG Inspektorat Luwu',
-      tag: 'LOKET PELAYANAN • ZERO GRATIFIKASI',
+      title: isEn ? "Stop Gratification: Reject • Record • Report" : isZh ? "拒绝收受回扣：拒收 • 登记 • 上报" : "Stop Gratifikasi: Tolak • Catat • Lapor",
+      sub: isEn ? "Strictly Forbidden to Give & Receive Tips / Gifts" : isZh ? "严禁给付与收受小费 / 礼品" : "Dilarang Memberi & Menerima Uang Tips / Hadiah",
+      badge: isEn ? "UPG Luwu Inspectorate" : isZh ? "鲁乌县监察局举报中心" : "UPG Inspektorat Luwu",
+      tag: isEn ? "SERVICE COUNTERS • ZERO GRATIFICATION" : isZh ? "窗口服务 • 零礼品" : "LOKET PELAYANAN • ZERO GRATIFIKASI",
       law: 'Pasal 12B UU No. 20/2001 & Perbup Luwu Pengendalian Gratifikasi',
-      penalty: 'Pemberian hadiah dalam bentuk apa pun wajib ditolak. Jika tidak dapat ditolak, wajib dilaporkan ke UPG dalam 30 hari kerja.',
-      desc: 'Bahkan secangkir kopi atau rokok dari pemohon merupakan pelanggaran kode etik pelayanan. Pelayanan prima adalah kewajiban aparatur.',
+      penalty: isEn ? "Any form of gift giving must be rejected. If it cannot be rejected, it must be reported to the UPG within 30 working days." : isZh ? "任何形式的礼品赠送均须拒收。如无法拒收，须在30个工作日内向地方监察局汇报登记。" : "Pemberian hadiah dalam bentuk apa pun wajib ditolak. Jika tidak dapat ditolak, wajib dilaporkan ke UPG dalam 30 hari kerja.",
+      desc: isEn ? "Even a cup of coffee or a cigarette from applicants constitutes a service code of conduct violation. Excellent service is the duty of the state apparatus." : isZh ? "即使是申请人提供的一杯咖啡或一支烟，也属于违反服务行为准则的行为。提供优质高效的服务是国家公职人员的法定职责。" : "Bahkan secangkir kopi atau rokok dari pemohon merupakan pelanggaran kode etik pelayanan. Pelayanan prima adalah kewajiban aparatur.",
     },
     {
       id: 'stop-pungli',
-      title: 'Bebas Pungli: Tarif Resmi Rp 0,-',
-      sub: 'Semua Layanan Izin & Adminduk Tanpa Biaya Tambahan',
-      badge: 'Satgas Saber Pungli',
-      tag: 'HAK PEMOHON & INVESTOR',
+      title: isEn ? "No Illegal Fees: Official Rate IDR 0,-" : isZh ? "无乱收费：官方费率 0 印尼盾" : "Bebas Pungli: Tarif Resmi Rp 0,-",
+      sub: isEn ? "All Licensing & Administration Services Free of Charge" : isZh ? "所有许可审批与行政政务服务均无附加费用" : "Semua Layanan Izin & Adminduk Tanpa Biaya Tambahan",
+      badge: isEn ? "Saber Pungli Task Force" : isZh ? "扫除乱收费工作组" : "Satgas Saber Pungli",
+      tag: isEn ? "RIGHTS OF APPLICANTS & INVESTORS" : isZh ? "申请人与投资者的合法权益" : "HAK PEMOHON & INVESTOR",
       law: 'Perpres No. 87/2016 tentang Satgas Sapu Bersih Pungutan Liar',
-      penalty: 'Operasi Tangkap Tangan (OTT) dan jeratan pidana pemerasan dalam jabatan (Pasal 368 & 423 KUHP).',
-      desc: 'Tidak ada transaksi tunai di meja loket. Seluruh retribusi resmi disetor langsung via Bank BPD Sulselbar dengan bukti bayar kas daerah yang sah.',
+      penalty: isEn ? "Sting Operations (OTT) and criminal charges for extortion in office (Article 368 & 423 of the Criminal Code)." : isZh ? "实施现场拘捕行动 (OTT)，并对滥用职权索贿进行刑事起诉（《刑法》第368条及第423条）。" : "Operasi Tangkap Tangan (OTT) dan jeratan pidana pemerasan dalam jabatan (Pasal 368 & 423 KUHP).",
+      desc: isEn ? "No cash transactions at service counters. All official retribution fees are deposited directly via Bank BPD Sulselbar with official receipts." : isZh ? "服务窗口不进行任何现金交易。所有法定行政规费均通过Sulselbar银行直接缴纳，并开具官方财政收据。" : "Tidak ada transaksi tunai di meja loket. Seluruh retribusi resmi disetor langsung via Bank BPD Sulselbar dengan bukti bayar kas daerah yang sah.",
     },
     {
       id: 'cctv-audit',
-      title: 'Pengawasan Aktif: CCTV 24/7 & Mystery Shopper',
-      sub: 'Seluruh Interaksi Loket Diawasi Tim Kepatuhan',
-      badge: 'Monitoring Inspektorat',
-      tag: 'PENGAWASAN SISTEM TERTUTUP',
+      title: isEn ? "Active Oversight: 24/7 CCTV & Mystery Shopper" : isZh ? "实时监管：24/7 监控与神秘顾客审计" : "Pengawasan Aktif: CCTV 24/7 & Mystery Shopper",
+      sub: isEn ? "All Counter Interactions Supervised by Compliance Team" : isZh ? "所有服务窗口交互全流程受合规团队监管" : "Seluruh Interaksi Loket Diawasi Tim Kepatuhan",
+      badge: isEn ? "Inspectorate Monitoring" : isZh ? "地方监察局实时督导" : "Monitoring Inspektorat",
+      tag: isEn ? "CLOSED SYSTEM SUPERVISION" : isZh ? "闭环系统监管" : "PENGAWASAN SISTEM TERTUTUP",
       law: 'PermenPAN-RB No. 90/2021 tentang Pembangunan Zona Integritas',
-      penalty: 'Pemeriksaan berkala hasil rekaman kamera & audio loket oleh Tim Investigasi Khusus Pemkab Luwu.',
-      desc: 'Setiap gerai dan loket terhubung ke pusat monitoring audio-visual untuk memastikan standar pelayanan prima tanpa penyimpangan.',
+      penalty: isEn ? "Periodic examination of window camera & audio records by the Luwu Special Investigation Team." : isZh ? "鲁乌县特别调查组定期调取并审查窗口的音视频监控录像。" : "Pemeriksaan berkala hasil rekaman kamera & audio loket oleh Tim Investigasi Khusus Pemkab Luwu.",
+      desc: isEn ? "Every counter and desk is linked to the audio-visual monitoring center to ensure excellent service standards without deviation." : isZh ? "每个办事窗口和卡位均接入音视频监控中心，以确保无偏差地执行优质高效服务标准。" : "Setiap gerai dan loket terhubung ke pusat monitoring audio-visual untuk memastikan standar pelayanan prima tanpa penyimpangan.",
     },
     {
       id: 'wbs-lapor',
-      title: 'WBS & SP4N-LAPOR!: Perlindungan Saksi 100%',
-      sub: 'Laporkan Pungli / Calo Secara Rahasia & Terenkripsi',
-      badge: 'Perlindungan Saksi LPSK',
-      tag: 'SALURAN PENGADUAN RAHASIA',
+      title: isEn ? "WBS & SP4N-LAPOR!: 100% Whistleblower Protection" : isZh ? "举报平台 (WBS)：100% 保护举报人隐私" : "WBS & SP4N-LAPOR!: Perlindungan Saksi 100%",
+      sub: isEn ? "Report Extortion / Brokers Confidentially & Encrypted" : isZh ? "机密且加密地举报索贿乱收费 / 中介黄牛" : "Laporkan Pungli / Calo Secara Rahasia & Terenkripsi",
+      badge: isEn ? "LPSK Witness Protection" : isZh ? "证人保护机构 (LPSK) 提供全面保护" : "Perlindungan Saksi LPSK",
+      tag: isEn ? "CONFIDENTIAL COMPLAINT CHANNEL" : isZh ? "机密申诉举报渠道" : "SALURAN PENGADUAN RAHASIA",
       law: 'UU No. 13/2006 jo. UU No. 31/2014 & PermenPAN-RB No. 90/2021',
-      penalty: 'Laporan dugaan pungli/gratifikasi langsung ditindaklanjuti dengan kerahasiaan identitas pelapor yang dijamin penuh undang-undang.',
-      desc: 'Masyarakat dan aparatur dapat melaporkan pelanggaran secara anonim tanpa rasa takut terhadap intimidasi atau diskriminasi pelayanan.',
+      penalty: isEn ? "Reports of extortion/bribery are immediately followed up with full whistleblower confidentiality guaranteed by law." : isZh ? "对涉嫌索贿乱收费/受贿的举报进行立即立案查处，法律确保举报人身份信息的绝对保密。" : "Laporan dugaan pungli/gratifikasi langsung ditindaklanjuti dengan kerahasiaan identitas pelapor yang dijamin penuh undang-undang.",
+      desc: isEn ? "The public and state apparatus can report violations anonymously without fear of intimidation or service discrimination." : isZh ? "社会公众和公职人员均可匿名举报违规行为，无须担心受到任何报复、威胁或服务歧视。" : "Masyarakat dan aparatur dapat melaporkan pelanggaran secara anonim tanpa rasa takut terhadap intimidasi atau diskriminasi pelayanan.",
     },
   ];
 
@@ -136,20 +136,24 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
             <div>
               <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-red-50 text-red-600 border border-red-200 dark:bg-red-950/60 dark:text-red-400 dark:border-red-800/60 font-sans shadow-2xs">
                 <ShieldCheck className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0" />
-                <span>Zona Integritas WBK / WBBM</span>
+                <span>{isEn ? "Integrity Zone WBK / WBBM" : isZh ? "廉洁防腐示范特区 (WBK/WBBM)" : "Zona Integritas WBK / WBBM"}</span>
               </span>
             </div>
 
             {/* Heading & Description */}
             <div className="space-y-2">
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight font-sans tracking-tight">
-                Zona Integritas{' '}
+                {isEn ? "Integrity " : isZh ? "廉政建设 " : "Zona Integritas "}
                 <span className="bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 bg-clip-text text-transparent">
-                  Bebas Pungli
+                  {isEn ? "Zone" : isZh ? "示范特区" : "Bebas Pungli"}
                 </span>
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium font-sans leading-relaxed">
-                Pencegahan gratifikasi, akuntabilitas pelayanan publik, dan transparansi penuh tanpa biaya tambahan yang tidak resmi. Seluruh aparatur berkomitmen mewujudkan Wilayah Bebas dari Korupsi di Kabupaten Luwu.
+                {isEn 
+                  ? "Prevention of bribery, public service accountability, and full transparency without unofficial fees. All personnel are committed to achieving a corruption-free region in Luwu." 
+                  : isZh 
+                  ? "预防贪腐、对政务服务严格问责并实现全流程收费透明，绝无非官方规费。所有公职人员均致力于在鲁乌县打造廉洁政府。" 
+                  : "Pencegahan gratifikasi, akuntabilitas pelayanan publik, dan transparansi penuh tanpa biaya tambahan yang tidak resmi. Seluruh aparatur berkomitmen mewujudkan Wilayah Bebas dari Korupsi di Kabupaten Luwu."}
               </p>
             </div>
           </div>
@@ -164,7 +168,9 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
               className="w-full min-h-[52px] sm:min-h-[56px] px-4 sm:px-6 py-3 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 hover:text-red-800 border border-red-200 dark:bg-red-950/40 dark:hover:bg-red-900/50 dark:text-red-200 dark:border-red-500/30 dark:hover:border-red-500/50 font-bold text-xs sm:text-sm transition-all duration-200 active:scale-95 flex items-center justify-center gap-2.5 cursor-pointer select-none whitespace-normal leading-tight text-center"
             >
               <Megaphone className="w-5 h-5 shrink-0 text-red-600 dark:text-red-400" />
-              <span className="whitespace-normal leading-tight">Lapor WBS / Whistleblowing System</span>
+              <span className="whitespace-normal leading-tight">
+                {isEn ? "Report via WBS (Whistleblowing System)" : isZh ? "通过内部举报系统 (WBS) 匿名举报" : "Lapor WBS / Whistleblowing System"}
+              </span>
             </button>
 
             {/* Action Block 2: Hotline WA (No truncate, whitespace-normal) */}
@@ -175,7 +181,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
               className="w-full min-h-[52px] sm:min-h-[56px] px-4 sm:px-6 py-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800 font-bold text-xs sm:text-sm transition-transform duration-200 active:scale-95 flex items-center justify-center gap-2.5 cursor-pointer select-none whitespace-normal leading-tight text-center"
             >
               <PhoneCall className="w-5 h-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-              <span className="whitespace-normal leading-tight">Saber Pungli WA Hotline</span>
+              <span className="whitespace-normal leading-tight">{isEn ? "Saber Pungli WhatsApp Hotline" : isZh ? "扫除乱收费官方举报热线 (WhatsApp)" : "Saber Pungli WA Hotline"}</span>
             </a>
 
             {/* Action Block 3: Informational Alert Banner with consistent p-4 sm:p-5 padding */}
@@ -186,13 +192,21 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
               <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
               <div className="space-y-1 text-xs sm:text-sm leading-relaxed">
                 <div className="uppercase tracking-wider font-extrabold text-red-700 dark:text-red-400 text-[11px] sm:text-xs font-sans">
-                  Maklumat Bebas Pungutan Liar
+                  {isEn ? "Declaration of Extortion-Free Services" : isZh ? "杜绝一切乱收费及红包公告声明" : "Maklumat Bebas Pungutan Liar"}
                 </div>
                 <p className="font-bold text-slate-900 dark:text-slate-100 leading-snug">
-                  Rp 0,- (GRATIS) KECUALI RETRIBUSI RESMI BANK BPD SULSELBAR • PETUGAS DILARANG MENERIMA UANG CASH
+                  {isEn 
+                    ? "IDR 0,- (FREE) EXCEPT FOR OFFICIAL RETRIBUTION PAID TO BANK BPD SULSELBAR • OFFICERS ARE FORBIDDEN TO RECEIVE CASH" 
+                    : isZh 
+                    ? "所有服务均为 0 额外费用（免费），除在国家指定 BPD 银行交纳的官方规费外 • 工作人员严禁私自收受现金红包" 
+                    : "Rp 0,- (GRATIS) KECUALI RETRIBUSI RESMI BANK BPD SULSELBAR • PETUGAS DILARANG MENERIMA UANG CASH"}
                 </p>
                 <p className="text-[11px] font-normal text-slate-600 dark:text-slate-300 leading-relaxed">
-                  Seluruh pembayaran retribusi daerah yang sah wajib melalui QRIS resmi atau loket Bank BPD Sulselbar dengan bukti setoran kas daerah.
+                  {isEn 
+                    ? "All official local retribution fees must be paid through official QRIS or Bank BPD Sulselbar counters with official treasury payment slips." 
+                    : isZh 
+                    ? "所有合法的本地政务规费必须通过官方统一 QRIS 或印尼国家 BPD 银行窗口缴纳，并获得官方金库缴纳收据。" 
+                    : "Seluruh pembayaran retribusi daerah yang sah wajib melalui QRIS resmi atau loket Bank BPD Sulselbar dengan bukti setoran kas daerah."}
                 </p>
               </div>
             </div>
@@ -213,7 +227,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                 <span>{currentSlide.badge}</span>
               </span>
               <span className="text-[10px] font-mono font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                Slide {currentIndex + 1} dari {totalSlides}
+                {isEn ? `Slide ${currentIndex + 1} of ${totalSlides}` : isZh ? `第 ${currentIndex + 1} / ${totalSlides} 页` : `Slide ${currentIndex + 1} dari ${totalSlides}`}
               </span>
             </div>
 
@@ -234,7 +248,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
             <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex items-start gap-2.5">
               <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
               <div className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                <strong className="text-slate-700 dark:text-slate-300 font-semibold">Regulasi Acuan: </strong>
+                <strong className="text-slate-700 dark:text-slate-300 font-semibold">{t('zonaIntegritas.regulations')}: </strong>
                 {currentSlide.law}
               </div>
             </div>
@@ -249,7 +263,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                 onClick={() => setSelectedPillar(currentSlide)}
                 className="text-xs font-bold text-red-600 hover:text-red-700 dark:text-red-400 inline-flex items-center gap-1 cursor-pointer transition-colors font-sans hover:underline"
               >
-                <span>Rincian Sanksi Hukum &rarr;</span>
+                <span>{t('zonaIntegritas.detailsBtn')}</span>
               </button>
             </div>
 
@@ -338,7 +352,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
               <div className="space-y-3 text-xs text-slate-600 dark:text-slate-300">
                 <div className="p-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10">
                   <strong className="block text-slate-900 dark:text-white mb-1 font-bold">
-                    📜 Landasan Hukum & Regulasi:
+                    {isEn ? "📜 Legal Basis & Regulations:" : isZh ? "📜 法律依据与规章制度：" : "📜 Landasan Hukum & Regulasi:"}
                   </strong>
                   <p className="font-mono text-[11px] text-slate-700 dark:text-slate-300">
                     {selectedPillar.law}
@@ -347,7 +361,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
 
                 <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20">
                   <strong className="block text-rose-700 dark:text-rose-400 mb-1 font-bold">
-                    ⚠️ Sanksi Tegas & Konsekuensi Hukum:
+                    {isEn ? "⚠️ Strict Penalties & Legal Consequences:" : isZh ? "⚠️ 严厉处罚与法律后果：" : "⚠️ Sanksi Tegas & Konsekuensi Hukum:"}
                   </strong>
                   <p className="leading-relaxed">
                     {selectedPillar.penalty}
@@ -356,7 +370,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
 
                 <div className="p-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10">
                   <strong className="block text-slate-900 dark:text-white mb-1 font-bold">
-                    🛡️ Penerapan di MPP Simpurusiang:
+                    {isEn ? "🛡️ Implementation at MPP Simpurusiang:" : isZh ? "🛡️ Simpurusiang 政务服务大厅执行标准：" : "🛡️ Penerapan di MPP Simpurusiang:"}
                   </strong>
                   <p className="leading-relaxed">
                     {selectedPillar.desc}
@@ -366,14 +380,14 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
 
               <div className="mt-5 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
                 <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
-                  Inspektorat Daerah Kabupaten Luwu
+                  {isEn ? "Luwu Regency Regional Inspectorate" : isZh ? "鲁乌县地方监察局监督" : "Inspektorat Daerah Kabupaten Luwu"}
                 </span>
                 <button
                   type="button"
                   onClick={() => setSelectedPillar(null)}
                   className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs cursor-pointer transition-colors"
                 >
-                  Tutup
+                  {isEn ? "Close" : isZh ? "关闭" : "Tutup"}
                 </button>
               </div>
             </motion.div>
@@ -411,10 +425,10 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                 </div>
                 <div>
                   <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400 block">
-                    WHISTLEBLOWING SYSTEM (WBS)
+                    {isEn ? "WHISTLEBLOWING SYSTEM (WBS)" : isZh ? "内部举报系统 (WBS)" : "WHISTLEBLOWING SYSTEM (WBS)"}
                   </span>
                   <h3 className="text-base sm:text-lg font-black leading-tight">
-                    Lapor Pungli / Gratifikasi Anonim
+                    {isEn ? "Anonymous Exploitation / Extortion Report" : isZh ? "匿名举报索贿乱收费/受贿行为" : "Lapor Pungli / Gratifikasi Anonim"}
                   </h3>
                 </div>
               </div>
@@ -422,10 +436,14 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
               <div className="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-4">
                 <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20">
                   <strong className="text-rose-700 dark:text-rose-300 block mb-1">
-                    🛡️ Perlindungan Identitas Pelapor:
+                    {isEn ? "🛡️ Whistleblower Identity Protection:" : isZh ? "🛡️ 举报人身份绝对保密安全：" : "🛡️ Perlindungan Identitas Pelapor:"}
                   </strong>
                   <p className="text-[11px] leading-relaxed">
-                    Informasi laporan diteruskan secara aman dan terenkripsi langsung ke Tim Khusus Satgas Saber Pungli & Inspektorat Kabupaten Luwu. Identitas pelapor dilindungi penuh oleh UU LPSK.
+                    {isEn 
+                      ? "Report information is securely and confidentially forwarded directly to the Special Task Force and Inspectorate of Luwu Regency. The identity of the whistleblower is fully protected by law." 
+                      : isZh 
+                      ? "您的举报信息将通过高强度安全加密，直接发送至扫除乱收费专责小组与鲁乌县地方监察局。法律百分之百确保举报人的隐私安全与合法权益。" 
+                      : "Informasi laporan diteruskan secara aman dan terenkripsi langsung ke Tim Khusus Satgas Saber Pungli & Inspektorat Kabupaten Luwu. Identitas pelapor dilindungi penuh oleh UU LPSK."}
                   </p>
                 </div>
 
@@ -439,8 +457,8 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                     <div className="flex items-center gap-2.5">
                       <PhoneCall className="w-4 h-4" />
                       <div className="text-left">
-                        <span className="block text-xs">WhatsApp Satgas Saber Pungli Luwu</span>
-                        <span className="text-[10px] opacity-90 font-mono font-normal">Respon Cepat Tim Investigasi</span>
+                        <span className="block text-xs">{isEn ? "Saber Pungli Luwu WhatsApp" : isZh ? "鲁乌县扫除乱收费 WhatsApp 窗口" : "WhatsApp Satgas Saber Pungli Luwu"}</span>
+                        <span className="text-[10px] opacity-90 font-mono font-normal">{isEn ? "Fast Investigation Response" : isZh ? "调查组快速核查响应" : "Respon Cepat Tim Investigasi"}</span>
                       </div>
                     </div>
                     <ChevronRight className="w-4 h-4" />
@@ -455,8 +473,8 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                     <div className="flex items-center gap-2.5">
                       <ExternalLink className="w-4 h-4 text-rose-400" />
                       <div className="text-left">
-                        <span className="block text-xs">Portal SP4N-LAPOR! Nasional</span>
-                        <span className="text-[10px] opacity-75 font-mono font-normal">Sistem Pengaduan Pelayanan Publik Nasional</span>
+                        <span className="block text-xs">{isEn ? "National SP4N-LAPOR! Portal" : isZh ? "国家 SP4N-LAPOR! 公共服务申诉平台" : "Portal SP4N-LAPOR! Nasional"}</span>
+                        <span className="text-[10px] opacity-75 font-mono font-normal">{isEn ? "National Public Service Complaint System" : isZh ? "印尼国家统一公共服务申诉体系" : "Sistem Pengaduan Pelayanan Publik Nasional"}</span>
                       </div>
                     </div>
                     <ChevronRight className="w-4 h-4" />
@@ -470,7 +488,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                   onClick={() => setIsWbsModalOpen(false)}
                   className="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs cursor-pointer hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors"
                 >
-                  Tutup
+                  {isEn ? "Close" : isZh ? "关闭" : "Tutup"}
                 </button>
               </div>
             </motion.div>

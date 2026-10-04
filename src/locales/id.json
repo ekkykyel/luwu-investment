@@ -3096,5 +3096,15 @@
     "realtimeDb": "Real-time Database",
     "notFoundTitle": "Nomor Resi Tidak Ditemukan",
     "notFoundDesc": "Nomor resi tidak ditemukan. Pastikan nomor registrasi yang Anda masukkan sesuai dengan bukti tanda terima."
+  },
+  "zonaIntegritas": {
+    "title": "Zona Integritas & Anti-Korupsi",
+    "subtitle": "Komitmen Keadilan, Transparansi, dan Akuntabilitas MPP Simpurusiang",
+    "regulations": "Regulasi Acuan",
+    "detailsBtn": "Rincian Sanksi Hukum →",
+    "regulationBasis": "Landasan Hukum & Regulasi:",
+    "penaltyConsequences": "Sanksi Tegas & Konsekuensi Hukum:",
+    "mppApplication": "Penerapan di MPP Simpurusiang:",
+    "inspektoratLabel": "Inspektorat Daerah Kabupaten Luwu"
   }
 }

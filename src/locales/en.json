@@ -3100,5 +3100,15 @@
     "realtimeDb": "Real-time Database",
     "notFoundTitle": "Tracking Number Not Found",
     "notFoundDesc": "Tracking number was not found. Please verify that the registration code matches your official filing receipt."
+  },
+  "zonaIntegritas": {
+    "title": "Integrity Zone & Anti-Corruption",
+    "subtitle": "Commitment to Fairness, Transparency, and Accountability at MPP Simpurusiang",
+    "regulations": "Reference Regulations",
+    "detailsBtn": "Legal Penalty Details →",
+    "regulationBasis": "Legal Basis & Regulations:",
+    "penaltyConsequences": "Strict Penalties & Legal Consequences:",
+    "mppApplication": "Implementation at MPP Simpurusiang:",
+    "inspektoratLabel": "Regional Inspectorate of Luwu Regency"
   }
 }
