@@ -1,12 +1,11 @@
 {
-  "name": "Peta Potensi Investasi Kabupaten Luwu",
-  "short_name": "InvestLuwu",
-  "description": "Portal Investasi Kabupaten Luwu",
+  "name": "MPP Simpurusiang Portal",
+  "short_name": "MPP Portal",
   "start_url": "/",
-  "display": "fullscreen",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#00a884",
   "orientation": "portrait",
-  "background_color": "#020617",
-  "theme_color": "#020617",
   "icons": [
     {
       "src": "/pwa-192x192.png",

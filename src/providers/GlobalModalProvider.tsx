@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode, Suspense, lazy } from 'react';
 import { Investment } from '../types';
 import { useData } from '../contexts/DataContext';
+import { useGlobalFullscreenBackHandler } from '../hooks/useModalFullscreenLifecycle';
+import { ensureFullscreen } from '../utils/fullscreen';
 
 // Lazy load modals for optimal bundle size
 const CommandPalette = lazy(() => import('../components/CommandPalette'));
@@ -91,6 +93,35 @@ export const GlobalModalProvider: React.FC<GlobalModalProviderProps> = ({ childr
   const [isStaffSettingsOpen, setIsStaffSettingsOpen] = useState(false);
   const [isAuditLogOpen, setIsAuditLogOpen] = useState(false);
   const [isSystemLogsOpen, setIsSystemLogsOpen] = useState(false);
+
+  const isAnyGlobalModalOpen = Boolean(
+    isCommandPaletteOpen ||
+    isDiagnosticModalOpen ||
+    lightboxState.isOpen ||
+    isCreateOperatorOpen ||
+    isManageOperatorsOpen ||
+    isHeroSettingsOpen ||
+    isStaffSettingsOpen ||
+    isAuditLogOpen ||
+    isSystemLogsOpen
+  );
+
+  const closeActiveGlobalModal = () => {
+    setIsCommandPaletteOpen(false);
+    setIsDiagnosticModalOpen(false);
+    setLightboxState(prev => ({ ...prev, isOpen: false }));
+    setIsCreateOperatorOpen(false);
+    setIsManageOperatorsOpen(false);
+    setIsHeroSettingsOpen(false);
+    setIsStaffSettingsOpen(false);
+    setIsAuditLogOpen(false);
+    setIsSystemLogsOpen(false);
+    setTimeout(() => {
+      ensureFullscreen();
+    }, 150);
+  };
+
+  useGlobalFullscreenBackHandler(isAnyGlobalModalOpen, closeActiveGlobalModal);
 
   const openLightbox = (images: string[], initialIndex = 0) => {
     setLightboxState({ isOpen: true, images, initialIndex });

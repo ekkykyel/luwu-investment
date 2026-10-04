@@ -72,6 +72,8 @@ import { FoOfficerLoginModal } from './mpp/FoOfficerLoginModal';
 import { MppAirportKioskModal } from './MppAirportKioskModal';
 import { MppCommandPalette } from './mpp/MppCommandPalette';
 import { PkkprTechnicalRecommendationModal, PkkprRecommendationData } from './mpp/PkkprTechnicalRecommendationModal';
+import { useGlobalFullscreenBackHandler } from '../hooks/useModalFullscreenLifecycle';
+import { ensureFullscreen } from '../utils/fullscreen';
 import { LUWU_LOGO_BASE64 } from '../lib/logoBase64';
 import { supabase } from '../lib/supabaseClient';
 import { submitMppSurvey } from '../services/mppFeedbackService';
@@ -774,6 +776,58 @@ export default function PortalMPP() {
   const [isAirportKioskOpen, setIsAirportKioskOpen] = useState(false);
   const [airportKioskInitialMode, setAirportKioskInitialMode] = useState<'citizen' | 'investor'>('citizen');
   const [liveAgencies, setLiveAgencies] = useState<InstansiItem[]>(LOCALIZED_AGENCIES);
+
+  // --- Android Hardware Back Button & Persistent Fullscreen Lifecycle Handler ---
+  const isAnyModalOpen = Boolean(
+    isNewsModalOpen ||
+    isSurveyModalOpen ||
+    activeAlurModal !== null ||
+    isPkkprModalOpen ||
+    isHelpdeskModalOpen ||
+    selectedAgencyDetail !== null ||
+    selectedServiceDetail !== null ||
+    isQueueBookingOpen ||
+    isCallingAlertOpen ||
+    isAiModalOpen ||
+    isAirportKioskOpen ||
+    isOperatorLoginOpen ||
+    isFoLoginModalOpen ||
+    isTenantDashboardOpen ||
+    isAnalyticsModalOpen ||
+    isAgenciesCatalogOpen ||
+    isServicesMatrixOpen ||
+    isCommandPaletteOpen ||
+    isGrpModalOpen ||
+    isFacilityLightboxOpen
+  );
+
+  const closeActiveModal = useCallback(() => {
+    setIsNewsModalOpen(false);
+    setIsSurveyModalOpen(false);
+    setActiveAlurModal(null);
+    setIsPkkprModalOpen(false);
+    setIsHelpdeskModalOpen(false);
+    setSelectedAgencyDetail(null);
+    setSelectedServiceDetail(null);
+    setIsQueueBookingOpen(false);
+    setIsCallingAlertOpen(false);
+    setIsAiModalOpen(false);
+    setIsAirportKioskOpen(false);
+    setIsOperatorLoginOpen(false);
+    setIsFoLoginModalOpen(false);
+    setIsTenantDashboardOpen(false);
+    setIsAnalyticsModalOpen(false);
+    setIsAgenciesCatalogOpen(false);
+    setIsServicesMatrixOpen(false);
+    setIsCommandPaletteOpen(false);
+    setIsGrpModalOpen(false);
+    setIsFacilityLightboxOpen(false);
+    setTimeout(() => {
+      ensureFullscreen();
+    }, 150);
+  }, []);
+
+  useGlobalFullscreenBackHandler(isAnyModalOpen, closeActiveModal);
 
   // --- State Dinamis Supabase untuk SKM, Antrean & Ulasan (Doktrin Zero Dummy) ---
   const [skmTotalRespondents, setSkmTotalRespondents] = useState<number>(0);
