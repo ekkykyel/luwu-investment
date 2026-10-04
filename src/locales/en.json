@@ -85,7 +85,22 @@
     "intel": {
       "title": "Business Intelligence",
       "subtitle": "Conduct in-depth financial simulations and get strategic recommendations through Luwu's dedicated Investment AI Consultant."
-    }
+    },
+    "skm_badge": "Satisfaction Survey",
+    "skm_title": "Community Satisfaction Survey (SKM)",
+    "skm_subtitle": "Honest public evaluation of counter service effectiveness at MPP Simpurusiang, Luwu Regency.",
+    "complaint_badge": "Complaints & Aspirations",
+    "complaint_title": "Public Service Complaint Channels",
+    "complaint_subtitle": "Opening public oversight channels to continuously improve service effectiveness at MPP Simpurusiang, Luwu Regency.",
+    "workflow_badge": "Workflow Guide",
+    "workflow_title": "Integrated Service Workflow",
+    "workflow_subtitle": "Below is the standardized integrated service workflow at MPP Simpurusiang, Luwu Regency.",
+    "news_badge": "Official Publication",
+    "news_title": "Latest News & Announcements",
+    "news_subtitle": "Latest service guides, policy regulations, and system update announcements at MPP Luwu.",
+    "review_badge": "Reviews & Testimonials",
+    "review_title": "MPP Simpurusiang Public Reviews",
+    "review_subtitle": "Firsthand experiences and sincere public reviews regarding services at MPP Simpurusiang, Luwu Regency."
   },
   "portal": {
     "noUmkmData": "There is no MSME product data registered on the portal yet. Data will be displayed automatically when connected to the MSME database.",

@@ -85,7 +85,22 @@
     "intel": {
       "title": "商业智能",
       "subtitle": "通过鲁乌专门的投资AI顾问进行深入的财务模拟并获得战略建议。"
-    }
+    },
+    "skm_badge": "满意度测评",
+    "skm_title": "公众满意度调查 (SKM)",
+    "skm_subtitle": "群众对鲁乌县 Simpurusiang 公共服务中心窗口效能的真实评价",
+    "complaint_badge": "诉求反馈与督查投诉",
+    "complaint_title": "公共服务投诉与反馈渠道",
+    "complaint_subtitle": "畅通群众监督反映渠道，持续提升鲁乌县 Simpurusiang 中心政务服务效能。",
+    "workflow_badge": "办事流程指南",
+    "workflow_title": "综合政务服务办理流程",
+    "workflow_subtitle": "以下为鲁乌县 Simpurusiang 综合政务服务中心标准化办理流程",
+    "news_badge": "官方权威发布",
+    "news_title": "最新新闻与官方公告",
+    "news_subtitle": "鲁乌一站式政务大厅最新办事指南、政策法规与系统升级公告。",
+    "review_badge": "群众真实口碑",
+    "review_title": "Simpurusiang 公共服务中心群众评价",
+    "review_subtitle": "广大群众对鲁乌县 Simpurusiang 公共服务中心各项办事的亲身体验与诚挚评价。"
   },
   "portal": {
     "noUmkmData": "目前门户网站上暂无注册的微中小企业 (UMKM) 产品数据。当连接到微中小企业数据库时，数据将自动显示。",

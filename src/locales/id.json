@@ -85,7 +85,22 @@
     "intel": {
       "title": "Intelegensi Bisnis",
       "subtitle": "Lakukan simulasi finansial mendalam dan dapatkan rekomendasi strategis melalui Konsultan AI khusus Investasi Luwu."
-    }
+    },
+    "skm_badge": "Survei Kepuasan",
+    "skm_title": "Survei Kepuasan Masyarakat (SKM)",
+    "skm_subtitle": "Evaluasi jujur masyarakat terhadap efektivitas pelayanan loket MPP Simpurusiang Kabupaten Luwu.",
+    "complaint_badge": "Pengaduan & Aspirasi",
+    "complaint_title": "Kanal Pengaduan Layanan Publik",
+    "complaint_subtitle": "Membuka saluran pengawasan masyarakat untuk terus meningkatkan efektivitas pelayanan publik MPP Simpurusiang Kabupaten Luwu.",
+    "workflow_badge": "Panduan Alur Kerja",
+    "workflow_title": "Alur Pelayanan Layanan Terpadu",
+    "workflow_subtitle": "Berikut adalah alur pelayanan standar terpadu di MPP Simpurusiang Kabupaten Luwu.",
+    "news_badge": "Publikasi Resmi",
+    "news_title": "Berita & Pengumuman Terbaru",
+    "news_subtitle": "Panduan pelayanan terbaru, regulasi kebijakan, dan pengumuman pembaruan sistem MPP Luwu.",
+    "review_badge": "Ulasan & Testimoni",
+    "review_title": "Ulasan Masyarakat MPP Simpurusiang",
+    "review_subtitle": "Pengalaman langsung dan ulasan jujur masyarakat terhadap pelayanan di MPP Simpurusiang Kabupaten Luwu."
   },
   "lang": {
     "id": "ID",

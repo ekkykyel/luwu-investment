@@ -3961,16 +3961,13 @@ export default function PortalMPP() {
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 space-y-2">
               <span className="px-3 py-1 rounded-full text-[11px] font-sans font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60">
-                {t("mppPortal.survey.badge", "Survei Kepuasan")}
+                {t("sections.skm_badge", t("mppPortal.survey.badge", "Survei Kepuasan"))}
               </span>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white font-sans text-center">
-                Survei Kepuasan{" "}
-                <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 dark:from-emerald-400 dark:to-cyan-400 bg-clip-text text-transparent">
-                  Masyarakat (SKM)
-                </span>
+                {t("sections.skm_title", "Survei Kepuasan Masyarakat (SKM)")}
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto text-center leading-relaxed">
-                {t("mppPortal.survey.subtitle", "Penilaian langsung masyarakat terhadap pelayanan MPP Simpurusiang Kab. Luwu")}
+                {t("sections.skm_subtitle", t("mppPortal.survey.subtitle", "Evaluasi jujur masyarakat terhadap efektivitas pelayanan loket MPP Simpurusiang Kabupaten Luwu."))}
               </p>
             </div>
 
@@ -4001,16 +3998,13 @@ export default function PortalMPP() {
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 space-y-2">
               <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60 font-sans">
-                {t("mppPortal.pengaduan.badge", "Pengaduan & Aspirasi")}
+                {t("sections.complaint_badge", t("mppPortal.pengaduan.badge", "Pengaduan & Aspirasi"))}
               </span>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white font-sans text-center">
-                Kanal Pengaduan{" "}
-                <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 dark:from-emerald-400 dark:to-cyan-400 bg-clip-text text-transparent">
-                  Layanan Publik
-                </span>
+                {t("sections.complaint_title", "Kanal Pengaduan Layanan Publik")}
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto text-center leading-relaxed">
-                {t("mppPortal.pengaduan.subtitle", "Berbagai kanal pengaduan masyarakat untuk peningkatan kualitas pelayanan pada MPP Simpurusiang Kabupaten Luwu.")}
+                {t("sections.complaint_subtitle", t("mppPortal.pengaduan.subtitle", "Membuka saluran pengawasan masyarakat untuk terus meningkatkan efektivitas pelayanan publik MPP Simpurusiang Kabupaten Luwu."))}
               </p>
             </div>
 
@@ -4218,16 +4212,13 @@ export default function PortalMPP() {
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-5 sm:mb-8 space-y-2">
               <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60 font-sans">
-                {t("mppPortal.alur.badge", "Panduan Prosedur")}
+                {t("sections.workflow_badge", t("mppPortal.alur.badge", "Panduan Prosedur"))}
               </span>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white font-sans text-center">
-                Alur Pelayanan{" "}
-                <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 dark:from-emerald-400 dark:to-cyan-400 bg-clip-text text-transparent">
-                  Layanan Terpadu
-                </span>
+                {t("sections.workflow_title", "Alur Pelayanan Layanan Terpadu")}
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto text-center leading-relaxed">
-                {t("mppPortal.alur.subtitle", "Berikut Alur Pelayanan di MPP Simpurusiang Kabupaten Luwu")}
+                {t("sections.workflow_subtitle", t("mppPortal.alur.subtitle", "Berikut adalah alur pelayanan standar terpadu di MPP Simpurusiang Kabupaten Luwu."))}
               </p>
             </div>
 
@@ -4394,16 +4385,13 @@ export default function PortalMPP() {
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-10 gap-3">
               <div className="space-y-2">
                 <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60 font-sans inline-block">
-                  {t("mppPortal.news.badge", "Publikasi Resmi")}
+                  {t("sections.news_badge", t("mppPortal.news.badge", "Publikasi Resmi"))}
                 </span>
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white font-sans">
-                  Berita & Pengumuman{" "}
-                  <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 dark:from-emerald-400 dark:to-cyan-400 bg-clip-text text-transparent">
-                    Terbaru
-                  </span>
+                  {t("sections.news_title", "Berita & Pengumuman Terbaru")}
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-2xl leading-relaxed">
-                  {t("mppPortal.news.subtitle", "Informasi terbaru seputar layanan MPP, regulasi perizinan, dan pembaruan sistem.")}
+                  {t("sections.news_subtitle", t("mppPortal.news.subtitle", "Panduan pelayanan terbaru, regulasi kebijakan, dan pengumuman pembaruan sistem MPP Luwu."))}
                 </p>
               </div>
               <button
@@ -4542,16 +4530,13 @@ export default function PortalMPP() {
               className="relative z-10 max-w-2xl mx-auto px-4 text-center mb-6 sm:mb-10 flex flex-col items-center space-y-2"
             >
               <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60 font-sans inline-block">
-                {t("mppPortal.ulasan.badge", "Testimoni Warga")}
+                {t("sections.review_badge", t("mppPortal.ulasan.badge", "Testimoni Warga"))}
               </span>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight font-sans text-slate-900 dark:text-white text-center">
-                Ulasan Masyarakat{" "}
-                <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 dark:from-emerald-400 dark:to-cyan-400 bg-clip-text text-transparent">
-                  MPP Simpurusiang
-                </span>
+                {t("sections.review_title", "Ulasan Masyarakat MPP Simpurusiang")}
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto text-center leading-relaxed">
-                {t("mppPortal.ulasan.subtitle", "Penilaian masyarakat langsung kepada pelayanan publik MPP Simpurusiang Kabupaten Luwu.")}
+                {t("sections.review_subtitle", t("mppPortal.ulasan.subtitle", "Pengalaman langsung dan ulasan jujur masyarakat terhadap pelayanan di MPP Simpurusiang Kabupaten Luwu."))}
               </p>
             </motion.div>
 
