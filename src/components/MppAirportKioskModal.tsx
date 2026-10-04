@@ -1251,22 +1251,22 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
       }`} />
 
       {/* TOP AIRPORT KIOSK HEADER */}
-      <header className={`w-full px-4 py-3 backdrop-blur-md border-b flex items-center justify-between gap-2 sticky top-0 z-50 shrink-0 transition-colors ${
+      <header className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 backdrop-blur-md border-b flex items-center justify-between gap-2 sticky top-0 z-50 shrink-0 transition-colors ${
         theme === 'dark'
           ? 'bg-slate-900/90 border-slate-800 text-white'
           : 'bg-white/95 border-slate-200 text-slate-900 shadow-sm'
       }`}>
         {/* Left Logo & Title */}
-        <div className="flex items-center gap-2.5 min-w-0">
+        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
           <img 
             src="/logo-luwu.png" 
             alt="Logo Luwu" 
             onError={(e) => {
               (e.currentTarget as HTMLImageElement).src = '/logo-192.png';
             }}
-            className="w-7 h-7 object-contain shrink-0" 
+            className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0" 
           />
-          <div className="truncate">
+          <div className="hidden sm:block truncate">
             <p className="text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 truncate">
               {t.kiosk_title || 'Kios Mandiri'}
             </p>
@@ -1304,7 +1304,7 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
         </div>
 
         {/* Right Utility Controls */}
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
           {/* Multilingual Toggle (Desktop) */}
           <div className={`hidden sm:flex items-center border rounded-xl p-0.5 text-[10px] font-bold ${
             theme === 'dark'
@@ -1340,7 +1340,7 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                 console.warn('Could not save theme:', e);
               }
             }}
-            className={`p-2 rounded-xl border text-xs cursor-pointer transition-all flex items-center justify-center ${
+            className={`p-1.5 sm:p-2 w-8 h-8 sm:w-auto sm:h-auto rounded-xl border text-xs cursor-pointer transition-all flex items-center justify-center ${
               theme === 'dark'
                 ? 'bg-slate-800 hover:bg-slate-700 text-amber-400 border-slate-700 shadow-xs'
                 : 'bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-300 shadow-xs'
@@ -1349,9 +1349,9 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
             aria-label="Toggle Dark / Light Theme"
           >
             {theme === 'dark' ? (
-              <Sun className="w-4 h-4 text-amber-400" />
+              <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
             ) : (
-              <Moon className="w-4 h-4 text-indigo-700" />
+              <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-700" />
             )}
           </button>
 
@@ -1362,7 +1362,7 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
               playBeep('beep');
               setIsAccessibleMode(!isAccessibleMode);
             }}
-            className={`p-2 rounded-xl border text-xs cursor-pointer transition-all ${
+            className={`p-1.5 sm:p-2 w-8 h-8 sm:w-auto sm:h-auto rounded-xl border text-xs cursor-pointer transition-all flex items-center justify-center ${
               isAccessibleMode
                 ? 'bg-emerald-600 border-emerald-500 text-white'
                 : theme === 'dark'
@@ -1371,16 +1371,16 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
             }`}
             title={t.accessibility_mode}
           >
-            <Accessibility className="w-4 h-4" />
+            <Accessibility className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
 
           {/* Session Timer Pill */}
-          <div className={`px-2.5 py-1 border rounded-xl text-xs font-black flex items-center gap-1 ${
+          <div className={`px-2 sm:px-2.5 py-1 border rounded-xl text-[11px] sm:text-xs font-black flex items-center gap-1 ${
             theme === 'dark'
               ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
               : 'bg-amber-50 border-amber-300 text-amber-800'
           }`}>
-            <Clock className="w-3.5 h-3.5" />
+            <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             <span>{inactivityTimer}s</span>
           </div>
 
@@ -1388,14 +1388,14 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
           <button 
             type="button"
             onClick={() => { playBeep('alert'); onClose(); }}
-            className={`p-2 rounded-xl border text-xs transition-all cursor-pointer ${
+            className={`p-1.5 sm:p-2 w-8 h-8 sm:w-auto sm:h-auto rounded-xl border text-xs transition-all cursor-pointer flex items-center justify-center ${
               theme === 'dark'
                 ? 'bg-rose-500/10 border-rose-500/30 text-rose-400 hover:bg-rose-500 hover:text-white'
                 : 'bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-600 hover:text-white'
             }`}
             title={t.exit}
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
         </div>
       </header>
@@ -1412,42 +1412,42 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
       )}
 
       {/* KIOSK MAIN SCREEN AREA */}
-      <main className="flex-1 overflow-y-auto max-h-[calc(100dvh-4rem)] sm:max-h-[calc(100dvh-5rem)] p-4 sm:p-6 md:p-8 custom-scrollbar flex flex-col justify-start md:justify-center items-center z-10 relative">
+      <main className="flex-1 overflow-y-auto max-h-[calc(100dvh-3.5rem)] sm:max-h-[calc(100dvh-5rem)] p-3 sm:p-6 md:p-8 custom-scrollbar flex flex-col justify-start items-center z-10 relative">
 
         {/* ========================================================= */}
         {/* STEP 1: WELCOME & PERSONA SELECTOR (CHEVRON AIRPORT GATES) */}
         {/* ========================================================= */}
         {step === 1 && (
-          <div className={`w-full max-w-5xl mx-auto px-4 pt-28 sm:pt-32 pb-24 space-y-8 text-center animate-in fade-in zoom-in-95 duration-300 ${
+          <div className={`w-full max-w-5xl mx-auto px-2 sm:px-4 pt-4 sm:pt-8 md:pt-10 pb-32 sm:pb-40 space-y-6 sm:space-y-8 text-center animate-in fade-in zoom-in-95 duration-300 ${
             theme === 'dark' ? 'text-slate-100' : 'text-slate-900'
           }`}>
             {/* HERO WELCOME & TOUCH INSTRUCTION BANNER */}
-            <div className="text-center space-y-4 max-w-2xl mx-auto">
+            <div className="text-center space-y-3 sm:space-y-4 max-w-2xl mx-auto">
               {/* Prominent Enriched Touch CTA Banner with animate-pulse */}
               <div 
                 onClick={() => {
                   playBeep('beep');
                 }}
-                className={`inline-flex items-center gap-3 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full text-xs sm:text-sm md:text-base font-mono font-black shadow-xl tracking-wider uppercase transition-all duration-300 animate-pulse border-2 cursor-pointer active:scale-95 ${
+                className={`inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-8 py-2.5 sm:py-3.5 rounded-full text-xs sm:text-sm md:text-base font-mono font-black shadow-xl tracking-wider uppercase transition-all duration-300 animate-pulse border-2 cursor-pointer active:scale-95 ${
                   theme === 'dark'
                     ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300 shadow-[0_0_30px_rgba(16,185,129,0.35)]'
                     : 'bg-emerald-50 border-emerald-500 text-emerald-800 shadow-[0_0_30px_rgba(16,185,129,0.25)]'
                 }`}
               >
-                <div className="p-1.5 rounded-full bg-emerald-500 text-slate-950 shadow-md">
-                  <Touchpad className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
+                <div className="p-1 sm:p-1.5 rounded-full bg-emerald-500 text-slate-950 shadow-md">
+                  <Touchpad className="w-4 h-4 sm:w-6 sm:h-6 stroke-[2.5]" />
                 </div>
-                <span className="font-extrabold tracking-wide">✦ SENTUH LAYAR UNTUK MEMULAI LAYANAN ✦</span>
+                <span className="font-extrabold tracking-wide text-[11px] xs:text-xs sm:text-sm md:text-base">✦ SENTUH LAYAR UNTUK MEMULAI LAYANAN ✦</span>
               </div>
 
               {/* Welcome Title & Subtitle */}
               <div>
-                <h1 className={`text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight font-sans ${
+                <h1 className={`text-3xl sm:text-5xl font-black tracking-tight leading-tight font-sans ${
                   theme === 'dark' ? 'text-white' : 'text-slate-900'
                 }`}>
                   Selamat Datang di <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500">Layanan Mandiri</span>
                 </h1>
-                <p className={`text-xs sm:text-sm md:text-base leading-relaxed mt-2.5 max-w-xl mx-auto font-medium ${
+                <p className={`text-xs sm:text-sm md:text-base leading-relaxed mt-2 max-w-xl mx-auto font-medium ${
                   theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
                 }`}>
                   Silakan tentukan jalur layanan Anda untuk mendapatkan prioritas dan antrean yang tepat.
@@ -1456,7 +1456,7 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
             </div>
 
             {/* INTERACTIVE SERVICE ROUTE CARDS (DUAL-TERMINAL AIRPORT M-KIOSK GRID) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto items-stretch">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 max-w-5xl mx-auto items-stretch">
               {/* Terminal A: Jalur Umum (Warga / Masyarakat) */}
               <div
                 onClick={() => {
@@ -1473,7 +1473,7 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                     setStep(2);
                   }
                 }}
-                className={`group relative p-6 sm:p-8 rounded-3xl backdrop-blur-xl border-2 transition-all duration-300 flex flex-col justify-between space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left shadow-[0_0_50px_-12px_rgba(16,185,129,0.35)] hover:shadow-[0_0_65px_-8px_rgba(16,185,129,0.5)] ${
+                className={`group relative p-5 sm:p-8 rounded-3xl backdrop-blur-xl border-2 transition-all duration-300 flex flex-col justify-between space-y-5 sm:space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left shadow-[0_0_50px_-12px_rgba(16,185,129,0.35)] hover:shadow-[0_0_65px_-8px_rgba(16,185,129,0.5)] ${
                   theme === 'dark'
                     ? 'bg-slate-900/95 border-emerald-500/40 hover:border-emerald-400 text-white'
                     : 'bg-white border-slate-200/90 hover:border-emerald-500 text-slate-900 shadow-xl'
@@ -1482,37 +1482,37 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                 {/* Ambient Card Glow Behind */}
                 <div className="absolute -top-12 -right-12 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl group-hover:bg-emerald-500/30 transition-all pointer-events-none" />
 
-                <div className="space-y-4 relative z-10">
+                <div className="space-y-3 sm:space-y-4 relative z-10">
                   {/* Card Header & Badge */}
                   <div className="flex items-center justify-between gap-2">
-                    <div className={`p-4 rounded-2xl border shadow-inner flex items-center justify-center ${
+                    <div className={`p-3 sm:p-4 rounded-2xl border shadow-inner flex items-center justify-center ${
                       theme === 'dark'
                         ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
                         : 'bg-emerald-100 border-emerald-300 text-emerald-700'
                     }`}>
-                      <User className="w-8 h-8 sm:w-10 sm:h-10 stroke-[2.5]" />
+                      <User className="w-7 h-7 sm:w-10 sm:h-10 stroke-[2.5]" />
                     </div>
-                    <span className={`px-4 py-1.5 font-mono font-extrabold text-xs uppercase tracking-wider rounded-full flex items-center gap-1.5 shadow-sm border ${
+                    <span className={`px-3 sm:px-4 py-1 sm:py-1.5 font-mono font-extrabold text-[11px] sm:text-xs uppercase tracking-wider rounded-full flex items-center gap-1.5 shadow-sm border ${
                       theme === 'dark'
                         ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300'
                         : 'bg-emerald-50 border-emerald-300 text-emerald-800'
                     }`}>
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+                      <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-emerald-500 animate-ping" />
                       <span>🟢 TERMINAL A</span>
                     </span>
                   </div>
 
                   {/* Card Content */}
-                  <div className="space-y-2">
-                    <p className="text-xs font-mono font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <p className="text-[11px] sm:text-xs font-mono font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
                       Jalur Umum
                     </p>
-                    <h3 className={`text-2xl sm:text-3xl font-black tracking-tight ${
+                    <h3 className={`text-2xl sm:text-4xl font-black tracking-tight ${
                       theme === 'dark' ? 'text-white' : 'text-slate-900'
                     }`}>
                       Warga / Masyarakat
                     </h3>
-                    <p className={`text-sm sm:text-base leading-relaxed pt-1 font-normal ${
+                    <p className={`text-xs sm:text-sm md:text-base leading-relaxed pt-1 font-normal ${
                       theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
                     }`}>
                       Pengurusan KTP-el, Kartu Keluarga, Akta Kelahiran, Pajak PBB, Samsat, BPJS, dan Surat Rekomendasi.
@@ -1521,9 +1521,9 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                 </div>
 
                 {/* Touch-Optimized Large Full Width Action Button */}
-                <div className="w-full h-14 sm:h-16 px-6 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-95 transition-all duration-150 text-white font-black text-sm sm:text-base rounded-2xl flex items-center justify-between shadow-lg shadow-emerald-950/30 cursor-pointer relative z-10">
+                <div className="w-full h-12 sm:h-16 px-5 sm:px-6 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-95 transition-all duration-150 text-white font-black text-xs sm:text-base rounded-2xl flex items-center justify-between shadow-lg shadow-emerald-950/30 cursor-pointer relative z-10">
                   <span>Masuk Jalur Warga</span>
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-2" />
                 </div>
               </div>
 
@@ -1543,7 +1543,7 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                     setStep(2);
                   }
                 }}
-                className={`group relative p-6 sm:p-8 rounded-3xl backdrop-blur-xl border-2 transition-all duration-300 flex flex-col justify-between space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left shadow-[0_0_50px_-12px_rgba(245,158,11,0.35)] hover:shadow-[0_0_65px_-8px_rgba(245,158,11,0.5)] ${
+                className={`group relative p-5 sm:p-8 rounded-3xl backdrop-blur-xl border-2 transition-all duration-300 flex flex-col justify-between space-y-5 sm:space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left shadow-[0_0_50px_-12px_rgba(245,158,11,0.35)] hover:shadow-[0_0_65px_-8px_rgba(245,158,11,0.5)] ${
                   theme === 'dark'
                     ? 'bg-slate-900/95 border-amber-500/40 hover:border-amber-400 text-white'
                     : 'bg-white border-slate-200/90 hover:border-amber-500 text-slate-900 shadow-xl'
@@ -1552,37 +1552,37 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                 {/* Ambient Card Glow Behind */}
                 <div className="absolute -top-12 -right-12 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl group-hover:bg-amber-500/30 transition-all pointer-events-none" />
 
-                <div className="space-y-4 relative z-10">
+                <div className="space-y-3 sm:space-y-4 relative z-10">
                   {/* Card Header & Badge */}
                   <div className="flex items-center justify-between gap-2">
-                    <div className={`p-4 rounded-2xl border shadow-inner flex items-center justify-center ${
+                    <div className={`p-3 sm:p-4 rounded-2xl border shadow-inner flex items-center justify-center ${
                       theme === 'dark'
                         ? 'bg-amber-500/20 border-amber-500/40 text-amber-400'
                         : 'bg-amber-100 border-amber-300 text-amber-800'
                     }`}>
-                      <Briefcase className="w-8 h-8 sm:w-10 sm:h-10 stroke-[2.5]" />
+                      <Briefcase className="w-7 h-7 sm:w-10 sm:h-10 stroke-[2.5]" />
                     </div>
-                    <span className={`px-4 py-1.5 font-mono font-extrabold text-xs uppercase tracking-wider rounded-full flex items-center gap-1.5 shadow-sm border ${
+                    <span className={`px-3 sm:px-4 py-1 sm:py-1.5 font-mono font-extrabold text-[11px] sm:text-xs uppercase tracking-wider rounded-full flex items-center gap-1.5 shadow-sm border ${
                       theme === 'dark'
                         ? 'bg-amber-500/15 border-amber-500/40 text-amber-300'
                         : 'bg-amber-50 border-amber-300 text-amber-800'
                     }`}>
-                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" />
+                      <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-amber-400 animate-ping" />
                       <span>🟧 TERMINAL B</span>
                     </span>
                   </div>
 
                   {/* Card Content */}
-                  <div className="space-y-2">
-                    <p className="text-xs font-mono font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest">
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <p className="text-[11px] sm:text-xs font-mono font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest">
                       Jalur Bisnis & Investasi
                     </p>
-                    <h3 className={`text-2xl sm:text-3xl font-black tracking-tight ${
+                    <h3 className={`text-2xl sm:text-4xl font-black tracking-tight ${
                       theme === 'dark' ? 'text-white' : 'text-slate-900'
                     }`}>
                       Pebisnis / Investor
                     </h3>
-                    <p className={`text-sm sm:text-base leading-relaxed pt-1 font-normal ${
+                    <p className={`text-xs sm:text-sm md:text-base leading-relaxed pt-1 font-normal ${
                       theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
                     }`}>
                       Penerbitan NIB OSS-RBA, Kesesuaian Tata Ruang (KKPR), Persetujuan Bangunan Gedung (PBG), dan Konsultasi Insentif Investasi.
@@ -1591,29 +1591,29 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                 </div>
 
                 {/* Touch-Optimized Large Full Width Action Button */}
-                <div className="w-full h-14 sm:h-16 px-6 bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-400 active:scale-95 transition-all duration-150 text-white font-black text-sm sm:text-base rounded-2xl flex items-center justify-between shadow-lg shadow-amber-950/30 cursor-pointer relative z-10">
+                <div className="w-full h-12 sm:h-16 px-5 sm:px-6 bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-400 active:scale-95 transition-all duration-150 text-white font-black text-xs sm:text-base rounded-2xl flex items-center justify-between shadow-lg shadow-amber-950/30 cursor-pointer relative z-10">
                   <span>Masuk Investor Corner</span>
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-2" />
                 </div>
               </div>
             </div>
 
             {/* SLEEK FOOTER BANNER & UTILITY CONTROLS */}
-            <div className={`pt-8 border-t text-center space-y-4 ${
+            <div className={`pt-6 sm:pt-8 border-t text-center space-y-3 sm:space-y-4 ${
               theme === 'dark' ? 'border-slate-800' : 'border-slate-200'
             }`}>
-              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4">
                 {/* FIDS Departure Board Button */}
                 <button 
                   type="button" 
                   onClick={() => { playBeep('beep'); setIsFidsOpen(true); }}
-                  className={`px-4 py-2.5 rounded-full border font-bold text-xs flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-95 ${
+                  className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full border font-bold text-xs flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-95 ${
                     theme === 'dark'
                       ? 'border-amber-500/40 bg-slate-900/80 hover:bg-amber-950/30 text-amber-300'
                       : 'border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-900'
                   }`}
                 >
-                  <Radio className="w-4 h-4 text-amber-500" />
+                  <Radio className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500" />
                   <span>{t.fids_btn}</span>
                 </button>
 
@@ -1621,24 +1621,24 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                 <button 
                   type="button" 
                   onClick={handleTriggerAssistance}
-                  className={`px-4 py-2.5 rounded-full border font-bold text-xs flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-95 ${
+                  className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full border font-bold text-xs flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-95 ${
                     theme === 'dark'
                       ? 'border-blue-500/40 bg-slate-900/80 hover:bg-blue-950/30 text-blue-300'
                       : 'border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-900'
                   }`}
                 >
-                  <BellRing className="w-4 h-4 text-blue-500" />
+                  <BellRing className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500" />
                   <span>{t.assisted_desk}</span>
                 </button>
               </div>
 
-              <div className="space-y-1">
-                <p className={`text-xs font-semibold font-mono ${
+              <div className="space-y-0.5 sm:space-y-1">
+                <p className={`text-[11px] sm:text-xs font-semibold font-mono ${
                   theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
                 }`}>
                   DPMPTSP KABUPATEN LUWU © 2026
                 </p>
-                <p className={`text-[10px] ${
+                <p className={`text-[9px] sm:text-[10px] ${
                   theme === 'dark' ? 'text-slate-600' : 'text-slate-400'
                 }`}>
                   Sistem Pelayanan Kios Mandiri Terpadu MPP Simpurusiang
@@ -3492,20 +3492,20 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
       </main>
 
       {/* BOTTOM AIRPORT TICKER STATUS BAR */}
-      <footer className="h-12 border-t px-4 sm:px-8 flex items-center justify-between text-xs font-sans shrink-0 z-20 transition-colors border-slate-800 bg-slate-950/90 text-slate-400">
-        <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1.5 font-bold text-emerald-400">
-            <Radio className="w-3.5 h-3.5 animate-pulse" /> {t.footer_online}
+      <footer className="h-10 sm:h-12 border-t px-3 sm:px-8 flex items-center justify-between text-[10px] sm:text-xs font-sans shrink-0 z-30 transition-colors border-slate-800 bg-slate-900/95 sm:bg-slate-950/95 backdrop-blur-md text-slate-400 sticky bottom-0">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <span className="flex items-center gap-1 font-bold text-emerald-400 whitespace-nowrap">
+            <Radio className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-pulse" /> {t.footer_online}
           </span>
           <span className="hidden sm:inline text-slate-600">|</span>
-          <span className="hidden sm:inline font-medium text-slate-400">{t.footer_db}</span>
-          <span className="hidden sm:inline text-slate-600">|</span>
-          <span className="hidden sm:inline text-amber-300 font-medium">
+          <span className="hidden md:inline font-medium text-slate-400">{t.footer_db}</span>
+          <span className="hidden md:inline text-slate-600">|</span>
+          <span className="hidden lg:inline text-amber-300 font-medium">
             {t.footer_vip}
           </span>
         </div>
-        <div>
-          <span className="text-xs font-semibold text-slate-400">{t.footer_copy}</span>
+        <div className="truncate pl-2">
+          <span className="text-[10px] sm:text-xs font-semibold text-slate-400 truncate block">{t.footer_copy}</span>
         </div>
       </footer>
 
