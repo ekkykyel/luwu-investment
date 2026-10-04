@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Accessibility, 
-  Sparkles, 
+  Briefcase, 
   ChevronLeft, 
   ChevronRight, 
   Armchair, 
@@ -20,12 +20,12 @@ const SHOWCASE_ITEMS = [
   {
     id: 'vip-investor',
     type: 'vip',
-    title: 'VIP Investor Fast-Track Desk',
-    kicker: 'Investasi & Penanaman Modal',
+    title: 'Fasilitasi Penanaman Modal & Investasi',
+    kicker: 'Layanan Eksekutif',
     description: 'Layanan asistensi personal satu pintu untuk penanam modal korporasi dan UMKM skala menengah ke atas dengan pendampingan langsung Liaison Officer DPMPTSP.',
-    badge: 'Prioritas Bisnis',
-    badgeColor: 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30',
-    icon: Sparkles,
+    badge: 'Prioritas Investasi',
+    badgeColor: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
+    icon: Briefcase,
     image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800',
     features: ['Pendampingan OSS-RBA', 'Konsultasi Tata Ruang RDTR', 'Fasilitasi Insentif Pajak Daerah'],
     actionLabel: 'Hubungi Liaison Officer',
@@ -38,7 +38,7 @@ const SHOWCASE_ITEMS = [
     kicker: 'Pelayanan Inklusif',
     description: 'Penyandang disabilitas, lansia >60 tahun, dan ibu hamil langsung mendapatkan nomor antrean khusus tanpa perlu menunggu antrean reguler.',
     badge: 'Prioritas Inklusi',
-    badgeColor: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30',
+    badgeColor: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
     icon: Accessibility,
     image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=800',
     features: ['Kursi Roda & Jalur Landai', 'Petugas Pendamping Bahasa Isyarat', 'Kiosk Khusus Layar Rendah'],
@@ -51,8 +51,8 @@ const SHOWCASE_ITEMS = [
     title: 'Executive Lounge & Business Corner',
     kicker: 'Fasilitas Unggulan',
     description: 'Ruang tunggu eksklusif berpenyejuk udara sentral dengan koneksi internet cepat, stasiun pengisian daya gawai, dan sajian kopi Luwu.',
-    badge: 'Kenyamanan Eksekutif',
-    badgeColor: 'bg-teal-500/15 text-teal-700 dark:text-teal-400 border-teal-500/30',
+    badge: 'Fasilitas Eksekutif',
+    badgeColor: 'bg-slate-800/80 text-slate-300 border-slate-700/80',
     icon: Armchair,
     image: 'https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&q=80&w=800',
     features: ['Wi-Fi Orbit Berkecepatan Tinggi', 'Layar Monitor Progres Berkas', 'Bilik Konsultasi Privat'],
@@ -65,8 +65,8 @@ const SHOWCASE_ITEMS = [
     title: 'Ruang Laktasi & Arena Bermain Ramah Anak',
     kicker: 'Fasilitas Keluarga',
     description: 'Bilik privat higienis untuk ibu menyusui serta arena bermain anak edukatif yang diawasi agar orang tua dapat mengurus berkas dengan tenang.',
-    badge: 'Ramah Keluarga',
-    badgeColor: 'bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30',
+    badge: 'Fasilitas Keluarga',
+    badgeColor: 'bg-slate-800/80 text-slate-300 border-slate-700/80',
     icon: Baby,
     image: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&q=80&w=800',
     features: ['Sterilizer & Kulkas ASI', 'Mainan Edukasi Standar SNI', 'Sofa Laktasi Ergonomis'],
@@ -233,7 +233,7 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
                     <div className="text-[11px] font-semibold text-emerald-300 uppercase tracking-wider mb-0.5">
                       {item.kicker}
                     </div>
-                    <h3 className="text-base sm:text-lg font-extrabold leading-snug line-clamp-1 font-sans">
+                    <h3 className="text-base sm:text-lg font-extrabold leading-snug line-clamp-2 min-h-[2.8rem] sm:min-h-[3.2rem] font-sans">
                       {item.title}
                     </h3>
                   </div>

@@ -43,14 +43,14 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col items-center text-center space-y-6 pt-2 pb-6">
       
-      {/* 1. Header Kicker Pill with Glass Accent */}
+      {/* 1. Header Kicker Pill with Institutional Accent */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="inline-flex items-center justify-center text-center px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider bg-white/70 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-700/60 shadow-xs backdrop-blur-md"
+        className="inline-flex items-center justify-center text-center px-3.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800/80 text-emerald-700 dark:text-emerald-400 border border-slate-200 dark:border-slate-700 shadow-2xs"
       >
-        <span>✦ REGIONAL GRP (GOVERNMENT RESOURCE PLANNING) PLATFORM</span>
+        <span>Regional GRP Platform</span>
       </motion.div>
 
       {/* 2. Main Title */}
@@ -138,8 +138,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
         <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-slate-50/90 dark:from-slate-950/90 to-transparent z-10 rounded-r-2xl" />
 
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scrollbar-none py-1.5 px-3 snap-x touch-pan-x">
-          <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
-            <Sparkles className="w-3 h-3 text-amber-500" />
+          <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0 mr-1">
             Populer:
           </span>
           {POPULAR_CHIPS.map((chip) => (

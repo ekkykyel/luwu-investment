@@ -1983,11 +1983,8 @@ export default function PortalMPP() {
             <div className="max-w-[1440px] mx-auto px-2 md:px-8 py-2 sm:py-2.5 flex items-center justify-between gap-3 text-xs sm:text-sm">
               <div className="flex items-center gap-2.5 min-w-0">
                 <span className="flex h-2.5 w-2.5 relative shrink-0">
-                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-80 ${
-                    activeTicket.status === 'dipanggil' ? 'bg-amber-400' : 'bg-emerald-400'
-                  }`}></span>
                   <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
-                    activeTicket.status === 'dipanggil' ? 'bg-amber-500' : 'bg-emerald-500'
+                    activeTicket.status === 'dipanggil' ? 'bg-amber-400 ring-2 ring-amber-400/30' : 'bg-emerald-400 ring-2 ring-emerald-400/30'
                   }`}></span>
                 </span>
                 <span className={`font-sans font-extrabold px-3 py-0.5 rounded-lg text-xs tracking-wider shrink-0 border ${
@@ -2139,9 +2136,8 @@ export default function PortalMPP() {
           <section id="hero" className="relative w-full overflow-hidden px-3 sm:px-8 lg:px-12 pt-6 pb-24 sm:pb-12 flex flex-col items-center text-center scroll-mt-24">
             <div id="beranda" className="absolute -top-24 left-0 w-0 h-0 pointer-events-none" />
 
-            {/* Ambient Radial Mesh Glow (Atmospheric Depth for Executive GovTech) */}
-            <div className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-[95vw] max-w-[1100px] h-[480px] bg-gradient-to-b from-emerald-500/15 via-teal-500/10 to-transparent blur-3xl -z-10 rounded-full" />
-            <div className="pointer-events-none absolute top-10 left-1/2 -translate-x-1/2 w-[70vw] max-w-[800px] h-[300px] bg-gradient-to-r from-blue-500/10 via-emerald-500/10 to-teal-500/10 blur-2xl -z-10 rounded-full" />
+            {/* Ambient Radial Mesh (Subtle Atmospheric Depth for GovTech) */}
+            <div className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-[90vw] max-w-[1000px] h-[400px] bg-gradient-to-b from-emerald-500/5 via-teal-500/3 to-transparent blur-[120px] -z-10 rounded-full" />
 
             {/* Architectural Blueprint Dot Pattern (Transparent Governance) */}
             <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:28px_28px] opacity-[0.08] dark:opacity-[0.07] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_35%,#000_70%,transparent_100%)]" />
@@ -2173,7 +2169,7 @@ export default function PortalMPP() {
               }}
             />
 
-            {/* Services & VIP Fast-Track Carousel (Horizontal Progressive Disclosure) */}
+            {/* Services & Fast-Track Carousel (Horizontal Progressive Disclosure) */}
             <div className="w-full max-w-6xl mx-auto pt-2 pb-6 px-0">
               <PriorityShowcaseCarousel
                 isDark={isDark}
@@ -2199,12 +2195,12 @@ export default function PortalMPP() {
                       onClick={() => document.getElementById('investor-vip')?.scrollIntoView({ behavior: 'smooth' })}
                       className="w-full min-h-[96px] h-24 p-4 sm:p-5 rounded-2xl bg-white/90 dark:bg-slate-900/80 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800/80 hover:border-emerald-500/50 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150 flex items-center gap-4 group cursor-pointer text-left"
                     >
-                      <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
-                        <Sparkles className="w-5 h-5" />
+                      <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 border border-slate-200 dark:border-slate-700 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all shrink-0">
+                        <Briefcase className="w-5 h-5" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <span className="block font-sans text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white tracking-tight leading-snug group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                          {t("mppPortal.quickActions.vipDesk", "VIP Investor Desk")}
+                          {t("mppPortal.quickActions.vipDesk", "Eksekutif Desk Investasi")}
                         </span>
                         <span className="block text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5">
                           {t("mppPortal.quickActions.vipDeskDesc", "Liaison Officer & Fasilitasi")}
@@ -2326,7 +2322,7 @@ export default function PortalMPP() {
                         key={p.id}
                         type="button"
                         onClick={() => setActivePersona(p.id as 'warga' | 'investor' | 'semua')}
-                        className={`relative px-3.5 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                        className={`relative min-h-[44px] px-3.5 sm:px-4 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
                           isActive 
                             ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs border border-slate-200/50 dark:border-slate-700/60 font-semibold" 
                             : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
@@ -2345,7 +2341,7 @@ export default function PortalMPP() {
                     <span>Antrean langsung, persyaratan berkas kependudukan & gerai instansi layanan publik.</span>
                   )}
                   {activePersona === 'investor' && (
-                    <span>VIP Investor Desk, konsultasi tata ruang, peta spasial RDTR, & perizinan OSS-RBA.</span>
+                    <span>Eksekutif Desk Investasi, konsultasi tata ruang, peta spasial RDTR, & perizinan OSS-RBA.</span>
                   )}
                   {activePersona === 'semua' && (
                     <span>Seluruh modul layanan masyarakat, investasi, fasilitasi bisnis & regulasi daerah.</span>
@@ -2477,13 +2473,13 @@ export default function PortalMPP() {
             </div>
           </motion.section>
 
-          {/* Seksi VIP Investor Fast-Track Concierge (Full Width on Android & Desktop) */}
-          <div id="investor-vip" className="w-full max-w-7xl mx-auto px-3 sm:px-8 lg:px-12 py-10 sm:py-16 md:py-24 scroll-mt-28">
+          {/* Seksi Eksekutif Fasilitasi Investasi (Full Width on Android & Desktop) */}
+          <div id="investor-vip" className="w-full max-w-7xl mx-auto px-3 sm:px-8 lg:px-12 py-8 sm:py-12 md:py-16 scroll-mt-28">
             <VipInvestorConcierge isDark={isDark} />
           </div>
 
           {/* Seksi Operational Status Banner & Heatmap Jam Ramai vs Sepi */}
-          <div id="operasional-heatmap" className="w-full max-w-7xl mx-auto px-3 sm:px-8 lg:px-12 py-10 sm:py-16 md:py-24 scroll-mt-28">
+          <div id="operasional-heatmap" className="w-full max-w-7xl mx-auto px-3 sm:px-8 lg:px-12 py-8 sm:py-12 md:py-16 scroll-mt-28">
             <div id="peta-jam-ramai" className="scroll-mt-28">
               <OperationalHeatmap isDark={isDark} />
             </div>

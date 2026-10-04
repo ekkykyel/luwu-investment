@@ -62,8 +62,7 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
         {/* Top Live Status Pill */}
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 rounded-full text-emerald-700 dark:text-emerald-300 text-xs font-bold mb-2">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 ring-2 ring-emerald-400/30"></span>
           </span>
           {t("mppPortal.operationalHeatmap.statusHeader", "Status Real-Time MPP Simpurusiang")}
         </div>

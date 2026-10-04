@@ -469,20 +469,20 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
           }`}>
             
             {/* Top Row: Location Tag & Glow Pagination Indicators */}
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center justify-between gap-3 w-full min-w-0">
               {/* Location Tag */}
-              <div className="flex items-center gap-1.5 text-emerald-500 font-semibold text-xs">
+              <div className="flex items-center gap-1.5 text-emerald-500 font-semibold text-xs min-w-0 flex-1">
                 <MapPin size={12} className="text-emerald-500 shrink-0" />
-                <span className={`font-semibold text-[11px] sm:text-xs ${
+                <span className={`font-semibold text-[11px] sm:text-xs truncate ${
                   isDark ? 'text-slate-200' : 'text-slate-700'
                 }`}>
                   {currentPhoto.location || 'MPP Simpurusiang Belopa'}
                 </span>
               </div>
 
-              {/* Glowing Pagination Dots & Slide Counter */}
+              {/* Pagination Dots & Slide Counter */}
               {activePhotosCount > 1 && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0">
                   <div className="flex items-center gap-1.5">
                     {displayPhotos.map((p, idx) => (
                       <button
@@ -495,7 +495,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
                         }}
                         className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                           idx === currentIndex
-                            ? 'w-6 sm:w-8 bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.95)]'
+                            ? 'w-6 sm:w-8 bg-emerald-500'
                             : isDark ? 'w-1.5 sm:w-2 bg-white/25 hover:bg-white/50' : 'w-1.5 sm:w-2 bg-slate-300 hover:bg-slate-400'
                         }`}
                         aria-label={`Go to photo ${idx + 1}`}
@@ -511,22 +511,25 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
               )}
             </div>
 
-            {/* Photo Title with Emerald Accent Dot */}
-            <h3 className={`text-[13px] sm:text-base md:text-lg font-bold leading-snug font-sans flex items-start gap-2 ${
-              isDark ? 'text-white' : 'text-slate-900'
-            }`}>
-              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 mt-1 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
-              <span className="line-clamp-2 sm:line-clamp-1">{currentPhoto.title}</span>
-            </h3>
-
-            {/* Short Refined Caption */}
-            {settings.showCaption && currentPhoto.caption && (
-              <p className={`text-xs sm:text-sm leading-relaxed font-normal line-clamp-2 ${
-                isDark ? 'text-slate-300/95' : 'text-slate-700 font-medium'
+            {/* Photo Title & Description Container (Isolated from Top Row) */}
+            <div className="overflow-hidden space-y-1">
+              {/* Photo Title with Emerald Accent Dot */}
+              <h3 className={`text-[13px] sm:text-base md:text-lg font-bold leading-snug font-sans flex items-start gap-2 ${
+                isDark ? 'text-white' : 'text-slate-900'
               }`}>
-                {currentPhoto.caption}
-              </p>
-            )}
+                <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 mt-1.5"></span>
+                <span className="line-clamp-2 sm:line-clamp-1">{currentPhoto.title}</span>
+              </h3>
+
+              {/* Short Refined Caption */}
+              {settings.showCaption && currentPhoto.caption && (
+                <p className={`text-xs sm:text-sm leading-relaxed font-normal line-clamp-2 ${
+                  isDark ? 'text-slate-300/95' : 'text-slate-700 font-medium'
+                }`}>
+                  {currentPhoto.caption}
+                </p>
+              )}
+            </div>
 
             {/* Auto-Play Progress Bar at bottom */}
             {settings.autoPlay && !isPaused && (

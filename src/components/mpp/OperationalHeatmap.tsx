@@ -88,7 +88,7 @@ export const OperationalHeatmap: React.FC<OperationalHeatmapProps> = ({ isDark: 
   const activeSla = slaCatalog[selectedServiceSla] || slaCatalog.nib;
 
   return (
-    <div className="w-full space-y-6 sm:space-y-8 my-4 sm:my-8">
+    <div className="w-full space-y-6 sm:space-y-8">
       {/* 1. Live Header Operating Status Banner */}
       <MppHeroStatusSection 
         isDark={isDark} 

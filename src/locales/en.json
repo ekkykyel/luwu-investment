@@ -1979,7 +1979,7 @@
       "cekStatusDesc": "Track Permit File",
       "mandiri": "Self-Service",
       "mandiriDesc": "24-Hour Digital Kiosk",
-      "vipDesk": "VIP Investor Desk",
+      "vipDesk": "Executive Investment Desk",
       "vipDeskDesc": "Liaison Officer & Facilitation",
       "petaSpasial": "RDTR Spatial Map",
       "petaSpasialDesc": "WebGIS Zoning & Potential",
@@ -2728,7 +2728,7 @@
       "wargaTag": "Citizen Mode:",
       "wargaDesc": "Direct Queue, Document Checklist, & Agency Counters.",
       "investorTag": "Investor Mode:",
-      "investorDesc": "VIP Investor Desk, RDTR Spatial Map, & OSS-RBA.",
+      "investorDesc": "Executive Investment Desk, RDTR Spatial Map, & OSS-RBA.",
       "semuaTag": "All Services Mode:",
       "semuaDesc": "All public counter modules, investment & regulations."
     },
@@ -2739,7 +2739,7 @@
       "floorPlan": "3D Floor Plan",
       "tracking": "Track Permit Document",
       "survey": "9-Element SKM Survey",
-      "vipInvestor": "VIP Investor Desk"
+      "vipInvestor": "Executive Investment Desk"
     },
     "staff": {
       "frontOfficeTitle": "Front Office Staff & MPP Assistance"
