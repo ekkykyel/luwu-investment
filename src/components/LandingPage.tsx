@@ -1678,7 +1678,12 @@ export default function LandingPage({
   }, [investments, districts]);
 
   const scrollToSection = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    const el = document.getElementById(id);
+    if (el) {
+      const navOffset = window.innerWidth < 640 ? 72 : 88;
+      const targetY = el.getBoundingClientRect().top + window.scrollY - navOffset;
+      window.scrollTo({ top: Math.max(0, targetY), behavior: "smooth" });
+    }
   };
 
   const handleSelectCommodityFromTicker = (commodity: CommodityItem) => {
@@ -1987,10 +1992,10 @@ export default function LandingPage({
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
         className={`fixed top-0 left-0 w-full z-[100] border-b transition-colors duration-500 ease-in-out ${
           isDark 
-            ? "bg-slate-950/75 border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)]" 
-            : "bg-white/80 border-white/70 shadow-[0_4px_30px_rgba(15,23,42,0.06)]"
+            ? "bg-slate-950/98 dark:bg-slate-950/98 border-slate-800/90 shadow-[0_4px_30px_rgba(0,0,0,0.85)]" 
+            : "bg-white/95 border-slate-200/90 shadow-[0_4px_30px_rgba(15,23,42,0.08)]"
         }`}
-        style={{ paddingTop: 'env(safe-area-inset-top)', backdropFilter: "blur(24px) saturate(190%)", WebkitBackdropFilter: "blur(24px) saturate(190%)" }}
+        style={{ paddingTop: 'env(safe-area-inset-top)', backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
       >
         <div className="max-w-screen-2xl mx-auto px-2.5 sm:px-6 lg:px-12">
           <div className="flex items-center justify-between h-16 sm:h-20 gap-1.5 sm:gap-4">
@@ -2337,7 +2342,7 @@ export default function LandingPage({
 
       <div className="relative z-10 pt-0">
         {/* 1. HERO SECTION WITH IMMERSIVE BACKGROUND */}
-        <div id="hero-section" className={`relative min-h-[80vh] sm:min-h-[85vh] md:min-h-[90vh] flex items-center justify-center pt-20 sm:pt-24 md:pt-28 pb-8 sm:pb-12 md:pb-16 overflow-hidden ${isDark ? "bg-[#0b0f19] text-white" : "bg-gradient-to-b from-slate-50 via-white to-slate-50 text-slate-900"}`}>
+        <div id="hero-section" className={`scroll-mt-20 sm:scroll-mt-24 relative min-h-[80vh] sm:min-h-[85vh] md:min-h-[90vh] flex items-center justify-center pt-20 sm:pt-24 md:pt-28 pb-8 sm:pb-12 md:pb-16 overflow-hidden ${isDark ? "bg-[#0b0f19] text-white" : "bg-gradient-to-b from-slate-50 via-white to-slate-50 text-slate-900"}`}>
           <style>{`
             @keyframes aurora1 {
               0%, 100% { transform: translate(0, 0) scale(1); }
@@ -2526,7 +2531,7 @@ export default function LandingPage({
                   {
                     id: 'stat-investment',
                     label: t("stats.totalInvestment"),
-                    value: totalInvestmentValue > 0 ? formatRupiah(totalInvestmentValue) : "Data Menyusul",
+                    value: totalInvestmentValue > 0 ? formatRupiah(totalInvestmentValue) : "Rp 0",
                     isCurrency: true,
                     icon: TrendingUp,
                     accentTop: 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500',
@@ -2676,7 +2681,11 @@ export default function LandingPage({
                         })()
                       ) : (
                         <span
-                          className="font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-2xl sm:text-3xl md:text-4xl tracking-tight text-slate-900 dark:text-white tabular-nums text-center truncate max-w-full"
+                          className={`font-['Plus_Jakarta_Sans',sans-serif] tracking-tight text-slate-900 dark:text-white tabular-nums text-center max-w-full ${
+                            typeof stat.value === 'string' && stat.value.length > 8 
+                              ? 'text-xs sm:text-sm font-bold leading-tight' 
+                              : 'font-extrabold text-2xl sm:text-3xl md:text-4xl'
+                          }`}
                           title={String(stat.value)}
                         >
                           {stat.value}
@@ -2979,7 +2988,7 @@ export default function LandingPage({
         {/* 2. DAFTAR POTENSI INVESTASI - BENTO GRID */}
         <div
           id="potensi-section"
-          className="container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-10 md:py-12 lg:py-16 min-h-[44px] border-t border-slate-200/60 dark:border-slate-800/60"
+          className="scroll-mt-20 sm:scroll-mt-24 container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-10 md:py-12 lg:py-16 min-h-[44px] border-t border-slate-200/60 dark:border-slate-800/60"
         >
           {/* Section Header with Slider Navigation Controls */}
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
@@ -3484,7 +3493,7 @@ export default function LandingPage({
         </div>
 
         {/* PERTUMBUHAN & KOMPOSISI INVESTASI (ANALYTICS CHART) - MOVED UP FOR STRATEGIC HOOK */}
-        <div id="analytics-section" className="mt-4 sm:mt-8 min-h-0 h-auto">
+        <div id="analytics-section" className="scroll-mt-20 sm:scroll-mt-24 mt-4 sm:mt-8 min-h-0 h-auto">
           <GisErrorBoundary componentName="Analisis Komposisi Spasial">
             <AnalitikSpasialSection
               isDark={isDark}
@@ -3505,7 +3514,7 @@ export default function LandingPage({
         {/* 3. LITERASI & KEUNTUNGAN LUTIM */}
         <div
           id="keuntungan-section"
-          className="container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10 md:py-14 lg:py-18"
+          className="scroll-mt-20 sm:scroll-mt-24 container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10 md:py-14 lg:py-18"
         >
           <div className="text-center mb-8 sm:mb-12 md:mb-16">
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2 text-balance break-words">
@@ -3611,7 +3620,7 @@ export default function LandingPage({
         {/* 4.5 FASILITAS PENUNJANG INFRASTRUKTUR */}
         <div
           id="infrastruktur-section"
-          className="container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10 md:py-14 lg:py-18 relative min-h-[44px]"
+          className="scroll-mt-20 sm:scroll-mt-24 container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10 md:py-14 lg:py-18 relative min-h-[44px]"
         >
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-[20%] right-[10%] w-[50vw] h-[50vw] rounded-full bg-blue-500/5 blur-[120px] mix-blend-screen" />
@@ -3816,7 +3825,7 @@ export default function LandingPage({
         </div>
 
         {/* INTERACTIVE ROADMAP & LICENSING GUIDE - REIMAGINED WITH FLOATING MEDALLIONS & EXECUTIVE DOSSIER */}
-        <section id="roadmap-section" className={`py-6 sm:py-10 md:py-14 lg:py-18 border-t relative overflow-hidden ${isDark ? "bg-[#0b0f19] border-slate-800/80" : "bg-gradient-to-b from-slate-50/70 via-white to-slate-50/50 border-slate-200/80"}`}>
+        <section id="roadmap-section" className={`scroll-mt-20 sm:scroll-mt-24 py-6 sm:py-10 md:py-14 lg:py-18 border-t relative overflow-hidden ${isDark ? "bg-[#0b0f19] border-slate-800/80" : "bg-gradient-to-b from-slate-50/70 via-white to-slate-50/50 border-slate-200/80"}`}>
           {/* Subtle Ambient Background Gradients */}
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-blue-500/5 dark:bg-blue-400/10 rounded-full blur-[120px] pointer-events-none" />
           <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-emerald-500/5 dark:bg-emerald-400/10 rounded-full blur-[140px] pointer-events-none" />
@@ -4205,7 +4214,7 @@ export default function LandingPage({
         {/* ICONIC SECTION: MAL PELAYANAN PUBLIK (MPP) SIMPURUSIANG - SOVEREIGN GLASS PAVILION */}
         <section
           id="mpp-showcase-section"
-          className={`py-10 sm:py-14 md:py-16 lg:py-20 pb-16 sm:pb-20 md:pb-24 border-y relative overflow-hidden z-10 ${
+          className={`scroll-mt-20 sm:scroll-mt-24 py-10 sm:py-14 md:py-16 lg:py-20 pb-16 sm:pb-20 md:pb-24 border-y relative overflow-hidden z-10 ${
             isDark
               ? "border-emerald-500/20 bg-[#090d16]"
               : "border-slate-200/80 bg-gradient-to-b from-slate-50/80 via-white to-emerald-50/30"
@@ -4531,7 +4540,7 @@ export default function LandingPage({
         {/* 5. SHOWCASE TEKNOLOGI AI & CALCULATOR */}
         <div
           id="ai-calculator-section"
-          className={`pt-6 pb-4 sm:pt-8 sm:pb-6 md:pt-12 md:pb-8 lg:pt-16 lg:pb-8 border-t relative ${isDark ? "border-slate-800" : "border-slate-200"}`}
+          className={`scroll-mt-20 sm:scroll-mt-24 pt-6 pb-4 sm:pt-8 sm:pb-6 md:pt-12 md:pb-8 lg:pt-16 lg:pb-8 border-t relative ${isDark ? "border-slate-800" : "border-slate-200"}`}
         >
           <div className="absolute inset-0 overflow-hidden pointer-events-none hidden dark:block">
             <div className="absolute top-[10%] left-[20%] w-[40vw] h-[40vw] rounded-full bg-indigo-500/5 blur-[120px] mix-blend-screen" />
@@ -5603,65 +5612,78 @@ export default function LandingPage({
                             </div>
                           </div>
 
-                          {/* Tombol AI & Analisis Lanjutan (Mobile Optimized) */}
-                          <div className="col-span-full mt-3 pt-4 border-t border-slate-500/10 flex flex-col gap-3">
+                          {/* Tombol AI & Analisis Lanjutan (Mobile Optimized & Symmetrical) */}
+                          <div className="col-span-full mt-4 pt-5 border-t border-slate-500/15 flex flex-col gap-4">
+                            {/* 1. Baris Dua CTA Utama (Primary Action Row) */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               <motion.button whileTap={{ scale: 0.97 }}
                                 whileHover={{ scale: 1.01 }}
                                 onClick={() => setIsRoiAiModalOpen(true)}
-                                className="w-full min-h-[48px] py-3.5 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm tracking-wider uppercase transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-emerald-600/20"
+                                className="w-full min-h-[50px] py-3.5 px-5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm tracking-wider uppercase transition-all flex items-center justify-center gap-2.5 cursor-pointer shadow-lg shadow-emerald-600/25 border border-emerald-400/30"
                               >
-                                <Bot className="w-4.5 h-4.5" />
-                                <span>{t("roiSimulator.askAi", "Tanya AI Strategis")} ✨</span>
+                                <Bot className="w-5 h-5 text-emerald-200 shrink-0" />
+                                <span>{t("roiSimulator.askAi", "Minta Analisis Kelayakan AI")} ✨</span>
                               </motion.button>
 
                               <motion.button whileTap={{ scale: 0.97 }}
                                 whileHover={{ scale: 1.01 }}
-                                onClick={() => setIsSpatialAiModalOpen(true)}
-                                className="w-full min-h-[48px] py-3.5 px-5 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-bold text-xs sm:text-sm tracking-wider uppercase transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-teal-600/20"
+                                onClick={() => {
+                                  handleRequestFullscreen();
+                                  navigate("/login?role=investor");
+                                }}
+                                className="w-full min-h-[50px] py-3.5 px-5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm tracking-wider uppercase transition-all flex items-center justify-center gap-2.5 cursor-pointer shadow-lg shadow-slate-900/30 border border-slate-700/80 group"
                               >
-                                <Compass className="w-4.5 h-4.5" />
-                                <span>{t('roiSimulator.analyzePotential', 'Analisis Spasial GIS')} 🗺️</span>
+                                <UserPlus className="w-5 h-5 text-amber-300 group-hover:scale-110 transition-transform shrink-0" />
+                                <span>{t("landing.loginInvestor", "Login Investor (Fitur Lengkap)")}</span>
                               </motion.button>
                             </div>
 
-                            {/* Regional Analysis Action Grid */}
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
-                              <button
-                                type="button"
-                                onClick={() => setIsIproPitchModalOpen(true)}
-                                className="min-h-[44px] py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-900/20 transition flex items-center justify-center gap-2 cursor-pointer border border-emerald-400/30"
-                              >
-                                <Building2 size={16} className="text-emerald-200 shrink-0" />
-                                <span className="truncate">Pitch Deck IPRO BKPM</span>
-                              </button>
+                            {/* 2. Referensi & Peralatan Analisis Lanjutan (Unified Glass Grid) */}
+                            <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-100/60 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800/80 flex flex-col gap-2.5">
+                              <div className="flex items-center justify-between px-1">
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 font-sans flex items-center gap-1.5">
+                                  <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+                                  Peralatan & Referensi Investasi Terpadu
+                                </span>
+                              </div>
 
-                              <button
-                                type="button"
-                                onClick={() => setIsRtrwModalOpen(true)}
-                                className="min-h-[44px] py-2.5 px-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer"
-                              >
-                                <ShieldCheck size={16} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
-                                <span className="truncate">{t('rtrwZoning.button', 'Zona Spasial RTRW')}</span>
-                              </button>
+                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
+                                <button
+                                  type="button"
+                                  onClick={() => setIsSpatialAiModalOpen(true)}
+                                  className="min-h-[44px] py-2.5 px-3 rounded-xl bg-white dark:bg-slate-800/90 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-700 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-emerald-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500/40 font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
+                                >
+                                  <Compass size={16} className="text-emerald-500 shrink-0" />
+                                  <span className="line-clamp-2 leading-tight text-center">{t('roiSimulator.analyzePotential', 'Analisis Spasial GIS')}</span>
+                                </button>
 
-                              <button
-                                type="button"
-                                onClick={() => setIsIncentiveModalOpen(true)}
-                                className="min-h-[44px] py-2.5 px-3 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-500/30 font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer"
-                              >
-                                <Award size={16} className="text-amber-600 dark:text-amber-400 shrink-0" />
-                                <span className="truncate">{t('incentiveCalculator.button', 'Insentif Perda')}</span>
-                              </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setIsIproPitchModalOpen(true)}
+                                  className="min-h-[44px] py-2.5 px-3 rounded-xl bg-white dark:bg-slate-800/90 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-700 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-emerald-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500/40 font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
+                                >
+                                  <Building2 size={16} className="text-teal-500 shrink-0" />
+                                  <span className="line-clamp-2 leading-tight text-center">Pitch Deck IPRO BKPM</span>
+                                </button>
 
-                              <button
-                                type="button"
-                                onClick={() => setIsProximityModalOpen(true)}
-                                className="min-h-[44px] py-2.5 px-3 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer"
-                              >
-                                <Navigation size={16} className="text-cyan-600 dark:text-cyan-400 shrink-0" />
-                                <span className="truncate">{t('proximityMatrix.button', 'Supply Chain')}</span>
-                              </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setIsRtrwModalOpen(true)}
+                                  className="min-h-[44px] py-2.5 px-3 rounded-xl bg-white dark:bg-slate-800/90 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-700 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-emerald-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500/40 font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
+                                >
+                                  <ShieldCheck size={16} className="text-indigo-500 shrink-0" />
+                                  <span className="line-clamp-2 leading-tight text-center">{t('rtrwZoning.button', 'Zona Spasial RTRW')}</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => setIsIncentiveModalOpen(true)}
+                                  className="min-h-[44px] py-2.5 px-3 rounded-xl bg-white dark:bg-slate-800/90 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-700 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-emerald-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500/40 font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
+                                >
+                                  <Award size={16} className="text-amber-500 shrink-0" />
+                                  <span className="line-clamp-2 leading-tight text-center">{t('incentiveCalculator.button', 'Insentif Fiskal Perda')}</span>
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -5671,26 +5693,6 @@ export default function LandingPage({
                 </AnimatePresence>
               </motion.div>
             </div>
-          </div>
-        </div>
-
-
-        
-                        {/* CTA LOGIN INVESTOR POST ROI SIMULATOR */}
-        <div className="container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mb-16">
-          <div className="flex justify-center w-full">
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => {
-                handleRequestFullscreen();
-                navigate("/login?role=investor");
-              }}
-              className="px-8 py-4 min-h-[44px] rounded-2xl font-bold uppercase tracking-wider border backdrop-blur-md transition-all duration-500 ease-out flex items-center justify-center gap-2.5 group bg-emerald-600 hover:bg-emerald-700 text-white shadow-[0_0_15px_rgba(16,185,129,0.35)] hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] hover:-translate-y-0.5 border-emerald-400/40"
-            >
-              <UserPlus size={19} className="transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12 text-amber-300" />
-              <span>{t("landing.loginInvestor", "Login Investor")}</span>
-            </motion.button>
           </div>
         </div>
 
@@ -5932,7 +5934,7 @@ export default function LandingPage({
         </section>
 
         {/* Widget Prakiraan Cuaca Wilayah Luwu (Tepat Diatas Footer) */}
-        <section id="weather-section" className={`relative py-8 sm:py-10 border-t ${isDark ? "bg-[#040812] border-slate-800/80" : "bg-slate-50/80 border-slate-200/80"}`}>
+        <section id="weather-section" className={`scroll-mt-20 sm:scroll-mt-24 relative py-8 sm:py-10 border-t ${isDark ? "bg-[#040812] border-slate-800/80" : "bg-slate-50/80 border-slate-200/80"}`}>
           <div className="container mx-auto px-3 sm:px-6 max-w-4xl flex flex-col items-center justify-center">
             <div className="w-full max-w-2xl">
               <WeatherWidget />
@@ -5941,7 +5943,7 @@ export default function LandingPage({
         </section>
 
         {/* BURSA KOMODITAS - LIVE MARKET TICKER SECTION (Elegant Bottom Page Section) */}
-        <section id="bursa-komoditas-section" className={`relative py-6 sm:py-8 border-t ${isDark ? "bg-[#03060d] border-slate-800/80" : "bg-slate-100/60 border-slate-200/80"}`}>
+        <section id="bursa-komoditas-section" className={`scroll-mt-20 sm:scroll-mt-24 relative py-6 sm:py-8 border-t ${isDark ? "bg-[#03060d] border-slate-800/80" : "bg-slate-100/60 border-slate-200/80"}`}>
           <div className="container mx-auto px-3 sm:px-6 max-w-7xl">
             <div className="flex flex-col items-center mb-3">
               <div className="flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-[#00FF99] border border-emerald-500/20 text-[10px] font-bold tracking-wider uppercase font-sans">
