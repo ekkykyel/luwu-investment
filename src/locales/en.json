@@ -3237,5 +3237,58 @@
     "kiosk": "Digital Self-Service Kiosk",
     "hours": "Operating Hours: 08:00 - 16:00 WITA",
     "workdays": "Open Every Working Day"
+  },
+  "invest": {
+    "hero_title": "Digital Investment Gateway",
+    "hero_title_p1": "Digital Investment",
+    "hero_title_p2": "Gateway",
+    "hero_subtitle": "Smart Investment Hub of Luwu Regency",
+    "stat_total": "Total Active Investment",
+    "stat_projects": "FDI / DDI Projects",
+    "stat_workforce": "Workforce Absorption",
+    "stat_investors": "Investor Nationalities",
+    "card_gis": "INVESTMENT POTENTIAL MAP (GIS)",
+    "card_sim": "INVESTMENT FEASIBILITY SIMULATOR",
+    "card_vip": "VIP CONCIERGE & FAST TRACK",
+    "card_incentive": "INCENTIVES & INVESTMENT FACILITIES"
+  },
+  "calc": {
+    "select_sector": "Select Investment Sector",
+    "planned_amount": "Planned Investment Value (IDR)",
+    "est_workforce": "Estimated Workforce (Persons)",
+    "target_district": "Target District Location",
+    "calculate_btn": "Calculate Feasibility & Incentives ➔",
+    "reset_btn": "Reset Parameters"
+  },
+  "dashboard": {
+    "realization_title": "Real-time Investment Realization",
+    "target_fdi_ddi": "FDI vs DDI Target",
+    "top_sectors": "Top Regional Sectors",
+    "yoy_growth": "YoY Growth (%)"
+  },
+  "sector": {
+    "agri": "Agriculture & Plantation",
+    "mining": "Mining & Energy",
+    "fishery": "Fisheries & Marine",
+    "tourism": "Tourism & Manufacturing"
+  },
+  "gis": {
+    "layer_control": "Spatial Map Layers",
+    "rtrw_thematic": "Spatial Planning (RTRW) Map",
+    "industrial_zone": "Industrial & Plantation Zones",
+    "check_coords": "Check Coordinates / Land Parcel",
+    "greenfield": "Available Greenfield Land",
+    "ready_land": "Construction-Ready Land"
+  },
+  "form": {
+    "incentive_title": "Incentive Application Form",
+    "tax_allowance": "Land Tax Reduction / Tax Allowance",
+    "submit_vip": "Submit VIP Application",
+    "download_guide": "Download Investor Guidebook"
+  },
+  "testimonial": {
+    "speech_head": "Opening Remarks from Head of DPMPTSP",
+    "investor_quotes": "Investor Testimonials",
+    "join_community": "Join Luwu Investor Community"
   }
 }

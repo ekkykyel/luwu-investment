@@ -3237,5 +3237,58 @@
     "kiosk": "数字自助排队终端",
     "hours": "营业时间：08:00 - 16:00 WITA",
     "workdays": "每个工作日开放"
+  },
+  "invest": {
+    "hero_title": "数字投资门户",
+    "hero_title_p1": "数字投资",
+    "hero_title_p2": "门户",
+    "hero_subtitle": "芦梧县智慧投资中心",
+    "stat_total": "活跃投资总额",
+    "stat_projects": "外资 / 内资项目",
+    "stat_workforce": "吸纳就业人数",
+    "stat_investors": "国别投资者",
+    "card_gis": "投资潜力地图 (GIS)",
+    "card_sim": "投资可行性模拟器",
+    "card_vip": "VIP绿色通道与专属服务",
+    "card_incentive": "投资优惠与便利政策"
+  },
+  "calc": {
+    "select_sector": "选择投资领域",
+    "planned_amount": "拟投资金额 (印尼盾)",
+    "est_workforce": "预计用工人数 (人)",
+    "target_district": "目标乡镇位置",
+    "calculate_btn": "计算可行性与优惠 ➔",
+    "reset_btn": "重置参数"
+  },
+  "dashboard": {
+    "realization_title": "实时投资完成度",
+    "target_fdi_ddi": "外资与内资目标对比",
+    "top_sectors": "区域优势产业",
+    "yoy_growth": "同比增长率 (%)"
+  },
+  "sector": {
+    "agri": "农业与种植业",
+    "mining": "矿业与能源",
+    "fishery": "渔业与海洋产业",
+    "tourism": "旅游与制造业"
+  },
+  "gis": {
+    "layer_control": "空间地图图层",
+    "rtrw_thematic": "空间规划 (RTRW) 地图",
+    "industrial_zone": "工业与种植园区",
+    "check_coords": "查询坐标 / 土地地块",
+    "greenfield": "可开发绿地土地",
+    "ready_land": "熟地 / 可即时施工土地"
+  },
+  "form": {
+    "incentive_title": "投资优惠申请表",
+    "tax_allowance": "土地税减免 / 税收优惠",
+    "submit_vip": "提交VIP申请",
+    "download_guide": "下载投资者指南"
+  },
+  "testimonial": {
+    "speech_head": "DPMPTSP 局长致辞",
+    "investor_quotes": "投资者感言与反馈",
+    "join_community": "加入芦梧投资者社区"
   }
 }

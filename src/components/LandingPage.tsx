@@ -2448,12 +2448,12 @@ export default function LandingPage({
 
                 {/* "Pintu Gerbang" - Larger size, dominant font weight */}
                 <span className="block text-[38px] xs:text-[46px] sm:text-7xl md:text-8xl lg:text-[88px] font-black text-slate-900 dark:text-white leading-[1.04] tracking-tight mb-1 sm:mb-2 font-['Plus_Jakarta_Sans',sans-serif]">
-                  Pintu Gerbang
+                  {t('invest.hero_title_p1', 'Pintu Gerbang')}
                 </span>
 
                 {/* "Investasi Digital" - Rich gradient, glowing drop shadow, slightly smaller proportion */}
                 <span className="block text-[30px] xs:text-[38px] sm:text-5xl md:text-6xl lg:text-7xl font-extrabold bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 dark:from-emerald-400 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent leading-[1.1] tracking-tight drop-shadow-[0_4px_25px_rgba(16,185,129,0.3)] font-['Plus_Jakarta_Sans',sans-serif]">
-                  Investasi Digital
+                  {t('invest.hero_title_p2', 'Investasi Digital')}
                 </span>
               </motion.h1>
               <motion.p

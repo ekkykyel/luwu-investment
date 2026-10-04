@@ -3233,5 +3233,58 @@
     "kiosk": "Kios Mandiri Antrean Digital",
     "hours": "Jam Operasional: 08:00 - 16:00 WITA",
     "workdays": "Buka Setiap Hari Kerja"
+  },
+  "invest": {
+    "hero_title": "Pintu Gerbang Investasi Digital",
+    "hero_title_p1": "Pintu Gerbang",
+    "hero_title_p2": "Investasi Digital",
+    "hero_subtitle": "Smart Investment Hub Kabupaten Luwu",
+    "stat_total": "Total Investasi Active",
+    "stat_projects": "Proyek PMA / PMDN",
+    "stat_workforce": "Penyerapan Tenaga Kerja",
+    "stat_investors": "Kewarganegaraan Investor",
+    "card_gis": "PETA POTENSI INVESTASI (GIS)",
+    "card_sim": "SIMULASI KELAYAKAN INVESTASI",
+    "card_vip": "VIP CONCIERGE & FAST TRACK",
+    "card_incentive": "INSENTIF & KEMUDAHAN INVESTASI"
+  },
+  "calc": {
+    "select_sector": "Pilih Sektor Investasi",
+    "planned_amount": "Rencana Nilai Investasi (Rp)",
+    "est_workforce": "Perkiraan Tenaga Kerja (Orang)",
+    "target_district": "Lokasi Kecamatan Target",
+    "calculate_btn": "Hitung Kelayakan & Incentive ➔",
+    "reset_btn": "Reset Parameter"
+  },
+  "dashboard": {
+    "realization_title": "Realisasi Investasi Real-time",
+    "target_fdi_ddi": "Target PMA vs PMDN",
+    "top_sectors": "Sektor Unggulan Daerah",
+    "yoy_growth": "Pertumbuhan YoY (%)"
+  },
+  "sector": {
+    "agri": "Pertanian & Perkebunan",
+    "mining": "Pertambangan & Energi",
+    "fishery": "Perikanan & Kelautan",
+    "tourism": "Pariwisata & Industri"
+  },
+  "gis": {
+    "layer_control": "Layer Peta Spatial",
+    "rtrw_thematic": "Peta Tematik RTRW",
+    "industrial_zone": "Kawasan Industri & Perkebunan",
+    "check_coords": "Cek Titik Koordinat / Parcel",
+    "greenfield": "Lahan Tersedia (Greenfield)",
+    "ready_land": "Lahan Siap Bangun"
+  },
+  "form": {
+    "incentive_title": "Form Pengajuan Insentif",
+    "tax_allowance": "Pengurangan PBB / Tax Allowance",
+    "submit_vip": "Kirim Pengajuan VIP",
+    "download_guide": "Unduh Panduan Investor"
+  },
+  "testimonial": {
+    "speech_head": "Kata Sambutan Kepala DPMPTSP",
+    "investor_quotes": "Kesan & Pesan Investor",
+    "join_community": "Gabung Komunitas Investor Luwu"
   }
 }
