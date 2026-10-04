@@ -7,7 +7,8 @@ import {
   ChevronRight, 
   Armchair, 
   Baby, 
-  ExternalLink 
+  ExternalLink,
+  ShieldCheck 
 } from 'lucide-react';
 
 export interface PriorityShowcaseCarouselProps {
@@ -159,7 +160,7 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
       <div className="flex items-center justify-between px-1">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-700/60">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>Fasilitas Prioritas & Layanan Inklusif</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight font-sans">
