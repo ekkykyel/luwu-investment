@@ -3148,6 +3148,8 @@
   },
   "skm": {
     "ikm_score": "Nilai IKM: 88.50 (Sangat Baik)",
+    "score_label": "Nilai IKM",
+    "very_good": "Sangat Baik",
     "badge": "SURVEI KEPUASAN",
     "title": "Indeks Kepuasan Masyarakat (IKM)",
     "total_respondents": "Total Responden",
@@ -3162,8 +3164,15 @@
     "tab_craft": "Kerajinan",
     "tab_agri": "Olahan Agriculture",
     "producer": "Produsen",
+    "producer_label": "Produsen",
     "price": "Harga",
-    "direct_order": "Pesan Direct / Hubungi"
+    "price_label": "Harga",
+    "view_detail": "Lihat Detail Produk",
+    "direct_order": "Pesan Direct / Hubungi",
+    "cat_all": "Semua Produk",
+    "cat_culinary": "Kuliner",
+    "cat_craft": "Kerajinan",
+    "cat_agri": "Olahan Agriculture"
   },
   "queue": {
     "badge": "ANTREAN & MONITORING",
@@ -3172,7 +3181,8 @@
     "being_served": "Sedang Dilayani",
     "remaining_quota": "Sisa Kuota",
     "active_counters": "Loket Operasional",
-    "take_online_btn": "Ambil Antrean Online"
+    "take_online_btn": "Ambil Antrean Online",
+    "take_btn": "Ambil Antrean Online"
   },
   "concierge": {
     "title": "Fasilitas & Layanan VIP Investor"
@@ -3187,15 +3197,23 @@
   "map": {
     "badge": "LOKASI & PETA",
     "title": "Peta Geospasial & Rute MPP",
+    "building_address": "Gedung MPP Simpurusiang Belopa",
     "get_directions": "Petunjuk Arah",
-    "open_gmaps": "Buka di Google Maps"
+    "directions": "Petunjuk Arah",
+    "open_gmaps": "Buka di Google Maps",
+    "gmaps_btn": "Buka di Google Maps"
   },
   "news": {
     "badge": "BERITA & INFORMASI",
     "read_more": "Baca Selengkapnya"
   },
   "faq": {
-    "title": "PERTANYAAN SERING DIAJUKAN (FAQ)"
+    "title": "PERTANYAAN SERING DIAJUKAN (FAQ)",
+    "q1": "Bagaimana cara mendaftar antrean online?",
+    "q2": "Apa saja dokumen yang diperlukan untuk NIB OSS?",
+    "q3": "Berapa lama proses pembuatan paspor?",
+    "q4": "Apakah ada biaya retribusi untuk layanan daerah?",
+    "view_all": "Lihat Semua FAQ"
   },
   "agency": {
     "dpmptsp": "Dinas Penanaman Modal dan PTSP",
@@ -3213,6 +3231,7 @@
     "disability": "Akses Ramah Disabilitas & Kursi Roda",
     "kids_corner": "Pojok Baca & Area Bermain Anak",
     "kiosk": "Kios Mandiri Antrean Digital",
-    "hours": "Jam Operasional: 08:00 - 16:00 WITA"
+    "hours": "Jam Operasional: 08:00 - 16:00 WITA",
+    "workdays": "Buka Setiap Hari Kerja"
   }
 }

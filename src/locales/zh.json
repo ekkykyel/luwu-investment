@@ -3152,6 +3152,8 @@
   },
   "skm": {
     "ikm_score": "公众满意度指数：88.50（优秀）",
+    "score_label": "满意度得分",
+    "very_good": "非常满意",
     "badge": "满意度调查",
     "title": "公众满意度指数 (IKM)",
     "total_respondents": "受访者总数",
@@ -3166,8 +3168,15 @@
     "tab_craft": "传统工艺",
     "tab_agri": "农产品深加工",
     "producer": "生产者 / 厂家",
+    "producer_label": "生产商",
     "price": "价格",
-    "direct_order": "直接订购 / 联系"
+    "price_label": "价格",
+    "view_detail": "查看产品详情",
+    "direct_order": "直接订购 / 联系",
+    "cat_all": "所有产品",
+    "cat_culinary": "特色美食",
+    "cat_craft": "传统工艺",
+    "cat_agri": "农产品深加工"
   },
   "queue": {
     "badge": "排队与实时监控",
@@ -3176,7 +3185,8 @@
     "being_served": "正在窗口办理",
     "remaining_quota": "剩余可预约名额",
     "active_counters": "开放服务窗口",
-    "take_online_btn": "在线领取排队号"
+    "take_online_btn": "在线领取排队号",
+    "take_btn": "在线领取排队号"
   },
   "concierge": {
     "title": "贵宾投资者设施与服务"
@@ -3191,15 +3201,23 @@
   "map": {
     "badge": "位置与地图",
     "title": "地理空间地图与导航路线",
+    "building_address": "芦梧县贝洛帕 Simpurusiang 公共服务大楼",
     "get_directions": "获取路线指引",
-    "open_gmaps": "在 Google 地图查看"
+    "directions": "获取路线指引",
+    "open_gmaps": "在 Google 地图查看",
+    "gmaps_btn": "在 Google 地图查看"
   },
   "news": {
     "badge": "新闻与资讯",
     "read_more": "阅读全文"
   },
   "faq": {
-    "title": "常见问题解答 (FAQ)"
+    "title": "常见问题解答 (FAQ)",
+    "q1": "如何在线预约排队？",
+    "q2": "办理 NIB OSS 需要哪些文件？",
+    "q3": "护照办理需要多长时间？",
+    "q4": "地方服务是否收取规费？",
+    "view_all": "查看所有常见问题"
   },
   "agency": {
     "dpmptsp": "投资与综合审批服务局",
@@ -3217,6 +3235,7 @@
     "disability": "无障碍与轮椅通道",
     "kids_corner": "图书角与儿童游乐区",
     "kiosk": "数字自助排队终端",
-    "hours": "营业时间：08:00 - 16:00 WITA"
+    "hours": "营业时间：08:00 - 16:00 WITA",
+    "workdays": "每个工作日开放"
   }
 }

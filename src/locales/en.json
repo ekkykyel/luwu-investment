@@ -3152,6 +3152,8 @@
   },
   "skm": {
     "ikm_score": "Community Satisfaction Index: 88.50 (Very Good)",
+    "score_label": "CSI Score",
+    "very_good": "Excellent",
     "badge": "SATISFACTION SURVEY",
     "title": "Community Satisfaction Index (CSI)",
     "total_respondents": "Total Respondents",
@@ -3166,17 +3168,25 @@
     "tab_craft": "Handicrafts",
     "tab_agri": "Processed Agricultural Products",
     "producer": "Producer / Maker",
+    "producer_label": "Producer",
     "price": "Price",
-    "direct_order": "Direct Order / Contact"
+    "price_label": "Price",
+    "view_detail": "View Product Details",
+    "direct_order": "Direct Order / Contact",
+    "cat_all": "All Products",
+    "cat_culinary": "Culinary",
+    "cat_craft": "Handicrafts",
+    "cat_agri": "Processed Agri-Products"
   },
   "queue": {
     "badge": "QUEUE & MONITORING",
     "title": "Real-time MPP Queue Monitor",
     "total_today": "Total Queues Today",
-    "being_served": "Currently Being Served",
+    "being_served": "Currently Served",
     "remaining_quota": "Remaining Quota",
-    "active_counters": "Operational Service Counters",
-    "take_online_btn": "Take Online Queue"
+    "active_counters": "Active Counters",
+    "take_online_btn": "Take Online Queue",
+    "take_btn": "Take Online Queue"
   },
   "concierge": {
     "title": "VIP Investor Facilities & Services"
@@ -3185,21 +3195,29 @@
     "badge": "CONSULTATION & HELPDESK",
     "title": "Virtual Helpdesk & Live Consultation",
     "online_consult": "Online Consultation",
-    "ai_faq": "AI Q&A Assistant",
+    "ai_faq": "AI Q&A",
     "contact_officer": "Contact Officer"
   },
   "map": {
     "badge": "LOCATION & MAP",
     "title": "Geospatial Map & MPP Directions",
+    "building_address": "Simpurusiang MPP Building Belopa",
     "get_directions": "Get Directions",
-    "open_gmaps": "Open in Google Maps"
+    "directions": "Get Directions",
+    "open_gmaps": "Open in Google Maps",
+    "gmaps_btn": "Open in Google Maps"
   },
   "news": {
     "badge": "NEWS & INFORMATION",
     "read_more": "Read More"
   },
   "faq": {
-    "title": "FREQUENTLY ASKED QUESTIONS (FAQ)"
+    "title": "FREQUENTLY ASKED QUESTIONS (FAQ)",
+    "q1": "How do I register for an online queue?",
+    "q2": "What documents are required for NIB OSS?",
+    "q3": "How long does passport processing take?",
+    "q4": "Are there retribution fees for regional services?",
+    "view_all": "View All FAQs"
   },
   "agency": {
     "dpmptsp": "Investment & One-Stop Integrated Services Agency",
@@ -3215,8 +3233,9 @@
   "facility": {
     "lactation": "Lactation & Nursing Room",
     "disability": "Wheelchair & Disability Access",
-    "kids_corner": "Reading Corner & Children's Play Area",
-    "kiosk": "Digital Self-Service Queue Kiosk",
-    "hours": "Operating Hours: 08:00 - 16:00 WITA"
+    "kids_corner": "Reading Corner & Play Area",
+    "kiosk": "Digital Self-Service Kiosk",
+    "hours": "Operating Hours: 08:00 - 16:00 WITA",
+    "workdays": "Open Every Working Day"
   }
 }
