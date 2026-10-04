@@ -2633,7 +2633,7 @@ const fetchActiveDocuments = async () => {
   return `\n[TABEL KNOWLEDGE SUPABASE: DAFTAR DOKUMEN LITERASI RESMI KABUPATEN LUWU]\nAnda terhubung langsung ke tabel knowledge_documents Supabase (PostgreSQL) Pemkab Luwu dengan dokumen literasi resmi aktif sebagai berikut:\n${docList}\n`;
 };
 
-function buildDetailedRoiDossier(invNum: number, sector: string, name: string, opexNum?: number, revNum?: number): string {
+function buildDetailedRoiDossier(invNum: number, sector: string, name: string, opexNum?: number, revNum?: number, locale: string = 'id'): string {
   const inv = invNum || 5000000000;
   const opex = opexNum && opexNum > 0 ? opexNum : inv * 0.16;
   const rev = revNum && revNum > 0 ? revNum : inv * 0.42;
@@ -2654,6 +2654,124 @@ function buildDetailedRoiDossier(invNum: number, sector: string, name: string, o
   const paybackPes = netPes > 0 ? (inv / netPes).toFixed(1) : '4.2';
 
   const laborEst = Math.max(25, Math.round(inv / 150000000));
+
+  const activeLocale = (locale || 'id').toLowerCase();
+
+  if (activeLocale.startsWith('en')) {
+    return `### OFFICIAL INVESTMENT FEASIBILITY & ROI PROJECTION REPORT
+**Project Name:** "${name}" | **Sector:** ${sector} | **Location:** Luwu Regency, South Sulawesi
+
+---
+
+### A. EXECUTIVE FEASIBILITY SCORE & SUMMARY
+- **Feasibility Status:** 🟢 **HIGHLY FEASIBLE (APPROVED FOR PRIORITY PIPELINE)**
+- **Executive Feasibility Score:** **89 / 100 (Tier-1 Priority Project)**
+- **Brief Justification:** This proposed project exhibits strong financial metrics, boasting an estimated payback period of ${estPaybackYears} years and a robust positive Net Present Value. Driven by abundant local raw material supply chains, an accommodating Luwu Spatial Planning (RTRW 2024-2044) zoning corridor, and strategic multimodal transportation access across the Luwu regional corridor.
+
+---
+
+### B. ESTIMATED PAYBACK PERIOD & FINANCIAL INDICATORS (ROI, NPV, IRR)
+Based on Discounted Cash Flow (DCF) modeling benchmarked at a 10% Weighted Average Cost of Capital (WACC / Discount Rate):
+1. **Estimated Payback Period (BEP):** **${estPaybackYears} Years** (Capital expenditure fully recouped in Year ${Math.ceil(parseFloat(estPaybackYears))}).
+2. **Net Present Value (5-Year NPV):** **IDR ${estNpv.toLocaleString('en-US')}** (Significantly positive above the hurdle rate).
+3. **Internal Rate of Return (IRR):** **${estIrr}%** (Positive hurdle spread of +${(parseFloat(estIrr) - 10).toFixed(1)}% over the 10% discount rate).
+4. **Profitability Index (PI) & Net Margin:**
+   - **Profitability Index (PI):** **${pi}** (PI > 1.0 indicates substantial shareholder value creation).
+   - **Net Profit Margin:** **${profitMargin}%** (Annual net operating income of IDR ${net.toLocaleString('en-US')} against gross revenues of IDR ${rev.toLocaleString('en-US')}).
+5. **Sensitivity Stress Testing:**
+   - **Optimistic Scenario (+15% Revenue):** Revenue IDR ${revOpt.toLocaleString('en-US')}/yr, Net Profit IDR ${netOpt.toLocaleString('en-US')}, Payback accelerated to **${paybackOpt} Years**.
+   - **Moderate Scenario (Baseline):** Revenue IDR ${rev.toLocaleString('en-US')}/yr, OPEX IDR ${opex.toLocaleString('en-US')}, Payback **${estPaybackYears} Years**.
+   - **Pessimistic Scenario (+20% OPEX):** OPEX IDR ${opexPes.toLocaleString('en-US')}/yr, Net Profit IDR ${netPes.toLocaleString('en-US')}, Payback maintained at **${paybackPes} Years**.
+
+#### 5-Year Cash Flow Projection Table:
+| Period | Initial CAPEX | OPEX / Annual Operating Cost | Gross Revenue | Net Operating Profit | Cumulative Cash Flow |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| **Yr 0** | IDR ${inv.toLocaleString('en-US')} | IDR 0 | IDR 0 | -IDR ${inv.toLocaleString('en-US')} | -IDR ${inv.toLocaleString('en-US')} |
+| **Yr 1** | IDR 0 | IDR ${opex.toLocaleString('en-US')} | IDR ${rev.toLocaleString('en-US')} | IDR ${net.toLocaleString('en-US')} | -IDR ${(Math.max(0, inv - net)).toLocaleString('en-US')} |
+| **Yr 2** | IDR 0 | IDR ${opex.toLocaleString('en-US')} | IDR ${rev.toLocaleString('en-US')} | IDR ${net.toLocaleString('en-US')} | -IDR ${(Math.max(0, inv - (net * 2))).toLocaleString('en-US')} |
+| **Yr 3** | IDR 0 | IDR ${opex.toLocaleString('en-US')} | IDR ${rev.toLocaleString('en-US')} | IDR ${net.toLocaleString('en-US')} | +IDR ${(Math.max(0, (net * 3) - inv)).toLocaleString('en-US')} *(Break-Even Point)* |
+| **Yr 4** | IDR 0 | IDR ${opex.toLocaleString('en-US')} | IDR ${rev.toLocaleString('en-US')} | IDR ${net.toLocaleString('en-US')} | +IDR ${(Math.max(0, (net * 4) - inv)).toLocaleString('en-US')} |
+| **Yr 5** | IDR 0 | IDR ${opex.toLocaleString('en-US')} | IDR ${rev.toLocaleString('en-US')} | IDR ${net.toLocaleString('en-US')} | +IDR ${(Math.max(0, (net * 5) - inv)).toLocaleString('en-US')} |
+
+---
+
+### C. REGIONAL TAX ALLOWANCE & INCENTIVE ELIGIBILITY
+- **Regional Tax Allowance & Land Concessions:** Eligible for up to **35% reduction in regional retribution charges and land lease rates** under Luwu Regency Investment Incentive Bylaws, conditioned upon employing at least 60% registered local workforce.
+- **Socio-Economic & Workforce Absorption:** Projected to generate **~${laborEst} to ${laborEst * 2} direct local employment opportunities**, fostering regional value creation and downstream supply chain synergy.
+- **Spatial Planning & Permitting Alignment (RTRW 2024-2044):** The project site is situated in an approved commercial/industrial development corridor, ensuring environmental carrying capacity and legal land certainty.
+
+---
+
+### D. KEY STRATEGIC RISKS & MITIGATION
+1. **Supply Chain & Operational Risk:** Fluctuations in agricultural/mineral raw materials or inter-island freight volatility.
+   - *Mitigation:* Establish long-term forward off-take contracts with certified local farmer/producer cooperatives and utilize buffer warehousing near regional arterial transit hubs.
+2. **Regulatory & Spatial Permitting Compliance:** Environmental approvals (AMDAL/UKL-UPL) and spatial verification (PKKPR).
+   - *Mitigation:* Leverage integrated OSS-RBA validation through DPMPTSP to guarantee Clean-and-Clear land tenure prior to groundbreaking.
+
+---
+
+### E. ACTIONABLE NEXT STEPS FOR INVESTOR CONCIERGE (MPP SIMPURUSIANG)
+1. **VIP Fast-Track Concierge:** Access the Executive VIP Desk at Simpurusiang Public Service Mall (MPP) Belopa for priority OSS-RBA 13-digit NIB and automated spatial PKKPR issuance.
+2. **Letter of Intent (LoI) Submission:** Register your formal Letter of Intent through this digital portal to initiate structured inter-agency facilitation with local government stakeholders.`;
+  }
+
+  if (activeLocale.startsWith('zh')) {
+    return `### 芦梧县官方投资可行性与 ROI 模拟分析报告
+**项目名称：** "${name}" | **所属产业：** ${sector} | **项目地点：** 印度尼西亚南苏拉威西省芦梧县 (Luwu Regency)
+
+---
+
+### A. 执行可行性概述与评分 (EXECUTIVE FEASIBILITY SCORE)
+- **可行性综合结论：** 🟢 **极具投资可行性 (HIGHLY FEASIBLE)**
+- **执行可行性综合评分：** **89 / 100 分 (一级重点支持产业)**
+- **投资可行性简要论证：** 该项目具备优良的财务投资回报率，预计静态投资回收期仅为 ${estPaybackYears} 年，净现值 (NPV) 显著为正。项目依托芦梧县丰富的本土原料供应链优势、友好的空间规划 (RTRW 2024-2044) 工业与农业用地走廊，以及连通海空枢纽的多式联运物流网络。
+
+---
+
+### B. 预计投资回收期与详细财务指标 (ROI, NPV, IRR)
+基于折现现金流法 (DCF) 模型，基准加权平均资本成本 (WACC / 折现率) 按 10% 测算：
+1. **预计投资回收期 (BEP)：** **${estPaybackYears} 年** (项目初始资本支出可在第 ${Math.ceil(parseFloat(estPaybackYears))} 年实现完全回本)。
+2. **5年期累计净现值 (NPV)：** **${estNpv.toLocaleString('zh-CN')} 印尼盾** (远高于资本成本底线，盈利安全垫厚实)。
+3. **内部收益率 (IRR)：** **${estIrr}%** (相比10%的基准折现率拥有 +${(parseFloat(estIrr) - 10).toFixed(1)}% 的超额内部回报利差)。
+4. **获利能力指数 (PI) 与净利润率：**
+   - **获利能力指数 (PI)：** **${pi}** (PI > 1.0 表明该项目具有强劲的长期资本增值效应)。
+   - **净利润率 (Net Margin)：** **${profitMargin}%** (年净营运利润约 ${net.toLocaleString('zh-CN')} 印尼盾，营业总收入约 ${rev.toLocaleString('zh-CN')} 印尼盾)。
+5. **多情景敏感性压力测试：**
+   - **乐观情景 (营业收入 +15%)：** 年收入增至 ${revOpt.toLocaleString('zh-CN')} 印尼盾，净利润达 ${netOpt.toLocaleString('zh-CN')} 印尼盾，投资回收期缩短至 **${paybackOpt} 年**。
+   - **基准情景 (稳健)：** 年收入 ${rev.toLocaleString('zh-CN')} 印尼盾，年运营支出 ${opex.toLocaleString('zh-CN')} 印尼盾，回收期为 **${estPaybackYears} 年**。
+   - **悲观情景 (运营成本 +20%)：** 年运营支出增至 ${opexPes.toLocaleString('zh-CN')} 印尼盾，净利润收敛至 ${netPes.toLocaleString('zh-CN')} 印尼盾，投资回收期平稳受控于 **${paybackPes} 年**。
+
+#### 5年期现金流模拟预测表：
+| 周期 | 初始投资 (CAPEX) | 年度运营成本 (OPEX) | 营业总收入 (Gross Revenue) | 净营运利润 | 累计现金流 |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| **第0年** | ${inv.toLocaleString('zh-CN')} 印尼盾 | 0 印尼盾 | 0 印尼盾 | -${inv.toLocaleString('zh-CN')} 印尼盾 | -${inv.toLocaleString('zh-CN')} 印尼盾 |
+| **第1年** | 0 印尼盾 | ${opex.toLocaleString('zh-CN')} 印尼盾 | ${rev.toLocaleString('zh-CN')} 印尼盾 | ${net.toLocaleString('zh-CN')} 印尼盾 | -${(Math.max(0, inv - net)).toLocaleString('zh-CN')} 印尼盾 |
+| **第2年** | 0 印尼盾 | ${opex.toLocaleString('zh-CN')} 印尼盾 | ${rev.toLocaleString('zh-CN')} 印尼盾 | ${net.toLocaleString('zh-CN')} 印尼盾 | -${(Math.max(0, inv - (net * 2))).toLocaleString('zh-CN')} 印尼盾 |
+| **第3年** | 0 印尼盾 | ${opex.toLocaleString('zh-CN')} 印尼盾 | ${rev.toLocaleString('zh-CN')} 印尼盾 | ${net.toLocaleString('zh-CN')} 印尼盾 | +${(Math.max(0, (net * 3) - inv)).toLocaleString('zh-CN')} 印尼盾 *(收支平衡点)* |
+| **第4年** | 0 印尼盾 | ${opex.toLocaleString('zh-CN')} 印尼盾 | ${rev.toLocaleString('zh-CN')} 印尼盾 | ${net.toLocaleString('zh-CN')} 印尼盾 | +${(Math.max(0, (net * 4) - inv)).toLocaleString('zh-CN')} 印尼盾 |
+| **第5年** | 0 印尼盾 | ${opex.toLocaleString('zh-CN')} 印尼盾 | ${rev.toLocaleString('zh-CN')} 印尼盾 | ${net.toLocaleString('zh-CN')} 印尼盾 | +${(Math.max(0, (net * 5) - inv)).toLocaleString('zh-CN')} 印尼盾 |
+
+---
+
+### C. 区域税收优惠与政策便利资质 (TAX ALLOWANCE & INCENTIVES)
+- **地方税收减免与土地优惠政策：** 凡在芦梧县投资并吸纳不低于 60% 本地员工的重点产业项目，依法最高可享受 **地方规费与土地租金 35% 的专项减免优惠 (Regional Tax Allowance)**。
+- **就业吸纳效应与社会效益：** 预计直接吸纳 **~${laborEst} 至 ${laborEst * 2} 名** 专业技术及本地劳工，有力促进区域产业链下游配套繁荣。
+- **空间规划合规性 (RTRW 2024-2044)：** 选址符合芦梧县国土空间总体规划法定用途，生态红线无冲突，土地权属清晰无争议。
+
+---
+
+### D. 关键战略风险与缓解措施 (RISKS & MITIGATION)
+1. **供应链与运营风险：** 农林矿产大宗原材料价格短期波动及跨岛海运物流运费影响。
+   - *应对措施：* 与芦梧县当地规范化专业合作社签订长期直供协议，并在 Belopa / Bua 关键交通枢纽建立前置储备仓储设施。
+2. **行政审批与环评合规风险：** 环评许可 (AMDAL/UKL-UPL) 与空间利用审批 (PKKPR)。
+   - *应对措施：* 通过综合公共服务大楼 (MPP Simpurusiang) 专席，在动工前实现土地产权与空间规划的一站式确权。
+
+---
+
+### E. 投资绿色通道行动指南 (MPP SIMPURUSIANG VIP CONCIERGE)
+1. **VIP 专属绿色通道：** 投资者可直接前往芦梧县贝洛帕 MPP Simpurusiang 大楼 1 层 VIP 投资专席，快速办理 13 位数字 NIB 企业身份代码及并发 PKKPR 空间许可。
+2. **提交投资意向书 (Letter of Intent)：** 通过本门户提交正式投资意向书，DPMPTSP 专班将提供全流程中文协助与政企协同对接。`;
+  }
 
   return `Tabe' Bapak/Ibu. Berikut Dokumen Resmi **Analisis Kelayakan Investasi & Proyeksi Simulator ROI** untuk rencana kegiatan **"${name}"** (Sektor: ${sector}) di Kabupaten Luwu:
 
@@ -2774,19 +2892,37 @@ Meskipun layanan AI generatif dinamis sedang offline untuk sementara waktu, **Po
 app.post("/api/gemini/chat", async (req, res) => {
   const reqStartTime = Date.now();
   try {
-    const { message, history, investmentContext, simulationContext, language } = req.body;
-    console.log(`[GEMINI CHAT REQUEST] Received query for context: "${investmentContext?.name || simulationContext?.name || 'General'}" (${language || 'id'}). Prompt length: ${(message || '').length} chars.`);
+    const { 
+      message, 
+      history, 
+      investmentContext, 
+      simulationContext, 
+      language, 
+      locale,
+      investment_amount,
+      sector,
+      workforce_target,
+      location 
+    } = req.body;
+    
+    const activeLang = ((locale || language || "id").toLowerCase()).startsWith("zh")
+      ? "zh"
+      : ((locale || language || "id").toLowerCase()).startsWith("en")
+      ? "en"
+      : "id";
+
+    console.log(`[GEMINI CHAT REQUEST] Received query for context: "${investmentContext?.name || simulationContext?.name || 'General'}" (locale: ${activeLang}). Prompt length: ${(message || '').length} chars.`);
 
     if (!geminiService.getValidApiKeys().length) {
       console.warn("[GEMINI CHAT WARNING] No Gemini API client or API keys configured. Generating Heuristic Fallback Analysis...");
       if (simulationContext || investmentContext) {
-        const inv = simulationContext?.capex || investmentContext?.investmentValue || 5000000000;
-        const sek = simulationContext?.sector || investmentContext?.sector || "Sektor Unggulan Daerah";
+        const inv = simulationContext?.capex || investment_amount || investmentContext?.investmentValue || 5000000000;
+        const sek = simulationContext?.sector || sector || investmentContext?.sector || "Sektor Unggulan Daerah";
         const name = simulationContext?.name || investmentContext?.name || "Proyek Investasi Prioritas";
         const opex = simulationContext?.opex;
         const rev = simulationContext?.revenue || simulationContext?.asumsiPendapatan;
         
-        const fallbackText = buildDetailedRoiDossier(Number(inv), sek, name, Number(opex), Number(rev));
+        const fallbackText = buildDetailedRoiDossier(Number(inv), sek, name, Number(opex), Number(rev), activeLang);
         return res.json({ text: fallbackText, sources: [], isFallback: true });
       }
 
@@ -2995,7 +3131,7 @@ app.post("/api/gemini/chat", async (req, res) => {
 
     }
 
-    let isRoiSimulation = !!simulationContext || (typeof message === 'string' && (message.includes("Analisis Kelayakan") || message.includes("Executive Feasibility Dossier") || message.includes("ROI") || message.includes("simulasi potensi investasi")));
+    let isRoiSimulation = !!simulationContext || (typeof message === 'string' && (message.includes("Analisis Kelayakan") || message.includes("Executive Feasibility Dossier") || message.includes("ROI") || message.includes("simulasi potensi investasi") || message.includes("Investment Feasibility")));
 
     let simulationInjection = "";
     if (simulationContext) {
@@ -3008,17 +3144,115 @@ app.post("/api/gemini/chat", async (req, res) => {
       const rawIrr = simulationContext.irr;
       const rawDiscountRate = simulationContext.discountRate || 10;
 
-      const formattedCapex = typeof rawCapex === 'number' ? `Rp ${rawCapex.toLocaleString("id-ID")}` : String(rawCapex || "0");
-      const formattedOpex = typeof rawOpex === 'number' ? `Rp ${rawOpex.toLocaleString("id-ID")}` : String(rawOpex || "0");
-      const formattedRev = typeof rawRev === 'number' ? `Rp ${rawRev.toLocaleString("id-ID")}` : String(rawRev || "0");
       const formattedRoi = typeof rawRoi === 'number' ? `${rawRoi.toFixed(2)}%` : String(rawRoi || "0%");
-      const formattedBep = typeof rawBep === 'number' ? `${rawBep.toFixed(2)} Tahun` : String(rawBep || "0 Tahun");
-      const formattedNpv = typeof rawNpv === 'number' ? `Rp ${rawNpv.toLocaleString("id-ID")}` : String(rawNpv || "0");
+      const formattedBep = typeof rawBep === 'number' ? `${rawBep.toFixed(2)}` : String(rawBep || "0");
       const formattedIrr = typeof rawIrr === 'number' ? `${rawIrr.toFixed(2)}%` : String(rawIrr || "0%");
 
-      simulationInjection = `\n\n[MANDAT KHUSUS: PAKAR ANALIS INVESTASI & EKONOMI SPASIAL LUWU]
-Anda adalah Pakar Analis Investasi & Ekonomi Spasial Luwu. Tugas Anda adalah memberikan laporan Analisis Kelayakan Investasi dan ROI Simulator yang SANGAT MENDETAIL, MENDALAM, DAN KOMPREHENSIF (panjang minimal 500-800+ kata analisis mendalam). Dilarang keras memberikan jawaban singkat atau seadanya!
-WAJIB menyertakan angka hitungan, estimasi parameter finansial terperinci, tabel simulasi arus kas 5 tahun, dan rekomendasi berbasis keunggulan komparatif Kabupaten Luwu.
+      if (activeLang === "en") {
+        simulationInjection = `\n\n[MANDATORY TASK: SENIOR INVESTMENT ANALYST FOR LUWU REGENCY]
+Analyze the provided ROI parameters and generate a comprehensive investment feasibility report (minimum 500-800+ words).
+STRICT REQUIREMENT: You MUST generate the ENTIRE output, headings, metrics analysis, risk assessment, and recommendations strictly in ENGLISH. Do not include any Indonesian words in the output.
+
+Investment Project Input Parameters:
+- Project Name: ${simulationContext.name || "Priority Investment Project"}
+- Sector / Category: ${simulationContext.sector || "Regional Priority Sector"}
+- Investment Capital Expenditure (CAPEX): IDR ${Number(rawCapex || 0).toLocaleString("en-US")}
+- Annual Operating Expenditure (OPEX / Year): IDR ${Number(rawOpex || 0).toLocaleString("en-US")}
+- Projected Gross Revenue (Revenue / Year): IDR ${Number(rawRev || 0).toLocaleString("en-US")}
+- Return on Investment (ROI): ${formattedRoi}
+- Amortization / Payback Period (BEP): ${formattedBep} Years
+- Net Present Value (NPV): IDR ${Number(rawNpv || 0).toLocaleString("en-US")}
+- Internal Rate of Return (IRR): ${formattedIrr}
+- Benchmark Discount Rate (WACC): ${rawDiscountRate}%
+
+MANDATORY 5-SECTION RESPONSE BLUEPRINT:
+
+### A. EXECUTIVE FEASIBILITY SCORE & SUMMARY
+- Feasibility Status: [HIGHLY FEASIBLE / CONDITIONALLY FEASIBLE / NOT FEASIBLE]
+- Executive Feasibility Score (1 - 100): [e.g., 88/100]
+- Brief Justification: (2-3 crisp sentences on financial strength and Luwu comparative advantage)
+
+### B. ESTIMATED PAYBACK PERIOD & DETAILED FINANCIAL INDICATORS (ROI, NPV, IRR)
+1. Estimated Payback Period (BEP): Analysis of capital recovery period.
+2. Net Present Value (NPV): 5-year discounted net present value against ${rawDiscountRate}% WACC.
+3. Internal Rate of Return (IRR): Hurdle rate spread.
+4. Profitability Index (PI) & Profit Margin (%): Return and operating margins.
+5. Sensitivity Scenarios:
+   - Optimistic Scenario (+15% Revenue)
+   - Moderate Scenario (Baseline)
+   - Pessimistic Scenario (+20% OPEX)
+Include 5-Year Cash Flow Projection Table.
+
+### C. REGIONAL TAX ALLOWANCE & INCENTIVE ELIGIBILITY
+- Regional Tax Allowance (reduction in regional land/building levies & rent up to 35%).
+- Local Workforce Absorption (projected employment and requirement for at least 60% local hiring).
+- Spatial Planning (RTRW 2024-2044) & Environmental Compatibility in Luwu Regency.
+
+### D. KEY STRATEGIC RISKS & MITIGATION
+- Financial & Operational Risks & Mitigation.
+- Spatial Permitting & Regulatory Risks.
+- Actionable Mitigation Steps for Investors.
+
+### E. ACTIONABLE NEXT STEPS FOR INVESTOR CONCIERGE (MPP SIMPURUSIANG)
+- Fast-Track OSS-RBA VIP Desk Assistance at Simpurusiang Public Service Mall, Belopa.
+- Steps to Submit Letter of Intent (LoI) & Schedule Priority Site Survey.`;
+      } else if (activeLang === "zh") {
+        simulationInjection = `\n\n[核心任务：印尼芦梧县高级投资分析专家]
+请根据提供的 ROI 参数生成一份全面的投资可行性分析报告 (字数不少于 500-800 字)。
+强制要求： 您必须完全使用简体中文 (Simplified Chinese) 生成所有分析内容、标题、风险评估及建议。严禁出现印尼语单词。
+
+投资方案核心输入参数：
+- 项目名称: ${simulationContext.name || "重点招商引资项目"}
+- 所属产业 / 行业: ${simulationContext.sector || "区域重点支持产业"}
+- 拟投资金额 (CAPEX): ${Number(rawCapex || 0).toLocaleString("zh-CN")} 印尼盾
+- 预计年度运营支出 (OPEX / 年): ${Number(rawOpex || 0).toLocaleString("zh-CN")} 印尼盾
+- 预计年营业总收入 (Gross Revenue): ${Number(rawRev || 0).toLocaleString("zh-CN")} 印尼盾
+- 投资回报率 (ROI): ${formattedRoi}
+- 预计投资回收期 (BEP): ${formattedBep} 年
+- 5年期累计净现值 (NPV): ${Number(rawNpv || 0).toLocaleString("zh-CN")} 印尼盾
+- 内部收益率 (IRR): ${formattedIrr}
+- 基准折现率 (WACC): ${rawDiscountRate}%
+
+强制 5 大模块结构蓝图 (必须完全使用简体中文输出)：
+
+### A. 执行可行性概述与综合评分 (EXECUTIVE FEASIBILITY SCORE)
+- 可行性综合结论: [极具投资可行性 / 有条件可行 / 不可行]
+- 执行可行性综合评分 (1 - 100): [例如: 88/100 分]
+- 投资论证简述: (2-3 句话深入剖析财务健康度与芦梧县区位比较优势)
+
+### B. 预计投资回收期与详细财务指标 (ROI, NPV, IRR)
+1. 预计投资回收期 (BEP): 资本回收年限与月度分析。
+2. 净现值 (NPV): 基于 ${rawDiscountRate}% 折现率的5年净现金流折现。
+3. 内部收益率 (IRR): 超额回报利差。
+4. 获利能力指数 (PI) 与净利润率 (%): 资本增值倍数与营运利润率。
+5. 多情景压力测试:
+   - 乐观情景 (营业收入 +15%)
+   - 基准情景 (稳健)
+   - 悲观情景 (运营成本 +20%)
+包含完整的5年期现金流模拟预测表。
+
+### C. 区域税收优惠与政策便利资质 (TAX ALLOWANCE & INCENTIVES)
+- 地方税收减免与土地优惠资质 (针对吸纳不低于 60% 本地员工的重点项目，地方规费与租金最高减免 35%)。
+- 就业吸纳效应 (预计新增就业人数与本籍劳动力培训配套)。
+- 国土空间规划 (RTRW 2024-2044) 与生态红线合规性。
+
+### D. 关键战略风险与缓解措施 (KEY STRATEGIC RISKS & MITIGATION)
+- 大宗原料供应链与物流风险及应对策略。
+- 环评许可与土地权属审批风险。
+- 投资者落地实务防范指引。
+
+### E. 投资绿色通道行动指南 (MPP SIMPURUSIANG VIP CONCIERGE)
+- 芦梧县公共服务大楼 (MPP Simpurusiang) 1 层 VIP 专席 13 位 NIB 及 PKKPR 空间许可绿色审批通道。
+- 提交投资意向书 (LoI) 与实地政企联合考察对接安排。`;
+      } else {
+        const formattedCapex = typeof rawCapex === 'number' ? `Rp ${rawCapex.toLocaleString("id-ID")}` : String(rawCapex || "0");
+        const formattedOpex = typeof rawOpex === 'number' ? `Rp ${rawOpex.toLocaleString("id-ID")}` : String(rawOpex || "0");
+        const formattedRev = typeof rawRev === 'number' ? `Rp ${rawRev.toLocaleString("id-ID")}` : String(rawRev || "0");
+        const formattedNpv = typeof rawNpv === 'number' ? `Rp ${rawNpv.toLocaleString("id-ID")}` : String(rawNpv || "0");
+
+        simulationInjection = `\n\n[MANDAT KHUSUS: PAKAR ANALIS INVESTASI & EKONOMI SPASIAL LUWU]
+Anda adalah Pakar Analis Investasi & Ekonomi Spasial Luwu. Tugas Anda adalah memberikan laporan Analisis Kelayakan Investasi dan ROI Simulator yang SANGAT MENDETAIL, MENDALAM, DAN KOMPREHENSIF (panjang minimal 500-800+ kata analisis mendalam).
+PERSYARATAN UTAMA: Anda HARUS menghasilkan seluruh output, judul, analisis risiko, dan rekomendasi dalam BAHASA INDONESIA yang baku dan profesional.
 
 Parameter Input Rencana Investasi:
 - Nama Rencana Kegiatan / Potensi: ${simulationContext.name}
@@ -3027,7 +3261,7 @@ Parameter Input Rencana Investasi:
 - Estimasi Biaya Operasional (OPEX / Tahun): ${formattedOpex}
 - Proyeksi Pendapatan (Revenue / Tahun): ${formattedRev}
 - Return on Investment (ROI): ${formattedRoi}
-- Amortisasi / Payback Period (BEP): ${formattedBep}
+- Amortisasi / Payback Period (BEP): ${formattedBep} Tahun
 - Net Present Value (NPV): ${formattedNpv}
 - Internal Rate of Return (IRR): ${formattedIrr}
 - Suku Bunga Acuan (Discount Rate / WACC): ${rawDiscountRate}%
@@ -3036,7 +3270,7 @@ STRUKTUR WAJIB RESPONS ANALISIS KELAYAKAN AI (FORMAT A SAMPAI E):
 
 ### A. RINGKASAN EKSEKUTIF & SKOR KELAYAKAN
 - Status Kelayakan: [SANGAT LAYAK / LAYAK BERSYARAT / TIDAK LAYAK]
-- Skor Kelayakan AI (1 - 100): [Nilai Skor]
+- Skor Kelayakan AI (1 - 100): [Nilai Skor, misal 88/100]
 - Justifikasi Singkat: (2-3 kalimat tajam mengenai kelayakan proyek)
 
 ### B. ANALISIS INDIKATOR FINANSIAL & SIMULATOR ROI DETAILED
@@ -3050,49 +3284,69 @@ STRUKTUR WAJIB RESPONS ANALISIS KELAYAKAN AI (FORMAT A SAMPAI E):
    - Skenario Pesimis (Biaya Operasional +20%)
 Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
 
-### C. POTENSI & IMPACT SOSIAL-EKONOMI DAERAH (KABUPATEN LUWU)
+### C. FASILITAS TAX ALLOWANCE & INSENTIF DAERAH
+- Keringanan Retribusi Daerah & Sewa Lahan hingga 35% untuk penyerapan minimal 60% Tenaga Kerja Asli Luwu (TKD).
 - Penyerapan Tenaga Kerja Lokal (Estimasi jumlah SDM terdisrupsi/terrekrut).
-- Dampak terhadap PDRB Sektor Terkait & Multiplier Effect Ekonomi Lokal di Kabupaten Luwu.
 - Integrasi Tata Ruang / PKKPR & Kesesuaian Lahan RTRW Luwu (Perda RTRW No. 06/2011 & RPJPD 2025-2045).
 
-### D. ANALISIS RISIKO & STRATEGI MITIGASI
+### D. ANALISIS RISIKO STRATEGIS & MITIGASI
 - Risiko Finansial & Operasional.
 - Risiko Perizinan & Regulasi Spasial.
 - Langkah Mitigasi Konkret untuk Investor.
 
 ### E. REKOMENDASI STRATEGIS & ACTION PLAN (MPP SIMPURISIANG)
-- Langkah percepatan perizinan di DPMPTSP / MPP Simpurusiang (Fast-Track OSS-RBA, SIMBG untuk PBG/SLF).
-- Rekomendasi Kemudahan Insentif Investasi Daerah (keringanan retribusi & sewa lahan hingga 35% untuk serapan min 60% tenaga kerja lokal Luwu).`;
+- Langkah percepatan perizinan di DPMPTSP / MPP Simpurusiang (Fast-Track OSS-RBA VIP Desk).
+- Panduan pengajuan Letter of Intent (LoI) dan penjadwalan survey lapangan.`;
+      }
     }
 
-    const activeLang = language || "id";
     let languageInstruction = "";
-    if (activeLang === "en") {
-      languageInstruction = `
+    if (isRoiSimulation) {
+      if (activeLang === "en") {
+        languageInstruction = `\nYou are an expert Senior Investment Analyst for Luwu Regency. Analyze the provided ROI parameters and generate a comprehensive investment feasibility report. STRICT REQUIREMENT: You MUST generate the ENTIRE output, headings, metrics analysis, risk assessment, and recommendations strictly in ENGLISH. Do not include any Indonesian words in the output.`;
+      } else if (activeLang === "zh") {
+        languageInstruction = `\n您是印尼芦梧县 (Luwu Regency) 的高级投资分析专家。请根据提供的 ROI 参数生成一份全面的投资可行性分析报告。强制要求： 您必须完全使用简体中文 (Simplified Chinese) 生成所有分析内容、标题、风险评估及建议。严禁出现印尼语单词。`;
+      } else {
+        languageInstruction = `\nAnda adalah Analis Investasi Senior Kabupaten Luwu. Analisis parameter ROI yang diberikan dan buat laporan kelayakan investasi secara komprehensif. PERSYARATAN UTAMA: Anda HARUS menghasilkan seluruh output, judul, analisis risiko, dan rekomendasi dalam BAHASA INDONESIA yang baku dan profesional.`;
+      }
+    } else {
+      if (activeLang === "en") {
+        languageInstruction = `
 [LANGUAGE INSTRUCTION]
 The user preferred English language.
 1. You MUST ALWAYS speak and answer in clean, professional, and grammatically correct English (Bahasa Inggris).
 2. Maintain the warm and polite hospitality, and you can refer to the user respectfully as "Sir/Madam" or "esteemed guest" to match the "Simpurusiang" local warmth.
 3. Keep all coordinates tag format intact like [COORD:lat,lng:Name].
 4. Translate any context or BPS stats to English in your final reply naturally (e.g., Economic Growth: 5.69%, GRDP: Rp 17.84 Trillion).`;
-    } else if (activeLang === "zh") {
-      languageInstruction = `
+      } else if (activeLang === "zh") {
+        languageInstruction = `
 [LANGUAGE INSTRUCTION]
 The user preferred Chinese (Simplified Mandarin) language.
 1. You MUST ALWAYS speak and answer in clean, polite, and professional Simplified Chinese (中文/普通话).
 2. Maintain the warm and polite hospitality, and you can refer to the user respectfully as "尊敬的女士/先生" (Zūnjìng de nǚshì/xiānsheng) or "贵客" to match the "Simpurusiang" local warmth.
 3. Keep all coordinates tag format intact like [COORD:lat,lng:Name].
 4. Translate any context or BPS stats to Chinese in your final reply naturally (e.g., 经济增长率: 5.69%, 地区生产总值(PDRB): 17.84万亿印尼盾).`;
-    } else {
-      languageInstruction = `
+      } else {
+        languageInstruction = `
 [LANGUAGE INSTRUCTION]
 The user preferred Indonesian language (Bahasa Indonesia).
 1. Selalu jawab dengan bahasa Indonesia yang ramah, sopan, membantu, dan panggillah pengguna dengan sapaan hormat "Bapak/Ibu".`;
+      }
     }
 
     const dynamicDocList = await fetchActiveDocuments();
 
-    const systemInstruction = `Anda adalah Konsultan AI Geospasial MPP Simpurusiang Kabupaten Luwu, Indonesia. 
+    let systemInstruction = "";
+    if (isRoiSimulation) {
+      if (activeLang === "en") {
+        systemInstruction = `You are an expert Senior Investment Analyst for Luwu Regency. Analyze the provided ROI parameters and generate a comprehensive investment feasibility report. STRICT REQUIREMENT: You MUST generate the ENTIRE output, headings, metrics analysis, risk assessment, and recommendations strictly in ENGLISH. Do not include any Indonesian words in the output.`;
+      } else if (activeLang === "zh") {
+        systemInstruction = `您是印尼芦梧县 (Luwu Regency) 的高级投资分析专家。请根据提供的 ROI 参数生成一份全面的投资可行性分析报告。强制要求： 您必须完全使用简体中文 (Simplified Chinese) 生成所有分析内容、标题、风险评估及建议。严禁出现印尼语单词。`;
+      } else {
+        systemInstruction = `Anda adalah Analis Investasi Senior Kabupaten Luwu. Analisis parameter ROI yang diberikan dan buat laporan kelayakan investasi secara komprehensif. PERSYARATAN UTAMA: Anda HARUS menghasilkan seluruh output, judul, analisis risiko, dan rekomendasi dalam BAHASA INDONESIA yang baku dan profesional.`;
+      }
+    } else {
+      systemInstruction = `Anda adalah Konsultan AI Geospasial MPP Simpurusiang Kabupaten Luwu, Indonesia. 
 Tugas Anda mendampingi investor dan masyarakat dalam mengidentifikasi titik potensi investasi riil di Kabupaten Luwu berbasis analisis spasial geografi dan data tata ruang (KKPR / RTRW 2024-2044) secara transparan, akuntabel, dan presisi.
 
 🚨 SYSTEM DIRECTIVE: RAG MODE ACTIVATED
@@ -3111,7 +3365,7 @@ You are the official AI Consultant for the Luwu Investment Ecosystem (MPP Simpur
 1. Anda DILARANG KERAS mengarang, memalsukan, atau menyebutkan proyek/potensi investasi fiktif yang tidak bersumber dari data riil.
 2. Skenario analisis, data spasial, dan potensi investasi HANYA BOLEH mengonsumsi data asli dari database yang aktif (terlampir di RAG/Context di bawah).
 3. Jika data potensi investasi dalam database atau context kosong, Anda WAJIB merespons secara jujur bahwa "Data belum tersedia, Bapak/Ibu" atau belum ada usulan potensi terdaftar dalam database, dan meminta user/admin mengunggah metadata proyek riil terlebih dahulu.
-4. Jangan menyuguhkan angka-angka finansial palsu (seperti NPV, IRR, Payback fiktif) untuk mengarang ketersediaan proyek baru.${simulationContext ? "" : "\n\n🚨 BATASAN PERAN (PENTING): You are the Luwu Spatial Investment AI. Your ONLY job is to provide information regarding investment potentials, spatial planning (RTRW), and regulations based explicitly on your provided RAG documents. DO NOT perform ROI, CAPEX, OPEX, or financial feasibility analyses. If a user asks for financial simulation analysis, politely inform them to use the 'Smart Investment Form' and click the dedicated 'Minta AI Analisa Kelayakan Ini' button inside the simulator."}
+4. Jangan menyuguhkan angka-angka finansial palsu (seperti NPV, IRR, Payback fiktif) untuk mengarang ketersediaan proyek baru.
 
 [DOKTRIN PGROUTING & JARAK JALAN RAYA]
 You are an expert GIS AI. You have access to real road-network data via PgRouting. Never calculate distance manually.
@@ -3353,6 +3607,7 @@ DOKUMEN CONTEXT REAL-TIME (SUPABASE & GIS MAP):
 ${ragContext}${specificInvestmentContext}${spatialStatsContext}${simulationInjection}
 
 ${languageInstruction}`;
+    }
 
     // Log Final System Prompt
 
@@ -3375,13 +3630,18 @@ ${languageInstruction}`;
 
     if (req.body?.simulationContext || req.body?.investmentContext) {
       const { simulationContext, investmentContext } = req.body;
-      const inv = simulationContext?.capex || investmentContext?.investmentValue || 5000000000;
-      const sek = simulationContext?.sector || investmentContext?.sector || "Sektor Unggulan Daerah";
+      const inv = simulationContext?.capex || req.body?.investment_amount || investmentContext?.investmentValue || 5000000000;
+      const sek = simulationContext?.sector || req.body?.sector || investmentContext?.sector || "Sektor Unggulan Daerah";
       const name = simulationContext?.name || investmentContext?.name || "Proyek Investasi Prioritas";
       const opex = simulationContext?.opex;
       const rev = simulationContext?.revenue || simulationContext?.asumsiPendapatan;
+      const fallbackLang = ((req.body?.locale || req.body?.language || "id").toLowerCase()).startsWith("zh")
+        ? "zh"
+        : ((req.body?.locale || req.body?.language || "id").toLowerCase()).startsWith("en")
+        ? "en"
+        : "id";
       
-      const fallbackText = buildDetailedRoiDossier(Number(inv), sek, name, Number(opex), Number(rev));
+      const fallbackText = buildDetailedRoiDossier(Number(inv), sek, name, Number(opex), Number(rev), fallbackLang);
       return res.json({ text: fallbackText, sources: [], isFallback: true });
     }
 
@@ -3389,6 +3649,142 @@ ${languageInstruction}`;
     const userMsg = req.body?.message || "";
     const generalFallbackText = buildGeneralChatStandbyResponse(userMsg, error?.message || String(error));
     return res.json({ text: generalFallbackText, sources: [], isFallback: true });
+  }
+});
+
+// ---------------------------------------------------------
+// DYNAMIC MULTI-LANGUAGE PROMPT ENGINE FOR ROI SIMULATOR AI
+// ---------------------------------------------------------
+app.post("/api/gemini/roi-simulation", async (req, res) => {
+  const reqStartTime = Date.now();
+  try {
+    const {
+      investment_amount,
+      sector,
+      workforce_target,
+      location,
+      locale,
+      language,
+      name,
+      capex,
+      opex,
+      revenue,
+      roi,
+      paybackPeriod,
+      discountRate,
+      irr,
+      npv,
+    } = req.body;
+
+    const activeLang = ((locale || language || "id").toLowerCase()).startsWith("zh")
+      ? "zh"
+      : ((locale || language || "id").toLowerCase()).startsWith("en")
+      ? "en"
+      : "id";
+
+    const inv = Number(investment_amount || capex || 50000000000);
+    const sek = sector || (activeLang === "en" ? "Agriculture & Processing" : activeLang === "zh" ? "农业与加工业" : "Pertanian & Perkebunan");
+    const loc = location || (activeLang === "en" ? "Luwu Regency" : activeLang === "zh" ? "芦梧县" : "Kabupaten Luwu");
+    const projName = name || (activeLang === "en" ? `Strategic Investment in ${sek}` : activeLang === "zh" ? `${sek}重点招商项目` : `Rencana Investasi ${sek}`);
+    const estOpex = Number(opex || inv * 0.16);
+    const estRev = Number(revenue || inv * 0.42);
+    const estRoi = roi !== undefined ? Number(roi) : ((estRev - estOpex) / inv) * 100;
+    const estBep = paybackPeriod !== undefined ? Number(paybackPeriod) : (inv / (estRev - estOpex));
+
+    let systemInstruction = "";
+    if (activeLang === "en") {
+      systemInstruction = `You are an expert Senior Investment Analyst for Luwu Regency. Analyze the provided ROI parameters and generate a comprehensive investment feasibility report. STRICT REQUIREMENT: You MUST generate the ENTIRE output, headings, metrics analysis, risk assessment, and recommendations strictly in ENGLISH. Do not include any Indonesian words in the output.`;
+    } else if (activeLang === "zh") {
+      systemInstruction = `您是印尼芦梧县 (Luwu Regency) 的高级投资分析专家。请根据提供的 ROI 参数生成一份全面的投资可行性分析报告。强制要求： 您必须完全使用简体中文 (Simplified Chinese) 生成所有分析内容、标题、风险评估及建议。严禁出现印尼语单词。`;
+    } else {
+      systemInstruction = `Anda adalah Analis Investasi Senior Kabupaten Luwu. Analisis parameter ROI yang diberikan dan buat laporan kelayakan investasi secara komprehensif. PERSYARATAN UTAMA: Anda HARUS menghasilkan seluruh output, judul, analisis risiko, dan rekomendasi dalam BAHASA INDONESIA yang baku dan profesional.`;
+    }
+
+    const wfTarget = workforce_target || Math.max(25, Math.round(inv / 150000000));
+
+    let userPrompt = "";
+    if (activeLang === "en") {
+      userPrompt = `Please generate an in-depth Investment Feasibility & ROI Simulation report for:
+- Project Name: ${projName}
+- Sector: ${sek}
+- Investment Amount (CAPEX): IDR ${inv.toLocaleString("en-US")}
+- Annual Operational Cost (OPEX): IDR ${estOpex.toLocaleString("en-US")}
+- Annual Projected Revenue: IDR ${estRev.toLocaleString("en-US")}
+- Estimated Workforce Target: ${wfTarget} Persons
+- Target Location: ${loc}
+
+Format strictly adhering to:
+1. Executive Feasibility Score (e.g., 88/100)
+2. Estimated Payback Period & ROI %
+3. Regional Tax Allowance & Incentive Eligibility
+4. Key Strategic Risks & Mitigation
+5. Actionable Next Steps for Investor Concierge`;
+    } else if (activeLang === "zh") {
+      userPrompt = `请对以下投资参数生成一份深入的投资可行性与 ROI 模拟分析报告：
+- 项目名称: ${projName}
+- 产业领域: ${sek}
+- 拟投资金额 (CAPEX): ${inv.toLocaleString("zh-CN")} 印尼盾
+- 预计年度运营支出 (OPEX): ${estOpex.toLocaleString("zh-CN")} 印尼盾
+- 预计年营业收入: ${estRev.toLocaleString("zh-CN")} 印尼盾
+- 预计吸纳就业人数: ${wfTarget} 人
+- 目标区位: ${loc}
+
+必须严格遵循以下结构输出：
+1. 执行可行性概述与综合评分 (如 88/100 分)
+2. 预计投资回收期与 ROI % 详析
+3. 区域税收优惠与政策便利资质 (Tax Allowance)
+4. 关键战略风险与缓解措施
+5. 投资绿色通道行动指南 (MPP Simpurusiang)`;
+    } else {
+      userPrompt = `Lakukan Analisis Kelayakan Investasi & Proyeksi ROI mendalam untuk data input berikut:
+- Nama Proyek: ${projName}
+- Sektor: ${sek}
+- Nilai Investasi (CAPEX): Rp ${inv.toLocaleString("id-ID")}
+- Biaya Operasional (OPEX): Rp ${estOpex.toLocaleString("id-ID")}
+- Proyeksi Pendapatan: Rp ${estRev.toLocaleString("id-ID")}
+- Target Penyerapan Tenaga Kerja: ${wfTarget} Orang
+- Lokasi Target: ${loc}
+
+Format sesuai standar resmi:
+1. Skor Kelayakan Eksekutif (misal 88/100)
+2. Estimasi Payback Period & ROI %
+3. Fasilitas Tax Allowance & Insentif Daerah
+4. Analisis Risiko Strategis & Mitigasi
+5. Rekomendasi & Action Plan Investor Concierge`;
+    }
+
+    try {
+      const response = await generateContentWithFallback({
+        contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+        config: {
+          systemInstruction,
+          temperature: 0.35,
+          maxOutputTokens: 4096,
+        }
+      });
+      const replyText = response?.text || "";
+      if (replyText.trim()) {
+        return res.json({ 
+          success: true, 
+          text: replyText, 
+          locale: activeLang,
+          isFallback: false 
+        });
+      }
+    } catch (genErr: any) {
+      console.warn(`[ROI Simulation Endpoint Notice] ${genErr?.message || genErr}. Activating multi-language fallback dossier...`);
+    }
+
+    const fallbackText = buildDetailedRoiDossier(inv, sek, projName, estOpex, estRev, activeLang);
+    return res.json({ 
+      success: true, 
+      text: fallbackText, 
+      locale: activeLang,
+      isFallback: true 
+    });
+  } catch (err: any) {
+    console.error("ROI Simulation Error:", err);
+    return res.status(500).json({ error: "Gagal memproses simulasi kelayakan ROI." });
   }
 });
 

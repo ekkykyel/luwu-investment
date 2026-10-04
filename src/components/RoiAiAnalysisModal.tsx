@@ -147,7 +147,58 @@ export default function RoiAiAnalysisModal({
       language: aiLanguage
     });
 
-    const userPrompt = `Lakukan Analisis Kelayakan Investasi & Proyeksi ROI mendalam untuk data input berikut:
+    const isEn = aiLanguage === "en";
+    const isZh = aiLanguage === "zh";
+
+    let userPrompt = "";
+    if (isEn) {
+      userPrompt = `Perform an in-depth Investment Feasibility Analysis & ROI Projection for the following parameters:
+- Project Name: ${investmentName}
+- Sector / Category: ${sector}
+- Estimated Investment (CAPEX): IDR ${capex.toLocaleString("en-US")}
+- Estimated Operating Cost (OPEX / Year): IDR ${opex.toLocaleString("en-US")}
+- Projected Gross Revenue (Revenue / Year): IDR ${revenue.toLocaleString("en-US")}
+- Return on Investment (ROI): ${roi.toFixed(2)}%
+- Payback Period (BEP): ${paybackPeriod.toFixed(1)} Years
+- Internal Rate of Return (IRR): ${irr.toFixed(2)}%
+- Net Present Value (NPV): IDR ${npv.toLocaleString("en-US")}
+- Benchmark Discount Rate (WACC): ${discountRate}%
+
+Generate an exhaustive, highly structured feasibility study adhering strictly to the 5 blueprints:
+### A. EXECUTIVE FEASIBILITY SCORE & SUMMARY
+- Feasibility Status: [HIGHLY FEASIBLE / CONDITIONALLY FEASIBLE / NOT FEASIBLE]
+- Executive Feasibility Score (1 - 100): [Score, e.g. 88/100]
+- Brief Justification: (2-3 crisp sentences)
+### B. ESTIMATED PAYBACK PERIOD & DETAILED FINANCIAL INDICATORS (ROI, NPV, IRR)
+(Include 5-Year Cash Flow Projection Table and Sensitivity Scenarios)
+### C. REGIONAL TAX ALLOWANCE & INCENTIVE ELIGIBILITY
+### D. KEY STRATEGIC RISKS & MITIGATION
+### E. ACTIONABLE NEXT STEPS FOR INVESTOR CONCIERGE (MPP SIMPURUSIANG)`;
+    } else if (isZh) {
+      userPrompt = `请对以下投资方案数据进行深入的投资可行性分析与 ROI 预测：
+- 项目名称: ${investmentName}
+- 所属产业 / 行业: ${sector}
+- 拟投资金额 (CAPEX): ${capex.toLocaleString("zh-CN")} 印尼盾
+- 预计年度运营支出 (OPEX / 年): ${opex.toLocaleString("zh-CN")} 印尼盾
+- 预计年营业总收入 (Gross Revenue): ${revenue.toLocaleString("zh-CN")} 印尼盾
+- 投资回报率 (ROI): ${roi.toFixed(2)}%
+- 预计投资回收期 (BEP): ${paybackPeriod.toFixed(1)} 年
+- 内部收益率 (IRR): ${irr.toFixed(2)}%
+- 净现值 (NPV): ${npv.toLocaleString("zh-CN")} 印尼盾
+- 基准折现率 (WACC): ${discountRate}%
+
+严格按照以下 5 大模块结构生成全面详尽的中文报告：
+### A. 执行可行性概述与综合评分 (EXECUTIVE FEASIBILITY SCORE)
+- 可行性结论: [极具投资可行性 / 有条件可行 / 不可行]
+- 执行可行性综合评分 (1 - 100): [例如: 88/100 分]
+- 投资论证简述: (2-3 句话深入剖析)
+### B. 预计投资回收期与详细财务指标 (ROI, NPV, IRR)
+(包含完整的5年期现金流模拟预测表与敏感性压力测试)
+### C. 区域税收优惠与政策便利资质 (TAX ALLOWANCE & INCENTIVES)
+### D. 关键战略风险与缓解措施 (KEY STRATEGIC RISKS & MITIGATION)
+### E. 投资绿色通道行动指南 (MPP SIMPURUSIANG VIP CONCIERGE)`;
+    } else {
+      userPrompt = `Lakukan Analisis Kelayakan Investasi & Proyeksi ROI mendalam untuk data input berikut:
 - Nama Rencana Kegiatan / Proyek: ${investmentName}
 - Kategori / Sektor: ${sector}
 - Estimasi Nilai Investasi (CAPEX): ${formatRupiah(capex)}
@@ -164,7 +215,7 @@ Hasilkan laporan analisis lengkap (minimal 500–800 kata) sesuai format struktu
 
 ### A. RINGKASAN EKSEKUTIF & SKOR KELAYAKAN
 - Status Kelayakan: [SANGAT LAYAK / LAYAK BERSYARAT / TIDAK LAYAK]
-- Skor Kelayakan AI (1 - 100): [Nilai Skor]
+- Skor Kelayakan AI (1 - 100): [Nilai Skor, misal 88/100]
 - Justifikasi Singkat: (2-3 kalimat mengenai kelayakan proyek)
 
 ### B. ANALISIS INDIKATOR FINANSIAL & SIMULATOR ROI DETAILED
@@ -179,12 +230,12 @@ Buat analisis rinci berdasarkan parameter input simulator (CAPEX, OPEX, Pendapat
    - Skenario Pesimis (Biaya Operasional +20%)
 Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
 
-### C. POTENSI & IMPACT SOSIAL-EKONOMI DAERAH (KABUPATEN LUWU)
+### C. FASILITAS TAX ALLOWANCE & INSENTIF DAERAH
+- Keringanan Retribusi Daerah & Sewa Lahan hingga 35% untuk penyerapan minimal 60% Tenaga Kerja Asli Luwu (TKD).
 - Penyerapan Tenaga Kerja Lokal (Estimasi jumlah SDM terdisrupsi/terrekrut).
-- Dampak terhadap PDRB Sektor Terkait & Multiplier Effect Ekonomi Lokal di Kabupaten Luwu.
 - Integrasi Tata Ruang / PKKPR & Kesesuaian Lahan RTRW Luwu (Perda RTRW No. 06/2011 & RPJPD 2025-2045).
 
-### D. ANALISIS RISIKO & STRATEGI MITIGASI
+### D. ANALISIS RISIKO STRATEGIS & MITIGASI
 - Risiko Finansial & Operasional.
 - Risiko Perizinan & Regulasi Spasial.
 - Langkah Mitigasi Konkret untuk Investor.
@@ -192,6 +243,7 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
 ### E. REKOMENDASI STRATEGIS & ACTION PLAN (MPP SIMPURISIANG)
 - Langkah percepatan perizinan di DPMPTSP / MPP Simpurusiang.
 - Rekomendasi Kemudahan Insentif Investasi Daerah (keringanan retribusi & sewa lahan hingga 35% untuk penyerapan tenaga kerja lokal).`;
+    }
 
     try {
       const controller = new AbortController();
@@ -206,6 +258,11 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
           message: userPrompt,
           history: [],
           language: aiLanguage,
+          locale: aiLanguage,
+          investment_amount: capex,
+          sector: sector,
+          workforce_target: Math.max(25, Math.round(capex / 150000000)),
+          location: "Kabupaten Luwu",
           investmentContext: { name: investmentName, sector: sector },
           simulationContext: {
             name: investmentName,
@@ -265,7 +322,8 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
       revenue,
       roi,
       projectName: investmentName,
-      sector
+      sector,
+      locale: aiLanguage
     });
 
     appendAndAnimateModelMessage(fallbackReply, []);
@@ -324,6 +382,11 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
             text: m.text,
           })),
           language: aiLanguage,
+          locale: aiLanguage,
+          investment_amount: capex,
+          sector: sector,
+          workforce_target: Math.max(25, Math.round(capex / 150000000)),
+          location: "Kabupaten Luwu",
           investmentContext: { name: investmentName, sector: sector },
           simulationContext: {
             name: investmentName,
@@ -356,17 +419,39 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
         appendAndAnimateModelMessage(reply, updatedMessages);
       } else {
         const heuristic = generateHeuristicRoiAnalysis({ nilaiInvestasi: capex, sektor: sector, luasLahan: 10 });
-        const fallbackChat = `Tabe' Bapak/Ibu. Terkait simulasi "${investmentName}" pada sektor ${sector}:\n\n` +
-          `1. Sektor ${sector} merupakan salah satu prioritas pembangunan ekonomi daerah Kabupaten Luwu dengan proyeksi tingkat pengembalian (BEP) sekitar ${heuristic.estPaybackYears} tahun.\n` +
-          `2. Pemkab Luwu melalui DPMPTSP siap mendampingi kesiapan dokumen perizinan (PKKPR dan Pertek Pertanahan) agar realisasi investasi berjalan aman dan optimal.`;
+        let fallbackChat = "";
+        if (aiLanguage === "en") {
+          fallbackChat = `Regarding your investment inquiry on "${investmentName}" in the ${sector} sector:\n\n` +
+            `1. The ${sector} sector is an official economic development priority for Luwu Regency with an estimated payback period (BEP) of approximately ${heuristic.estPaybackYears} years.\n` +
+            `2. The Luwu Regency Government through DPMPTSP is prepared to facilitate integrated permitting (PKKPR & land technical verification) to ensure optimal and legally secure investment realization.`;
+        } else if (aiLanguage === "zh") {
+          fallbackChat = `关于您对 "${investmentName}"（所属产业：${sector}）的投资咨询：\n\n` +
+            `1. ${sector} 产业属于印度尼西亚芦梧县政府重点支持与倾斜扶持的支柱经济领域，预估静态投资回收期 (BEP) 约为 ${heuristic.estPaybackYears} 年。\n` +
+            `2. 芦梧县政府综合一站式投资服务部门 (DPMPTSP) 将为企业全程提供空间规划许可 (PKKPR) 与环评确权协同，保障投资项目合规高效落地。`;
+        } else {
+          fallbackChat = `Tabe' Bapak/Ibu. Terkait simulasi "${investmentName}" pada sektor ${sector}:\n\n` +
+            `1. Sektor ${sector} merupakan salah satu prioritas pembangunan ekonomi daerah Kabupaten Luwu dengan proyeksi tingkat pengembalian (BEP) sekitar ${heuristic.estPaybackYears} tahun.\n` +
+            `2. Pemkab Luwu melalui DPMPTSP siap mendampingi kesiapan dokumen perizinan (PKKPR dan Pertek Pertanahan) agar realisasi investasi berjalan aman dan optimal.`;
+        }
         appendAndAnimateModelMessage(fallbackChat, updatedMessages);
       }
     } catch (err) {
       console.warn("ROI AI send fallback:", err);
       const heuristic = generateHeuristicRoiAnalysis({ nilaiInvestasi: capex, sektor: sector, luasLahan: 10 });
-      const fallbackChat = `Tabe' Bapak/Ibu. Terkait simulasi "${investmentName}" pada sektor ${sector}:\n\n` +
-        `1. Sektor ${sector} merupakan salah satu prioritas pembangunan ekonomi daerah Kabupaten Luwu dengan proyeksi tingkat pengembalian (BEP) sekitar ${heuristic.estPaybackYears} tahun.\n` +
-        `2. Pemkab Luwu melalui DPMPTSP siap mendampingi kesiapan dokumen perizinan (PKKPR dan Pertek Pertanahan) agar realisasi investasi berjalan aman dan optimal.`;
+      let fallbackChat = "";
+      if (aiLanguage === "en") {
+        fallbackChat = `Regarding your investment inquiry on "${investmentName}" in the ${sector} sector:\n\n` +
+          `1. The ${sector} sector is an official economic development priority for Luwu Regency with an estimated payback period (BEP) of approximately ${heuristic.estPaybackYears} years.\n` +
+          `2. The Luwu Regency Government through DPMPTSP is prepared to facilitate integrated permitting (PKKPR & land technical verification) to ensure optimal and legally secure investment realization.`;
+      } else if (aiLanguage === "zh") {
+        fallbackChat = `关于您对 "${investmentName}"（所属产业：${sector}）的投资咨询：\n\n` +
+          `1. ${sector} 产业属于印度尼西亚芦梧县政府重点支持与倾斜扶持的支柱经济领域，预估静态投资回收期 (BEP) 约为 ${heuristic.estPaybackYears} 年。\n` +
+          `2. 芦梧县政府综合一站式投资服务部门 (DPMPTSP) 将为企业全程提供空间规划许可 (PKKPR) 与环评确权协同，保障投资项目合规高效落地。`;
+      } else {
+        fallbackChat = `Tabe' Bapak/Ibu. Terkait simulasi "${investmentName}" pada sektor ${sector}:\n\n` +
+          `1. Sektor ${sector} merupakan salah satu prioritas pembangunan ekonomi daerah Kabupaten Luwu dengan proyeksi tingkat pengembalian (BEP) sekitar ${heuristic.estPaybackYears} tahun.\n` +
+          `2. Pemkab Luwu melalui DPMPTSP siap mendampingi kesiapan dokumen perizinan (PKKPR dan Pertek Pertanahan) agar realisasi investasi berjalan aman dan optimal.`;
+      }
       appendAndAnimateModelMessage(fallbackChat, updatedMessages);
     }
   };
