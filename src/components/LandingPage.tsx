@@ -2077,16 +2077,16 @@ export default function LandingPage({
             </div>
 
             {/* Actions: Fullscreen, Language Toggle, Data-Sync Audit, Theme Toggle, Mobile Menu & Login */}
-            <div className="flex items-center gap-1 sm:gap-2.5 shrink-0 ml-auto">
+            <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0 ml-auto">
               {/* Tombol Fullscreen Layar Penuh Android / Desktop */}
               <motion.button whileTap={{ scale: 0.95 }}
                 type="button"
                 onClick={isFullscreen ? handleExitFullscreen : () => handleRequestFullscreen(true)}
-                className={`p-2 sm:p-2.5 rounded-full transition-all duration-300 hover:scale-110 shrink-0 ${
+                className={`w-10 h-10 min-w-[40px] min-h-[40px] rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105 shrink-0 ${
                   isFullscreen
                     ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.3)]"
                     : isDark
-                      ? "bg-slate-800/80 text-slate-300 hover:text-white"
+                      ? "bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700"
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                 }`}
                 title={isFullscreen ? t("nav.exitFullscreen", "Keluar dari Layar Penuh") : t("nav.fullscreen", "Mode Layar Penuh (Fullscreen)")}
@@ -2095,27 +2095,26 @@ export default function LandingPage({
                 {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
               </motion.button>
 
-              <LanguageToggle isDarkHeader={isDark} />
-              
+              <LanguageToggle isDarkHeader={isDark} isCircular={true} />
               
               <motion.button whileTap={{ scale: 0.95 }}
+                type="button"
                 onClick={handleToggleTheme}
-                className={`p-2 sm:p-2.5 rounded-full transition-all duration-300 hover:scale-110 shrink-0 ${
+                className={`w-10 h-10 min-w-[40px] min-h-[40px] rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105 shrink-0 ${
                   isDark
-                    ? "bg-slate-800/80 text-yellow-700 dark:text-yellow-400 hover:text-yellow-300 hover:shadow-[0_0_15px_rgba(250,204,21,0.2)]"
-                    : "bg-slate-100 text-slate-800 dark:text-slate-200 hover:bg-slate-200"
+                    ? "bg-slate-800/80 text-yellow-400 hover:text-yellow-300 hover:bg-slate-700 hover:shadow-[0_0_15px_rgba(250,204,21,0.2)]"
+                    : "bg-slate-100 text-slate-800 hover:bg-slate-200"
                 }`}
                 aria-label="Toggle Theme"
               >
                 {isDark ? <Sun size={18} /> : <Moon size={18} />}
               </motion.button>
-
               
               {/* Dropdown Desktop: Registrasi */}
               <div className="relative group hidden md:block">
                 <button
                   type="button"
-                  className="flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-full bg-gradient-to-r from-emerald-500 via-teal-500 via-cyan-500 to-indigo-600 bg-[length:200%_auto] hover:bg-right text-white text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.35)] hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] hover:-translate-y-0.5 relative overflow-hidden border border-emerald-300/40"
+                  className="flex items-center gap-2 px-5 py-2.5 min-h-[40px] rounded-full bg-gradient-to-r from-emerald-500 via-teal-500 via-cyan-500 to-indigo-600 bg-[length:200%_auto] hover:bg-right text-white text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.35)] hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] hover:-translate-y-0.5 relative overflow-hidden border border-emerald-300/40"
                 >
                   <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                   <span className="relative flex items-center gap-1.5">
@@ -2140,7 +2139,6 @@ export default function LandingPage({
                 </div>
               </div>
 
-
               <motion.button whileTap={{ scale: 0.95 }}
                 type="button"
                 onClick={(e) => {
@@ -2149,7 +2147,7 @@ export default function LandingPage({
                   handleRequestFullscreen();
                   navigate("/login");
                 }}
-                className="hidden sm:flex items-center gap-2 px-6 py-2.5 min-h-[44px] rounded-full bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white text-sm font-bold transition-all duration-300 shadow-[0_4px_15px_rgba(37,99,235,0.25)] hover:shadow-[0_6px_20px_rgba(37,99,235,0.4)] hover:-translate-y-0.5 relative overflow-hidden group"
+                className="hidden sm:flex items-center gap-2 px-6 py-2.5 min-h-[40px] rounded-full bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white text-sm font-bold transition-all duration-300 shadow-[0_4px_15px_rgba(16,185,129,0.25)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.4)] hover:-translate-y-0.5 relative overflow-hidden group"
               >
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                 <span className="relative flex items-center gap-2">
@@ -2161,10 +2159,10 @@ export default function LandingPage({
               <motion.button whileTap={{ scale: 0.95 }}
                 type="button"
                 onClick={() => onOpenDiagnostic && onOpenDiagnostic()}
-                className={`hidden sm:flex items-center justify-center p-2 w-10 h-10 sm:w-11 sm:h-11 min-h-[40px] sm:min-h-[44px] rounded-full border transition-all duration-300 shadow-sm hover:-translate-y-0.5 relative overflow-hidden group shrink-0
+                className={`hidden sm:flex items-center justify-center w-10 h-10 min-w-[40px] min-h-[40px] rounded-full border transition-all duration-300 hover:scale-105 shrink-0 relative
                   ${isDark 
                     ? "border-slate-700 bg-slate-800/80 text-emerald-400 hover:bg-slate-700 hover:text-emerald-300 shadow-black/20" 
-                    : "border-slate-200 bg-white text-emerald-600 hover:bg-slate-50 hover:text-emerald-700"}`}
+                    : "border-slate-200 bg-slate-100 text-emerald-700 hover:bg-slate-200"}`}
                 title="Diagnostik Koneksi Supabase & Solusi"
                 aria-label="Diagnostik Koneksi Supabase"
               >
@@ -2175,10 +2173,10 @@ export default function LandingPage({
               {/* Mobile Menu Toggle */}
               <motion.button whileTap={{ scale: 0.95 }}
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className={`md:hidden w-10 h-10 sm:w-11 sm:h-11 shrink-0 flex items-center justify-center p-2 rounded-xl border transition-all ${
+                className={`md:hidden w-10 h-10 min-w-[40px] min-h-[40px] shrink-0 flex items-center justify-center rounded-full border transition-all duration-300 hover:scale-105 ${
                   isDark
-                    ? "border-slate-800 bg-slate-900/50 text-slate-300 hover:text-white"
-                    : "border-slate-200 bg-white text-slate-800 dark:text-slate-200 hover:bg-slate-100"
+                    ? "border-slate-800 bg-slate-900/80 text-slate-300 hover:text-white hover:bg-slate-800"
+                    : "border-slate-200 bg-slate-100 text-slate-800 hover:bg-slate-200"
                 }`}
                 aria-label="Toggle Mobile Menu"
               >

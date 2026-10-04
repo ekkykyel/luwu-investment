@@ -5,6 +5,7 @@ import { Globe, Check } from 'lucide-react';
 interface LanguageToggleProps {
   isDarkHeader?: boolean;
   className?: string;
+  isCircular?: boolean;
 }
 
 const LANGUAGES = [
@@ -13,7 +14,7 @@ const LANGUAGES = [
   { code: 'zh', label: 'ZH', name: '中文', flag: '🇨🇳' },
 ];
 
-export default function LanguageToggle({ isDarkHeader, className = '' }: LanguageToggleProps) {
+export default function LanguageToggle({ isDarkHeader, className = '', isCircular = false }: LanguageToggleProps) {
   const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -49,18 +50,28 @@ export default function LanguageToggle({ isDarkHeader, className = '' }: Languag
 
   const buttonClasses = isDarkHeader
     ? 'text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700/80 border border-white/10'
-    : 'text-slate-800 dark:text-slate-200 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-white/10';
+    : 'text-slate-800 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-white/10';
 
   return (
     <div className={`relative inline-block text-left ${className}`} ref={dropdownRef}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm ${buttonClasses}`}
+        className={isCircular 
+          ? `w-10 h-10 min-w-[40px] min-h-[40px] rounded-full flex items-center justify-center text-xs font-bold transition-all cursor-pointer shadow-sm hover:scale-105 shrink-0 ${buttonClasses}`
+          : `flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm ${buttonClasses}`}
         title="Pilih Bahasa / Select Language"
       >
-        <Globe size={15} className="text-emerald-700 dark:text-emerald-400 shrink-0" />
-        <span className="uppercase tracking-wider">{currentLang.label}</span>
+        {isCircular ? (
+          <span className="font-mono text-[11px] font-black uppercase tracking-tight text-emerald-600 dark:text-emerald-400">
+            {currentLang.label}
+          </span>
+        ) : (
+          <>
+            <Globe size={15} className="text-emerald-700 dark:text-emerald-400 shrink-0" />
+            <span className="uppercase tracking-wider">{currentLang.label}</span>
+          </>
+        )}
       </button>
 
       {isOpen && (
