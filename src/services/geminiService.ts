@@ -287,7 +287,7 @@ export class GeminiService {
         lastModelError = err;
         const errMsg = (err?.message || String(err)).toLowerCase();
 
-        // Fail fast across models on quota/rate-limit so we rotate to the next API key immediately!
+        // Fail fast across models on quota/rate-limit/permission-denied so we rotate to the next API key immediately!
         if (
           errMsg.includes("429") ||
           errMsg.includes("quota") ||
@@ -295,7 +295,11 @@ export class GeminiService {
           errMsg.includes("exceeded your current quota") ||
           errMsg.includes("api key not valid") ||
           errMsg.includes("invalid key") ||
-          errMsg.includes("api_key_invalid")
+          errMsg.includes("api_key_invalid") ||
+          errMsg.includes("403") ||
+          errMsg.includes("denied") ||
+          errMsg.includes("permission_denied") ||
+          errMsg.includes("leaked")
         ) {
           throw err;
         }

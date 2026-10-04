@@ -3371,8 +3371,7 @@ ${languageInstruction}`;
     res.json({ text: response.text, sources: res.locals.ragSources || [] });
   } catch (error: any) {
     const elapsedMs = Date.now() - reqStartTime;
-    console.error(`🚨 [GEMINI CHAT FAILED after ${elapsedMs}ms]:`, error?.message || error);
-    if (error?.stack) console.error("Stack:", error.stack);
+    console.warn(`⚠️ [Gemini Chat Service Standby] ${error?.message || error}. Activating Heuristic Standby Response after ${elapsedMs}ms...`);
 
     if (req.body?.simulationContext || req.body?.investmentContext) {
       const { simulationContext, investmentContext } = req.body;
