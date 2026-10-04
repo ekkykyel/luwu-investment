@@ -37,17 +37,51 @@ export function formatTextForCrystalClearTts(text: string, lang: 'id' | 'en' | '
 
   let cleaned = text;
 
-  // 1. Strip Markdown formatting
-  cleaned = cleaned.replace(/[\*\_~`#]+/g, '');
-  cleaned = cleaned.replace(/^\s*[\-\•\*\+]\s+/gm, ''); // Bullet markers
-  cleaned = cleaned.replace(/^\s*\d+\.\s+/gm, ''); // Numbered markers
+  // 1. Strip Markdown headings and append period so heading separates cleanly from body
+  cleaned = cleaned.replace(/^\s*#{1,6}\s*(.+)$/gm, '$1. ');
 
-  // 2. Remove URLs, HTML tags, and clean brackets without creating pause stutter
+  // 2. Strip Markdown bold, italics, strikethrough, backticks
+  cleaned = cleaned.replace(/\*\*([^*]+)\*\*/g, '$1');
+  cleaned = cleaned.replace(/\*([^*]+)\*/g, '$1');
+  cleaned = cleaned.replace(/__([^_]+)__/g, '$1');
+  cleaned = cleaned.replace(/_([^_]+)_/g, '$1');
+  cleaned = cleaned.replace(/~~([^~]+)~~/g, '$1');
+  cleaned = cleaned.replace(/`([^`]+)`/g, '$1');
+  cleaned = cleaned.replace(/[\*\_~`#]+/g, '');
+
+  // 3. Strip Markdown images and links: ![alt](url) -> '', [text](url) -> text
+  cleaned = cleaned.replace(/!\[([^\]]*)\]\([^)]+\)/g, '');
+  cleaned = cleaned.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+
+  // 4. Strip bullet markers and numbered list prefixes
+  cleaned = cleaned.replace(/^\s*[\-\•\*\+]\s+/gm, ''); // Bullet markers
+  cleaned = cleaned.replace(/^\s*\d+[\.\)]\s+/gm, ''); // Numbered markers e.g. 1. or 1)
+
+  // 5. Remove raw URLs, HTML tags, horizontal rules, and table delimiters
   cleaned = cleaned.replace(/https?:\/\/\S+/gi, '');
   cleaned = cleaned.replace(/<[^>]*>/g, '');
+  cleaned = cleaned.replace(/^[-*_]{3,}\s*$/gm, '');
+  cleaned = cleaned.replace(/\|/g, ' ');
 
-  // Convert parenthesized acronyms cleanly (e.g. "Persetujuan Bangunan Gedung (PBG)" -> "Persetujuan Bangunan Gedung atau P B G")
-  cleaned = cleaned.replace(/\s*\(([A-Za-z0-9\-\s]{2,15})\)\s*/g, ' atau $1 ');
+  // 6. Decode common HTML entities
+  cleaned = cleaned.replace(/&amp;/g, lang === 'en' ? ' and ' : lang === 'zh' ? '及' : ' dan ');
+  cleaned = cleaned.replace(/&nbsp;/g, ' ');
+  cleaned = cleaned.replace(/&quot;/g, '"');
+  cleaned = cleaned.replace(/&#39;/g, "'");
+  cleaned = cleaned.replace(/&lt;/g, ' ');
+  cleaned = cleaned.replace(/&gt;/g, ' ');
+
+  // 7. Strip unicode emojis to eliminate phonetic reading stutter
+  cleaned = cleaned.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}]/gu, '');
+
+  // 8. Convert parenthesized acronyms cleanly in a language-aware manner (FIXING 'atau' bug in EN and ZH!)
+  if (lang === 'en') {
+    cleaned = cleaned.replace(/\s*\(([A-Za-z0-9\-\s]{2,15})\)\s*/g, ' or $1 ');
+  } else if (lang === 'zh') {
+    cleaned = cleaned.replace(/\s*\(([A-Za-z0-9\-\s]{2,15})\)\s*/g, '即 $1 ');
+  } else {
+    cleaned = cleaned.replace(/\s*\(([A-Za-z0-9\-\s]{2,15})\)\s*/g, ' atau $1 ');
+  }
   cleaned = cleaned.replace(/[\(\)\[\]\{\}]/g, ' ');
 
   // ==========================================
@@ -151,6 +185,10 @@ export function formatTextForCrystalClearTts(text: string, lang: 'id' | 'en' | '
     // A. Currency and numbers
     cleaned = cleaned.replace(/\bRp\.?\s*350\,?000\b/gi, '350 thousand Indonesian Rupiah');
     cleaned = cleaned.replace(/\bRp\.?\s*650\,?000\b/gi, '650 thousand Indonesian Rupiah');
+    cleaned = cleaned.replace(/\bRp\.?\s*80\,?000\b/gi, '80 thousand Indonesian Rupiah');
+    cleaned = cleaned.replace(/\bRp\.?\s*75\,?000\b/gi, '75 thousand Indonesian Rupiah');
+    cleaned = cleaned.replace(/\bRp\.?\s*50\,?000\b/gi, '50 thousand Indonesian Rupiah');
+    cleaned = cleaned.replace(/\bRp\.?\s*30\,?000\b/gi, '30 thousand Indonesian Rupiah');
     cleaned = cleaned.replace(/\bRp\.?\s*0\b/gi, 'free of charge');
     cleaned = cleaned.replace(/\bRp\.?\s*(\d+)/gi, '$1 Indonesian Rupiah');
 
@@ -159,7 +197,7 @@ export function formatTextForCrystalClearTts(text: string, lang: 'id' | 'en' | '
     cleaned = cleaned.replace(/08:00\s*(to|-)\s*15:30\s*(WITA)?/gi, '7:30 AM to 4:00 PM Central Indonesia Time');
     cleaned = cleaned.replace(/\bWITA\b/g, 'Central Indonesia Time');
 
-    // C. Clarify Indonesian Government Acronyms for International Investors
+    // C. Clarify Indonesian Government Acronyms for International Investors & Visitors
     cleaned = cleaned.replace(/\bKabupaten Luwu\b/gi, 'Luwu');
     cleaned = cleaned.replace(/\bLuwu Regency\b/gi, 'Luwu');
     cleaned = cleaned.replace(/\bMPP Simpurusiang\b/gi, 'MPP Simpurusiang Public Service Center');
@@ -172,10 +210,25 @@ export function formatTextForCrystalClearTts(text: string, lang: 'id' | 'en' | '
     cleaned = cleaned.replace(/\bSIMBG\b/gi, 'SIMBG national building portal');
     cleaned = cleaned.replace(/\bDPMPTSP\b/g, 'Investment Agency DPMPTSP');
     cleaned = cleaned.replace(/\bDPUPR\b/g, 'Public Works Agency DPUPR');
+    cleaned = cleaned.replace(/\bDisdukcapil\b/gi, 'Civil Registry Agency Disdukcapil');
+    cleaned = cleaned.replace(/\bBapenda\b/gi, 'Regional Revenue Agency Bapenda');
     cleaned = cleaned.replace(/\bPKKPR\b/g, 'Spatial Conformity Confirmation PKKPR');
     cleaned = cleaned.replace(/\bSPPL\b/g, 'Environmental Statement SPPL');
     cleaned = cleaned.replace(/\bNPWP\b/g, 'Tax Identification Number NPWP');
+    cleaned = cleaned.replace(/\bKTP-el\b/gi, 'Electronic National ID Card');
     cleaned = cleaned.replace(/\bKTP\b/g, 'National ID Card');
+    cleaned = cleaned.replace(/\bKK\b/g, 'Family Card');
+    cleaned = cleaned.replace(/\bKIA\b/g, 'Child ID Card');
+    cleaned = cleaned.replace(/\bIKD\b/g, 'Digital Citizen ID');
+    cleaned = cleaned.replace(/\bSKCK\b/g, 'Police Clearance Certificate SKCK');
+    cleaned = cleaned.replace(/\bSAMSAT\b/gi, 'Vehicle Registration & Taxation Office SAMSAT');
+    cleaned = cleaned.replace(/\bSTNK\b/g, 'Vehicle Registration Document STNK');
+    cleaned = cleaned.replace(/\bBPJS Kesehatan\b/gi, 'National Health Insurance BPJS');
+    cleaned = cleaned.replace(/\bBPJS Ketenagakerjaan\b/gi, 'Workers Social Security BPJS');
+    cleaned = cleaned.replace(/\bBPJS\b/g, 'BPJS Social Security');
+    cleaned = cleaned.replace(/\bPBB-P2\b/gi, 'Rural and Urban Land and Building Tax PBB');
+    cleaned = cleaned.replace(/\bPBB\b/g, 'Land and Building Tax PBB');
+    cleaned = cleaned.replace(/\bBPHTB\b/g, 'Land Transfer Duty BPHTB');
     cleaned = cleaned.replace(/\bBSrE\b/g, 'National Cyber and Crypto Agency');
     cleaned = cleaned.replace(/\bSLA\b/g, 'Service Level Agreement duration');
     cleaned = cleaned.replace(/\bNo\.\s*(\d+)/gi, 'Number $1');
@@ -190,6 +243,7 @@ export function formatTextForCrystalClearTts(text: string, lang: 'id' | 'en' | '
     cleaned = cleaned.replace(/Rp\.?\s*650[\.\,]?000/gi, '六十五万印尼盾');
     cleaned = cleaned.replace(/Rp\.?\s*80[\.\,]?000/gi, '八万印尼盾');
     cleaned = cleaned.replace(/Rp\.?\s*75[\.\,]?000/gi, '七万五千印尼盾');
+    cleaned = cleaned.replace(/Rp\.?\s*50[\.\,]?000/gi, '五万印尼盾');
     cleaned = cleaned.replace(/Rp\.?\s*30[\.\,]?000/gi, '三万印尼盾');
     cleaned = cleaned.replace(/Rp\.?\s*0/gi, '全程免费');
     cleaned = cleaned.replace(/Rp\.?\s*/gi, '印尼盾 ');
@@ -208,19 +262,30 @@ export function formatTextForCrystalClearTts(text: string, lang: 'id' | 'en' | '
     cleaned = cleaned.replace(/OSS-RBA/gi, 'OSS 风险分级在线审批系统');
     cleaned = cleaned.replace(/OSS/g, 'OSS 在线企业注册系统');
     cleaned = cleaned.replace(/NPWP/g, 'NPWP 企业与个人税号');
+    cleaned = cleaned.replace(/KTP-el/gi, '印尼电子居民身份证');
     cleaned = cleaned.replace(/KTP/g, '印尼居民身份证');
     cleaned = cleaned.replace(/KK/g, '家庭户口卡');
     cleaned = cleaned.replace(/KIA/g, '少儿身份证');
+    cleaned = cleaned.replace(/IKD/g, '手机数字身份证');
     cleaned = cleaned.replace(/SIMBG/g, '国家建筑在线审批系统');
     cleaned = cleaned.replace(/PKKPR/g, '空间规划合规确认书');
     cleaned = cleaned.replace(/SPPL/g, '环保承诺书');
     cleaned = cleaned.replace(/DPMPTSP/g, '投资与一站式综合审批局');
     cleaned = cleaned.replace(/DPUPR/g, '公共工程与空间规划局');
+    cleaned = cleaned.replace(/Disdukcapil/gi, '民政与户籍登记局');
+    cleaned = cleaned.replace(/Bapenda/gi, '地方税务局');
     cleaned = cleaned.replace(/Bank Sulselbar/g, '南苏尔塞尔巴尔银行');
     cleaned = cleaned.replace(/BSrE/g, '印尼国家密码与网络局');
     cleaned = cleaned.replace(/SLA/g, '法定办理时限');
     cleaned = cleaned.replace(/SKCK/g, '无犯罪记录证明');
     cleaned = cleaned.replace(/SAMSAT/g, '机动车税务窗口');
+    cleaned = cleaned.replace(/STNK/g, '机动车行驶证');
+    cleaned = cleaned.replace(/BPJS Kesehatan/gi, '国民健康医保');
+    cleaned = cleaned.replace(/BPJS Ketenagakerjaan/gi, '劳工社会保险');
+    cleaned = cleaned.replace(/BPJS/g, '国民社会保障');
+    cleaned = cleaned.replace(/PBB-P2/gi, '城乡土地与建筑税');
+    cleaned = cleaned.replace(/PBB/g, '土地与建筑税');
+    cleaned = cleaned.replace(/BPHTB/g, '土地房屋产权转让税');
   }
 
   // 4. Slashes & Punctuation Cleanup (Pembersihan Tanda Baca Anti-Stutter)
@@ -262,6 +327,34 @@ export function stopAllSpeech(): void {
   if ('speechSynthesis' in window) {
     try {
       window.speechSynthesis.cancel();
+    } catch (e) {}
+  }
+}
+
+/**
+ * Unlocks browser audio context and speech synthesis on user interaction (tap/click).
+ * Essential for mobile browsers (iOS Safari, Android Chrome) where audio is suspended until gesture.
+ */
+export function unlockAudioContext(): void {
+  if (typeof window === 'undefined') return;
+
+  try {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    if (AudioCtx) {
+      if (!(window as any).__globalAudioCtx) {
+        (window as any).__globalAudioCtx = new AudioCtx();
+      }
+      if ((window as any).__globalAudioCtx.state === 'suspended') {
+        (window as any).__globalAudioCtx.resume().catch(() => {});
+      }
+    }
+  } catch (e) {}
+
+  if ('speechSynthesis' in window) {
+    try {
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
     } catch (e) {}
   }
 }
@@ -351,35 +444,63 @@ function splitTextIntoSafeChunks(text: string, lang: 'id' | 'en' | 'zh' = 'id'):
  * Prioritizes Microsoft Neural Online, Google Natural, and Apple native voices.
  */
 function findOptimalVoice(voices: SpeechSynthesisVoice[], lang: 'id' | 'en' | 'zh'): SpeechSynthesisVoice | null {
-  if (!voices || voices.length === 0) return null;
+  const currentVoices = (voices && voices.length > 0)
+    ? voices
+    : (typeof window !== 'undefined' && 'speechSynthesis' in window ? window.speechSynthesis.getVoices() : []);
+  if (!currentVoices || currentVoices.length === 0) return null;
 
   if (lang === 'en') {
-    return (
-      voices.find(v => (v.lang === 'en-US' || v.lang === 'en_US') && (v.name.includes('Neural') || v.name.includes('Natural') || v.name.includes('Online'))) ||
-      voices.find(v => (v.lang === 'en-US' || v.lang === 'en_US') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Jenny') || v.name.includes('Aria'))) ||
-      voices.find(v => v.lang.startsWith('en') && (v.name.includes('Neural') || v.name.includes('Natural') || v.name.includes('Google'))) ||
-      voices.find(v => v.lang.startsWith('en')) ||
-      null
+    // 1. High-fidelity Neural / Natural en-US / en-GB voices
+    const neural = currentVoices.find(v => 
+      v.lang.toLowerCase().startsWith('en') && 
+      (v.name.includes('Neural') || v.name.includes('Natural') || v.name.includes('Online'))
     );
+    if (neural) return neural;
+
+    // 2. High-quality Google or Apple native English voices
+    const natural = currentVoices.find(v => 
+      v.lang.toLowerCase().startsWith('en') && 
+      (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Jenny') || v.name.includes('Aria') || v.name.includes('Daniel') || v.name.includes('Karen'))
+    );
+    if (natural) return natural;
+
+    // 3. Strict match: Any voice starting with 'en'
+    return currentVoices.find(v => v.lang.toLowerCase().startsWith('en')) || null;
   }
 
   if (lang === 'zh') {
-    return (
-      voices.find(v => (v.lang === 'zh-CN' || v.lang === 'zh_CN') && (v.name.includes('Neural') || v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Xiaoxiao') || v.name.includes('Yunxi'))) ||
-      voices.find(v => (v.lang === 'zh-CN' || v.lang === 'zh_CN') && (v.name.includes('Google') || v.name.includes('Ting-Ting') || v.name.includes('Mei-Jia'))) ||
-      voices.find(v => (v.lang.startsWith('zh') || v.lang.includes('cmn')) && (v.name.includes('Google') || v.name.includes('Natural'))) ||
-      voices.find(v => v.lang.startsWith('zh') || v.lang.includes('cmn')) ||
-      null
+    // 1. High-fidelity Neural / Natural zh-CN / cmn voices
+    const neural = currentVoices.find(v => 
+      (v.lang.toLowerCase().startsWith('zh') || v.lang.toLowerCase().includes('cmn')) && 
+      (v.name.includes('Neural') || v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Xiaoxiao') || v.name.includes('Yunxi'))
     );
+    if (neural) return neural;
+
+    // 2. High-quality Google or Apple Mandarin voices
+    const natural = currentVoices.find(v => 
+      (v.lang.toLowerCase().startsWith('zh') || v.lang.toLowerCase().includes('cmn')) && 
+      (v.name.includes('Google') || v.name.includes('Ting-Ting') || v.name.includes('Mei-Jia') || v.name.includes('Sin-ji'))
+    );
+    if (natural) return natural;
+
+    // 3. Strict match: Any voice starting with 'zh' or 'cmn'
+    return currentVoices.find(v => v.lang.toLowerCase().startsWith('zh') || v.lang.toLowerCase().includes('cmn')) || null;
   }
 
   // Indonesian (default)
-  return (
-    voices.find(v => (v.lang === 'id-ID' || v.lang === 'id_ID' || v.lang === 'id') && (v.name.includes('Neural') || v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Gadis') || v.name.includes('Ardi'))) ||
-    voices.find(v => (v.lang === 'id-ID' || v.lang === 'id_ID' || v.lang === 'id') && (v.name.includes('Google') || v.name.includes('Damayanti') || v.name.includes('Indonesian'))) ||
-    voices.find(v => v.lang.startsWith('id') || v.lang.includes('id_ID') || v.lang.includes('id-ID') || v.lang.includes('ind')) ||
-    null
+  const neural = currentVoices.find(v => 
+    (v.lang.toLowerCase().startsWith('id') || v.lang.toLowerCase().includes('ind')) && 
+    (v.name.includes('Neural') || v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Gadis') || v.name.includes('Ardi'))
   );
+  if (neural) return neural;
+
+  const natural = currentVoices.find(v => 
+    (v.lang.toLowerCase().startsWith('id') || v.lang.toLowerCase().includes('ind')) && 
+    (v.name.includes('Google') || v.name.includes('Damayanti') || v.name.includes('Indonesian'))
+  );
+  if (natural) return natural;
+
+  return currentVoices.find(v => v.lang.toLowerCase().startsWith('id') || v.lang.toLowerCase().includes('ind')) || null;
 }
 
 /**
@@ -415,11 +536,30 @@ export function speakCrystalClearText(text: string, options: SpeakOptions = {}):
   const sentenceChunks = splitTextIntoSafeChunks(normalizedText, lang);
   if (sentenceChunks.length === 0) return 0;
 
-  if (onStart) onStart();
-
-  // 3. Select Highest Quality Available Voice
-  const voiceList = availableVoices.length > 0 ? availableVoices : window.speechSynthesis.getVoices();
+  // 3. Select Highest Quality Available Voice with STRICT Accent Integrity Check
+  const voiceList = availableVoices.length > 0 ? availableVoices : (typeof window !== 'undefined' && 'speechSynthesis' in window ? window.speechSynthesis.getVoices() : []);
   const targetVoice = findOptimalVoice(voiceList, lang);
+
+  // ACCENT INTEGRITY SAFEGUARD:
+  // If user requested Mandarin (zh) or English (en) but the browser lacks matching voice profiles:
+  // Strictly prevent an Indonesian voice from pronouncing foreign text into garbled phonetic noise.
+  if (lang === 'zh') {
+    const hasChineseVoice = voiceList.some(v => v.lang.toLowerCase().startsWith('zh') || v.lang.toLowerCase().includes('cmn'));
+    if (!hasChineseVoice && voiceList.length > 0) {
+      console.warn('[AudioEngine] No Mandarin TTS voice profile installed in browser/OS. Silencing audio to prevent garbled accent collision.');
+      if (onEnd) onEnd();
+      return 0;
+    }
+  } else if (lang === 'en') {
+    const hasEnglishVoice = voiceList.some(v => v.lang.toLowerCase().startsWith('en'));
+    if (!hasEnglishVoice && voiceList.length > 0) {
+      console.warn('[AudioEngine] No English TTS voice profile installed in browser/OS. Silencing audio to prevent garbled accent collision.');
+      if (onEnd) onEnd();
+      return 0;
+    }
+  }
+
+  if (onStart) onStart();
 
   // 4. Default Prosody Tuning per Language (Natural human pitch & speed calibration - measured for maximum enunciation clarity)
   const finalRate = rate !== undefined ? rate : (lang === 'zh' ? 0.82 : lang === 'en' ? 0.85 : 0.92);
@@ -465,7 +605,9 @@ export function speakCrystalClearText(text: string, options: SpeakOptions = {}):
       utterance.lang = 'id-ID';
     }
 
-    if (targetVoice) utterance.voice = targetVoice;
+    if (targetVoice) {
+      utterance.voice = targetVoice;
+    }
 
     utterance.rate = Math.min(Math.max(finalRate, 0.75), 1.15);
     utterance.pitch = finalPitch;

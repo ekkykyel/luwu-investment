@@ -11,7 +11,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { resolveMppVoiceQuery, VoiceAssistantResponse, appendVoiceClosing, prependVoiceGreeting } from '../../utils/mppVoiceKnowledge';
-import { speakCrystalClearText, stopAllSpeech, formatTextForCrystalClearTts } from '../../utils/mppAudioEngine';
+import { speakCrystalClearText, stopAllSpeech, formatTextForCrystalClearTts, unlockAudioContext } from '../../utils/mppAudioEngine';
 
 /**
  * Phonetically normalizes spoken abbreviations and Indonesian conversational queries
@@ -196,11 +196,21 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
   const currentTranscriptRef = useRef<string>('');
   const speechSessionRef = useRef<number>(0);
 
+  const consecutiveSilenceRef = useRef<number>(0);
+  const restartTimeoutRef = useRef<any>(null);
+
   // Synchronize voiceLanguage dynamically whenever global portal i18n language changes
   useEffect(() => {
     const rawLang = i18n.language || 'id';
     const targetLang: 'id' | 'en' | 'zh' = rawLang.startsWith('zh') ? 'zh' : rawLang.startsWith('en') ? 'en' : 'id';
     if (targetLang !== voiceLanguage) {
+      // Abort ongoing audio playback immediately on language toggle
+      speechSessionRef.current += 1;
+      stopAllSpeech();
+      setIsSpeaking(false);
+      if (isListeningRef.current) {
+        stopVoiceListening();
+      }
       setVoiceLanguage(targetLang);
     }
   }, [i18n.language]);
@@ -226,6 +236,28 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
   }, []);
 
   const handleSwitchLanguage = (lang: 'id' | 'en' | 'zh') => {
+    // 1. Immediately abort pending backend voice request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+
+    // 2. Immediately stop any active TTS playback
+    speechSessionRef.current += 1;
+    stopAllSpeech();
+    setIsSpeaking(false);
+
+    // 3. Immediately stop active Speech Recognition to prevent race conditions
+    if (isListeningRef.current || isListening) {
+      stopVoiceListening();
+    }
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.abort();
+      } catch (e) {}
+    }
+
+    // 4. Update language states
     setVoiceLanguage(lang);
     if (i18n.language !== lang) {
       i18n.changeLanguage(lang);
@@ -233,12 +265,14 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
         localStorage.setItem('i18nextLng', lang);
       } catch (e) {}
     }
+
+    // 5. User feedback in target locale
     if (lang === 'en') {
-      notify('Switched to English Voice Assistant & Portal');
+      notify('Switched to English Voice Assistant (MPP Simpurusiang)');
     } else if (lang === 'zh') {
-      notify('已切换至中文政务语音与全站门户');
+      notify('已切换至中文普通话语音助手 (欣普鲁香公共服务大楼)');
     } else {
-      notify('Beralih ke Bahasa Indonesia (MPP Simpurusiang)');
+      notify('Beralih ke Asisten Suara Bahasa Indonesia (MPP Simpurusiang)');
     }
   };
 
@@ -257,17 +291,26 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
   useEffect(() => {
     currentTranscriptRef.current = recognizedVoiceText;
   }, [recognizedVoiceText]);
-  // Initialize Speech Recognition on language change
+
+  // Initialize Speech Recognition on language change with anti-leak and anti-infinite-loop safeguards
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // Clean up previous recognition instance to prevent orphaned listeners
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.abort();
+        } catch (e) {}
+        recognitionRef.current = null;
+      }
+
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
-        recognition.continuous = true; // Stay active even when user pauses
-        recognition.interimResults = true; // Real-time preview for Android
+        recognition.continuous = true; // Stay active while user speaks
+        recognition.interimResults = true; // Real-time preview
         recognition.maxAlternatives = 3;
         
-        // Dynamic BCP 47 language code
+        // Dynamic BCP 47 language code strictly bound to voiceLanguage
         if (voiceLanguage === 'en') {
           recognition.lang = 'en-US';
         } else if (voiceLanguage === 'zh') {
@@ -276,7 +319,10 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
           recognition.lang = 'id-ID';
         }
 
+        consecutiveSilenceRef.current = 0;
+
         recognition.onresult = (event: any) => {
+          consecutiveSilenceRef.current = 0;
           let interimTranscript = '';
           let finalTranscript = '';
           for (let i = 0; i < event.results.length; ++i) {
@@ -305,27 +351,108 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
         };
 
         recognition.onerror = (event: any) => {
-          console.warn('Speech recognition warning/error:', event.error);
+          console.warn('[Speech Recognition] Event error:', event.error);
+          
           if (event.error === 'not-allowed') {
-            notify('Izin mikrofon ditolak. Mohon izinkan akses mikrofon di peramban Anda.');
+            const msg = voiceLanguage === 'en'
+              ? 'Microphone permission denied. Please allow microphone access in your browser.'
+              : voiceLanguage === 'zh'
+              ? '麦克风权限被拒绝。请在浏览器设置中开启麦克风权限。'
+              : 'Izin mikrofon ditolak. Mohon izinkan akses mikrofon di peramban Anda.';
+            notify(msg);
             stopVoiceListening();
+            return;
+          }
+
+          if (event.error === 'audio-capture') {
+            const msg = voiceLanguage === 'en'
+              ? 'No microphone detected on your device.'
+              : voiceLanguage === 'zh'
+              ? '未检测到可用麦克风设备。'
+              : 'Mikrofon tidak terdeteksi pada perangkat Anda.';
+            notify(msg);
+            stopVoiceListening();
+            return;
+          }
+
+          if (event.error === 'service-not-allowed' || event.error === 'network') {
+            const msg = voiceLanguage === 'en'
+              ? 'Speech recognition service unavailable. You can type your question.'
+              : voiceLanguage === 'zh'
+              ? '语音识别服务暂时不可用，请使用键盘输入。'
+              : 'Layanan pengenalan suara tidak tersedia saat ini. Anda dapat mengetik pertanyaan.';
+            notify(msg);
+            stopVoiceListening();
+            return;
+          }
+
+          if (event.error === 'no-speech') {
+            consecutiveSilenceRef.current += 1;
+            // If user already spoke some text, finalize it cleanly
+            if (currentTranscriptRef.current && currentTranscriptRef.current.trim().length > 1) {
+              finalizeVoiceRecording();
+              return;
+            }
+            // If consecutive silence detected with zero words, stop to prevent infinite battery drain loop
+            if (consecutiveSilenceRef.current >= 2) {
+              stopVoiceListening();
+              const msg = voiceLanguage === 'en'
+                ? 'No voice detected. Please speak closer to the microphone or type below.'
+                : voiceLanguage === 'zh'
+                ? '未检测到声音，请靠近麦克风重新提问或直接输入文字。'
+                : 'Belum ada suara terdeteksi. Silakan coba lagi atau ketik pertanyaan Anda.';
+              notify(msg);
+              return;
+            }
           }
         };
 
         recognition.onend = () => {
-          // If still marked listening (e.g. system timeout on mobile), auto-restart unless max time reached
-          if (isListeningRef.current && recordingSecondsRef.current < 44) {
-            try {
-              recognition.start();
-            } catch (e) {
-              // Ignore
-            }
+          // If session is already halted, do NOT restart
+          if (!isListeningRef.current) return;
+
+          // If maximum time reached (45s), finalize
+          if (recordingSecondsRef.current >= 44) {
+            finalizeVoiceRecording();
+            return;
+          }
+
+          // If valid text exists, finalize instead of looping
+          if (currentTranscriptRef.current && currentTranscriptRef.current.trim().length > 2) {
+            finalizeVoiceRecording();
+            return;
+          }
+
+          // Safe gentle single restart with backoff if user is still actively listening
+          if (consecutiveSilenceRef.current < 2) {
+            if (restartTimeoutRef.current) clearTimeout(restartTimeoutRef.current);
+            restartTimeoutRef.current = setTimeout(() => {
+              if (isListeningRef.current) {
+                try {
+                  recognition.start();
+                } catch (e) {
+                  // Ignore already started or abort errors
+                }
+              }
+            }, 300);
+          } else {
+            stopVoiceListening();
           }
         };
 
         recognitionRef.current = recognition;
       }
     }
+
+    return () => {
+      if (restartTimeoutRef.current) clearTimeout(restartTimeoutRef.current);
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.abort();
+        } catch (e) {}
+        recognitionRef.current = null;
+      }
+    };
   }, [voiceLanguage]);
 
   // Clean up timers on unmount
@@ -333,6 +460,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
     return () => {
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
       if (silenceTimeoutRef.current) clearTimeout(silenceTimeoutRef.current);
+      if (restartTimeoutRef.current) clearTimeout(restartTimeoutRef.current);
       if (recognitionRef.current) {
         try { recognitionRef.current.stop(); } catch (e) {}
       }
@@ -344,22 +472,30 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
   }, []);
 
   const startVoiceListening = () => {
+    // 1. Resume AudioContext and SpeechSynthesis on user interaction gesture (fixes mobile autoplay bug)
+    unlockAudioContext();
+
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition && !recognitionRef.current) {
-      notify('Fitur input suara belum didukung di peramban ini. Anda dapat mendengarkan audio melalui tombol TTS Suara.');
+      const unsupportedMsg = voiceLanguage === 'en'
+        ? 'Voice speech recognition is not supported in this browser. You can type your query or listen to audio guidance.'
+        : voiceLanguage === 'zh'
+        ? '当前浏览器不支持麦克风语音输入。您可以输入文字提问或点击收听语音解答。'
+        : 'Fitur input suara belum didukung di peramban ini. Anda dapat mengetik pertanyaan atau mendengarkan audio melalui tombol TTS Suara.';
+      notify(unsupportedMsg);
+      setIsVoiceListeningModalOpen(true);
       return;
     }
 
     // Stop existing TTS
-    if ('speechSynthesis' in window) {
-      speechSessionRef.current += 1;
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
-    }
+    stopAllSpeech();
+    setIsSpeaking(false);
+    speechSessionRef.current += 1;
 
     setRecognizedVoiceText('');
     currentTranscriptRef.current = '';
     setRecordingSeconds(0);
+    consecutiveSilenceRef.current = 0;
     setIsListening(true);
     setIsVoiceListeningModalOpen(true);
 
@@ -483,17 +619,25 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
       return;
     }
 
-    // 3. Contact Gemini AI Backend endpoint with verified language parameter
+    // 3. Contact Gemini AI Backend endpoint with verified language parameter & strict 7.5s watchdog timeout
     setIsProcessingVoiceAi(true);
-    setVoiceResponse(localRes); // Immediate fallback UI
+    setVoiceResponse(localRes); // Immediate fallback UI so citizen is never left on empty screen
     setIsVoiceResponseModalOpen(true);
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    const fetchTimeoutId = setTimeout(() => {
+      controller.abort();
+    }, 7500);
 
     try {
       const res = await fetch('/api/mpp/voice-assistant', {
-        method: 'POST', signal: abortControllerRef.current?.signal,
+        method: 'POST',
+        signal: controller.signal,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: clean, language: targetLang })
       });
+      clearTimeout(fetchTimeoutId);
 
       if (res.ok) {
         if (speechSessionRef.current !== currentSessionId) return;
@@ -520,10 +664,12 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
         }
       }
     } catch (err: any) {
+      clearTimeout(fetchTimeoutId);
       if (err.name === 'AbortError') {
-        return;
+        console.warn("[Voice Assistant] Backend request timed out or cancelled, seamlessly engaging local knowledge engine.");
+      } else {
+        console.warn("AI Voice endpoint fallback to local knowledge:", err);
       }
-      console.warn("AI Voice endpoint fallback to local knowledge:", err);
     }
     if (speechSessionRef.current !== currentSessionId) return;
     setIsProcessingVoiceAi(false);
