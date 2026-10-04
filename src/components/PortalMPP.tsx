@@ -776,6 +776,7 @@ export default function PortalMPP() {
   const [isAirportKioskOpen, setIsAirportKioskOpen] = useState(false);
   const [airportKioskInitialMode, setAirportKioskInitialMode] = useState<'citizen' | 'investor'>('citizen');
   const [liveAgencies, setLiveAgencies] = useState<InstansiItem[]>(LOCALIZED_AGENCIES);
+  const [isGrpModalOpen, setIsGrpModalOpen] = useState(false);
 
   // --- Android Hardware Back Button & Persistent Fullscreen Lifecycle Handler ---
   const isAnyModalOpen = Boolean(
@@ -1568,7 +1569,6 @@ export default function PortalMPP() {
   }, []);
 
   // Listener untuk membuka GRPArchitectureModal (Inspektur Arsitektur GRP & SPBE)
-  const [isGrpModalOpen, setIsGrpModalOpen] = useState(false);
   useEffect(() => {
     const handleOpenGrp = () => setIsGrpModalOpen(true);
     window.addEventListener('open-grp-architecture-modal', handleOpenGrp);
