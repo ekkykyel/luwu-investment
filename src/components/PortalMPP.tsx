@@ -7193,7 +7193,7 @@ export default function PortalMPP() {
         <AnimatePresence>
           {isSurveyModalOpen && (
             <div 
-              className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
+              className="fixed inset-0 z-[100] flex items-center justify-center p-1.5 sm:p-3 md:p-4 lg:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
               onClick={() => setIsSurveyModalOpen(false)}
             >
               <motion.div
@@ -7202,7 +7202,7 @@ export default function PortalMPP() {
                 exit={{ opacity: 0, scale: 0.96, y: 20 }}
                 transition={{ duration: 0.22, ease: "easeOut" }}
                 onClick={(e) => e.stopPropagation()}
-                className="relative w-full max-w-7xl bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92dvh] md:max-h-[88dvh] text-slate-900 dark:text-slate-100 border border-slate-200/80 dark:border-slate-800"
+                className="relative w-full max-w-[97vw] 2xl:max-w-7xl bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[94dvh] md:max-h-[90dvh] text-slate-900 dark:text-slate-100 border border-slate-200/80 dark:border-slate-800"
               >
                 {/* Header Modal */}
                 <div className="shrink-0 flex items-start justify-between px-4 sm:px-8 py-3.5 sm:py-4 border-b border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">

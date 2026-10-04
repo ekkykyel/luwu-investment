@@ -763,38 +763,38 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
             </span>
           </div>
 
-          <div className="grid grid-cols-1 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 gap-3.5 sm:gap-5">
             {skmQuestions.map((q) => {
               const currentVal = ratings[q.id] || 4;
               const Icon = q.icon;
               return (
                 <div
                   key={q.id}
-                  className="p-3 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 mb-3 bg-slate-50 dark:bg-slate-800/50 transition-all w-full max-w-full shadow-xs flex flex-col"
+                  className="p-3.5 sm:p-5 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/50 transition-all w-full shadow-xs flex flex-col"
                 >
-                  {/* Baris 1: Header Judul Unsur & Badge Nilai (Multi-line safe) */}
-                  <div className="flex items-start sm:items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-200/60 dark:border-slate-700/60">
-                    <div className="flex items-start sm:items-center gap-2 min-w-0 flex-1">
-                      <div className={`p-1.5 sm:p-2 rounded-xl bg-emerald-500/10 ${q.color} shrink-0 mt-0.5 sm:mt-0`}>
+                  {/* Baris 1: Header Judul Unsur & Badge Nilai (Multi-line safe & Symmetrical) */}
+                  <div className="flex items-center justify-between gap-3 mb-2.5 pb-2.5 border-b border-slate-200/70 dark:border-slate-700/70">
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                      <div className={`p-1.5 sm:p-2 rounded-xl bg-emerald-500/10 ${q.color} shrink-0`}>
                         <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
-                      <h4 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider font-sans text-emerald-800 dark:text-emerald-400 leading-tight whitespace-normal break-words">
+                      <h4 className="text-xs sm:text-sm md:text-base font-extrabold uppercase tracking-wide font-sans text-emerald-800 dark:text-emerald-400 leading-tight whitespace-normal break-words">
                         {q.title}
                       </h4>
                     </div>
 
-                    <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 font-mono px-2 sm:px-2.5 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 shrink-0 self-start sm:self-center">
+                    <span className="text-xs sm:text-sm font-bold text-emerald-700 dark:text-emerald-300 font-mono px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 shrink-0">
                       {currentVal} / 4
                     </span>
                   </div>
 
                   {/* Baris 2: Teks Pertanyaan Full-Width, Wrapping Normal, dan Justify */}
-                  <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 leading-relaxed mb-3 w-full text-justify">
+                  <p className="text-xs sm:text-sm md:text-[15px] font-medium text-slate-800 dark:text-slate-200 leading-relaxed mb-3.5 w-full text-justify">
                     {q.question}
                   </p>
 
-                  {/* Baris 3: Grid Pilihan Jawaban (4 Opsi 4 Kolom) */}
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 w-full mt-1">
+                  {/* Baris 3: Grid Pilihan Jawaban (4 Opsi 4 Kolom Simetris dari Breakpoint Tablet/MD ke atas) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 w-full mt-1">
                     {ratingOptions.map((opt) => {
                       const isSelected = currentVal === opt.value;
                       return (
@@ -802,16 +802,16 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
                           key={opt.value}
                           type="button"
                           onClick={() => handleRatingChange(q.id, opt.value)}
-                          className={`relative flex items-center justify-between px-3 py-2.5 sm:p-3 rounded-xl border text-left transition-all w-full cursor-pointer min-h-[46px] sm:min-h-[50px] ${
+                          className={`relative flex items-center justify-between px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl border text-left transition-all w-full cursor-pointer min-h-[48px] sm:min-h-[52px] ${
                             isSelected
-                              ? 'border-emerald-500 bg-emerald-500 text-white dark:bg-emerald-600 shadow-md font-bold'
-                              : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-emerald-500'
+                              ? 'border-emerald-500 bg-emerald-500 text-white dark:bg-emerald-600 shadow-md font-bold ring-2 ring-emerald-500/20'
+                              : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-emerald-500 hover:bg-emerald-50/40 dark:hover:bg-slate-800/80'
                           }`}
                         >
-                          <span className={`text-xs sm:text-sm font-semibold leading-snug pr-1 flex-1 ${isSelected ? 'text-white' : 'text-slate-800 dark:text-slate-100'}`}>
+                          <span className={`text-xs sm:text-sm font-semibold leading-snug pr-2 flex-1 break-words ${isSelected ? 'text-white' : 'text-slate-800 dark:text-slate-100'}`}>
                             {opt.label}
                           </span>
-                          <span className={`w-5 h-5 sm:w-6 sm:h-6 rounded-md text-[11px] sm:text-xs font-bold flex items-center justify-center shrink-0 ${
+                          <span className={`w-6 h-6 rounded-lg text-xs font-bold flex items-center justify-center shrink-0 ${
                             isSelected
                               ? 'bg-white/20 text-white'
                               : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
