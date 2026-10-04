@@ -199,10 +199,13 @@ export class GeminiService {
           errMsg.includes("invalid key") ||
           errMsg.includes("api_key_invalid") ||
           errMsg.includes("leaked") ||
-          errMsg.includes("reported as leaked")
+          errMsg.includes("reported as leaked") ||
+          errMsg.includes("403") ||
+          errMsg.includes("denied") ||
+          errMsg.includes("permission_denied")
         ) {
           console.warn(
-            `⛔ [GeminiService Invalid Key] Key ${maskedKey} is invalid. Activating 1h cooldown & rotating...`
+            `⛔ [GeminiService Invalid Key] Key ${maskedKey} is invalid/leaked/denied. Activating 1h cooldown & rotating...`
           );
           this.keyCooldownMap.set(currentKey, Date.now() + 3600000);
         } else {

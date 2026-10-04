@@ -2721,6 +2721,56 @@ Berdasarkan pemodelan arus kas diskonto (*Discounted Cash Flow / DCF*) dengan Su
 Salama' Ki' Ta Pada Salama'.`;
 }
 
+function buildGeneralChatStandbyResponse(message: string, originalError: string): string {
+  const msgLower = (message || "").toLowerCase();
+  
+  let keywordResponse = "";
+  if (msgLower.includes("antre") || msgLower.includes("antri") || msgLower.includes("daftar") || msgLower.includes("tiket")) {
+    keywordResponse = `
+### 🎫 Panduan Pendaftaran Antrean Digital MPP Luwu:
+1. **Pilih Gerai/Instansi:** Buka modul **"Pendaftaran Antrean Digital"** di halaman utama, pilih instansi tujuan Anda (contoh: DPMPTSP, Dukcapil, Bapenda, dll.).
+2. **Pilih Layanan:** Pilih jenis pelayanan spesifik yang Anda butuhkan.
+3. **Isi Identitas:** Masukkan NIK 16-digit Anda, Nama Lengkap, dan Nomor WhatsApp aktif untuk konfirmasi tiket.
+4. **Buat Kata Sandi:** Anda juga dapat mengisi kata sandi opsional untuk mempermudah masuk tanpa kode OTP WA pada kunjungan berikutnya.
+5. **Simpan Tiket:** Tiket antrean digital Anda akan diterbitkan lengkap dengan perkiraan waktu pelayanan dan dikirimkan langsung melalui WhatsApp resmi.`;
+  } else if (msgLower.includes("peta") || msgLower.includes("gis") || msgLower.includes("spasial") || msgLower.includes("lahan") || msgLower.includes("ruang") || msgLower.includes("zonasi")) {
+    keywordResponse = `
+### 🗺️ Panduan Peta Spasial GIS Kabupaten Luwu:
+* **Analisis Tata Ruang Spasial:** Anda dapat mengakses modul **Peta Spasial GIS** kami untuk memverifikasi kesesuaian rencana lokasi proyek Anda dengan RDTR (Rencana Detail Tata Ruang) dan RTRW Kabupaten Luwu secara mandiri.
+* **Fitur Utama:** Peta interaktif mendukung deteksi tumpang tindih lahan, integrasi data perizinan, pengukuran luas, penggambaran poligon, koordinat geografis (WGS 84), serta deteksi kepatuhan SRID spasial.
+* **Pengecekan Konflik:** Gunakan fitur **Conflict Resolution Tool** untuk menganalisis risiko tumpang tindih kawasan hutan lindung atau kawasan konservasi pertanian.`;
+  } else if (msgLower.includes("investasi") || msgLower.includes("luwu") || msgLower.includes("proyek") || msgLower.includes("sektor") || msgLower.includes("potensi")) {
+    keywordResponse = `
+### 📈 Sektor Investasi Unggulan Kabupaten Luwu:
+1. **Pertanian & Perkebunan:** Komoditas Kakao Latimojong dan Kopi Arabika/Robusta Bastem merupakan sektor andalan ekspor berdaya saing tinggi.
+2. **Kawasan Industri Bua:** Sentra pengembangan hilirisasi industri pengolahan hasil pertanian dan logistik strategis yang terhubung langsung dengan Bandara Lagaligo Bua.
+3. **Pariwisata & Jasa:** Pengembangan ekowisata alam, agrowisata, dan kawasan komersial perkotaan Belopa.
+4. **Insentif Daerah:** Investor berhak atas fasilitasi jalur prioritas (*Executive Desk* Lantai 2 MPP) serta potensi insentif pengurangan retribusi daerah berdasarkan penyerapan tenaga kerja lokal.`;
+  } else if (msgLower.includes("skm") || msgLower.includes("survey") || msgLower.includes("kepuasan") || msgLower.includes("puas")) {
+    keywordResponse = `
+### 📊 Formulir Survey Kepuasan Masyarakat (SKM):
+* Sebagai bagian dari komitmen keterbukaan dan transparansi, MPP Simpurusiang menyediakan **Formulir SKM Digital** mandiri.
+* Indikator penilaian meliputi: *Persyaratan Pelayanan, Kemudahan Prosedur, Kecepatan Pelayanan, Kesesuaian Biaya, Kualitas Produk Layanan, Kompetensi Petugas, Perilaku Pelayanan, Kualitas Sarana & Prasarana, serta Penanganan Pengaduan*.
+* Setiap masukan Anda dipantau langsung oleh Kepala Dinas DPMPTSP dan Inspektorat Daerah demi perbaikan berkelanjutan.`;
+  } else {
+    keywordResponse = `
+### 🏢 Kontak & Jam Layanan MPP Simpurusiang:
+* **Alamat Kantor:** Jl. Jenderal Sudirman, Kompleks Perkantoran Pemkab Luwu, Belopa, Sulawesi Selatan.
+* **Jam Operasional Pelayanan:** Senin s/d Jumat, Pukul 08:00 - 15:30 WITA (Istirahat Pukul 12:00 - 13:00 WITA).
+* **Layanan Utama:** Izin Usaha (OSS-RBA), Administrasi Kependudukan (Dukcapil), Pajak Daerah, Sertifikasi Halal, Keimigrasian, Pertanahan (ATR/BPN), hingga Kepolisian (Samsat).`;
+  }
+
+  return `### 📡 STATUS ASISTEN: STANDBY OFFLINE MODE (PEMELIHARAAN SISTEM)
+
+Mohon maaf yang sebesar-besarnya, Bapak/Ibu Pemohon. Saat ini sistem Asisten AI Utama kami sedang dalam proses pemeliharaan sistem berkala (Rotasi API Key / Penyesuaian Quota).
+
+Meskipun layanan AI generatif dinamis sedang offline untuk sementara waktu, **Portal Layanan Mandiri MPP Simpurusiang Luwu** tetap berfungsi penuh 100%! Berikut informasi panduan resmi yang berhasil kami himpun berdasarkan pertanyaan Anda:
+\${keywordResponse}
+
+---
+*Silakan hubungi **Meja Bantuan Informasi (Front Office) MPP Simpurusiang** secara langsung di Gedung Utama Lantai 1 Belopa jika Anda memerlukan bantuan segera.*`;
+}
+
 app.post("/api/gemini/chat", async (req, res) => {
   const reqStartTime = Date.now();
   try {
@@ -3336,10 +3386,10 @@ ${languageInstruction}`;
       return res.json({ text: fallbackText, sources: [], isFallback: true });
     }
 
-    return res.status(500).json({ 
-      error: "AI Failed", 
-      details: error?.message || "Internal server error" 
-    });
+    // Graceful stand-by fallback for general chat queries so the app NEVER displays a raw red error to investors or citizens
+    const userMsg = req.body?.message || "";
+    const generalFallbackText = buildGeneralChatStandbyResponse(userMsg, error?.message || String(error));
+    return res.json({ text: generalFallbackText, sources: [], isFallback: true });
   }
 });
 
