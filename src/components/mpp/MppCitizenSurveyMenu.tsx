@@ -866,7 +866,7 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
             ) : (
               <>
                 <Send className="w-4 h-4" />
-                <span>{isZh ? '立即提交 SKM 满意度调查' : isEn ? 'Submit SKM Survey Now' : 'Kirim Survei SKM Sekarang'}</span>
+                <span>{t('skm.fill_survey_btn', isZh ? '立即提交 SKM 满意度调查' : isEn ? 'Submit SKM Survey Now' : 'Kirim Survei SKM Sekarang')}</span>
               </>
             )}
           </button>

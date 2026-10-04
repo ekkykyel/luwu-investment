@@ -3151,6 +3151,54 @@
     "call_officer": "呼叫现场协助人员"
   },
   "skm": {
-    "ikm_score": "公众满意度指数：88.50（优秀）"
+    "ikm_score": "公众满意度指数：88.50（优秀）",
+    "badge": "满意度调查",
+    "title": "公众满意度指数 (IKM)",
+    "total_respondents": "受访者总数",
+    "feedback_label": "意见与建议",
+    "fill_survey_btn": "立即填写满意度调查"
+  },
+  "umkm": {
+    "badge": "合作与精选中小微企业",
+    "title": "芦梧县精选中小微企业产品",
+    "tab_all": "所有产品",
+    "tab_culinary": "特色美食",
+    "tab_craft": "传统工艺",
+    "tab_agri": "农产品深加工",
+    "producer": "生产者 / 厂家",
+    "price": "价格",
+    "direct_order": "直接订购 / 联系"
+  },
+  "queue": {
+    "badge": "排队与实时监控",
+    "title": "MPP 实时排队监控",
+    "total_today": "今日排队总数",
+    "being_served": "正在窗口办理",
+    "remaining_quota": "剩余可预约名额",
+    "active_counters": "开放服务窗口",
+    "take_online_btn": "在线领取排队号"
+  },
+  "concierge": {
+    "title": "贵宾投资者设施与服务"
+  },
+  "helpdesk": {
+    "badge": "咨询与服务台",
+    "title": "虚拟服务台与实时咨询",
+    "online_consult": "在线咨询",
+    "ai_faq": "AI 智能问答",
+    "contact_officer": "联系工作人员"
+  },
+  "map": {
+    "badge": "位置与地图",
+    "title": "地理空间地图与导航路线",
+    "get_directions": "获取路线指引",
+    "open_gmaps": "在 Google 地图查看"
+  },
+  "news": {
+    "badge": "新闻与资讯",
+    "read_more": "阅读全文"
+  },
+  "faq": {
+    "title": "常见问题解答 (FAQ)"
   }
 }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { HelpCircle, ChevronDown, Sparkles } from 'lucide-react';
 
 export interface FaqItem {
@@ -43,6 +44,11 @@ const FAQ_DATA: FaqItem[] = [
 ];
 
 export const FaqAccordion: React.FC = () => {
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n?.language || 'id';
+  const isEn = currentLang.startsWith('en');
+  const isZh = currentLang.startsWith('zh');
+
   const [openId, setOpenId] = useState<string | null>('faq-1');
 
   const toggleItem = (id: string) => {
@@ -56,10 +62,10 @@ export const FaqAccordion: React.FC = () => {
       <div className="text-center space-y-2">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[11px] font-sans font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
           <HelpCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-          <span>Tanya Jawab Seputar Layanan</span>
+          <span>{isEn ? 'Service Q&A Center' : isZh ? '政务常见问答中心' : 'Tanya Jawab Seputar Layanan'}</span>
         </div>
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white font-sans mt-1">
-          Pertanyaan Sering Diajukan (FAQ)
+          {t('faq.title', isEn ? 'FREQUENTLY ASKED QUESTIONS (FAQ)' : isZh ? '常见问题解答 (FAQ)' : 'Pertanyaan Sering Diajukan (FAQ)')}
         </h2>
         <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed mt-1.5 mb-3">
           Temukan jawaban cepat atas pertanyaan seputar jam kerja, biaya resmi, dan fasilitas di MPP Simpurusiang.

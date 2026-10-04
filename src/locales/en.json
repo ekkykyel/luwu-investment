@@ -3151,6 +3151,54 @@
     "call_officer": "Call Assistance Officer"
   },
   "skm": {
-    "ikm_score": "Community Satisfaction Index: 88.50 (Very Good)"
+    "ikm_score": "Community Satisfaction Index: 88.50 (Very Good)",
+    "badge": "SATISFACTION SURVEY",
+    "title": "Community Satisfaction Index (CSI)",
+    "total_respondents": "Total Respondents",
+    "feedback_label": "Feedback & Suggestions",
+    "fill_survey_btn": "Fill Satisfaction Survey Now"
+  },
+  "umkm": {
+    "badge": "PARTNERSHIPS & FEATURED MSME",
+    "title": "Selected Luwu Regency MSME Products",
+    "tab_all": "All Products",
+    "tab_culinary": "Culinary",
+    "tab_craft": "Handicrafts",
+    "tab_agri": "Processed Agricultural Products",
+    "producer": "Producer / Maker",
+    "price": "Price",
+    "direct_order": "Direct Order / Contact"
+  },
+  "queue": {
+    "badge": "QUEUE & MONITORING",
+    "title": "Real-time MPP Queue Monitor",
+    "total_today": "Total Queues Today",
+    "being_served": "Currently Being Served",
+    "remaining_quota": "Remaining Quota",
+    "active_counters": "Operational Service Counters",
+    "take_online_btn": "Take Online Queue"
+  },
+  "concierge": {
+    "title": "VIP Investor Facilities & Services"
+  },
+  "helpdesk": {
+    "badge": "CONSULTATION & HELPDESK",
+    "title": "Virtual Helpdesk & Live Consultation",
+    "online_consult": "Online Consultation",
+    "ai_faq": "AI Q&A Assistant",
+    "contact_officer": "Contact Officer"
+  },
+  "map": {
+    "badge": "LOCATION & MAP",
+    "title": "Geospatial Map & MPP Directions",
+    "get_directions": "Get Directions",
+    "open_gmaps": "Open in Google Maps"
+  },
+  "news": {
+    "badge": "NEWS & INFORMATION",
+    "read_more": "Read More"
+  },
+  "faq": {
+    "title": "FREQUENTLY ASKED QUESTIONS (FAQ)"
   }
 }

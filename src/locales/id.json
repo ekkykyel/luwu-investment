@@ -3147,6 +3147,54 @@
     "call_officer": "Panggil Petugas Sampingan"
   },
   "skm": {
-    "ikm_score": "Nilai IKM: 88.50 (Sangat Baik)"
+    "ikm_score": "Nilai IKM: 88.50 (Sangat Baik)",
+    "badge": "SURVEI KEPUASAN",
+    "title": "Indeks Kepuasan Masyarakat (IKM)",
+    "total_respondents": "Total Responden",
+    "feedback_label": "Saran & Masukan",
+    "fill_survey_btn": "Isi Survei SKM Sekarang"
+  },
+  "umkm": {
+    "badge": "KEMITRAAN & UMKM UNGGULAN",
+    "title": "Produk UMKM Terpilih Kab. Luwu",
+    "tab_all": "Semua Produk",
+    "tab_culinary": "Kuliner",
+    "tab_craft": "Kerajinan",
+    "tab_agri": "Olahan Agriculture",
+    "producer": "Produsen",
+    "price": "Harga",
+    "direct_order": "Pesan Direct / Hubungi"
+  },
+  "queue": {
+    "badge": "ANTREAN & MONITORING",
+    "title": "Pantau Antrean Real-time MPP",
+    "total_today": "Total Antrean Hari Ini",
+    "being_served": "Sedang Dilayani",
+    "remaining_quota": "Sisa Kuota",
+    "active_counters": "Loket Operasional",
+    "take_online_btn": "Ambil Antrean Online"
+  },
+  "concierge": {
+    "title": "Fasilitas & Layanan VIP Investor"
+  },
+  "helpdesk": {
+    "badge": "KONSULTASI & HELPDESK",
+    "title": "Virtual Helpdesk & Konsultasi",
+    "online_consult": "Konsultasi Online",
+    "ai_faq": "Tanya Jawab AI",
+    "contact_officer": "Hubungi Petugas"
+  },
+  "map": {
+    "badge": "LOKASI & PETA",
+    "title": "Peta Geospasial & Rute MPP",
+    "get_directions": "Petunjuk Arah",
+    "open_gmaps": "Buka di Google Maps"
+  },
+  "news": {
+    "badge": "BERITA & INFORMASI",
+    "read_more": "Baca Selengkapnya"
+  },
+  "faq": {
+    "title": "PERTANYAAN SERING DIAJUKAN (FAQ)"
   }
 }
