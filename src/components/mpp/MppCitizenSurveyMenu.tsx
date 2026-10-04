@@ -693,7 +693,7 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
               value={isAnonymous ? (isZh ? '鲁乌居民 (匿名)' : isEn ? 'Luwu Resident (Anonymous)' : 'Warga Luwu (Anonim)') : nama}
               onChange={(e) => setNama(e.target.value)}
               placeholder={isZh ? '请输入您的全名...' : isEn ? 'Enter your full name...' : 'Masukkan nama lengkap Anda...'}
-              className="w-full min-h-[46px] px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none disabled:opacity-60"
+              className="w-full min-h-[46px] px-3 sm:px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none disabled:opacity-60"
             />
           </div>
 
@@ -708,7 +708,7 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
                 setInstansi(e.target.value);
                 setLayanan(''); // reset dynamic service selection
               }}
-              className="w-full min-h-[46px] px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
+              className="w-full min-h-[46px] px-3 sm:px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
             >
               {MPP_AGENCIES_DEFAULT.map((inst, idx) => (
                 <option key={idx} value={inst}>
@@ -730,7 +730,7 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
             <select
               value={layanan}
               onChange={(e) => setLayanan(e.target.value)}
-              className="w-full min-h-[46px] px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
+              className="w-full min-h-[46px] px-3 sm:px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 text-xs sm:text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
             >
               <option value="">
                 {isZh 
@@ -770,20 +770,20 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
               return (
                 <div
                   key={q.id}
-                  className="p-3.5 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 mb-3 bg-slate-50 dark:bg-slate-800/50 transition-all w-full max-w-full shadow-xs flex flex-col"
+                  className="p-3 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 mb-3 bg-slate-50 dark:bg-slate-800/50 transition-all w-full max-w-full shadow-xs flex flex-col"
                 >
-                  {/* Baris 1: Header Judul Unsur & Badge Nilai */}
-                  <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-200/60 dark:border-slate-700/60">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className={`p-1.5 sm:p-2 rounded-xl bg-emerald-500/10 ${q.color} shrink-0`}>
+                  {/* Baris 1: Header Judul Unsur & Badge Nilai (Multi-line safe) */}
+                  <div className="flex items-start sm:items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-200/60 dark:border-slate-700/60">
+                    <div className="flex items-start sm:items-center gap-2 min-w-0 flex-1">
+                      <div className={`p-1.5 sm:p-2 rounded-xl bg-emerald-500/10 ${q.color} shrink-0 mt-0.5 sm:mt-0`}>
                         <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
-                      <h4 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider font-sans text-emerald-800 dark:text-emerald-400 truncate">
+                      <h4 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider font-sans text-emerald-800 dark:text-emerald-400 leading-tight whitespace-normal break-words">
                         {q.title}
                       </h4>
                     </div>
 
-                    <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 font-mono px-2.5 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 shrink-0">
+                    <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 font-mono px-2 sm:px-2.5 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 shrink-0 self-start sm:self-center">
                       {currentVal} / 4
                     </span>
                   </div>
