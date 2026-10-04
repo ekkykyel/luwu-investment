@@ -1,5 +1,15 @@
 {
   "hero": {
+    "grp_badge": "REGIONAL GRP PLATFORM",
+    "title": "Ekosistem Layanan Publik Tanpa Hambatan",
+    "subtitle": "Portal terpadu Regional GRP (Government Resource Planning) untuk 19 instansi pemerintah, BUMN, dan kepolisian. Cepat, transparan, dan ramah untuk seluruh warga Luwu.",
+    "search_placeholder": "Apa layanan yang Anda butuhkan hari ini di MPP?",
+    "search_button": "Cari ➔",
+    "chip_dukcapil": "Dukcapil & KTP-el",
+    "chip_nib": "Izin Usaha NIB OSS",
+    "chip_queue": "Ambil Antrean Online",
+    "chip_bpjs": "BPJS Kesehatan",
+    "chip_pajak": "Pajak & Retribusi",
     "titleHighlight": "Pintu Gerbang",
     "titleRest": "Investasi Digital",
     "subtitle": "Portal Pelayanan Publik Terpadu Kabupaten Luwu",
@@ -1941,6 +1951,22 @@
   "opex_bahan_baku": "Bahan Baku Produksi",
   "opex_kemasan": "Biaya Kemasan (Packaging)",
   "mppPortal": {
+    "persona": {
+      "warga": "Masyarakat",
+      "investor": "Investor & Bisnis",
+      "semua": "Semua Layanan"
+    },
+    "personaDesc": {
+      "warga": "Antrean langsung, persyaratan berkas kependudukan & gerai instansi layanan publik.",
+      "investor": "Eksekutif Desk Investasi, konsultasi tata ruang, peta spasial RDTR, & perizinan OSS-RBA.",
+      "semua": "Seluruh modul layanan masyarakat, investasi, fasilitasi bisnis & regulasi daerah."
+    },
+    "chips": {
+      "popular": "Populer:",
+      "samsat": "SAMSAT PKB Luwu",
+      "bpn": "Sertipikat Tanah BPN",
+      "imigrasi": "Paspor Imigrasi"
+    },
     "hero": {
       "titlePrefix": "Transformasi Digital Menuju",
       "titleHighlight": "Luwu Unggul",
@@ -3286,5 +3312,38 @@
     "speech_head": "Kata Sambutan Kepala DPMPTSP",
     "investor_quotes": "Kesan & Pesan Investor",
     "join_community": "Gabung Komunitas Investor Luwu"
+  },
+  "access": {
+    "tag_badge": "FASILITAS PRIORITAS & LAYANAN INKLUSIF",
+    "section_title": "Aksesibilitas & Fasilitasi Cepat",
+    "card1_badge": "PRIORITAS INVESTASI",
+    "card1_title": "Fasilitasi Penanaman Modal & Investasi",
+    "card1_desc": "Layanan asistensi personal satu pintu untuk penanam modal korporasi dan UMKM skala menengah ke atas dengan pendampingan langsung Liaison Officer DPMPTSP.",
+    "card1_bullet1": "Pendampingan OSS-RBA",
+    "card1_bullet2": "Konsultasi Tata Ruang RDTR",
+    "card1_bullet3": "Fasilitasi Insentif Pajak Daerah",
+    "card1_cta": "Hubungi Liaison Officer ↗",
+    "card2_badge": "PRIORITAS INKLUSI",
+    "card2_title": "Jalur Fast-Track Ramah Disabilitas",
+    "card2_desc": "Penyandang disabilitas, lansia >60 tahun, dan ibu hamil langsung mendapatkan nomor antrean khusus tanpa perlu menunggu antrean reguler.",
+    "card2_bullet1": "Kursi Roda & Jalur Landai",
+    "card2_bullet2": "Petugas Pendamping Bahasa Isyarat",
+    "card2_bullet3": "Kios Khusus Layar Rendah",
+    "card2_cta": "Buka Menu Inklusif ↗",
+    "card3_badge": "FASILITAS EKSEKUTIF",
+    "card3_title": "Executive Lounge & Business Corner",
+    "card3_desc": "Ruang tunggu eksklusif berpenyejuk udara sentral dengan koneksi internet cepat, stasiun pengisian daya gawai, dan sajian kopi Luwu.",
+    "card3_bullet1": "Wi-Fi Orbit Berkecepatan Tinggi",
+    "card3_bullet2": "Layar Monitor Progres Berkas",
+    "card3_bullet3": "Bilik Konsultasi Privat",
+    "card3_cta": "Lihat Denah Lounge ↗",
+    "card4_badge": "FASILITAS KELUARGA",
+    "card4_title": "Ruang Laktasi & Arena Bermain Ramah Anak",
+    "card4_desc": "Bilik privat higienis untuk ibu menyusui serta arena bermain anak edukatif yang diawasi agar orang tua dapat mengurus berkas dengan tenang.",
+    "card4_bullet1": "Sterilizer & Kulkas ASI",
+    "card4_bullet2": "Mainan Edukasi Standar SNI",
+    "card4_bullet3": "Sofa Laktasi Ergonomis",
+    "card4_cta": "Panduan Fasilitas Anak ↗",
+    "sub_info": "Antrean langsung, persyaratan berkas kependudukan & gerai instansi layanan publik."
   }
 }

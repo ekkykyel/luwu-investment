@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Search, Mic, Command, ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export interface SuperHeroSearchProps {
   onSearchSubmit?: (query: string) => void;
@@ -10,17 +11,6 @@ export interface SuperHeroSearchProps {
   activePersona?: 'warga' | 'investor' | 'semua';
 }
 
-const POPULAR_CHIPS = [
-  { id: 'dukcapil', label: 'Dukcapil & KTP-el', category: 'Kependudukan' },
-  { id: 'oss', label: 'Izin Usaha NIB OSS', category: 'Perizinan' },
-  { id: 'antrean', label: 'Ambil Antrean Online', category: 'Layanan Cepat' },
-  { id: 'bpjs', label: 'BPJS Kesehatan', category: 'Kesehatan' },
-  { id: 'pajak', label: 'Pajak Daerah & PBB', category: 'Keuangan' },
-  { id: 'samsat', label: 'SAMSAT PKB Luwu', category: 'Kepolisian' },
-  { id: 'bpn', label: 'Sertipikat Tanah BPN', category: 'Pertanahan' },
-  { id: 'imigrasi', label: 'Paspor Imigrasi', category: 'Hukum' },
-];
-
 export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
   onSearchSubmit,
   onOpenCommandPalette,
@@ -28,8 +18,20 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
   onSelectChip,
   activePersona = 'warga',
 }) => {
+  const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+
+  const POPULAR_CHIPS = [
+    { id: 'dukcapil', label: t('hero.chip_dukcapil', 'Dukcapil & KTP-el'), category: 'Kependudukan' },
+    { id: 'oss', label: t('hero.chip_nib', 'Izin Usaha NIB OSS'), category: 'Perizinan' },
+    { id: 'antrean', label: t('hero.chip_queue', 'Ambil Antrean Online'), category: 'Layanan Cepat' },
+    { id: 'bpjs', label: t('hero.chip_bpjs', 'BPJS Kesehatan'), category: 'Kesehatan' },
+    { id: 'pajak', label: t('hero.chip_pajak', 'Pajak & Retribusi'), category: 'Keuangan' },
+    { id: 'samsat', label: t('mppPortal.chips.samsat', 'SAMSAT PKB Luwu'), category: 'Kepolisian' },
+    { id: 'bpn', label: t('mppPortal.chips.bpn', 'Sertipikat Tanah BPN'), category: 'Pertanahan' },
+    { id: 'imigrasi', label: t('mppPortal.chips.imigrasi', 'Paspor Imigrasi'), category: 'Hukum' },
+  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +52,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
         transition={{ duration: 0.3 }}
         className="inline-flex items-center justify-center text-center px-3.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800/80 text-emerald-700 dark:text-emerald-400 border border-slate-200 dark:border-slate-700 shadow-2xs"
       >
-        <span>Regional GRP Platform</span>
+        <span>{t('hero.grp_badge', 'REGIONAL GRP PLATFORM')}</span>
       </motion.div>
 
       {/* 2. Main Title */}
@@ -61,13 +63,12 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
         className="space-y-3 max-w-3xl px-2"
       >
         <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.15] font-sans">
-          <span className="block text-slate-900 dark:text-white">Ekosistem Layanan Publik</span>
-          <span className="block bg-gradient-to-r from-teal-500 via-emerald-500 to-cyan-500 bg-clip-text text-transparent">
-            Tanpa Hambatan
+          <span className="block bg-gradient-to-r from-slate-900 via-emerald-800 to-teal-900 dark:from-white dark:via-emerald-300 dark:to-teal-200 bg-clip-text text-transparent">
+            {t('hero.title', 'Ekosistem Layanan Publik Tanpa Hambatan')}
           </span>
         </h1>
         <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium max-w-md sm:max-w-xl mx-auto text-balance leading-relaxed">
-          Portal terpadu Regional GRP (Government Resource Planning) untuk 19 instansi pemerintah, BUMN, dan kepolisian. Cepat, transparan, dan ramah untuk seluruh warga Luwu.
+          {t('hero.subtitle', 'Portal terpadu Regional GRP (Government Resource Planning) untuk 19 instansi pemerintah, BUMN, dan kepolisian. Cepat, transparan, dan ramah untuk seluruh warga Luwu.')}
         </p>
       </motion.div>
 
@@ -95,7 +96,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
               onChange={(e) => setQuery(e.target.value)}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              placeholder="Apa layanan yang Anda butuhkan hari ini di MPP Simpurusiang?"
+              placeholder={t('hero.search_placeholder', 'Apa layanan yang Anda butuhkan hari ini di MPP?')}
               className="w-full bg-transparent text-sm sm:text-base font-medium text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none truncate py-2 sm:py-2.5"
             />
 
@@ -110,7 +111,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
               <button
                 type="button"
                 onClick={onOpenVoiceAssistant}
-                title="Pencarian Suara & Asisten AI"
+                title={t('mppPortal.voiceAssistant.title', 'Pencarian Suara & Asisten AI')}
                 aria-label="Pencarian Suara"
                 className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/15 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 transition-transform active:scale-90 cursor-pointer"
               >
@@ -123,7 +124,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
               type="submit"
               className="px-4 sm:px-6 py-2.5 sm:py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm rounded-2xl shadow-md shadow-emerald-600/30 flex items-center gap-1.5 shrink-0 transition-all cursor-pointer active:scale-95"
             >
-              <span>Cari</span>
+              <span>{t('hero.search_button', 'Cari ➔')}</span>
               <ArrowRight className="w-4 h-4 hidden sm:inline-block" />
             </button>
           </div>
@@ -139,7 +140,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
 
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scrollbar-none py-1.5 px-3 snap-x touch-pan-x">
           <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0 mr-1">
-            Populer:
+            {t('mppPortal.chips.popular', 'Populer:')}
           </span>
           {POPULAR_CHIPS.map((chip) => (
             <button

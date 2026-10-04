@@ -2338,13 +2338,13 @@ export default function PortalMPP() {
                 {/* Unboxed Quiet Context Line */}
                 <div className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 text-center max-w-xl">
                   {activePersona === 'warga' && (
-                    <span>Antrean langsung, persyaratan berkas kependudukan & gerai instansi layanan publik.</span>
+                    <span>{t('access.sub_info', 'Antrean langsung, persyaratan berkas kependudukan & gerai instansi layanan publik.')}</span>
                   )}
                   {activePersona === 'investor' && (
-                    <span>Eksekutif Desk Investasi, konsultasi tata ruang, peta spasial RDTR, & perizinan OSS-RBA.</span>
+                    <span>{t('mppPortal.personaDesc.investor', 'Eksekutif Desk Investasi, konsultasi tata ruang, peta spasial RDTR, & perizinan OSS-RBA.')}</span>
                   )}
                   {activePersona === 'semua' && (
-                    <span>Seluruh modul layanan masyarakat, investasi, fasilitasi bisnis & regulasi daerah.</span>
+                    <span>{t('mppPortal.personaDesc.semua', 'Seluruh modul layanan masyarakat, investasi, fasilitasi bisnis & regulasi daerah.')}</span>
                   )}
                 </div>
 

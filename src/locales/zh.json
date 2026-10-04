@@ -1,5 +1,15 @@
 {
   "hero": {
+    "grp_badge": "区域 GRP 平台",
+    "title": "无障碍公共服务生态系统",
+    "subtitle": "整合 19 个政府部门、国有企业与警察局的区域 GRP 统一门户。高效、透明，为所有芦梧居民提供优质服务。",
+    "search_placeholder": "您今天在公共服务大楼需要什么服务？",
+    "search_button": "搜索 ➔",
+    "chip_dukcapil": "户籍与电子身份证",
+    "chip_nib": "NIB 商业许可证 (OSS)",
+    "chip_queue": "在线取号",
+    "chip_bpjs": "国家医疗保险 (BPJS)",
+    "chip_pajak": "地方税收与规费",
     "titleHighlight": "数字投资",
     "titleRest": "门户",
     "subtitle": "芦梧县综合公共服务门户",
@@ -1945,6 +1955,22 @@
   "opex_bahan_baku": "生产原材料",
   "opex_kemasan": "包装费用",
   "mppPortal": {
+    "persona": {
+      "warga": "公众/居民",
+      "investor": "投资人与企业",
+      "semua": "全部政务服务"
+    },
+    "personaDesc": {
+      "warga": "现场排队、户籍文件要求及公共服务机构窗口。",
+      "investor": "投资执行处、空间规划咨询、RDTR 空间地图与 OSS-RBA 审批。",
+      "semua": "涵盖公众服务、招商引资、企业便利化及区域政策规章的全模块。"
+    },
+    "chips": {
+      "popular": "热门搜索：",
+      "samsat": "SAMSAT 车船税",
+      "bpn": "BPN 土地权证",
+      "imigrasi": "出入境护照办理"
+    },
     "hero": {
       "titlePrefix": "欢迎来到公共服务",
       "titleHighlight": "鲁乌县商场",
@@ -3290,5 +3316,38 @@
     "speech_head": "DPMPTSP 局长致辞",
     "investor_quotes": "投资者感言与反馈",
     "join_community": "加入芦梧投资者社区"
+  },
+  "access": {
+    "tag_badge": "优先设施与包容性服务",
+    "section_title": "无障碍与快速通道设施",
+    "card1_badge": "投资优先",
+    "card1_title": "招商引资与投资便利服务",
+    "card1_desc": "由 DPMPTSP 联络官提供一对一全程协助，为企业投资者及中大型微型企业提供一站式服务。",
+    "card1_bullet1": "OSS-RBA 备案指导",
+    "card1_bullet2": "RDTR 空间规划咨询",
+    "card1_bullet3": "地方税收优惠政策协助",
+    "card1_cta": "联系联络官 ↗",
+    "card2_badge": "包容性优先",
+    "card2_title": "无障碍人士快速通道",
+    "card2_desc": "残疾人士、60岁以上老人及孕妇可直接领取专属优先排队号，无需等待常规排队。",
+    "card2_bullet1": "轮椅与无障碍坡道",
+    "card2_bullet2": "手语协助服务人员",
+    "card2_bullet3": "低屏幕专属自助终端",
+    "card2_cta": "打开包容性菜单 ↗",
+    "card3_badge": "行政 VIP 设施",
+    "card3_title": "行政休息室与商务角",
+    "card3_desc": "配备中央空调的专属休息室，提供高速网络、设备充电站及芦梧特产咖啡。",
+    "card3_bullet1": "高速 Orbit 无线网络",
+    "card3_bullet2": "文件办理进度显示屏",
+    "card3_bullet3": "私密咨询隔间",
+    "card3_cta": "查看休息室平面图 ↗",
+    "card4_badge": "家庭专属设施",
+    "card4_title": "母婴哺乳室与儿童游乐区",
+    "card4_desc": "为哺乳期母亲提供卫生的私密隔间，以及受看护的儿童益智游乐区，让家长安心办理各项业务。",
+    "card4_bullet1": "母乳冷藏冰箱与消毒柜",
+    "card4_bullet2": "符合国家标准的益智玩具",
+    "card4_bullet3": "人体工学哺乳沙发",
+    "card4_cta": "儿童设施指南 ↗",
+    "sub_info": "现场排队、户籍文件要求及公共服务机构窗口。"
   }
 }

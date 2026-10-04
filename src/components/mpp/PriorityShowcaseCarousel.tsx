@@ -10,6 +10,7 @@ import {
   ExternalLink,
   ShieldCheck 
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export interface PriorityShowcaseCarouselProps {
   onOpenAccessibilityPanel?: () => void;
@@ -17,74 +18,91 @@ export interface PriorityShowcaseCarouselProps {
   isDark?: boolean;
 }
 
-const SHOWCASE_ITEMS = [
-  {
-    id: 'vip-investor',
-    type: 'vip',
-    title: 'Fasilitasi Penanaman Modal & Investasi',
-    kicker: 'Layanan Eksekutif',
-    description: 'Layanan asistensi personal satu pintu untuk penanam modal korporasi dan UMKM skala menengah ke atas dengan pendampingan langsung Liaison Officer DPMPTSP.',
-    badge: 'Prioritas Investasi',
-    badgeColor: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
-    icon: Briefcase,
-    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800',
-    features: ['Pendampingan OSS-RBA', 'Konsultasi Tata Ruang RDTR', 'Fasilitasi Insentif Pajak Daerah'],
-    actionLabel: 'Hubungi Liaison Officer',
-    isVip: true,
-  },
-  {
-    id: 'ramah-disabilitas',
-    type: 'inklusif',
-    title: 'Jalur Fast-Track Ramah Disabilitas',
-    kicker: 'Pelayanan Inklusif',
-    description: 'Penyandang disabilitas, lansia >60 tahun, dan ibu hamil langsung mendapatkan nomor antrean khusus tanpa perlu menunggu antrean reguler.',
-    badge: 'Prioritas Inklusi',
-    badgeColor: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
-    icon: Accessibility,
-    image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=800',
-    features: ['Kursi Roda & Jalur Landai', 'Petugas Pendamping Bahasa Isyarat', 'Kiosk Khusus Layar Rendah'],
-    actionLabel: 'Buka Menu Inklusif',
-    isVip: false,
-  },
-  {
-    id: 'executive-lounge',
-    type: 'vip',
-    title: 'Executive Lounge & Business Corner',
-    kicker: 'Fasilitas Unggulan',
-    description: 'Ruang tunggu eksklusif berpenyejuk udara sentral dengan koneksi internet cepat, stasiun pengisian daya gawai, dan sajian kopi Luwu.',
-    badge: 'Fasilitas Eksekutif',
-    badgeColor: 'bg-slate-800/80 text-slate-300 border-slate-700/80',
-    icon: Armchair,
-    image: 'https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&q=80&w=800',
-    features: ['Wi-Fi Orbit Berkecepatan Tinggi', 'Layar Monitor Progres Berkas', 'Bilik Konsultasi Privat'],
-    actionLabel: 'Lihat Denah Lounge',
-    isVip: true,
-  },
-  {
-    id: 'laktasi-anak',
-    type: 'inklusif',
-    title: 'Ruang Laktasi & Arena Bermain Ramah Anak',
-    kicker: 'Fasilitas Keluarga',
-    description: 'Bilik privat higienis untuk ibu menyusui serta arena bermain anak edukatif yang diawasi agar orang tua dapat mengurus berkas dengan tenang.',
-    badge: 'Fasilitas Keluarga',
-    badgeColor: 'bg-slate-800/80 text-slate-300 border-slate-700/80',
-    icon: Baby,
-    image: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&q=80&w=800',
-    features: ['Sterilizer & Kulkas ASI', 'Mainan Edukasi Standar SNI', 'Sofa Laktasi Ergonomis'],
-    actionLabel: 'Panduan Fasilitas Anak',
-    isVip: false,
-  },
-];
-
 export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> = ({
   onOpenAccessibilityPanel,
   onOpenVipInvestor,
   isDark = false,
 }) => {
+  const { t } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const touchStartXRef = useRef<number | null>(null);
+
+  const SHOWCASE_ITEMS = [
+    {
+      id: 'vip-investor',
+      type: 'vip',
+      title: t('access.card1_title', 'Fasilitasi Penanaman Modal & Investasi'),
+      kicker: t('access.card1_kicker', 'Layanan Eksekutif'),
+      description: t('access.card1_desc', 'Layanan asistensi personal satu pintu untuk penanam modal korporasi dan UMKM skala menengah ke atas dengan pendampingan langsung Liaison Officer DPMPTSP.'),
+      badge: t('access.card1_badge', 'PRIORITAS INVESTASI'),
+      badgeColor: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
+      icon: Briefcase,
+      image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800',
+      features: [
+        t('access.card1_bullet1', 'Pendampingan OSS-RBA'),
+        t('access.card1_bullet2', 'Konsultasi Tata Ruang RDTR'),
+        t('access.card1_bullet3', 'Fasilitasi Insentif Pajak Daerah')
+      ],
+      actionLabel: t('access.card1_cta', 'Hubungi Liaison Officer ↗'),
+      isVip: true,
+    },
+    {
+      id: 'ramah-disabilitas',
+      type: 'inklusif',
+      title: t('access.card2_title', 'Jalur Fast-Track Ramah Disabilitas'),
+      kicker: t('access.card2_kicker', 'Pelayanan Inklusif'),
+      description: t('access.card2_desc', 'Penyandang disabilitas, lansia >60 tahun, dan ibu hamil langsung mendapatkan nomor antrean khusus tanpa perlu menunggu antrean reguler.'),
+      badge: t('access.card2_badge', 'PRIORITAS INKLUSI'),
+      badgeColor: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
+      icon: Accessibility,
+      image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=800',
+      features: [
+        t('access.card2_bullet1', 'Kursi Roda & Jalur Landai'),
+        t('access.card2_bullet2', 'Petugas Pendamping Bahasa Isyarat'),
+        t('access.card2_bullet3', 'Kios Khusus Layar Rendah')
+      ],
+      actionLabel: t('access.card2_cta', 'Buka Menu Inklusif ↗'),
+      isVip: false,
+    },
+    {
+      id: 'executive-lounge',
+      type: 'vip',
+      title: t('access.card3_title', 'Executive Lounge & Business Corner'),
+      kicker: t('access.card3_kicker', 'Fasilitas Unggulan'),
+      description: t('access.card3_desc', 'Ruang tunggu eksklusif berpenyejuk udara sentral dengan koneksi internet cepat, stasiun pengisian daya gawai, dan sajian kopi Luwu.'),
+      badge: t('access.card3_badge', 'FASILITAS EKSEKUTIF'),
+      badgeColor: 'bg-slate-800/80 text-slate-300 border-slate-700/80',
+      icon: Armchair,
+      image: 'https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&q=80&w=800',
+      features: [
+        t('access.card3_bullet1', 'Wi-Fi Orbit Berkecepatan Tinggi'),
+        t('access.card3_bullet2', 'Layar Monitor Progres Berkas'),
+        t('access.card3_bullet3', 'Bilik Konsultasi Privat')
+      ],
+      actionLabel: t('access.card3_cta', 'Lihat Denah Lounge ↗'),
+      isVip: true,
+    },
+    {
+      id: 'laktasi-anak',
+      type: 'inklusif',
+      title: t('access.card4_title', 'Ruang Laktasi & Arena Bermain Ramah Anak'),
+      kicker: t('access.card4_kicker', 'Fasilitas Keluarga'),
+      description: t('access.card4_desc', 'Bilik privat higienis untuk ibu menyusui serta arena bermain anak edukatif yang diawasi agar orang tua dapat mengurus berkas dengan tenang.'),
+      badge: t('access.card4_badge', 'FASILITAS KELUARGA'),
+      badgeColor: 'bg-slate-800/80 text-slate-300 border-slate-700/80',
+      icon: Baby,
+      image: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&q=80&w=800',
+      features: [
+        t('access.card4_bullet1', 'Sterilizer & Kulkas ASI'),
+        t('access.card4_bullet2', 'Mainan Edukasi Standar SNI'),
+        t('access.card4_bullet3', 'Sofa Laktasi Ergonomis')
+      ],
+      actionLabel: t('access.card4_cta', 'Panduan Fasilitas Anak ↗'),
+      isVip: false,
+    },
+  ];
 
   // Smooth scroll and state sync handler without entire viewport hijacking
   const scrollToCard = useCallback((index: number) => {
@@ -161,10 +179,10 @@ export const PriorityShowcaseCarousel: React.FC<PriorityShowcaseCarouselProps> =
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-700/60">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span>Fasilitas Prioritas & Layanan Inklusif</span>
+            <span>{t('access.tag_badge', 'FASILITAS PRIORITAS & LAYANAN INKLUSIF')}</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight font-sans">
-            Aksesibilitas & Fasilitasi Cepat
+            {t('access.section_title', 'Aksesibilitas & Fasilitasi Cepat')}
           </h2>
         </div>
 

@@ -1,5 +1,15 @@
 {
   "hero": {
+    "grp_badge": "REGIONAL GRP PLATFORM",
+    "title": "Seamless Public Service Ecosystem",
+    "subtitle": "Integrated Regional GRP portal connecting 19 government agencies, SOEs, and police forces. Fast, transparent, and user-friendly for all Luwu residents.",
+    "search_placeholder": "What service do you need at MPP today?",
+    "search_button": "Search ➔",
+    "chip_dukcapil": "Civil Registry & E-ID",
+    "chip_nib": "NIB Business License (OSS)",
+    "chip_queue": "Get Online Queue",
+    "chip_bpjs": "BPJS Health Insurance",
+    "chip_pajak": "Taxes & Regional Levies",
     "titleHighlight": "Digital Investment",
     "titleRest": "Gateway",
     "subtitle": "Integrated Public Service Portal of Luwu Regency",
@@ -1945,6 +1955,22 @@
   "opex_bahan_baku": "Production Raw Materials",
   "opex_kemasan": "Packaging Costs",
   "mppPortal": {
+    "persona": {
+      "warga": "Citizens",
+      "investor": "Investors & Business",
+      "semua": "All Services"
+    },
+    "personaDesc": {
+      "warga": "Direct queuing, civil registration requirements & public service agency counters.",
+      "investor": "Executive Investment Desk, spatial planning consultation, RDTR spatial map, & OSS-RBA licensing.",
+      "semua": "Complete modules for public services, investment, business facilitation & regional regulations."
+    },
+    "chips": {
+      "popular": "Popular:",
+      "samsat": "SAMSAT Vehicle Tax",
+      "bpn": "BPN Land Certificate",
+      "imigrasi": "Immigration Passport"
+    },
     "hero": {
       "titlePrefix": "Welcome to the Public Service",
       "titleHighlight": "Mall of Luwu Regency",
@@ -3290,5 +3316,38 @@
     "speech_head": "Opening Remarks from Head of DPMPTSP",
     "investor_quotes": "Investor Testimonials",
     "join_community": "Join Luwu Investor Community"
+  },
+  "access": {
+    "tag_badge": "PRIORITY FACILITIES & INCLUSIVE SERVICES",
+    "section_title": "Accessibility & Fast-Track Facilities",
+    "card1_badge": "INVESTMENT PRIORITY",
+    "card1_title": "Investment & Capital Facilitation",
+    "card1_desc": "One-stop personal assistance service for corporate investors and medium-to-large MSMEs, guided directly by DPMPTSP Liaison Officers.",
+    "card1_bullet1": "OSS-RBA Assistance",
+    "card1_bullet2": "RDTR Spatial Planning Consultation",
+    "card1_bullet3": "Regional Tax Incentive Facilitation",
+    "card1_cta": "Contact Liaison Officer ↗",
+    "card2_badge": "INCLUSIVE PRIORITY",
+    "card2_title": "Disability-Friendly Fast-Track Lane",
+    "card2_desc": "Persons with disabilities, seniors over 60, and pregnant women receive priority queue numbers without waiting in regular queues.",
+    "card2_bullet1": "Wheelchairs & Access Ramps",
+    "card2_bullet2": "Sign Language Assistance Staff",
+    "card2_bullet3": "Low-Screen Self-Service Kiosks",
+    "card2_cta": "Open Inclusive Menu ↗",
+    "card3_badge": "EXECUTIVE FACILITY",
+    "card3_title": "Executive Lounge & Business Corner",
+    "card3_desc": "Exclusive air-conditioned lounge featuring high-speed internet, device charging stations, and premium Luwu coffee service.",
+    "card3_bullet1": "High-Speed Orbit Wi-Fi",
+    "card3_bullet2": "Document Progress Tracking Screen",
+    "card3_bullet3": "Private Consultation Booth",
+    "card3_cta": "View Lounge Floor Plan ↗",
+    "card4_badge": "FAMILY FACILITY",
+    "card4_title": "Lactation Room & Child-Friendly Play Area",
+    "card4_desc": "Hygienic private booth for nursing mothers and supervised educational play area for kids while parents handle civil affairs.",
+    "card4_bullet1": "Breast Milk Refrigerator & Sterilizer",
+    "card4_bullet2": "Standard Educational Toys",
+    "card4_bullet3": "Ergonomic Nursing Sofa",
+    "card4_cta": "Family Facility Guide ↗",
+    "sub_info": "Direct queuing, civil registration requirements & public service agency counters."
   }
 }
