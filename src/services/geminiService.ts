@@ -23,12 +23,9 @@ export class GeminiService {
   ];
 
   /**
-   * Built-in production safety net keys
+   * Built-in production safety net keys (dynamically empty to prevent leaked keys)
    */
-  private readonly BUILTIN_FALLBACK_KEYS = [
-    "AIzaSyCex5xksiwafLPGbf6FJKaNZvSyRShqgTM", // Primary Built-in Fallback
-    "AIzaSyDvtN4VPcJEuYJZ2MVdAK0YV8gShz9VH6g"  // Secondary Built-in Fallback
-  ];
+  private readonly BUILTIN_FALLBACK_KEYS: string[] = [];
 
   private constructor() {}
 
@@ -44,7 +41,7 @@ export class GeminiService {
 
   /**
    * Retrieves all configured and valid Gemini API keys in priority order.
-   * Priority: GEMINI_API_KEY_FIRST > GEMINI_API_KEY_2 > GEMINI_API_KEY > GEMINI_API_KEY_1..7 > Built-in Fallbacks
+   * Priority: GEMINI_API_KEY_FIRST > GEMINI_API_KEY_2 > GEMINI_API_KEY > API_KEY > GEMINI_API_KEY_1..7
    */
   public getValidApiKeys(): string[] {
     const rawKeys: (string | undefined)[] = [];
@@ -55,6 +52,7 @@ export class GeminiService {
         process.env.GEMINI_API_KEY_FIRST,
         process.env.GEMINI_API_KEY_2,
         process.env.GEMINI_API_KEY,
+        process.env.API_KEY,
         process.env.VITE_GEMINI_API_KEY,
         process.env.NEXT_PUBLIC_GEMINI_API_KEY,
         process.env.GEMINI_API_KEY_1,
@@ -131,7 +129,7 @@ export class GeminiService {
    * Obtains a GoogleGenAI SDK client initialized with the primary active key
    */
   public getClient(apiKey?: string): GoogleGenAI {
-    const key = apiKey || this.getActiveApiKeys()[0] || this.BUILTIN_FALLBACK_KEYS[0];
+    const key = apiKey || this.getActiveApiKeys()[0] || (typeof process !== "undefined" ? (process.env?.GEMINI_API_KEY || process.env?.API_KEY) : "") || "";
     return new GoogleGenAI({
       apiKey: key,
       httpOptions: {
