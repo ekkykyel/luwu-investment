@@ -4397,50 +4397,44 @@ export default function LandingPage({
                     </div>
 
                     {/* Staff Photos Container with Smooth Elevation */}
-                    {staffImageLeft && staffImageRight ? (
-                      <div className="flex items-end justify-center gap-1 sm:gap-3 w-full relative z-10 px-2">
-                        {/* Petugas Kiri */}
-                        <div className="relative flex-1 flex flex-col items-center justify-end group">
-                          <img
-                            src={staffImageLeft}
-                            alt="Petugas Front Office MPP Simpurusiang (Kiri)"
-                            referrerPolicy="no-referrer"
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800";
-                            }}
-                            className="w-full max-h-72 sm:max-h-80 md:max-h-92 object-contain object-bottom bg-transparent transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_12px_24px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_14px_28px_rgba(0,0,0,0.7)]"
-                          />
-                        </div>
+                    {(() => {
+                      const DEFAULT_OFFICER_LEFT = "https://images.unsplash.com/photo-1580894732468-058f747280f2?auto=format&fit=crop&q=80&w=800";
+                      const DEFAULT_OFFICER_RIGHT = "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=800";
+                      const finalLeft = staffImageLeft || DEFAULT_OFFICER_LEFT;
+                      const finalRight = staffImageRight || DEFAULT_OFFICER_RIGHT;
 
-                        {/* Petugas Kanan */}
-                        <div className="relative flex-1 flex flex-col items-center justify-end group">
-                          <img
-                            src={staffImageRight}
-                            alt="Petugas Front Office MPP Simpurusiang (Kanan)"
-                            referrerPolicy="no-referrer"
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800";
-                            }}
-                            className="w-full max-h-72 sm:max-h-80 md:max-h-92 object-contain object-bottom bg-transparent transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_12px_24px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_14px_28px_rgba(0,0,0,0.7)]"
-                          />
+                      return (
+                        <div className="flex items-end justify-center gap-1 sm:gap-3 w-full relative z-10 px-2">
+                          {/* Petugas Front Office Kiri */}
+                          <div className="relative flex-1 flex flex-col items-center justify-end group">
+                            <img
+                              src={finalLeft}
+                              alt="Petugas Front Office DPMPTSP MPP Simpurusiang (Kiri)"
+                              referrerPolicy="no-referrer"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = DEFAULT_OFFICER_LEFT;
+                              }}
+                              className="w-full max-h-72 sm:max-h-80 md:max-h-92 object-contain object-bottom bg-transparent transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_12px_24px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_14px_28px_rgba(0,0,0,0.7)]"
+                            />
+                          </div>
+
+                          {/* Petugas Front Office Kanan */}
+                          <div className="relative flex-1 flex flex-col items-center justify-end group">
+                            <img
+                              src={finalRight}
+                              alt="Petugas Front Office DPMPTSP MPP Simpurusiang (Kanan)"
+                              referrerPolicy="no-referrer"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = DEFAULT_OFFICER_RIGHT;
+                              }}
+                              className="w-full max-h-72 sm:max-h-80 md:max-h-92 object-contain object-bottom bg-transparent transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_12px_24px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_14px_28px_rgba(0,0,0,0.7)]"
+                            />
+                          </div>
                         </div>
-                      </div>
-                    ) : (
-                      <div className="relative w-full flex flex-col items-center justify-end group z-10 px-2">
-                        <img
-                          src={staffImageLeft || staffImageRight || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800"}
-                          alt="DPMPTSP MPP Simpurusiang - Petugas Front Office"
-                          referrerPolicy="no-referrer"
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800";
-                          }}
-                          className="w-full max-h-72 sm:max-h-80 md:max-h-92 object-contain object-bottom bg-transparent transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_12px_24px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_14px_28px_rgba(0,0,0,0.7)]"
-                        />
-                      </div>
-                    )}
+                      );
+                    })()}
 
                     {/* Elegant Frosted Pedestal Plinth at Base */}
                     <div className="w-full relative z-20 -mt-3 sm:-mt-4">
@@ -5962,7 +5956,7 @@ export default function LandingPage({
         </section>
 
         {/* Footer Sovereign Executive */}
-        <footer className={`relative border-t pt-6 pb-20 sm:pt-12 sm:pb-12 px-3 sm:px-6 ${isDark ? "bg-slate-900/90 border-slate-800" : "bg-white border-slate-200"}`}>
+        <footer className={`relative border-t pt-6 pb-28 sm:pt-12 sm:pb-16 px-3 sm:px-6 ${isDark ? "bg-slate-900/90 border-slate-800" : "bg-white border-slate-200"}`}>
           <div className="container mx-auto px-0 relative max-w-6xl">
             {/* Floating Back to Top Button */}
             <button
@@ -5993,8 +5987,8 @@ export default function LandingPage({
                 </div>
               </div>
 
-              {/* Quick Navigation Links */}
-              <div className="grid grid-cols-2 gap-3 w-full max-w-sm mx-auto md:max-w-none md:mx-0 md:flex md:flex-wrap items-center justify-center md:w-auto text-center">
+              {/* Quick Navigation Links (Symmetrical 2x2 Grid for Android) */}
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full max-w-md mx-auto md:max-w-none md:mx-0 md:flex md:flex-wrap items-center justify-center md:w-auto text-center">
                 {[
                   { name: t('nav.home', 'Beranda'), icon: Home, action: () => scrollToSection("hero-section") },
                   { name: t('nav.potensiRegional', 'Potensi Regional'), icon: Map, action: () => scrollToSection("potensi-section") },
@@ -6013,14 +6007,14 @@ export default function LandingPage({
                     <button 
                       key={link.name} 
                       onClick={link.action}
-                      className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-[10.5px] sm:text-xs font-semibold transition-all cursor-pointer border ${
+                      className={`w-full min-h-[46px] flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer border shadow-2xs ${
                         isDark 
-                          ? "text-slate-300 hover:text-white bg-slate-800/40 border-slate-800 hover:bg-slate-800/80 hover:border-slate-700" 
-                          : "text-slate-700 hover:text-emerald-700 bg-slate-50 border-slate-100 hover:bg-emerald-50/80 hover:border-emerald-200"
+                          ? "text-slate-200 hover:text-white bg-slate-900/80 border-slate-800 hover:bg-slate-800/90 hover:border-emerald-500/40" 
+                          : "text-slate-800 hover:text-emerald-700 bg-white border-slate-200/80 hover:bg-emerald-50/80 hover:border-emerald-300"
                       }`}
                     >
-                      <IconComponent className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                      <span className="truncate">{link.name}</span>
+                      <IconComponent className="w-4 h-4 text-emerald-500 shrink-0" />
+                      <span className="truncate leading-tight">{link.name}</span>
                     </button>
                   );
                 })}
