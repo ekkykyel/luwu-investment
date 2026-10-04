@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { ChevronRight, ChevronLeft, Building2, ArrowRight, Sparkles } from 'lucide-react';
 import { LOCALIZED_AGENCIES } from '../../data/mppAgenciesData';
 
@@ -30,6 +31,11 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
   className = '',
   id = 'instansi'
 }) => {
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n?.language || 'id';
+  const isEn = currentLang.startsWith('en');
+  const isZh = currentLang.startsWith('zh');
+
   // Format data instansi
   const formattedTenants: TenantData[] = (propTenants && propTenants.length > 0 ? propTenants : LOCALIZED_AGENCIES).map((item: any, idx: number) => {
     return {
@@ -159,20 +165,20 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
         <div className="flex justify-center mb-2">
           <span className="px-3.5 py-1 rounded-full text-[11px] font-sans font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60 inline-flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
-            Gerai Pelayanan Terpadu
+            {isEn ? 'Integrated Service Counters' : isZh ? '综合政务大厅与窗口' : 'Gerai Pelayanan Terpadu'}
           </span>
         </div>
         <div className="inline-block relative pb-2">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white font-sans text-center">
-            Instansi Tergabung{" "}
+            {isEn ? 'Participating ' : isZh ? '入驻服务机构 ' : 'Instansi Tergabung '}
             <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 dark:from-emerald-300 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent">
-              Layanan Prima
+              {isEn ? 'Agencies & Institutions' : isZh ? '与卓越政务服务' : 'Layanan Prima'}
             </span>
           </h2>
           <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-14 h-1 bg-emerald-500 rounded-full"></span>
         </div>
         <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto text-center leading-relaxed text-justify">
-          {formattedTenants.length} Instansi Pemerintah, BUMN/BUMD, dan Lembaga Pelayanan Publik terintegrasi melayani masyarakat dan investor di MPP Simpurusiang Kabupaten Luwu.
+          {formattedTenants.length} {isEn ? 'Integrated Government Agencies, State Enterprises, and Public Institutions serving citizens and investors at Simpurusiang MPP, Luwu Regency.' : isZh ? '家入驻政府部门、国有企业及公共服务机构在鲁乌县 Simpurusiang 政务大厅为市民和投资者提供服务。' : 'Instansi Pemerintah, BUMN/BUMD, dan Lembaga Pelayanan Publik terintegrasi melayani masyarakat dan investor di MPP Simpurusiang Kabupaten Luwu.'}
         </p>
       </div>
 
@@ -230,7 +236,7 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                     </span>
-                    Loket Aktif
+                    {isEn ? 'Active Counter' : isZh ? '活跃窗口' : 'Loket Aktif'}
                   </div>
 
                   {/* Loket Number Tag Top Left */}
@@ -269,7 +275,7 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
                     onClick={() => onSelectTenant?.(tenant.rawItem || tenant)}
                     className="w-full py-2.5 px-4 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white text-emerald-700 dark:text-emerald-300 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all active:scale-[0.99] cursor-pointer shadow-2xs group-hover:bg-emerald-600 group-hover:text-white"
                   >
-                    <span>Buka Layanan Instansi</span>
+                    <span>{isEn ? 'Open Agency Services' : isZh ? '查看机构服务' : 'Buka Layanan Instansi'}</span>
                     <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </div>
@@ -312,7 +318,9 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
           className="w-full min-h-[48px] py-3.5 px-6 bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold rounded-2xl shadow-lg shadow-emerald-600/25 hover:shadow-emerald-600/40 flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer group"
         >
           <Building2 className="w-4 h-4" />
-          <span>Lihat Semua {formattedTenants.length} Instansi & Direktori Layanan</span>
+          <span>
+            {isEn ? `View All ${formattedTenants.length} Agencies & Service Directory` : isZh ? `查看全部 ${formattedTenants.length} 家机构与服务目录` : `Lihat Semua ${formattedTenants.length} Instansi & Direktori Layanan`}
+          </span>
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </button>
       </div>

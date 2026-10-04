@@ -69,8 +69,10 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
 
         {/* Title (Judul Utama) */}
         <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
-          Pelayanan Publik Luwu <br />
-          <span className="text-emerald-600 dark:text-emerald-400">Terbuka & Bebas Pungli</span>
+          {currentLang === 'en' ? 'Luwu Public Services' : currentLang === 'zh' ? '鲁乌县公共政务服务' : 'Pelayanan Publik Luwu'} <br />
+          <span className="text-emerald-600 dark:text-emerald-400">
+            {currentLang === 'en' ? 'Open, Transparent & Zero Extortion' : currentLang === 'zh' ? '阳光透明 · 零规费乱收费' : 'Terbuka & Bebas Pungli'}
+          </span>
         </h1>
 
         {/* Subtitle (Font sans-serif halus) */}
@@ -145,7 +147,9 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
             className="w-full py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow-md flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-98"
           >
             <FileText className="w-4 h-4 shrink-0" />
-            <span className="truncate">Cek Maklumat & SLA</span>
+            <span className="truncate">
+              {currentLang === 'en' ? 'Check Charter & SLA' : currentLang === 'zh' ? '查看承诺与 SLA' : 'Cek Maklumat & SLA'}
+            </span>
           </button>
 
           {/* Tombol 2: Petunjuk Arah / Navigasi Lokasi */}
@@ -155,7 +159,9 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
             className="w-full py-2.5 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-98"
           >
             <Navigation className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-            <span className="truncate">Petunjuk Arah</span>
+            <span className="truncate">
+              {currentLang === 'en' ? 'Directions' : currentLang === 'zh' ? '获取路线' : 'Petunjuk Arah'}
+            </span>
           </button>
         </div>
       </div>
@@ -180,8 +186,12 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">Lokasi MPP Simpurusiang</h3>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400">Kabupaten Luwu, Sulawesi Selatan</p>
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                      {currentLang === 'en' ? 'Simpurusiang MPP Location' : currentLang === 'zh' ? 'Simpurusiang 政务大厅位置' : 'Lokasi MPP Simpurusiang'}
+                    </h3>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                      {currentLang === 'en' ? 'Luwu Regency, South Sulawesi' : currentLang === 'zh' ? '南苏拉威西省鲁乌县' : 'Kabupaten Luwu, Sulawesi Selatan'}
+                    </p>
                   </div>
                 </div>
                 <button
@@ -195,10 +205,12 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
 
               <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs text-slate-600 dark:text-slate-300">
                 <p className="font-semibold text-slate-900 dark:text-white">
-                  📍 Alamat Resmi:
+                  📍 {currentLang === 'en' ? 'Official Address:' : currentLang === 'zh' ? '📍 官方地址:' : '📍 Alamat Resmi:'}
                 </p>
                 <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200/80 dark:border-slate-700">
-                  <p className="font-medium text-slate-900 dark:text-white">Gedung Mal Pelayanan Publik (MPP) Simpurusiang</p>
+                  <p className="font-medium text-slate-900 dark:text-white">
+                    {currentLang === 'en' ? 'Simpurusiang Public Service Mall (MPP) Building' : currentLang === 'zh' ? 'Simpurusiang 公共服务大厅 (MPP)' : 'Gedung Mal Pelayanan Publik (MPP) Simpurusiang'}
+                  </p>
                   <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                     Jl. Jendral Sudirman No. 1, Senga, Kec. Belopa, Kabupaten Luwu, Sulawesi Selatan 91994
                   </p>
@@ -206,7 +218,13 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
 
                 <div className="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400 pt-1">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                  <span>Tersedia fasilitas parkir roda 2 & roda 4 luas, ramp kursi roda, dan ruang tunggu ber-AC.</span>
+                  <span>
+                    {currentLang === 'en' 
+                      ? 'Spacious motorcycle & car parking, wheelchair ramp access, and air-conditioned waiting lounge available.' 
+                      : currentLang === 'zh' 
+                      ? '配备大型机动车与摩托车停车场、无障碍轮椅通道及全空调候办大厅。' 
+                      : 'Tersedia fasilitas parkir roda 2 & roda 4 luas, ramp kursi roda, dan ruang tunggu ber-AC.'}
+                  </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5 pt-2">
@@ -221,7 +239,7 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
                     }}
                     className="w-full py-2.5 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold transition-all text-center cursor-pointer"
                   >
-                    Denah Gedung
+                    {currentLang === 'en' ? 'Floor Plan' : currentLang === 'zh' ? '大楼平面图' : 'Denah Gedung'}
                   </button>
                   <button
                     type="button"
@@ -229,7 +247,7 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
                     className="w-full py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow-md flex items-center justify-center gap-1.5 transition-all text-center cursor-pointer"
                   >
                     <ExternalLink className="w-4 h-4 shrink-0" />
-                    <span>Buka Google Maps</span>
+                    <span>{currentLang === 'en' ? 'Google Maps' : currentLang === 'zh' ? '谷歌地图' : 'Buka Google Maps'}</span>
                   </button>
                 </div>
               </div>
