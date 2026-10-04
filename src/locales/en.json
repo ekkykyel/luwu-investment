@@ -3200,5 +3200,23 @@
   },
   "faq": {
     "title": "FREQUENTLY ASKED QUESTIONS (FAQ)"
+  },
+  "agency": {
+    "dpmptsp": "Investment & One-Stop Integrated Services Agency",
+    "dukcapil": "Population & Civil Registration Agency",
+    "bapenda": "Regional Revenue Agency",
+    "samsat": "Luwu Joint Revenue Office (SAMSAT)",
+    "bpjs": "Health & Employment Insurance (BPJS)",
+    "counter_label": "Counter {{num}}",
+    "floor_1": "1st Floor",
+    "floor_2": "2nd Floor",
+    "online_available": "Online System Available"
+  },
+  "facility": {
+    "lactation": "Lactation & Nursing Room",
+    "disability": "Wheelchair & Disability Access",
+    "kids_corner": "Reading Corner & Children's Play Area",
+    "kiosk": "Digital Self-Service Queue Kiosk",
+    "hours": "Operating Hours: 08:00 - 16:00 WITA"
   }
 }

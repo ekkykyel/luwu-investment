@@ -3200,5 +3200,23 @@
   },
   "faq": {
     "title": "常见问题解答 (FAQ)"
+  },
+  "agency": {
+    "dpmptsp": "投资与综合审批服务局",
+    "dukcapil": "人口与民政登记局",
+    "bapenda": "地方税务局",
+    "samsat": "芦梧车辆联合登记处 (SAMSAT)",
+    "bpjs": "国家医疗与就业保险局",
+    "counter_label": "窗口 {{num}}",
+    "floor_1": "一楼",
+    "floor_2": "二楼",
+    "online_available": "支持在线办理"
+  },
+  "facility": {
+    "lactation": "母婴室与哺乳室",
+    "disability": "无障碍与轮椅通道",
+    "kids_corner": "图书角与儿童游乐区",
+    "kiosk": "数字自助排队终端",
+    "hours": "营业时间：08:00 - 16:00 WITA"
   }
 }

@@ -3196,5 +3196,23 @@
   },
   "faq": {
     "title": "PERTANYAAN SERING DIAJUKAN (FAQ)"
+  },
+  "agency": {
+    "dpmptsp": "Dinas Penanaman Modal dan PTSP",
+    "dukcapil": "Dinas Kependudukan dan Pencatatan Sipil",
+    "bapenda": "Badan Pendapatan Daerah",
+    "samsat": "Samsat Luwu",
+    "bpjs": "BPJS Kesehatan / Ketenagakerjaan",
+    "counter_label": "Loket {{num}}",
+    "floor_1": "Lantai 1",
+    "floor_2": "Lantai 2",
+    "online_available": "Sistem Online Available"
+  },
+  "facility": {
+    "lactation": "Ruang Laktasi & Ibu Menyusui",
+    "disability": "Akses Ramah Disabilitas & Kursi Roda",
+    "kids_corner": "Pojok Baca & Area Bermain Anak",
+    "kiosk": "Kios Mandiri Antrean Digital",
+    "hours": "Jam Operasional: 08:00 - 16:00 WITA"
   }
 }
