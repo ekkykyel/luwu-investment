@@ -3349,5 +3349,20 @@
     "card4_bullet3": "人体工学哺乳沙发",
     "card4_cta": "儿童设施指南 ↗",
     "sub_info": "现场排队、户籍文件要求及公共服务机构窗口。"
+  },
+  "radar": {
+    "title": "人流高峰与空闲时段分布图",
+    "recom_title": "最佳办理时间推荐",
+    "recom_text": "无需排队的快速办理最佳时间为 08:00–09:00 或 14:00–15:00。高峰时段为 10:00–11:30。",
+    "legend_low": "人流较少 (< 30%)",
+    "legend_moderate": "人流适中 (30% - 70%)",
+    "legend_busy": "人流拥挤 (> 70%)",
+    "legend_break": "休息时间",
+    "status_smooth": "空闲（顺畅）",
+    "status_moderate": "人流适中",
+    "status_peak": "拥挤高峰",
+    "status_busy": "人流拥挤",
+    "status_closed_break": "午休时间（关闭）",
+    "status_closed_badge": "已关闭"
   }
 }

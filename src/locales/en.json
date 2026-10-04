@@ -3349,5 +3349,20 @@
     "card4_bullet3": "Ergonomic Nursing Sofa",
     "card4_cta": "Family Facility Guide ↗",
     "sub_info": "Direct queuing, civil registration requirements & public service agency counters."
+  },
+  "radar": {
+    "title": "Peak vs Low Traffic Hours Map",
+    "recom_title": "Recommended Visit Time",
+    "recom_text": "The best time for fast service without queues is 08:00–09:00 or 14:00–15:00. Peak hours occur between 10:00–11:30.",
+    "legend_low": "Low Traffic (< 30%)",
+    "legend_moderate": "Moderate (30% - 70%)",
+    "legend_busy": "Busy (> 70%)",
+    "legend_break": "Break Time",
+    "status_smooth": "Low Traffic (Smooth)",
+    "status_moderate": "Moderate",
+    "status_peak": "Peak Crowd",
+    "status_busy": "Busy",
+    "status_closed_break": "Lunch Break (Closed)",
+    "status_closed_badge": "CLOSED"
   }
 }

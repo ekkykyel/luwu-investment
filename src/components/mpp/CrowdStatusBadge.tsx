@@ -7,6 +7,7 @@ import {
   Coffee, 
   Clock 
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export type CrowdStatusType = 'sepi' | 'sedang' | 'ramai' | 'puncak' | 'istirahat';
 
@@ -31,6 +32,7 @@ export const CrowdStatusBadge: React.FC<CrowdStatusBadgeProps> = ({
   className = '',
   iconSize = 'sm',
 }) => {
+  const { t } = useTranslation();
   const iconClass = iconSize === 'md' ? 'w-4.5 h-4.5 shrink-0' : 'w-4 h-4 shrink-0';
 
   switch (status) {
@@ -38,7 +40,7 @@ export const CrowdStatusBadge: React.FC<CrowdStatusBadgeProps> = ({
       return (
         <div className={`flex items-center gap-1.5 text-xs sm:text-sm font-bold text-emerald-500 dark:text-emerald-400 ${className}`}>
           <CheckCircle2 className={iconClass} aria-hidden="true" />
-          <span>{label || 'Sepi (Lancar)'}</span>
+          <span>{label || t('radar.status_smooth', 'Sepi (Lancar)')}</span>
         </div>
       );
 
@@ -46,7 +48,7 @@ export const CrowdStatusBadge: React.FC<CrowdStatusBadgeProps> = ({
       return (
         <div className={`flex items-center gap-1.5 text-xs sm:text-sm font-bold text-amber-500 dark:text-amber-400 ${className}`}>
           <Activity className={iconClass} aria-hidden="true" />
-          <span>{label || 'Sedang'}</span>
+          <span>{label || t('radar.status_moderate', 'Sedang')}</span>
         </div>
       );
 
@@ -54,7 +56,7 @@ export const CrowdStatusBadge: React.FC<CrowdStatusBadgeProps> = ({
       return (
         <div className={`flex items-center gap-1.5 text-xs sm:text-sm font-bold text-rose-500 dark:text-rose-400 ${className}`}>
           <Flame className={iconClass} aria-hidden="true" />
-          <span>{label || 'Puncak Ramai'}</span>
+          <span>{label || t('radar.status_peak', 'Puncak Ramai')}</span>
         </div>
       );
 
@@ -62,7 +64,7 @@ export const CrowdStatusBadge: React.FC<CrowdStatusBadgeProps> = ({
       return (
         <div className={`flex items-center gap-1.5 text-xs sm:text-sm font-bold text-rose-500 dark:text-rose-400 ${className}`}>
           <Users className={iconClass} aria-hidden="true" />
-          <span>{label || 'Ramai'}</span>
+          <span>{label || t('radar.status_busy', 'Ramai')}</span>
         </div>
       );
 
@@ -70,7 +72,7 @@ export const CrowdStatusBadge: React.FC<CrowdStatusBadgeProps> = ({
       return (
         <div className={`flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-400 dark:text-slate-500 ${className}`}>
           <Coffee className={iconClass} aria-hidden="true" />
-          <span>{label || 'Jam Istirahat (Tutup)'}</span>
+          <span>{label || t('radar.status_closed_break', 'Jam Istirahat (Tutup)')}</span>
         </div>
       );
 

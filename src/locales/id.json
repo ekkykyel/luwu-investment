@@ -3345,5 +3345,20 @@
     "card4_bullet3": "Sofa Laktasi Ergonomis",
     "card4_cta": "Panduan Fasilitas Anak ↗",
     "sub_info": "Antrean langsung, persyaratan berkas kependudukan & gerai instansi layanan publik."
+  },
+  "radar": {
+    "title": "Peta Jam Ramai vs Sepi Kunjungan",
+    "recom_title": "Rekomendasi Waktu Berkunjung",
+    "recom_text": "Waktu terbaik untuk pelayanan cepat tanpa antrean adalah pukul 08:00–09:00 atau 14:00–15:00. Puncak keramaian terjadi pukul 10:00–11:30.",
+    "legend_low": "Sepi (< 30%)",
+    "legend_moderate": "Sedang (30% - 70%)",
+    "legend_busy": "Ramai (> 70%)",
+    "legend_break": "Istirahat",
+    "status_smooth": "Sepi (Lancar)",
+    "status_moderate": "Sedang",
+    "status_peak": "Puncak Ramai",
+    "status_busy": "Ramai",
+    "status_closed_break": "Jam Istirahat (Tutup)",
+    "status_closed_badge": "TUTUP"
   }
 }

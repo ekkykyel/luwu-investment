@@ -32,14 +32,14 @@ export const PeakHoursSection: React.FC<PeakHoursSectionProps> = ({
 
   // Data Jam Kepadatan Operasional MPP Simpurusiang
   const hourlyData: HourlyItem[] = [
-    { time: '08:00', density: 'rendah', percentage: 25, status: 'Sepi (Lancar)', statusType: 'sepi' },
-    { time: '09:00', density: 'sedang', percentage: 55, status: 'Sedang', statusType: 'sedang' },
-    { time: '10:00', density: 'tinggi', percentage: 90, status: 'Puncak Ramai', statusType: 'puncak' },
-    { time: '11:00', density: 'tinggi', percentage: 85, status: 'Ramai', statusType: 'ramai' },
-    { time: '12:00', density: 'istirahat', percentage: 0, status: 'Jam Istirahat (Tutup)', statusType: 'istirahat' },
-    { time: '13:00', density: 'sedang', percentage: 60, status: 'Sedang', statusType: 'sedang' },
-    { time: '14:00', density: 'sedang', percentage: 45, status: 'Sedang', statusType: 'sedang' },
-    { time: '15:00', density: 'rendah', percentage: 20, status: 'Sepi (Lancar)', statusType: 'sepi' },
+    { time: '08:00', density: 'rendah', percentage: 25, status: t('radar.status_smooth', 'Sepi (Lancar)'), statusType: 'sepi' },
+    { time: '09:00', density: 'sedang', percentage: 55, status: t('radar.status_moderate', 'Sedang'), statusType: 'sedang' },
+    { time: '10:00', density: 'tinggi', percentage: 90, status: t('radar.status_peak', 'Puncak Ramai'), statusType: 'puncak' },
+    { time: '11:00', density: 'tinggi', percentage: 85, status: t('radar.status_busy', 'Ramai'), statusType: 'ramai' },
+    { time: '12:00', density: 'istirahat', percentage: 0, status: t('radar.status_closed_break', 'Jam Istirahat (Tutup)'), statusType: 'istirahat' },
+    { time: '13:00', density: 'sedang', percentage: 60, status: t('radar.status_moderate', 'Sedang'), statusType: 'sedang' },
+    { time: '14:00', density: 'sedang', percentage: 45, status: t('radar.status_moderate', 'Sedang'), statusType: 'sedang' },
+    { time: '15:00', density: 'rendah', percentage: 20, status: t('radar.status_smooth', 'Sepi (Lancar)'), statusType: 'sepi' },
   ];
 
   return (
@@ -51,7 +51,7 @@ export const PeakHoursSection: React.FC<PeakHoursSectionProps> = ({
       <div className="space-y-1.5 text-left">
         <h3 className="text-lg sm:text-xl font-extrabold flex items-center gap-2.5 text-slate-900 dark:text-white font-sans">
           <Clock className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-          <span>Peta Jam Ramai vs Sepi Kunjungan</span>
+          <span>{t('radar.title', 'Peta Jam Ramai vs Sepi Kunjungan')}</span>
         </h3>
         <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
           {t(
@@ -65,28 +65,29 @@ export const PeakHoursSection: React.FC<PeakHoursSectionProps> = ({
       <div className="p-3.5 sm:p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-start gap-3 text-xs sm:text-sm shadow-xs text-left">
         <Lightbulb className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" aria-hidden="true" />
         <div className="text-slate-800 dark:text-slate-200 leading-relaxed">
-          <strong className="font-extrabold text-slate-900 dark:text-emerald-300">Rekomendasi Waktu Berkunjung:</strong>{' '}
-          Waktu terbaik untuk pelayanan cepat tanpa antrean adalah pukul{' '}
-          <strong className="font-extrabold text-emerald-700 dark:text-emerald-400">08:00–09:00</strong> atau{' '}
-          <strong className="font-extrabold text-emerald-700 dark:text-emerald-400">14:00–15:00</strong>.{' '}
-          Puncak keramaian terjadi pukul{' '}
-          <strong className="font-extrabold text-rose-600 dark:text-rose-400">10:00–11:30</strong>.
+          <strong className="font-extrabold text-slate-900 dark:text-emerald-300">
+            {t('radar.recom_title', 'Rekomendasi Waktu Berkunjung')}:
+          </strong>{' '}
+          {t(
+            'radar.recom_text',
+            'Waktu terbaik untuk pelayanan cepat tanpa antrean adalah pukul 08:00–09:00 atau 14:00–15:00. Puncak keramaian terjadi pukul 10:00–11:30.'
+          )}
         </div>
       </div>
 
       {/* 3. Legenda Status Berbasis SVG Semantic Badges */}
       <div className="flex flex-wrap items-center gap-2 pt-1 pb-1">
         <div className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700">
-          <CrowdStatusBadge status="sepi" label="Sepi (< 30%)" />
+          <CrowdStatusBadge status="sepi" label={t('radar.legend_low', 'Sepi (< 30%)')} />
         </div>
         <div className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700">
-          <CrowdStatusBadge status="sedang" label="Sedang (30% - 70%)" />
+          <CrowdStatusBadge status="sedang" label={t('radar.legend_moderate', 'Sedang (30% - 70%)')} />
         </div>
         <div className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700">
-          <CrowdStatusBadge status="ramai" label="Ramai (> 70%)" />
+          <CrowdStatusBadge status="ramai" label={t('radar.legend_busy', 'Ramai (> 70%)')} />
         </div>
         <div className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700">
-          <CrowdStatusBadge status="istirahat" label="Istirahat" />
+          <CrowdStatusBadge status="istirahat" label={t('radar.legend_break', 'Istirahat')} />
         </div>
       </div>
 
@@ -112,7 +113,7 @@ export const PeakHoursSection: React.FC<PeakHoursSectionProps> = ({
                 <div className="flex items-center justify-between text-xs sm:text-sm font-bold">
                   <span className="text-slate-700 dark:text-slate-300 font-extrabold">{item.time}</span>
                   <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                    Tutup
+                    {t('radar.status_closed_badge', 'TUTUP')}
                   </span>
                 </div>
 
