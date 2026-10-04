@@ -439,7 +439,13 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
   const [step, setStep] = useState<number>(1);
   const [userMode, setUserMode] = useState<'citizen' | 'investor'>(initialMode);
   const [lang, setLang] = useState<KioskLang>('id');
-  const [theme, setTheme] = useState<KioskTheme>('dark');
+  const [theme, setTheme] = useState<KioskTheme>(() => {
+    try {
+      return (localStorage.getItem('mpp_kiosk_theme') as KioskTheme) || 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [isAccessibleMode, setIsAccessibleMode] = useState<boolean>(false);
   const [isAssistanceAlerting, setIsAssistanceAlerting] = useState<boolean>(false);
@@ -1231,21 +1237,25 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
       } ${
         theme === 'dark' 
           ? 'dark bg-[#060D1A] text-white' 
-          : 'bg-slate-100 text-slate-900'
+          : 'bg-slate-50 text-slate-900'
       }`}
       onClick={resetInactivity}
       onTouchStart={resetInactivity}
     >
       {/* BACKGROUND AMBIENT GLOW */}
       <div className={`absolute top-0 left-1/4 w-[600px] h-[350px] blur-[130px] pointer-events-none rounded-full transition-opacity ${
-        theme === 'dark' ? 'bg-emerald-500/10' : 'bg-emerald-500/10'
+        theme === 'dark' ? 'bg-emerald-500/10' : 'bg-emerald-500/5'
       }`} />
       <div className={`absolute bottom-0 right-1/4 w-[600px] h-[350px] blur-[130px] pointer-events-none rounded-full transition-opacity ${
-        theme === 'dark' ? 'bg-amber-500/10' : 'bg-amber-500/10'
+        theme === 'dark' ? 'bg-amber-500/10' : 'bg-amber-500/5'
       }`} />
 
       {/* TOP AIRPORT KIOSK HEADER */}
-      <header className="w-full px-4 py-3 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 flex items-center justify-between gap-2 sticky top-0 z-50 text-white shrink-0">
+      <header className={`w-full px-4 py-3 backdrop-blur-md border-b flex items-center justify-between gap-2 sticky top-0 z-50 shrink-0 transition-colors ${
+        theme === 'dark'
+          ? 'bg-slate-900/90 border-slate-800 text-white'
+          : 'bg-white/95 border-slate-200 text-slate-900 shadow-sm'
+      }`}>
         {/* Left Logo & Title */}
         <div className="flex items-center gap-2.5 min-w-0">
           <img 
@@ -1257,10 +1267,10 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
             className="w-7 h-7 object-contain shrink-0" 
           />
           <div className="truncate">
-            <p className="text-xs font-black uppercase tracking-wider text-emerald-400 truncate">
+            <p className="text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 truncate">
               {t.kiosk_title || 'Kios Mandiri'}
             </p>
-            <p className="text-[10px] font-bold text-slate-400 truncate">
+            <p className={`text-[10px] font-bold truncate ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
               MPP Simpurusiang
             </p>
           </div>
@@ -1271,15 +1281,23 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
           <button
             type="button"
             onClick={() => { playBeep('beep'); setIsFidsOpen(true); }}
-            className="px-3.5 py-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 flex items-center gap-2 text-xs font-bold transition-all cursor-pointer"
+            className={`px-3.5 py-1.5 rounded-xl border flex items-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+              theme === 'dark'
+                ? 'border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300'
+                : 'border-amber-400/50 bg-amber-50 hover:bg-amber-100 text-amber-900 shadow-xs'
+            }`}
           >
             <Radio className="w-3.5 h-3.5 animate-pulse text-amber-500" />
             <span>{t.fids_board_btn}</span>
           </button>
 
-          <div className="flex items-center gap-2 px-3 py-1 bg-slate-800/80 border border-slate-700 rounded-xl text-xs">
-            <Clock className="w-3.5 h-3.5 text-amber-400" />
-            <span className="font-bold text-emerald-400">
+          <div className={`flex items-center gap-2 px-3 py-1 rounded-xl text-xs border ${
+            theme === 'dark'
+              ? 'bg-slate-800/80 border-slate-700'
+              : 'bg-slate-100 border-slate-200'
+          }`}>
+            <Clock className="w-3.5 h-3.5 text-amber-500" />
+            <span className={`font-bold ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-700 font-mono'}`}>
               {currentTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })} WITA
             </span>
           </div>
@@ -1288,7 +1306,11 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
         {/* Right Utility Controls */}
         <div className="flex items-center gap-1.5 shrink-0">
           {/* Multilingual Toggle (Desktop) */}
-          <div className="hidden sm:flex items-center border border-slate-700 bg-slate-800 rounded-xl p-0.5 text-[10px] font-bold">
+          <div className={`hidden sm:flex items-center border rounded-xl p-0.5 text-[10px] font-bold ${
+            theme === 'dark'
+              ? 'border-slate-700 bg-slate-800'
+              : 'border-slate-200 bg-slate-100'
+          }`}>
             {(['id', 'en', 'zh'] as KioskLang[]).map((l) => (
               <button
                 key={l}
@@ -1297,13 +1319,41 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                 className={`px-2 py-1 rounded-lg transition-colors cursor-pointer uppercase ${
                   lang === l 
                     ? 'bg-emerald-600 text-white font-black' 
-                    : 'text-slate-400 hover:text-white'
+                    : theme === 'dark' ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {l}
               </button>
             ))}
           </div>
+
+          {/* Theme Toggle Button (Light/Dark Mode) */}
+          <button
+            type="button"
+            onClick={() => {
+              playBeep('beep');
+              const nextTheme: KioskTheme = theme === 'dark' ? 'light' : 'dark';
+              setTheme(nextTheme);
+              try {
+                localStorage.setItem('mpp_kiosk_theme', nextTheme);
+              } catch (e) {
+                console.warn('Could not save theme:', e);
+              }
+            }}
+            className={`p-2 rounded-xl border text-xs cursor-pointer transition-all flex items-center justify-center ${
+              theme === 'dark'
+                ? 'bg-slate-800 hover:bg-slate-700 text-amber-400 border-slate-700 shadow-xs'
+                : 'bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-300 shadow-xs'
+            }`}
+            title={theme === 'dark' ? 'Beralih ke Mode Terang (Light Mode)' : 'Beralih ke Mode Gelap (Dark Mode)'}
+            aria-label="Toggle Dark / Light Theme"
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-4 h-4 text-amber-400" />
+            ) : (
+              <Moon className="w-4 h-4 text-indigo-700" />
+            )}
+          </button>
 
           {/* Accessibility Pill */}
           <button
@@ -1315,7 +1365,9 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
             className={`p-2 rounded-xl border text-xs cursor-pointer transition-all ${
               isAccessibleMode
                 ? 'bg-emerald-600 border-emerald-500 text-white'
-                : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                : theme === 'dark'
+                  ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
             }`}
             title={t.accessibility_mode}
           >
@@ -1323,7 +1375,11 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
           </button>
 
           {/* Session Timer Pill */}
-          <div className="px-2.5 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-xl text-xs font-black flex items-center gap-1">
+          <div className={`px-2.5 py-1 border rounded-xl text-xs font-black flex items-center gap-1 ${
+            theme === 'dark'
+              ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+              : 'bg-amber-50 border-amber-300 text-amber-800'
+          }`}>
             <Clock className="w-3.5 h-3.5" />
             <span>{inactivityTimer}s</span>
           </div>
@@ -1332,7 +1388,11 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
           <button 
             type="button"
             onClick={() => { playBeep('alert'); onClose(); }}
-            className="p-2 bg-rose-500/10 border border-rose-500/30 text-rose-400 rounded-xl text-xs hover:bg-rose-500 hover:text-white transition-all cursor-pointer"
+            className={`p-2 rounded-xl border text-xs transition-all cursor-pointer ${
+              theme === 'dark'
+                ? 'bg-rose-500/10 border-rose-500/30 text-rose-400 hover:bg-rose-500 hover:text-white'
+                : 'bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-600 hover:text-white'
+            }`}
             title={t.exit}
           >
             <X className="w-4 h-4" />
@@ -1358,21 +1418,38 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
         {/* STEP 1: WELCOME & PERSONA SELECTOR (CHEVRON AIRPORT GATES) */}
         {/* ========================================================= */}
         {step === 1 && (
-          <div className="w-full max-w-5xl mx-auto px-4 pt-28 sm:pt-32 pb-24 space-y-8 text-slate-100 text-center animate-in fade-in zoom-in-95 duration-300">
+          <div className={`w-full max-w-5xl mx-auto px-4 pt-28 sm:pt-32 pb-24 space-y-8 text-center animate-in fade-in zoom-in-95 duration-300 ${
+            theme === 'dark' ? 'text-slate-100' : 'text-slate-900'
+          }`}>
             {/* HERO WELCOME & TOUCH INSTRUCTION BANNER */}
-            <div className="text-center space-y-3 max-w-2xl mx-auto">
-              {/* Animated Touch Prompt Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/15 border border-emerald-500/40 rounded-full text-emerald-300 text-xs font-mono font-extrabold shadow-sm animate-pulse">
-                <Touchpad className="w-4 h-4 text-emerald-400" />
-                <span>✦ SENTUH LAYAR UNTUK MEMULAI LAYANAN</span>
+            <div className="text-center space-y-4 max-w-2xl mx-auto">
+              {/* Prominent Enriched Touch CTA Banner with animate-pulse */}
+              <div 
+                onClick={() => {
+                  playBeep('beep');
+                }}
+                className={`inline-flex items-center gap-3 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full text-xs sm:text-sm md:text-base font-mono font-black shadow-xl tracking-wider uppercase transition-all duration-300 animate-pulse border-2 cursor-pointer active:scale-95 ${
+                  theme === 'dark'
+                    ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300 shadow-[0_0_30px_rgba(16,185,129,0.35)]'
+                    : 'bg-emerald-50 border-emerald-500 text-emerald-800 shadow-[0_0_30px_rgba(16,185,129,0.25)]'
+                }`}
+              >
+                <div className="p-1.5 rounded-full bg-emerald-500 text-slate-950 shadow-md">
+                  <Touchpad className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
+                </div>
+                <span className="font-extrabold tracking-wide">✦ SENTUH LAYAR UNTUK MEMULAI LAYANAN ✦</span>
               </div>
 
               {/* Welcome Title & Subtitle */}
               <div>
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight font-sans">
-                  Selamat Datang di <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-300">Layanan Mandiri</span>
+                <h1 className={`text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight font-sans ${
+                  theme === 'dark' ? 'text-white' : 'text-slate-900'
+                }`}>
+                  Selamat Datang di <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500">Layanan Mandiri</span>
                 </h1>
-                <p className="text-xs sm:text-sm md:text-base text-slate-400 leading-relaxed mt-2 max-w-xl mx-auto font-medium">
+                <p className={`text-xs sm:text-sm md:text-base leading-relaxed mt-2.5 max-w-xl mx-auto font-medium ${
+                  theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
+                }`}>
                   Silakan tentukan jalur layanan Anda untuk mendapatkan prioritas dan antrean yang tepat.
                 </p>
               </div>
@@ -1396,41 +1473,57 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                     setStep(2);
                   }
                 }}
-                className="group relative p-6 sm:p-8 rounded-3xl bg-slate-900/90 backdrop-blur-xl border border-emerald-500/40 hover:border-emerald-400 shadow-2xl shadow-emerald-950/50 transition-all duration-300 flex flex-col justify-between space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left"
+                className={`group relative p-6 sm:p-8 rounded-3xl backdrop-blur-xl border-2 transition-all duration-300 flex flex-col justify-between space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left shadow-[0_0_50px_-12px_rgba(16,185,129,0.35)] hover:shadow-[0_0_65px_-8px_rgba(16,185,129,0.5)] ${
+                  theme === 'dark'
+                    ? 'bg-slate-900/95 border-emerald-500/40 hover:border-emerald-400 text-white'
+                    : 'bg-white border-slate-200/90 hover:border-emerald-500 text-slate-900 shadow-xl'
+                }`}
               >
-                {/* Background Subtle Glow */}
-                <div className="absolute -top-12 -right-12 w-40 h-40 bg-emerald-500/15 rounded-full blur-3xl group-hover:bg-emerald-500/25 transition-all pointer-events-none" />
+                {/* Ambient Card Glow Behind */}
+                <div className="absolute -top-12 -right-12 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl group-hover:bg-emerald-500/30 transition-all pointer-events-none" />
 
-                <div className="space-y-4">
+                <div className="space-y-4 relative z-10">
                   {/* Card Header & Badge */}
                   <div className="flex items-center justify-between gap-2">
-                    <div className="p-3.5 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 shadow-inner">
-                      <User className="w-7 h-7" />
+                    <div className={`p-4 rounded-2xl border shadow-inner flex items-center justify-center ${
+                      theme === 'dark'
+                        ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                        : 'bg-emerald-100 border-emerald-300 text-emerald-700'
+                    }`}>
+                      <User className="w-8 h-8 sm:w-10 sm:h-10 stroke-[2.5]" />
                     </div>
-                    <span className="px-3.5 py-1.5 bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 font-mono font-extrabold text-xs uppercase tracking-wider rounded-full flex items-center gap-1.5 shadow-xs">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                    <span className={`px-4 py-1.5 font-mono font-extrabold text-xs uppercase tracking-wider rounded-full flex items-center gap-1.5 shadow-sm border ${
+                      theme === 'dark'
+                        ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300'
+                        : 'bg-emerald-50 border-emerald-300 text-emerald-800'
+                    }`}>
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
                       <span>🟢 TERMINAL A</span>
                     </span>
                   </div>
 
                   {/* Card Content */}
-                  <div className="space-y-1.5">
-                    <p className="text-xs font-mono font-extrabold text-emerald-400 uppercase tracking-widest">
+                  <div className="space-y-2">
+                    <p className="text-xs font-mono font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
                       Jalur Umum
                     </p>
-                    <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                    <h3 className={`text-2xl sm:text-3xl font-black tracking-tight ${
+                      theme === 'dark' ? 'text-white' : 'text-slate-900'
+                    }`}>
                       Warga / Masyarakat
                     </h3>
-                    <p className="text-xs sm:text-sm text-slate-400 leading-relaxed pt-1">
+                    <p className={`text-sm sm:text-base leading-relaxed pt-1 font-normal ${
+                      theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
+                    }`}>
                       Pengurusan KTP-el, Kartu Keluarga, Akta Kelahiran, Pajak PBB, Samsat, BPJS, dan Surat Rekomendasi.
                     </p>
                   </div>
                 </div>
 
                 {/* Touch-Optimized Large Full Width Action Button */}
-                <div className="w-full h-14 sm:h-16 px-6 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm sm:text-base rounded-2xl flex items-center justify-between transition-all active:scale-95 shadow-lg shadow-emerald-950/40 cursor-pointer">
+                <div className="w-full h-14 sm:h-16 px-6 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-95 transition-all duration-150 text-white font-black text-sm sm:text-base rounded-2xl flex items-center justify-between shadow-lg shadow-emerald-950/30 cursor-pointer relative z-10">
                   <span>Masuk Jalur Warga</span>
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1.5" />
+                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
                 </div>
               </div>
 
@@ -1450,55 +1543,77 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                     setStep(2);
                   }
                 }}
-                className="group relative p-6 sm:p-8 rounded-3xl bg-slate-900/90 backdrop-blur-xl border border-amber-500/40 hover:border-amber-400 shadow-2xl shadow-amber-950/50 transition-all duration-300 flex flex-col justify-between space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left"
+                className={`group relative p-6 sm:p-8 rounded-3xl backdrop-blur-xl border-2 transition-all duration-300 flex flex-col justify-between space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left shadow-[0_0_50px_-12px_rgba(245,158,11,0.35)] hover:shadow-[0_0_65px_-8px_rgba(245,158,11,0.5)] ${
+                  theme === 'dark'
+                    ? 'bg-slate-900/95 border-amber-500/40 hover:border-amber-400 text-white'
+                    : 'bg-white border-slate-200/90 hover:border-amber-500 text-slate-900 shadow-xl'
+                }`}
               >
-                {/* Background Subtle Glow */}
-                <div className="absolute -top-12 -right-12 w-40 h-40 bg-amber-500/15 rounded-full blur-3xl group-hover:bg-amber-500/25 transition-all pointer-events-none" />
+                {/* Ambient Card Glow Behind */}
+                <div className="absolute -top-12 -right-12 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl group-hover:bg-amber-500/30 transition-all pointer-events-none" />
 
-                <div className="space-y-4">
+                <div className="space-y-4 relative z-10">
                   {/* Card Header & Badge */}
                   <div className="flex items-center justify-between gap-2">
-                    <div className="p-3.5 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 shadow-inner">
-                      <Briefcase className="w-7 h-7" />
+                    <div className={`p-4 rounded-2xl border shadow-inner flex items-center justify-center ${
+                      theme === 'dark'
+                        ? 'bg-amber-500/20 border-amber-500/40 text-amber-400'
+                        : 'bg-amber-100 border-amber-300 text-amber-800'
+                    }`}>
+                      <Briefcase className="w-8 h-8 sm:w-10 sm:h-10 stroke-[2.5]" />
                     </div>
-                    <span className="px-3.5 py-1.5 bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-extrabold text-xs uppercase tracking-wider rounded-full flex items-center gap-1.5 shadow-xs">
-                      <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                    <span className={`px-4 py-1.5 font-mono font-extrabold text-xs uppercase tracking-wider rounded-full flex items-center gap-1.5 shadow-sm border ${
+                      theme === 'dark'
+                        ? 'bg-amber-500/15 border-amber-500/40 text-amber-300'
+                        : 'bg-amber-50 border-amber-300 text-amber-800'
+                    }`}>
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" />
                       <span>🟧 TERMINAL B</span>
                     </span>
                   </div>
 
                   {/* Card Content */}
-                  <div className="space-y-1.5">
-                    <p className="text-xs font-mono font-extrabold text-amber-400 uppercase tracking-widest">
+                  <div className="space-y-2">
+                    <p className="text-xs font-mono font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest">
                       Jalur Bisnis & Investasi
                     </p>
-                    <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                    <h3 className={`text-2xl sm:text-3xl font-black tracking-tight ${
+                      theme === 'dark' ? 'text-white' : 'text-slate-900'
+                    }`}>
                       Pebisnis / Investor
                     </h3>
-                    <p className="text-xs sm:text-sm text-slate-400 leading-relaxed pt-1">
+                    <p className={`text-sm sm:text-base leading-relaxed pt-1 font-normal ${
+                      theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
+                    }`}>
                       Penerbitan NIB OSS-RBA, Kesesuaian Tata Ruang (KKPR), Persetujuan Bangunan Gedung (PBG), dan Konsultasi Insentif Investasi.
                     </p>
                   </div>
                 </div>
 
                 {/* Touch-Optimized Large Full Width Action Button */}
-                <div className="w-full h-14 sm:h-16 px-6 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-extrabold text-sm sm:text-base rounded-2xl flex items-center justify-between transition-all active:scale-95 shadow-lg shadow-amber-950/40 cursor-pointer">
+                <div className="w-full h-14 sm:h-16 px-6 bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-400 active:scale-95 transition-all duration-150 text-white font-black text-sm sm:text-base rounded-2xl flex items-center justify-between shadow-lg shadow-amber-950/30 cursor-pointer relative z-10">
                   <span>Masuk Investor Corner</span>
-                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1.5" />
+                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
                 </div>
               </div>
             </div>
 
             {/* SLEEK FOOTER BANNER & UTILITY CONTROLS */}
-            <div className="pt-8 border-t border-slate-800 text-center space-y-4">
+            <div className={`pt-8 border-t text-center space-y-4 ${
+              theme === 'dark' ? 'border-slate-800' : 'border-slate-200'
+            }`}>
               <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
                 {/* FIDS Departure Board Button */}
                 <button 
                   type="button" 
                   onClick={() => { playBeep('beep'); setIsFidsOpen(true); }}
-                  className="px-4 py-2.5 rounded-full border border-amber-500/40 bg-slate-900/80 hover:bg-amber-950/30 text-amber-300 font-bold text-xs flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-95"
+                  className={`px-4 py-2.5 rounded-full border font-bold text-xs flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-95 ${
+                    theme === 'dark'
+                      ? 'border-amber-500/40 bg-slate-900/80 hover:bg-amber-950/30 text-amber-300'
+                      : 'border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-900'
+                  }`}
                 >
-                  <Radio className="w-4 h-4 text-amber-400" />
+                  <Radio className="w-4 h-4 text-amber-500" />
                   <span>{t.fids_btn}</span>
                 </button>
 
@@ -1506,18 +1621,26 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                 <button 
                   type="button" 
                   onClick={handleTriggerAssistance}
-                  className="px-4 py-2.5 rounded-full border border-blue-500/40 bg-slate-900/80 hover:bg-blue-950/30 text-blue-300 font-bold text-xs flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-95"
+                  className={`px-4 py-2.5 rounded-full border font-bold text-xs flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-95 ${
+                    theme === 'dark'
+                      ? 'border-blue-500/40 bg-slate-900/80 hover:bg-blue-950/30 text-blue-300'
+                      : 'border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-900'
+                  }`}
                 >
-                  <BellRing className="w-4 h-4 text-blue-400" />
+                  <BellRing className="w-4 h-4 text-blue-500" />
                   <span>{t.assisted_desk}</span>
                 </button>
               </div>
 
               <div className="space-y-1">
-                <p className="text-xs font-semibold text-slate-400 font-mono">
+                <p className={`text-xs font-semibold font-mono ${
+                  theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+                }`}>
                   DPMPTSP KABUPATEN LUWU © 2026
                 </p>
-                <p className="text-[10px] text-slate-600">
+                <p className={`text-[10px] ${
+                  theme === 'dark' ? 'text-slate-600' : 'text-slate-400'
+                }`}>
                   Sistem Pelayanan Kios Mandiri Terpadu MPP Simpurusiang
                 </p>
               </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   User, Briefcase, ArrowRight, Accessibility, 
-  Clock, X, Touchpad
+  Clock, X, Touchpad, Sun, Moon
 } from 'lucide-react';
 
 export interface KiosMandiriSectionProps {
@@ -23,6 +23,13 @@ export const KiosMandiriSection: React.FC<KiosMandiriSectionProps> = ({
 }) => {
   const [sessionTimer, setSessionTimer] = useState(initialTimer);
   const [isAccessible, setIsAccessible] = useState(false);
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    try {
+      return (localStorage.getItem('mpp_kiosk_theme') as 'dark' | 'light') || 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
 
   // Inactivity / Session countdown timer
   useEffect(() => {
@@ -47,26 +54,35 @@ export const KiosMandiriSection: React.FC<KiosMandiriSectionProps> = ({
   };
 
   return (
-    <div className={`w-full min-h-screen bg-slate-950 font-sans selection:bg-emerald-500 selection:text-white ${isAccessible ? 'text-lg' : ''}`}>
+    <div className={`w-full min-h-screen font-sans selection:bg-emerald-500 selection:text-white transition-colors duration-300 ${
+      isAccessible ? 'text-lg' : ''
+    } ${
+      theme === 'dark'
+        ? 'dark bg-[#060D1A] text-white'
+        : 'bg-slate-50 text-slate-900'
+    }`}>
       {/* 1. TOP NAVBAR & SAFETY HEADER */}
       {showHeader && (
-        <header className="w-full px-4 py-3 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 flex items-center justify-between gap-2 sticky top-0 z-50 text-white">
+        <header className={`w-full px-4 py-3 backdrop-blur-md border-b flex items-center justify-between gap-2 sticky top-0 z-50 transition-colors ${
+          theme === 'dark'
+            ? 'bg-slate-900/90 border-slate-800 text-white'
+            : 'bg-white/95 border-slate-200 text-slate-900 shadow-sm'
+        }`}>
           {/* Left Logo & Title */}
           <div className="flex items-center gap-2.5 min-w-0">
             <img 
               src="/logo-luwu.png" 
               alt="Logo Kabupaten Luwu"
               onError={(e) => {
-                // Fallback if logo-luwu.png fails
                 (e.currentTarget as HTMLImageElement).src = '/logo-192.png';
               }}
               className="w-7 h-7 object-contain shrink-0" 
             />
             <div className="truncate">
-              <p className="text-xs font-black uppercase tracking-wider text-emerald-400 truncate">
+              <p className="text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 truncate">
                 Kios Mandiri
               </p>
-              <p className="text-[10px] font-bold text-slate-400 truncate">
+              <p className={`text-[10px] font-bold truncate ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
                 MPP Simpurusiang
               </p>
             </div>
@@ -74,6 +90,28 @@ export const KiosMandiriSection: React.FC<KiosMandiriSectionProps> = ({
 
           {/* Right Utility Controls */}
           <div className="flex items-center gap-1.5 shrink-0">
+            {/* Theme Toggle Button */}
+            <button
+              type="button"
+              onClick={() => {
+                const next = theme === 'dark' ? 'light' : 'dark';
+                setTheme(next);
+                try {
+                  localStorage.setItem('mpp_kiosk_theme', next);
+                } catch (e) {
+                  console.warn('Could not save theme:', e);
+                }
+              }}
+              className={`p-2 rounded-xl border text-xs cursor-pointer transition-all flex items-center justify-center ${
+                theme === 'dark'
+                  ? 'bg-slate-800 hover:bg-slate-700 text-amber-400 border-slate-700'
+                  : 'bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-300'
+              }`}
+              title={theme === 'dark' ? 'Beralih ke Mode Terang (Light Mode)' : 'Beralih ke Mode Gelap (Dark Mode)'}
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-700" />}
+            </button>
+
             {/* Accessibility Pill */}
             <button 
               type="button"
@@ -81,7 +119,9 @@ export const KiosMandiriSection: React.FC<KiosMandiriSectionProps> = ({
               className={`p-2 rounded-xl border text-xs cursor-pointer transition-all ${
                 isAccessible 
                   ? 'bg-emerald-600 border-emerald-500 text-white' 
-                  : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                  : theme === 'dark'
+                    ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
               }`}
               title="Mode Aksesibilitas"
             >
@@ -89,7 +129,11 @@ export const KiosMandiriSection: React.FC<KiosMandiriSectionProps> = ({
             </button>
 
             {/* Session Timer Pill */}
-            <div className="px-2.5 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-xl text-xs font-black flex items-center gap-1">
+            <div className={`px-2.5 py-1 border rounded-xl text-xs font-black flex items-center gap-1 ${
+              theme === 'dark'
+                ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                : 'bg-amber-50 border-amber-300 text-amber-800'
+            }`}>
               <Clock className="w-3.5 h-3.5" />
               <span>{sessionTimer}s</span>
             </div>
@@ -99,7 +143,11 @@ export const KiosMandiriSection: React.FC<KiosMandiriSectionProps> = ({
               <button 
                 type="button"
                 onClick={onClose}
-                className="p-2 bg-rose-500/10 border border-rose-500/30 text-rose-400 rounded-xl text-xs hover:bg-rose-500 hover:text-white transition-all cursor-pointer"
+                className={`p-2 rounded-xl border text-xs transition-all cursor-pointer ${
+                  theme === 'dark'
+                    ? 'bg-rose-500/10 border-rose-500/30 text-rose-400 hover:bg-rose-500 hover:text-white'
+                    : 'bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-600 hover:text-white'
+                }`}
                 title="Tutup Kios"
               >
                 <X className="w-4 h-4" />
@@ -110,20 +158,30 @@ export const KiosMandiriSection: React.FC<KiosMandiriSectionProps> = ({
       )}
 
       {/* 2. HERO WELCOME & TOUCH INSTRUCTION BANNER */}
-      <main className={className || "w-full max-w-5xl mx-auto px-4 pt-28 sm:pt-32 pb-24 space-y-8 text-slate-100 text-center"}>
-        <div className="space-y-3 max-w-2xl mx-auto">
-          {/* Animated Touch Prompt Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/15 border border-emerald-500/40 rounded-full text-emerald-300 text-xs font-mono font-extrabold shadow-sm animate-pulse">
-            <Touchpad className="w-4 h-4 text-emerald-400" />
-            <span>✦ SENTUH LAYAR UNTUK MEMULAI LAYANAN</span>
+      <main className={className || "w-full max-w-5xl mx-auto px-4 pt-28 sm:pt-32 pb-24 space-y-8 text-center"}>
+        <div className="space-y-4 max-w-2xl mx-auto">
+          {/* Prominent Animated Touch Prompt CTA Banner */}
+          <div className={`inline-flex items-center gap-3 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full text-xs sm:text-sm md:text-base font-mono font-black shadow-xl tracking-wider uppercase transition-all duration-300 animate-pulse border-2 cursor-pointer active:scale-95 ${
+            theme === 'dark'
+              ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300 shadow-[0_0_30px_rgba(16,185,129,0.35)]'
+              : 'bg-emerald-50 border-emerald-500 text-emerald-800 shadow-[0_0_30px_rgba(16,185,129,0.25)]'
+          }`}>
+            <div className="p-1.5 rounded-full bg-emerald-500 text-slate-950 shadow-md">
+              <Touchpad className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
+            </div>
+            <span className="font-extrabold tracking-wide">✦ SENTUH LAYAR UNTUK MEMULAI LAYANAN ✦</span>
           </div>
 
           {/* Welcome Title & Subtitle */}
           <div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight font-sans">
-              Selamat Datang di <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-300">Layanan Mandiri</span>
+            <h1 className={`text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight font-sans ${
+              theme === 'dark' ? 'text-white' : 'text-slate-900'
+            }`}>
+              Selamat Datang di <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500">Layanan Mandiri</span>
             </h1>
-            <p className="text-xs sm:text-sm md:text-base text-slate-400 leading-relaxed mt-2 max-w-xl mx-auto font-medium">
+            <p className={`text-xs sm:text-sm md:text-base leading-relaxed mt-2.5 max-w-xl mx-auto font-medium ${
+              theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
+            }`}>
               Silakan tentukan jalur layanan Anda untuk mendapatkan prioritas dan antrean yang tepat.
             </p>
           </div>
@@ -141,41 +199,57 @@ export const KiosMandiriSection: React.FC<KiosMandiriSectionProps> = ({
                 handleLaneClick('citizen');
               }
             }}
-            className="group relative p-6 sm:p-8 rounded-3xl bg-slate-900/90 backdrop-blur-xl border border-emerald-500/40 hover:border-emerald-400 shadow-2xl shadow-emerald-950/50 transition-all duration-300 flex flex-col justify-between space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left"
+            className={`group relative p-6 sm:p-8 rounded-3xl backdrop-blur-xl border-2 transition-all duration-300 flex flex-col justify-between space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left shadow-[0_0_50px_-12px_rgba(16,185,129,0.35)] hover:shadow-[0_0_65px_-8px_rgba(16,185,129,0.5)] ${
+              theme === 'dark'
+                ? 'bg-slate-900/95 border-emerald-500/40 hover:border-emerald-400 text-white'
+                : 'bg-white border-slate-200/90 hover:border-emerald-500 text-slate-900 shadow-xl'
+            }`}
           >
             {/* Background Subtle Glow */}
-            <div className="absolute -top-12 -right-12 w-40 h-40 bg-emerald-500/15 rounded-full blur-3xl group-hover:bg-emerald-500/25 transition-all pointer-events-none" />
+            <div className="absolute -top-12 -right-12 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl group-hover:bg-emerald-500/30 transition-all pointer-events-none" />
 
-            <div className="space-y-4">
+            <div className="space-y-4 relative z-10">
               {/* Card Header & Badge */}
               <div className="flex items-center justify-between gap-2">
-                <div className="p-3.5 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 shadow-inner">
-                  <User className="w-7 h-7" />
+                <div className={`p-4 rounded-2xl border shadow-inner flex items-center justify-center ${
+                  theme === 'dark'
+                    ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                    : 'bg-emerald-100 border-emerald-300 text-emerald-700'
+                }`}>
+                  <User className="w-8 h-8 sm:w-10 sm:h-10 stroke-[2.5]" />
                 </div>
-                <span className="px-3.5 py-1.5 bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 font-mono font-extrabold text-xs uppercase tracking-wider rounded-full flex items-center gap-1.5 shadow-xs">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                <span className={`px-4 py-1.5 font-mono font-extrabold text-xs uppercase tracking-wider rounded-full flex items-center gap-1.5 shadow-sm border ${
+                  theme === 'dark'
+                    ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300'
+                    : 'bg-emerald-50 border-emerald-300 text-emerald-800'
+                }`}>
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
                   <span>🟢 TERMINAL A</span>
                 </span>
               </div>
 
               {/* Card Content */}
-              <div className="space-y-1.5">
-                <p className="text-xs font-mono font-extrabold text-emerald-400 uppercase tracking-widest">
+              <div className="space-y-2">
+                <p className="text-xs font-mono font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
                   Jalur Umum
                 </p>
-                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                <h3 className={`text-2xl sm:text-3xl font-black tracking-tight ${
+                  theme === 'dark' ? 'text-white' : 'text-slate-900'
+                }`}>
                   Warga / Masyarakat
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-400 leading-relaxed pt-1">
+                <p className={`text-sm sm:text-base leading-relaxed pt-1 font-normal ${
+                  theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
+                }`}>
                   Pengurusan KTP-el, Kartu Keluarga, Akta Kelahiran, Pajak PBB, Samsat, BPJS, dan Surat Rekomendasi.
                 </p>
               </div>
             </div>
 
             {/* Touch-Optimized Large Full Width Action Button */}
-            <div className="w-full h-14 sm:h-16 px-6 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm sm:text-base rounded-2xl flex items-center justify-between transition-all active:scale-95 shadow-lg shadow-emerald-950/40 cursor-pointer">
+            <div className="w-full h-14 sm:h-16 px-6 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-95 transition-all duration-150 text-white font-black text-sm sm:text-base rounded-2xl flex items-center justify-between shadow-lg shadow-emerald-950/30 cursor-pointer relative z-10">
               <span>Masuk Jalur Warga</span>
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1.5" />
+              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
             </div>
           </div>
 
@@ -189,52 +263,74 @@ export const KiosMandiriSection: React.FC<KiosMandiriSectionProps> = ({
                 handleLaneClick('investor');
               }
             }}
-            className="group relative p-6 sm:p-8 rounded-3xl bg-slate-900/90 backdrop-blur-xl border border-amber-500/40 hover:border-amber-400 shadow-2xl shadow-amber-950/50 transition-all duration-300 flex flex-col justify-between space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left"
+            className={`group relative p-6 sm:p-8 rounded-3xl backdrop-blur-xl border-2 transition-all duration-300 flex flex-col justify-between space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left shadow-[0_0_50px_-12px_rgba(245,158,11,0.35)] hover:shadow-[0_0_65px_-8px_rgba(245,158,11,0.5)] ${
+              theme === 'dark'
+                ? 'bg-slate-900/95 border-amber-500/40 hover:border-amber-400 text-white'
+                : 'bg-white border-slate-200/90 hover:border-amber-500 text-slate-900 shadow-xl'
+            }`}
           >
             {/* Background Subtle Glow */}
-            <div className="absolute -top-12 -right-12 w-40 h-40 bg-amber-500/15 rounded-full blur-3xl group-hover:bg-amber-500/25 transition-all pointer-events-none" />
+            <div className="absolute -top-12 -right-12 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl group-hover:bg-amber-500/30 transition-all pointer-events-none" />
 
-            <div className="space-y-4">
+            <div className="space-y-4 relative z-10">
               {/* Card Header & Badge */}
               <div className="flex items-center justify-between gap-2">
-                <div className="p-3.5 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 shadow-inner">
-                  <Briefcase className="w-7 h-7" />
+                <div className={`p-4 rounded-2xl border shadow-inner flex items-center justify-center ${
+                  theme === 'dark'
+                    ? 'bg-amber-500/20 border-amber-500/40 text-amber-400'
+                    : 'bg-amber-100 border-amber-300 text-amber-800'
+                }`}>
+                  <Briefcase className="w-8 h-8 sm:w-10 sm:h-10 stroke-[2.5]" />
                 </div>
-                <span className="px-3.5 py-1.5 bg-amber-500/15 border border-amber-500/40 text-amber-300 font-mono font-extrabold text-xs uppercase tracking-wider rounded-full flex items-center gap-1.5 shadow-xs">
-                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                <span className={`px-4 py-1.5 font-mono font-extrabold text-xs uppercase tracking-wider rounded-full flex items-center gap-1.5 shadow-sm border ${
+                  theme === 'dark'
+                    ? 'bg-amber-500/15 border-amber-500/40 text-amber-300'
+                    : 'bg-amber-50 border-amber-300 text-amber-800'
+                }`}>
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" />
                   <span>🟧 TERMINAL B</span>
                 </span>
               </div>
 
               {/* Card Content */}
-              <div className="space-y-1.5">
-                <p className="text-xs font-mono font-extrabold text-amber-400 uppercase tracking-widest">
+              <div className="space-y-2">
+                <p className="text-xs font-mono font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest">
                   Jalur Bisnis & Investasi
                 </p>
-                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                <h3 className={`text-2xl sm:text-3xl font-black tracking-tight ${
+                  theme === 'dark' ? 'text-white' : 'text-slate-900'
+                }`}>
                   Pebisnis / Investor
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-400 leading-relaxed pt-1">
+                <p className={`text-sm sm:text-base leading-relaxed pt-1 font-normal ${
+                  theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
+                }`}>
                   Penerbitan NIB OSS-RBA, Kesesuaian Tata Ruang (KKPR), Persetujuan Bangunan Gedung (PBG), dan Konsultasi Insentif Investasi.
                 </p>
               </div>
             </div>
 
             {/* Touch-Optimized Large Full Width Action Button */}
-            <div className="w-full h-14 sm:h-16 px-6 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-extrabold text-sm sm:text-base rounded-2xl flex items-center justify-between transition-all active:scale-95 shadow-lg shadow-amber-950/40 cursor-pointer">
+            <div className="w-full h-14 sm:h-16 px-6 bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-400 active:scale-95 transition-all duration-150 text-white font-black text-sm sm:text-base rounded-2xl flex items-center justify-between shadow-lg shadow-amber-950/30 cursor-pointer relative z-10">
               <span>Masuk Investor Corner</span>
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1.5" />
+              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
             </div>
           </div>
         </div>
 
         {/* 4. SLEEK FOOTER BANNER */}
         {showFooter && (
-          <footer className="pt-8 border-t border-slate-800 text-center space-y-1">
-            <p className="text-xs font-semibold text-slate-400 font-mono">
+          <footer className={`pt-8 border-t text-center space-y-1 ${
+            theme === 'dark' ? 'border-slate-800' : 'border-slate-200'
+          }`}>
+            <p className={`text-xs font-semibold font-mono ${
+              theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+            }`}>
               DPMPTSP KABUPATEN LUWU © 2026
             </p>
-            <p className="text-[10px] text-slate-600">
+            <p className={`text-[10px] ${
+              theme === 'dark' ? 'text-slate-600' : 'text-slate-400'
+            }`}>
               Sistem Pelayanan Kios Mandiri Terpadu MPP Simpurusiang
             </p>
           </footer>
