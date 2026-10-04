@@ -2,7 +2,13 @@
   "hero": {
     "titleHighlight": "数字投资",
     "titleRest": "门户",
-    "subtitle": "快速。透明。空间整合。实时访问鲁乌投资机会数据。",
+    "subtitle": "芦梧县综合公共服务门户",
+    "search_placeholder": "搜索服务、许可证、机构或文档...",
+    "filter_dukcapil": "户籍与电子身份证",
+    "filter_nib": "NIB商业许可证 (OSS)",
+    "filter_pajak": "税收与规费",
+    "filter_bpjs": "医疗与社会保障",
+    "filter_paspor": "护照与移民服务",
     "btnGisAnalytics": "GIS 分析",
     "btnGisAnalyticsBadge": "空间地图",
     "btnExplorePotential": "探索潜力",
@@ -3110,5 +3116,41 @@
     "penaltyConsequences": "严厉处罚与法律后果：",
     "mppApplication": "Simpurusiang 政务大厅执行标准：",
     "inspektoratLabel": "鲁乌县地方监察局"
+  },
+  "categories": {
+    "all": "所有机构",
+    "pemda": "地方政府",
+    "bumn": "国有与地方企业",
+    "vertikal": "中央驻地机构",
+    "perbankan": "金融银行"
+  },
+  "sla": {
+    "title": "服务速度与SLA准时率雷达",
+    "target_label": "SLA 目标",
+    "realization_label": "平均实际耗时",
+    "max_time": "最多 {{time}} 分钟",
+    "check_req": "查看申请条件 ➔",
+    "free_cost": "免收规费 / 免费",
+    "perda_cost": "依据地方法规/政府条例"
+  },
+  "facilities": {
+    "badge": "优先设施与包容性服务",
+    "lactation": "母婴室与哺乳室",
+    "disability": "无障碍与轮椅通道",
+    "kids_corner": "图书角与儿童游乐区",
+    "kiosk": "数字自助排队终端",
+    "op_hours": "营业时间：08:00 - 16:00 WITA"
+  },
+  "vip": {
+    "badge": "绿色通道 VIP：随时服务",
+    "book_consultation": "预约VIP咨询服务",
+    "view_pitching": "查看VIP及路演设施"
+  },
+  "assistant": {
+    "quick_ask": "AI 快速提问",
+    "call_officer": "呼叫现场协助人员"
+  },
+  "skm": {
+    "ikm_score": "公众满意度指数：88.50（优秀）"
   }
 }

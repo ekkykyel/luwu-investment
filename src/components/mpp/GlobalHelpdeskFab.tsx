@@ -92,7 +92,7 @@ export const GlobalHelpdeskFab: React.FC<GlobalHelpdeskFabProps> = ({
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="font-extrabold text-slate-900 dark:text-white">{isEn ? 'AI Permit Consultation' : isZh ? 'AI 许可咨询' : 'AI Konsultasi Izin'}</div>
+                  <div className="font-extrabold text-slate-900 dark:text-white">{t('assistant.quick_ask', isEn ? 'AI Permit Consultation' : isZh ? 'AI 许可咨询' : 'AI Konsultasi Izin')}</div>
                   <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Instant requirement check' : isZh ? '即时查询审批条件' : 'Cek syarat & berkas instan'}</div>
                 </div>
               </button>

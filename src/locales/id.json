@@ -2,7 +2,13 @@
   "hero": {
     "titleHighlight": "Pintu Gerbang",
     "titleRest": "Investasi Digital",
-    "subtitle": "Cepat. Transparan. Terintegrasi Spasial. Akses data peluang investasi Luwu secara real-time.",
+    "subtitle": "Portal Pelayanan Publik Terpadu Kabupaten Luwu",
+    "search_placeholder": "Cari layanan, izin, instansi, atau dokumen...",
+    "filter_dukcapil": "Dukcapil & KTP-el",
+    "filter_nib": "Izin Usaha NIB OSS",
+    "filter_pajak": "Pajak & Retribusi",
+    "filter_bpjs": "Kesehatan & BPJS",
+    "filter_paspor": "Paspor & Keimigrasian",
     "btnGisAnalytics": "GIS Analytics",
     "btnGisAnalyticsBadge": "Peta Spasial",
     "btnExplorePotential": "Eksplorasi Potensi",
@@ -3106,5 +3112,41 @@
     "penaltyConsequences": "Sanksi Tegas & Konsekuensi Hukum:",
     "mppApplication": "Penerapan di MPP Simpurusiang:",
     "inspektoratLabel": "Inspektorat Daerah Kabupaten Luwu"
+  },
+  "categories": {
+    "all": "Semua Instansi",
+    "pemda": "Pemerintah Daerah",
+    "bumn": "BUMN/BUMD",
+    "vertikal": "Instansi Vertikal",
+    "perbankan": "Perbankan"
+  },
+  "sla": {
+    "title": "Radar Kecepatan & Ketepatan Waktu Pelayanan (SLA)",
+    "target_label": "Target SLA",
+    "realization_label": "Realisasi Rata-rata",
+    "max_time": "Maks. {{time}} Menit",
+    "check_req": "Cek Syarat ➔",
+    "free_cost": "Gratis Bebas Retribusi",
+    "perda_cost": "Sesuai Perda/PP"
+  },
+  "facilities": {
+    "badge": "FASILITAS PRIORITAS & LAYANAN INKLUSIF",
+    "lactation": "Ruang Laktasi & Ibu Menyusui",
+    "disability": "Akses Ramah Disabilitas & Kursi Roda",
+    "kids_corner": "Pojok Baca & Area Bermain Anak",
+    "kiosk": "Kios Mandiri Antrean Digital",
+    "op_hours": "Jam Operasional: 08:00 - 16:00 WITA"
+  },
+  "vip": {
+    "badge": "FAST TRACK VIP: SIAP MELAYANI",
+    "book_consultation": "Booking Sesi Konsultasi VIP",
+    "view_pitching": "Lihat Fasilitas VIP & Pitching Room"
+  },
+  "assistant": {
+    "quick_ask": "Tanya Cepat AI",
+    "call_officer": "Panggil Petugas Sampingan"
+  },
+  "skm": {
+    "ikm_score": "Nilai IKM: 88.50 (Sangat Baik)"
   }
 }

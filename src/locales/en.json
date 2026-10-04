@@ -2,7 +2,13 @@
   "hero": {
     "titleHighlight": "Digital Investment",
     "titleRest": "Gateway",
-    "subtitle": "Fast. Transparent. Spatially Integrated. Real-time access to Luwu's investment opportunity data.",
+    "subtitle": "Integrated Public Service Portal of Luwu Regency",
+    "search_placeholder": "Search services, permits, agencies, or documents...",
+    "filter_dukcapil": "Civil Registry & ID Card",
+    "filter_nib": "NIB Business License (OSS)",
+    "filter_pajak": "Taxes & Retributions",
+    "filter_bpjs": "Health & Social Security",
+    "filter_paspor": "Passport & Immigration",
     "btnGisAnalytics": "GIS Analytics",
     "btnGisAnalyticsBadge": "Spatial Map",
     "btnExplorePotential": "Explore Potential",
@@ -3110,5 +3116,41 @@
     "penaltyConsequences": "Strict Penalties & Legal Consequences:",
     "mppApplication": "Implementation at MPP Simpurusiang:",
     "inspektoratLabel": "Regional Inspectorate of Luwu Regency"
+  },
+  "categories": {
+    "all": "All Agencies",
+    "pemda": "Local Government",
+    "bumn": "State/Regional Enterprises",
+    "vertikal": "Vertical Agencies",
+    "perbankan": "Banking Services"
+  },
+  "sla": {
+    "title": "Service Speed & SLA Punctuality Radar",
+    "target_label": "Target SLA",
+    "realization_label": "Average Realization",
+    "max_time": "Max {{time}} Mins",
+    "check_req": "Check Requirements ➔",
+    "free_cost": "Free of Charge",
+    "perda_cost": "Per Regional/Gov Regulation"
+  },
+  "facilities": {
+    "badge": "PRIORITY FACILITIES & INCLUSIVE SERVICES",
+    "lactation": "Lactation & Nursing Room",
+    "disability": "Wheelchair & Disability Access",
+    "kids_corner": "Reading Corner & Children's Play Area",
+    "kiosk": "Digital Self-Service Queue Kiosk",
+    "op_hours": "Operating Hours: 08:00 - 16:00 WITA"
+  },
+  "vip": {
+    "badge": "FAST TRACK VIP: READY TO SERVE",
+    "book_consultation": "Book VIP Consultation Session",
+    "view_pitching": "View VIP & Pitching Facilities"
+  },
+  "assistant": {
+    "quick_ask": "AI Quick Ask",
+    "call_officer": "Call Assistance Officer"
+  },
+  "skm": {
+    "ikm_score": "Community Satisfaction Index: 88.50 (Very Good)"
   }
 }

@@ -485,7 +485,7 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium">
                         <Clock className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                        {isEn ? 'Target SLA:' : isZh ? '法定目标 (SLA):' : 'Target SLA:'}
+                        {t('sla.target_label', isEn ? 'Target SLA:' : isZh ? 'SLA 目标:' : 'Target SLA:')}
                       </span>
                       <strong className="text-slate-800 dark:text-slate-200 font-mono font-bold">
                         {item.targetSla}
@@ -495,7 +495,7 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium">
                         <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                        {isEn ? 'Realization:' : isZh ? '实际平均:' : 'Realisasi:'}
+                        {t('sla.realization_label', isEn ? 'Average Realization:' : isZh ? '平均实际耗时:' : 'Realisasi Rata-rata:')}
                       </span>
                       <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
                         {item.actualAvgMinutes >= 480 
@@ -531,7 +531,7 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
                     }}
                     className="font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 flex items-center gap-1 cursor-pointer transition-colors shrink-0 px-1 py-0.5 active:scale-95 group/btn"
                   >
-                    <span className="whitespace-nowrap">{isEn ? 'Check Requirements' : isZh ? '查看前置条件' : 'Cek Syarat'}</span>
+                    <span className="whitespace-nowrap">{t('sla.check_req', isEn ? 'Check Requirements ➔' : isZh ? '查看申请条件 ➔' : 'Cek Syarat ➔')}</span>
                     <ArrowRight className="w-3.5 h-3.5 shrink-0 group-hover/btn:translate-x-0.5 transition-transform" />
                   </button>
                 </div>
