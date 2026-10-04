@@ -5987,8 +5987,8 @@ export default function LandingPage({
                 </div>
               </div>
 
-              {/* Quick Navigation Links (Symmetrical 2x2 Grid for Android) */}
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full max-w-md mx-auto md:max-w-none md:mx-0 md:flex md:flex-wrap items-center justify-center md:w-auto text-center">
+              {/* Quick Navigation Links (Uniform 2x2 Grid Layout with grid-cols-2 gap-4) */}
+              <div className="grid grid-cols-2 gap-4 w-full max-w-md mx-auto md:max-w-none md:mx-0 md:flex md:flex-wrap items-center justify-center md:w-auto text-center">
                 {[
                   { name: t('nav.home', 'Beranda'), icon: Home, action: () => scrollToSection("hero-section") },
                   { name: t('nav.potensiRegional', 'Potensi Regional'), icon: Map, action: () => scrollToSection("potensi-section") },
@@ -6007,7 +6007,7 @@ export default function LandingPage({
                     <button 
                       key={link.name} 
                       onClick={link.action}
-                      className={`w-full min-h-[46px] flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer border shadow-2xs ${
+                      className={`w-full min-h-[48px] flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer border shadow-2xs ${
                         isDark 
                           ? "text-slate-200 hover:text-white bg-slate-900/80 border-slate-800 hover:bg-slate-800/90 hover:border-emerald-500/40" 
                           : "text-slate-800 hover:text-emerald-700 bg-white border-slate-200/80 hover:bg-emerald-50/80 hover:border-emerald-300"
