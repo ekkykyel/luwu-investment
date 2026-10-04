@@ -720,7 +720,7 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
 
           {/* SECTION 3: Jenis Layanan yang Diurus (DROPDOWN DINAMIS SESUAI INSTANSI) */}
           <div className="space-y-2 sm:col-span-2">
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 font-sans flex items-center justify-between">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 font-sans flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
               <span>{isZh ? '申办的服务事项 (可选)' : isEn ? 'Service Type Managed (Optional)' : 'Jenis Layanan yang Diurus (Opsional)'}</span>
               <span className="text-[11px] font-normal text-emerald-600 dark:text-emerald-400">
                 {isZh ? '• 选项已根据所选部门自动更新' : isEn ? '• Options auto-filtered by selected agency' : '• Pilihan disesuaikan dengan instansi terpilih'}
@@ -770,31 +770,31 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
               return (
                 <div
                   key={q.id}
-                  className="p-3.5 sm:p-5 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 mb-3 sm:mb-5 bg-slate-50 dark:bg-slate-800/50 transition-all w-full max-w-full shadow-xs"
+                  className="p-3.5 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 mb-3 bg-slate-50 dark:bg-slate-800/50 transition-all w-full max-w-full shadow-xs flex flex-col"
                 >
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="flex items-start gap-3 flex-1 min-w-0">
-                      <div className={`p-2.5 rounded-xl bg-emerald-500/10 ${q.color} shrink-0 mt-0.5`}>
-                        <Icon className="w-5 h-5" />
+                  {/* Baris 1: Header Judul Unsur & Badge Nilai */}
+                  <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-200/60 dark:border-slate-700/60">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className={`p-1.5 sm:p-2 rounded-xl bg-emerald-500/10 ${q.color} shrink-0`}>
+                        <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-xs sm:text-sm md:text-base font-extrabold uppercase tracking-wider font-sans text-emerald-800 dark:text-emerald-400">
-                          {q.title}
-                        </h4>
-                        {/* Teks Pertanyaan */}
-                        <p className="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-slate-100 mt-1 mb-2 leading-relaxed tracking-normal w-full max-w-full">
-                          {q.question}
-                        </p>
-                      </div>
+                      <h4 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider font-sans text-emerald-800 dark:text-emerald-400 truncate">
+                        {q.title}
+                      </h4>
                     </div>
 
-                    <span className="text-xs sm:text-sm font-extrabold text-emerald-600 dark:text-emerald-400 font-mono px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 shrink-0">
+                    <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 font-mono px-2.5 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 shrink-0">
                       {currentVal} / 4
                     </span>
                   </div>
 
-                  {/* Grid Pilihan Jawaban (4 Opsi 4 Kolom) */}
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 w-full mt-2">
+                  {/* Baris 2: Teks Pertanyaan Full-Width & Wrapping Normal */}
+                  <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 leading-relaxed mb-3 w-full">
+                    {q.question}
+                  </p>
+
+                  {/* Baris 3: Grid Pilihan Jawaban (4 Opsi 4 Kolom) */}
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 w-full mt-1">
                     {ratingOptions.map((opt) => {
                       const isSelected = currentVal === opt.value;
                       return (
@@ -802,16 +802,16 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
                           key={opt.value}
                           type="button"
                           onClick={() => handleRatingChange(q.id, opt.value)}
-                          className={`relative flex items-center justify-between px-3 py-2.5 sm:p-4 rounded-xl border text-left transition-all w-full cursor-pointer min-h-[50px] sm:min-h-[56px] ${
+                          className={`relative flex items-center justify-between px-3 py-2.5 sm:p-3 rounded-xl border text-left transition-all w-full cursor-pointer min-h-[46px] sm:min-h-[50px] ${
                             isSelected
                               ? 'border-emerald-500 bg-emerald-500 text-white dark:bg-emerald-600 shadow-md font-bold'
                               : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-emerald-500'
                           }`}
                         >
-                          <span className={`text-xs sm:text-sm md:text-base font-semibold leading-snug pr-1 flex-1 ${isSelected ? 'text-white' : 'text-slate-800 dark:text-slate-100'}`}>
+                          <span className={`text-xs sm:text-sm font-semibold leading-snug pr-1 flex-1 ${isSelected ? 'text-white' : 'text-slate-800 dark:text-slate-100'}`}>
                             {opt.label}
                           </span>
-                          <span className={`w-6 h-6 rounded-md text-xs font-bold flex items-center justify-center shrink-0 ${
+                          <span className={`w-5 h-5 sm:w-6 sm:h-6 rounded-md text-[11px] sm:text-xs font-bold flex items-center justify-center shrink-0 ${
                             isSelected
                               ? 'bg-white/20 text-white'
                               : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
