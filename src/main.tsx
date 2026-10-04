@@ -309,16 +309,34 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 );
 
-// Register service worker for PWA support & GeoJSON SWR caching layer
-if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js', { scope: '/' })
-      .then((reg) => {
-        console.log('[SW] Service Worker registered successfully with scope:', reg.scope);
-      })
-      .catch((err) => {
-        console.warn('[SW] Service Worker registration failed (benign in restricted iframes):', err?.message || err);
+// Register service worker for PWA support & GeoJSON SWR caching layer only in production
+if ('serviceWorker' in navigator) {
+  if (import.meta.env.DEV) {
+    // Proactively clean up any stale development service worker and caches
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (const registration of registrations) {
+        registration.unregister();
+      }
+    });
+    if ('caches' in window) {
+      caches.keys().then((keys) => {
+        keys.forEach((key) => {
+          if (key.includes('workbox') || key.includes('vite') || key.includes('pwa')) {
+            caches.delete(key);
+          }
+        });
       });
-  });
+    }
+  } else if (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        .then((reg) => {
+          console.log('[SW] Service Worker registered successfully with scope:', reg.scope);
+        })
+        .catch((err) => {
+          console.warn('[SW] Service Worker registration failed (benign in restricted iframes):', err?.message || err);
+        });
+    });
+  }
 }
 
