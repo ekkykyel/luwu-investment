@@ -486,7 +486,7 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
   return (
     <div className={`w-full max-w-full transition-all ${
       isInModal 
-        ? 'p-2 sm:p-4 md:p-6 bg-transparent border-0 shadow-none text-slate-900 dark:text-slate-100' 
+        ? 'p-0 bg-transparent border-0 shadow-none text-slate-900 dark:text-slate-100' 
         : `rounded-3xl border p-4 sm:p-8 backdrop-blur-md shadow-xl w-full max-w-7xl mx-auto ${
             isDarkMode ? 'bg-slate-900/70 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
           }`
@@ -788,8 +788,8 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
                     </span>
                   </div>
 
-                  {/* Baris 2: Teks Pertanyaan Full-Width & Wrapping Normal */}
-                  <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 leading-relaxed mb-3 w-full">
+                  {/* Baris 2: Teks Pertanyaan Full-Width, Wrapping Normal, dan Justify */}
+                  <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 leading-relaxed mb-3 w-full text-justify">
                     {q.question}
                   </p>
 
