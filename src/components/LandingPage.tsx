@@ -1264,7 +1264,7 @@ export default function LandingPage({
             },
             language: i18n.language,
             locale: i18n.language,
-            investment_amount: context.capex || context.investmentValue,
+            investment_amount: context.capex || (context as any).investmentValue || 0,
             sector: context.sector,
             workforce_target: Math.max(25, Math.round((context.capex || 5000000000) / 150000000)),
             location: "Kabupaten Luwu",

@@ -32,7 +32,7 @@ export const ensureFullscreen = () => {
 /**
  * Smart fullscreen request for Android & modern browsers
  */
-export const requestSmartFullscreen = async (): Promise<boolean> => {
+export const requestSmartFullscreen = async (_force: boolean = false): Promise<boolean> => {
   if (typeof window === 'undefined') return false;
 
   const doc = document as any;
