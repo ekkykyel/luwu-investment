@@ -157,12 +157,13 @@ export function isApplicationInPuptrTab(item: PkkprApplicationItem, tabId: strin
   // 1. Forwarded to Dinas Pertanian
   const isForwardedToPertanian =
     rawPkkprStatus === 'VERIFIKASI_PERTANIAN' ||
+    rawPkkprStatus === 'FORWARDED_TO_PERTANIAN' ||
     rawPkkprStatus === 'PENDING PERTEK PERTANIAN' ||
     rawAgriStatus === 'FORWARDED' ||
     rawPermohonanStatus === 'ESCALATED_PERTANIAN' ||
     rawPermohonanStatus === 'WAITING_PERTANIAN';
 
-  // 2. Approved / Published
+  // 2. Approved / Published / Forwarded to OSS
   const isApproved =
     rawPkkprStatus === 'APPROVED_PUPTR' ||
     rawPkkprStatus === 'TERBIT' ||
@@ -189,13 +190,30 @@ export function isApplicationInPuptrTab(item: PkkprApplicationItem, tabId: strin
      rawPermohonanStatus === 'REJECTED_PERTANIAN') &&
     !isRevisionOrRejectedFinal;
 
-  switch (tabId) {
+  // 5. Explicit check for active PUPTR statuses (Case-insensitive)
+  const isActivePuptrStatus =
+    rawPermohonanStatus === 'REVIEW_PUPTR' ||
+    rawPermohonanStatus === 'SUBMITTED' ||
+    rawPermohonanStatus === 'WAITING_PUPTR' ||
+    rawPermohonanStatus === 'WAITING_PUPTR_REVIEW' ||
+    rawPermohonanStatus === 'WAITING_PUPTR_FINAL' ||
+    rawPermohonanStatus === 'DRAFT' ||
+    rawPkkprStatus === 'SUBMITTED' ||
+    rawPkkprStatus === 'VERIFIKASI_PUPTR' ||
+    rawPkkprStatus === 'DRAFT' ||
+    rawPkkprDisplay === 'PENDING SPATIAL CHECK';
+
+  const cleanTabId = String(tabId || '').toUpperCase().trim();
+
+  switch (cleanTabId) {
     case 'ALL':
     case 'PENDING':
     case 'PUPTR_ACTIVE':
     case 'ACTIVE': {
-      // Must not be in forwarded, approved, revision, or rejected by Pertanian
-      return !isForwardedToPertanian && !isApproved && !isRevisionOrRejectedFinal && !isRejectedPertanian;
+      // For Active queue, item must not be in forwarded, approved, revision, or rejected-pertanian states.
+      // If it has an explicit active status OR is not excluded, it is active.
+      const isExcluded = isForwardedToPertanian || isApproved || isRevisionOrRejectedFinal || isRejectedPertanian;
+      return !isExcluded;
     }
 
     case 'REJECTED_PERTANIAN':
@@ -1298,7 +1316,7 @@ export default function PuptrSpatialClearanceDashboard() {
       // Auto-select first active pending item for inspection (excluding forwarded to Pertanian or already approved/returned items)
       if (mapped.length > 0) {
         setSelectedApp(prev => {
-          const activePending = mapped.filter(m => m.pertanianStatus !== 'FORWARDED' && m.pkkprStatus !== 'Approved' && m.pkkprStatus !== 'Requires Revision');
+          const activePending = mapped.filter(m => isApplicationInPuptrTab(m, 'ALL'));
           if (activePending.length === 0) return mapped[0];
           if (!prev) return activePending[0];
           const found = activePending.find(m => m.id === prev.id || m.nibNik === prev.nibNik);

@@ -123,8 +123,9 @@ export function isApplicationInPertanianTab(item: AgrarianQueueItem, tabId: stri
   if (!item) return false;
   const rawStatus = String(item.agriStatus || '').toUpperCase().trim();
   const rawPertanianStatus = String(item.pertanianStatus || '').toUpperCase().trim();
+  const cleanTabId = String(tabId || '').toUpperCase().trim();
 
-  switch (tabId) {
+  switch (cleanTabId) {
     case 'APPROVED':
       return rawStatus === 'APPROVED' || rawPertanianStatus === 'APPROVED';
     case 'REJECTED':
@@ -567,8 +568,8 @@ export default function PertanianLandClearanceDashboard() {
 
       if (mapped.length > 0) {
         if (!selectedApp || !mapped.some(m => m.id === selectedApp.id)) {
-          // Default to first pending review application
-          const pendingItem = mapped.find(m => m.agriStatus === 'Pending Review') || mapped[0];
+          // Default to first pending review application using SSOT filter
+          const pendingItem = mapped.find(m => isApplicationInPertanianTab(m, 'ALL')) || mapped[0];
           selectAppForReview(pendingItem);
         } else {
           // Update selectedApp with fresh state from database
