@@ -48,9 +48,8 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-white/70 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-700/60 shadow-xs backdrop-blur-md"
+        className="inline-flex items-center justify-center text-center px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider bg-white/70 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-700/60 shadow-xs backdrop-blur-md"
       >
-        <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
         <span>✦ REGIONAL GRP (GOVERNMENT RESOURCE PLANNING) PLATFORM</span>
       </motion.div>
 
@@ -59,15 +58,15 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, delay: 0.05 }}
-        className="space-y-2 max-w-3xl"
+        className="space-y-3 max-w-3xl px-2"
       >
         <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.15] font-sans">
-          Ekosistem Layanan Publik{' '}
-          <span className="bg-gradient-to-r from-teal-500 via-emerald-500 to-cyan-500 bg-clip-text text-transparent">
+          <span className="block text-slate-900 dark:text-white">Ekosistem Layanan Publik</span>
+          <span className="block bg-gradient-to-r from-teal-500 via-emerald-500 to-cyan-500 bg-clip-text text-transparent">
             Tanpa Hambatan
           </span>
         </h1>
-        <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-medium max-w-2xl mx-auto">
+        <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium max-w-md sm:max-w-xl mx-auto text-balance leading-relaxed">
           Portal terpadu Regional GRP (Government Resource Planning) untuk 19 instansi pemerintah, BUMN, dan kepolisian. Cepat, transparan, dan ramah untuk seluruh warga Luwu.
         </p>
       </motion.div>
@@ -77,7 +76,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4, delay: 0.1 }}
-        className="w-full max-w-2xl"
+        className="w-full max-w-2xl px-2 sm:px-0"
       >
         <form
           onSubmit={handleSubmit}
@@ -87,7 +86,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
               : 'bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 shadow-xl hover:border-slate-300 dark:hover:border-slate-700'
           }`}
         >
-          <div className="flex items-center gap-2 sm:gap-3 pl-3 pr-1">
+          <div className="flex items-center gap-2 sm:gap-3 pl-3.5 pr-1.5 sm:pl-4 sm:pr-2">
             <Search className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
             
             <input
@@ -97,7 +96,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
               placeholder="Apa layanan yang Anda butuhkan hari ini di MPP Simpurusiang?"
-              className="w-full bg-transparent text-sm sm:text-base font-medium text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none truncate py-2.5"
+              className="w-full bg-transparent text-sm sm:text-base font-medium text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none truncate py-2 sm:py-2.5"
             />
 
             {/* Keyboard shortcut hint */}
