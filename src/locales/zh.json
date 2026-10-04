@@ -2,8 +2,8 @@
   "hero": {
     "grp_badge": "区域 GRP 平台",
     "title": "无障碍公共服务生态系统",
-    "subtitle": "整合 19 个政府部门、国有企业与警察局的区域 GRP 统一门户。高效、透明，为所有芦梧居民提供优质服务。",
-    "search_placeholder": "您今天在公共服务大楼需要什么服务？",
+    "subtitle": "芦梧县综合公共服务门户",
+    "search_placeholder": "搜索服务、许可证、机构或文档...",
     "search_button": "搜索 ➔",
     "chip_dukcapil": "户籍与电子身份证",
     "chip_nib": "NIB 商业许可证 (OSS)",
@@ -12,8 +12,6 @@
     "chip_pajak": "地方税收与规费",
     "titleHighlight": "数字投资",
     "titleRest": "门户",
-    "subtitle": "芦梧县综合公共服务门户",
-    "search_placeholder": "搜索服务、许可证、机构或文档...",
     "filter_dukcapil": "户籍与电子身份证",
     "filter_nib": "NIB商业许可证 (OSS)",
     "filter_pajak": "税收与规费",
@@ -112,15 +110,13 @@
     "zh": "中文"
   },
   "map": {
-    "spatialControl": "空间控制",
-    "basemap": "底图设置",
-    "temporalGis": "时空 GIS",
-    "investmentPotential": "投资潜力",
-    "landUseZoning": "土地利用分区",
-    "floodRisk": "洪水风险图",
-    "searchPlaceholder": "搜索村、镇或投资区域...",
-    "totalCommitment": "总投资承诺",
-    "aligningBasemap": "正在对齐空间底图..."
+    "badge": "位置与地图",
+    "title": "地理空间地图与导航路线",
+    "building_address": "芦梧县贝洛帕 Simpurusiang 公共服务大楼",
+    "get_directions": "获取路线指引",
+    "directions": "获取路线指引",
+    "open_gmaps": "在 Google 地图查看",
+    "gmaps_btn": "在 Google 地图查看"
   },
   "stats": {
     "totalInvestment": "总投资",
@@ -755,11 +751,10 @@
     "high": "高"
   },
   "sector": {
-    "marine": "海洋与渔业",
-    "agriculture": "农业",
-    "mining": "矿业",
-    "industry": "工业",
-    "tourism": "旅游业"
+    "agri": "农业与种植业",
+    "mining": "矿业与能源",
+    "fishery": "渔业与海洋产业",
+    "tourism": "旅游与制造业"
   },
   "spatial": {
     "intersect": "相交 (Intersect)",
@@ -1018,7 +1013,9 @@
     ]
   },
   "testimonial": {
-    "verified": "已验证投资者"
+    "speech_head": "DPMPTSP 局长致辞",
+    "investor_quotes": "投资者感言与反馈",
+    "join_community": "加入芦梧投资者社区"
   },
   "operator": {
     "searchPlaceholder": "搜索项目...",
@@ -1119,49 +1116,10 @@
     "nikError": "身份证号码必须为16位数字"
   },
   "dashboard": {
-    "menuOverview": "概览",
-    "menuVerify": "NIB 验证",
-    "menuSimulation": "财务模拟",
-    "welcomeTitle": "欢迎来到投资者门户",
-    "welcomeSub": "统一访问卢武县的服务、空间数据和财务可行性模拟。",
-    "totalOpportunities": "总投资机会",
-    "totalOpportunitiesDesc": "活跃的已规划投资机会",
-    "totalLandArea": "总土地面积",
-    "totalLandAreaDesc": "累计记录面积",
-    "dominantSector": "主导行业",
-    "dominantSectorDesc": "潜在主要贡献行业",
-    "avgRoi": "平均预估投资回报率",
-    "avgRoiDesc": "平均资本回报率",
-    "nibVerificationStatus": "NIB 验证状态",
-    "nibEmptyState": "目前尚无相关机构提交 NIB 进行法律验证。请提交您的 NIB 以连接卢武投资网络。",
-    "topRecommendations": "首选推荐投资项目",
-    "topRecommendationsDesc": "基于投资承诺价值的顶级战略项目",
-    "sectorDistribution": "行业分布",
-    "sectorDistributionDesc": "记录投资的百分比分布",
-    "emptySectorData": "尚未输入投资行业数据。",
-    "emptyInvestmentData": "尚未整合投资数据",
-    "viewDetails": "查看详情",
-    "exploreMoreMap": "进一步探索地图",
-    "openVerificationForm": "打开验证表单",
-    "actionCenter": "操作中心",
-    "actionCenterDesc": "快速访问导航菜单和智能分析。",
-    "spatialWebGis": "空间地图 (WebGIS)",
-    "spatialWebGisDesc": "探索卢武 3D 空间图层。",
-    "startSimulation": "开始模拟",
-    "startSimulationDesc": "计算财务可行性和投资回报率。",
-    "logout": "登出",
-    "loadingAnalysis": "正在加载投资者门户分析...",
-    "dbErrorTitle": "连接数据库失败",
-    "dbErrorDesc": "我们目前无法如实加载卢武县的投资数据。请检查您的连接。",
-    "retry": "重试",
-    "onlineSyncActive": "在线同步激活",
-    "roiBenchmark": "Luwu 基准: ~10% - 12% (行业平均)",
-    "sectorFiltered": "📍 部门：动态过滤",
-    "filterSummary": "过滤结果摘要",
-    "avgScaleEnterprise": "💼 平均规模：企业",
-    "pa": "每年",
-    "fold": "倍",
-    "arcModule": "ARC-WEB GIS模块"
+    "realization_title": "实时投资完成度",
+    "target_fdi_ddi": "外资与内资目标对比",
+    "top_sectors": "区域优势产业",
+    "yoy_growth": "同比增长率 (%)"
   },
   "analyticalHub": {
     "title": "以投资者为中心的分析中心",
@@ -1976,9 +1934,15 @@
   "opex_kemasan": "包装费用",
   "mppPortal": {
     "persona": {
-      "warga": "公众/居民",
-      "investor": "投资人与企业",
-      "semua": "全部政务服务"
+      "warga": "公众 / 市民",
+      "investor": "投资者与企业",
+      "semua": "全部服务",
+      "wargaTag": "市民模式：",
+      "wargaDesc": "实时排号、办事材料清单与部门窗口。",
+      "investorTag": "投资者模式：",
+      "investorDesc": "VIP 投资者专席、RDTR 空间规划与 OSS-RBA。",
+      "semuaTag": "全部服务模式：",
+      "semuaDesc": "全馆公共窗口、投资与法规模块。"
     },
     "personaDesc": {
       "warga": "现场排队、户籍文件要求及公共服务机构窗口。",
@@ -2660,7 +2624,7 @@
       "genderLabel": "性别",
       "genderMale": "男",
       "genderFemale": "女",
-      "occupationLabel": "职业",
+      "occupationLabel": "职业身份",
       "occupations": {
         "pns": "公务员 / 军警",
         "bumnSwasta": "国企 / 私企员工",
@@ -2733,11 +2697,7 @@
       "testCallBtn": "模拟机场提示音与语音叫号",
       "testDoneLabel": "模拟业务办结测试:",
       "testDoneBtn": "模拟业务办理完成",
-      "cancelQueueBtn": "取消排队号票",
-      "genderLabel": "性别",
-      "genderMale": "男",
-      "genderFemale": "女",
-      "occupationLabel": "职业身份"
+      "cancelQueueBtn": "取消排队号票"
     },
     "trackingModal": {
       "badge": "政务公开与进度透明",
@@ -2772,17 +2732,6 @@
     },
     "notification": {
       "closeAria": "关闭当前排队票据"
-    },
-    "persona": {
-      "warga": "公众 / 市民",
-      "investor": "投资者与企业",
-      "semua": "全部服务",
-      "wargaTag": "市民模式：",
-      "wargaDesc": "实时排号、办事材料清单与部门窗口。",
-      "investorTag": "投资者模式：",
-      "investorDesc": "VIP 投资者专席、RDTR 空间规划与 OSS-RBA。",
-      "semuaTag": "全部服务模式：",
-      "semuaDesc": "全馆公共窗口、投资与法规模块。"
     },
     "quickNav": {
       "operational": "服务时间与SLA",
@@ -3029,17 +2978,22 @@
     "dataDesc": "指挥调度中心与管理层仪表板"
   },
   "umkm": {
-    "viewDetails": "查看详情",
-    "contactOwner": "联系企业主 (WhatsApp)",
-    "notAvailableTitle": "中小微企业目录暂未上线",
-    "notAvailableDesc": "目前数据库中暂无经认证的中小微企业合作伙伴数据。请稍后再试。",
-    "legalityVerified": "许可证与法定资质已核验",
-    "legalityStatus": "合法合规状态",
-    "indicativePrice": "指导价格",
-    "ingredients": "主要成分 / 配料",
-    "owner": "企业主 / 负责人",
-    "productionLocation": "生产地址",
-    "contactViaWa": "通过 WhatsApp 沟通"
+    "badge": "合作与精选中小微企业",
+    "title": "芦梧县精选中小微企业产品",
+    "tab_all": "所有产品",
+    "tab_culinary": "特色美食",
+    "tab_craft": "传统工艺",
+    "tab_agri": "农产品深加工",
+    "producer": "生产者 / 厂家",
+    "producer_label": "生产商",
+    "price": "价格",
+    "price_label": "价格",
+    "view_detail": "查看产品详情",
+    "direct_order": "直接订购 / 联系",
+    "cat_all": "所有产品",
+    "cat_culinary": "特色美食",
+    "cat_craft": "传统工艺",
+    "cat_agri": "农产品深加工"
   },
   "mppVision": {
     "closeAssistant": "关闭 Asisten Digital Ta'",
@@ -3208,24 +3162,6 @@
     "feedback_label": "意见与建议",
     "fill_survey_btn": "立即填写满意度调查"
   },
-  "umkm": {
-    "badge": "合作与精选中小微企业",
-    "title": "芦梧县精选中小微企业产品",
-    "tab_all": "所有产品",
-    "tab_culinary": "特色美食",
-    "tab_craft": "传统工艺",
-    "tab_agri": "农产品深加工",
-    "producer": "生产者 / 厂家",
-    "producer_label": "生产商",
-    "price": "价格",
-    "price_label": "价格",
-    "view_detail": "查看产品详情",
-    "direct_order": "直接订购 / 联系",
-    "cat_all": "所有产品",
-    "cat_culinary": "特色美食",
-    "cat_craft": "传统工艺",
-    "cat_agri": "农产品深加工"
-  },
   "queue": {
     "badge": "排队与实时监控",
     "title": "MPP 实时排队监控",
@@ -3245,15 +3181,6 @@
     "online_consult": "在线咨询",
     "ai_faq": "AI 智能问答",
     "contact_officer": "联系工作人员"
-  },
-  "map": {
-    "badge": "位置与地图",
-    "title": "地理空间地图与导航路线",
-    "building_address": "芦梧县贝洛帕 Simpurusiang 公共服务大楼",
-    "get_directions": "获取路线指引",
-    "directions": "获取路线指引",
-    "open_gmaps": "在 Google 地图查看",
-    "gmaps_btn": "在 Google 地图查看"
   },
   "news": {
     "badge": "新闻与资讯",
@@ -3308,18 +3235,6 @@
     "calculate_btn": "计算可行性与优惠 ➔",
     "reset_btn": "重置参数"
   },
-  "dashboard": {
-    "realization_title": "实时投资完成度",
-    "target_fdi_ddi": "外资与内资目标对比",
-    "top_sectors": "区域优势产业",
-    "yoy_growth": "同比增长率 (%)"
-  },
-  "sector": {
-    "agri": "农业与种植业",
-    "mining": "矿业与能源",
-    "fishery": "渔业与海洋产业",
-    "tourism": "旅游与制造业"
-  },
   "gis": {
     "layer_control": "空间地图图层",
     "rtrw_thematic": "空间规划 (RTRW) 地图",
@@ -3333,11 +3248,6 @@
     "tax_allowance": "土地税减免 / 税收优惠",
     "submit_vip": "提交VIP申请",
     "download_guide": "下载投资者指南"
-  },
-  "testimonial": {
-    "speech_head": "DPMPTSP 局长致辞",
-    "investor_quotes": "投资者感言与反馈",
-    "join_community": "加入芦梧投资者社区"
   },
   "access": {
     "tag_badge": "优先设施与包容性服务",
@@ -3432,43 +3342,74 @@
     "cta_btn": "立即在线取号 ➔"
   },
   "stepper": {
-    "badge": "动态交互式清单流程",
-    "category_hint": "选择服务类型以匹配所需材料清单",
-    "cat_ktp": "电子身份证与户籍",
-    "cat_pkkpr": "PKKPR 空间规划",
-    "cat_nib": "NIB 商业许可证 (OSS)",
-    "cat_pbg": "PBG 建筑许可",
-    "cat_passport": "出入境护照",
-    "cat_skck": "警察无犯罪记录 (SKCK)",
-    "dept_tag": "户籍行政管理",
-    "dept_info": "户籍与民政局 (Disdukcapil) • 展位 01 • 窗口 01 - 03",
-    "title": "电子身份证采集与打印 / 数字身份 (IKD) 指南",
-    "subtitle": "芦梧县户籍局关于首次办理电子身份证、补办/换领及激活数字身份 (IKD) 的官方要求。",
-    "completeness_title": "材料完整度",
-    "completeness_count": "10 份材料中已准备 0 份",
-    "step1_title": "步骤 01",
-    "step1_desc": "申请人文件材料",
-    "step2_title": "步骤 02",
-    "step2_desc": "生物识别采集与 NIK 验证",
-    "step3_title": "步骤 03",
-    "step3_desc": "实体卡打印与 IKD 激活",
-    "req_required": "必填/必需",
-    "req_optional": "选填/可选",
-    "doc1_title": "户口簿 (KK) 原件 / 数字版",
-    "doc1_desc": "带有内政部 Dukcapil 官方二维码的最新户口簿扫描件或纸质打印件（无需盖章）。",
-    "doc2_title": "警察局报失单（若身份证丢失）/ 损坏的身份证",
-    "doc2_desc": "若卡片损坏请携带旧卡以旧换新，若丢失请提供当地警察局的报失证明 (STLK)。",
-    "doc3_title": "最新证件照（若涉及数据变更）",
-    "doc3_desc": "3x4 或 4x6 蓝/红底正式证件照（仅限婚姻状态或学历信息变更时）。",
-    "doc4_title": "有效的 WhatsApp 号码",
-    "doc4_desc": "申请人的有效联系电话，用于接收排队确认、窗口叫号条形码及卡片印制进度。",
-    "btn_prev": "上一步",
-    "btn_next": "下一步 ➔"
+    "badge_checklist": "互动式申办条件指南与 / Checklist",
+    "badge_official_standard": "Luwu 县 Government 官方服务标准",
+    "title": "KTP-el 身份证 / IKD 数字身份申办条件指南",
+    "subtitle": "请在下方勾选您已准备好的文件，以在取号前确认申请资格。",
+    "stages": {
+      "stage_1": "第一阶段：申请人文件材料",
+      "stage_2": "第二阶段：审核与生物识别采集",
+      "stage_3": "第三阶段：IKD 激活与实体卡打印"
+    },
+    "items": {
+      "kk_original": {
+        "label": "户口簿 (KK) 原件 / 电子版",
+        "desc": "印 supervision 局官方二维码的最新户口簿，无需盖章。"
+      },
+      "police_report": {
+        "label": "报失证明 / 损坏 KTP 原件",
+        "desc": "携带损坏旧卡，若遗失请提供警察局报失单。"
+      },
+      "biometric_photo": {
+        "label": "生物识别采集（人脸与指纹）",
+        "desc": "在 Dukcapil 窗口现场采集虹膜、指纹及电子签名。"
+      },
+      "ikd_app": {
+        "label": "数字身份 App (IKD)",
+        "desc": "在应用商店下载 IKD App 并准备有效邮箱用于二维码激活。"
+      }
+    },
+    "status": {
+      "ready": "您的文件 100% 准备就绪！可直接前往窗口。",
+      "incomplete": "请补充上方未勾选的文件。"
+    },
+    "actions": {
+      "prev_step": "← 上一阶段",
+      "next_step": "下一阶段 →",
+      "take_queue": "立即获取 Dukcapil 取号",
+      "download_pdf": "下载 Checklist (PDF)"
+    }
   },
   "floorplan": {
     "badge": "大堂交互式平面图",
     "title": "房间与服务窗口平面图",
     "subtitle": "公共服务大楼一楼公共设施、服务窗口及等候区的 2D 交互式平面图。",
     "footer_note": "点击房间 / 窗口以查看服务与许可详情"
+  },
+  "directory": {
+    "badge_fast_search": "服务目录与快速检索",
+    "badge_spatial_sync": "同步至空间平面图",
+    "title": "服务窗口与柜台快速导航",
+    "subtitle": "请在下方选择您的政务需求，以在 Simpurusiang 公共服务中心互动平面图上直接高亮窗口位置。",
+    "tabs": {
+      "all": "全部目录",
+      "civil": "户籍与人口",
+      "licensing": "OSS 许可审批",
+      "tax": "税务与车辆 SAMSAT",
+      "health_social": "医保社保与社会福利",
+      "passport_law": "护照与法律服务",
+      "inclusive_facilities": "无障碍设施"
+    },
+    "labels": {
+      "main_requirements": "主要申办条件：",
+      "view_on_map": "在平面图查看 →"
+    },
+    "tags": {
+      "most_searched": "热门搜索",
+      "fast_service": "快速办理",
+      "vip_investor": "VIP 投资服务",
+      "today_ready": "当日即办",
+      "universal_health": "全民健康"
+    }
   }
 }

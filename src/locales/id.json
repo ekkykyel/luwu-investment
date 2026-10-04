@@ -2,8 +2,8 @@
   "hero": {
     "grp_badge": "REGIONAL GRP PLATFORM",
     "title": "Ekosistem Layanan Publik Tanpa Hambatan",
-    "subtitle": "Portal terpadu Regional GRP (Government Resource Planning) untuk 19 instansi pemerintah, BUMN, dan kepolisian. Cepat, transparan, dan ramah untuk seluruh warga Luwu.",
-    "search_placeholder": "Apa layanan yang Anda butuhkan hari ini di MPP?",
+    "subtitle": "Portal Pelayanan Publik Terpadu Kabupaten Luwu",
+    "search_placeholder": "Cari layanan, izin, instansi, atau dokumen...",
     "search_button": "Cari ➔",
     "chip_dukcapil": "Dukcapil & KTP-el",
     "chip_nib": "Izin Usaha NIB OSS",
@@ -12,8 +12,6 @@
     "chip_pajak": "Pajak & Retribusi",
     "titleHighlight": "Pintu Gerbang",
     "titleRest": "Investasi Digital",
-    "subtitle": "Portal Pelayanan Publik Terpadu Kabupaten Luwu",
-    "search_placeholder": "Cari layanan, izin, instansi, atau dokumen...",
     "filter_dukcapil": "Dukcapil & KTP-el",
     "filter_nib": "Izin Usaha NIB OSS",
     "filter_pajak": "Pajak & Retribusi",
@@ -108,15 +106,13 @@
     "zh": "中文"
   },
   "map": {
-    "spatialControl": "Kontrol Spasial",
-    "basemap": "Pengaturan Base Map",
-    "temporalGis": "GIS Temporal",
-    "investmentPotential": "Potensi Investasi",
-    "landUseZoning": "Zonasi Pemanfaatan Lahan",
-    "floodRisk": "Peta Risiko Banjir",
-    "searchPlaceholder": "Cari desa, kecamatan, atau kawasan investasi...",
-    "totalCommitment": "Total Komitmen Investasi",
-    "aligningBasemap": "Menyelaraskan Basemap Spasial..."
+    "badge": "LOKASI & PETA",
+    "title": "Peta Geospasial & Rute MPP",
+    "building_address": "Gedung MPP Simpurusiang Belopa",
+    "get_directions": "Petunjuk Arah",
+    "directions": "Petunjuk Arah",
+    "open_gmaps": "Buka di Google Maps",
+    "gmaps_btn": "Buka di Google Maps"
   },
   "stats": {
     "totalInvestment": "TOTAL INVESTASI",
@@ -751,11 +747,10 @@
     "high": "Tinggi"
   },
   "sector": {
-    "marine": "Kelautan dan Perikanan",
-    "agriculture": "Pertanian",
-    "mining": "Pertambangan",
-    "industry": "Perindustrian",
-    "tourism": "Pariwisata"
+    "agri": "Pertanian & Perkebunan",
+    "mining": "Pertambangan & Energi",
+    "fishery": "Perikanan & Kelautan",
+    "tourism": "Pariwisata & Industri"
   },
   "spatial": {
     "intersect": "Irisan (Intersect)",
@@ -1014,7 +1009,9 @@
     ]
   },
   "testimonial": {
-    "verified": "NIB Terverifikasi"
+    "speech_head": "Kata Sambutan Kepala DPMPTSP",
+    "investor_quotes": "Kesan & Pesan Investor",
+    "join_community": "Gabung Komunitas Investor Luwu"
   },
   "operator": {
     "searchPlaceholder": "Cari proyek...",
@@ -1115,49 +1112,10 @@
     "nikError": "NIK harus berupa 16 digit angka"
   },
   "dashboard": {
-    "menuOverview": "Ringkasan",
-    "menuVerify": "Verifikasi NIB",
-    "menuSimulation": "Simulasi Finansial",
-    "welcomeTitle": "Selamat Datang di Portal Investor",
-    "welcomeSub": "Akses layanan, data spasial, dan simulasi kelayakan finansial secara terpadu di Kabupaten Luwu.",
-    "totalOpportunities": "Total Peluang Investasi",
-    "totalOpportunitiesDesc": "Peluang investasi terpetakan aktif",
-    "totalLandArea": "Total Luas Lahan",
-    "totalLandAreaDesc": "Kumulatif luas wilayah terdata",
-    "dominantSector": "Sektor Dominan",
-    "dominantSectorDesc": "Sektor potensi kontributor utama",
-    "avgRoi": "Rata-rata Estimasi ROI",
-    "avgRoiDesc": "Tingkat pengembalian modal rata-rata",
-    "nibVerificationStatus": "Status Verifikasi NIB",
-    "nibEmptyState": "Belum ada NIB yang diajukan untuk diverifikasi secara hukum oleh instansi terkait. Silakan ajukan NIB Anda untuk terhubung ke jaringan investasi Luwu.",
-    "topRecommendations": "Top Rekomendasi Investasi",
-    "topRecommendationsDesc": "Proyek strategis teratas berdasarkan nilai komitmen investasi",
-    "sectorDistribution": "Distribusi Sektor",
-    "sectorDistributionDesc": "Persentase sebaran jenis investasi terdata",
-    "emptySectorData": "Belum ada data sektor investasi diinput.",
-    "emptyInvestmentData": "Belum ada data investasi diinput secara terpadu",
-    "viewDetails": "Lihat Detail",
-    "exploreMoreMap": "Eksplor Peta Selengkapnya",
-    "openVerificationForm": "Buka Form Verifikasi",
-    "actionCenter": "Action Center",
-    "actionCenterDesc": "Akses cepat menu navigasi dan analisis cerdas.",
-    "spatialWebGis": "Peta Spasial (WebGIS)",
-    "spatialWebGisDesc": "Eksplor layer tata ruang 3D Luwu.",
-    "startSimulation": "Mulai Simulasi",
-    "startSimulationDesc": "Hitung kelayakan finansial & ROI.",
-    "logout": "Keluar",
-    "loadingAnalysis": "Memuat Analisis Portal Investor...",
-    "dbErrorTitle": "Gagal Terhubung ke Database",
-    "dbErrorDesc": "Kami tidak dapat memuat data investasi Kabupaten Luwu saat ini secara jujur. Silakan periksa koneksi Anda.",
-    "retry": "Coba Ulang",
-    "onlineSyncActive": "Online Sync Active",
-    "roiBenchmark": "Benchmark Luwu: ~10% - 12% (Rata-rata sektor)",
-    "sectorFiltered": "📍 Sektor: Terfilter Dinamis",
-    "filterSummary": "Ringkasan Hasil Filter",
-    "avgScaleEnterprise": "💼 Rata-rata Skala: Enterprise",
-    "pa": "p.a",
-    "fold": "Lipat",
-    "arcModule": "ARC-WEB GIS MODULE"
+    "realization_title": "Realisasi Investasi Real-time",
+    "target_fdi_ddi": "Target PMA vs PMDN",
+    "top_sectors": "Sektor Unggulan Daerah",
+    "yoy_growth": "Pertumbuhan YoY (%)"
   },
   "analyticalHub": {
     "title": "Hub Analitik Berbasis Investor",
@@ -1974,7 +1932,13 @@
     "persona": {
       "warga": "Masyarakat",
       "investor": "Investor & Bisnis",
-      "semua": "Semua Layanan"
+      "semua": "Semua Layanan",
+      "wargaTag": "Mode Warga:",
+      "wargaDesc": "Antrean Langsung, Persyaratan Berkas, & Gerai Instansi.",
+      "investorTag": "Mode Investor:",
+      "investorDesc": "Eksekutif Desk Investasi, Peta Spasial RDTR, & OSS-RBA.",
+      "semuaTag": "Semua Layanan:",
+      "semuaDesc": "Seluruh modul gerai publik, investasi & regulasi."
     },
     "personaDesc": {
       "warga": "Antrean langsung, persyaratan berkas kependudukan & gerai instansi layanan publik.",
@@ -2529,11 +2493,7 @@
       "testCallBtn": "Simulasikan Bel Bandara & Panggilan",
       "testDoneLabel": "Uji Layanan Selesai:",
       "testDoneBtn": "Simulasikan Pelayanan Selesai",
-      "cancelQueueBtn": "Batalkan Antrean",
-      "genderLabel": "Jenis Kelamin",
-      "genderMale": "Laki-laki",
-      "genderFemale": "Perempuan",
-      "occupationLabel": "Pekerjaan"
+      "cancelQueueBtn": "Batalkan Antrean"
     },
     "trackingModal": {
       "badge": "Transparansi Pelayanan",
@@ -2768,17 +2728,6 @@
     },
     "notification": {
       "closeAria": "Tutup antrean"
-    },
-    "persona": {
-      "warga": "Masyarakat",
-      "investor": "Investor & Bisnis",
-      "semua": "Semua Layanan",
-      "wargaTag": "Mode Warga:",
-      "wargaDesc": "Antrean Langsung, Persyaratan Berkas, & Gerai Instansi.",
-      "investorTag": "Mode Investor:",
-      "investorDesc": "Eksekutif Desk Investasi, Peta Spasial RDTR, & OSS-RBA.",
-      "semuaTag": "Semua Layanan:",
-      "semuaDesc": "Seluruh modul gerai publik, investasi & regulasi."
     },
     "quickNav": {
       "operational": "Jam Kunjungan & SLA",
@@ -3025,17 +2974,22 @@
     "dataDesc": "Pusat Komando & Dashboard Eksekutif"
   },
   "umkm": {
-    "viewDetails": "Lihat Detail",
-    "contactOwner": "Hubungi Pemilik (WA)",
-    "notAvailableTitle": "Katalog UMKM Belum Tersedia",
-    "notAvailableDesc": "Saat ini belum ada data mitra UMKM terverifikasi di dalam database kami. Silakan kembali lagi nanti.",
-    "legalityVerified": "Izin/Legalitas Terverifikasi",
-    "legalityStatus": "Status Legalitas",
-    "indicativePrice": "Harga Indikatif",
-    "ingredients": "Komposisi / Bahan Utama",
-    "owner": "Owner / Penanggung Jawab",
-    "productionLocation": "Lokasi Produksi",
-    "contactViaWa": "Hubungi via WhatsApp"
+    "badge": "KEMITRAAN & UMKM UNGGULAN",
+    "title": "Produk UMKM Terpilih Kab. Luwu",
+    "tab_all": "Semua Produk",
+    "tab_culinary": "Kuliner",
+    "tab_craft": "Kerajinan",
+    "tab_agri": "Olahan Agriculture",
+    "producer": "Produsen",
+    "producer_label": "Produsen",
+    "price": "Harga",
+    "price_label": "Harga",
+    "view_detail": "Lihat Detail Produk",
+    "direct_order": "Pesan Direct / Hubungi",
+    "cat_all": "Semua Produk",
+    "cat_culinary": "Kuliner",
+    "cat_craft": "Kerajinan",
+    "cat_agri": "Olahan Agriculture"
   },
   "mppVision": {
     "closeAssistant": "Tutup Asisten Digital Ta'",
@@ -3204,24 +3158,6 @@
     "feedback_label": "Saran & Masukan",
     "fill_survey_btn": "Isi Survei SKM Sekarang"
   },
-  "umkm": {
-    "badge": "KEMITRAAN & UMKM UNGGULAN",
-    "title": "Produk UMKM Terpilih Kab. Luwu",
-    "tab_all": "Semua Produk",
-    "tab_culinary": "Kuliner",
-    "tab_craft": "Kerajinan",
-    "tab_agri": "Olahan Agriculture",
-    "producer": "Produsen",
-    "producer_label": "Produsen",
-    "price": "Harga",
-    "price_label": "Harga",
-    "view_detail": "Lihat Detail Produk",
-    "direct_order": "Pesan Direct / Hubungi",
-    "cat_all": "Semua Produk",
-    "cat_culinary": "Kuliner",
-    "cat_craft": "Kerajinan",
-    "cat_agri": "Olahan Agriculture"
-  },
   "queue": {
     "badge": "ANTREAN & MONITORING",
     "title": "Pantau Antrean Real-time MPP",
@@ -3241,15 +3177,6 @@
     "online_consult": "Konsultasi Online",
     "ai_faq": "Tanya Jawab AI",
     "contact_officer": "Hubungi Petugas"
-  },
-  "map": {
-    "badge": "LOKASI & PETA",
-    "title": "Peta Geospasial & Rute MPP",
-    "building_address": "Gedung MPP Simpurusiang Belopa",
-    "get_directions": "Petunjuk Arah",
-    "directions": "Petunjuk Arah",
-    "open_gmaps": "Buka di Google Maps",
-    "gmaps_btn": "Buka di Google Maps"
   },
   "news": {
     "badge": "BERITA & INFORMASI",
@@ -3304,18 +3231,6 @@
     "calculate_btn": "Hitung Kelayakan & Incentive ➔",
     "reset_btn": "Reset Parameter"
   },
-  "dashboard": {
-    "realization_title": "Realisasi Investasi Real-time",
-    "target_fdi_ddi": "Target PMA vs PMDN",
-    "top_sectors": "Sektor Unggulan Daerah",
-    "yoy_growth": "Pertumbuhan YoY (%)"
-  },
-  "sector": {
-    "agri": "Pertanian & Perkebunan",
-    "mining": "Pertambangan & Energi",
-    "fishery": "Perikanan & Kelautan",
-    "tourism": "Pariwisata & Industri"
-  },
   "gis": {
     "layer_control": "Layer Peta Spatial",
     "rtrw_thematic": "Peta Tematik RTRW",
@@ -3329,11 +3244,6 @@
     "tax_allowance": "Pengurangan PBB / Tax Allowance",
     "submit_vip": "Kirim Pengajuan VIP",
     "download_guide": "Unduh Panduan Investor"
-  },
-  "testimonial": {
-    "speech_head": "Kata Sambutan Kepala DPMPTSP",
-    "investor_quotes": "Kesan & Pesan Investor",
-    "join_community": "Gabung Komunitas Investor Luwu"
   },
   "access": {
     "tag_badge": "FASILITAS PRIORITAS & LAYANAN INKLUSIF",
@@ -3428,43 +3338,74 @@
     "cta_btn": "Ambil Antrean Online Sekarang ➔"
   },
   "stepper": {
-    "badge": "INTERACTIVE DYNAMIC CHECKLIST STEPPER",
-    "category_hint": "Pilih jenis layanan untuk menyesuaikan dokumen persyaratan",
-    "cat_ktp": "KTP-el & Dukcapil",
-    "cat_pkkpr": "PKKPR Tata Ruang",
-    "cat_nib": "Izin Usaha NIB OSS",
-    "cat_pbg": "PBG & Bangunan",
-    "cat_passport": "Paspor Imigrasi",
-    "cat_skck": "SKCK Kepolisian",
-    "dept_tag": "ADMINISTRASI KEPENDUDUKAN",
-    "dept_info": "Dinas Kependudukan & Pencatatan Sipil (Disdukcapil) • Gerai 01 • Loket 01 - 03",
+    "badge_checklist": "PANDUAN & CHECKLIST PERSYARATAN INTERAKTIF",
+    "badge_official_standard": "Standar Layanan Resmi Pemkab Luwu",
     "title": "Panduan Syarat Perekaman & Cetak KTP-el / IKD",
-    "subtitle": "Persyaratan resmi Disdukcapil Kab. Luwu untuk penerbitan KTP-el pemula, penggantian rusak/hilang, dan aktivasi Identitas Kependudukan Digital (IKD).",
-    "completeness_title": "Kelengkapan Berkas",
-    "completeness_count": "0 dari 10 berkas siap",
-    "step1_title": "LANGKAH 01",
-    "step1_desc": "Berkas Dokumen Pemohon",
-    "step2_title": "LANGKAH 02",
-    "step2_desc": "Perekaman Biometrik & Validasi NIK",
-    "step3_title": "LANGKAH 03",
-    "step3_desc": "Pencetakan Fisik & Aktivasi IKD",
-    "req_required": "Wajib",
-    "req_optional": "Opsional",
-    "doc1_title": "Kartu Keluarga (KK) Asli / Digital",
-    "doc1_desc": "Scan atau cetak fisik KK terbaru ber-barcode resmi Ditjen Dukcapil Kemendagri tanpa legalisir basah",
-    "doc2_title": "Surat Kehilangan dari Kepolisian (Jika KTP Hilang) / KTP Rusak",
-    "doc2_desc": "Bawa fisik KTP lama jika rusak untuk ditukar, atau Surat Tanda Lapor Kehilangan (STLK) Polsek/Polres jika hilang",
-    "doc3_title": "Pasfoto terbaru (jika ada perubahan data)",
-    "doc3_desc": "Pasfoto formal ukuran 3x4 atau 4x6 latar belakang biru/merah (khusus jika ada penyesuaian data perkawinan/pendidikan)",
-    "doc4_title": "Nomor WhatsApp Aktif",
-    "doc4_desc": "Nomor kontak pemohon aktif untuk konfirmasi tiket antrean, barcode panggilan loket, dan info kesiapan blangko KTP",
-    "btn_prev": "Tahap Sebelumnya",
-    "btn_next": "Lanjut Langkah Berikutnya ➔"
+    "subtitle": "Centang setiap dokumen yang telah Anda siapkan di bawah ini untuk mengonfirmasi kelayakan permohonan sebelum mengambil nomor antrean.",
+    "stages": {
+      "stage_1": "Tahap 1: Berkas Dokumen Pemohon",
+      "stage_2": "Tahap 2: Verifikasi & Perekaman Biometrik",
+      "stage_3": "Tahap 3: Aktivasi IKD & Pencetakan Fisik"
+    },
+    "items": {
+      "kk_original": {
+        "label": "Kartu Keluarga (KK) Asli / Digital",
+        "desc": "Cetak fisik KK terbaru ber-barcode resmi Ditjen Dukcapil Kemendagri tanpa legalisir basah."
+      },
+      "police_report": {
+        "label": "Surat Kehilangan / KTP Rusak",
+        "desc": "Bawa KTP lama yang rusak atau Surat Keterangan Hilang dari Polsek/Polres jika KTP hilang."
+      },
+      "biometric_photo": {
+        "label": "Perekaman Biometrik (Wajah & Sidik Jari)",
+        "desc": "Perekaman foto iris mata, sidik jari, dan tanda tangan digital langsung di loket Dukcapil."
+      },
+      "ikd_app": {
+        "label": "Aplikasi Identitas Kependudukan Digital (IKD)",
+        "desc": "Unduh aplikasi IKD di PlayStore/AppStore dan siapkan email aktif untuk aktivasi QR."
+      }
+    },
+    "status": {
+      "ready": "Dokumen Anda 100% Lengkap! Siap menuju loket.",
+      "incomplete": "Lengkapi berkas yang belum dicentang di atas."
+    },
+    "actions": {
+      "prev_step": "← Tahap Sebelumnya",
+      "next_step": "Lanjut Tahap Berikutnya →",
+      "take_queue": "Ambil Antrean Dukcapil Sekarang",
+      "download_pdf": "Unduh Checklist (PDF)"
+    }
   },
   "floorplan": {
     "badge": "DENAH INTERAKTIF FRONT OFFICE",
     "title": "Denah Ruangan & Loket Pelayanan",
     "subtitle": "Peta tata letak lantai 1 2D interaktif fasilitas publik, gerai layanan, dan area tunggu MPP.",
     "footer_note": "Ketuk ruangan / loket untuk detail layanan & perizinan"
+  },
+  "directory": {
+    "badge_fast_search": "DIREKTORI & PENCARIAN CEPAT LAYANAN",
+    "badge_spatial_sync": "Sinkron ke Denah Spasial",
+    "title": "Navigasi Cepat Gerai & Loket Layanan",
+    "subtitle": "Pilih kebutuhan administrasi Anda di bawah untuk langsung menyorot posisi gerai pada denah interaktif MPP Simpurusiang.",
+    "tabs": {
+      "all": "Semua Direktori",
+      "civil": "Kependudukan",
+      "licensing": "Perizinan OSS",
+      "tax": "Pajak & SAMSAT",
+      "health_social": "BPJS & Sosial",
+      "passport_law": "Paspor & Hukum",
+      "inclusive_facilities": "Fasilitas Ramah"
+    },
+    "labels": {
+      "main_requirements": "SYARAT UTAMA:",
+      "view_on_map": "Lihat di Denah →"
+    },
+    "tags": {
+      "most_searched": "Paling Dicari",
+      "fast_service": "Layanan Cepat",
+      "vip_investor": "Investor VIP",
+      "today_ready": "Siap Hari Ini",
+      "universal_health": "Universal Health"
+    }
   }
 }

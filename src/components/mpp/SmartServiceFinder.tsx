@@ -129,13 +129,13 @@ export const FAST_TRACK_SERVICES: FastTrackService[] = [
 
 // Categories Grouping for Top Quick Filter Chips
 export const CATEGORY_TABS = [
-  { id: 'all', label: 'Semua Direktori', icon: Compass },
-  { id: 'Kependudukan & Capil', label: 'Kependudukan', icon: Users, defaultNode: 'DUKCAPIL_W1' },
-  { id: 'Perizinan & Investasi', label: 'Perizinan OSS', icon: Briefcase, defaultNode: 'DPMPTSP_N' },
-  { id: 'Pajak & Retribusi', label: 'Pajak & SAMSAT', icon: CreditCard, defaultNode: 'SAMSAT' },
-  { id: 'Jaminan Sosial', label: 'BPJS & Sosial', icon: HeartPulse, defaultNode: 'BPJS_KES' },
-  { id: 'Keimigrasian & Hukum', label: 'Paspor & Hukum', icon: Scale, defaultNode: 'IMIGRASI' },
-  { id: 'Fasilitas & Inklusi', label: 'Fasilitas Ramah', icon: Accessibility, defaultNode: 'layanan_disabilitas' }
+  { id: 'all', labelKey: 'directory.tabs.all', defaultLabel: 'Semua Direktori', icon: Compass },
+  { id: 'Kependudukan & Capil', labelKey: 'directory.tabs.civil', defaultLabel: 'Kependudukan', icon: Users, defaultNode: 'DUKCAPIL_W1' },
+  { id: 'Perizinan & Investasi', labelKey: 'directory.tabs.licensing', defaultLabel: 'Perizinan OSS', icon: Briefcase, defaultNode: 'DPMPTSP_N' },
+  { id: 'Pajak & Retribusi', labelKey: 'directory.tabs.tax', defaultLabel: 'Pajak & SAMSAT', icon: CreditCard, defaultNode: 'SAMSAT' },
+  { id: 'Jaminan Sosial', labelKey: 'directory.tabs.health_social', defaultLabel: 'BPJS & Sosial', icon: HeartPulse, defaultNode: 'BPJS_KES' },
+  { id: 'Keimigrasian & Hukum', labelKey: 'directory.tabs.passport_law', defaultLabel: 'Paspor & Hukum', icon: Scale, defaultNode: 'IMIGRASI' },
+  { id: 'Fasilitas & Inklusi', labelKey: 'directory.tabs.inclusive_facilities', defaultLabel: 'Fasilitas Ramah', icon: Accessibility, defaultNode: 'layanan_disabilitas' }
 ];
 
 export function SmartServiceFinder({
@@ -181,21 +181,21 @@ export function SmartServiceFinder({
             {/* Badge Top 1: Direktori & Pencarian Cepat Layanan */}
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-800/50">
               <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              {t('nav.badge', 'E-DIRECTORY & PENEMUAN CEPAT LAYANAN')}
+              {t('directory.badge_fast_search', 'DIREKTORI & PENCARIAN CEPAT LAYANAN')}
             </span>
 
             {/* Badge Top 2: Sinkron ke Denah Spasial */}
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-950/50 dark:text-indigo-300 dark:border-indigo-800/50">
               <Compass className="w-3 h-3 text-indigo-600 dark:text-indigo-400" />
-              Sinkron ke Denah Spasial
+              {t('directory.badge_spatial_sync', 'Sinkron ke Denah Spasial')}
             </span>
           </div>
 
           <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white font-sans">
-            Navigasi Cepat Gerai & Loket Layanan
+            {t('directory.title', 'Navigasi Cepat Gerai & Loket Layanan')}
           </h3>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl font-normal leading-relaxed">
-            {t('nav.subtitle', 'Pilih kebutuhan administrasi Anda di bawah untuk langsung menuju lokasi gerai pada denah interaktif MPP Simpurusiang.')}
+            {t('directory.subtitle', 'Pilih kebutuhan administrasi Anda di bawah untuk langsung menyorot posisi gerai pada denah interaktif MPP Simpurusiang.')}
           </p>
         </div>
 
@@ -245,7 +245,7 @@ export function SmartServiceFinder({
               }`}
             >
               <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-emerald-600 dark:text-emerald-400'}`} />
-              <span>{tab.label}</span>
+              <span>{t(tab.labelKey, tab.defaultLabel)}</span>
             </button>
           );
         })}
@@ -454,7 +454,12 @@ export function SmartServiceFinder({
 
                       {service.popularLabel && (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/20">
-                          {service.popularLabel}
+                          {service.popularLabel === 'Paling Dicari' && t('directory.tags.most_searched', 'Paling Dicari')}
+                          {service.popularLabel === 'Layanan Cepat' && t('directory.tags.fast_service', 'Layanan Cepat')}
+                          {service.popularLabel === 'Investor VIP' && t('directory.tags.vip_investor', 'Investor VIP')}
+                          {service.popularLabel === 'Siap Hari Ini' && t('directory.tags.today_ready', 'Siap Hari Ini')}
+                          {service.popularLabel === 'Universal Health' && t('directory.tags.universal_health', 'Universal Health')}
+                          {service.popularLabel === 'Akses Ramah' && t('directory.tags.inclusive', 'Akses Ramah')}
                         </span>
                       )}
                     </div>
@@ -470,7 +475,7 @@ export function SmartServiceFinder({
                     {/* Requirements checklist snippet */}
                     <div className="space-y-1 pt-2 border-t border-slate-200 dark:border-slate-700/60 mb-3">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                        {t('nav.card_main_req', 'Syarat Utama:')}
+                        {t('directory.labels.main_requirements', 'SYARAT UTAMA:')}
                       </span>
                       {service.requirements.slice(0, 2).map((req, i) => (
                         <div key={i} className="flex items-center gap-1.5 text-[11px] text-slate-700 dark:text-slate-300">
@@ -489,7 +494,7 @@ export function SmartServiceFinder({
                     </div>
 
                     <span className="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-bold text-[11px] group-hover:translate-x-0.5 transition-transform">
-                      <span>{t('nav.card_view_map', 'Lihat di Denah')}</span>
+                      <span>{t('directory.labels.view_on_map', 'Lihat di Denah →')}</span>
                       <ArrowRight className="w-3 h-3" />
                     </span>
                   </div>

@@ -609,18 +609,18 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
   };
 
   const getItemLabel = (item: StepItem) => {
-    if (item.id === 'ktp-1-1') return t('stepper.doc1_title', item.label);
-    if (item.id === 'ktp-1-2') return t('stepper.doc2_title', item.label);
-    if (item.id === 'ktp-1-3') return t('stepper.doc3_title', item.label);
-    if (item.id === 'ktp-1-4') return t('stepper.doc4_title', item.label);
+    if (item.id === 'ktp-1-1') return t('stepper.items.kk_original.label', t('stepper.doc1_title', item.label));
+    if (item.id === 'ktp-1-2') return t('stepper.items.police_report.label', t('stepper.doc2_title', item.label));
+    if (item.id === 'ktp-1-3') return t('stepper.items.biometric_photo.label', t('stepper.doc3_title', item.label));
+    if (item.id === 'ktp-1-4') return t('stepper.items.ikd_app.label', t('stepper.doc4_title', item.label));
     return item.label;
   };
 
   const getItemDesc = (item: StepItem) => {
-    if (item.id === 'ktp-1-1') return t('stepper.doc1_desc', item.desc);
-    if (item.id === 'ktp-1-2') return t('stepper.doc2_desc', item.desc);
-    if (item.id === 'ktp-1-3') return t('stepper.doc3_desc', item.desc);
-    if (item.id === 'ktp-1-4') return t('stepper.doc4_desc', item.desc);
+    if (item.id === 'ktp-1-1') return t('stepper.items.kk_original.desc', t('stepper.doc1_desc', item.desc));
+    if (item.id === 'ktp-1-2') return t('stepper.items.police_report.desc', t('stepper.doc2_desc', item.desc));
+    if (item.id === 'ktp-1-3') return t('stepper.items.biometric_photo.desc', t('stepper.doc3_desc', item.desc));
+    if (item.id === 'ktp-1-4') return t('stepper.items.ikd_app.desc', t('stepper.doc4_desc', item.desc));
     return item.desc;
   };
 
@@ -654,7 +654,7 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
   ];
 
   const renderedCategoryBadge = activeServiceKey === 'KTP_DUKCAPIL'
-    ? t('stepper.dept_tag', activeConfig.categoryBadge)
+    ? t('stepper.badge_official_standard', activeConfig.categoryBadge)
     : activeConfig.categoryBadge;
 
   const renderedTitle = activeServiceKey === 'KTP_DUKCAPIL'
@@ -673,7 +673,7 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
         <div className="flex items-center justify-between">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-teal-100 dark:bg-teal-950/80 text-teal-800 dark:text-teal-300 border border-teal-300/60 dark:border-teal-700/60">
             <FileCheck2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-            <span>{t('stepper.badge', 'INTERACTIVE DYNAMIC CHECKLIST STEPPER')}</span>
+            <span>{t('stepper.badge_checklist', 'PANDUAN & CHECKLIST PERSYARATAN INTERAKTIF')}</span>
           </div>
           <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 hidden sm:inline">
             {t('stepper.category_hint', 'Pilih jenis layanan untuk menyesuaikan dokumen persyaratan')}
@@ -760,13 +760,13 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
           let stageLabel = stage.title;
           if (idx === 0) {
             stepTitle = t('stepper.step1_title', 'LANGKAH 01');
-            if (activeServiceKey === 'KTP_DUKCAPIL') stageLabel = t('stepper.step1_desc', stage.title);
+            if (activeServiceKey === 'KTP_DUKCAPIL') stageLabel = t('stepper.stages.stage_1', t('stepper.step1_desc', stage.title));
           } else if (idx === 1) {
             stepTitle = t('stepper.step2_title', 'LANGKAH 02');
-            if (activeServiceKey === 'KTP_DUKCAPIL') stageLabel = t('stepper.step2_desc', stage.title);
+            if (activeServiceKey === 'KTP_DUKCAPIL') stageLabel = t('stepper.stages.stage_2', t('stepper.step2_desc', stage.title));
           } else if (idx === 2) {
             stepTitle = t('stepper.step3_title', 'LANGKAH 03');
-            if (activeServiceKey === 'KTP_DUKCAPIL') stageLabel = t('stepper.step3_desc', stage.title);
+            if (activeServiceKey === 'KTP_DUKCAPIL') stageLabel = t('stepper.stages.stage_3', t('stepper.step3_desc', stage.title));
           }
 
           return (
@@ -887,7 +887,7 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
             className="px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
           >
             <ChevronLeft className="w-4 h-4" />
-            <span>{t('stepper.btn_prev', 'Tahap Sebelumnya')}</span>
+            <span>{t('stepper.actions.prev_step', '← Tahap Sebelumnya')}</span>
           </button>
 
           <div className="flex items-center gap-2.5">
@@ -897,7 +897,7 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
                 onClick={() => setCurrentStageIndex(prev => Math.min(currentStages.length - 1, prev + 1))}
                 className="w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/25 transition-all cursor-pointer active:scale-95"
               >
-                <span>{t('stepper.btn_next', 'Lanjut Langkah Berikutnya ➔').replace('➔', '').trim()}</span>
+                <span>{t('stepper.actions.next_step', 'Lanjut Tahap Berikutnya →')}</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             ) : (
@@ -906,7 +906,7 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
                 onClick={handleCtaClick}
                 className="w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/30 transition-all cursor-pointer active:scale-95"
               >
-                <span>{activeConfig.actionCta.label}</span>
+                <span>{activeConfig.key === 'KTP_DUKCAPIL' ? t('stepper.actions.take_queue', activeConfig.actionCta.label) : activeConfig.actionCta.label}</span>
                 {React.createElement(activeConfig.actionCta.icon, { className: 'w-4 h-4' })}
               </button>
             )}

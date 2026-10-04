@@ -2,8 +2,8 @@
   "hero": {
     "grp_badge": "REGIONAL GRP PLATFORM",
     "title": "Seamless Public Service Ecosystem",
-    "subtitle": "Integrated Regional GRP portal connecting 19 government agencies, SOEs, and police forces. Fast, transparent, and user-friendly for all Luwu residents.",
-    "search_placeholder": "What service do you need at MPP today?",
+    "subtitle": "Integrated Public Service Portal of Luwu Regency",
+    "search_placeholder": "Search services, permits, agencies, or documents...",
     "search_button": "Search ➔",
     "chip_dukcapil": "Civil Registry & E-ID",
     "chip_nib": "NIB Business License (OSS)",
@@ -12,8 +12,6 @@
     "chip_pajak": "Taxes & Regional Levies",
     "titleHighlight": "Digital Investment",
     "titleRest": "Gateway",
-    "subtitle": "Integrated Public Service Portal of Luwu Regency",
-    "search_placeholder": "Search services, permits, agencies, or documents...",
     "filter_dukcapil": "Civil Registry & ID Card",
     "filter_nib": "NIB Business License (OSS)",
     "filter_pajak": "Taxes & Retributions",
@@ -112,15 +110,13 @@
     "zh": "中文"
   },
   "map": {
-    "spatialControl": "Spatial Control",
-    "basemap": "Base Map Settings",
-    "temporalGis": "Temporal GIS",
-    "investmentPotential": "Investment Potential",
-    "landUseZoning": "Land Use Zoning",
-    "floodRisk": "Flood Risk Map",
-    "searchPlaceholder": "Search village, sub-district, or investment area...",
-    "totalCommitment": "Total Investment Commitment",
-    "aligningBasemap": "Aligning Spatial Basemap..."
+    "badge": "LOCATION & MAP",
+    "title": "Geospatial Map & MPP Directions",
+    "building_address": "Simpurusiang MPP Building Belopa",
+    "get_directions": "Get Directions",
+    "directions": "Get Directions",
+    "open_gmaps": "Open in Google Maps",
+    "gmaps_btn": "Open in Google Maps"
   },
   "stats": {
     "totalInvestment": "Total Investment",
@@ -755,11 +751,10 @@
     "high": "High"
   },
   "sector": {
-    "marine": "Marine and Fisheries",
-    "agriculture": "Agriculture",
-    "mining": "Mining",
-    "industry": "Industry",
-    "tourism": "Tourism"
+    "agri": "Agriculture & Plantation",
+    "mining": "Mining & Energy",
+    "fishery": "Fisheries & Marine",
+    "tourism": "Tourism & Manufacturing"
   },
   "spatial": {
     "intersect": "Intersect",
@@ -1018,7 +1013,9 @@
     ]
   },
   "testimonial": {
-    "verified": "Verified Investor"
+    "speech_head": "Opening Remarks from Head of DPMPTSP",
+    "investor_quotes": "Investor Testimonials",
+    "join_community": "Join Luwu Investor Community"
   },
   "operator": {
     "searchPlaceholder": "Search projects...",
@@ -1119,49 +1116,10 @@
     "nikError": "NIK must be 16 digits"
   },
   "dashboard": {
-    "menuOverview": "Overview",
-    "menuVerify": "NIB Verification",
-    "menuSimulation": "Financial Simulation",
-    "welcomeTitle": "Welcome to the Investor Portal",
-    "welcomeSub": "Integrated access to services, spatial data, and financial feasibility simulations in Luwu Regency.",
-    "totalOpportunities": "Total Investment Opportunities",
-    "totalOpportunitiesDesc": "Active mapped investment opportunities",
-    "totalLandArea": "Total Land Area",
-    "totalLandAreaDesc": "Cumulative recorded area",
-    "dominantSector": "Dominant Sector",
-    "dominantSectorDesc": "Dominant potential contributor sector",
-    "avgRoi": "Average Estimated ROI",
-    "avgRoiDesc": "Average rate of capital return",
-    "nibVerificationStatus": "NIB Verification Status",
-    "nibEmptyState": "No NIB has been submitted for legal verification by the relevant authorities yet. Please submit your NIB to connect to the Luwu investment network.",
-    "topRecommendations": "Top Recommended Investments",
-    "topRecommendationsDesc": "Top strategic projects based on investment commitment value",
-    "sectorDistribution": "Sector Distribution",
-    "sectorDistributionDesc": "Percentage distribution of recorded investments",
-    "emptySectorData": "No investment sector data has been inputted.",
-    "emptyInvestmentData": "No investment data has been integrated yet",
-    "viewDetails": "View Details",
-    "exploreMoreMap": "Explore Map Further",
-    "openVerificationForm": "Open Verification Form",
-    "actionCenter": "Action Center",
-    "actionCenterDesc": "Quick access to navigation menu and smart analytics.",
-    "spatialWebGis": "Spatial Map (WebGIS)",
-    "spatialWebGisDesc": "Explore Luwu 3D spatial layers.",
-    "startSimulation": "Start Simulation",
-    "startSimulationDesc": "Calculate financial feasibility & ROI.",
-    "logout": "Logout",
-    "loadingAnalysis": "Loading Investor Portal Analysis...",
-    "dbErrorTitle": "Failed to Connect to Database",
-    "dbErrorDesc": "We cannot load the Luwu Regency investment data honestly at this moment. Please check your connection.",
-    "retry": "Retry",
-    "onlineSyncActive": "Online Sync Active",
-    "roiBenchmark": "Luwu Benchmark: ~10% - 12% (Sector average)",
-    "sectorFiltered": "📍 Sector: Dynamically Filtered",
-    "filterSummary": "Filter Results Summary",
-    "avgScaleEnterprise": "💼 Avg Scale: Enterprise",
-    "pa": "p.a",
-    "fold": "Fold",
-    "arcModule": "ARC-WEB GIS MODULE"
+    "realization_title": "Real-time Investment Realization",
+    "target_fdi_ddi": "FDI vs DDI Target",
+    "top_sectors": "Top Regional Sectors",
+    "yoy_growth": "YoY Growth (%)"
   },
   "analyticalHub": {
     "title": "Investor-Centric Analytical Hub",
@@ -1976,9 +1934,15 @@
   "opex_kemasan": "Packaging Costs",
   "mppPortal": {
     "persona": {
-      "warga": "Citizens",
-      "investor": "Investors & Business",
-      "semua": "All Services"
+      "warga": "Citizens & Public",
+      "investor": "Investors & Businesses",
+      "semua": "All Services",
+      "wargaTag": "Citizen Mode:",
+      "wargaDesc": "Direct Queue, Document Checklist, & Agency Counters.",
+      "investorTag": "Investor Mode:",
+      "investorDesc": "Executive Investment Desk, RDTR Spatial Map, & OSS-RBA.",
+      "semuaTag": "All Services Mode:",
+      "semuaDesc": "All public counter modules, investment & regulations."
     },
     "personaDesc": {
       "warga": "Direct queuing, civil registration requirements & public service agency counters.",
@@ -2533,11 +2497,7 @@
       "testCallBtn": "Simulate Airport Chime & Voice Call",
       "testDoneLabel": "Test Service Done:",
       "testDoneBtn": "Simulate Service Completed",
-      "cancelQueueBtn": "Cancel Queue Ticket",
-      "genderLabel": "Gender",
-      "genderMale": "Male",
-      "genderFemale": "Female",
-      "occupationLabel": "Occupation"
+      "cancelQueueBtn": "Cancel Queue Ticket"
     },
     "trackingModal": {
       "badge": "Service Transparency",
@@ -2772,17 +2732,6 @@
     },
     "notification": {
       "closeAria": "Close active ticket"
-    },
-    "persona": {
-      "warga": "Citizens & Public",
-      "investor": "Investors & Businesses",
-      "semua": "All Services",
-      "wargaTag": "Citizen Mode:",
-      "wargaDesc": "Direct Queue, Document Checklist, & Agency Counters.",
-      "investorTag": "Investor Mode:",
-      "investorDesc": "Executive Investment Desk, RDTR Spatial Map, & OSS-RBA.",
-      "semuaTag": "All Services Mode:",
-      "semuaDesc": "All public counter modules, investment & regulations."
     },
     "quickNav": {
       "operational": "Visiting Hours & SLA",
@@ -3029,17 +2978,22 @@
     "dataDesc": "Command Center & Executive Dashboard"
   },
   "umkm": {
-    "viewDetails": "View Details",
-    "contactOwner": "Contact Owner (WhatsApp)",
-    "notAvailableTitle": "MSME Catalog Not Yet Available",
-    "notAvailableDesc": "There is currently no verified MSME partner data in our database. Please check back later.",
-    "legalityVerified": "Verified Permit & Legality",
-    "legalityStatus": "Legality Status",
-    "indicativePrice": "Indicative Price",
-    "ingredients": "Ingredients / Main Materials",
-    "owner": "Owner / Person in Charge",
-    "productionLocation": "Production Location",
-    "contactViaWa": "Contact via WhatsApp"
+    "badge": "PARTNERSHIPS & FEATURED MSME",
+    "title": "Selected Luwu Regency MSME Products",
+    "tab_all": "All Products",
+    "tab_culinary": "Culinary",
+    "tab_craft": "Handicrafts",
+    "tab_agri": "Processed Agricultural Products",
+    "producer": "Producer / Maker",
+    "producer_label": "Producer",
+    "price": "Price",
+    "price_label": "Price",
+    "view_detail": "View Product Details",
+    "direct_order": "Direct Order / Contact",
+    "cat_all": "All Products",
+    "cat_culinary": "Culinary",
+    "cat_craft": "Handicrafts",
+    "cat_agri": "Processed Agri-Products"
   },
   "mppVision": {
     "closeAssistant": "Close Asisten Digital Ta'",
@@ -3208,24 +3162,6 @@
     "feedback_label": "Feedback & Suggestions",
     "fill_survey_btn": "Fill Satisfaction Survey Now"
   },
-  "umkm": {
-    "badge": "PARTNERSHIPS & FEATURED MSME",
-    "title": "Selected Luwu Regency MSME Products",
-    "tab_all": "All Products",
-    "tab_culinary": "Culinary",
-    "tab_craft": "Handicrafts",
-    "tab_agri": "Processed Agricultural Products",
-    "producer": "Producer / Maker",
-    "producer_label": "Producer",
-    "price": "Price",
-    "price_label": "Price",
-    "view_detail": "View Product Details",
-    "direct_order": "Direct Order / Contact",
-    "cat_all": "All Products",
-    "cat_culinary": "Culinary",
-    "cat_craft": "Handicrafts",
-    "cat_agri": "Processed Agri-Products"
-  },
   "queue": {
     "badge": "QUEUE & MONITORING",
     "title": "Real-time MPP Queue Monitor",
@@ -3245,15 +3181,6 @@
     "online_consult": "Online Consultation",
     "ai_faq": "AI Q&A",
     "contact_officer": "Contact Officer"
-  },
-  "map": {
-    "badge": "LOCATION & MAP",
-    "title": "Geospatial Map & MPP Directions",
-    "building_address": "Simpurusiang MPP Building Belopa",
-    "get_directions": "Get Directions",
-    "directions": "Get Directions",
-    "open_gmaps": "Open in Google Maps",
-    "gmaps_btn": "Open in Google Maps"
   },
   "news": {
     "badge": "NEWS & INFORMATION",
@@ -3308,18 +3235,6 @@
     "calculate_btn": "Calculate Feasibility & Incentives ➔",
     "reset_btn": "Reset Parameters"
   },
-  "dashboard": {
-    "realization_title": "Real-time Investment Realization",
-    "target_fdi_ddi": "FDI vs DDI Target",
-    "top_sectors": "Top Regional Sectors",
-    "yoy_growth": "YoY Growth (%)"
-  },
-  "sector": {
-    "agri": "Agriculture & Plantation",
-    "mining": "Mining & Energy",
-    "fishery": "Fisheries & Marine",
-    "tourism": "Tourism & Manufacturing"
-  },
   "gis": {
     "layer_control": "Spatial Map Layers",
     "rtrw_thematic": "Spatial Planning (RTRW) Map",
@@ -3333,11 +3248,6 @@
     "tax_allowance": "Land Tax Reduction / Tax Allowance",
     "submit_vip": "Submit VIP Application",
     "download_guide": "Download Investor Guidebook"
-  },
-  "testimonial": {
-    "speech_head": "Opening Remarks from Head of DPMPTSP",
-    "investor_quotes": "Investor Testimonials",
-    "join_community": "Join Luwu Investor Community"
   },
   "access": {
     "tag_badge": "PRIORITY FACILITIES & INCLUSIVE SERVICES",
@@ -3432,43 +3342,74 @@
     "cta_btn": "Get Online Queue Now ➔"
   },
   "stepper": {
-    "badge": "INTERACTIVE DYNAMIC CHECKLIST STEPPER",
-    "category_hint": "Select service type to view required documents",
-    "cat_ktp": "E-ID & Civil Registry",
-    "cat_pkkpr": "PKKPR Spatial Planning",
-    "cat_nib": "NIB Business License (OSS)",
-    "cat_pbg": "PBG & Building Permits",
-    "cat_passport": "Immigration Passport",
-    "cat_skck": "Police Record (SKCK)",
-    "dept_tag": "CIVIL ADMINISTRATION",
-    "dept_info": "Civil Registry Office (Disdukcapil) • Booth 01 • Counters 01 - 03",
-    "title": "Guide to E-ID Recording & Printing / Digital ID (IKD)",
-    "subtitle": "Official requirements from Disdukcapil Luwu Regency for first-time E-ID, damaged/lost replacement, and Digital ID (IKD) activation.",
-    "completeness_title": "Document Completeness",
-    "completeness_count": "0 of 10 documents ready",
-    "step1_title": "STEP 01",
-    "step1_desc": "Applicant Document Files",
-    "step2_title": "STEP 02",
-    "step2_desc": "Biometric Capture & NIK Validation",
-    "step3_title": "STEP 03",
-    "step3_desc": "Physical Printing & IKD Activation",
-    "req_required": "Required",
-    "req_optional": "Optional",
-    "doc1_title": "Original / Digital Family Card (KK)",
-    "doc1_desc": "Scan or physical printout of the latest official barcode Family Card from Dukcapil Kemendagri without wet stamp authorization.",
-    "doc2_title": "Police Loss Report (If E-ID Lost) / Damaged E-ID",
-    "doc2_desc": "Bring old physical E-ID if damaged for exchange, or Police Loss Report (STLK) if lost.",
-    "doc3_title": "Recent Photo (If data updated)",
-    "doc3_desc": "Formal photo size 3x4 or 4x6 with blue/red background (specifically for marital/education updates).",
-    "doc4_title": "Active WhatsApp Number",
-    "doc4_desc": "Active applicant contact number for ticket confirmation, counter call barcode, and blank card availability notifications.",
-    "btn_prev": "Previous Step",
-    "btn_next": "Next Step ➔"
+    "badge_checklist": "INTERACTIVE REQUIREMENTS & CHECKLIST GUIDE",
+    "badge_official_standard": "Official Luwu Regency Service Standard",
+    "title": "Requirements Checklist for KTP-el / IKD Issuance",
+    "subtitle": "Check each document you have prepared below to confirm application eligibility before taking a queue ticket.",
+    "stages": {
+      "stage_1": "Stage 1: Applicant Document Files",
+      "stage_2": "Stage 2: Verification & Biometric Capture",
+      "stage_3": "Stage 3: IKD Activation & Physical Printing"
+    },
+    "items": {
+      "kk_original": {
+        "label": "Original / Digital Family Card (KK)",
+        "desc": "Latest printed KK with official Dukcapil QR code without wet seal requirement."
+      },
+      "police_report": {
+        "label": "Police Loss Report / Damaged KTP",
+        "desc": "Bring damaged old KTP or Police Loss Report if lost."
+      },
+      "biometric_photo": {
+        "label": "Biometric Capture (Face & Fingerprint)",
+        "desc": "Live iris scan, fingerprint capture, and digital signature at Dukcapil counter."
+      },
+      "ikd_app": {
+        "label": "Digital ID Application (IKD App)",
+        "desc": "Download IKD app on mobile store and prepare active email for QR activation."
+      }
+    },
+    "status": {
+      "ready": "Your Documents are 100% Complete! Ready for counter.",
+      "incomplete": "Please complete unchecked items above."
+    },
+    "actions": {
+      "prev_step": "← Previous Stage",
+      "next_step": "Next Stage →",
+      "take_queue": "Get Dukcapil Queue Ticket Now",
+      "download_pdf": "Download Checklist (PDF)"
+    }
   },
   "floorplan": {
     "badge": "FRONT OFFICE INTERACTIVE MAP",
     "title": "Room & Counter Floor Plan",
     "subtitle": "Interactive 2D Floor 1 layout map of public facilities, service counters, and MPP waiting areas.",
     "footer_note": "Tap room / counter for service & permit details"
+  },
+  "directory": {
+    "badge_fast_search": "DIRECTORY & QUICK SERVICE SEARCH",
+    "badge_spatial_sync": "Synced to Spatial Map",
+    "title": "Quick Navigation for Service Booths & Counters",
+    "subtitle": "Select your administrative needs below to highlight booth locations on the MPP Simpurusiang interactive floor plan.",
+    "tabs": {
+      "all": "All Directory",
+      "civil": "Civil Registration",
+      "licensing": "OSS Licensing",
+      "tax": "Tax & Vehicle SAMSAT",
+      "health_social": "BPJS & Social Services",
+      "passport_law": "Passport & Legal",
+      "inclusive_facilities": "Inclusive Facilities"
+    },
+    "labels": {
+      "main_requirements": "MAIN REQUIREMENTS:",
+      "view_on_map": "View on Map →"
+    },
+    "tags": {
+      "most_searched": "Most Popular",
+      "fast_service": "Express Service",
+      "vip_investor": "VIP Investor",
+      "today_ready": "Same Day Service",
+      "universal_health": "Universal Health"
+    }
   }
 }
