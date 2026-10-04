@@ -1,9 +1,13 @@
-/**
- * Utility Manager for Re-Entering and Ensuring Fullscreen on Mobile / Android WebApps
- */
+import { isAndroidDevice } from '../hooks/useDeviceAutomation';
 
+/**
+ * Utility Manager for Re-Entering and Ensuring Fullscreen on Mobile / Android WebApps.
+ * Strictly disabled on Desktop / Laptop / PC browsers.
+ */
 export const ensureFullscreen = () => {
   if (typeof window === 'undefined') return;
+  // Fullscreen only applies to Android devices, strictly disabled on Desktop
+  if (!isAndroidDevice()) return;
 
   const doc = document as any;
   const isDocFullscreen = !!(
@@ -30,10 +34,13 @@ export const ensureFullscreen = () => {
 };
 
 /**
- * Smart fullscreen request for Android & modern browsers
+ * Smart fullscreen request strictly for Android devices.
+ * Always returns false on Desktop to maintain natural desktop viewport.
  */
 export const requestSmartFullscreen = async (_force: boolean = false): Promise<boolean> => {
   if (typeof window === 'undefined') return false;
+  // Fullscreen strictly applies to Android devices
+  if (!isAndroidDevice()) return false;
 
   const doc = document as any;
   const docEl = document.documentElement as any;

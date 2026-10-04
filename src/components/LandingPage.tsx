@@ -3,7 +3,7 @@ import { WeatherWidget } from "./WeatherWidget";
 import { LUWU_LOGO_BASE64 } from "@/lib/logoBase64.js";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import { isMobileOrAndroidDevice } from "../hooks/useDeviceAutomation";
+import { isMobileOrAndroidDevice, isAndroidDevice } from "../hooks/useDeviceAutomation";
 import { requestSmartFullscreen } from "../utils/fullscreen";
 
 const HERO_PLACEHOLDER_SVG = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`
@@ -473,7 +473,7 @@ export default function LandingPage({
   useEffect(() => {
     // Auto-fullscreen KHUSUS untuk Android / Smartphone saat tampil di Halaman Landing Page
     // Menjadikan pengalaman aplikasi Smart Investment Luwu menyerupai aplikasi Android asli (Immersive Fullscreen)
-    if (!isMobileOrAndroidDevice()) return;
+    if (!isAndroidDevice()) return;
 
     // Upaya langsung saat halaman dimuat
     try {
