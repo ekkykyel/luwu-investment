@@ -3081,7 +3081,7 @@ export default function PortalMPP() {
             {/* Fitur 5: Modal Detail Fasilitas Publik (Full-Bleed 16:9 Header & max-w-3xl) */}
             {isFacilityModalOpen && (
               <div 
-                className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
+                className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
                 onClick={() => setIsFacilityModalOpen(false)}
               >
                 <motion.div
@@ -3642,7 +3642,7 @@ export default function PortalMPP() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 30, scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                  className="w-full max-w-md my-auto max-h-[85vh] sm:max-h-[88vh] bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl flex flex-col overflow-hidden shadow-2xl transition-all border border-slate-200/80 dark:border-slate-800"
+                  className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl flex flex-col overflow-hidden shadow-xl transition-all border border-slate-200/80 dark:border-slate-800 max-h-[90dvh] md:max-h-[85dvh]"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Hero Image Full-Bleed & Overlay Controls */}
@@ -6018,7 +6018,7 @@ export default function PortalMPP() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.94, y: 20 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="w-full max-w-2xl my-auto max-h-[85vh] sm:max-h-[88vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-2xl overflow-y-auto text-slate-900 dark:text-white font-sans flex flex-col"
+              className="relative w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl md:rounded-3xl p-5 sm:p-7 shadow-xl overflow-y-auto text-slate-900 dark:text-white font-sans flex flex-col max-h-[90dvh] md:max-h-[85dvh]"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header Modal Detail Instansi */}

@@ -163,14 +163,18 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
       {/* Modal Dialog Petunjuk Arah & Google Maps */}
       <AnimatePresence>
         {showLocationDialog && (
-          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans">
+          <div 
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
+            onClick={() => setShowLocationDialog(false)}
+          >
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 my-auto max-h-[85vh] sm:max-h-[88vh] overflow-y-auto flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border border-slate-200 dark:border-slate-800"
             >
-              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+              <div className="p-5 sm:p-6 pb-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 shrink-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
                 <div className="flex items-center gap-2">
                   <div className="p-2 rounded-xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400">
                     <MapPin className="w-5 h-5" />
@@ -183,13 +187,13 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowLocationDialog(false)}
-                  className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 cursor-pointer"
+                  className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
+              <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs text-slate-600 dark:text-slate-300">
                 <p className="font-semibold text-slate-900 dark:text-white">
                   📍 Alamat Resmi:
                 </p>
@@ -204,30 +208,30 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                   <span>Tersedia fasilitas parkir roda 2 & roda 4 luas, ramp kursi roda, dan ruang tunggu ber-AC.</span>
                 </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-2.5 pt-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowLocationDialog(false);
-                    const el = document.getElementById('interactive-floorplan') || document.getElementById('denah-gedung');
-                    if (el) {
-                      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                  }}
-                  className="w-full py-2.5 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold transition-all text-center cursor-pointer"
-                >
-                  Denah Gedung
-                </button>
-                <button
-                  type="button"
-                  onClick={openGoogleMaps}
-                  className="w-full py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow-md flex items-center justify-center gap-1.5 transition-all text-center cursor-pointer"
-                >
-                  <ExternalLink className="w-4 h-4 shrink-0" />
-                  <span>Buka Google Maps</span>
-                </button>
+                <div className="grid grid-cols-2 gap-2.5 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowLocationDialog(false);
+                      const el = document.getElementById('interactive-floorplan') || document.getElementById('denah-gedung');
+                      if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }
+                    }}
+                    className="w-full py-2.5 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold transition-all text-center cursor-pointer"
+                  >
+                    Denah Gedung
+                  </button>
+                  <button
+                    type="button"
+                    onClick={openGoogleMaps}
+                    className="w-full py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow-md flex items-center justify-center gap-1.5 transition-all text-center cursor-pointer"
+                  >
+                    <ExternalLink className="w-4 h-4 shrink-0" />
+                    <span>Buka Google Maps</span>
+                  </button>
+                </div>
               </div>
             </motion.div>
           </div>

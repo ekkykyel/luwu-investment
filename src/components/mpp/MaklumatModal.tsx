@@ -24,15 +24,15 @@ export const MaklumatModal: React.FC<MaklumatModalProps> = ({
   return (
     <AnimatePresence>
       <div 
-        className="fixed inset-0 z-[100] flex flex-col justify-center items-center bg-slate-950/80 backdrop-blur-md p-3 overflow-hidden font-sans"
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
         onClick={onClose}
       >
         <motion.div
-          initial={{ opacity: 0, y: 50, scale: 0.98 }}
+          initial={{ opacity: 0, y: 30, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 50, scale: 0.98 }}
+          exit={{ opacity: 0, y: 30, scale: 0.98 }}
           transition={{ type: "spring", stiffness: 350, damping: 30 }}
-          className="w-full max-h-[85vh] sm:max-w-xl bg-white dark:bg-slate-900 rounded-3xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100 shadow-2xl transition-all duration-300 border border-slate-200/80 dark:border-slate-800"
+          className="relative w-full max-w-xl bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] text-slate-900 dark:text-slate-100 border border-slate-200/80 dark:border-slate-800"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Mobile Drag Handle Indicator */}
