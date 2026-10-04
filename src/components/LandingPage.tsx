@@ -1,5 +1,6 @@
 import { CompactWeatherWidget } from "./CompactWeatherWidget";
 import { WeatherWidget } from "./WeatherWidget";
+import { Footer } from "./Footer";
 import { LUWU_LOGO_BASE64 } from "@/lib/logoBase64.js";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useRef, useEffect, useMemo } from "react";
@@ -5960,89 +5961,12 @@ export default function LandingPage({
           </div>
         </section>
 
-        {/* Footer Sovereign Executive */}
-        <footer className={`relative border-t pt-6 pb-28 sm:pt-12 sm:pb-16 px-3 sm:px-6 ${isDark ? "bg-slate-900/90 border-slate-800" : "bg-white border-slate-200"}`}>
-          <div className="container mx-auto px-0 relative max-w-6xl">
-            {/* Floating Back to Top Button */}
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className={`absolute right-4 sm:right-6 -top-12 w-10 h-10 rounded-full flex items-center justify-center shadow-xl border transition-all hover:-translate-y-1 cursor-pointer ${
-                isDark 
-                  ? "bg-slate-800/90 border-slate-700 text-emerald-400 hover:bg-slate-700 hover:border-emerald-500/50 shadow-emerald-500/10" 
-                  : "bg-white border-slate-200 text-emerald-600 hover:bg-emerald-50 shadow-slate-300"
-              }`}
-              aria-label={t("footer.backToTop", "Kembali ke atas")}
-            >
-              <ArrowUp className="w-5 h-5" />
-            </button>
-
-            {/* Main Footer Block */}
-            <div className="flex flex-col md:flex-row items-center md:items-center justify-between gap-6 pb-8 border-b border-slate-200/80 dark:border-slate-800/80">
-              <div className="flex flex-col items-center justify-center gap-3.5 w-full md:w-auto text-center md:text-left md:flex-row md:justify-start md:items-center">
-                <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center p-1 shadow-inner shrink-0">
-                  <img src={LUWU_LOGO_BASE64} alt="Logo Resmi Kabupaten Luwu" className="w-7 h-7 object-contain" />
-                </div>
-                <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                  <h3 className={`font-extrabold text-lg sm:text-xl leading-tight tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
-                    InvestLuwu Hub
-                  </h3>
-                  <p className="text-[10px] sm:text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
-                    {t("footer.pemkabLuwu", "Pemerintah Kabupaten Luwu")}
-                  </p>
-                </div>
-              </div>
-
-              {/* Quick Navigation Links (Uniform 2x2 Grid Layout with grid-cols-2 gap-4) */}
-              <div className="grid grid-cols-2 gap-4 w-full max-w-md mx-auto md:max-w-none md:mx-0 md:flex md:flex-wrap items-center justify-center md:w-auto text-center">
-                {[
-                  { name: t('nav.home', 'Beranda'), icon: Home, action: () => scrollToSection("hero-section") },
-                  { name: t('nav.potensiRegional', 'Potensi Regional'), icon: Map, action: () => scrollToSection("potensi-section") },
-                  { 
-                    name: 'Portal MPP', 
-                    icon: Building2, 
-                    action: () => {
-                      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-                      navigate("/mpp");
-                    } 
-                  },
-                  { name: t('nav.interactiveDashboard', 'Dashboard Interaktif'), icon: BarChart2, action: () => scrollToSection("hero-section") }
-                ].map((link) => {
-                  const IconComponent = link.icon;
-                  return (
-                    <button 
-                      key={link.name} 
-                      onClick={link.action}
-                      className={`w-full min-h-[48px] flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer border shadow-2xs ${
-                        isDark 
-                          ? "text-slate-200 hover:text-white bg-slate-900/80 border-slate-800 hover:bg-slate-800/90 hover:border-emerald-500/40" 
-                          : "text-slate-800 hover:text-emerald-700 bg-white border-slate-200/80 hover:bg-emerald-50/80 hover:border-emerald-300"
-                      }`}
-                    >
-                      <IconComponent className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span className="truncate leading-tight">{link.name}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Bottom Copyright & Security Metadata */}
-            <div className="pt-6 flex flex-col items-center justify-center gap-3 text-center text-xs">
-              <p className="text-center font-sans font-medium text-slate-500 dark:text-slate-400 text-xs px-3">
-                {t("footer.copyright", "© 2026 Pemerintah Kabupaten Luwu. Hak Cipta Dilindungi Undang-Undang.")}
-              </p>
-              <div className="flex flex-col items-center justify-center gap-2.5 text-xs">
-                <span className="inline-flex items-center gap-1.5 text-emerald-500 font-semibold bg-emerald-500/5 dark:bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/15">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  PostGIS Supabase Enabled
-                </span>
-                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-mono text-[11px]">
-                  {t("footer.version", "v2.0.1 (Precision Engine)")}
-                </span>
-              </div>
-            </div>
-          </div>
-        </footer>
+        {/* Footer Component */}
+        <Footer
+          isDark={isDark}
+          onNavigateSection={scrollToSection}
+          onNavigatePage={(path) => navigate(path)}
+        />
       </div>
 
       {/* AI Feasibility & Spatial Buffer Modals */}
