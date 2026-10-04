@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { 
   Building2, 
   Search, 
@@ -1246,6 +1247,7 @@ export function InteractiveFloorPlan({
   floor = 1,
   onFloorChange
 }: InteractiveFloorPlanProps) {
+  const { t } = useTranslation();
   // State management
   const [activeFilter, setActiveFilter] = useState<FloorCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -1509,13 +1511,13 @@ export function InteractiveFloorPlan({
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-700/60 mb-2">
             <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Denah Interaktif Front Office</span>
+            <span>{t('floorplan.badge', 'DENAH INTERAKTIF FRONT OFFICE')}</span>
           </div>
           <h3 className="text-xl sm:text-2xl font-black tracking-tight font-sans">
-            Denah Ruangan & Loket Pelayanan
+            {t('floorplan.title', 'Denah Ruangan & Loket Pelayanan')}
           </h3>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Eksplorasi tata letak 32 gerai instansi terpadu, fasilitas publik, dan alur sirkulasi ramah disabilitas.
+            {t('floorplan.subtitle', 'Peta tata letak lantai 1 2D interaktif fasilitas publik, gerai layanan, dan area tunggu MPP.')}
           </p>
         </div>
 
@@ -2125,7 +2127,7 @@ export function InteractiveFloorPlan({
             <div className="absolute bottom-3 left-4 pointer-events-none">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shadow-md backdrop-blur-md">
                 <Compass className="w-3.5 h-3.5 text-emerald-500 animate-spin" />
-                <span>Ketuk ruangan / loket untuk detail layanan & antrean</span>
+                <span>{t('floorplan.footer_note', 'Ketuk ruangan / loket untuk detail layanan & perizinan')}</span>
               </span>
             </div>
           )}

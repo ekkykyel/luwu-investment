@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { 
   MapPin, 
   Layers, 
@@ -148,6 +149,7 @@ export const InteractiveSpatialFloorPlan: React.FC<InteractiveSpatialFloorPlanPr
   onSelectLoket,
   isDark = false,
 }) => {
+  const { t } = useTranslation();
   const [activeFloor, setActiveFloor] = useState<1 | 2>(1);
   const [selectedPin, setSelectedPin] = useState<MapPinZone | null>(null);
   const [isKioskMode, setIsKioskMode] = useState<boolean>(false);
@@ -310,13 +312,13 @@ export const InteractiveSpatialFloorPlan: React.FC<InteractiveSpatialFloorPlanPr
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-300 border border-blue-300/60 dark:border-blue-700/60">
             <Compass className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-            <span>Navigasi Spasial Denah Interaktif</span>
+            <span>{t('floorplan.badge', 'DENAH INTERAKTIF FRONT OFFICE')}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight font-sans">
-            Denah Ruangan & Loket Pelayanan
+            {t('floorplan.title', 'Denah Ruangan & Loket Pelayanan')}
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
-            Klik pin-drop pada kanvas denah untuk melihat informasi fasilitas dan loket instansi secara langsung.
+            {t('floorplan.subtitle', 'Peta tata letak lantai 1 2D interaktif fasilitas publik, gerai layanan, dan area tunggu MPP.')}
           </p>
         </div>
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { 
   CheckSquare, 
   Square, 
@@ -591,7 +592,37 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
   // Calculate overall progress across all stages of active service
   const allItems = currentStages.flatMap(s => s.items);
   const checkedCount = allItems.filter(it => it.checked).length;
+  const { t } = useTranslation();
   const progressPercent = allItems.length > 0 ? Math.round((checkedCount / allItems.length) * 100) : 0;
+
+  // Translation helpers for service categories
+  const getCategoryLabel = (sKey: RequirementServiceKey, fallback: string) => {
+    switch (sKey) {
+      case 'KTP_DUKCAPIL': return t('stepper.cat_ktp', fallback);
+      case 'GIS_PKKPR': return t('stepper.cat_pkkpr', fallback);
+      case 'NIB_OSS': return t('stepper.cat_nib', fallback);
+      case 'PBG_BANGUNAN': return t('stepper.cat_pbg', fallback);
+      case 'PASPOR_IMIGRASI': return t('stepper.cat_passport', fallback);
+      case 'SKCK_POLRES': return t('stepper.cat_skck', fallback);
+      default: return fallback;
+    }
+  };
+
+  const getItemLabel = (item: StepItem) => {
+    if (item.id === 'ktp-1-1') return t('stepper.doc1_title', item.label);
+    if (item.id === 'ktp-1-2') return t('stepper.doc2_title', item.label);
+    if (item.id === 'ktp-1-3') return t('stepper.doc3_title', item.label);
+    if (item.id === 'ktp-1-4') return t('stepper.doc4_title', item.label);
+    return item.label;
+  };
+
+  const getItemDesc = (item: StepItem) => {
+    if (item.id === 'ktp-1-1') return t('stepper.doc1_desc', item.desc);
+    if (item.id === 'ktp-1-2') return t('stepper.doc2_desc', item.desc);
+    if (item.id === 'ktp-1-3') return t('stepper.doc3_desc', item.desc);
+    if (item.id === 'ktp-1-4') return t('stepper.doc4_desc', item.desc);
+    return item.desc;
+  };
 
   // Handle CTA Click
   const handleCtaClick = () => {
@@ -622,6 +653,18 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
     'SKCK_POLRES'
   ];
 
+  const renderedCategoryBadge = activeServiceKey === 'KTP_DUKCAPIL'
+    ? t('stepper.dept_tag', activeConfig.categoryBadge)
+    : activeConfig.categoryBadge;
+
+  const renderedTitle = activeServiceKey === 'KTP_DUKCAPIL'
+    ? t('stepper.title', activeConfig.title)
+    : activeConfig.title;
+
+  const renderedDescription = activeServiceKey === 'KTP_DUKCAPIL'
+    ? t('stepper.subtitle', activeConfig.description)
+    : activeConfig.description;
+
   return (
     <section id="syarat-dokumen" className="w-full space-y-6 scroll-mt-28 font-sans">
       
@@ -630,10 +673,10 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
         <div className="flex items-center justify-between">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-teal-100 dark:bg-teal-950/80 text-teal-800 dark:text-teal-300 border border-teal-300/60 dark:border-teal-700/60">
             <FileCheck2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-            <span>Interactive Dynamic Checklist Stepper</span>
+            <span>{t('stepper.badge', 'INTERACTIVE DYNAMIC CHECKLIST STEPPER')}</span>
           </div>
           <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 hidden sm:inline">
-            Pilih jenis layanan untuk menyesuaikan dokumen persyaratan
+            {t('stepper.category_hint', 'Pilih jenis layanan untuk menyesuaikan dokumen persyaratan')}
           </span>
         </div>
 
@@ -653,7 +696,7 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-900/50'
                 }`}
               >
-                <span className="truncate">{cfg.label}</span>
+                <span className="truncate">{getCategoryLabel(sKey, cfg.label)}</span>
                 {isActive && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />}
               </button>
             );
@@ -666,7 +709,7 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300/50">
-              {activeConfig.categoryBadge}
+              {renderedCategoryBadge}
             </span>
             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1">
               <Building2 className="w-3.5 h-3.5 text-slate-400" />
@@ -676,10 +719,10 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
             </span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight font-sans">
-            {activeConfig.title}
+            {renderedTitle}
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-3xl text-justify leading-relaxed">
-            {activeConfig.description}
+            {renderedDescription}
           </p>
         </div>
 
@@ -689,8 +732,14 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
             {progressPercent}%
           </div>
           <div>
-            <div className="text-xs font-extrabold text-slate-900 dark:text-white">Kelengkapan Berkas</div>
-            <div className="text-[11px] text-slate-400 font-medium">{checkedCount} dari {allItems.length} berkas siap</div>
+            <div className="text-xs font-extrabold text-slate-900 dark:text-white">
+              {t('stepper.completeness_title', 'Kelengkapan Berkas')}
+            </div>
+            <div className="text-[11px] text-slate-400 font-medium">
+              {t('stepper.completeness_count', '0 dari 10 berkas siap')
+                .replace('0', String(checkedCount))
+                .replace('10', String(allItems.length))}
+            </div>
           </div>
         </div>
       </div>
@@ -706,6 +755,20 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
         {currentStages.map((stage, idx) => {
           const isActive = idx === currentStageIndex;
           const isDone = stage.items.length > 0 && stage.items.every(it => it.checked);
+          
+          let stepTitle = `Langkah 0${idx + 1}`;
+          let stageLabel = stage.title;
+          if (idx === 0) {
+            stepTitle = t('stepper.step1_title', 'LANGKAH 01');
+            if (activeServiceKey === 'KTP_DUKCAPIL') stageLabel = t('stepper.step1_desc', stage.title);
+          } else if (idx === 1) {
+            stepTitle = t('stepper.step2_title', 'LANGKAH 02');
+            if (activeServiceKey === 'KTP_DUKCAPIL') stageLabel = t('stepper.step2_desc', stage.title);
+          } else if (idx === 2) {
+            stepTitle = t('stepper.step3_title', 'LANGKAH 03');
+            if (activeServiceKey === 'KTP_DUKCAPIL') stageLabel = t('stepper.step3_desc', stage.title);
+          }
+
           return (
             <button
               key={stage.id}
@@ -721,7 +784,7 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
             >
               <div className="flex items-center justify-between mb-1.5">
                 <span className={`text-[10px] font-bold uppercase tracking-wider ${isActive ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-400'}`}>
-                  Langkah 0{idx + 1}
+                  {stepTitle}
                 </span>
                 {isDone ? (
                   <CheckCircle2 className="w-4 h-4 text-emerald-500" />
@@ -730,7 +793,7 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
                 )}
               </div>
               <div className="text-xs font-extrabold text-slate-900 dark:text-white line-clamp-1 font-sans">
-                {stage.title}
+                {stageLabel}
               </div>
             </button>
           );
@@ -747,7 +810,13 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
               {currentStage.badge}
             </span>
             <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white font-sans">
-              {currentStage.title}
+              {currentStageIndex === 0 && activeServiceKey === 'KTP_DUKCAPIL'
+                ? t('stepper.step1_desc', currentStage.title)
+                : currentStageIndex === 1 && activeServiceKey === 'KTP_DUKCAPIL'
+                ? t('stepper.step2_desc', currentStage.title)
+                : currentStageIndex === 2 && activeServiceKey === 'KTP_DUKCAPIL'
+                ? t('stepper.step3_desc', currentStage.title)
+                : currentStage.title}
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               {currentStage.description}
@@ -789,20 +858,20 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
                   <span className={`text-xs sm:text-sm font-bold font-sans ${
                     item.checked ? 'text-emerald-950 dark:text-emerald-200 line-through opacity-80' : 'text-slate-900 dark:text-white'
                   }`}>
-                    {item.label}
+                    {getItemLabel(item)}
                   </span>
                   {item.required ? (
                     <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-400">
-                      Wajib
+                      {t('stepper.req_required', 'Wajib')}
                     </span>
                   ) : (
                     <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-                      Opsional
+                      {t('stepper.req_optional', 'Opsional')}
                     </span>
                   )}
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed text-justify">
-                  {item.desc}
+                  {getItemDesc(item)}
                 </p>
               </div>
             </div>
@@ -818,7 +887,7 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
             className="px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
           >
             <ChevronLeft className="w-4 h-4" />
-            <span>Tahap Sebelumnya</span>
+            <span>{t('stepper.btn_prev', 'Tahap Sebelumnya')}</span>
           </button>
 
           <div className="flex items-center gap-2.5">
@@ -828,7 +897,7 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
                 onClick={() => setCurrentStageIndex(prev => Math.min(currentStages.length - 1, prev + 1))}
                 className="w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/25 transition-all cursor-pointer active:scale-95"
               >
-                <span>Lanjut Langkah Berikutnya</span>
+                <span>{t('stepper.btn_next', 'Lanjut Langkah Berikutnya ➔').replace('➔', '').trim()}</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             ) : (

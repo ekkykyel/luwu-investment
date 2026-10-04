@@ -56,7 +56,12 @@
     "interactiveDashboard": "Dashboard Interaktif",
     "top": "Atas",
     "infras": "Infras",
-    "data": "Data"
+    "data": "Data",
+    "badge": "E-DIRECTORY & PENEMUAN CEPAT LAYANAN",
+    "subtitle": "Pilih kebutuhan administrasi Anda di bawah untuk langsung menuju lokasi gerai pada denah interaktif MPP Simpurusiang.",
+    "search_placeholder": "Cari layanan (misal: Paspor, KTP, NIB, dll)...",
+    "card_main_req": "Syarat Utama:",
+    "card_view_map": "Lihat di Denah"
   },
   "sections": {
     "potensi": {
@@ -3156,7 +3161,9 @@
     "perda_cost": "Sesuai Perda/PP"
   },
   "facilities": {
-    "badge": "FASILITAS PRIORITAS & LAYANAN INKLUSIF",
+    "badge": "SARANA & PRASARANA",
+    "title": "Fasilitas Publik Layanan Terpadu",
+    "subtitle": "Ruang tunggu ramah anak, laktasi, aksesibilitas disabilitas, dan ketersediaan pojok baca digital di MPP Simpurusiang.",
     "lactation": "Ruang Laktasi & Ibu Menyusui",
     "disability": "Akses Ramah Disabilitas & Kursi Roda",
     "kids_corner": "Pojok Baca & Area Bermain Anak",
@@ -3404,5 +3411,45 @@
     "feature2_title": "Kepastian Layanan",
     "feature2_desc": "Terhubung langsung dengan 21 loket instansi resmi Kabupaten Luwu.",
     "cta_btn": "Ambil Antrean Online Sekarang ➔"
+  },
+  "stepper": {
+    "badge": "INTERACTIVE DYNAMIC CHECKLIST STEPPER",
+    "category_hint": "Pilih jenis layanan untuk menyesuaikan dokumen persyaratan",
+    "cat_ktp": "KTP-el & Dukcapil",
+    "cat_pkkpr": "PKKPR Tata Ruang",
+    "cat_nib": "Izin Usaha NIB OSS",
+    "cat_pbg": "PBG & Bangunan",
+    "cat_passport": "Paspor Imigrasi",
+    "cat_skck": "SKCK Kepolisian",
+    "dept_tag": "ADMINISTRASI KEPENDUDUKAN",
+    "dept_info": "Dinas Kependudukan & Pencatatan Sipil (Disdukcapil) • Gerai 01 • Loket 01 - 03",
+    "title": "Panduan Syarat Perekaman & Cetak KTP-el / IKD",
+    "subtitle": "Persyaratan resmi Disdukcapil Kab. Luwu untuk penerbitan KTP-el pemula, penggantian rusak/hilang, dan aktivasi Identitas Kependudukan Digital (IKD).",
+    "completeness_title": "Kelengkapan Berkas",
+    "completeness_count": "0 dari 10 berkas siap",
+    "step1_title": "LANGKAH 01",
+    "step1_desc": "Berkas Dokumen Pemohon",
+    "step2_title": "LANGKAH 02",
+    "step2_desc": "Perekaman Biometrik & Validasi NIK",
+    "step3_title": "LANGKAH 03",
+    "step3_desc": "Pencetakan Fisik & Aktivasi IKD",
+    "req_required": "Wajib",
+    "req_optional": "Opsional",
+    "doc1_title": "Kartu Keluarga (KK) Asli / Digital",
+    "doc1_desc": "Scan atau cetak fisik KK terbaru ber-barcode resmi Ditjen Dukcapil Kemendagri tanpa legalisir basah",
+    "doc2_title": "Surat Kehilangan dari Kepolisian (Jika KTP Hilang) / KTP Rusak",
+    "doc2_desc": "Bawa fisik KTP lama jika rusak untuk ditukar, atau Surat Tanda Lapor Kehilangan (STLK) Polsek/Polres jika hilang",
+    "doc3_title": "Pasfoto terbaru (jika ada perubahan data)",
+    "doc3_desc": "Pasfoto formal ukuran 3x4 atau 4x6 latar belakang biru/merah (khusus jika ada penyesuaian data perkawinan/pendidikan)",
+    "doc4_title": "Nomor WhatsApp Aktif",
+    "doc4_desc": "Nomor kontak pemohon aktif untuk konfirmasi tiket antrean, barcode panggilan loket, dan info kesiapan blangko KTP",
+    "btn_prev": "Tahap Sebelumnya",
+    "btn_next": "Lanjut Langkah Berikutnya ➔"
+  },
+  "floorplan": {
+    "badge": "DENAH INTERAKTIF FRONT OFFICE",
+    "title": "Denah Ruangan & Loket Pelayanan",
+    "subtitle": "Peta tata letak lantai 1 2D interaktif fasilitas publik, gerai layanan, dan area tunggu MPP.",
+    "footer_note": "Ketuk ruangan / loket untuk detail layanan & perizinan"
   }
 }

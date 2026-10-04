@@ -56,7 +56,12 @@
     "interactiveDashboard": "Interactive Dashboard",
     "top": "Top",
     "infras": "Infras",
-    "data": "Data"
+    "data": "Data",
+    "badge": "E-DIRECTORY & QUICK SERVICE FINDER",
+    "subtitle": "Select your administrative needs below to navigate directly to the booth location on the interactive map.",
+    "search_placeholder": "Search services (e.g., Passport, ID Card, NIB, etc)...",
+    "card_main_req": "Main Requirements:",
+    "card_view_map": "View on Map"
   },
   "sections": {
     "potensi": {
@@ -3160,7 +3165,9 @@
     "perda_cost": "Per Regional/Gov Regulation"
   },
   "facilities": {
-    "badge": "PRIORITY FACILITIES & INCLUSIVE SERVICES",
+    "badge": "FACILITIES & INFRASTRUCTURE",
+    "title": "Integrated Public Facilities",
+    "subtitle": "Child-friendly waiting room, lactation room, disability accessibility, and digital reading corner at MPP Simpurusiang.",
     "lactation": "Lactation & Nursing Room",
     "disability": "Wheelchair & Disability Access",
     "kids_corner": "Reading Corner & Children's Play Area",
@@ -3408,5 +3415,45 @@
     "feature2_title": "Service Certainty",
     "feature2_desc": "Directly connected to 21 official agency counters in Luwu Regency.",
     "cta_btn": "Get Online Queue Now ➔"
+  },
+  "stepper": {
+    "badge": "INTERACTIVE DYNAMIC CHECKLIST STEPPER",
+    "category_hint": "Select service type to view required documents",
+    "cat_ktp": "E-ID & Civil Registry",
+    "cat_pkkpr": "PKKPR Spatial Planning",
+    "cat_nib": "NIB Business License (OSS)",
+    "cat_pbg": "PBG & Building Permits",
+    "cat_passport": "Immigration Passport",
+    "cat_skck": "Police Record (SKCK)",
+    "dept_tag": "CIVIL ADMINISTRATION",
+    "dept_info": "Civil Registry Office (Disdukcapil) • Booth 01 • Counters 01 - 03",
+    "title": "Guide to E-ID Recording & Printing / Digital ID (IKD)",
+    "subtitle": "Official requirements from Disdukcapil Luwu Regency for first-time E-ID, damaged/lost replacement, and Digital ID (IKD) activation.",
+    "completeness_title": "Document Completeness",
+    "completeness_count": "0 of 10 documents ready",
+    "step1_title": "STEP 01",
+    "step1_desc": "Applicant Document Files",
+    "step2_title": "STEP 02",
+    "step2_desc": "Biometric Capture & NIK Validation",
+    "step3_title": "STEP 03",
+    "step3_desc": "Physical Printing & IKD Activation",
+    "req_required": "Required",
+    "req_optional": "Optional",
+    "doc1_title": "Original / Digital Family Card (KK)",
+    "doc1_desc": "Scan or physical printout of the latest official barcode Family Card from Dukcapil Kemendagri without wet stamp authorization.",
+    "doc2_title": "Police Loss Report (If E-ID Lost) / Damaged E-ID",
+    "doc2_desc": "Bring old physical E-ID if damaged for exchange, or Police Loss Report (STLK) if lost.",
+    "doc3_title": "Recent Photo (If data updated)",
+    "doc3_desc": "Formal photo size 3x4 or 4x6 with blue/red background (specifically for marital/education updates).",
+    "doc4_title": "Active WhatsApp Number",
+    "doc4_desc": "Active applicant contact number for ticket confirmation, counter call barcode, and blank card availability notifications.",
+    "btn_prev": "Previous Step",
+    "btn_next": "Next Step ➔"
+  },
+  "floorplan": {
+    "badge": "FRONT OFFICE INTERACTIVE MAP",
+    "title": "Room & Counter Floor Plan",
+    "subtitle": "Interactive 2D Floor 1 layout map of public facilities, service counters, and MPP waiting areas.",
+    "footer_note": "Tap room / counter for service & permit details"
   }
 }

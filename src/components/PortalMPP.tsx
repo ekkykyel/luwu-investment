@@ -2842,7 +2842,7 @@ export default function PortalMPP() {
                 className="flex justify-center mb-1"
               >
                 <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60">
-                  Sarana & Prasarana
+                  {t('facilities.badge', 'SARANA & PRASARANA')}
                 </span>
               </motion.div>
               <motion.h2 
@@ -2852,10 +2852,7 @@ export default function PortalMPP() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white font-sans text-center"
               >
-                Fasilitas Publik{" "}
-                <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 dark:from-emerald-400 dark:to-cyan-400 bg-clip-text text-transparent">
-                  Layanan Terpadu
-                </span>
+                {t('facilities.title', 'Fasilitas Publik Layanan Terpadu')}
               </motion.h2>
               <motion.p 
                 initial={{ opacity: 0, y: 30 }}
@@ -2864,7 +2861,7 @@ export default function PortalMPP() {
                 transition={{ duration: 0.5, delay: 0.3 }}
                 className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto text-center leading-relaxed"
               >
-                Ruang tunggu ramah anak, laktasi, aksesibilitas disabilitas, dan ketersediaan pojok baca digital di MPP Simpurusiang.
+                {t('facilities.subtitle', 'Ruang tunggu ramah anak, laktasi, aksesibilitas disabilitas, dan ketersediaan pojok baca digital di MPP Simpurusiang.')}
               </motion.p>
               <motion.div 
                 initial={{ opacity: 0, scaleX: 0 }}

@@ -56,7 +56,12 @@
     "interactiveDashboard": "交互式仪表板",
     "top": "顶部",
     "infras": "基础设施",
-    "data": "数据"
+    "data": "数据",
+    "badge": "电子目录与服务快速查找",
+    "subtitle": "在下方选择您的行政需求，直接在大楼交互式平面图上定位对应窗口。",
+    "search_placeholder": "搜索服务（如：护照、身份证、NIB等）...",
+    "card_main_req": "主要所需材料：",
+    "card_view_map": "在平面图上查看"
   },
   "sections": {
     "potensi": {
@@ -3160,7 +3165,9 @@
     "perda_cost": "依据地方法规/政府条例"
   },
   "facilities": {
-    "badge": "优先设施与包容性服务",
+    "badge": "基础设施与服务设施",
+    "title": "综合服务公共设施",
+    "subtitle": "Simpurusiang 公共服务大楼提供儿童友好候诊室、母婴室、无障碍通道及数字阅读角。",
     "lactation": "母婴室与哺乳室",
     "disability": "无障碍与轮椅通道",
     "kids_corner": "图书角与儿童游乐区",
@@ -3408,5 +3415,45 @@
     "feature2_title": "服务保障",
     "feature2_desc": "直连芦梧县 21 个官方机构服务窗口。",
     "cta_btn": "立即在线取号 ➔"
+  },
+  "stepper": {
+    "badge": "动态交互式清单流程",
+    "category_hint": "选择服务类型以匹配所需材料清单",
+    "cat_ktp": "电子身份证与户籍",
+    "cat_pkkpr": "PKKPR 空间规划",
+    "cat_nib": "NIB 商业许可证 (OSS)",
+    "cat_pbg": "PBG 建筑许可",
+    "cat_passport": "出入境护照",
+    "cat_skck": "警察无犯罪记录 (SKCK)",
+    "dept_tag": "户籍行政管理",
+    "dept_info": "户籍与民政局 (Disdukcapil) • 展位 01 • 窗口 01 - 03",
+    "title": "电子身份证采集与打印 / 数字身份 (IKD) 指南",
+    "subtitle": "芦梧县户籍局关于首次办理电子身份证、补办/换领及激活数字身份 (IKD) 的官方要求。",
+    "completeness_title": "材料完整度",
+    "completeness_count": "10 份材料中已准备 0 份",
+    "step1_title": "步骤 01",
+    "step1_desc": "申请人文件材料",
+    "step2_title": "步骤 02",
+    "step2_desc": "生物识别采集与 NIK 验证",
+    "step3_title": "步骤 03",
+    "step3_desc": "实体卡打印与 IKD 激活",
+    "req_required": "必填/必需",
+    "req_optional": "选填/可选",
+    "doc1_title": "户口簿 (KK) 原件 / 数字版",
+    "doc1_desc": "带有内政部 Dukcapil 官方二维码的最新户口簿扫描件或纸质打印件（无需盖章）。",
+    "doc2_title": "警察局报失单（若身份证丢失）/ 损坏的身份证",
+    "doc2_desc": "若卡片损坏请携带旧卡以旧换新，若丢失请提供当地警察局的报失证明 (STLK)。",
+    "doc3_title": "最新证件照（若涉及数据变更）",
+    "doc3_desc": "3x4 或 4x6 蓝/红底正式证件照（仅限婚姻状态或学历信息变更时）。",
+    "doc4_title": "有效的 WhatsApp 号码",
+    "doc4_desc": "申请人的有效联系电话，用于接收排队确认、窗口叫号条形码及卡片印制进度。",
+    "btn_prev": "上一步",
+    "btn_next": "下一步 ➔"
+  },
+  "floorplan": {
+    "badge": "大堂交互式平面图",
+    "title": "房间与服务窗口平面图",
+    "subtitle": "公共服务大楼一楼公共设施、服务窗口及等候区的 2D 交互式平面图。",
+    "footer_note": "点击房间 / 窗口以查看服务与许可详情"
   }
 }

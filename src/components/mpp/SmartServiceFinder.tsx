@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import {
   Search,
   Sparkles,
@@ -144,6 +145,7 @@ export function SmartServiceFinder({
   onOpenQueueBooking,
   className = ''
 }: SmartServiceFinderProps) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -179,7 +181,7 @@ export function SmartServiceFinder({
             {/* Badge Top 1: Direktori & Pencarian Cepat Layanan */}
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-800/50">
               <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              Direktori & Pencarian Cepat Layanan
+              {t('nav.badge', 'E-DIRECTORY & PENEMUAN CEPAT LAYANAN')}
             </span>
 
             {/* Badge Top 2: Sinkron ke Denah Spasial */}
@@ -193,7 +195,7 @@ export function SmartServiceFinder({
             Navigasi Cepat Gerai & Loket Layanan
           </h3>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl font-normal leading-relaxed">
-            Pilih kebutuhan administrasi Anda di bawah untuk langsung menyorot posisi gerai pada denah interaktif MPP Simpurusiang.
+            {t('nav.subtitle', 'Pilih kebutuhan administrasi Anda di bawah untuk langsung menuju lokasi gerai pada denah interaktif MPP Simpurusiang.')}
           </p>
         </div>
 
@@ -204,7 +206,7 @@ export function SmartServiceFinder({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari layanan (Paspor, KTP, NIB, BPJS)..."
+            placeholder={t('nav.search_placeholder', 'Cari layanan (misal: Paspor, KTP, NIB, dll)...')}
             className="w-full pl-10 pr-9 py-2.5 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all shadow-xs font-medium"
           />
           {searchQuery && (
@@ -468,7 +470,7 @@ export function SmartServiceFinder({
                     {/* Requirements checklist snippet */}
                     <div className="space-y-1 pt-2 border-t border-slate-200 dark:border-slate-700/60 mb-3">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                        Syarat Utama:
+                        {t('nav.card_main_req', 'Syarat Utama:')}
                       </span>
                       {service.requirements.slice(0, 2).map((req, i) => (
                         <div key={i} className="flex items-center gap-1.5 text-[11px] text-slate-700 dark:text-slate-300">
@@ -487,7 +489,7 @@ export function SmartServiceFinder({
                     </div>
 
                     <span className="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-bold text-[11px] group-hover:translate-x-0.5 transition-transform">
-                      <span>Lihat di Denah</span>
+                      <span>{t('nav.card_view_map', 'Lihat di Denah')}</span>
                       <ArrowRight className="w-3 h-3" />
                     </span>
                   </div>
