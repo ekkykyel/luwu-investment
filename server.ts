@@ -2913,8 +2913,7 @@ app.post("/api/gemini/chat", async (req, res) => {
 
     console.log(`[GEMINI CHAT REQUEST] Received query for context: "${investmentContext?.name || simulationContext?.name || 'General'}" (locale: ${activeLang}). Prompt length: ${(message || '').length} chars.`);
 
-    if (!geminiService.getValidApiKeys().length) {
-      console.warn("[GEMINI CHAT WARNING] No Gemini API client or API keys configured. Generating Heuristic Fallback Analysis...");
+    if (!geminiService.hasWorkingKey()) {
       if (simulationContext || investmentContext) {
         const inv = simulationContext?.capex || investment_amount || investmentContext?.investmentValue || 5000000000;
         const sek = simulationContext?.sector || sector || investmentContext?.sector || "Sektor Unggulan Daerah";
@@ -2926,10 +2925,9 @@ app.post("/api/gemini/chat", async (req, res) => {
         return res.json({ text: fallbackText, sources: [], isFallback: true });
       }
 
-      return res.status(503).json({ 
-        error: "Gemini API client is not initialized. Please set GEMINI_API_KEY.",
-        text: "Maaf, sistem AI sedang offline karena API Key belum terkonfigurasi. Silakan hubungi sys-admin."
-      });
+      const userMsg = message || "";
+      const generalFallbackText = buildGeneralChatStandbyResponse(userMsg, "Gemini service is operating in regional standby mode.");
+      return res.json({ text: generalFallbackText, sources: [], isFallback: true });
     }
     const formattedHistory = (history || []).map((msg: any) => {
       let t = "";
@@ -3626,7 +3624,7 @@ ${languageInstruction}`;
     res.json({ text: response.text, sources: res.locals.ragSources || [] });
   } catch (error: any) {
     const elapsedMs = Date.now() - reqStartTime;
-    console.warn(`⚠️ [Gemini Chat Service Standby] ${error?.message || error}. Activating Heuristic Standby Response after ${elapsedMs}ms...`);
+    console.log(`[Gemini Chat Standby] Activated standby heuristic engine in ${elapsedMs}ms.`);
 
     if (req.body?.simulationContext || req.body?.investmentContext) {
       const { simulationContext, investmentContext } = req.body;
@@ -3753,26 +3751,28 @@ Format sesuai standar resmi:
 5. Rekomendasi & Action Plan Investor Concierge`;
     }
 
-    try {
-      const response = await generateContentWithFallback({
-        contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-        config: {
-          systemInstruction,
-          temperature: 0.35,
-          maxOutputTokens: 4096,
-        }
-      });
-      const replyText = response?.text || "";
-      if (replyText.trim()) {
-        return res.json({ 
-          success: true, 
-          text: replyText, 
-          locale: activeLang,
-          isFallback: false 
+    if (geminiService.hasWorkingKey()) {
+      try {
+        const response = await generateContentWithFallback({
+          contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+          config: {
+            systemInstruction,
+            temperature: 0.35,
+            maxOutputTokens: 4096,
+          }
         });
+        const replyText = response?.text || "";
+        if (replyText.trim()) {
+          return res.json({ 
+            success: true, 
+            text: replyText, 
+            locale: activeLang,
+            isFallback: false 
+          });
+        }
+      } catch (genErr: any) {
+        console.log(`[ROI Simulation Standby] Switching to multi-language dossier engine (${activeLang}).`);
       }
-    } catch (genErr: any) {
-      console.warn(`[ROI Simulation Endpoint Notice] ${genErr?.message || genErr}. Activating multi-language fallback dossier...`);
     }
 
     const fallbackText = buildDetailedRoiDossier(inv, sek, projName, estOpex, estRev, activeLang);

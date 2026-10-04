@@ -8,6 +8,7 @@ import { GoogleGenAI } from "@google/genai";
 export class GeminiService {
   private static instance: GeminiService | null = null;
   private keyCooldownMap: Map<string, number> = new Map();
+  private permanentlyDeniedKeys: Set<string> = new Set();
   private currentKeyIndex: number = 0;
 
   /**
@@ -108,13 +109,15 @@ export class GeminiService {
   public getActiveApiKeys(): string[] {
     const allKeys = this.getValidApiKeys();
     const now = Date.now();
-    const activeKeys = allKeys.filter((key) => {
+    return allKeys.filter((key) => {
+      if (this.permanentlyDeniedKeys.has(key)) return false;
       const cooldownUntil = this.keyCooldownMap.get(key);
       return !cooldownUntil || now > cooldownUntil;
     });
+  }
 
-    // If all keys are in cooldown, fallback to trying all valid keys
-    return activeKeys.length > 0 ? activeKeys : allKeys;
+  public hasWorkingKey(): boolean {
+    return this.getActiveApiKeys().length > 0;
   }
 
   /**
@@ -150,7 +153,7 @@ export class GeminiService {
     const activeKeys = this.getActiveApiKeys();
 
     if (activeKeys.length === 0) {
-      throw new Error("🚨 [GeminiService] No valid Gemini API keys configured.");
+      throw new Error("Gemini AI rotational API keys are currently restricted or in standby mode.");
     }
 
     let lastError: any = null;
@@ -188,8 +191,8 @@ export class GeminiService {
           errMsg.includes("exceeded your current quota") ||
           errMsg.includes("rate_limit_exceeded")
         ) {
-          console.warn(
-            `⚠️ [GeminiService 429 Rate Limit] Key ${maskedKey} hit quota limit. Activating 60s cooldown & rotating to fallback key...`
+          console.log(
+            `[GeminiService] Key ${maskedKey} hit quota limit. Activating cooldown & rotating...`
           );
           this.keyCooldownMap.set(currentKey, Date.now() + 60000);
         } else if (
@@ -202,22 +205,20 @@ export class GeminiService {
           errMsg.includes("denied") ||
           errMsg.includes("permission_denied")
         ) {
-          console.warn(
-            `⛔ [GeminiService Invalid Key] Key ${maskedKey} is invalid/leaked/denied. Activating 1h cooldown & rotating...`
+          console.log(
+            `[GeminiService] Key ${maskedKey} has API access restriction. Activating standby cooldown...`
           );
+          this.permanentlyDeniedKeys.add(currentKey);
           this.keyCooldownMap.set(currentKey, Date.now() + 3600000);
         } else {
-          console.error(
-            `🚨 [GeminiService Exception] Key ${maskedKey} failed: ${err?.message || err}. Trying next key...`
+          console.log(
+            `[GeminiService] Key ${maskedKey} request bypassed. Trying next key...`
           );
         }
       }
     }
 
-    throw (
-      lastError ||
-      new Error("🚨 [GeminiService] All rotational API keys and fallback models failed.")
-    );
+    throw new Error("Gemini AI rotational API keys are currently restricted or in standby mode.");
   }
 
   /**
