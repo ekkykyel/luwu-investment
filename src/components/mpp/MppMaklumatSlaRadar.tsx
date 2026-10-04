@@ -11,7 +11,7 @@ import { MaklumatModal } from './MaklumatModal';
 
 interface SlaItem {
   id: string;
-  category: 'perizinan' | 'kependudukan' | 'perpajakan' | 'agraria' | 'kesehatan';
+  category: 'perizinan' | 'kependudukan' | 'perpajakan' | 'agraria' | 'kesehatan' | 'kepolisian';
   serviceName: string;
   agencyName: string;
   targetSla: string;
@@ -28,12 +28,12 @@ const SLA_DATA: SlaItem[] = [
     id: 'nib-oss',
     category: 'perizinan',
     serviceName: 'Penerbitan NIB Usaha (OSS RBA Risiko Rendah)',
-    agencyName: 'DPMPTSP Kab. Luwu',
+    agencyName: 'DPMPTSP KAB. LUWU',
     targetSla: 'Maks. 15 Menit',
     targetMinutes: 15,
     actualAvgMinutes: 11,
     cost: 'Rp 0,- (Gratis Bebas Retribusi)',
-    productType: 'Nomor Induk Berusaha (NIB) Resmi BKPM RI',
+    productType: '📄 Nomor Induk Berusaha (NIB) Resmi BKPM RI',
     complianceRate: 99.4,
     status: 'fast'
   },
@@ -41,12 +41,12 @@ const SLA_DATA: SlaItem[] = [
     id: 'ktp-el',
     category: 'kependudukan',
     serviceName: 'Pencetakan & Penggantian KTP-el / KIA',
-    agencyName: 'Disdukcapil Kab. Luwu',
+    agencyName: 'DISDUKCAPIL KAB. LUWU',
     targetSla: 'Maks. 30 Menit (Siap Cetak)',
     targetMinutes: 30,
     actualAvgMinutes: 18,
     cost: 'Rp 0,- (Gratis Bebas Retribusi)',
-    productType: 'KTP Elektronik / KIA Berchip Aktif',
+    productType: '🪪 KTP Elektronik / KIA Berchip Aktif',
     complianceRate: 98.6,
     status: 'optimal'
   },
@@ -54,12 +54,12 @@ const SLA_DATA: SlaItem[] = [
     id: 'akta-kelahiran',
     category: 'kependudukan',
     serviceName: 'Penerbitan Akta Kelahiran & Kartu Keluarga Baru',
-    agencyName: 'Disdukcapil Kab. Luwu',
+    agencyName: 'DISDUKCAPIL KAB. LUWU',
     targetSla: 'Maks. 45 Menit',
     targetMinutes: 45,
     actualAvgMinutes: 28,
     cost: 'Rp 0,- (Gratis Bebas Retribusi)',
-    productType: 'Akta Kelahiran Tanda Tangan Elektronik (TTE) & KK',
+    productType: '📜 Akta Kelahiran Tanda Tangan Elektronik (TTE) & KK',
     complianceRate: 97.9,
     status: 'optimal'
   },
@@ -67,12 +67,12 @@ const SLA_DATA: SlaItem[] = [
     id: 'pbg-simbg',
     category: 'perizinan',
     serviceName: 'Persetujuan Bangunan Gedung (PBG SIMBG Teknis)',
-    agencyName: 'Dinas PUPTR & DPMPTSP',
+    agencyName: 'DINAS PUPTR & DPMPTSP',
     targetSla: 'Maks. 3 Hari Kerja',
     targetMinutes: 1440,
     actualAvgMinutes: 960,
     cost: 'Sesuai Perda Retribusi Bangunan',
-    productType: 'Sertifikat PBG Definitif & Dokumen Teknis',
+    productType: '🏛️ Sertifikat PBG Definitif & Dokumen Teknis',
     complianceRate: 96.8,
     status: 'optimal'
   },
@@ -80,12 +80,12 @@ const SLA_DATA: SlaItem[] = [
     id: 'pbb-bphtb',
     category: 'perpajakan',
     serviceName: 'Validasi Pajak BPHTB & Mutasi SPPT PBB-P2',
-    agencyName: 'Bapenda Kab. Luwu',
+    agencyName: 'BAPENDA KAB. LUWU',
     targetSla: 'Maks. 20 Menit',
     targetMinutes: 20,
     actualAvgMinutes: 14,
     cost: 'Rp 0,- (Gratis Administrasi Validasi)',
-    productType: 'Lembar SSPD BPHTB Tervalidasi Bank Sulselbar',
+    productType: '📑 Lembar SSPD BPHTB Tervalidasi Bank Sulselbar',
     complianceRate: 99.1,
     status: 'fast'
   },
@@ -93,12 +93,12 @@ const SLA_DATA: SlaItem[] = [
     id: 'sertifikat-roya',
     category: 'agraria',
     serviceName: 'Penghapusan Hak Tanggungan (Roya) Elektronik',
-    agencyName: 'Kantor Pertanahan / BPN Luwu',
+    agencyName: 'KANTOR PERTANAHAN / BPN LUWU',
     targetSla: 'Maks. 1 Hari Kerja',
     targetMinutes: 480,
     actualAvgMinutes: 320,
     cost: 'Sesuai PNBP PP 128/2015 (Rp 50.000)',
-    productType: 'Sertifikat Tanah Bersih Bebas Tanggungan',
+    productType: '📑 Sertifikat Tanah Bersih Bebas Tanggungan',
     complianceRate: 97.4,
     status: 'optimal'
   },
@@ -106,13 +106,39 @@ const SLA_DATA: SlaItem[] = [
     id: 'bpjs-mutasi',
     category: 'kesehatan',
     serviceName: 'Perubahan Faskes & Penambahan Anggota BPJS',
-    agencyName: 'BPJS Kesehatan Kantor Cabang Luwu',
+    agencyName: 'BPJS KESEHATAN KAB. LUWU',
     targetSla: 'Maks. 15 Menit',
     targetMinutes: 15,
     actualAvgMinutes: 9,
     cost: 'Rp 0,- (Gratis Tanpa Biaya)',
-    productType: 'Kartu Indonesia Sehat (KIS) Digital Aktif',
+    productType: '💳 Kartu Indonesia Sehat (KIS) Digital Aktif',
     complianceRate: 99.7,
+    status: 'fast'
+  },
+  {
+    id: 'skck-polres',
+    category: 'kepolisian',
+    serviceName: 'Penerbitan & Perpanjangan SKCK',
+    agencyName: 'POLRES LUWU',
+    targetSla: 'Maks. 20 Menit',
+    targetMinutes: 20,
+    actualAvgMinutes: 14,
+    cost: 'Sesuai PP 76/2020 (Rp 30.000,-)',
+    productType: '📄 Lembar SKCK Resmi Berhologram',
+    complianceRate: 98.5,
+    status: 'optimal'
+  },
+  {
+    id: 'pkb-samsat',
+    category: 'perpajakan',
+    serviceName: 'Pembayaran Pajak Kendaraan Bermotor (PKB)',
+    agencyName: 'SAMSAT KAB. LUWU',
+    targetSla: 'Maks. 15 Menit',
+    targetMinutes: 15,
+    actualAvgMinutes: 10,
+    cost: 'Sesuai Nilai Pajak Kendaraan',
+    productType: '🧾 Pengesahan STNK & Cetak SKPD',
+    complianceRate: 99.2,
     status: 'fast'
   }
 ];
@@ -130,47 +156,59 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
   const localizedSlaData = SLA_DATA.map(item => {
     if (isEn) {
       if (item.id === 'nib-oss') {
-        return { ...item, serviceName: 'Business Identification Number (OSS RBA Low Risk)', targetSla: 'Max. 15 Mins', cost: 'IDR 0 (Free of Charge)', productType: 'Official NIB BKPM RI' };
+        return { ...item, serviceName: 'Business Identification Number (OSS RBA Low Risk)', targetSla: 'Max. 15 Mins', cost: 'IDR 0 (Free of Charge)', productType: '📄 Official NIB BKPM RI' };
       }
       if (item.id === 'ktp-el') {
-        return { ...item, serviceName: 'e-KTP / Child ID Card Printing & Replacement', targetSla: 'Max. 30 Mins (Ready to Print)', cost: 'IDR 0 (Free)', productType: 'e-KTP / KIA Card with Active Chip' };
+        return { ...item, serviceName: 'e-KTP / Child ID Card Printing & Replacement', targetSla: 'Max. 30 Mins (Ready to Print)', cost: 'IDR 0 (Free)', productType: '🪪 e-KTP / KIA Card with Active Chip' };
       }
       if (item.id === 'akta-kelahiran') {
-        return { ...item, serviceName: 'Birth Certificate & New Family Card Issuance', targetSla: 'Max. 45 Mins', cost: 'IDR 0 (Free)', productType: 'Digitally Signed Birth Certificate & KK' };
+        return { ...item, serviceName: 'Birth Certificate & New Family Card Issuance', targetSla: 'Max. 45 Mins', cost: 'IDR 0 (Free)', productType: '📜 Digitally Signed Birth Certificate & KK' };
       }
       if (item.id === 'pbg-simbg') {
-        return { ...item, serviceName: 'Building Approval (PBG SIMBG Technical)', targetSla: 'Max. 3 Work Days', cost: 'According to Building Retribution Bylaw', productType: 'Definitive PBG Certificate & Tech Specs' };
+        return { ...item, serviceName: 'Building Approval (PBG SIMBG Technical)', targetSla: 'Max. 3 Work Days', cost: 'According to Building Retribution Bylaw', productType: '🏛️ Definitive PBG Certificate & Tech Specs' };
       }
       if (item.id === 'pbb-bphtb') {
-        return { ...item, serviceName: 'BPHTB Tax Validation & PBB Mutation', targetSla: 'Max. 20 Mins', cost: 'IDR 0 (Free Admin)', productType: 'Validated BPHTB SSPD Bank Sulselbar' };
+        return { ...item, serviceName: 'BPHTB Tax Validation & PBB Mutation', targetSla: 'Max. 20 Mins', cost: 'IDR 0 (Free Admin)', productType: '📑 Validated BPHTB SSPD Bank Sulselbar' };
       }
       if (item.id === 'sertifikat-roya') {
-        return { ...item, serviceName: 'Electronic Mortgage Discharge (Roya)', targetSla: 'Max. 1 Work Day', cost: 'Official PNBP PP 128/2015 (Rp 50,000)', productType: 'Clean Land Title Certificate' };
+        return { ...item, serviceName: 'Electronic Mortgage Discharge (Roya)', targetSla: 'Max. 1 Work Day', cost: 'Official PNBP PP 128/2015 (Rp 50,000)', productType: '📑 Clean Land Title Certificate' };
       }
       if (item.id === 'bpjs-mutasi') {
-        return { ...item, serviceName: 'Healthcare Facility Change & BPJS Member Addition', targetSla: 'Max. 15 Mins', cost: 'IDR 0 (Free)', productType: 'Active Digital Healthy Indonesia Card' };
+        return { ...item, serviceName: 'Healthcare Facility Change & BPJS Member Addition', targetSla: 'Max. 15 Mins', cost: 'IDR 0 (Free)', productType: '💳 Active Digital Healthy Indonesia Card' };
+      }
+      if (item.id === 'skck-polres') {
+        return { ...item, serviceName: 'SKCK Police Clearance Certificate Issuance & Renewal', targetSla: 'Max. 20 Mins', cost: 'Per PP 76/2020 (IDR 30,000)', productType: '📄 Official Holographic SKCK Certificate' };
+      }
+      if (item.id === 'pkb-samsat') {
+        return { ...item, serviceName: 'Motor Vehicle Tax Payment (PKB SAMSAT)', targetSla: 'Max. 15 Mins', cost: 'According to Vehicle Tax Assessment', productType: '🧾 STNK Validation & Printed SKPD Tax Receipt' };
       }
     } else if (isZh) {
       if (item.id === 'nib-oss') {
-        return { ...item, serviceName: '低风险商业登记证 (OSS RBA NIB) 核发', targetSla: '最多 15 分钟', cost: '0 印尼盾（完全免费）', productType: '印尼投资协调委员会 (BKPM) 官方 NIB' };
+        return { ...item, serviceName: '低风险商业登记证 (OSS RBA NIB) 核发', targetSla: '最多 15 分钟', cost: '0 印尼盾（完全免费）', productType: '📄 印尼投资协调委员会 (BKPM) 官方 NIB' };
       }
       if (item.id === 'ktp-el') {
-        return { ...item, serviceName: '电子身份证 (e-KTP) / 儿童卡 (KIA) 打印与更换', targetSla: '最多 30 分钟', cost: '0 印尼盾（完全免费）', productType: '带芯片电子身份证 / 儿童身份证' };
+        return { ...item, serviceName: '电子身份证 (e-KTP) / 儿童卡 (KIA) 打印与更换', targetSla: '最多 30 分钟', cost: '0 印尼盾（完全免费）', productType: '🪪 带芯片电子身份证 / 儿童身份证' };
       }
       if (item.id === 'akta-kelahiran') {
-        return { ...item, serviceName: '出生证明与新户口簿 (KK) 核发', targetSla: '最多 45 分钟', cost: '0 印尼盾（完全免费）', productType: '电子签名 (TTE) 出生证明及户口簿' };
+        return { ...item, serviceName: '出生证明与新户口簿 (KK) 核发', targetSla: '最多 45 分钟', cost: '0 印尼盾（完全免费）', productType: '📜 电子签名 (TTE) 出生证明及户口簿' };
       }
       if (item.id === 'pbg-simbg') {
-        return { ...item, serviceName: '建筑物批准 (PBG SIMBG 技术审查)', targetSla: '最多 3 个工作日', cost: '依据地方建筑规费条例', productType: '法定 PBG 证书及技术规范文件' };
+        return { ...item, serviceName: '建筑物批准 (PBG SIMBG 技术审查)', targetSla: '最多 3 个工作日', cost: '依据地方建筑规费条例', productType: '🏛️ 法定 PBG 证书及技术规范文件' };
       }
       if (item.id === 'pbb-bphtb') {
-        return { ...item, serviceName: '契税 (BPHTB) 验证与房产税 (PBB) 变更', targetSla: '最多 20 分钟', cost: '0 印尼盾（免费行政验证）', productType: 'Sulselbar 银行验证 BPHTB 凭单' };
+        return { ...item, serviceName: '契税 (BPHTB) 验证与房产税 (PBB) 变更', targetSla: '最多 20 分钟', cost: '0 印尼盾（免费行政验证）', productType: '📑 Sulselbar 银行验证 BPHTB 凭单' };
       }
       if (item.id === 'sertifikat-roya') {
-        return { ...item, serviceName: '电子抵押权注销 (Roya)', targetSla: '最多 1 个工作日', cost: '官方规费 50,000 印尼盾', productType: '无抵押负担土地产权证书' };
+        return { ...item, serviceName: '电子抵押权注销 (Roya)', targetSla: '最多 1 个工作日', cost: '官方规费 50,000 印尼盾', productType: '📑 无抵押负担土地产权证书' };
       }
       if (item.id === 'bpjs-mutasi') {
-        return { ...item, serviceName: '医保 (BPJS) 定点变更与家庭成员新增', targetSla: '最多 15 分钟', cost: '0 印尼盾（完全免费）', productType: '激活状态电子健康卡 (KIS)' };
+        return { ...item, serviceName: '医保 (BPJS) 定点变更与家庭成员新增', targetSla: '最多 15 分钟', cost: '0 印尼盾（完全免费）', productType: '💳 激活状态电子健康卡 (KIS)' };
+      }
+      if (item.id === 'skck-polres') {
+        return { ...item, serviceName: '无犯罪记录证明 (SKCK) 新办与延期', targetSla: '最多 20 分钟', cost: '依据第76/2020号条例 (30,000印尼盾)', productType: '📄 带全息防伪官方 SKCK 证明' };
+      }
+      if (item.id === 'pkb-samsat') {
+        return { ...item, serviceName: '机动车车辆税 (PKB SAMSAT) 缴纳与审验', targetSla: '最多 15 分钟', cost: '依据机动车应纳税额', productType: '🧾 行驶证审验与完税证明 (SKPD)' };
       }
     }
     return item;
@@ -347,12 +385,13 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
           {/* Category Filter Pills */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar touch-pan-x snap-x snap-mandatory">
             {[
-              { id: 'semua', label: isEn ? 'All' : isZh ? '全部' : 'Semua Layanan' },
+              { id: 'semua', label: isEn ? 'All (9)' : isZh ? '全部 (9)' : 'Semua Layanan (9)' },
               { id: 'perizinan', label: isEn ? 'Business' : isZh ? '企业许可' : 'Perizinan Usaha' },
               { id: 'kependudukan', label: isEn ? 'Civil Reg' : isZh ? '户籍民政' : 'Kependudukan' },
-              { id: 'perpajakan', label: isEn ? 'Tax' : isZh ? '财税' : 'Perpajakan' },
+              { id: 'perpajakan', label: isEn ? 'Tax & SAMSAT' : isZh ? '财税交警' : 'Perpajakan & SAMSAT' },
               { id: 'agraria', label: isEn ? 'Agrarian' : isZh ? '土地' : 'Agraria / BPN' },
-              { id: 'kesehatan', label: isEn ? 'Health' : isZh ? '医疗' : 'Kesehatan' },
+              { id: 'kesehatan', label: isEn ? 'Health' : isZh ? '医疗' : 'Kesehatan / BPJS' },
+              { id: 'kepolisian', label: isEn ? 'Police (SKCK)' : isZh ? '警务 (SKCK)' : 'Polres (SKCK)' },
             ].map(cat => (
               <button
                 key={cat.id}
@@ -372,39 +411,39 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
           </div>
         </div>
 
-        {/* SLA Grid Cards with Staggered Slide-Up and Vibrant Category Styling */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* SLA Grid Cards - Enterprise 3x3 Matrix with Premium Micro-interactions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredSla.map((item, idx) => {
-            const categoryThemes: Record<string, { badge: string; bar: string; icon: string; borderHover: string }> = {
+            const categoryThemes: Record<string, { badge: string; bar: string; borderHover: string }> = {
               perizinan: {
-                badge: 'bg-sky-500/15 text-sky-800 dark:text-sky-300 border-sky-500/30',
-                bar: 'from-sky-500 via-blue-500 to-indigo-500',
-                icon: 'text-sky-500',
-                borderHover: 'hover:border-sky-500/60'
+                badge: 'bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/20',
+                bar: 'from-sky-400 via-blue-500 to-indigo-500',
+                borderHover: 'hover:border-emerald-200 dark:hover:border-emerald-500/40'
               },
               kependudukan: {
-                badge: 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border-emerald-500/30',
-                bar: 'from-emerald-500 via-teal-400 to-emerald-300',
-                icon: 'text-emerald-500',
-                borderHover: 'hover:border-emerald-500/60'
+                badge: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20',
+                bar: 'from-emerald-400 to-emerald-500',
+                borderHover: 'hover:border-emerald-200 dark:hover:border-emerald-500/40'
               },
               perpajakan: {
-                badge: 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30',
-                bar: 'from-amber-500 via-orange-400 to-yellow-400',
-                icon: 'text-amber-500',
-                borderHover: 'hover:border-amber-500/60'
+                badge: 'bg-orange-500/10 text-orange-700 dark:text-orange-300 border-orange-500/20',
+                bar: 'from-orange-500 via-amber-500 to-red-500',
+                borderHover: 'hover:border-emerald-200 dark:hover:border-emerald-500/40'
               },
               agraria: {
-                badge: 'bg-violet-500/15 text-violet-800 dark:text-violet-300 border-violet-500/30',
-                bar: 'from-violet-500 via-purple-400 to-indigo-400',
-                icon: 'text-violet-500',
-                borderHover: 'hover:border-violet-500/60'
+                badge: 'bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/20',
+                bar: 'from-violet-400 via-purple-500 to-indigo-400',
+                borderHover: 'hover:border-emerald-200 dark:hover:border-emerald-500/40'
               },
               kesehatan: {
-                badge: 'bg-rose-500/15 text-rose-800 dark:text-rose-300 border-rose-500/30',
-                bar: 'from-rose-500 via-pink-400 to-rose-300',
-                icon: 'text-rose-500',
-                borderHover: 'hover:border-rose-500/60'
+                badge: 'bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20',
+                bar: 'from-rose-400 via-pink-500 to-rose-500',
+                borderHover: 'hover:border-emerald-200 dark:hover:border-emerald-500/40'
+              },
+              kepolisian: {
+                badge: 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20',
+                bar: 'from-amber-400 via-yellow-400 to-amber-500',
+                borderHover: 'hover:border-emerald-200 dark:hover:border-emerald-500/40'
               },
             };
 
@@ -416,74 +455,71 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
                 initial={{ opacity: 0, y: 25 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: idx * 0.05 }}
-                whileHover={{ y: -3, transition: { duration: 0.2 } }}
-                className={`p-4 sm:p-5 rounded-2xl border transition-all flex flex-col justify-between space-y-3 relative group shadow-sm ${theme.borderHover} ${
-                  isDark 
-                    ? 'bg-slate-900/90 border-slate-800 shadow-lg' 
-                    : 'bg-white border-slate-200/90 shadow-md shadow-slate-200/50'
-                }`}
+                transition={{ duration: 0.45, delay: idx * 0.04 }}
+                className={`bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-1.5 hover:shadow-xl hover:border-emerald-200 dark:hover:border-emerald-500/40 hover:shadow-emerald-900/5 flex flex-col justify-between relative group`}
               >
-                <div>
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md border font-mono ${theme.badge}`}>
+                <div className="space-y-3">
+                  {/* Top Tags */}
+                  <div className="flex items-center justify-between gap-2">
+                    <span className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-lg border font-mono tracking-wide ${theme.badge}`}>
                       {item.agencyName}
                     </span>
-                    <span className="text-[10px] font-extrabold text-slate-700 dark:text-slate-300 flex items-center gap-1 font-mono">
-                      <Sparkles className="w-3 h-3 text-amber-500" />
-                      {item.complianceRate}% On-Time
+                    <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1 font-mono shrink-0">
+                      <span>⚡</span>
+                      <span>{item.complianceRate}% On-Time</span>
                     </span>
                   </div>
 
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2 font-sans mb-1 leading-snug">
+                  {/* Title */}
+                  <h4 className="font-bold text-slate-800 dark:text-slate-100 leading-snug text-balance text-sm sm:text-base min-h-[2.5rem] flex items-center">
                     {item.serviceName}
                   </h4>
 
-                  <p className="text-[11px] text-slate-700 dark:text-slate-300 flex items-center gap-1.5 font-medium">
-                    <Award className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                  {/* Output / Metadata */}
+                  <p className="text-sm text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1.5">
                     <span className="truncate">{item.productType}</span>
                   </p>
+
+                  {/* SLA Target vs Actual Visualizer */}
+                  <div className="p-3.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800/80 space-y-2.5 mt-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium">
+                        <Clock className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                        {isEn ? 'Target SLA:' : isZh ? '法定目标 (SLA):' : 'Target SLA:'}
+                      </span>
+                      <strong className="text-slate-800 dark:text-slate-200 font-mono font-bold">
+                        {item.targetSla}
+                      </strong>
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium">
+                        <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                        {isEn ? 'Realization:' : isZh ? '实际平均:' : 'Realisasi:'}
+                      </span>
+                      <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                        {item.actualAvgMinutes >= 480 
+                          ? `${(item.actualAvgMinutes / 480).toFixed(1)} ${isEn ? 'Work Days' : isZh ? '个工作日' : 'Hari Kerja'}` 
+                          : `${item.actualAvgMinutes} ${isEn ? 'Minutes' : isZh ? '分钟' : 'Menit'}`}
+                      </span>
+                    </div>
+
+                    {/* Progress Bar with smooth rounded corners and vibrant gradient */}
+                    <div className="w-full bg-slate-200/70 dark:bg-slate-700/60 h-2 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${Math.min(100, Math.round((item.actualAvgMinutes / item.targetMinutes) * 100))}%` }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: 0.1 + idx * 0.04, ease: "easeOut" }}
+                        className={`bg-gradient-to-r ${theme.bar} h-full rounded-full`}
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                {/* SLA Target vs Actual Visualizer */}
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-700 dark:text-slate-300 flex items-center gap-1 font-medium">
-                      <Clock className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                      {isEn ? 'Target SLA Limit:' : isZh ? '法定时效上限:' : 'Target Batas SLA:'}
-                    </span>
-                    <strong className="text-slate-900 dark:text-slate-100 font-mono font-bold">
-                      {item.targetSla}
-                    </strong>
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-700 dark:text-slate-300 flex items-center gap-1 font-medium">
-                      <Zap className="w-3.5 h-3.5 text-amber-500" />
-                      {isEn ? 'Avg Realization:' : isZh ? '实际平均耗时:' : 'Realisasi Rata-rata:'}
-                    </span>
-                    <span className="font-mono font-extrabold text-emerald-700 dark:text-emerald-400">
-                      {item.actualAvgMinutes >= 480 
-                        ? `${(item.actualAvgMinutes / 480).toFixed(1)} ${isEn ? 'Work Days' : isZh ? '个工作日' : 'Hari Kerja'}` 
-                        : `${item.actualAvgMinutes} ${isEn ? 'Mins' : isZh ? '分钟' : 'Menit'}`}
-                    </span>
-                  </div>
-
-                  {/* Multi-color Progress bar of SLA performance */}
-                  <div className="w-full bg-slate-200/80 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${Math.min(100, (item.actualAvgMinutes / item.targetMinutes) * 100)}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.8, delay: 0.1 + idx * 0.05, ease: "easeOut" }}
-                      className={`bg-gradient-to-r ${theme.bar} h-full rounded-full`}
-                    />
-                  </div>
-                </div>
-
-                {/* Cost & Action Footer */}
-                <div className="flex items-center justify-between pt-2 border-t border-slate-200/80 dark:border-slate-800/80 text-[11px] gap-2">
-                  <span className="font-extrabold text-emerald-800 dark:text-emerald-300 truncate">
+                {/* Footer Area Cleanup */}
+                <div className="border-t border-slate-50 dark:border-slate-800/80 mt-4 pt-4 flex justify-between items-center text-xs">
+                  <span className="font-medium text-slate-600 dark:text-slate-400 truncate text-[11px] sm:text-xs max-w-[62%]">
                     {item.cost}
                   </span>
 
@@ -493,10 +529,10 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
                       const el = document.getElementById('layanan') || document.getElementById('instansi');
                       el?.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className="font-bold text-slate-800 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1 cursor-pointer transition-colors shrink-0 min-h-[34px] px-1 active:scale-95"
+                    className="font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 flex items-center gap-1 cursor-pointer transition-colors shrink-0 px-1 py-0.5 active:scale-95 group/btn"
                   >
-                    <span className="whitespace-nowrap">{isEn ? 'View Requirements' : isZh ? '查看前置条件' : 'Cek Syarat'}</span>
-                    <ArrowRight className="w-3.5 h-3.5 shrink-0" />
+                    <span className="whitespace-nowrap">{isEn ? 'Check Requirements' : isZh ? '查看前置条件' : 'Cek Syarat'}</span>
+                    <ArrowRight className="w-3.5 h-3.5 shrink-0 group-hover/btn:translate-x-0.5 transition-transform" />
                   </button>
                 </div>
               </motion.div>
