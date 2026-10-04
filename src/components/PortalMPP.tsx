@@ -7193,7 +7193,7 @@ export default function PortalMPP() {
         <AnimatePresence>
           {isSurveyModalOpen && (
             <div 
-              className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
+              className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
               onClick={() => setIsSurveyModalOpen(false)}
             >
               <motion.div
@@ -7201,11 +7201,11 @@ export default function PortalMPP() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.96, y: 20 }}
                 transition={{ duration: 0.22, ease: "easeOut" }}
-                className="w-full max-w-5xl my-auto max-h-[85vh] sm:max-h-[88vh] bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100 shadow-2xl transition-all border border-slate-200/80 dark:border-slate-800"
                 onClick={(e) => e.stopPropagation()}
+                className="relative w-full max-w-5xl bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] text-slate-900 dark:text-slate-100 border border-slate-200/80 dark:border-slate-800"
               >
                 {/* Header Modal */}
-                <div className="flex items-start justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-100 dark:border-slate-800 shrink-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
+                <div className="shrink-0 flex items-start justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
                   <div>
                     <span className="px-2.5 py-0.5 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[11px] font-bold rounded-full font-mono">
                       SKM PermenPAN-RB 14/2017
@@ -7225,7 +7225,7 @@ export default function PortalMPP() {
                 </div>
 
                 {/* Formulir SKM Komprehensif MppCitizenSurveyMenu */}
-                <div className="flex-1 overflow-y-auto p-2 sm:p-5 md:p-6 w-full pb-20 sm:pb-6 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 w-full scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
                   <MppCitizenSurveyMenu 
                     isInModal={true}
                     isDarkMode={isDark}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -34,6 +34,16 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
     preferredTime: '10:00 WITA',
     notes: ''
   });
+
+  useEffect(() => {
+    if (isBookingModalOpen) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') setIsBookingModalOpen(false);
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isBookingModalOpen]);
 
   const handleBookingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -168,7 +178,7 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
       <AnimatePresence>
         {isBookingModalOpen && (
           <div 
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
             onClick={() => setIsBookingModalOpen(false)}
           >
             <motion.div
@@ -177,139 +187,145 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-6 max-w-lg w-full my-auto max-h-[85vh] sm:max-h-[88vh] shadow-2xl space-y-4 relative flex flex-col overflow-y-auto"
+              className="relative w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh]"
             >
-              <button
-                type="button"
-                onClick={() => setIsBookingModalOpen(false)}
-                className="absolute top-4 right-4 p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-all cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-
-              <div className="space-y-1">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-mono">
-                  EKSEKUTIF DESK FASILITASI INVESTASI
-                </span>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white font-sans">
-                  Formulir Konsultasi Fasilitasi Investasi
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Jadwalkan konsultasi prioritas tatap muka dengan Tim Teknis & Kepala Dinas DPMPTSP Kab. Luwu.
-                </p>
-              </div>
-
-              {bookingSubmitted ? (
-                <div className="p-6 text-center space-y-3 my-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 rounded-2xl">
-                  <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto animate-bounce" />
-                  <h4 className="text-sm font-bold text-emerald-900 dark:text-emerald-200 font-sans">
-                    Permohonan Konsultasi Berhasil Terkirim!
-                  </h4>
-                  <p className="text-xs text-emerald-700 dark:text-emerald-300">
-                    Tim Fasilitasi Investasi DPMPTSP Luwu akan menghubungi Anda melalui WhatsApp/Email dalam 1x24 jam kerja untuk konfirmasi jadwal.
+              {/* Sticky Header with Close Button */}
+              <div className="shrink-0 flex items-start justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
+                <div className="space-y-1 pr-4">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-mono">
+                    EKSEKUTIF DESK FASILITASI INVESTASI
+                  </span>
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white font-sans leading-tight">
+                    Formulir Konsultasi Fasilitasi Investasi
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    Jadwalkan konsultasi prioritas tatap muka dengan Tim Teknis & Kepala Dinas DPMPTSP Kab. Luwu.
                   </p>
                 </div>
-              ) : (
-                <form onSubmit={handleBookingSubmit} className="space-y-3 text-xs">
-                  <div>
-                    <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">
-                      Nama Lengkap Investor / Perwakilan
-                    </label>
-                    <input 
-                      type="text"
-                      required
-                      value={bookingData.name}
-                      onChange={(e) => setBookingData(p => ({ ...p, name: e.target.value }))}
-                      placeholder={isEn ? "e.g., John Doe" : isZh ? "例如：张伟 / 投资代表" : "Contoh: Budi Santoso"}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                    />
-                  </div>
+                <button
+                  type="button"
+                  onClick={() => setIsBookingModalOpen(false)}
+                  className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-all cursor-pointer shrink-0"
+                  aria-label="Tutup formulir"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+              {/* Scrollable Form Body */}
+              <div className="overflow-y-auto p-4 sm:p-6 flex-1 space-y-4">
+                {bookingSubmitted ? (
+                  <div className="p-6 text-center space-y-3 my-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 rounded-2xl">
+                    <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto animate-bounce" />
+                    <h4 className="text-sm font-bold text-emerald-900 dark:text-emerald-200 font-sans">
+                      Permohonan Konsultasi Berhasil Terkirim!
+                    </h4>
+                    <p className="text-xs text-emerald-700 dark:text-emerald-300">
+                      Tim Fasilitasi Investasi DPMPTSP Luwu akan menghubungi Anda melalui WhatsApp/Email dalam 1x24 jam kerja untuk konfirmasi jadwal.
+                    </p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleBookingSubmit} className="space-y-3.5 text-xs">
                     <div>
                       <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">
-                        Nama Perusahaan / PT
+                        Nama Lengkap Investor / Perwakilan
                       </label>
                       <input 
                         type="text"
                         required
-                        value={bookingData.company}
-                        onChange={(e) => setBookingData(p => ({ ...p, company: e.target.value }))}
-                        placeholder={isEn ? "e.g. Luwu Agro Global Ltd" : isZh ? "如：鲁乌农产品实业有限公司" : "PT Luwu Cocoa Industry"}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        value={bookingData.name}
+                        onChange={(e) => setBookingData(p => ({ ...p, name: e.target.value }))}
+                        placeholder={isEn ? "e.g., John Doe" : isZh ? "例如：张伟 / 投资代表" : "Contoh: Budi Santoso"}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                       />
                     </div>
-                    <div>
-                      <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">
-                        Nomor WhatsApp Aktif
-                      </label>
-                      <input 
-                        type="tel"
-                        required
-                        value={bookingData.phone}
-                        onChange={(e) => setBookingData(p => ({ ...p, phone: e.target.value }))}
-                        placeholder="+62 812-3456-7890"
-                        className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                      />
-                    </div>
-                  </div>
 
-                  <div>
-                    <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">
-                      Sektor Rencana Investasi
-                    </label>
-                    <select
-                      value={bookingData.sector}
-                      onChange={(e) => setBookingData(p => ({ ...p, sector: e.target.value }))}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                    >
-                      <option value="Pertanian & Perkebunan Kakao/Kopi">Pertanian & Perkebunan Kakao/Kopi</option>
-                      <option value="Energi Terbarukan (PLTA/PLTMH)">Energi Terbarukan (PLTA/PLTMH)</option>
-                      <option value="Perikanan & Kelautan">Perikanan & Kelautan</option>
-                      <option value="Pariwisata & Perhotelan">Pariwisata & Perhotelan</option>
-                      <option value="Pertambangan & Olahan Mineral">Pertambangan & Olahan Mineral</option>
-                      <option value="Properti & Infrastruktur">Properti & Infrastruktur</option>
-                    </select>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">
-                        Pilih Tanggal Pertemuan
-                      </label>
-                      <input 
-                        type="date"
-                        required
-                        value={bookingData.preferredDate}
-                        onChange={(e) => setBookingData(p => ({ ...p, preferredDate: e.target.value }))}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                      />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">
+                          Nama Perusahaan / PT
+                        </label>
+                        <input 
+                          type="text"
+                          required
+                          value={bookingData.company}
+                          onChange={(e) => setBookingData(p => ({ ...p, company: e.target.value }))}
+                          placeholder={isEn ? "e.g. Luwu Agro Global Ltd" : isZh ? "如：鲁乌农产品实业有限公司" : "PT Luwu Cocoa Industry"}
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">
+                          Nomor WhatsApp Aktif
+                        </label>
+                        <input 
+                          type="tel"
+                          required
+                          value={bookingData.phone}
+                          onChange={(e) => setBookingData(p => ({ ...p, phone: e.target.value }))}
+                          placeholder="+62 812-3456-7890"
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
                     </div>
+
                     <div>
                       <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">
-                        Pilih Jam Konsultasi
+                        Sektor Rencana Investasi
                       </label>
                       <select
-                        value={bookingData.preferredTime}
-                        onChange={(e) => setBookingData(p => ({ ...p, preferredTime: e.target.value }))}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        value={bookingData.sector}
+                        onChange={(e) => setBookingData(p => ({ ...p, sector: e.target.value }))}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                       >
-                        <option>09:00 WITA</option>
-                        <option>10:00 WITA</option>
-                        <option>11:00 WITA</option>
-                        <option>14:00 WITA</option>
+                        <option value="Pertanian & Perkebunan Kakao/Kopi">Pertanian & Perkebunan Kakao/Kopi</option>
+                        <option value="Energi Terbarukan (PLTA/PLTMH)">Energi Terbarukan (PLTA/PLTMH)</option>
+                        <option value="Perikanan & Kelautan">Perikanan & Kelautan</option>
+                        <option value="Pariwisata & Perhotelan">Pariwisata & Perhotelan</option>
+                        <option value="Pertambangan & Olahan Mineral">Pertambangan & Olahan Mineral</option>
+                        <option value="Properti & Infrastruktur">Properti & Infrastruktur</option>
                       </select>
                     </div>
-                  </div>
 
-                  <button
-                    type="submit"
-                    className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg transition-all active:scale-95 cursor-pointer mt-2"
-                  >
-                    Kirim Permohonan Konsultasi VIP
-                  </button>
-                </form>
-              )}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">
+                          Pilih Tanggal Pertemuan
+                        </label>
+                        <input 
+                          type="date"
+                          required
+                          value={bookingData.preferredDate}
+                          onChange={(e) => setBookingData(p => ({ ...p, preferredDate: e.target.value }))}
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">
+                          Pilih Jam Konsultasi
+                        </label>
+                        <select
+                          value={bookingData.preferredTime}
+                          onChange={(e) => setBookingData(p => ({ ...p, preferredTime: e.target.value }))}
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        >
+                          <option>09:00 WITA</option>
+                          <option>10:00 WITA</option>
+                          <option>11:00 WITA</option>
+                          <option>14:00 WITA</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-md transition-all active:scale-[0.98] cursor-pointer mt-2"
+                    >
+                      Kirim Permohonan Konsultasi Eksekutif
+                    </button>
+                  </form>
+                )}
+              </div>
             </motion.div>
           </div>
         )}

@@ -73,16 +73,22 @@ export const PendaftaranAntreanModal: React.FC<PendaftaranAntreanModalProps> = (
   };
   const isNameValid = (val: string) => !!val && val.trim().length >= 3;
 
-  // Load Tenants & GIS upon open
+  // Load Tenants & GIS upon open + Escape key handler
   useEffect(() => {
     if (isOpen) {
       fetchTenants();
       fetchKecamatan();
       checkActiveUser();
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') onClose();
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
     } else {
       resetForm();
     }
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   const checkActiveUser = async () => {
     try {
@@ -342,19 +348,23 @@ export const PendaftaranAntreanModal: React.FC<PendaftaranAntreanModalProps> = (
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 bg-slate-900/60 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200">
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200"
+      onClick={onClose}
+    >
       <motion.div 
         initial={{ opacity: 0, scale: 0.96, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 15 }}
-        className={`w-full max-w-2xl my-auto rounded-2xl sm:rounded-3xl shadow-2xl border overflow-hidden flex flex-col max-h-[85vh] sm:max-h-[88vh] ${
+        onClick={(e) => e.stopPropagation()}
+        className={`relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border ${
           isDarkMode 
-            ? 'bg-slate-900 border-white/10 text-white' 
-            : 'bg-white border-slate-200 text-slate-900'
+            ? 'border-white/10 text-white' 
+            : 'border-slate-200 text-slate-900'
         }`}
       >
         {/* HEADER MODAL */}
-        <div className="px-5 py-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-transparent">
+        <div className="shrink-0 px-5 py-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-transparent">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-2xl bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20">
               <Ticket className="w-5 h-5" />
@@ -378,7 +388,7 @@ export const PendaftaranAntreanModal: React.FC<PendaftaranAntreanModalProps> = (
         </div>
 
         {/* STEPPER PROGRESS */}
-        <div className="px-5 py-2.5 bg-slate-50 dark:bg-slate-800/40 border-b border-slate-200 dark:border-white/5 flex items-center justify-between text-xs font-semibold">
+        <div className="shrink-0 px-5 py-2.5 bg-slate-50 dark:bg-slate-800/40 border-b border-slate-200 dark:border-white/5 flex items-center justify-between text-xs font-semibold">
           <div className="flex items-center gap-2">
             <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black ${
               step >= 1 ? 'bg-emerald-500 text-slate-950' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'
@@ -417,7 +427,7 @@ export const PendaftaranAntreanModal: React.FC<PendaftaranAntreanModalProps> = (
         </div>
 
         {/* MODAL BODY */}
-        <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4">
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4">
           {submitError && (
             <div className="p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 flex items-start gap-2.5 text-xs text-rose-700 dark:text-rose-300 font-medium">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
