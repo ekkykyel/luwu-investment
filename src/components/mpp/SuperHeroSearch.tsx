@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Search, Mic, Sparkles, Command, ArrowRight } from 'lucide-react';
+import { Search, Mic, Command, ArrowRight } from 'lucide-react';
 
 export interface SuperHeroSearchProps {
   onSearchSubmit?: (query: string) => void;
