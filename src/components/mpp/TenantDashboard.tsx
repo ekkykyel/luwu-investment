@@ -729,12 +729,18 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
     };
 
     return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-2.5 sm:p-4 bg-slate-950/85 backdrop-blur-md overflow-y-auto">
-        <div className={`w-full max-w-lg p-5 sm:p-7 rounded-3xl shadow-2xl flex flex-col my-auto border ${
-          isDarkMode ? 'bg-slate-900 text-white border-slate-800' : 'bg-white text-slate-900 border-slate-200'
-        }`}>
+      <div 
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-md overflow-y-auto"
+        onClick={onClose}
+      >
+        <div 
+          onClick={(e) => e.stopPropagation()}
+          className={`relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border ${
+            isDarkMode ? 'text-white border-slate-800' : 'text-slate-900 border-slate-200'
+          }`}
+        >
           {/* Header */}
-          <div className="flex justify-between items-start mb-4">
+          <div className="flex justify-between items-start p-5 sm:p-6 pb-4 border-b border-inherit shrink-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
                 <Smartphone className="w-6 h-6" />
@@ -753,13 +759,15 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
               </div>
             </div>
 
-            <button onClick={onClose} className="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-red-500/10 hover:text-red-500 rounded-xl transition-all shrink-0">
+            <button onClick={onClose} className="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-red-500/10 hover:text-red-500 rounded-xl transition-all shrink-0 cursor-pointer">
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          {/* Sub-Tabs: Login vs Kelola Gerai */}
-          <div className="flex p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/70 mb-5">
+          {/* Scrollable Container */}
+          <div className="overflow-y-auto p-5 sm:p-6 flex-1 space-y-4">
+            {/* Sub-Tabs: Login vs Kelola Gerai */}
+            <div className="flex p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/70 mb-2">
             <button
               type="button"
               onClick={() => setAuthSubTab('login')}
@@ -965,22 +973,34 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
               </div>
             </div>
           )}
+          </div>
         </div>
 
         {/* Modal Tambah/Edit Gerai */}
         {tenantModalOpen && (
-          <div className="fixed inset-0 z-[120] flex flex-col items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-hidden font-sans">
-            <div className={`w-full max-w-md max-h-[85vh] p-5 sm:p-6 rounded-3xl shadow-2xl flex flex-col overflow-y-auto ${isDarkMode ? 'bg-slate-900 text-white border border-slate-800' : 'bg-white text-slate-900 border border-slate-200'}`}>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-bold text-lg">
+          <div 
+            className="fixed inset-0 z-[120] flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto font-sans"
+            onClick={() => setTenantModalOpen(false)}
+          >
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              className={`relative w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border ${
+                isDarkMode ? 'text-white border-slate-800' : 'text-slate-900 border-slate-200'
+              }`}
+            >
+              <div className="p-5 sm:p-6 pb-4 flex justify-between items-center border-b border-inherit shrink-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
+                <h3 className="font-bold text-base sm:text-lg">
                   {editingTenant ? 'Edit Profil Instansi' : 'Tambah Instansi Gerai Baru'}
                 </h3>
-                <button onClick={() => setTenantModalOpen(false)} className="p-1 rounded-lg text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800">
+                <button 
+                  onClick={() => setTenantModalOpen(false)} 
+                  className="p-2 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <form onSubmit={handleSaveTenant} className="space-y-4">
+              <form onSubmit={handleSaveTenant} className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-500 mb-1">Nama Instansi / Dinas</label>
                   <input
