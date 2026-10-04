@@ -1,6 +1,23 @@
 // Service Worker: GeoJSON & Spatial Cache Layer with SWR / TTL Strategy
 // Powered by Workbox with robust Native SWR Fallback
 
+const isDevOrPreview = self.location.hostname.includes('localhost') || 
+                      self.location.hostname.includes('127.0.0.1') || 
+                      self.location.hostname.includes('run.app') ||
+                      self.location.hostname.includes('ais-dev') ||
+                      self.location.hostname.includes('ais-pre');
+
+if (isDevOrPreview) {
+  self.addEventListener('install', () => self.skipWaiting());
+  self.addEventListener('activate', (event) => {
+    event.waitUntil(
+      caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
+        .then(() => self.registration.unregister())
+        .then(() => self.clients.claim())
+    );
+  });
+} else {
+
 const APP_CACHE_NAME = 'luwu-invest-v6';
 const SPATIAL_CACHE_NAME = 'geojson-spatial-cache-v2';
 const SPATIAL_MAX_ENTRIES = 30;
@@ -51,13 +68,15 @@ if (isWorkboxReady) {
     })
   );
 
-  // 2. Static Assets & Vite chunks (CacheFirst - strictly same-origin)
+  // 2. Static Assets & Production Chunks (CacheFirst - strictly /assets/ only, NEVER node_modules or dev)
   registerRoute(
     ({ request, url }) =>
-      url.origin === self.location.origin && (
+      url.origin === self.location.origin && 
+      !url.pathname.includes('node_modules') &&
+      !url.pathname.startsWith('/src/') &&
+      !url.pathname.includes('/@') &&
+      (
         url.pathname.startsWith('/assets/') ||
-        request.destination === 'style' ||
-        request.destination === 'script' ||
         request.destination === 'font' ||
         request.destination === 'image'
       ),
@@ -256,4 +275,5 @@ if (isWorkboxReady) {
       })
     );
   });
+}
 }

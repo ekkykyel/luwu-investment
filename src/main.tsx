@@ -309,9 +309,17 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 );
 
-// Register service worker for PWA support & GeoJSON SWR caching layer only in production
+// Register service worker for PWA support & GeoJSON SWR caching layer only in real production
 if ('serviceWorker' in navigator) {
-  if (import.meta.env.DEV) {
+  const isDevOrPreview = 
+    import.meta.env.DEV ||
+    window.location.hostname.includes('run.app') ||
+    window.location.hostname.includes('localhost') ||
+    window.location.hostname.includes('127.0.0.1') ||
+    window.location.hostname.includes('ais-dev') ||
+    window.location.hostname.includes('ais-pre');
+
+  if (isDevOrPreview) {
     // Proactively clean up any stale development service worker and caches
     navigator.serviceWorker.getRegistrations().then((registrations) => {
       for (const registration of registrations) {
@@ -321,13 +329,11 @@ if ('serviceWorker' in navigator) {
     if ('caches' in window) {
       caches.keys().then((keys) => {
         keys.forEach((key) => {
-          if (key.includes('workbox') || key.includes('vite') || key.includes('pwa')) {
-            caches.delete(key);
-          }
+          caches.delete(key);
         });
       });
     }
-  } else if (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+  } else if (window.location.protocol === 'https:') {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js', { scope: '/' })
         .then((reg) => {

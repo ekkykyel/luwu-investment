@@ -85,30 +85,23 @@
         const isDev = window.location.hostname.includes('localhost') || 
                       window.location.hostname.includes('127.0.0.1') || 
                       window.location.hostname.includes('ais-dev') ||
+                      window.location.hostname.includes('ais-pre') ||
+                      window.location.hostname.includes('run.app') ||
                       window.location.search.includes('clearCache=true');
         if (isDev) {
-          console.log('[Dev-Hotfix] Force cleaning service workers and caches in development mode...');
           if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function(registrations) {
               registrations.forEach(function(registration) {
-                registration.unregister().then(function() {
-                  console.log('[Dev-Hotfix] Unregistered service worker:', registration.scope);
-                });
+                registration.unregister();
               });
-            }).catch(function(err) {
-              console.error('[Dev-Hotfix] Failed to unregister service worker:', err);
-            });
+            }).catch(function() {});
           }
           if ('caches' in window) {
             caches.keys().then(function(keys) {
               keys.forEach(function(key) {
-                caches.delete(key).then(function() {
-                  console.log('[Dev-Hotfix] Deleted cache storage:', key);
-                });
+                caches.delete(key);
               });
-            }).catch(function(err) {
-              console.error('[Dev-Hotfix] Failed to delete caches:', err);
-            });
+            }).catch(function() {});
           }
         }
       })();
