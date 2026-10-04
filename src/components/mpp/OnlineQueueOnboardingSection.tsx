@@ -1,5 +1,6 @@
 import React from 'react';
 import { Smartphone, Clock, ShieldCheck, Ticket, ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export interface OnlineQueueOnboardingSectionProps {
   isDark?: boolean;
@@ -12,6 +13,7 @@ export const OnlineQueueOnboardingSection: React.FC<OnlineQueueOnboardingSection
   className,
   onOpenBooking
 }) => {
+  const { t } = useTranslation();
   const isDark = propIsDark ?? (typeof document !== 'undefined' && document.documentElement.classList.contains('dark'));
 
   const handleBooking = () => {
@@ -38,18 +40,17 @@ export const OnlineQueueOnboardingSection: React.FC<OnlineQueueOnboardingSection
         <div className="flex justify-center">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-800 text-[11px] font-black uppercase tracking-wider rounded-full">
             <Smartphone className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            Antrean Online Resmi
+            {t('online_queue.badge', 'Antrean Online Resmi')}
           </span>
         </div>
 
         {/* 3. TYPOGRAPHY & VISUAL FEATURE GRID */}
         <div className="space-y-2">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-center text-slate-900 dark:text-white tracking-tight leading-tight">
-            Solusi Mudah Mendaftar Antrean <br />
-            <span className="text-emerald-600 dark:text-emerald-400">MPP Simpurusiang</span>
+            {t('online_queue.title', 'Solusi Mudah Mendaftar Antrean MPP Simpurusiang')}
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed text-justify">
-            Dapatkan nomor antrean secara online sebelum berkunjung untuk pelayanan yang presisi, cepat, dan transparan.
+            {t('online_queue.desc', 'Dapatkan nomor antrean secara online sebelum berkunjung untuk pelayanan yang presisi, cepat, dan transparan.')}
           </p>
         </div>
 
@@ -61,9 +62,11 @@ export const OnlineQueueOnboardingSection: React.FC<OnlineQueueOnboardingSection
               <Clock className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-slate-900 dark:text-white">Tanpa Antre Manual</h4>
+              <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                {t('online_queue.feature1_title', 'Tanpa Antre Manual')}
+              </h4>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5 text-justify">
-                Ambil nomor tiket dari rumah dan pantau estimasi waktu panggilan.
+                {t('online_queue.feature1_desc', 'Ambil nomor tiket dari rumah dan pantau estimasi waktu panggilan.')}
               </p>
             </div>
           </div>
@@ -74,9 +77,11 @@ export const OnlineQueueOnboardingSection: React.FC<OnlineQueueOnboardingSection
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-slate-900 dark:text-white">Kepastian Layanan</h4>
+              <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                {t('online_queue.feature2_title', 'Kepastian Layanan')}
+              </h4>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug mt-0.5 text-justify">
-                Terhubung langsung dengan 21 loket instansi resmi Kabupaten Luwu.
+                {t('online_queue.feature2_desc', 'Terhubung langsung dengan 21 loket instansi resmi Kabupaten Luwu.')}
               </p>
             </div>
           </div>
@@ -90,7 +95,7 @@ export const OnlineQueueOnboardingSection: React.FC<OnlineQueueOnboardingSection
             className="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
           >
             <Ticket className="w-4 h-4" />
-            <span>Ambil Antrean Online Sekarang</span>
+            <span>{t('online_queue.cta_btn', 'Ambil Antrean Online Sekarang ➔').replace('➔', '').trim()}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

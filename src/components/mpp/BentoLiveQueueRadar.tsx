@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { 
   Users, 
   Clock, 
@@ -44,14 +45,14 @@ const INITIAL_COUNTERS: CounterQueueItem[] = [
 ];
 
 const CHIP_CATEGORIES = [
-  'Semua',
-  'Kependudukan',
-  'Perizinan',
-  'Perpajakan',
-  'Agraria',
-  'Kesehatan',
-  'Ketenagakerjaan',
-  'Keimigrasian',
+  { id: 'Semua', key: 'counters.filter_all', defaultLabel: 'Semua' },
+  { id: 'Kependudukan', key: 'counters.filter_civil', defaultLabel: 'Kependudukan' },
+  { id: 'Perizinan', key: 'counters.filter_permit', defaultLabel: 'Perizinan' },
+  { id: 'Perpajakan', key: 'counters.filter_tax', defaultLabel: 'Perpajakan' },
+  { id: 'Agraria', key: 'counters.filter_land', defaultLabel: 'Agraria' },
+  { id: 'Kesehatan', key: 'counters.filter_health', defaultLabel: 'Kesehatan' },
+  { id: 'Ketenagakerjaan', key: 'counters.filter_labor', defaultLabel: 'Ketenagakerjaan' },
+  { id: 'Keimigrasian', key: 'counters.filter_immigration', defaultLabel: 'Keimigrasian' },
 ];
 
 export interface BentoLiveQueueRadarProps {
@@ -63,6 +64,7 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
   onRegisterQueue,
   isDark = false,
 }) => {
+  const { t } = useTranslation();
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [counters, setCounters] = useState<CounterQueueItem[]>(INITIAL_COUNTERS);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -111,13 +113,13 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-700/60">
             <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-            <span>Radar Antrean & SLA Pelayanan Real-Time</span>
+            <span>{t('counters.radar_badge', 'RADAR ANTREAN & SLA PELAYANAN REAL-TIME')}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight font-sans">
-            Transparansi Loket Terpadu
+            {t('counters.title', 'Transparansi Loket Terpadu')}
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-xl">
-            Pantau pergerakan antrean dari rumah tanpa perlu menunggu di loket fisik.
+            {t('counters.subtitle', 'Pantau pergerakan antrean dari rumah tanpa perlu menunggu di loket fisik.')}
           </p>
         </div>
 
@@ -130,7 +132,7 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
             className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-emerald-500 shadow-2xs transition-all cursor-pointer active:scale-95 disabled:opacity-50"
           >
             <RefreshCw className={`w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span>{isRefreshing ? 'Memperbarui...' : 'Sinkronisasi'}</span>
+            <span>{isRefreshing ? t('counters.syncing_btn', 'Memperbarui...') : t('counters.sync_btn', 'Sinkronisasi')}</span>
           </button>
         </div>
       </div>
@@ -143,7 +145,7 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
           <div className="absolute -right-4 -bottom-4 w-28 h-28 bg-white/10 rounded-full blur-xl pointer-events-none" />
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider bg-white/20 px-2.5 py-1 rounded-full">
-              Status Hari Ini
+              {t('counters.status_badge', 'STATUS HARI INI')}
             </span>
             <Activity className="w-5 h-5 text-emerald-200 animate-pulse" />
           </div>
@@ -153,13 +155,13 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
               {activeCountersCount} / 20
             </div>
             <div className="text-xs text-emerald-100 font-medium">
-              Loket Pelayanan Sedang Aktif Melayani
+              {t('counters.status_sub', 'Loket Pelayanan Sedang Aktif Melayani')}
             </div>
           </div>
 
           <div className="flex items-center justify-between pt-2 border-t border-white/20 text-xs text-emerald-50">
-            <span>Total Antrean Aktif:</span>
-            <span className="font-extrabold text-white font-mono">{totalWaiting} Orang</span>
+            <span>{t('counters.total_active_queue', 'Total Antrean Aktif:')}</span>
+            <span className="font-extrabold text-white font-mono">{totalWaiting} {t('counters.unit_people', 'Orang')}</span>
           </div>
         </div>
 
@@ -167,23 +169,23 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
         <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-              Komitmen SLA
+              {t('counters.sla_badge', 'KOMITMEN SLA')}
             </span>
             <Clock className="w-5 h-5 text-teal-600 dark:text-teal-400" />
           </div>
 
           <div className="space-y-1">
             <div className="text-3xl sm:text-4xl font-black font-mono tracking-tight text-slate-900 dark:text-white">
-              ~11.5 <span className="text-sm font-semibold text-slate-400">Menit</span>
+              ~11.5 <span className="text-sm font-semibold text-slate-400">{t('counters.sla_unit', 'Menit')}</span>
             </div>
             <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-              Rata-rata Waktu Pelayanan per Berkas
+              {t('counters.sla_avg_label', 'Rata-rata Waktu Pelayanan per Berkas')}
             </div>
           </div>
 
           <div className="flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">
             <CheckCircle2 className="w-4 h-4" />
-            <span>98.4% Tuntas Sesuai Standar Layanan</span>
+            <span>{t('counters.sla_guarantee', '98.4% Tuntas Sesuai Standar Layanan')}</span>
           </div>
         </div>
 
@@ -191,7 +193,7 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
         <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-              Lacak Nomor Antrean
+              {t('counters.track_badge', 'LACAK NOMOR ANTREAN')}
             </span>
             <Ticket className="w-5 h-5 text-amber-500" />
           </div>
@@ -202,14 +204,14 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
                 type="text"
                 value={searchTicket}
                 onChange={(e) => setSearchTicket(e.target.value)}
-                placeholder="Contoh: A-042"
+                placeholder={t('counters.track_placeholder', 'CONTOH: A-042')}
                 className="w-full px-3 py-2 text-xs font-mono uppercase bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
               <button
                 type="submit"
                 className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shrink-0 cursor-pointer active:scale-95 transition-all"
               >
-                Cek
+                {t('counters.track_btn', 'Cek')}
               </button>
             </div>
             {trackResult && (
@@ -220,7 +222,7 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
           </form>
 
           <div className="text-[11px] text-slate-400">
-            Ketik nomor tiket dari struk fisik atau notifikasi WhatsApp Anda.
+            {t('counters.track_helper', 'Ketik nomor tiket dari struk fisik atau notifikasi WhatsApp Anda.')}
           </div>
         </div>
       </div>
@@ -228,23 +230,23 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
       {/* 3. MATERIAL CHIP FILTERS (Only rendering relevant counters to reduce fatigue) */}
       <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scrollbar-none pb-1 pt-2 touch-pan-x">
         {CHIP_CATEGORIES.map((cat) => {
-          const isSelected = selectedCategory === cat;
-          const count = cat === 'Semua' 
+          const isSelected = selectedCategory === cat.id;
+          const count = cat.id === 'Semua' 
             ? counters.length 
-            : counters.filter(c => c.category === cat).length;
+            : counters.filter(c => c.category === cat.id).length;
 
           return (
             <button
-              key={cat}
+              key={cat.id}
               type="button"
-              onClick={() => setSelectedCategory(cat)}
+              onClick={() => setSelectedCategory(cat.id)}
               className={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer active:scale-95 ${
                 isSelected
                   ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/25 scale-[1.02]'
                   : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200/90 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
-              <span>{cat}</span>
+              <span>{t(cat.key, cat.defaultLabel)}</span>
               <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
                 isSelected ? 'bg-white/25 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
               }`}>
@@ -274,14 +276,14 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
               {/* Header */}
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-200/80 dark:border-emerald-800/60">
-                  Loket {counter.loketNo}
+                  {t('counters.card_loket', 'Loket')} {counter.loketNo}
                 </span>
 
                 <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-slate-500">
                   <span className={`w-2 h-2 rounded-full ${
                     counter.status === 'busy' ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500 animate-ping'
                   }`} />
-                  {counter.status === 'busy' ? 'Melayani' : 'Siap'}
+                  {counter.status === 'busy' ? t('counters.card_status_serving', 'Melayani') : t('counters.card_status_ready', 'Siap')}
                 </span>
               </div>
 
@@ -299,7 +301,7 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
               <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between">
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
-                    Sedang Dipanggil
+                    {t('counters.card_now_calling', 'SEDANG DIPANGGIL')}
                   </span>
                   <span className="text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400">
                     {counter.currentNumber}
@@ -308,10 +310,10 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
 
                 <div className="text-right">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
-                    Menunggu
+                    {t('counters.card_waiting', 'MENUNGGU')}
                   </span>
                   <span className="text-base font-extrabold font-mono text-slate-700 dark:text-slate-300">
-                    {counter.totalWaiting} <span className="text-[10px] font-sans font-normal">org</span>
+                    {counter.totalWaiting} <span className="text-[10px] font-sans font-normal">{t('counters.card_person_unit', 'org')}</span>
                   </span>
                 </div>
               </div>
@@ -322,7 +324,7 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
                 onClick={() => onRegisterQueue && onRegisterQueue(counter.agencyName)}
                 className="w-full py-2 px-3 rounded-xl bg-slate-100 hover:bg-emerald-600 dark:bg-slate-800 dark:hover:bg-emerald-600 text-slate-700 hover:text-white dark:text-slate-200 dark:hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow-2xs"
               >
-                <span>Ambil Tiket</span>
+                <span>{t('counters.card_get_ticket', 'Ambil Tiket ↗').replace('↗', '').trim()}</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
             </motion.div>
