@@ -39,49 +39,36 @@ export type ImageFallbackType = 'tenant' | 'agency' | 'facility' | 'umkm' | 'new
 
 /**
  * Optical sizing & scaling helper for agency logos.
- * Handles logos that have wide aspect ratios (e.g. PT Nevis, Bank Sulselbar, Taspen, KPP Pratama, PDAM)
- * or intrinsic transparent padding so they display prominently and balance with square/crest logos (e.g. Luwu, ATR/BPN).
+ * Ensures wide horizontal logos (e.g. Bank Sulselbar, PDAM, PT Nevis, Taspen, KPP Pratama, BPJS)
+ * fit completely inside the wider logo pedestal without clipping side text, while balancing crest emblems.
  */
 export function getAgencyLogoScaleClass(agencyName?: string | null): string {
   if (!agencyName) return 'scale-100';
   const name = agencyName.toLowerCase();
   
-  // Logos with high transparent padding or very wide banners
-  if (name.includes('sulselbar')) {
-    return 'scale-[1.38]'; // Bank Sulselbar has wide aspect + inner margins
+  // Wide horizontal logos: keep at scale-100 (or subtle scale) so horizontal text is never clipped
+  if (
+    name.includes('sulselbar') ||
+    name.includes('nevis') ||
+    name.includes('nervis') ||
+    name.includes('pdam') ||
+    name.includes('taspen') ||
+    name.includes('kpp') ||
+    name.includes('pajak') ||
+    name.includes('pratama') ||
+    name.includes('ketenagakerjaan') ||
+    name.includes('kesehatan') ||
+    name.includes('has')
+  ) {
+    return 'scale-100';
   }
-  if (name.includes('nevis') || name.includes('nervis')) {
-    return 'scale-[1.36]'; // PT Nevis / Nervis certification logo (wide banner 2.1:1)
-  }
-  if (name.includes('taspen')) {
-    return 'scale-[1.30]'; // PT Taspen (wide ratio)
-  }
-  if (name.includes('kpp') || name.includes('pajak') || name.includes('pratama')) {
-    return 'scale-[1.30]'; // KPP Pratama wide horizontal logo
-  }
-  if (name.includes('pdam')) {
-    return 'scale-[1.26]'; // PDAM Tirta Luwu wide logo
-  }
-  if (name.includes('ketenagakerjaan')) {
-    return 'scale-[1.24]'; // BPJS Ketenagakerjaan
-  }
-  if (name.includes('kesehatan')) {
-    return 'scale-[1.20]'; // BPJS Kesehatan
-  }
-  if (name.includes('has')) {
-    return 'scale-[1.25]'; // HAS International
-  }
+
+  // Round/crest emblem with large built-in transparent canvas padding
   if (name.includes('kejaksaan') || name.includes('kejari')) {
-    return 'scale-[1.38]'; // Kejaksaan Negeri emblem has ~32% intrinsic transparent margins
-  }
-  if (name.includes('imigrasi')) {
-    return 'scale-[1.15]'; // Kantor Imigrasi
-  }
-  if (name.includes('samsat') || name.includes('bapenda')) {
-    return 'scale-[1.15]'; // Samsat / Bapenda
+    return 'scale-[1.18]';
   }
   
-  // Standard square / crest emblems (Luwu, ATR/BPN, DPMPTSP, Kejaksaan, etc.) fit naturally at 100%
+  // Standard square / crest emblems (Luwu, ATR/BPN, DPMPTSP, Imigrasi, Samsat, etc.) fit naturally at 100%
   return 'scale-100';
 }
 

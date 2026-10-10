@@ -215,13 +215,13 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
                     </Badge>
                   </div>
 
-                  {/* Theme-Adaptive Logo Pedestal (Follows Light/Dark Theme Surface Tokens) */}
-                  <div className={`w-28 h-28 sm:w-32 sm:h-32 rounded-2xl ${MPP_CARD_SURFACE.layer2} ring-1 ring-slate-900/[0.03] dark:ring-white/[0.05] shadow-sm flex items-center justify-center p-3 mt-1 group-hover:scale-105 group-hover:shadow-md group-hover:border-emerald-500/40 transition-all duration-300 overflow-hidden relative z-10`}>
+                  {/* Theme-Adaptive Wide Logo Pedestal (Accommodates Wide & Crest Logos Cleanly) */}
+                  <div className={`w-48 h-28 sm:w-56 sm:h-32 rounded-2xl ${MPP_CARD_SURFACE.layer2} ring-1 ring-slate-900/[0.03] dark:ring-white/[0.05] shadow-sm flex items-center justify-center px-4 py-2.5 mt-1 group-hover:scale-[1.03] group-hover:shadow-md group-hover:border-emerald-500/40 transition-all duration-300 overflow-hidden relative z-10`}>
                     <img
                       src={getImageUrl(tenant.logo, 'agency')}
                       alt={tenant.name}
                       loading="lazy"
-                      className={`max-h-full max-w-full object-contain transition-transform duration-300 dark:drop-shadow-[0_2px_8px_rgba(255,255,255,0.14)] ${getAgencyLogoScaleClass(tenant.name)}`}
+                      className={`max-h-full max-w-full w-auto h-auto object-contain transition-transform duration-300 dark:drop-shadow-[0_2px_8px_rgba(255,255,255,0.14)] ${getAgencyLogoScaleClass(tenant.name)}`}
                       onError={(e) => handleImageError(e, 'agency')}
                     />
                   </div>

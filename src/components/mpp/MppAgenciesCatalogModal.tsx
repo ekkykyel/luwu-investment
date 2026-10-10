@@ -331,12 +331,12 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
                       <div>
                         {/* Card Top: Logo, Kategori & Loket Badge */}
                         <div className="flex items-start justify-between gap-3 mb-3">
-                          <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white dark:bg-[#143755] border border-slate-200/90 dark:border-white/10 p-1.5 sm:p-2 flex items-center justify-center shrink-0 overflow-hidden shadow-sm group-hover:scale-105 group-hover:border-emerald-500/40 transition-all">
+                          <div className="w-32 h-24 sm:w-36 sm:h-28 rounded-2xl bg-white dark:bg-[#143755] border border-slate-200/90 dark:border-white/10 px-2.5 py-2 flex items-center justify-center shrink-0 overflow-hidden shadow-sm group-hover:scale-[1.03] group-hover:border-emerald-500/40 transition-all">
                             <img
                               src={getImageUrl(agency.logo, 'agency')}
                               alt={agency.nama}
                               referrerPolicy="no-referrer"
-                              className={`max-h-full max-w-full object-contain transition-transform duration-200 ${getAgencyLogoScaleClass(agency.nama || agency.fullName)}`}
+                              className={`max-h-full max-w-full w-auto h-auto object-contain transition-transform duration-200 ${getAgencyLogoScaleClass(agency.nama || agency.fullName)}`}
                               onError={(e) => handleImageError(e, 'agency')}
                             />
                           </div>

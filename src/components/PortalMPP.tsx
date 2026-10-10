@@ -5802,12 +5802,12 @@ export default function PortalMPP() {
               {/* Header Modal Detail Instansi */}
               <div className="flex items-start justify-between pb-4 sm:pb-5 border-b border-slate-100 dark:border-white/10 gap-3 sm:gap-4">
                 <div className="flex items-center gap-3.5 sm:gap-4 flex-1 min-w-0">
-                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white dark:bg-[#143755] border border-slate-200/90 dark:border-white/10 flex items-center justify-center shrink-0 overflow-hidden shadow-sm p-1.5 sm:p-2">
+                  <div className="w-32 h-24 sm:w-36 sm:h-28 rounded-2xl bg-white dark:bg-[#143755] border border-slate-200/90 dark:border-white/10 flex items-center justify-center shrink-0 overflow-hidden shadow-sm px-2.5 py-2">
                     <img 
                       src={getImageUrl(activeAgency.logo, 'agency')} 
                       alt={activeAgency.nama}
                       referrerPolicy="no-referrer"
-                      className={`max-h-full max-w-full object-contain transition-transform duration-200 ${getAgencyLogoScaleClass(activeAgency.nama || activeAgency.fullName)}`}
+                      className={`max-h-full max-w-full w-auto h-auto object-contain transition-transform duration-200 ${getAgencyLogoScaleClass(activeAgency.nama || activeAgency.fullName)}`}
                       onError={(e) => handleImageError(e, 'agency')}
                     />
                   </div>
