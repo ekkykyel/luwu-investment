@@ -357,7 +357,7 @@ export async function getMppSurveys(): Promise<MppSurveySummary> {
   try {
     const { data: skmRows, error } = await supabase
       .from('mpp_skm')
-      .select('*, tenant:mpp_tenants(name, code), citizen:mpp_citizens(full_name, phone_number, occupation)')
+      .select('*, tenant:mpp_tenants!tenant_id(name, code), citizen:mpp_citizens!citizen_nik(full_name, phone_number, occupation)')
       .order('created_at', { ascending: false });
 
     if (!error && Array.isArray(skmRows)) {

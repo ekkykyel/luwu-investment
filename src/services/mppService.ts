@@ -267,7 +267,7 @@ export const mppService = {
     // Cek duplikasi antrean aktif dengan NIK yang sama pada hari yang sama
     const { data: activeQueues } = await supabase
       .from('mpp_queues')
-      .select('id, ticket_code, status, tenant:mpp_tenants(name)')
+      .select('id, ticket_code, status, tenant:mpp_tenants!tenant_id(name)')
       .eq('citizen_nik', params.citizenNik)
       .eq('queue_date', today)
       .in('status', ['menunggu', 'dipanggil', 'dilayani']);
@@ -524,9 +524,9 @@ export const mppService = {
       .from('mpp_queues')
       .select(`
         *,
-        citizen:mpp_citizens(*),
-        tenant:mpp_tenants(*),
-        service:mpp_services(*)
+        citizen:mpp_citizens!citizen_nik(*),
+        tenant:mpp_tenants!tenant_id(*),
+        service:mpp_services!service_id(*)
       `)
       .eq('queue_date', today)
       .order('queue_number', { ascending: true });
@@ -536,8 +536,28 @@ export const mppService = {
     }
 
     const { data, error } = await query;
-    if (error || !data) return [];
-    return data;
+    if (error) {
+      // Fallback ke view v_mpp_queues_complete
+      let vQuery = supabase
+        .from('v_mpp_queues_complete')
+        .select('*')
+        .eq('queue_date', today)
+        .order('queue_number', { ascending: true });
+      if (tenantId) {
+        vQuery = vQuery.eq('tenant_id', tenantId);
+      }
+      const { data: vData } = await vQuery;
+      if (vData) {
+        return vData.map((d: any) => ({
+          ...d,
+          citizen: { nik: d.citizen_nik, full_name: d.citizen_name, phone_number: d.citizen_phone },
+          tenant: { id: d.tenant_id, name: d.tenant_name, code: d.tenant_code },
+          service: { id: d.service_id, service_name: d.service_name }
+        })) as MPPQueue[];
+      }
+      return [];
+    }
+    return data || [];
   },
 
   // 8. Buat Tracking Berkas Izin (Long Process Services)
@@ -579,13 +599,39 @@ export const mppService = {
     history: MPPTrackingHistory[];
     queue?: MPPQueue;
   }> {
-    const { data: tracking, error } = await supabase
+    let { data: tracking, error } = await supabase
       .from('mpp_document_tracking')
-      .select('*, queue:mpp_queues(*, tenant:mpp_tenants(*), service:mpp_services(*), citizen:mpp_citizens(*))')
+      .select('*, queue:mpp_queues!queue_id(*, tenant:mpp_tenants!tenant_id(*), service:mpp_services!service_id(*), citizen:mpp_citizens!citizen_nik(*))')
       .eq('tracking_code', trackingCode.trim())
       .maybeSingle();
 
     if (error || !tracking) {
+      const { data: vTracking } = await supabase
+        .from('v_mpp_document_tracking_complete')
+        .select('*')
+        .eq('tracking_code', trackingCode.trim())
+        .maybeSingle();
+      if (vTracking) {
+        tracking = {
+          id: vTracking.id,
+          queue_id: vTracking.queue_id,
+          tracking_code: vTracking.tracking_code,
+          current_status: vTracking.current_status,
+          created_at: vTracking.created_at,
+          updated_at: vTracking.updated_at,
+          queue: {
+            id: vTracking.queue_id,
+            ticket_code: vTracking.ticket_code,
+            status: vTracking.queue_status,
+            tenant: { id: vTracking.tenant_id, name: vTracking.tenant_name, code: vTracking.tenant_code },
+            service: { id: vTracking.service_id, service_name: vTracking.service_name },
+            citizen: { nik: vTracking.citizen_nik, full_name: vTracking.citizen_name, phone_number: vTracking.citizen_phone }
+          }
+        } as any;
+      }
+    }
+
+    if (!tracking) {
       return { tracking: null, history: [] };
     }
 

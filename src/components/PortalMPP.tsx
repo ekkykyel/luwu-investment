@@ -846,7 +846,7 @@ export default function PortalMPP() {
     try {
       const { data: skmList, error } = await supabase
         .from('mpp_skm')
-        .select('*, tenant:mpp_tenants(name, code), citizen:mpp_citizens(full_name, occupation)')
+        .select('*, tenant:mpp_tenants!tenant_id(name, code), citizen:mpp_citizens!citizen_nik(full_name, occupation)')
         .order('created_at', { ascending: false });
 
       if (!error && Array.isArray(skmList)) {

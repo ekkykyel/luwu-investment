@@ -62,8 +62,11 @@ export default function LoketPelayanan({ isDark = true }: { isDark?: boolean }) 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      // 1. Fetch antrean live dari tabel mpp_queues di Supabase
-      const { data: antreanData, error: antreanErr } = await supabase
+      // 1. Fetch antrean live dari tabel mpp_queues di Supabase (dengan FK Hints & View Fallback)
+      let antreanData: any[] | null = null;
+      let antreanErr: any = null;
+
+      const resQ = await supabase
         .from("mpp_queues")
         .select(`
           id,
@@ -74,12 +77,32 @@ export default function LoketPelayanan({ isDark = true }: { isDark?: boolean }) 
           status,
           session,
           created_at,
-          mpp_tenants ( name, floor ),
-          mpp_services ( service_name ),
-          mpp_citizens ( full_name )
+          mpp_tenants!tenant_id ( name, floor ),
+          mpp_services!service_id ( service_name ),
+          mpp_citizens!citizen_nik ( full_name )
         `)
         .order("created_at", { ascending: false })
         .limit(20);
+
+      if (!resQ.error && resQ.data) {
+        antreanData = resQ.data;
+      } else {
+        const { data: vQueues } = await supabase
+          .from("v_mpp_queues_complete")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(20);
+        if (vQueues) {
+          antreanData = vQueues.map((item: any) => ({
+            ...item,
+            mpp_tenants: { name: item.tenant_name, floor: item.tenant_floor },
+            mpp_services: { service_name: item.service_name },
+            mpp_citizens: { full_name: item.citizen_name }
+          }));
+        } else {
+          antreanErr = resQ.error;
+        }
+      }
 
       if (!antreanErr && antreanData && antreanData.length > 0) {
         setAntreanList(antreanData.map((item: any) => {
@@ -102,8 +125,11 @@ export default function LoketPelayanan({ isDark = true }: { isDark?: boolean }) 
         setAntreanList([]);
       }
 
-      // 2. Fetch tracking dokumen live dari tabel mpp_document_tracking di Supabase
-      const { data: pbgData, error: pbgErr } = await supabase
+      // 2. Fetch tracking dokumen live dari tabel mpp_document_tracking di Supabase (dengan FK Hints & View Fallback)
+      let pbgData: any[] | null = null;
+      let pbgErr: any = null;
+
+      const resPbg = await supabase
         .from("mpp_document_tracking")
         .select(`
           id,
@@ -111,16 +137,44 @@ export default function LoketPelayanan({ isDark = true }: { isDark?: boolean }) 
           current_status,
           created_at,
           updated_at,
-          mpp_queues (
+          mpp_queues!queue_id (
             ticket_code,
             citizen_nik,
-            mpp_tenants ( name ),
-            mpp_services ( service_name ),
-            mpp_citizens ( full_name )
+            mpp_tenants!tenant_id ( name ),
+            mpp_services!service_id ( service_name ),
+            mpp_citizens!citizen_nik ( full_name )
           )
         `)
         .order("created_at", { ascending: false })
         .limit(20);
+
+      if (!resPbg.error && resPbg.data) {
+        pbgData = resPbg.data;
+      } else {
+        const { data: vTracking } = await supabase
+          .from("v_mpp_document_tracking_complete")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(20);
+        if (vTracking) {
+          pbgData = vTracking.map((item: any) => ({
+            id: item.id,
+            tracking_code: item.tracking_code,
+            current_status: item.current_status,
+            created_at: item.created_at,
+            updated_at: item.updated_at,
+            mpp_queues: {
+              ticket_code: item.ticket_code,
+              citizen_nik: item.citizen_nik,
+              mpp_tenants: { name: item.tenant_name },
+              mpp_services: { service_name: item.service_name },
+              mpp_citizens: { full_name: item.citizen_name }
+            }
+          }));
+        } else {
+          pbgErr = resPbg.error;
+        }
+      }
 
       if (!pbgErr && pbgData && pbgData.length > 0) {
         setTrackingList(pbgData.map((p: any) => {

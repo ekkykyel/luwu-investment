@@ -97,12 +97,27 @@ export const SmartLiveQueueSection: React.FC<SmartLiveQueueSectionProps> = ({
 
     try {
       // Query from Supabase mpp_queues
-      const { data: foundQueues, error } = await supabase
+      let foundQueues: any[] | null = null;
+      const res = await supabase
         .from('mpp_queues')
-        .select('*, mpp_tenants(*)')
+        .select('*, mpp_tenants!tenant_id(*)')
         .or(`ticket_code.ilike.%${rawQuery}%,phone_number.ilike.%${rawQuery}%`)
         .order('created_at', { ascending: false })
         .limit(1);
+
+      if (!res.error && res.data) {
+        foundQueues = res.data;
+      } else {
+        const { data: vData } = await supabase
+          .from('v_mpp_queues_complete')
+          .select('*')
+          .ilike('ticket_code', `%${rawQuery}%`)
+          .order('created_at', { ascending: false })
+          .limit(1);
+        if (vData) {
+          foundQueues = vData.map(v => ({ ...v, mpp_tenants: { name: v.tenant_name } }));
+        }
+      }
 
       if (!error && foundQueues && foundQueues.length > 0) {
         const found = foundQueues[0];

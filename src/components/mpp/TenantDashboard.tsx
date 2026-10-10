@@ -139,18 +139,37 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
       const today = new Date().toISOString().split('T')[0];
       
       // 1. Fetch Queues for Today
-      const { data: qData, error: qErr } = await supabase
+      let qData: any = null;
+      const resQ = await supabase
         .from('mpp_queues')
         .select(`
           *,
-          citizen:mpp_citizens(*),
-          service:mpp_services(*)
+          citizen:mpp_citizens!citizen_nik(*),
+          service:mpp_services!service_id(*)
         `)
         .eq('tenant_id', tenantId)
         .eq('queue_date', today)
         .order('queue_number', { ascending: true });
         
-      if (qErr) throw qErr;
+      if (!resQ.error && resQ.data) {
+        qData = resQ.data;
+      } else {
+        const { data: vQueues } = await supabase
+          .from('v_mpp_queues_complete')
+          .select('*')
+          .eq('tenant_id', tenantId)
+          .eq('queue_date', today)
+          .order('queue_number', { ascending: true });
+        if (vQueues) {
+          qData = vQueues.map((item: any) => ({
+            ...item,
+            citizen: { nik: item.citizen_nik, full_name: item.citizen_name, phone_number: item.citizen_phone },
+            service: { id: item.service_id, service_name: item.service_name }
+          }));
+        } else if (resQ.error) {
+          throw resQ.error;
+        }
+      }
       if (qData) setQueues(qData as unknown as MPPQueue[]);
 
       // 2. Fetch Services for this Tenant
@@ -164,19 +183,46 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
       if (sData) setServices(sData);
 
       // 3. Fetch Document Tracking Items
-      const { data: tData, error: tErr } = await supabase
+      let tData: any = null;
+      const resTrk = await supabase
         .from('mpp_document_tracking')
         .select(`
           *,
-          queue:mpp_queues(
+          queue:mpp_queues!queue_id(
             ticket_code,
             citizen_nik,
             session,
-            citizen:mpp_citizens(full_name, phone_number),
-            service:mpp_services(service_name)
+            citizen:mpp_citizens!citizen_nik(full_name, phone_number),
+            service:mpp_services!service_id(service_name)
           )
         `)
         .order('created_at', { ascending: false });
+
+      if (!resTrk.error && resTrk.data) {
+        tData = resTrk.data;
+      } else {
+        const { data: vTrk } = await supabase
+          .from('v_mpp_document_tracking_complete')
+          .select('*')
+          .eq('tenant_id', tenantId)
+          .order('created_at', { ascending: false });
+        if (vTrk) {
+          tData = vTrk.map((item: any) => ({
+            id: item.id,
+            tracking_code: item.tracking_code,
+            current_status: item.current_status,
+            created_at: item.created_at,
+            updated_at: item.updated_at,
+            queue: {
+              ticket_code: item.ticket_code,
+              citizen_nik: item.citizen_nik,
+              session: item.queue_session,
+              citizen: { full_name: item.citizen_name, phone_number: item.citizen_phone },
+              service: { service_name: item.service_name }
+            }
+          }));
+        }
+      }
 
       if (tErr) console.warn('Could not fetch tracking items:', tErr);
       if (tData) {

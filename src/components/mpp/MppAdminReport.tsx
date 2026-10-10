@@ -48,8 +48,22 @@ export function MppAdminReport({ isDarkMode = false }: { isDarkMode?: boolean })
   const fetchReportData = async () => {
     setIsLoading(true);
     try {
-      // Fetch Queues
-      const { data: queues } = await supabase.from('mpp_queues').select('*, tenant:mpp_tenants(name)');
+      // Fetch Queues (Explicit FK Hint with robust view fallback)
+      let queues: any[] = [];
+      const { data: queuesData, error: qErr } = await supabase
+        .from('mpp_queues')
+        .select('*, tenant:mpp_tenants!tenant_id(name)');
+      
+      if (!qErr && queuesData) {
+        queues = queuesData;
+      } else {
+        const { data: vQueues } = await supabase
+          .from('v_mpp_queues_complete')
+          .select('id, tenant_name');
+        if (vQueues) {
+          queues = vQueues.map(vq => ({ ...vq, tenant: { name: vq.tenant_name } }));
+        }
+      }
       
       // Fetch SKM
       const { data: skm } = await supabase.from('mpp_skm').select('*');

@@ -761,7 +761,7 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
     try {
       const { data, error } = await supabase
         .from('mpp_queues')
-        .select('*, tenant:mpp_tenants(name, code, floor), service:mpp_services(service_name, name, estimated_time_minutes)')
+        .select('*, tenant:mpp_tenants!tenant_id(name, code, floor), service:mpp_services!service_id(service_name, name, estimated_time_minutes)')
         .eq('citizen_nik', citizenNik)
         .in('status', ['menunggu', 'dipanggil', 'dilayani'])
         .order('created_at', { ascending: false });

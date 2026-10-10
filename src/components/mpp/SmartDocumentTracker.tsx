@@ -96,15 +96,43 @@ export function SmartDocumentTracker({ isDark = false }: { isDark?: boolean }) {
         .from('mpp_document_tracking')
         .select(`
           *,
-          queue:mpp_queues(
+          queue:mpp_queues!queue_id(
             *,
-            citizen:mpp_citizens(*),
-            service:mpp_services(*),
-            tenant:mpp_tenants(*)
+            citizen:mpp_citizens!citizen_nik(*),
+            service:mpp_services!service_id(*),
+            tenant:mpp_tenants!tenant_id(*)
           )
         `)
         .eq('tracking_code', query)
         .maybeSingle();
+
+      if (error || !data) {
+        // Fallback to view
+        const { data: vData } = await supabase
+          .from('v_mpp_document_tracking_complete')
+          .select('*')
+          .eq('tracking_code', query)
+          .maybeSingle();
+        if (vData) {
+          data = {
+            id: vData.id,
+            tracking_code: vData.tracking_code,
+            current_status: vData.current_status,
+            created_at: vData.created_at,
+            updated_at: vData.updated_at,
+            queue: {
+              id: vData.queue_id,
+              ticket_code: vData.ticket_code,
+              status: vData.queue_status,
+              session: vData.queue_session,
+              citizen: { full_name: vData.citizen_name, phone_number: vData.citizen_phone },
+              service: { service_name: vData.service_name },
+              tenant: { name: vData.tenant_name, code: vData.tenant_code }
+            }
+          };
+          error = null;
+        }
+      }
         
       if (!data) {
         // Coba cari berdasarkan ticket_code pada mpp_queues
@@ -115,10 +143,10 @@ export function SmartDocumentTracker({ isDark = false }: { isDark?: boolean }) {
             ticket_code,
             status,
             created_at,
-            citizen:mpp_citizens(*),
-            service:mpp_services(*),
-            tenant:mpp_tenants(*),
-            tracking:mpp_document_tracking(*)
+            citizen:mpp_citizens!citizen_nik(*),
+            service:mpp_services!service_id(*),
+            tenant:mpp_tenants!tenant_id(*),
+            tracking:mpp_document_tracking!queue_id(*)
           `)
           .ilike('ticket_code', query)
           .maybeSingle();

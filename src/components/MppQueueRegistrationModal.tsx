@@ -497,7 +497,7 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode,
             session: 'pagi',
             call_count: 0
           })
-          .select('*, tenant:mpp_tenants(*), service:mpp_services(*)')
+          .select('*, tenant:mpp_tenants!tenant_id(*), service:mpp_services!service_id(*)')
           .single();
 
         if (directErr) throw directErr;
