@@ -1,7 +1,7 @@
 import { CompactWeatherWidget } from "./CompactWeatherWidget";
 import { WeatherWidget } from "./WeatherWidget";
 import { Footer } from "./Footer";
-import { LanguageSwitcher } from "./LanguageSwitcher";
+import LanguageToggle from "./LanguageToggle";
 import { LUWU_LOGO_BASE64 } from "@/lib/logoBase64.js";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useRef, useEffect, useMemo } from "react";
@@ -2238,7 +2238,7 @@ export default function LandingPage({
                 {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
               </motion.button>
 
-              <LanguageSwitcher isDarkHeader={isDark} isCircular={true} />
+              <LanguageToggle isDarkHeader={isDark} isCircular={true} />
               
               <motion.button whileTap={{ scale: 0.95 }}
                 type="button"

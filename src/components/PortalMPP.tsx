@@ -2572,7 +2572,7 @@ export default function PortalMPP() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-sans mt-1"
               >
-                {t("mppPortal.motto.title")}{" "}
+                {t("mppPortal.motto.title", "Motto Pelayanan Publik")}{" "}
                 <span className="text-emerald-700 dark:text-emerald-400">
                   {t("mppPortal.motto.magatti")}
                 </span>
@@ -3180,7 +3180,7 @@ export default function PortalMPP() {
                 <span>Navigasi Spasial Gedung</span>
               </span>
               <h2 className={MPP_TYPOGRAPHY.sectionTitle}>
-                Temukan Loket{" "}
+                {t("sections.skm_title", "Survei Kepuasan Masyarakat (SKM)")}
                 <span className="text-emerald-700 dark:text-emerald-400">
                   Anda
                 </span>
@@ -3500,7 +3500,7 @@ export default function PortalMPP() {
                 {t("mppPortal.statistik.badge")}
               </span>
               <h2 className={MPP_TYPOGRAPHY.sectionTitle}>
-                {t("mppPortal.statistik.title")}
+                {t("mppPortal.statistik.title", "Statistik Pelayanan Publik Terpadu")}
               </h2>
               <p className={`${MPP_TYPOGRAPHY.sectionSubtitle} max-w-2xl mx-auto mt-1.5 mb-3 text-center`}>
                 {t("mppPortal.statistik.subtitle")}
@@ -3740,7 +3740,7 @@ export default function PortalMPP() {
                 {t("sections.complaint_badge")}
               </span>
               <h2 className={`${MPP_TYPOGRAPHY.sectionTitle} text-center`}>
-                {t("sections.complaint_title")}
+                {t("sections.complaint_title", "Kanal Pengaduan Layanan Publik")}
               </h2>
               <p className={`${MPP_TYPOGRAPHY.sectionSubtitle} max-w-2xl mx-auto text-center`}>
                 {t("sections.complaint_subtitle")}
