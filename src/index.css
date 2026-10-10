@@ -1,0 +1,1462 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=JetBrains+Mono:ital,wght@0,400..700;1,400..700&display=swap');
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  height: 100dvh;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+#root {
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Base & WCAG Text Contrast System & Design Tokens */
+:root {
+  --color-text-primary: #0f172a;    /* slate-900 (14.2:1 contrast ratio against white) */
+  --color-text-secondary: #334155;  /* slate-700 (7.8:1 contrast ratio against white) */
+  --color-text-muted: #475569;      /* slate-600 (4.9:1 contrast ratio against white) */
+  --color-text-dim: #64748b;        /* slate-500 */
+  --color-text-brand: #047857;      /* emerald-700 (5.5:1 contrast ratio against light bg) */
+
+  /* === SEMANTIC COLOR TOKENS (LIGHT MODE) === */
+  --semantic-primary-text: #065f46;   /* emerald-800 (7.9:1) */
+  --semantic-primary-bg: #ecfdf5;     /* emerald-50 */
+  --semantic-primary-border: #6ee7b7; /* emerald-300 */
+  --semantic-success-text: #0f766e;   /* teal-700 (5.4:1) */
+  --semantic-success-bg: #f0fdfa;     /* teal-50 */
+  --semantic-success-border: #99f6e4; /* teal-200 */
+  --semantic-info-text: #1d4ed8;      /* blue-700 (6.7:1) */
+  --semantic-info-bg: #eff6ff;        /* blue-50 */
+  --semantic-info-border: #bfdbfe;    /* blue-200 */
+  --semantic-warning-text: #92400e;   /* amber-800 (6.5:1) */
+  --semantic-warning-bg: #fffbeb;     /* amber-50 */
+  --semantic-warning-border: #fcd34d; /* amber-300 */
+  --semantic-danger-text: #be123c;    /* rose-700 (6.3:1) */
+  --semantic-danger-bg: #fff1f2;      /* rose-50 */
+  --semantic-danger-border: #fda4af;  /* rose-300 */
+
+  /* === ELEGAN NUSANTARA HERO DESIGN TOKENS (LIGHT THEME) === */
+  --hero-bg-base: #FAF7F0;
+  --hero-surface-start: #FFFFFF;
+  --hero-surface-end: #F3EEDF;
+  --hero-gold-line: rgba(133, 90, 20, 0.30);
+  --hero-text-primary: #10261E;
+  --hero-text-secondary: #334155;
+  --hero-accent-gold: #855A14;
+  --hero-accent-gold-hover: #6D480E;
+  --hero-accent-emerald: #0F6B4F;
+  --hero-accent-emerald-hover: #0B533D;
+  --hero-scrim-top: rgba(250, 247, 240, 0.88);
+  --hero-scrim-mid: rgba(250, 247, 240, 0.55);
+  --hero-scrim-bottom: rgba(250, 247, 240, 0.22);
+  --hero-card-border: rgba(160, 122, 40, 0.28);
+  --hero-chip-bg: rgba(255, 255, 255, 0.85);
+  --hero-chip-border: rgba(160, 122, 40, 0.25);
+
+  /* === SPACING SCALE === */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 40px;
+  --space-7: 64px;
+  --space-8: 80px;
+
+  /* === BORDER RADIUS === */
+  --radius-sm: 8px;   /* komponen dalam card: input, badge, tag */
+  --radius-md: 12px;  /* card, panel, modal */
+
+  /* === FONT SIZE SCALE === */
+  --text-xs: 12px;    /* caption, label uppercase */
+  --text-sm: 14px;    /* meta info, badge text */
+  --text-base: 16px;  /* body utama */
+  --text-md: 18px;    /* subheading */
+  --text-lg: 20px;    /* heading section */
+  --text-xl: 24px;    /* display */
+  --text-2xl: 30px;   /* hero */
+
+  /* === FONT WEIGHT === */
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+
+  /* === LINE HEIGHT === */
+  --leading-tight: 1.2;   /* heading */
+  --leading-base: 1.6;    /* body */
+  --leading-loose: 1.75;  /* deskripsi panjang */
+
+  /* === LETTER SPACING === */
+  --tracking-label: 0.08em;  /* uppercase label */
+  --tracking-wide: 0.05em;   /* badge */
+  --tracking-tight: -0.02em; /* display heading */
+
+  /* === TOUCH TARGET (Android Material You) === */
+  --touch-min: 48px;   /* minimum height semua button interaktif */
+  --touch-icon: 44px;  /* minimum icon button */
+
+  /* === SECTION RHYTHM === */
+  --section-gap-desktop: 80px;
+  --section-gap-mobile: 48px;
+  --subsection-gap: 40px;
+}
+
+@layer base {
+  :root {
+    /* Base (Light Mode): Slate-50 (#F8FAFC) */
+    --bg-base: 248 250 252;
+    /* Surface (Light Mode): Pure White (#FFFFFF) */
+    --bg-surface: 255 255 255;
+    /* Elevated (Light Mode): Slate-100 (#F1F5F9) */
+    --bg-elevated: 241 245 249;
+    --bg-overlay: #FFFFFF;
+    --border-subtle: rgba(226, 232, 240, 0.9);
+  }
+}
+
+.dark {
+  /* === INSTITUTIONAL DARK ELEVATION SYSTEM (WARM NAVY ~210°) === */
+  --bg-base: 10 34 56;                 /* Layer 0: Base Viewport background (#0A2238) */
+  --bg-surface: 15 41 66;              /* Layer 1: Card / Section surface (#0F2942) */
+  --bg-elevated: 20 48 76;             /* Layer 2: Nested / Elevated card surface (#14304C) */
+  --bg-overlay: #1A4366;              /* Layer 3: Interactive hover / overlay / modal elevation */
+  --border-subtle: rgba(255, 255, 255, 0.09); /* 1px low-opacity divider */
+
+  --text-primary: #E2E8F0;            /* slate-200 (12.99:1 contrast ratio against #0A2238) */
+  --text-secondary: #CBD5E1;          /* slate-300 (8.9:1 contrast ratio against #0A2238) */
+  --text-tertiary: #94A3B8;           /* slate-400 (6.37:1 contrast ratio against #0A2238) */
+  --text-accent: #34D399;             /* emerald-400 (8.92:1 contrast ratio against #0A2238) */
+
+  /* Legacy Aliases for backward-compatibility */
+  --surface-layer-0: var(--bg-base);
+  --surface-layer-1: var(--bg-surface);
+  --surface-layer-2: var(--bg-elevated);
+  --surface-layer-hover: var(--bg-overlay);
+  --surface-border-subtle: var(--border-subtle);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-tertiary);
+  --color-text-dim: var(--text-tertiary);
+  --color-text-brand: var(--text-accent);
+
+  /* === SEMANTIC COLOR TOKENS (DARK MODE) === */
+  --semantic-primary-text: #34d399;   /* emerald-400 (9.8:1) */
+  --semantic-primary-bg: #022c22;     /* emerald-950 */
+  --semantic-primary-border: #065f46; /* emerald-800 */
+  --semantic-success-text: #5eead4;   /* teal-300 (12.4:1) */
+  --semantic-success-bg: #042f2e;     /* teal-950 */
+  --semantic-success-border: #115e59; /* teal-800 */
+  --semantic-info-text: #38bdf8;      /* sky-400 (9.4:1) */
+  --semantic-info-bg: #082f49;        /* sky-950 */
+  --semantic-info-border: #0369a1;    /* sky-700 */
+  --semantic-warning-text: #fcd34d;   /* amber-300 (13.1:1) */
+  --semantic-warning-bg: #451a03;     /* amber-950 */
+  --semantic-warning-border: #92400e; /* amber-800 */
+  --semantic-danger-text: #fda4af;    /* rose-300 (10.2:1) */
+  --semantic-danger-bg: #4c0519;      /* rose-950 */
+  --semantic-danger-border: #9f1239;  /* rose-800 */
+
+  /* === ELEGAN NUSANTARA HERO DESIGN TOKENS (DARK THEME) === */
+  --hero-bg-base: #06130F;
+  --hero-surface-start: #0B2A20;
+  --hero-surface-end: #08201A;
+  --hero-gold-line: rgba(201, 162, 75, 0.35);
+  --hero-text-primary: #F6F1E4;
+  --hero-text-secondary: #B9C4BC;
+  --hero-accent-gold: #C9A24B;
+  --hero-accent-gold-hover: #E0BE6A;
+  --hero-accent-emerald: #1F9D74;
+  --hero-accent-emerald-hover: #26BF8D;
+  --hero-scrim-top: rgba(6, 19, 15, 0.88);
+  --hero-scrim-mid: rgba(6, 19, 15, 0.55);
+  --hero-scrim-bottom: rgba(6, 19, 15, 0.22);
+  --hero-card-border: rgba(201, 162, 75, 0.35);
+  --hero-chip-bg: rgba(11, 42, 32, 0.70);
+  --hero-chip-border: rgba(201, 162, 75, 0.30);
+}
+
+/* === ELEGAN NUSANTARA HERO UTILITIES === */
+.font-serif-display {
+  font-family: 'Fraunces', 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.hero-fluid-heading {
+  font-family: 'Fraunces', 'Playfair Display', Georgia, serif;
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.14;
+}
+
+.gold-divider-diamond {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  margin: 8px 0 16px 0;
+}
+.gold-divider-diamond::before,
+.gold-divider-diamond::after {
+  content: '';
+  flex: 1;
+  max-width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--hero-gold-line), transparent);
+}
+.gold-diamond-icon {
+  width: 6px;
+  height: 6px;
+  transform: rotate(45deg);
+  background-color: var(--hero-accent-gold);
+}
+
+.invest-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #855A14;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  background-color: rgba(133, 90, 20, 0.08);
+  border: 1px solid rgba(133, 90, 20, 0.22);
+}
+
+.dark .invest-eyebrow {
+  color: #E2C475;
+  background-color: rgba(201, 162, 75, 0.12);
+  border-color: rgba(201, 162, 75, 0.30);
+}
+
+.invest-heading {
+  font-family: 'Fraunces', 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  color: var(--hero-text-primary);
+  line-height: 1.18;
+}
+
+.invest-subheading {
+  color: var(--hero-text-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.hero-canvas-card {
+  background: linear-gradient(155deg, var(--hero-surface-start) 0%, var(--hero-surface-end) 100%);
+  border: 1px solid var(--hero-card-border);
+  box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.10), 0 0 0 1px var(--hero-gold-line);
+  transition: background 300ms ease, border-color 300ms ease, box-shadow 300ms ease;
+}
+
+.dark .hero-canvas-card {
+  box-shadow: 0 25px 60px -18px rgba(0, 0, 0, 0.55), 0 0 0 1px var(--hero-gold-line);
+}
+
+.hero-gold-gradient-text {
+  background: linear-gradient(135deg, var(--hero-accent-gold) 0%, #D8B257 50%, var(--hero-accent-gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Button base — utility classes */
+.btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--touch-min);
+  padding: 0 20px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-primary   { background: #059669; color: #fff; border: none; }
+.btn-primary:hover  { background: #047857; transform: translateY(-1px); }
+.btn-secondary { background: transparent; color: inherit; border: 1px solid; }
+.btn-ghost     { background: transparent; border: none; color: inherit; }
+
+/* Section container standar */
+.section-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+@media (min-width: 768px) {
+  .section-container { padding: 0 24px; }
+}
+@media (min-width: 1024px) {
+  .section-container { padding: 0 32px; }
+}
+
+/* Heading standar */
+.heading-display {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+.heading-section {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+.heading-sub {
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+}
+
+/* Label uppercase standar */
+.label-caps {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+/* Badge standar — SATU template untuk semua badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.25rem 0.625rem; /* 4px 10px (Standard 1:2.5 vertical to horizontal ratio) */
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: var(--tracking-wide);
+  border: 0.5px solid;
+}
+
+/* Theme Settings */
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-jakarta: "Plus Jakarta Sans", sans-serif;
+  --font-display: "Plus Jakarta Sans", sans-serif;
+  --font-sora: "Plus Jakarta Sans", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-dim: var(--color-text-dim);
+  --color-text-brand: var(--color-text-brand);
+
+  --color-base: rgb(var(--bg-base));
+  --color-surface: rgb(var(--bg-surface));
+  --color-elevated: rgb(var(--bg-elevated));
+  --color-overlay: var(--bg-overlay);
+  --color-border-subtle: var(--border-subtle);
+  
+  --color-brand-50: #f0fdf4;
+  --color-brand-100: #dcfce7;
+  --color-brand-500: #10b981; /* Shift to emerald */
+  --color-brand-600: #059669;
+  --color-brand-700: #047857;
+  
+  --color-accent-blue: #3b82f6;
+  --color-accent-amber: #f59e0b;
+  --color-accent-rose: #f43f5e;
+  
+  --animate-fade-in-up: fade-in-up 0.8s ease-out forwards;
+  --animate-fade-in-basic: fade-in-basic 1s ease-out forwards;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-border: pulse-border 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes fade-in-up {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-basic {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-border {
+  0% { transform: scale(1); opacity: 0.8; }
+  70% { transform: scale(1.6); opacity: 0; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-border {
+  animation: pulse-border 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Swiper Custom Pagination Dots (MPP Badung Style) */
+.swiper-pagination {
+  position: relative !important;
+  margin-top: 1.5rem !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.swiper-pagination-bullet {
+  width: 9px !important;
+  height: 9px !important;
+  background: #0d9488 !important;
+  opacity: 0.3 !important;
+  border-radius: 9999px !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  cursor: pointer !important;
+}
+
+.swiper-pagination-bullet-active {
+  width: 28px !important;
+  opacity: 1 !important;
+  background: linear-gradient(135deg, #14b8a6, #2563eb) !important;
+  box-shadow: 0 0 10px rgba(20, 184, 166, 0.4) !important;
+}
+
+/* Base resets & custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.4);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.dark-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Custom scrollbar optimized for AI chat bubble scroll */
+.ai-custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.ai-custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9; /* slate-100 */
+  border-radius: 4px;
+}
+
+.ai-custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* slate-300 */
+  border-radius: 4px;
+}
+
+.dark .ai-custom-scrollbar::-webkit-scrollbar-track {
+  background: #1e293b; /* slate-800 */
+}
+
+.dark .ai-custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #475569; /* slate-600 */
+}
+
+/* Custom glowing effects */
+.glow-accent {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.1);
+  animation: pulse-glow 3s infinite alternate;
+}
+
+.glow-blue {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.maplibregl-ctrl-bottom-left {
+  display: flex !important;
+  flex-direction: column !important;
+  margin-left: 16px !important;
+  margin-bottom: 20px !important;
+  z-index: 30 !important;
+  pointer-events: auto !important;
+}
+
+/* Sharp & Crisp Canvas rendering for Spatial WebGL / MapLibre to avoid canvas blur */
+canvas.maplibregl-canvas,
+.maplibregl-map canvas {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  filter: none !important;
+  transform: none !important;
+}
+
+.maplibregl-ctrl-scale {
+  display: inline-block !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(4px);
+  border: 2px solid #0f172a !important;
+  border-top: none !important;
+  color: #0f172a !important;
+  font-family: 'Plus Jakarta Sans', monospace, sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 1px 6px !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+  border-radius: 0 0 3px 3px !important;
+  line-height: 1.3 !important;
+  user-select: none !important;
+}
+
+.dark .maplibregl-ctrl-scale {
+  background-color: rgba(15, 23, 42, 0.9) !important;
+  border: 2px solid #38bdf8 !important;
+  border-top: none !important;
+  color: #f8fafc !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Ensure MapLibre controls do not overlap with mobile bottom bar or FAB */
+@media (max-width: 768px) {
+  .maplibregl-ctrl-bottom-right,
+  .maplibregl-ctrl-bottom-left {
+    margin-bottom: 160px !important;
+  }
+  .maplibregl-ctrl-group {
+    margin-bottom: 150px !important;
+    transform: scale(0.9);
+    transform-origin: bottom right;
+  }
+}
+
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
+  100% { box-shadow: 0 0 25px rgba(16, 185, 129, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.05); }
+}
+
+/* Float animations */
+@keyframes atmospheric-drift {
+  0% { transform: translateY(0) scale(1); opacity: 0.5; }
+  50% { transform: translateY(-10px) scale(1.05); opacity: 0.7; }
+  100% { transform: translateY(0) scale(1); opacity: 0.5; }
+}
+
+.atmospheric-blur {
+  animation: atmospheric-drift 15s infinite ease-in-out;
+}
+
+/* Circular Chart SVG styles */
+.circular-chart {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  max-height: 250px;
+}
+.circle-bg {
+  fill: none;
+}
+.circle {
+  fill: none;
+  animation: progress 1s ease-out forwards;
+}
+
+/* Animation presets */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-100%); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(100%); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Navigation layout overlay styles */
+.glass-overlay {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.glass-overlay-dark {
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Premium Classes */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+}
+.dark .glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================================================= */
+/* EXECUTIVE GLASSMORPHISM ARCHITECTURE (SPATIAL UI / OPTICAL FROSTED GLASS) */
+/* ========================================================================= */
+.glass-crystal {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 10px 35px -5px rgba(15, 23, 42, 0.06), 0 2px 10px -2px rgba(15, 23, 42, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 0.7);
+}
+.dark .glass-crystal {
+  background: rgba(15, 23, 42, 0.68);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 45px -8px rgba(0, 0, 0, 0.55), 0 2px 10px -2px rgba(0, 0, 0, 0.3), inset 0 1px 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.glass-card-interactive {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+.glass-card-interactive::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  pointer-events: none;
+  opacity: 0.85;
+}
+.dark .glass-card-interactive::before {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  opacity: 0.7;
+}
+.glass-card-interactive:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 50px -10px rgba(16, 185, 129, 0.16), 0 8px 20px -4px rgba(15, 23, 42, 0.08), inset 0 1px 2px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(16, 185, 129, 0.45);
+}
+.dark .glass-card-interactive:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 55px -10px rgba(16, 185, 129, 0.25), 0 8px 24px -4px rgba(0, 0, 0, 0.6), inset 0 1px 2px 0 rgba(255, 255, 255, 0.25);
+  border-color: rgba(52, 211, 153, 0.45);
+}
+
+.glass-nav-pill {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+.dark .glass-nav-pill {
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.18);
+}
+
+.glass-badge {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.dark .glass-badge {
+  background: rgba(30, 41, 59, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-ambient-radial {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(75px);
+  pointer-events: none;
+  z-index: 0;
+}
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.text-gradient-emerald {
+  background-image: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+.dark .text-gradient-emerald {
+  background-image: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+}
+.text-gradient-gold {
+  background-image: linear-gradient(135deg, #fbb034 0%, #ffdd00 100%);
+}
+.hero-glow-bg {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120vw;
+  height: 120vh;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(15, 23, 42, 0) 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+.dark .hero-glow-bg {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, rgba(15, 23, 42, 0) 60%);
+}
+
+/* =========================================================================
+   SAFE AREA & ANDROID VIEWPORT ZERO-GAP SYSTEM (WEBVIEW & NOTCH OPTIMIZED)
+   ========================================================================= */
+:root {
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+}
+
+.app-container-fullscreen {
+  height: 100dvh;
+  min-height: 100dvh;
+  width: 100%;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  overflow: hidden;
+}
+
+/* Explicit Safe Area Utility Classes */
+.safe-area-pt,
+.safe-top-padding {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.safe-area-pb,
+.safe-bottom-padding,
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.pb-safe-bottom {
+  padding-bottom: max(12px, calc(env(safe-area-inset-bottom, 0px) + 8px));
+}
+
+.safe-area-pl {
+  padding-left: env(safe-area-inset-left, 0px);
+}
+
+.safe-area-pr {
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+.safe-area-p {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+.safe-area-mb {
+  margin-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* =========================================================================
+   INVESTMENT DETAIL MODAL IMAGES & PHOTO SLIDER (16:9 RATIO & COVER)
+   ========================================================================= */
+.investment-detail-photo,
+.investment-modal-image,
+.investment-slider-image {
+  width: 100% !important;
+  aspect-ratio: 16 / 9 !important;
+  object-fit: cover !important;
+  object-position: center !important;
+}
+
+/* --- MAPLIBRE POPUP ENTERPRISE EMERALD UI OVERRIDES --- */
+
+/* Main popup container */
+.maplibregl-popup-content,
+.mapboxgl-popup-content {
+  background: rgba(15, 23, 42, 0.95) !important; /* Slate-900 with high opacity */
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(16, 185, 129, 0.4) !important; /* Enterprise Emerald border */
+  border-radius: 16px !important;
+  color: #f8fafc !important; /* Slate-50 text */
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.4), 0 0 20px rgba(16, 185, 129, 0.15) !important;
+  padding: 14px 18px !important;
+  font-family: var(--font-sans) !important;
+}
+
+/* Map popup pointer tips for all directional anchors */
+.maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  border-top-color: #0f172a !important;
+}
+
+.maplibregl-popup-anchor-top .maplibregl-popup-tip,
+.mapboxgl-popup-anchor-top .mapboxgl-popup-tip {
+  border-bottom-color: #0f172a !important;
+}
+
+.maplibregl-popup-anchor-left .maplibregl-popup-tip,
+.mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+  border-right-color: #0f172a !important;
+}
+
+.maplibregl-popup-anchor-right .maplibregl-popup-tip,
+.mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
+  border-left-color: #0f172a !important;
+}
+
+/* Close button (X) customization */
+.maplibregl-popup-close-button,
+.mapboxgl-popup-close-button {
+  color: #94a3b8 !important; /* Slate-400 */
+  font-size: 18px !important;
+  padding: 4px 10px !important;
+  transition: all 0.2s ease !important;
+  border-radius: 0 16px 0 10px !important;
+  line-height: 1 !important;
+}
+
+.maplibregl-popup-close-button:hover,
+.mapboxgl-popup-close-button:hover {
+  color: #34d399 !important; /* Emerald-400 on hover */
+  background-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+/* ui polish: dark glassmorphism map popups */
+
+@keyframes menuStaggerIn {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-stagger-in {
+  animation: menuStaggerIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.mask-fade-edges {
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+@keyframes ticker-marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-ticker-marquee {
+  display: flex;
+  width: max-content;
+  animation: ticker-marquee 120s linear infinite;
+}
+
+.animate-ticker-marquee:hover {
+  animation-play-state: paused;
+}
+
+
+/* Force typography inheritance for charts and complex components */
+.recharts-wrapper, 
+.recharts-tooltip-wrapper,
+.recharts-default-tooltip,
+table,
+.maplibregl-popup-content {
+  font-family: var(--font-sans) !important;
+}
+
+@media print {
+  * {
+    font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif !important;
+  }
+}
+
+/* Android WebView — paksa GPU compositing pada animated elements */
+.android-webview .glass-panel,
+.android-webview [class*="motion"] {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Android WebView — fix Recharts container sizing */
+.android-webview .recharts-wrapper {
+  position: relative !important;
+}
+
+/* Android WebView — disable heavy blur effects yang bisa crash */
+.android-webview [class*="backdrop-blur"] {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background-color: rgba(15, 23, 42, 0.95);
+}
+
+@layer utilities {
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* === GIS INVESTMENT RIPPLE PULSE ANIMATIONS === */
+@keyframes ripplePulseExpand {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.95;
+  }
+  40% {
+    opacity: 0.65;
+  }
+  80% {
+    opacity: 0.25;
+  }
+  100% {
+    transform: scale(3.6);
+    opacity: 0;
+  }
+}
+
+.animate-ripple-pulse-expand,
+.ripple-pulse-expand {
+  animation: ripplePulseExpand 2.2s cubic-bezier(0.1, 0.4, 0.2, 1) infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes rippleSonarWave {
+  0% {
+    transform: scale(0.4) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4.5) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes beaconGlowPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.8));
+  }
+  50% {
+    transform: scale(1.12);
+    filter: drop-shadow(0 0 24px rgba(16, 185, 129, 1)) drop-shadow(0 0 35px rgba(52, 211, 153, 0.6));
+  }
+}
+
+.animate-ripple-pulse-1 {
+  animation: ripplePulseExpand 2.2s cubic-bezier(0.1, 0.4, 0.2, 1) infinite;
+  will-change: transform, opacity;
+}
+.animate-ripple-pulse-2 {
+  animation: ripplePulseExpand 2.2s cubic-bezier(0.1, 0.4, 0.2, 1) infinite 0.7s;
+  will-change: transform, opacity;
+}
+.animate-ripple-pulse-3 {
+  animation: ripplePulseExpand 2.2s cubic-bezier(0.1, 0.4, 0.2, 1) infinite 1.4s;
+  will-change: transform, opacity;
+}
+.animate-beacon-glow {
+  animation: beaconGlowPulse 2s ease-in-out infinite;
+}
+
+/* === ACCESSIBILITY TYPOGRAPHY GUARD (MOBILE/WEBVIEW) === */
+/* Force absolute minimum 12px (text-xs) for microscopic custom font-sizes to ensure readability */
+.text-\[8px\],
+.text-\[9px\],
+.text-\[10px\],
+.text-\[11px\],
+.text-\[0\.625rem\],
+.text-\[0\.7rem\] {
+  font-size: 12px !important;
+  font-size: 0.75rem !important; /* Exactly equivalent to text-xs */
+}
+
+/* Establish standard, elegant tracking and leading for readability */
+p, .text-base {
+  line-height: 1.625 !important;
+  letter-spacing: -0.011em !important;
+}
+
+/* ==========================================================================
+   AKSESIBILITAS INKLUSIF & DISABILITAS (STANDAR WCAG 2.1 AA/AAA & UU No. 8/2016)
+   ========================================================================== */
+
+/* 1. Font Size Scaling Scale (WCAG 1.4.4 Resize Text) */
+html.text-size-small {
+  font-size: 14px !important;
+}
+html.text-size-normal {
+  font-size: 16px !important;
+}
+html.text-size-large {
+  font-size: 19.2px !important; /* 120% magnification */
+}
+html.text-size-xlarge {
+  font-size: 22.4px !important; /* 140% high magnification */
+}
+
+/* 2. High Contrast Yellow on Black Mode (Hitam-Kuning - WCAG AAA 7:1+ Contrast) */
+html.high-contrast-mode,
+html.contrast-yellow-black {
+  background-color: #000000 !important;
+  color: #ffff00 !important;
+}
+
+html.high-contrast-mode body,
+html.contrast-yellow-black body {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Background overrides in Yellow-Black Mode */
+html.high-contrast-mode div:not(.keep-original-color),
+html.high-contrast-mode section,
+html.high-contrast-mode header,
+html.high-contrast-mode footer,
+html.high-contrast-mode main,
+html.high-contrast-mode aside,
+html.high-contrast-mode nav,
+html.high-contrast-mode article,
+html.contrast-yellow-black div:not(.keep-original-color),
+html.contrast-yellow-black section,
+html.contrast-yellow-black header,
+html.contrast-yellow-black footer,
+html.contrast-yellow-black main,
+html.contrast-yellow-black aside,
+html.contrast-yellow-black nav,
+html.contrast-yellow-black article {
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+/* Disable blur and translucent overlays in High Contrast Mode for razor-sharp legibility */
+html.high-contrast-mode .backdrop-blur-md,
+html.high-contrast-mode .backdrop-blur-lg,
+html.high-contrast-mode .backdrop-blur-xl,
+html.high-contrast-mode .backdrop-blur-sm,
+html.contrast-yellow-black .backdrop-blur-md,
+html.contrast-yellow-black .backdrop-blur-lg,
+html.contrast-yellow-black .backdrop-blur-xl,
+html.contrast-yellow-black .backdrop-blur-sm {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-color: #000000 !important;
+}
+
+/* Solid high-visibility borders in High Contrast Mode */
+html.high-contrast-mode *,
+html.contrast-yellow-black * {
+  border-color: #ffff00 !important;
+}
+
+/* Headings and Accent Labels in High Contrast */
+html.high-contrast-mode h1,
+html.high-contrast-mode h2,
+html.high-contrast-mode h3,
+html.high-contrast-mode h4,
+html.high-contrast-mode h5,
+html.high-contrast-mode h6,
+html.high-contrast-mode strong,
+html.high-contrast-mode b,
+html.contrast-yellow-black h1,
+html.contrast-yellow-black h2,
+html.contrast-yellow-black h3,
+html.contrast-yellow-black h4,
+html.contrast-yellow-black h5,
+html.contrast-yellow-black h6,
+html.contrast-yellow-black strong,
+html.contrast-yellow-black b {
+  color: #ffff00 !important;
+  text-shadow: none !important;
+}
+
+/* Body text, spans, and table cells */
+html.high-contrast-mode p,
+html.high-contrast-mode span,
+html.high-contrast-mode label,
+html.high-contrast-mode li,
+html.high-contrast-mode td,
+html.high-contrast-mode th,
+html.contrast-yellow-black p,
+html.contrast-yellow-black span,
+html.contrast-yellow-black label,
+html.contrast-yellow-black li,
+html.contrast-yellow-black td,
+html.contrast-yellow-black th {
+  color: #ffffff !important;
+}
+
+/* Interactive elements: Buttons, links, badges */
+html.high-contrast-mode button,
+html.high-contrast-mode a,
+html.contrast-yellow-black button,
+html.contrast-yellow-black a {
+  border: 2px solid #ffff00 !important;
+  color: #ffff00 !important;
+  background-color: #000000 !important;
+}
+
+html.high-contrast-mode button:hover,
+html.high-contrast-mode a:hover,
+html.high-contrast-mode .bg-emerald-500,
+html.high-contrast-mode .bg-emerald-600,
+html.contrast-yellow-black button:hover,
+html.contrast-yellow-black a:hover,
+html.contrast-yellow-black .bg-emerald-500,
+html.contrast-yellow-black .bg-emerald-600 {
+  background-color: #ffff00 !important;
+  color: #000000 !important;
+}
+
+html.high-contrast-mode button:hover *,
+html.high-contrast-mode a:hover *,
+html.contrast-yellow-black button:hover *,
+html.contrast-yellow-black a:hover * {
+  color: #000000 !important;
+}
+
+html.high-contrast-mode input,
+html.high-contrast-mode textarea,
+html.high-contrast-mode select,
+html.contrast-yellow-black input,
+html.contrast-yellow-black textarea,
+html.contrast-yellow-black select {
+  background-color: #000000 !important;
+  color: #ffff00 !important;
+  border: 2px solid #ffff00 !important;
+}
+
+html.high-contrast-mode input::placeholder,
+html.contrast-yellow-black input::placeholder {
+  color: #a3e635 !important;
+}
+
+/* Icons */
+html.high-contrast-mode svg,
+html.contrast-yellow-black svg {
+  color: #ffff00 !important;
+  stroke: #ffff00 !important;
+}
+
+/* Cards & Modals */
+html.high-contrast-mode .rounded-2xl,
+html.high-contrast-mode .rounded-3xl,
+html.high-contrast-mode .rounded-xl,
+html.contrast-yellow-black .rounded-2xl,
+html.contrast-yellow-black .rounded-3xl,
+html.contrast-yellow-black .rounded-xl {
+  border: 2px solid #ffff00 !important;
+  box-shadow: none !important;
+}
+
+/* 3. Monochrome Mode (Hitam-Putih Grayscale) */
+html.contrast-monochrome {
+  filter: grayscale(100%) contrast(125%) !important;
+}
+html.contrast-monochrome img,
+html.contrast-monochrome video {
+  filter: grayscale(100%) !important;
+}
+
+/* =========================================================================
+   4. ANDROID FULLSCREEN MODE STYLING & SPACING OPTIMIZATION
+   Merapatkan margin kiri-kanan serta memperluas card agar memenuhi lebar layar
+   secara proporsional dan memiliki estetika layaknya aplikasi Android APK / PWA Native
+   ========================================================================= */
+html.android-fullscreen-mode,
+body.android-fullscreen-mode {
+  --space-mobile-edge-l: max(4px, env(safe-area-inset-left));
+  --space-mobile-edge-r: max(4px, env(safe-area-inset-right));
+  overflow-x: clip !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Rapatkan padding container utama saat mode Android aktif */
+html.android-fullscreen-mode main {
+  padding-left: var(--space-mobile-edge-l, 4px) !important;
+  padding-right: var(--space-mobile-edge-r, 4px) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+html.android-fullscreen-mode .section-container {
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+  max-width: 100% !important;
+}
+
+/* Full-bleed element helper untuk elemen yang ingin menyentuh tepi layar secara presisi */
+html.android-fullscreen-mode .android-full-bleed {
+  margin-left: calc(-1 * var(--space-mobile-edge-l, 4px)) !important;
+  margin-right: calc(-1 * var(--space-mobile-edge-r, 4px)) !important;
+  width: calc(100% + var(--space-mobile-edge-l, 4px) + var(--space-mobile-edge-r, 4px)) !important;
+  max-width: none !important;
+}
+
+/* Optimasi border-radius matematis pada Android agar sudut kartu tidak terlalu tajam/bulat berlebihan */
+@media (max-width: 768px) {
+  html.android-fullscreen-mode .rounded-3xl {
+    border-radius: 1.25rem !important;
+  }
+  html.android-fullscreen-mode .rounded-2xl {
+    border-radius: 1rem !important;
+  }
+  html.android-fullscreen-mode section {
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+  }
+}
+
+/* =========================================================================
+   5. ANDROID FULLSCREEN MODE: INVESTMENT CARDS & ANALYTICS DASHBOARDS
+   Optimasi padding khusus (mendekati 0 / 2px-6px) agar kartu investasi
+   dan panel dashboard analitik memenuhi lebar layar penuh Android secara presisi.
+   ========================================================================= */
+@media (max-width: 768px) {
+  /* Card Investasi & Proyek Strategis */
+  html.android-fullscreen-mode .investment-card,
+  html.android-fullscreen-mode .investor-card,
+  html.android-fullscreen-mode .project-card,
+  html.android-fullscreen-mode [data-tour="invest-card"],
+  html.android-fullscreen-mode .bento-card {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 1rem !important;
+  }
+
+  /* Dashboard Analitik & Panel Eksekutif */
+  html.android-fullscreen-mode .executive-dashboard,
+  html.android-fullscreen-mode .investor-analytics-panel,
+  html.android-fullscreen-mode .analytics-widget,
+  html.android-fullscreen-mode .dashboard-panel,
+  html.android-fullscreen-mode .chart-container {
+    padding-left: 0.375rem !important;
+    padding-right: 0.375rem !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Recharts & Diagram Area - Memenuhi Lebar Maksimal Layar HP */
+  html.android-fullscreen-mode .recharts-responsive-container {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Grid Kartu & List Item Investasi */
+  html.android-fullscreen-mode .investment-grid,
+  html.android-fullscreen-mode .analytics-grid {
+    gap: 0.5rem !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Stat Card & KPI Metrics di Android */
+  html.android-fullscreen-mode .stat-card,
+  html.android-fullscreen-mode .kpi-card {
+    padding: 0.625rem 0.5rem !important;
+    border-radius: 0.875rem !important;
+  }
+}
+
+/* =========================================================================
+   6. ULTRA-POLISHED MICRO-ANIMATIONS: SHIMMER SWEEP & PROGRESS BAR GLOW
+   ========================================================================= */
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-150%) skewX(-15deg);
+  }
+  30%, 100% {
+    transform: translateX(250%) skewX(-15deg);
+  }
+}
+
+.animate-shimmer-sweep {
+  animation: shimmer-sweep 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes shimmer-progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.animate-shimmer-progress {
+  animation: shimmer-progress 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.shimmer-bar-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-bar-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 25%,
+    rgba(52, 211, 153, 0.75) 50%,
+    rgba(251, 191, 36, 0.75) 65%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: shimmer-progress 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* =========================================================================
+   7. ANDROID FULLSCREEN ACTIVE CLICK & MODAL VIEWPORT FIT
+   Memastikan saat tombol aktif diklik di Landing Page atau Portal MPP,
+   tampilan modal, sheet, panel, dan navigasi target memenuhi layar Android
+   secara presisi dari ujung ke ujung tanpa terpotong.
+   ========================================================================= */
+html {
+  scroll-behavior: smooth;
+}
+
+section,
+div[id],
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
+@media (max-width: 768px) {
+  section,
+  div[id],
+  section[id] {
+    scroll-margin-top: 4.25rem;
+  }
+}
+
+/* =========================================================================
+   8. MPP SIMPURUSIANG INTERACTIVE FLOOR PLAN ANIMATIONS & BEACONS
+   ========================================================================= */
+@keyframes flowRoute {
+  from { stroke-dashoffset: 40; }
+  to { stroke-dashoffset: 0; }
+}
+
+.active-route-path {
+  stroke: #10b981; /* Emerald Green */
+  stroke-width: 3.5px;
+  stroke-dasharray: 8, 8;
+  animation: flowRoute 1s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.8));
+}
+
+.active-route-halo {
+  stroke: #10b981;
+  stroke-width: 9px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.28;
+  filter: blur(2px);
+}
+
+@keyframes beaconPulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+@keyframes beaconPulseAmber {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+}
+
+@keyframes beaconPulseRed {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.status-beacon-green { animation: beaconPulse 2s infinite; }
+.status-beacon-amber { animation: beaconPulseAmber 1.5s infinite; }
+.status-beacon-red { animation: beaconPulseRed 1s infinite; }
+
+
+
+
