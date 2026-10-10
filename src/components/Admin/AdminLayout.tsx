@@ -32,7 +32,9 @@ import {
   Sliders,
   Sun,
   Moon,
-  FileCheck
+  FileCheck,
+  Star,
+  CalendarClock
 } from "lucide-react";
 import { LuwuLogo } from "../LuwuLogo";
 import { supabase } from "../../lib/supabaseClient";
@@ -44,7 +46,6 @@ import PengaturanWeb from "./Views/PengaturanWeb";
 import PortalMppManagement from "./Views/PortalMppManagement";
 import MppQueueScheduleAdmin from "./Views/MppQueueScheduleAdmin";
 import { MppAdminReport } from "../mpp/MppAdminReport";
-import { Star, CalendarClock } from "lucide-react";
 
 interface NavItem {
   id: string;
