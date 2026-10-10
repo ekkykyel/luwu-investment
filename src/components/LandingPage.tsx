@@ -2502,15 +2502,15 @@ export default function LandingPage({
           {/* ───────────────────────────────────────────────────────────────────────────── */}
           {/* GRAND IMMERSIVE SHOWCASE HERO FRAME — PITA NAVY ELEGAN NUSANTARA (#0A2238) */}
           {/* ───────────────────────────────────────────────────────────────────────────── */}
-          <div className="relative w-full min-h-[550px] sm:min-h-[615px] lg:min-h-[660px] flex flex-col justify-between rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/70 dark:border-white/[0.08] ring-1 ring-slate-900/[0.04] dark:ring-white/[0.04] shadow-2xl bg-[#071727] dark:bg-[#071727] group transition-colors duration-300">
+          <div className="relative w-full min-h-[550px] sm:min-h-[615px] lg:min-h-[660px] flex flex-col justify-between rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/80 dark:border-white/[0.08] ring-1 ring-slate-900/[0.04] dark:ring-white/[0.04] shadow-xl dark:shadow-2xl bg-white dark:bg-[#071727] group transition-colors duration-300">
             
             {/* Ultra-Soft Inner Photo Boundary Line (Garis Batas Foto di Dalam yang Sangat Tipis & Lembut) */}
-            <div className="pointer-events-none absolute inset-[3px] sm:inset-1.5 rounded-[13px] sm:rounded-[20px] border border-white/[0.12] dark:border-white/[0.08] ring-1 ring-inset ring-white/[0.04] z-30" />
+            <div className="pointer-events-none absolute inset-[3px] sm:inset-1.5 rounded-[13px] sm:rounded-[20px] border border-white/65 dark:border-white/[0.12] ring-1 ring-inset ring-white/30 dark:ring-white/[0.05] z-30" />
 
-            {/* 1. Background Investment Photo Slideshow with Parallax & Light Sweep */}
+            {/* 1. Background Investment Photo Slideshow with Parallax & Light Sweep (Pure Full Bleed without Dark Mask) */}
             <motion.div
               style={{ y: shouldReduceMotion ? 0 : yBg }}
-              className="absolute inset-0 z-0 overflow-hidden transform-gpu pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black_82%,transparent_100%)]"
+              className="absolute inset-0 z-0 overflow-hidden transform-gpu pointer-events-none"
             >
               {heroImages.map((imgUrl, idx) => (
                 <motion.img
@@ -2555,14 +2555,16 @@ export default function LandingPage({
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12 pointer-events-none transform-gpu"
               />
 
-              {/* Dual-Theme Smooth Aesthetic Vignette & Ultra-Soft Edge Inset Shadow (Bright White Smooth Vignette) */}
-              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_66%,rgba(255,255,255,0.28)_88%,rgba(255,255,255,0.55)_100%)] dark:bg-[radial-gradient(ellipse_at_center,transparent_68%,rgba(255,255,255,0.22)_88%,rgba(255,255,255,0.45)_100%)] z-10 transition-colors duration-300" />
-              <div className="absolute inset-0 pointer-events-none rounded-2xl sm:rounded-3xl shadow-[inset_0_0_34px_rgba(255,255,255,0.38)] dark:shadow-[inset_0_0_30px_rgba(255,255,255,0.28)] z-10 transition-shadow duration-300" />
+              {/* Pure Luminous White Smooth Vignette & Ultra-Soft White Edge Inset Glow */}
+              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_62%,rgba(255,255,255,0.38)_86%,rgba(255,255,255,0.78)_100%)] dark:bg-[radial-gradient(ellipse_at_center,transparent_64%,rgba(255,255,255,0.22)_88%,rgba(255,255,255,0.48)_100%)] z-10 transition-colors duration-300" />
+              <div className="absolute inset-0 pointer-events-none rounded-2xl sm:rounded-3xl shadow-[inset_0_0_40px_rgba(255,255,255,0.65)] dark:shadow-[inset_0_0_32px_rgba(255,255,255,0.32)] z-10 transition-shadow duration-300" />
 
-              {/* Smooth Soft Scrim Overlays — Gradasi Batas Putih Cerah Halus & Alami */}
-              <div className="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-white/25 dark:from-white/15 via-transparent to-transparent pointer-events-none z-10" />
-              <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white/35 dark:from-white/25 via-transparent to-transparent pointer-events-none z-10" />
-              <div className="absolute inset-0 bg-slate-900/[0.04] dark:bg-[#0A2238]/[0.07] pointer-events-none z-10" />
+              {/* Smooth Soft White Scrim Overlays — Gradasi Batas Putih Cerah Halus & Alami */}
+              <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-white/45 dark:from-white/20 via-white/15 to-transparent pointer-events-none z-10" />
+              <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-white/55 dark:from-white/25 via-white/20 to-transparent pointer-events-none z-10" />
+
+              {/* Focal Center Scrim for Crisp Typography Readability on Bright/Sky Photos */}
+              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_62%_at_50%_46%,rgba(7,23,39,0.52)_0%,rgba(7,23,39,0.22)_65%,transparent_100%)] z-10" />
 
               {/* Cartographic Topography Contour Overlay */}
               <TopographicContourOverlay opacity={0.12} />
@@ -2582,33 +2584,33 @@ export default function LandingPage({
                 animate={shouldReduceMotion ? false : "visible"}
                 className="w-full flex-1 flex flex-col items-center justify-center text-center space-y-3 sm:space-y-4 md:space-y-5 my-auto"
               >
-                {/* A. Editorial Kicker (Zero-Pill Discipline - Clean Sans-Serif) */}
+                {/* A. Editorial Kicker Pill (High-Contrast Glass Badge for Bright Sky Readability) */}
                 <motion.div
                   variants={shouldReduceMotion ? undefined : heroFadeInUpItemVariants}
-                  className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-[10px] sm:text-xs font-bold tracking-[0.16em] uppercase text-emerald-300 font-sans select-none drop-shadow-sm text-center px-2"
+                  className="inline-flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-3.5 py-1.5 rounded-2xl sm:rounded-full bg-[#0A2238]/85 dark:bg-slate-950/85 backdrop-blur-xl border border-[#D9B96E]/35 shadow-lg shadow-black/35 text-[10px] sm:text-xs font-bold tracking-[0.14em] uppercase font-sans select-none text-center max-w-[95%]"
                 >
                   <div className="flex items-center gap-1.5 shrink-0">
                     <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                     <span className="text-[#D9B96E] font-extrabold tracking-wider">{t('landingInvest.hero.govTitle', 'PEMERINTAH KABUPATEN LUWU')}</span>
                   </div>
                   <span aria-hidden="true" className="hidden sm:inline text-white/40">·</span>
-                  <span className="text-slate-200 font-semibold tracking-wide">{t('landingInvest.hero.dpmptspTitle', 'DINAS PENANAMAN MODAL & PTSP')}</span>
+                  <span className="text-slate-100 font-semibold tracking-wide">{t('landingInvest.hero.dpmptspTitle', 'DINAS PENANAMAN MODAL & PTSP')}</span>
                 </motion.div>
 
                 {/* B. Main Title — Luxury Typography & Gold-Emerald Radiant Gradient */}
                 <motion.div
                   variants={shouldReduceMotion ? undefined : heroFadeInUpItemVariants}
-                  className="space-y-1 sm:space-y-1.5 max-w-3xl w-full"
+                  className="space-y-1.5 sm:space-y-2 max-w-3xl w-full"
                 >
-                  <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-white leading-[1.15] font-sans drop-shadow-md">
-                    <span className="block text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 to-slate-300">
+                  <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-white leading-[1.15] font-display-sora drop-shadow-[0_4px_18px_rgba(0,0,0,0.85)]">
+                    <span className="block text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.75)]">
                       {t('invest.hero_title_p1', 'Pintu Gerbang')}
                     </span>
-                    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-[#E5C77A] drop-shadow-lg">
+                    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-[#E5C77A] drop-shadow-[0_4px_14px_rgba(0,0,0,0.75)]">
                       {t('invest.hero_title_p2', 'Investasi Digital')}
                     </span>
                   </h1>
-                  <p className="text-[10px] xs:text-[11px] sm:text-xs md:text-sm text-slate-100 font-medium max-w-md sm:max-w-xl mx-auto text-balance leading-relaxed drop-shadow-sm">
+                  <p className="text-[11px] sm:text-xs md:text-sm text-white font-medium max-w-md sm:max-w-xl mx-auto text-balance leading-relaxed drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)]">
                     {t("hero.subtitle", "Cepat. Transparan. Terintegrasi Spasial. Akses data peluang investasi Kabupaten Luwu secara real-time dengan peta interaktif terintegrasi RTRW & OSS-RBA.")}
                   </p>
                 </motion.div>
@@ -2646,32 +2648,32 @@ export default function LandingPage({
                   {/* Strip Kepercayaan 4 Butir Resmi Pemkab Luwu with micro-stagger (Symmetric 2x2 on Mobile) */}
                   <motion.div
                     variants={shouldReduceMotion ? undefined : heroTrustBadgeContainerVariants}
-                    className="grid grid-cols-2 xs:flex xs:flex-wrap items-center justify-center gap-1.5 sm:gap-2 pt-0.5 text-slate-200 text-[10px] sm:text-[11px] font-medium w-full max-w-xl"
+                    className="grid grid-cols-2 xs:flex xs:flex-wrap items-center justify-center gap-1.5 sm:gap-2 pt-0.5 text-white text-[10px] sm:text-[11px] font-semibold w-full max-w-xl"
                   >
                     <motion.div
                       variants={shouldReduceMotion ? undefined : heroTrustBadgeItemVariants}
-                      className="flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/40 border border-white/10 backdrop-blur-md shadow-2xs text-center"
+                      className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-full bg-[#0A2238]/75 border border-white/15 backdrop-blur-md shadow-sm text-center"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                       <span className="truncate">{t('landingInvest.hero.trustOss', 'Terintegrasi OSS-RBA')}</span>
                     </motion.div>
                     <motion.div
                       variants={shouldReduceMotion ? undefined : heroTrustBadgeItemVariants}
-                      className="flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/40 border border-white/10 backdrop-blur-md shadow-2xs text-center"
+                      className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-full bg-[#0A2238]/75 border border-white/15 backdrop-blur-md shadow-sm text-center"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                       <span className="truncate">{t('landingInvest.hero.trustRtrw', 'Data RTRW Terverifikasi')}</span>
                     </motion.div>
                     <motion.div
                       variants={shouldReduceMotion ? undefined : heroTrustBadgeItemVariants}
-                      className="flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/40 border border-white/10 backdrop-blur-md shadow-2xs text-center"
+                      className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-full bg-[#0A2238]/75 border border-white/15 backdrop-blur-md shadow-sm text-center"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                       <span className="truncate">{t('landingInvest.hero.trustDpmptsp', 'DPMPTSP Kab. Luwu')}</span>
                     </motion.div>
                     <motion.div
                       variants={shouldReduceMotion ? undefined : heroTrustBadgeItemVariants}
-                      className="flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/40 border border-white/10 backdrop-blur-md shadow-2xs text-center"
+                      className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-full bg-[#0A2238]/75 border border-white/15 backdrop-blur-md shadow-sm text-center"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                       <span className="truncate">{t('landingInvest.hero.trustLegal', 'Kepastian Hukum Berusaha')}</span>
@@ -2679,21 +2681,21 @@ export default function LandingPage({
                   </motion.div>
                 </motion.div>
 
-                {/* D. Bottom Live Telemetry Bar (Zero Dummy Compliant & Mobile Ergonomic) */}
+                {/* D. Bottom Live Telemetry Bar (Frosted Glass Pill Bar so it stays crisp above bright vignette) */}
                 <motion.div
                   variants={shouldReduceMotion ? undefined : heroFadeInUpItemVariants}
-                  className="w-full pt-2.5 sm:pt-3 mt-auto border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2 text-slate-300 text-[10px] sm:text-[11px] font-sans px-1"
+                  className="w-full py-2 px-3.5 mt-auto rounded-2xl bg-[#0A2238]/80 dark:bg-slate-950/80 backdrop-blur-xl border border-white/15 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-2 text-slate-200 text-[10px] sm:text-[11px] font-sans"
                 >
-                  <div className="flex items-center gap-1.5 sm:gap-2 text-slate-300 truncate">
+                  <div className="flex items-center gap-1.5 sm:gap-2 text-slate-100 truncate">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                     <span className="font-bold text-white">{t('landingInvest.hero.opportunitiesLabel', 'Peluang Investasi:')}</span>
-                    <span className="text-emerald-400 font-bold">
+                    <span className="text-emerald-300 font-bold">
                       {investments && investments.length > 0
                         ? t('landingInvest.hero.verifiedPotentialPoints', { count: investments.length, defaultValue: `${investments.length} Titik Potensi Terverifikasi` })
                         : t('landingInvest.hero.verifiedPotentialPointsDefault', '2 Titik Potensi Terverifikasi')}
                     </span>
                     <span aria-hidden="true" className="hidden md:inline text-white/30">·</span>
-                    <span className="hidden md:inline text-slate-300">{t('landingInvest.hero.districtsAndVillages', '22 Kecamatan & 227 Desa')}</span>
+                    <span className="hidden md:inline text-slate-200">{t('landingInvest.hero.districtsAndVillages', '22 Kecamatan & 227 Desa')}</span>
                   </div>
 
                   <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
@@ -2708,14 +2710,14 @@ export default function LandingPage({
                             className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                               currentSlide === idx
                                 ? 'w-5 bg-emerald-400'
-                                : 'w-1.5 bg-white/30 hover:bg-white/60'
+                                : 'w-1.5 bg-white/35 hover:bg-white/65'
                             }`}
                           />
                         ))}
                       </div>
                     )}
 
-                    <div className="flex items-center gap-1.5 text-emerald-400 text-[10px] sm:text-[11px] font-bold tracking-wide uppercase">
+                    <div className="flex items-center gap-1.5 text-emerald-300 text-[10px] sm:text-[11px] font-bold tracking-wide uppercase">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                       <span>{t('landingInvest.hero.verifiedSpatialSystem', 'SISTEM SPASIAL TERVERIFIKASI')}</span>
                     </div>

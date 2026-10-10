@@ -318,15 +318,15 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
       {/* ───────────────────────────────────────────────────────────────────────────── */}
       {/* EDGE-TO-EDGE IMMERSIVE HERO CANVAS WITH PARALLAX SCROLL & EXOTIC SHINE */}
       {/* ───────────────────────────────────────────────────────────────────────────── */}
-      <div className="relative w-full min-h-[550px] sm:min-h-[615px] lg:min-h-[660px] flex flex-col justify-center rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/70 dark:border-white/[0.08] ring-1 ring-slate-900/[0.04] dark:ring-white/[0.04] shadow-2xl bg-[#071727] dark:bg-[#071727] group transition-colors duration-300">
+      <div className="relative w-full min-h-[550px] sm:min-h-[615px] lg:min-h-[660px] flex flex-col justify-center rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/80 dark:border-white/[0.08] ring-1 ring-slate-900/[0.04] dark:ring-white/[0.04] shadow-xl dark:shadow-2xl bg-white dark:bg-[#071727] group transition-colors duration-300">
         
         {/* Ultra-Soft Inner Photo Boundary Line (Garis Batas Foto di Dalam yang Sangat Tipis & Lembut) */}
-        <div className="pointer-events-none absolute inset-[3px] sm:inset-1.5 rounded-[13px] sm:rounded-[20px] border border-white/[0.12] dark:border-white/[0.08] ring-1 ring-inset ring-white/[0.04] z-30" />
+        <div className="pointer-events-none absolute inset-[3px] sm:inset-1.5 rounded-[13px] sm:rounded-[20px] border border-white/65 dark:border-white/[0.12] ring-1 ring-inset ring-white/30 dark:ring-white/[0.05] z-30" />
 
-        {/* 1. Background Architecture Showcase Photo (Parallax Shifted via bgY) */}
+        {/* 1. Background Architecture Showcase Photo (Parallax Shifted via bgY - Pure Full Bleed without Dark Mask) */}
         <motion.div
           style={{ y: shouldReduceMotion ? 0 : bgY }}
-          className="absolute inset-0 z-0 overflow-hidden transform-gpu pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black_82%,transparent_100%)]"
+          className="absolute inset-0 z-0 overflow-hidden transform-gpu pointer-events-none"
         >
           {heroSlides.map((slide, idx) => (
             <motion.img
@@ -365,14 +365,16 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12 pointer-events-none transform-gpu"
           />
 
-          {/* Dual-Theme Smooth Aesthetic Vignette & Ultra-Soft Edge Inset Shadow (Bright White Smooth Vignette) */}
-          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_66%,rgba(255,255,255,0.28)_88%,rgba(255,255,255,0.55)_100%)] dark:bg-[radial-gradient(ellipse_at_center,transparent_68%,rgba(255,255,255,0.22)_88%,rgba(255,255,255,0.45)_100%)] z-10 transition-colors duration-300" />
-          <div className="absolute inset-0 pointer-events-none rounded-2xl sm:rounded-3xl shadow-[inset_0_0_34px_rgba(255,255,255,0.38)] dark:shadow-[inset_0_0_30px_rgba(255,255,255,0.28)] z-10 transition-shadow duration-300" />
+          {/* Pure Luminous White Smooth Vignette & Ultra-Soft White Edge Inset Glow */}
+          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_62%,rgba(255,255,255,0.38)_86%,rgba(255,255,255,0.78)_100%)] dark:bg-[radial-gradient(ellipse_at_center,transparent_64%,rgba(255,255,255,0.22)_88%,rgba(255,255,255,0.48)_100%)] z-10 transition-colors duration-300" />
+          <div className="absolute inset-0 pointer-events-none rounded-2xl sm:rounded-3xl shadow-[inset_0_0_40px_rgba(255,255,255,0.65)] dark:shadow-[inset_0_0_32px_rgba(255,255,255,0.32)] z-10 transition-shadow duration-300" />
 
-          {/* Smooth Soft Scrim Overlays — Gradasi Batas Putih Cerah Halus & Alami */}
-          <div className="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-white/25 dark:from-white/15 via-transparent to-transparent pointer-events-none z-10" />
-          <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white/35 dark:from-white/25 via-transparent to-transparent pointer-events-none z-10" />
-          <div className="absolute inset-0 bg-slate-900/[0.04] dark:bg-[#0A2238]/[0.07] pointer-events-none z-10" />
+          {/* Smooth Soft White Scrim Overlays — Gradasi Batas Putih Cerah Halus & Alami */}
+          <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-white/45 dark:from-white/20 via-white/15 to-transparent pointer-events-none z-10" />
+          <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-white/55 dark:from-white/25 via-white/20 to-transparent pointer-events-none z-10" />
+
+          {/* Focal Center Scrim for Crisp Typography Readability on Bright/Sky Photos */}
+          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_75%_55%_at_50%_46%,rgba(7,23,39,0.38)_0%,rgba(7,23,39,0.14)_62%,transparent_100%)] z-10" />
 
           {/* Cartographic Topography Contour Overlay */}
           <TopographicContourOverlay opacity={0.12} />
@@ -505,14 +507,14 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
             </form>
           </motion.div>
 
-          {/* Quick Filter Chips (Native Mobile Horizontal Scroll with Emerald Micro Dots) */}
+          {/* Quick Filter Chips (Centered Wrap on Mobile & Desktop with Emerald Micro Dots) */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="w-full flex items-center justify-start sm:justify-center gap-1.5 sm:gap-2 pt-1 overflow-x-auto no-scrollbar py-1 px-1 touch-pan-x"
+            className="w-full flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 pt-1 py-1 px-1"
           >
-            <span className="text-[10px] sm:text-xs text-slate-300 font-semibold whitespace-nowrap shrink-0 flex items-center gap-1 pl-1">
+            <span className="text-[10px] sm:text-xs text-white font-semibold whitespace-nowrap shrink-0 flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#0A2238]/65 backdrop-blur-md border border-white/15">
               <span className="w-1.5 h-1.5 rounded-full bg-[#D9B96E] shrink-0" />
               {t('hero.popular', 'Paling Dicari:')}
             </span>
@@ -521,7 +523,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
                 key={chip.id}
                 type="button"
                 onClick={() => onSelectChip?.(chip.id)}
-                className="px-2.5 sm:px-3 py-1 rounded-full bg-[#0A2238]/70 hover:bg-emerald-500/25 text-slate-200 hover:text-emerald-300 border border-white/15 hover:border-emerald-500/40 text-[10px] sm:text-xs font-medium backdrop-blur-md transition-all active:scale-95 cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1.5"
+                className="px-2.5 sm:px-3 py-1 rounded-full bg-[#0A2238]/80 hover:bg-emerald-500/30 text-white hover:text-emerald-200 border border-white/20 hover:border-emerald-400/50 text-[10px] sm:text-xs font-medium backdrop-blur-md shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1.5"
               >
                 <span className="w-1 h-1 rounded-full bg-emerald-400 shrink-0" />
                 {chip.label}
