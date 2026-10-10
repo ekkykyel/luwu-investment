@@ -55,59 +55,38 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   {
     id: "beranda",
-    label: "Beranda",
+    label: "Beranda & Monitoring",
     path: "/admin/beranda",
     icon: LayoutDashboard,
-    description: "Ringkasan metrik eksekutif & operasional MPP"
+    description: "Ringkasan metrik operasional, loket aktif & kepuasan masyarakat"
   },
   {
     id: "laporan-mpp",
     label: "Laporan Eksekutif MPP",
     path: "/admin/laporan-mpp",
     icon: Star,
-    description: "Laporan statistik Antrean & Survei Kepuasan SKM"
+    description: "Laporan statistik antrean, SKM & kinerja layanan per gerai"
   },
   {
     id: "loket-pelayanan",
-    label: "Loket Pelayanan",
+    label: "Loket & Antrean Terpadu",
     path: "/admin/loket-pelayanan",
     icon: Building2,
-    description: "Antrean terpadu, instansi vertikal & loket OPD"
-  },
-  {
-    id: "tata-ruang-investasi",
-    label: "Tata Ruang & Investasi",
-    path: "/admin/tata-ruang-investasi",
-    icon: Compass,
-    description: "Digitasi spasial RTRW, IPRO & izin investasi"
-  },
-  {
-    id: "e-office",
-    label: "Sistem E-Office",
-    path: "/admin/e-office",
-    icon: FileText,
-    description: "Persuratan dinas, disposisi digital & verifikasi berkas"
+    description: "Monitoring panggilan loket, tracking berkas terpadu & SLA"
   },
   {
     id: "manajemen-asn",
-    label: "Manajemen ASN",
+    label: "Jadwal & Petugas Loket",
     path: "/admin/manajemen-asn",
     icon: Users,
-    description: "Jadwal petugas front office, absensi & penugasan"
+    description: "Plotting operator loket gerai, shift kerja & absensi front office"
   },
   {
     id: "kelola-portal",
-    label: "Kelola Portal MPP",
+    label: "Kelola Portal & Fasilitas MPP",
     path: "/admin/kelola-portal",
     icon: Sliders,
-    description: "Kelola instansi, layanan, fasilitas, berita & aduan warga"
-  },
-  {
-    id: "pengaturan-web",
-    label: "Pengaturan Web",
-    path: "/admin/pengaturan-web",
-    icon: Settings,
-    description: "Konfigurasi portal publik, banner & integrasi sistem"
+    description: "Master gerai/instansi, layanan, fasilitas, kiosk, berita & aduan warga"
   }
 ];
 
@@ -664,11 +643,8 @@ export default function AdminLayout() {
           {/* Sub-view Rendering based on Active Nav */}
           {currentNav.id === "beranda" && <BerandaDashboardView operatorUser={operatorUser} isDark={isDark} />}
           {currentNav.id === "loket-pelayanan" && <LoketPelayanan isDark={isDark} />}
-          {currentNav.id === "tata-ruang-investasi" && <TataRuangInvestasi isDark={isDark} />}
-          {currentNav.id === "e-office" && <EOffice isDark={isDark} />}
           {currentNav.id === "manajemen-asn" && <ManajemenASN isDark={isDark} />}
           {currentNav.id === "kelola-portal" && <PortalMppManagement isDark={isDark} />}
-          {currentNav.id === "pengaturan-web" && <PengaturanWeb isDark={isDark} />}
           {currentNav.id === "laporan-mpp" && <MppAdminReport isDarkMode={isDark} />}
         </main>
       </div>
@@ -716,16 +692,16 @@ function BerandaDashboardView({ operatorUser, isDark = true }: { operatorUser: a
           avgSkm = Number((total / skmData.length).toFixed(1));
         }
 
-        // Fetch Potensi Investasi count
-        const { count: potensiCount } = await supabase
-          .from('gis_potensi_investasi')
+        // Fetch Total Layanan Publik Terdaftar
+        const { count: layananCount } = await supabase
+          .from('mpp_services')
           .select('*', { count: 'exact', head: true });
 
         setMetrics({
           totalLoket: loketCount || 0,
           antreanHariIni: antreanCount || 0,
           skmScore: avgSkm,
-          potensiInvestasi: potensiCount || 0
+          potensiInvestasi: layananCount || 0
         });
       } catch (error) {
         console.error('Error fetching beranda metrics:', error);
@@ -807,19 +783,19 @@ function BerandaDashboardView({ operatorUser, isDark = true }: { operatorUser: a
           isDark ? "bg-slate-900 border-white/10" : "bg-white border-slate-200/80 shadow-xs"
         }`}>
           <div className="flex justify-between items-start mb-2 sm:mb-3">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 font-mono">PROYEK INVESTASI</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 font-mono">LAYANAN PUBLIK</span>
             <div className={`p-2 rounded-xl ${isDark ? "bg-amber-950/80 text-amber-400" : "bg-amber-50 text-amber-600"}`}>
-              <TrendingUp size={16} />
+              <FileCheck size={16} />
             </div>
           </div>
           <div className={`text-lg sm:text-xl md:text-2xl font-bold font-mono ${isDark ? "text-white" : "text-slate-900"} mt-1`}>
-            {loading ? "..." : `${metrics.potensiInvestasi} Titik`}
+            {loading ? "..." : `${metrics.potensiInvestasi} Layanan`}
           </div>
           <div className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 mt-2 line-clamp-1">
-            Proyek Investasi (GIS)
+            Katalog Layanan MPP
           </div>
           <div className="text-[10px] text-amber-600 dark:text-amber-400 font-bold mt-1.5 flex items-center gap-1">
-            <Compass size={11} /> Terpetakan di Luwu
+            <CheckCircle2 size={11} /> Standar Pelayanan (SP)
           </div>
         </div>
 
@@ -845,17 +821,17 @@ function BerandaDashboardView({ operatorUser, isDark = true }: { operatorUser: a
         </div>
       </div>
 
-      {/* Action Shortcut Panels */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      {/* Action Shortcut Panels (100% Relevan Tugas Admin MPP) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         <div className={`p-5 sm:p-6 rounded-2xl border space-y-4 transition-all ${
           isDark ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200 shadow-xs"
         }`}>
           <h3 className={`text-sm font-bold flex items-center gap-2 ${isDark ? "text-white" : "text-slate-900"}`}>
             <Building2 size={16} className="text-emerald-500" />
-            <span>Akses Cepat Pengelolaan Loket</span>
+            <span>Kelola Gerai & Antrean Loket</span>
           </h3>
           <p className={`text-xs leading-relaxed ${isDark ? "text-slate-400" : "text-slate-600"}`}>
-            Kelola status pemanggilan antrean, instansi vertikal (Polres, ATR/BPN, BPJS), dan OPD teknis di lantai 1 dan 2 MPP Simpurusiang.
+            Monitoring antrean harian gerai terpadu (Polres, ATR/BPN, BPJS, Disdukcapil) di lantai 1 dan 2 MPP Simpurusiang.
           </p>
           <button
             onClick={() => navigate("/admin/loket-pelayanan")}
@@ -869,21 +845,43 @@ function BerandaDashboardView({ operatorUser, isDark = true }: { operatorUser: a
           isDark ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200 shadow-xs"
         }`}>
           <h3 className={`text-sm font-bold flex items-center gap-2 ${isDark ? "text-white" : "text-slate-900"}`}>
-            <Compass size={16} className="text-emerald-500" />
-            <span>Tata Ruang & Digitasi Investasi</span>
+            <Sliders size={16} className="text-emerald-500" />
+            <span>Kelola Konten & Fasilitas Portal</span>
           </h3>
           <p className={`text-xs leading-relaxed ${isDark ? "text-slate-400" : "text-slate-600"}`}>
-            Perbarui data IPRO, periksa batas spasial RDTR/RTRW, dan verifikasi permohonan insentif penanaman modal Kabupaten Luwu.
+            Sinkronkan profil instansi, foto fasilitas fisik, kontrol buka/tutup kiosk mandiri, serta berita warta MPP.
           </p>
           <button
-            onClick={() => navigate("/admin/tata-ruang-investasi")}
+            onClick={() => navigate("/admin/kelola-portal")}
             className={`w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-bold border transition-all shadow min-h-[44px] flex items-center justify-center cursor-pointer ${
               isDark 
                 ? "bg-slate-800 hover:bg-slate-750 text-white border-slate-700" 
                 : "bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300"
             }`}
           >
-            Kelola Tata Ruang & Investasi
+            Kelola Portal & Fasilitas
+          </button>
+        </div>
+
+        <div className={`p-5 sm:p-6 rounded-2xl border space-y-4 transition-all ${
+          isDark ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200 shadow-xs"
+        }`}>
+          <h3 className={`text-sm font-bold flex items-center gap-2 ${isDark ? "text-white" : "text-slate-900"}`}>
+            <Star size={16} className="text-emerald-500" />
+            <span>Laporan & Evaluasi SKM</span>
+          </h3>
+          <p className={`text-xs leading-relaxed ${isDark ? "text-slate-400" : "text-slate-600"}`}>
+            Pantau rekapitulasi kepuasan masyarakat sesuai standar PermenPAN-RB dan ekspor laporan berkala ke format PDF.
+          </p>
+          <button
+            onClick={() => navigate("/admin/laporan-mpp")}
+            className={`w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-bold border transition-all shadow min-h-[44px] flex items-center justify-center cursor-pointer ${
+              isDark 
+                ? "bg-slate-800 hover:bg-slate-750 text-white border-slate-700" 
+                : "bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300"
+            }`}
+          >
+            Buka Laporan Eksekutif
           </button>
         </div>
       </div>

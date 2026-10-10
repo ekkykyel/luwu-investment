@@ -1823,16 +1823,20 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
             background-color: #f8fafc !important;
             color: #1e293b !important;
           }
-          #mpp-dashboard-root .bg-base\\/60,
-          #mpp-dashboard-root .bg-slate-900\\/60,
+          #mpp-dashboard-root .bg-base\/60,
+          #mpp-dashboard-root .bg-slate-900\/60,
           #mpp-dashboard-root .bg-slate-900,
           #mpp-dashboard-root .bg-base,
-          #mpp-dashboard-root .bg-slate-900\\/80,
-          #mpp-dashboard-root .bg-base\\/40,
-          #mpp-dashboard-root .bg-base\\/50 {
+          #mpp-dashboard-root .bg-slate-850,
+          #mpp-dashboard-root .bg-slate-900\/80,
+          #mpp-dashboard-root .bg-base\/40,
+          #mpp-dashboard-root .bg-base\/50,
+          #mpp-dashboard-root .bg-surface\/90,
+          #mpp-dashboard-root .bg-surface\/60 {
             background-color: #ffffff !important;
-            border-color: #cbd5e1 !important;
-            color: #1e293b !important;
+            border-color: #e2e8f0 !important;
+            color: #0f172a !important;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04) !important;
           }
           #mpp-dashboard-root .border-slate-800 {
             border-color: #cbd5e1 !important;

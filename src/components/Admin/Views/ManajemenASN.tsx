@@ -24,7 +24,7 @@ interface ASNItem {
   nip: string;
   namaLengkap: string;
   gelar: string;
-  kategoriJabatan: "Jabatan Struktural" | "Jabatan Fungsional";
+  kategoriJabatan: "Koordinator Gerai / Pejabat" | "Operator Loket Pelayanan";
   namaJabatan: string;
   golonganRuang: string;
   unitKerja: string;
@@ -37,7 +37,7 @@ interface ASNItem {
 
 export default function ManajemenASN({ isDark = true }: { isDark?: boolean }) {
   const [asnList, setAsnList] = useState<ASNItem[]>([]);
-  const [filterKategori, setFilterKategori] = useState<"Semua" | "Jabatan Struktural" | "Jabatan Fungsional">("Semua");
+  const [filterKategori, setFilterKategori] = useState<"Semua" | "Koordinator Gerai / Pejabat" | "Operator Loket Pelayanan">("Semua");
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -57,7 +57,7 @@ export default function ManajemenASN({ isDark = true }: { isDark?: boolean }) {
           nip: item.nik || `1988${item.id.slice(0, 8).replace(/\D/g, '1').padEnd(8, '0')}`,
           namaLengkap: item.full_name || item.email || "Petugas Aparatur",
           gelar: "",
-          kategoriJabatan: item.role === "superadmin" || item.role === "admin" ? "Jabatan Struktural" : "Jabatan Fungsional",
+          kategoriJabatan: item.role === "superadmin" || item.role === "admin" ? "Koordinator Gerai / Pejabat" : "Operator Loket Pelayanan",
           namaJabatan: item.role === "superadmin" 
             ? "Super Administrator DPMPTSP" 
             : item.role === "admin" 
@@ -99,8 +99,8 @@ export default function ManajemenASN({ isDark = true }: { isDark?: boolean }) {
     return matchKategori && matchSearch;
   });
 
-  const countStruktural = asnList.filter(a => a.kategoriJabatan === "Jabatan Struktural").length;
-  const countFungsional = asnList.filter(a => a.kategoriJabatan === "Jabatan Fungsional").length;
+  const countStruktural = asnList.filter(a => a.kategoriJabatan === "Koordinator Gerai / Pejabat").length;
+  const countFungsional = asnList.filter(a => a.kategoriJabatan === "Operator Loket Pelayanan").length;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
@@ -117,11 +117,11 @@ export default function ManajemenASN({ isDark = true }: { isDark?: boolean }) {
               <Users size={18} />
             </span>
             <h3 className={`text-base sm:text-lg font-black tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
-              Direktori Kepegawaian & Manajemen ASN
+              Manajemen Petugas & Jadwal Piket Loket MPP
             </h3>
           </div>
           <p className={`text-xs mt-1 ${isDark ? "text-slate-400" : "text-slate-600"}`}>
-            Penugasan shift loket front-office, evaluasi kinerja SKP, dan pemisahan Jabatan Struktural & Fungsional.
+            Pengaturan jadwal piket operator front-office per gerai instansi, status presensi, dan evaluasi waktu pelayanan.
           </p>
         </div>
 
@@ -154,19 +154,19 @@ export default function ManajemenASN({ isDark = true }: { isDark?: boolean }) {
           }`}
         >
           <div className={`flex items-center justify-between ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-            <span className="text-xs font-semibold uppercase tracking-wider">Total ASN & Operator</span>
+            <span className="text-xs font-semibold uppercase tracking-wider">Total Operator Terdaftar</span>
             <Users size={18} className="text-emerald-500 shrink-0" />
           </div>
           <div className={`text-lg sm:text-xl md:text-2xl font-bold font-mono mt-2.5 ${isDark ? "text-white" : "text-slate-900"}`}>
             {asnList.length} <span className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 font-sans">Pegawai</span>
           </div>
-          <span className="text-xs text-emerald-600 dark:text-emerald-400 mt-1.5 block font-medium">100% Terdaftar SIMPEG Luwu</span>
+          <span className="text-xs text-emerald-600 dark:text-emerald-400 mt-1.5 block font-medium">Petugas Gerai & Front Office</span>
         </div>
 
         <div
-          onClick={() => setFilterKategori("Jabatan Struktural")}
+          onClick={() => setFilterKategori("Koordinator Gerai / Pejabat")}
           className={`p-4 sm:p-5 rounded-2xl border cursor-pointer transition-all ${
-            filterKategori === "Jabatan Struktural"
+            filterKategori === "Koordinator Gerai / Pejabat"
               ? isDark 
                 ? "bg-slate-850 border-purple-500/50 shadow-lg shadow-purple-950/30" 
                 : "bg-purple-50/50 border-purple-500 shadow-sm"
@@ -176,19 +176,19 @@ export default function ManajemenASN({ isDark = true }: { isDark?: boolean }) {
           }`}
         >
           <div className={`flex items-center justify-between ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-            <span className="text-xs font-semibold uppercase tracking-wider">Jabatan Struktural</span>
+            <span className="text-xs font-semibold uppercase tracking-wider">Koordinator Gerai / Pejabat</span>
             <Building2 size={18} className="text-purple-500 shrink-0" />
           </div>
           <div className={`text-lg sm:text-xl md:text-2xl font-bold font-mono mt-2.5 ${isDark ? "text-white" : "text-slate-900"}`}>
             {countStruktural} <span className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 font-sans">Pejabat</span>
           </div>
-          <span className="text-xs text-purple-600 dark:text-purple-400 mt-1.5 block font-medium">Pengambil Kebijakan & Paraf</span>
+          <span className="text-xs text-purple-600 dark:text-purple-400 mt-1.5 block font-medium">Supervisi Layanan Gerai</span>
         </div>
 
         <div
-          onClick={() => setFilterKategori("Jabatan Fungsional")}
+          onClick={() => setFilterKategori("Operator Loket Pelayanan")}
           className={`p-4 sm:p-5 rounded-2xl border cursor-pointer transition-all ${
-            filterKategori === "Jabatan Fungsional"
+            filterKategori === "Operator Loket Pelayanan"
               ? isDark 
                 ? "bg-slate-850 border-sky-500/50 shadow-lg shadow-sky-950/30" 
                 : "bg-sky-50/50 border-sky-500 shadow-sm"
@@ -198,13 +198,13 @@ export default function ManajemenASN({ isDark = true }: { isDark?: boolean }) {
           }`}
         >
           <div className={`flex items-center justify-between ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-            <span className="text-xs font-semibold uppercase tracking-wider">Jabatan Fungsional</span>
+            <span className="text-xs font-semibold uppercase tracking-wider">Operator Loket Pelayanan</span>
             <Briefcase size={18} className="text-sky-500 shrink-0" />
           </div>
           <div className={`text-lg sm:text-xl md:text-2xl font-bold font-mono mt-2.5 ${isDark ? "text-white" : "text-slate-900"}`}>
             {countFungsional} <span className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 font-sans">Pegawai</span>
           </div>
-          <span className="text-xs text-sky-600 dark:text-sky-400 mt-1.5 block font-medium">Pelaksana Teknis & Front Office</span>
+          <span className="text-xs text-sky-600 dark:text-sky-400 mt-1.5 block font-medium">Pelayanan Langsung Pemohon</span>
         </div>
       </div>
 
@@ -220,7 +220,7 @@ export default function ManajemenASN({ isDark = true }: { isDark?: boolean }) {
           <div className={`flex items-center gap-1.5 p-1 border rounded-xl w-full sm:w-auto overflow-x-auto ${
             isDark ? "bg-base border-slate-800" : "bg-slate-100 border-slate-200"
           }`}>
-            {(["Semua", "Jabatan Struktural", "Jabatan Fungsional"] as const).map((cat) => (
+            {(["Semua", "Koordinator Gerai / Pejabat", "Operator Loket Pelayanan"] as const).map((cat) => (
               <button
                 key={cat}
                 onClick={() => setFilterKategori(cat)}
@@ -287,7 +287,7 @@ export default function ManajemenASN({ isDark = true }: { isDark?: boolean }) {
                     <td className="py-3.5 px-4">
                       <span
                         className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
-                          asn.kategoriJabatan === "Jabatan Struktural"
+                          asn.kategoriJabatan === "Koordinator Gerai / Pejabat"
                             ? isDark ? "bg-purple-950/80 text-purple-300 border-purple-500/30" : "bg-purple-50 text-purple-700 border-purple-200"
                             : isDark ? "bg-sky-950/80 text-sky-300 border-sky-500/30" : "bg-sky-50 text-sky-700 border-sky-200"
                         }`}

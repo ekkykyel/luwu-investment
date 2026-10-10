@@ -33,7 +33,7 @@ interface AntreanItem {
   slaMinutes: number;
 }
 
-interface PBGDocItem {
+interface DocumentTrackingItem {
   id: string;
   nomorRegistrasi: string;
   namaPemilik: string;
@@ -51,8 +51,8 @@ const INITIAL_PBG: PBGDocItem[] = [];
 
 export default function LoketPelayanan({ isDark = true }: { isDark?: boolean }) {
   const [antreanList, setAntreanList] = useState<AntreanItem[]>(INITIAL_ANTREAN);
-  const [pbgList, setPbgList] = useState<PBGDocItem[]>(INITIAL_PBG);
-  const [searchPBG, setSearchPBG] = useState("");
+  const [trackingList, setTrackingList] = useState<DocumentTrackingItem[]>(INITIAL_PBG);
+  const [searchDoc, setSearchDoc] = useState("");
   const [filterTahap, setFilterTahap] = useState<string>("Semua");
   const [isLoading, setIsLoading] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState<string>(new Date().toLocaleTimeString("id-ID"));
@@ -123,7 +123,7 @@ export default function LoketPelayanan({ isDark = true }: { isDark?: boolean }) 
         .limit(20);
 
       if (!pbgErr && pbgData && pbgData.length > 0) {
-        setPbgList(pbgData.map((p: any) => {
+        setTrackingList(pbgData.map((p: any) => {
           const q = Array.isArray(p.mpp_queues) ? p.mpp_queues[0] : p.mpp_queues;
           const tenant = q?.mpp_tenants ? (Array.isArray(q.mpp_tenants) ? q.mpp_tenants[0] : q.mpp_tenants) : null;
           const service = q?.mpp_services ? (Array.isArray(q.mpp_services) ? q.mpp_services[0] : q.mpp_services) : null;
@@ -146,7 +146,7 @@ export default function LoketPelayanan({ isDark = true }: { isDark?: boolean }) 
           };
         }));
       } else {
-        setPbgList([]);
+        setTrackingList([]);
       }
 
       // 3. Fetch data SKM
@@ -167,7 +167,7 @@ export default function LoketPelayanan({ isDark = true }: { isDark?: boolean }) 
       setLastRefreshed(new Date().toLocaleTimeString("id-ID"));
     } catch {
       setAntreanList([]);
-      setPbgList([]);
+      setTrackingList([]);
     } finally {
       setIsLoading(false);
     }
@@ -178,9 +178,9 @@ export default function LoketPelayanan({ isDark = true }: { isDark?: boolean }) 
   }, [fetchData]);
 
   // Filter PBG Data
-  const filteredPBG = pbgList.filter((item) => {
+  const filteredDocs = trackingList.filter((item) => {
     const matchSearch =
-      item.nomorRegistrasi.toLowerCase().includes(searchPBG.toLowerCase()) ||
+      item.nomorRegistrasi.toLowerCase().includes(searchDoc.toLowerCase()) ||
       item.namaPemilik.toLowerCase().includes(searchPBG.toLowerCase()) ||
       item.fungsiBangunan.toLowerCase().includes(searchPBG.toLowerCase()) ||
       item.lokasiBangunan.toLowerCase().includes(searchPBG.toLowerCase());
@@ -211,11 +211,11 @@ export default function LoketPelayanan({ isDark = true }: { isDark?: boolean }) 
               <Building2 size={18} />
             </span>
             <h3 className={`text-base sm:text-lg font-black tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
-              Manajemen Loket Pelayanan & PBG
+              Manajemen Loket Pelayanan & Tracking Berkas Terpadu
             </h3>
           </div>
           <p className={`text-xs mt-1 ${isDark ? "text-slate-400" : "text-slate-600"}`}>
-            Monitoring operasional antrean harian dan alur dokumen Persetujuan Bangunan Gedung (PBG) MPP Simpurusiang.
+            Monitoring operasional antrean harian dan pelacakan alur berkas permohonan lintas gerai instansi MPP Simpurusiang.
           </p>
         </div>
 
@@ -293,10 +293,10 @@ export default function LoketPelayanan({ isDark = true }: { isDark?: boolean }) 
             </div>
             <div className="mt-3">
               <div className={`text-lg sm:text-xl md:text-2xl font-bold font-mono ${isDark ? "text-white" : "text-slate-900"}`}>
-                {pbgList.length} <span className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">Dokumen</span>
+                {trackingList.length} <span className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">Dokumen</span>
               </div>
               <div className="text-xs text-amber-600 dark:text-amber-400 mt-1.5 font-semibold">
-                Alur SIMBG & Perizinan Terpadu
+                Pelacakan Berkas Lintas Gerai Instansi
               </div>
             </div>
           </div>
@@ -418,11 +418,11 @@ export default function LoketPelayanan({ isDark = true }: { isDark?: boolean }) 
                 <FileCheck size={18} />
               </span>
               <h4 className={`text-base font-bold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
-                Panel Khusus: Alur Dokumen Persetujuan Bangunan Gedung (PBG)
+                Pelacakan Dokumen Permohonan Layanan Terpadu (E-Lacak)
               </h4>
             </div>
             <p className={`text-xs mt-1 ${isDark ? "text-slate-400" : "text-slate-600"}`}>
-              Pelacakan terperinci proses administrasi teknis SIMBG dengan indikator Service Level Agreement (SLA).
+              Pelacakan status berkas pemohon antar-gerai (KTP/KK, Pertanahan, Pajak Daerah, PBG, BPJS) dengan indikator SLA.
             </p>
           </div>
 
@@ -455,9 +455,9 @@ export default function LoketPelayanan({ isDark = true }: { isDark?: boolean }) 
             <Search size={15} className={`absolute left-3.5 top-1/2 -translate-y-1/2 ${isDark ? "text-slate-500" : "text-slate-400"}`} />
             <input
               type="text"
-              value={searchPBG}
-              onChange={(e) => setSearchPBG(e.target.value)}
-              placeholder="Cari Nomor Registrasi PBG, Nama Pemilik, atau Layanan..."
+              value={searchDoc}
+              onChange={(e) => setSearchDoc(e.target.value)}
+              placeholder="Cari Kode Tracking, Nama Pemohon, atau Jenis Layanan..."
               className={`w-full pl-9 pr-4 py-2.5 border rounded-xl text-xs outline-none transition-all ${
                 isDark 
                   ? "bg-base border-slate-800 text-white placeholder:text-slate-500 focus:border-emerald-500" 
@@ -477,7 +477,7 @@ export default function LoketPelayanan({ isDark = true }: { isDark?: boolean }) 
                   : "bg-slate-50 border-slate-200 text-slate-800 focus:border-emerald-500"
               }`}
             >
-              <option value="Semua">Semua Tahap Alur PBG</option>
+              <option value="Semua">Semua Tahapan Berkas</option>
               <option value="Verifikasi Berkas">Verifikasi Berkas</option>
               <option value="Tinjauan Teknis">Tinjauan Teknis</option>
               <option value="Menunggu Tanda Tangan">Menunggu Tanda Tangan</option>
@@ -502,14 +502,14 @@ export default function LoketPelayanan({ isDark = true }: { isDark?: boolean }) 
               </tr>
             </thead>
             <tbody className={`divide-y ${isDark ? "divide-slate-800/60 text-slate-200" : "divide-slate-200 text-slate-800"}`}>
-              {filteredPBG.length === 0 ? (
+              {filteredDocs.length === 0 ? (
                 <tr>
                   <td colSpan={6} className={`py-8 text-center text-xs ${isDark ? "text-slate-500" : "text-slate-400"}`}>
                     Tidak ada data permohonan dokumen yang sesuai dengan kriteria pencarian.
                   </td>
                 </tr>
               ) : (
-                filteredPBG.map((doc) => (
+                filteredDocs.map((doc) => (
                   <tr key={doc.id} className={isDark ? "hover:bg-slate-850/50 transition-colors" : "hover:bg-slate-50 transition-colors"}>
                     <td className="py-3.5 px-4 font-mono font-bold text-sky-600 dark:text-sky-400">
                       {doc.nomorRegistrasi}
