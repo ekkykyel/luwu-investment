@@ -1,8 +1,7 @@
 import react from '@vitejs/plugin-react';
-import path from 'path';
 import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
-import { VitePWA } from 'vite-plugin-pwa';
+import { fileURLToPath } from 'url';
 
 export default defineConfig(() => {
   return {
@@ -54,39 +53,6 @@ export default defineConfig(() => {
     plugins: [
       react(), 
       tailwindcss(),
-      VitePWA({
-        registerType: 'autoUpdate',
-        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png'],
-        workbox: {
-          cleanupOutdatedCaches: true, // WAJIB ADA: Membersihkan cache lama mencegah error IDB
-          clientsClaim: true,
-          skipWaiting: true,
-          globIgnores: ['**/*.json'],
-          maximumFileSizeToCacheInBytes: 8388608, // 8 MiB to accommodate bundles
-          navigateFallbackDenylist: [/^\/api/],
-        },
-        manifest: {
-          name: 'Portal Investasi Luwu',
-          short_name: 'InvestLuwu',
-          description: 'Sistem Informasi Spasial Potensi Investasi Kabupaten Luwu',
-          theme_color: '#020617',
-          background_color: '#020617',
-          icons: [
-            {
-              src: '/pwa-192x192.png',
-              sizes: '192x192',
-              type: 'image/png',
-              purpose: 'any maskable'
-            },
-            {
-              src: '/pwa-512x512.png',
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'any maskable'
-            }
-          ]
-        }
-      })
     ],
     define: {
       'process.env.NEXT_PUBLIC_SUPABASE_URL': JSON.stringify(process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "https://yeezhpdgafbefwipmldl.supabase.co"),
@@ -110,7 +76,7 @@ export default defineConfig(() => {
         'maplibre-gl'
       ],
       alias: {
-        '@': path.resolve(__dirname, './src'),
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
     optimizeDeps: {
@@ -139,6 +105,7 @@ export default defineConfig(() => {
       host: '0.0.0.0',
       port: 3000,
       hmr: false,
+      ws: false,
     },
   };
 });

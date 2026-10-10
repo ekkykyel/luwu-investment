@@ -62,7 +62,7 @@ var SUPABASE_URL = (() => {
   if (!url) {
     isSupabaseConfigured = false;
     console.warn("[WARN] SUPABASE_URL is not set in environment. Using standard working URL fallback.");
-    return "https://yeezhpdgafbefwipmldl.supabase.co";
+    return "https://svxugvxchjsjuyfeddor.supabase.co";
   }
   url = url.trim();
   if (url.endsWith("/")) url = url.slice(0, -1);

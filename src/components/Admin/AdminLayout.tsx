@@ -31,7 +31,8 @@ import {
   Database,
   Sliders,
   Sun,
-  Moon
+  Moon,
+  FileCheck
 } from "lucide-react";
 import { LuwuLogo } from "../LuwuLogo";
 import { supabase } from "../../lib/supabaseClient";

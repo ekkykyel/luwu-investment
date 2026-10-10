@@ -199,7 +199,7 @@ const TRANSPARENT_1X1_PNG = Buffer.from(
 
 import { createClient } from "@supabase/supabase-js";
 import { createSupabaseContext } from "@supabase/server";
-import { GLOBAL_JWT_SECRET, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_SECRET_KEY, SUPABASE_PUBLISHABLE_KEY, SUPABASE_JWKS_URL, SUPABASE_JWT_SECRET, DATABASE_URL, isSupabaseConfigured } from "./src/config/env.js";
+import { GLOBAL_JWT_SECRET, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_SECRET_KEY, SUPABASE_PUBLISHABLE_KEY, SUPABASE_JWKS_URL, DATABASE_URL, isSupabaseConfigured } from "./src/config/env.js";
 
 // Service/Admin Client initialized with SUPABASE_SECRET_KEY / SUPABASE_SERVICE_ROLE_KEY for privileged backend operations
 const supabaseAdminKey = SUPABASE_SECRET_KEY || SUPABASE_SERVICE_ROLE_KEY;
@@ -779,11 +779,8 @@ async function safeGetLayerDataRpc(tableName: string, timeoutMs?: number): Promi
     // Try fallback query directly from table if RPC times out
     if (res.error) {
       try {
-        const directRes: any = await Promise.race([
-          supabase.from(tableName).select('*').limit(300),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('DIRECT_TABLE_TIMEOUT')), 3500))
-        ]);
-        if (!directRes?.error && Array.isArray(directRes?.data) && directRes.data.length > 0) {
+        const directRes = await supabase.from(tableName).select('*').limit(300);
+        if (!directRes.error && Array.isArray(directRes.data) && directRes.data.length > 0) {
           const formatted = directRes.data.map((row: any) => {
             let geom = null;
             if (row.geom) {
@@ -802,7 +799,7 @@ async function safeGetLayerDataRpc(tableName: string, timeoutMs?: number): Promi
           }
         }
       } catch {
-        // Direct query timed out or failed, return honest fallback
+        // Direct query failed, return honest fallback
       }
     }
   } catch (err: any) {
@@ -839,13 +836,13 @@ async function fetchAndJoinInvestments(bypassCache = false) {
     return activeJoinPromise;
   }
 
-  const safeQuery = async (queryFn: () => any, tableName: string, maxAttempts = 2, queryTimeoutMs = 6500) => {
-    let delay = 300;
+  const safeQuery = async (queryFn: () => any, tableName: string, maxAttempts = 2) => {
+    let delay = 400;
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         const queryWithTimeout = Promise.race([
           queryFn(),
-          new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`Timeout querying ${tableName}`)), queryTimeoutMs))
+          new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`Timeout querying ${tableName}`)), 4500))
         ]);
         const res = await queryWithTimeout;
         if (res?.error) {
@@ -885,6 +882,41 @@ async function fetchAndJoinInvestments(bypassCache = false) {
 
   const fetchPromise = (async () => {
     try {
+      // ⚡ FAST-PATH: Mencoba kueri terpadu v_investments_complete jika view sudah aktif di database Supabase
+      try {
+        const viewRes = await safeQuery(
+          () => supabase.from('v_investments_complete').select('*').limit(500),
+          'v_investments_complete',
+          1
+        );
+        if (viewRes?.data && Array.isArray(viewRes.data) && viewRes.data.length > 0) {
+          const formattedList = viewRes.data.map((row: any) => {
+            const rawFin = Array.isArray(row.financials) ? row.financials[0] : row.financials;
+            const rawLoc = Array.isArray(row.locations) ? row.locations[0] : row.locations;
+            const rawLeg = Array.isArray(row.legalities) ? row.legalities[0] : row.legalities;
+            const rawScore = Array.isArray(row.investment_scores) ? row.investment_scores[0] : row.investment_scores;
+            const rawMed = Array.isArray(row.media_assets) ? row.media_assets[0] : row.media_assets;
+
+            return {
+              ...row,
+              geom: row.spatial_geometry || (row.longitude && row.latitude ? { type: "Point", coordinates: [Number(row.longitude), Number(row.latitude)] } : null),
+              financials: rawFin || null,
+              locations: rawLoc || null,
+              legalities: rawLeg || null,
+              investment_scores: rawScore || null,
+              media_assets: rawMed || null,
+            };
+          });
+
+          joinedInvestmentsCache = formattedList;
+          lastJoinedFetchTime = Date.now();
+          console.log(`⚡ [FAST-PATH] Berhasil memuat ${formattedList.length} data investasi via v_investments_complete`);
+          return { data: formattedList, error: null };
+        }
+      } catch (viewCheckErr) {
+        // Fallback transparan ke kueri multi-tabel di bawah
+      }
+
       const [
         { data: invList, error: invErr },
         { data: potList, error: potErr },
@@ -895,15 +927,15 @@ async function fetchAndJoinInvestments(bypassCache = false) {
         { data: legList, error: legErr }
       ] = await withTimeout(
         Promise.all([
-          safeQuery(() => supabase.from('investments').select('*').limit(500), 'investments', 2, 7000),
-          safeGetLayerDataRpc('gis_potensi_investasi', 5000),
-          safeQuery(() => supabase.from('financials').select('id, project_id, capex, opex, irr, npv, bep, roi, currency').limit(500), 'financials', 2, 6000),
-          safeQuery(() => supabase.from('locations').select('id, project_id, address, district, latitude, longitude').limit(500), 'locations', 2, 6000),
-          safeQuery(() => supabase.from('media_assets').select('id, project_id, photos, videos, documents').limit(500), 'media_assets', 2, 6000),
-          safeQuery(() => supabase.from('investment_scores').select('id, project_id, score, category').limit(500), 'investment_scores', 2, 6000),
-          safeQuery(() => supabase.from('legalities').select('id, project_id, status, permit_number, rtrw_compliance, amdal_status').limit(500), 'legalities', 2, 6000)
+          safeQuery(() => supabase.from('investments').select('*').limit(500), 'investments'),
+          safeGetLayerDataRpc('gis_potensi_investasi'),
+          safeQuery(() => supabase.from('financials').select('id, project_id, capex, opex, irr, npv, bep, roi, currency').limit(500), 'financials'),
+          safeQuery(() => supabase.from('locations').select('id, project_id, address, district, latitude, longitude').limit(500), 'locations'),
+          safeQuery(() => supabase.from('media_assets').select('id, project_id, photos, videos, documents').limit(500), 'media_assets'),
+          safeQuery(() => supabase.from('investment_scores').select('id, project_id, score, category').limit(500), 'investment_scores'),
+          safeQuery(() => supabase.from('legalities').select('id, project_id, status, permit_number, rtrw_compliance, amdal_status').limit(500), 'legalities')
         ]),
-        25000,
+        12000,
         "Database fetch timed out inside fetchAndJoinInvestments"
       );
 
@@ -1109,10 +1141,10 @@ async function fetchAndJoinInvestments(bypassCache = false) {
       return { data: joined, error: null };
     } catch (err: any) {
       console.warn("[fetchAndJoinInvestments] Handled warning:", err?.message || err);
-      if (joinedInvestmentsCache && joinedInvestmentsCache.length > 0) {
+      if (joinedInvestmentsCache) {
         return { data: joinedInvestmentsCache, error: null };
       }
-      return { data: [], error: null };
+      return { data: [], error: err };
     } finally {
       if (!bypassCache) {
         activeJoinPromise = null;
@@ -3941,10 +3973,8 @@ app.post("/api/upload-photo", upload.single('photo'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "Missing photo file" });
 
-    const rawFolder = (req.body?.folder || req.query?.folder || 'photos').toString();
-    const cleanFolder = rawFolder.replace(/[^a-zA-Z0-9_-]/g, '') || 'photos';
     const fileExt = req.file.originalname?.split('.').pop()?.toLowerCase() || 'jpg';
-    const filename = `${cleanFolder}/${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+    const filename = `photos/${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
 
     let uploadRes = await supabase.storage.from('mpp-images').upload(filename, req.file.buffer, {
       contentType: req.file.mimetype,
@@ -3967,7 +3997,7 @@ app.post("/api/upload-photo", upload.single('photo'), async (req, res) => {
     }
 
     const { data: urlData } = supabase.storage.from(activeBucket).getPublicUrl(filename);
-    res.json({ success: true, url: urlData.publicUrl, bucket: activeBucket, filename });
+    res.json({ success: true, url: urlData.publicUrl });
   } catch (err: any) {
     console.error("Error uploading photo via FormData:", err);
     res.status(500).json({ error: err.message });
@@ -3979,10 +4009,8 @@ app.post("/api/storage/upload", upload.single('photo'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "Missing photo file" });
 
-    const rawFolder = (req.body?.folder || req.query?.folder || 'photos').toString();
-    const cleanFolder = rawFolder.replace(/[^a-zA-Z0-9_-]/g, '') || 'photos';
     const fileExt = req.file.originalname?.split('.').pop()?.toLowerCase() || 'jpg';
-    const filename = `${cleanFolder}/${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+    const filename = `photos/${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
 
     let uploadRes = await supabase.storage.from('mpp-images').upload(filename, req.file.buffer, {
       contentType: req.file.mimetype,
@@ -4005,9 +4033,9 @@ app.post("/api/storage/upload", upload.single('photo'), async (req, res) => {
     }
 
     const { data: urlData } = supabase.storage.from(activeBucket).getPublicUrl(filename);
-    res.json({ success: true, url: urlData.publicUrl, bucket: activeBucket, filename });
+    res.json({ success: true, url: urlData.publicUrl });
   } catch (err: any) {
-    console.error("Error uploading photo via storage upload alias:", err);
+    console.error("Error uploading storage photo:", err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -4473,11 +4501,9 @@ app.use(async (req, res, next) => {
     "/api/mpp/skm",
     "/api/mpp/citizens",
     "/api/mpp/voice-assistant",
-    "/api/upload-photo",
-    "/api/site-settings"
+    "/api/upload-photo"
   ];
-  const isMppFacilityPath = req.path.startsWith("/api/mpp/facilities");
-  const isPublicPath = isGeminiPath || isKioskPath || isRagPath || isPublicTestimonialSubmit || isMppFacilityPath || publicPaths.includes(req.path);
+  const isPublicPath = isGeminiPath || isKioskPath || isRagPath || isPublicTestimonialSubmit || publicPaths.includes(req.path);
   const isWriteMethod = ["POST", "PUT", "DELETE"].includes(req.method);
 
   if (isWriteMethod && !isPublicPath && req.path.startsWith("/api/") && req.path !== "/api/infrastruktur" && !req.path.startsWith("/api/spatial")) {
@@ -4578,8 +4604,6 @@ app.post("/api/auth/login", async (req, res) => {
     }
   }
 
-  let profile: any = null;
-
   if (authError || !authData?.user) {
     const lowerEmail = username.toLowerCase().trim();
     if ((lowerEmail === "superadmin@luwu.go.id" || lowerEmail === "superadmin") && (password === "SuperAdmin123!" || password === "Operator123!")) {
@@ -4610,7 +4634,7 @@ app.post("/api/auth/login", async (req, res) => {
       mappedRole = "Admin OSS";
       userEmail = "dpmptspluwu@gmail.com";
       userId = "offline-oss-uuid-00008";
-    } else if ((lowerEmail === "adminmpp@luwukab.go.id" || lowerEmail === "mpp@luwukab.go.id" || lowerEmail === "adminmpp") && (password === "adminmpp@26" || password === "Mpp123!" || password === "Operator123!")) {
+    } else if ((lowerEmail === "adminmpp@luwukab.go.id" || lowerEmail === "mpp@luwukab.go.id" || lowerEmail === "adminmpp") && (password === "Mpp123!" || password === "Operator123!")) {
       mappedRole = "Admin MPP";
       userEmail = "adminmpp@luwukab.go.id";
       userId = "offline-mpp-uuid-00009";
@@ -4635,7 +4659,7 @@ app.post("/api/auth/login", async (req, res) => {
   } else {
     // 2. Map role based on user_metadata, profiles, and official email patterns
     const userMetadataRole = authData.user.user_metadata?.role || "";
-    profile = null;
+    let profile: any = null;
     try {
       // Query profiles safely using service role to bypass any faulty RLS
       const { data: profData, error: profErr } = await supabase
@@ -4685,8 +4709,7 @@ app.post("/api/auth/login", async (req, res) => {
     tokenSession = authData.session;
 
     // Fallback: If authData was verified directly via PostgreSQL bcrypt and has no session, generate a valid Supabase JWT session
-    const supabaseJwtSecret = process.env.SUPABASE_JWT_SECRET || '';
-    if (!tokenSession && supabaseJwtSecret) {
+    if (!tokenSession && SUPABASE_JWT_SECRET) {
       try {
         const sbToken = jwt.sign({
           aud: 'authenticated',
@@ -4697,7 +4720,7 @@ app.post("/api/auth/login", async (req, res) => {
           app_metadata: { provider: 'email', providers: ['email'] },
           user_metadata: { role: dbRole || mappedRole, full_name: profile?.full_name || mappedRole },
           role: 'authenticated'
-        }, supabaseJwtSecret);
+        }, SUPABASE_JWT_SECRET);
         tokenSession = {
           access_token: sbToken,
           token_type: 'bearer',
@@ -7318,21 +7341,6 @@ app.post("/api/site-settings", async (req, res) => {
       }, { onConflict: "setting_key" })
       .select();
     if (error) throw error;
-
-    // Auto-sync mpp_address if mpp_portal_profile is being updated
-    if (setting_key === 'mpp_portal_profile' && setting_value) {
-      try {
-        const parsed = typeof setting_value === 'string' ? JSON.parse(setting_value) : setting_value;
-        if (parsed?.mpp_address && typeof parsed.mpp_address === 'string' && parsed.mpp_address.trim().length > 0) {
-          await supabase.from("site_settings").upsert({
-            setting_key: 'mpp_address',
-            setting_value: parsed.mpp_address.trim(),
-            updated_at: new Date().toISOString()
-          }, { onConflict: "setting_key" });
-        }
-      } catch (e) {}
-    }
-
     res.json({ success: true, data });
   } catch (err: any) {
     res.status(500).json({ error: err?.message || "Failed to update site settings" });
@@ -14510,125 +14518,6 @@ app.post("/api/kiosk/submit-ticket", async (req, res) => {
 // INTEGRATED MPP (MAL PELAYANAN PUBLIK) API ENGINE
 // =========================================================
 
-// 0. Facilities Endpoints (GET, POST, PUT, DELETE)
-app.get("/api/mpp/facilities", async (req, res) => {
-  try {
-    const { data: dbFacilities, error } = await supabase
-      .from("mpp_facilities")
-      .select("*")
-      .order("updated_at", { ascending: false, nullsFirst: false });
-
-    if (!error && dbFacilities) {
-      return res.json({ success: true, count: dbFacilities.length, data: dbFacilities });
-    }
-    return res.json({ success: true, count: 0, data: [] });
-  } catch (err: any) {
-    console.error("[MPP API] Error fetching facilities:", err);
-    return res.status(500).json({ success: false, error: err?.message || "Failed to fetch facilities" });
-  }
-});
-
-app.post("/api/mpp/facilities", async (req, res) => {
-  try {
-    const { name, floor, description, image_url } = req.body || {};
-    if (!name) {
-      return res.status(400).json({ success: false, error: "Nama fasilitas wajib diisi" });
-    }
-
-    const { data, error } = await supabase
-      .from("mpp_facilities")
-      .insert({
-        name,
-        floor: floor || "Lantai 1",
-        description: description || "",
-        image_url: image_url || ""
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-    return res.json({ success: true, data });
-  } catch (err: any) {
-    console.error("[MPP API] Error creating facility:", err);
-    return res.status(500).json({ success: false, error: err?.message || "Gagal membuat fasilitas" });
-  }
-});
-
-app.put("/api/mpp/facilities/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, floor, description, image_url } = req.body || {};
-
-    const updatePayload: any = { updated_at: new Date().toISOString() };
-    if (name !== undefined) updatePayload.name = name;
-    if (floor !== undefined) updatePayload.floor = floor;
-    if (description !== undefined) updatePayload.description = description;
-    if (image_url !== undefined) updatePayload.image_url = image_url;
-
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    let targetId = isUuid ? id : null;
-
-    if (!targetId) {
-      // Find matching row in mpp_facilities by name or standard identifier
-      const { data: existingRows } = await supabase.from("mpp_facilities").select("id, name");
-      const matched = (existingRows || []).find((r: any) => {
-        const rName = (r.name || "").toLowerCase();
-        const searchName = (name || id || "").toLowerCase();
-        return rName.includes(searchName) || searchName.includes(rName);
-      });
-      if (matched?.id) {
-        targetId = matched.id;
-      }
-    }
-
-    if (targetId) {
-      const { data, error } = await supabase
-        .from("mpp_facilities")
-        .update(updatePayload)
-        .eq("id", targetId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return res.json({ success: true, data });
-    } else {
-      // If no existing row found, create a new record
-      const { data, error } = await supabase
-        .from("mpp_facilities")
-        .insert({
-          name: name || id,
-          floor: floor || "Lantai 1",
-          description: description || "",
-          image_url: image_url || ""
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return res.json({ success: true, data });
-    }
-  } catch (err: any) {
-    console.error("[MPP API] Error updating facility:", err);
-    return res.status(500).json({ success: false, error: err?.message || "Gagal memperbarui fasilitas" });
-  }
-});
-
-app.delete("/api/mpp/facilities/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { error } = await supabase
-      .from("mpp_facilities")
-      .delete()
-      .eq("id", id);
-
-    if (error) throw error;
-    return res.json({ success: true, message: "Fasilitas berhasil dihapus" });
-  } catch (err: any) {
-    console.error("[MPP API] Error deleting facility:", err);
-    return res.status(500).json({ success: false, error: err?.message || "Gagal menghapus fasilitas" });
-  }
-});
-
 // 1. GET /api/mpp/tenants - Daftar Semua Tenant/Instansi MPP
 app.get("/api/mpp/tenants", async (req, res) => {
   try {
@@ -14835,39 +14724,7 @@ function getWitaTimeDetails() {
   };
 }
 
-let cachedQueueSchedule: any = null;
-let lastQueueScheduleFetch = 0;
-
-async function getOrFetchQueueSchedule() {
-  const now = Date.now();
-  if (cachedQueueSchedule && (now - lastQueueScheduleFetch < 30000)) {
-    return cachedQueueSchedule;
-  }
-  try {
-    const { data } = await supabase
-      .from('site_settings')
-      .select('setting_value')
-      .eq('setting_key', 'mpp_queue_schedule_config')
-      .maybeSingle();
-    if (data && data.setting_value) {
-      cachedQueueSchedule = typeof data.setting_value === 'string' 
-        ? JSON.parse(data.setting_value) 
-        : data.setting_value;
-      lastQueueScheduleFetch = now;
-      return cachedQueueSchedule;
-    }
-  } catch (err) {
-    console.warn('[QueueSchedule Cache] Warning fetching schedule:', err);
-  }
-  return null;
-}
-
-function validateMppOperationalHours(
-  visitDate: string,
-  session: string = 'pagi',
-  allowOffHours: boolean = false,
-  scheduleConfig?: any
-): { isValid: boolean; message?: string } {
+function validateMppOperationalHours(visitDate: string, session: string = 'pagi', allowOffHours: boolean = true): { isValid: boolean; message?: string } {
   const wita = getWitaTimeDetails();
 
   if (visitDate < wita.todayStr) {
@@ -14877,65 +14734,32 @@ function validateMppOperationalHours(
     };
   }
 
-  const config = scheduleConfig || cachedQueueSchedule;
-
-  // 1. Cek Mode Override Pengelola MPP
-  if (config?.overrideMode === 'force_open') {
-    return { isValid: true };
-  }
-  if (config?.overrideMode === 'force_closed') {
-    return {
-      isValid: false,
-      message: config?.overrideReason || "Mesin dan pendaftaran antrean online ditutup sementara oleh Admin Pengelola MPP (Pemeliharaan Sistem / Penutupan Darurat)."
-    };
-  }
-
-  // 2. Cek Hari Libur Nasional, Cuti Bersama, & Hari Raya Keagamaan
-  if (config?.holidays && Array.isArray(config.holidays)) {
-    const holiday = config.holidays.find((h: any) => h.isActive && h.date === visitDate);
-    if (holiday) {
-      const catLabel = holiday.category === 'cuti_bersama' 
-        ? 'Cuti Bersama' 
-        : holiday.category === 'keagamaan' 
-          ? 'Hari Raya Keagamaan' 
-          : 'Hari Libur Nasional';
-      return {
-        isValid: false,
-        message: `Pendaftaran antrean online ditutup karena ${catLabel}: ${holiday.name}. Silakan ambil nomor antrean pada hari kerja berikutnya.`
-      };
-    }
-  }
-
-  // Jika bypass off hours secara eksplisit diminta
+  // Jika allowOffHours disetel (default true untuk registrasi online 24/7), lewati pembatasan jam operasional fisik
   if (allowOffHours) {
     return { isValid: true };
   }
 
-  // 3. Cek Hari Libur Akhir Pekan (Sabtu & Minggu Tutup)
+  // 1. Cek hari libur akhir pekan pada tanggal kunjungan yang dipilih
   const targetDateObj = new Date(`${visitDate}T12:00:00+08:00`);
   const targetDay = targetDateObj.getDay();
   if (targetDay === 0 || targetDay === 6) {
     return {
       isValid: false,
-      message: "MPP Simpurusiang tidak beroperasi pada akhir pekan (Sabtu & Minggu). Layanan dibuka setiap hari kerja (Senin s.d. Jumat) pukul 07:30 WITA."
+      message: "MPP Simpurusiang tidak beroperasi pada akhir pekan (Sabtu & Minggu). Silakan pilih tanggal kunjungan hari kerja (Senin s.d. Jumat)."
     };
   }
 
-  // 4. Validasi Jam Operasional Hari Kerja Berjalan (Hari H)
+  // 2. Validasi jika pendaftaran untuk hari ini (Hari H)
   if (visitDate === wita.todayStr) {
     if (wita.isWeekend) {
       return {
         isValid: false,
-        message: "Hari ini adalah akhir pekan. Layanan tatap muka MPP Simpurusiang buka pada hari kerja (Senin s.d. Jumat) pukul 07:30 WITA."
+        message: "Hari ini adalah akhir pekan. Layanan tatap muka MPP Simpurusiang buka pada hari kerja (Senin s.d. Jumat)."
       };
     }
 
-    // Jadwal Resmi Pemkab Luwu:
-    // Senin - Kamis: 07:30 - 16:00 WITA
-    // Jumat: 07:30 - 16:30 WITA
-    const isFriday = wita.isFriday;
-    const closingHour = isFriday ? 16.5 : 16.0;
-    const closingLabel = isFriday ? "16:30 WITA" : "16:00 WITA";
+    const closingHour = wita.isFriday ? 16.0 : 15.5;
+    const closingLabel = wita.isFriday ? "16:00 WITA" : "15:30 WITA";
 
     if (wita.timeDecimal < 7.5) {
       return {
@@ -14945,10 +14769,17 @@ function validateMppOperationalHours(
     }
 
     if (wita.timeDecimal >= closingHour) {
-      const nextDayDesc = isFriday ? "hari Senin pukul 07:30 WITA" : "besok hari pukul 07:30 WITA";
       return {
         isValid: false,
-        message: `Jam operasional pendaftaran antrean hari ini telah ditutup (${closingLabel}). Pendaftaran antrean online ditutup hingga menunggu jam pelayanan dibuka kembali pada ${nextDayDesc}.`
+        message: `Jam operasional pendaftaran antrean hari ini telah ditutup (${closingLabel}). Silakan jadwalkan kunjungan Anda pada hari kerja berikutnya.`
+      };
+    }
+
+    const normSession = (session || 'pagi').toLowerCase();
+    if (normSession === 'pagi' && wita.timeDecimal >= 12.0) {
+      return {
+        isValid: false,
+        message: "Pendaftaran Sesi Pagi (07:30 - 12:00 WITA) untuk hari ini telah berakhir. Silakan pilih Sesi Siang (13:00 - 15:30 WITA) atau jadwalkan pada hari kerja berikutnya."
       };
     }
   }
@@ -15198,7 +15029,7 @@ app.post("/api/mpp/register-citizen", async (req, res) => {
       }
 
       const paddedNum = String(nextNum).padStart(3, "0");
-      const ticketCode = is_priority ? `P-${tCode}-${paddedNum}` : `${tCode}-${paddedNum}`;
+      const ticketCode = is_priority ? `P-${paddedNum}-${tCode}` : `${paddedNum}-${tCode}`;
 
       const { data: qData, error: qErr } = await supabase
         .from("mpp_queues")
@@ -15432,7 +15263,7 @@ app.post("/api/mpp/queues", async (req, res) => {
 
         // Format Nomor Antrean Resmi: 001-KODE (contoh: 001-DPMPTSP, 001-PUPTR, atau P-001-DPMPTSP jika prioritas)
         const paddedNum = String(nextNum).padStart(3, "0");
-        const ticketCode = is_priority ? `P-${tenantCode}-${paddedNum}` : `${tenantCode}-${paddedNum}`;
+        const ticketCode = is_priority ? `P-${paddedNum}-${tenantCode}` : `${paddedNum}-${tenantCode}`;
 
         const finalUserId = user_id || (`cit-${citizen_nik}`);
         let passHash: string | null = null;
@@ -16631,137 +16462,6 @@ app.post("/api/mpp/tenant-users/session/end", async (req, res) => {
       success: true,
       message: "Sesi loket berhasil dinonaktifkan."
     });
-  } catch (err: any) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// 19d. POST /api/mpp/tenants - Simpan / Perbarui Profil Gerai / Instansi (Admin MPP with Service Role)
-app.post("/api/mpp/tenants", async (req, res) => {
-  try {
-    const { id, name, code, logo, floor, is_active, description } = req.body;
-    if (!name || !code) {
-      return res.status(400).json({ success: false, message: "Nama dan kode gerai wajib diisi." });
-    }
-
-    const payload: any = {
-      name: name.trim(),
-      code: code.trim().toUpperCase(),
-      logo: logo?.trim() || null,
-      floor: floor?.trim() || "Lantai 1",
-      is_active: is_active !== false,
-      description: description?.trim() || null
-    };
-
-    let resultData: any = null;
-    if (id) {
-      // Update existing
-      const { data, error } = await supabase
-        .from("mpp_tenants")
-        .update(payload)
-        .eq("id", id)
-        .select();
-
-      if (error) throw error;
-      resultData = data?.[0] || { id, ...payload };
-    } else {
-      // Insert new
-      payload.created_at = new Date().toISOString();
-      const { data, error } = await supabase
-        .from("mpp_tenants")
-        .insert(payload)
-        .select();
-
-      if (error) throw error;
-      resultData = data?.[0] || payload;
-    }
-
-    return res.json({
-      success: true,
-      data: resultData,
-      message: id ? "Profil gerai berhasil diperbarui." : "Gerai baru berhasil ditambahkan."
-    });
-  } catch (err: any) {
-    console.error("[API /api/mpp/tenants Error]:", err);
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// 19e. DELETE /api/mpp/tenants/:id - Hapus Gerai / Instansi (Admin MPP with Service Role)
-app.delete("/api/mpp/tenants/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    if (!id) return res.status(400).json({ success: false, message: "ID gerai wajib diisi." });
-
-    const { error } = await supabase.from("mpp_tenants").delete().eq("id", id);
-    if (error) throw error;
-
-    return res.json({ success: true, message: "Gerai berhasil dihapus." });
-  } catch (err: any) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// 19f. POST /api/mpp/services - Simpan / Perbarui Layanan MPP Beserta Foto Layanan (photo_url)
-app.post("/api/mpp/services", async (req, res) => {
-  try {
-    const { id, tenant_id, service_name, requirements, estimated_time_minutes, is_active, photo_url } = req.body;
-    if (!service_name || !tenant_id) {
-      return res.status(400).json({ success: false, message: "Nama layanan dan instansi/gerai wajib diisi." });
-    }
-
-    const payload: any = {
-      tenant_id,
-      service_name: service_name.trim(),
-      name: service_name.trim(), // backward compatibility
-      requirements: requirements?.trim() || null,
-      estimated_time_minutes: Number(estimated_time_minutes) || 15,
-      is_active: is_active !== false,
-      photo_url: photo_url?.trim() || null
-    };
-
-    let resultData: any = null;
-    if (id) {
-      const { data, error } = await supabase
-        .from("mpp_services")
-        .update(payload)
-        .eq("id", id)
-        .select();
-
-      if (error) throw error;
-      resultData = data?.[0] || { id, ...payload };
-    } else {
-      payload.created_at = new Date().toISOString();
-      const { data, error } = await supabase
-        .from("mpp_services")
-        .insert(payload)
-        .select();
-
-      if (error) throw error;
-      resultData = data?.[0] || payload;
-    }
-
-    return res.json({
-      success: true,
-      data: resultData,
-      message: id ? "Layanan berhasil diperbarui." : "Layanan baru berhasil ditambahkan."
-    });
-  } catch (err: any) {
-    console.error("[API /api/mpp/services Error]:", err);
-    return res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// 19g. DELETE /api/mpp/services/:id - Hapus Layanan MPP (Admin MPP)
-app.delete("/api/mpp/services/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    if (!id) return res.status(400).json({ success: false, message: "ID layanan wajib diisi." });
-
-    const { error } = await supabase.from("mpp_services").delete().eq("id", id);
-    if (error) throw error;
-
-    return res.json({ success: true, message: "Layanan berhasil dihapus." });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: err.message });
   }

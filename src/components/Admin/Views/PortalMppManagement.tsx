@@ -1026,14 +1026,14 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
         setting_key: 'mpp_portal_profile',
         setting_value: JSON.stringify(profile),
         updated_at: new Date().toISOString()
-      }, { onConflict: 'setting_key' }).catch(() => {});
+      }, { onConflict: 'setting_key' });
 
       if (profile.mpp_address) {
         await supabase.from("site_settings").upsert({
           setting_key: 'mpp_address',
           setting_value: profile.mpp_address.trim(),
           updated_at: new Date().toISOString()
-        }, { onConflict: 'setting_key' }).catch(() => {});
+        }, { onConflict: 'setting_key' });
       }
 
       // 2. Synchronize banner directly to mpp_hero_images & hero_image_url
@@ -1059,7 +1059,7 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
           setting_key: 'mpp_hero_images',
           setting_value: JSON.stringify([profile.banner_url]),
           updated_at: new Date().toISOString()
-        }, { onConflict: 'setting_key' }).catch(() => {});
+        }, { onConflict: 'setting_key' });
       }
     } catch (err) {
       console.warn("Notice syncing profile to site_settings:", err);

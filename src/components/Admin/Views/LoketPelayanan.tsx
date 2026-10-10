@@ -47,7 +47,7 @@ interface DocumentTrackingItem {
 }
 
 const INITIAL_ANTREAN: AntreanItem[] = [];
-const INITIAL_PBG: PBGDocItem[] = [];
+const INITIAL_PBG: DocumentTrackingItem[] = [];
 
 export default function LoketPelayanan({ isDark = true }: { isDark?: boolean }) {
   const [antreanList, setAntreanList] = useState<AntreanItem[]>(INITIAL_ANTREAN);
@@ -181,9 +181,9 @@ export default function LoketPelayanan({ isDark = true }: { isDark?: boolean }) 
   const filteredDocs = trackingList.filter((item) => {
     const matchSearch =
       item.nomorRegistrasi.toLowerCase().includes(searchDoc.toLowerCase()) ||
-      item.namaPemilik.toLowerCase().includes(searchPBG.toLowerCase()) ||
-      item.fungsiBangunan.toLowerCase().includes(searchPBG.toLowerCase()) ||
-      item.lokasiBangunan.toLowerCase().includes(searchPBG.toLowerCase());
+      item.namaPemilik.toLowerCase().includes(searchDoc.toLowerCase()) ||
+      item.fungsiBangunan.toLowerCase().includes(searchDoc.toLowerCase()) ||
+      item.lokasiBangunan.toLowerCase().includes(searchDoc.toLowerCase());
 
     const matchTahap = filterTahap === "Semua" || item.tahap === filterTahap;
 
