@@ -218,21 +218,49 @@
       "agencyText": "Managed by DPMPTSP Luwu Regency"
     },
     "sections": {
+      "floorplan_badge": "Interactive Building Map",
+      "floorplan_title": "Find Counter",
+      "floorplan_subtitle": "Explore service counter locations in real-time to speed up your visit inside the MPP Simpurusiang building.",
       "skm_badge": "Satisfaction Survey",
-      "skm_title": "Public Satisfaction Survey (SKM)",
+      "skm_title": "Public Satisfaction Index (IKM)",
       "skm_subtitle": "Honest evaluation from the public on the effectiveness of MPP Simpurusiang services.",
       "complaint_badge": "Complaints & Aspirations",
       "complaint_title": "Public Complaint Channels",
       "complaint_subtitle": "Open channels for public oversight to improve the effectiveness of MPP Simpurusiang services.",
       "workflow_badge": "Procedure Guide",
-      "workflow_title": "Integrated Service Workflow",
-      "workflow_subtitle": "Standardized integrated service workflow at MPP Simpurusiang, Luwu Regency.",
+      "workflow_title": "Digital Service Workflow",
+      "workflow_subtitle": "Fast, transparent, and integrated process in 4 easy steps.",
       "news_badge": "Official Publication",
-      "news_title": "Latest News & Announcements",
+      "news_title": "Latest News & Information",
       "news_subtitle": "Latest service guides, policy regulations, and MPP system updates in Luwu.",
       "review_badge": "Citizen Testimonials",
-      "review_title": "MPP Simpurusiang Citizen Reviews",
+      "review_title": "Citizen Reviews",
       "review_subtitle": "Direct experiences and honest reviews from the community regarding MPP Simpurusiang services."
+    },
+    "survey": {
+      "indicators": {
+        "persyaratan": "Requirements",
+        "prosedur": "Procedures",
+        "kecepatan": "Service Speed",
+        "biaya": "Fees / Tariffs",
+        "produk": "Service Products",
+        "kompetensi": "Staff Competence",
+        "perilaku": "Staff Behavior",
+        "sarana": "Facilities & Infrastructure",
+        "pengaduan": "Complaint Handling"
+      }
+    },
+    "statistik": {
+      "badge": "Service Statistics",
+      "title": "Visitor Statistics",
+      "titleHighlight": "MPP Simpurusiang",
+      "subtitle": "Real-time data monitoring of citizens served at Luwu Regency Public Service Mall.",
+      "dailyAvg": "Daily Average",
+      "weeklyAvg": "Weekly Average",
+      "monthlyAvg": "Monthly Average",
+      "yearlyAvg": "Total Applicants / Year",
+      "unitVisitor": "Applicants Served",
+      "liveSync": "Supabase Live Sync"
     },
     "instansi": {
       "title": "Registered Agencies"
@@ -267,5 +295,25 @@
       "nik": "Enter 16-digit ID number",
       "phone": "WhatsApp number (e.g., 08123456789)"
     }
+  },
+  "sections": {
+    "floorplan_badge": "Interactive Building Map",
+    "floorplan_title": "Find Counter",
+    "floorplan_subtitle": "Explore service counter locations in real-time to speed up your visit inside the MPP Simpurusiang building.",
+    "skm_badge": "SATISFACTION SURVEY",
+    "skm_title": "Public Satisfaction Index (IKM)",
+    "skm_subtitle": "Honest evaluation from the public on the effectiveness of MPP Simpurusiang services.",
+    "complaint_badge": "Complaints & Aspirations",
+    "complaint_title": "Public Complaint Channels",
+    "complaint_subtitle": "Open channels for public oversight to improve the effectiveness of MPP Simpurusiang services.",
+    "workflow_badge": "PROCEDURE GUIDE",
+    "workflow_title": "Digital Service Workflow",
+    "workflow_subtitle": "Fast, transparent, and integrated process in 4 easy steps.",
+    "news_badge": "Official Publication",
+    "news_title": "Latest News & Information",
+    "news_subtitle": "Latest service guides, policy regulations, and MPP system updates in Luwu.",
+    "review_badge": "Citizen Testimonials",
+    "review_title": "Citizen Reviews",
+    "review_subtitle": "Direct experiences and honest reviews from the community regarding MPP Simpurusiang services."
   }
 }

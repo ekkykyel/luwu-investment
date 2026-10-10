@@ -218,21 +218,49 @@
       "agencyText": "由鲁武县投资与政务审批局运维管理"
     },
     "sections": {
+      "floorplan_badge": "交互式楼层平面图",
+      "floorplan_title": "查找服务窗口",
+      "floorplan_subtitle": "实时查看服务窗口位置，加速您在 MPP Simpurusiang 大楼内的业务办理。",
       "skm_badge": "满意度调查",
-      "skm_title": "群众满意度调查 (SKM)",
+      "skm_title": "群众满意度指数 (IKM)",
       "skm_subtitle": "对 MPP Simpurusiang 窗口服务效率的真实反馈。",
       "complaint_badge": "投诉与建议",
       "complaint_title": "公共服务投诉渠道",
       "complaint_subtitle": "公开投诉渠道，助力提升 MPP Simpurusiang 的便民服务质量。",
       "workflow_badge": "办事流程指南",
-      "workflow_title": "一站式办事流程",
-      "workflow_subtitle": "鲁武县 MPP Simpurusiang 标准化政务办事指南。",
+      "workflow_title": "数字化服务流程",
+      "workflow_subtitle": "快速、透明、一网通办的 4 步便捷流程。",
       "news_badge": "官方公告",
-      "news_title": "最新新闻与公告",
+      "news_title": "最新资讯与公告",
       "news_subtitle": "鲁武县最新的服务指南、政策法规及系统升级公告。",
       "review_badge": "市民口碑",
-      "review_title": "MPP Simpurusiang 市民反馈",
+      "review_title": "市民评价",
       "review_subtitle": "市民对 MPP Simpurusiang 服务体验的真实评价与建议。"
+    },
+    "survey": {
+      "indicators": {
+        "persyaratan": "办理条件",
+        "prosedur": "办事流程",
+        "kecepatan": "办理时限",
+        "biaya": "收费标准",
+        "produk": "服务成果",
+        "kompetensi": "人员专业度",
+        "perilaku": "服务态度",
+        "sarana": "设施与环境",
+        "pengaduan": "投诉处理"
+      }
+    },
+    "statistik": {
+      "badge": "服务统计",
+      "title": "访问量统计",
+      "titleHighlight": "MPP Simpurusiang",
+      "subtitle": "鲁武县公共服务大厅累计服务人次实时监测。",
+      "dailyAvg": "日均接待",
+      "weeklyAvg": "周均接待",
+      "monthlyAvg": "月均接待",
+      "yearlyAvg": "年度累计办理",
+      "unitVisitor": "已服务申请人",
+      "liveSync": "Supabase 实时同步"
     },
     "instansi": {
       "title": "入驻机构"
@@ -267,5 +295,25 @@
       "nik": "请输入16位公民身份证号",
       "phone": "联系电话/微信"
     }
+  },
+  "sections": {
+    "floorplan_badge": "交互式楼层平面图",
+    "floorplan_title": "查找服务窗口",
+    "floorplan_subtitle": "实时查看服务窗口位置，加速您在 MPP Simpurusiang 大楼内的业务办理。",
+    "skm_badge": "满意度调查",
+    "skm_title": "群众满意度指数 (IKM)",
+    "skm_subtitle": "对 MPP Simpurusiang 窗口服务效率的真实反馈。",
+    "complaint_badge": "投诉与建议",
+    "complaint_title": "公共服务投诉渠道",
+    "complaint_subtitle": "公开投诉渠道，助力提升 MPP Simpurusiang 的便民服务质量。",
+    "workflow_badge": "办事流程指南",
+    "workflow_title": "数字化服务流程",
+    "workflow_subtitle": "快速、透明、一网通办的 4 步便捷流程。",
+    "news_badge": "官方公告",
+    "news_title": "最新资讯与公告",
+    "news_subtitle": "鲁武县最新的服务指南、政策法规及系统升级公告。",
+    "review_badge": "市民口碑",
+    "review_title": "市民评价",
+    "review_subtitle": "市民对 MPP Simpurusiang 服务体验的真实评价与建议。"
   }
 }

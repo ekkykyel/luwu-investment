@@ -218,21 +218,49 @@
       "agencyText": "Dikelola oleh DPMPTSP Kabupaten Luwu"
     },
     "sections": {
+      "floorplan_badge": "Denah Gedung Interaktif",
+      "floorplan_title": "Temukan Loket",
+      "floorplan_subtitle": "Eksplorasi lokasi loket pelayanan secara real-time untuk mempercepat urusan Anda di dalam gedung MPP Simpurusiang.",
       "skm_badge": "Survei Kepuasan",
-      "skm_title": "Survei Kepuasan Masyarakat (SKM)",
+      "skm_title": "Indeks Kepuasan Masyarakat (IKM)",
       "skm_subtitle": "Evaluasi jujur masyarakat terhadap efektivitas pelayanan loket MPP Simpurusiang Kabupaten Luwu.",
       "complaint_badge": "Pengaduan & Aspirasi",
       "complaint_title": "Kanal Pengaduan Layanan Publik",
       "complaint_subtitle": "Membuka saluran pengawasan masyarakat untuk terus meningkatkan efektivitas pelayanan publik MPP Simpurusiang Kabupaten Luwu.",
       "workflow_badge": "Panduan Prosedur",
-      "workflow_title": "Alur Pelayanan Layanan Terpadu",
-      "workflow_subtitle": "Berikut adalah alur pelayanan standar terpadu di MPP Simpurusiang Kabupaten Luwu.",
+      "workflow_title": "Alur Pelayanan Digital",
+      "workflow_subtitle": "Proses cepat, transparan, dan terintegrasi dalam 4 langkah mudah.",
       "news_badge": "Publikasi Resmi",
-      "news_title": "Berita & Pengumuman Terbaru",
+      "news_title": "Kabar & Informasi Terkini",
       "news_subtitle": "Panduan pelayanan terbaru, regulasi kebijakan, dan pengumuman pembaruan sistem MPP Luwu.",
       "review_badge": "Testimoni Warga",
-      "review_title": "Ulasan Masyarakat MPP Simpurusiang",
+      "review_title": "Ulasan Masyarakat",
       "review_subtitle": "Pengalaman langsung dan ulasan jujur masyarakat terhadap pelayanan di MPP Simpurusiang Kabupaten Luwu."
+    },
+    "survey": {
+      "indicators": {
+        "persyaratan": "Persyaratan",
+        "prosedur": "Prosedur",
+        "kecepatan": "Kecepatan Waktu",
+        "biaya": "Biaya / Tarif",
+        "produk": "Produk Layanan",
+        "kompetensi": "Kompetensi Pelaksana",
+        "perilaku": "Perilaku Pelaksana",
+        "sarana": "Sarana & Prasarana",
+        "pengaduan": "Penanganan Pengaduan"
+      }
+    },
+    "statistik": {
+      "badge": "Statistik Pelayanan",
+      "title": "Statistik Kunjungan",
+      "titleHighlight": "MPP Simpurusiang",
+      "subtitle": "Pantauan data real-time jumlah masyarakat yang telah terlayani di Mal Pelayanan Publik Kabupaten Luwu.",
+      "dailyAvg": "Rata-rata Harian",
+      "weeklyAvg": "Rata-rata Mingguan",
+      "monthlyAvg": "Rata-rata Bulanan",
+      "yearlyAvg": "Total Pemohon / Tahun",
+      "unitVisitor": "Pemohon Terlayani",
+      "liveSync": "Sinkronisasi Langsung Supabase"
     },
     "instansi": {
       "title": "Instansi Terdaftar"
@@ -267,5 +295,25 @@
       "nik": "Masukkan 16 digit NIK Anda",
       "phone": "Nomor WhatsApp (misal: 08123456789)"
     }
+  },
+  "sections": {
+    "floorplan_badge": "Denah Gedung Interaktif",
+    "floorplan_title": "Temukan Loket",
+    "floorplan_subtitle": "Eksplorasi lokasi loket pelayanan secara real-time untuk mempercepat urusan Anda di dalam gedung MPP Simpurusiang.",
+    "skm_badge": "SURVEI KEPUASAN",
+    "skm_title": "Indeks Kepuasan Masyarakat (IKM)",
+    "skm_subtitle": "Evaluasi jujur masyarakat terhadap efektivitas pelayanan loket MPP Simpurusiang Kabupaten Luwu.",
+    "complaint_badge": "Pengaduan & Aspirasi",
+    "complaint_title": "Kanal Pengaduan Layanan Publik",
+    "complaint_subtitle": "Membuka saluran pengawasan masyarakat untuk terus meningkatkan efektivitas pelayanan publik MPP Simpurusiang Kabupaten Luwu.",
+    "workflow_badge": "PANDUAN PROSEDUR",
+    "workflow_title": "Alur Pelayanan Digital",
+    "workflow_subtitle": "Proses cepat, transparan, dan terintegrasi dalam 4 langkah mudah.",
+    "news_badge": "Publikasi Resmi",
+    "news_title": "Kabar & Informasi Terkini",
+    "news_subtitle": "Panduan pelayanan terbaru, regulasi kebijakan, dan pengumuman pembaruan sistem MPP Luwu.",
+    "review_badge": "Testimoni Warga",
+    "review_title": "Ulasan Masyarakat",
+    "review_subtitle": "Pengalaman langsung dan ulasan jujur masyarakat terhadap pelayanan di MPP Simpurusiang Kabupaten Luwu."
   }
 }

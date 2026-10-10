@@ -1901,23 +1901,23 @@ export default function PortalMPP() {
   };
 
   const statistikCards = [
-    { label: t("mppPortal.statistik.dailyAvg"), value: formatMetricVal(queueMetrics.dailyAvg), numValue: queueMetrics.dailyAvg, icon: Clock },
-    { label: t("mppPortal.statistik.weeklyAvg"), value: formatMetricVal(queueMetrics.weeklyAvg), numValue: queueMetrics.weeklyAvg, icon: CalendarDays },
-    { label: t("mppPortal.statistik.monthlyAvg"), value: formatMetricVal(queueMetrics.monthlyAvg), numValue: queueMetrics.monthlyAvg, icon: Calendar },
-    { label: t("mppPortal.statistik.yearlyAvg"), value: formatMetricVal(queueMetrics.yearlyTotal), numValue: queueMetrics.yearlyTotal, icon: TrendingUp },
+    { label: t("mppPortal.statistik.dailyAvg", "Rata-rata Harian"), value: formatMetricVal(queueMetrics.dailyAvg), numValue: queueMetrics.dailyAvg, icon: Clock },
+    { label: t("mppPortal.statistik.weeklyAvg", "Rata-rata Mingguan"), value: formatMetricVal(queueMetrics.weeklyAvg), numValue: queueMetrics.weeklyAvg, icon: CalendarDays },
+    { label: t("mppPortal.statistik.monthlyAvg", "Rata-rata Bulanan"), value: formatMetricVal(queueMetrics.monthlyAvg), numValue: queueMetrics.monthlyAvg, icon: Calendar },
+    { label: t("mppPortal.statistik.yearlyAvg", "Total Pemohon / Tahun"), value: formatMetricVal(queueMetrics.yearlyTotal), numValue: queueMetrics.yearlyTotal, icon: TrendingUp },
   ];
 
   // 9 Unsur SKM (PermenPANRB No. 14/2017) Terkoneksi Database Supabase mpp_skm
   const skmIndicators = [
-    { key: 'persyaratan', label: t("mppPortal.survey.indicators.persyaratan"), score: skmScores.persyaratan },
-    { key: 'prosedur', label: t("mppPortal.survey.indicators.prosedur"), score: skmScores.prosedur },
-    { key: 'kecepatan', label: t("mppPortal.survey.indicators.kecepatan"), score: skmScores.kecepatan },
-    { key: 'biaya', label: t("mppPortal.survey.indicators.biaya"), score: skmScores.biaya },
-    { key: 'produk', label: t("mppPortal.survey.indicators.produk"), score: skmScores.produk },
-    { key: 'kompetensi', label: t("mppPortal.survey.indicators.kompetensi"), score: skmScores.kompetensi },
-    { key: 'perilaku', label: t("mppPortal.survey.indicators.perilaku"), score: skmScores.perilaku },
-    { key: 'sarana', label: t("mppPortal.survey.indicators.sarana"), score: skmScores.sarana },
-    { key: 'pengaduan', label: t("mppPortal.survey.indicators.pengaduan"), score: skmScores.pengaduan },
+    { key: 'persyaratan', label: t("mppPortal.survey.indicators.persyaratan", "Persyaratan"), score: skmScores.persyaratan },
+    { key: 'prosedur', label: t("mppPortal.survey.indicators.prosedur", "Prosedur"), score: skmScores.prosedur },
+    { key: 'kecepatan', label: t("mppPortal.survey.indicators.kecepatan", "Kecepatan Waktu"), score: skmScores.kecepatan },
+    { key: 'biaya', label: t("mppPortal.survey.indicators.biaya", "Biaya / Tarif"), score: skmScores.biaya },
+    { key: 'produk', label: t("mppPortal.survey.indicators.produk", "Produk Layanan"), score: skmScores.produk },
+    { key: 'kompetensi', label: t("mppPortal.survey.indicators.kompetensi", "Kompetensi Pelaksana"), score: skmScores.kompetensi },
+    { key: 'perilaku', label: t("mppPortal.survey.indicators.perilaku", "Perilaku Pelaksana"), score: skmScores.perilaku },
+    { key: 'sarana', label: t("mppPortal.survey.indicators.sarana", "Sarana & Prasarana"), score: skmScores.sarana },
+    { key: 'pengaduan', label: t("mppPortal.survey.indicators.pengaduan", "Penanganan Pengaduan"), score: skmScores.pengaduan },
   ];
 
   const averageSkm = skmScoreAverage;
@@ -2230,9 +2230,9 @@ export default function PortalMPP() {
                         { id: 'tracking-berkas', label: t("mppPortal.quickNav.tracking", "Lacak Berkas/Resi"), icon: SearchCheck },
                         { id: 'denah-interaktif', label: t("mppPortal.quickNav.floorPlan", "Denah 3D Interaktif"), icon: Layers },
                         { id: 'operasional-heatmap', label: t("mppPortal.quickNav.operational", "Jam Kunjungan & SLA"), icon: Clock },
-                        { id: 'layanan', label: t("mppPortal.nav.layanan"), icon: LayoutGrid },
-                        { id: 'instansi', label: t("mppPortal.nav.instansi"), icon: Building2 },
-                        { id: 'fasilitas', label: t("mppPortal.nav.fasilitas"), icon: Armchair },
+                        { id: 'layanan', label: t("mppPortal.nav.layanan", "Layanan"), icon: LayoutGrid },
+                        { id: 'instansi', label: t("mppPortal.nav.instansi", "Instansi"), icon: Building2 },
+                        { id: 'fasilitas', label: t("mppPortal.nav.fasilitas", "Fasilitas"), icon: Armchair },
                         { id: 'survey', label: t("mppPortal.quickNav.survey", "Survei SKM 9 Unsur"), icon: Star },
                       ]
                     : activePersona === 'investor'
@@ -2254,11 +2254,11 @@ export default function PortalMPP() {
                         { id: 'tracking-berkas', label: t("mppPortal.quickNav.tracking", "Lacak Berkas/Resi"), icon: SearchCheck },
                         { id: 'survey', label: t("mppPortal.quickNav.survey", "Survei SKM 9 Unsur"), icon: Star },
                         { id: 'investor-vip', label: t("mppPortal.quickNav.vipInvestor", "VIP Investor Desk"), icon: Sparkles },
-                        { id: 'layanan', label: t("mppPortal.nav.layanan"), icon: LayoutGrid },
-                        { id: 'instansi', label: t("mppPortal.nav.instansi"), icon: Building2 },
-                        { id: 'fasilitas', label: t("mppPortal.nav.fasilitas"), icon: Armchair },
+                        { id: 'layanan', label: t("mppPortal.nav.layanan", "Layanan"), icon: LayoutGrid },
+                        { id: 'instansi', label: t("mppPortal.nav.instansi", "Instansi"), icon: Building2 },
+                        { id: 'fasilitas', label: t("mppPortal.nav.fasilitas", "Fasilitas"), icon: Armchair },
                         { id: 'umkm', label: t("mppPortal.nav.umkm", "Katalog UMKM"), icon: Store },
-                        { id: 'statistik', label: t("mppPortal.nav.statistik"), icon: BarChart3 },
+                        { id: 'statistik', label: t("mppPortal.nav.statistik", "Statistik"), icon: BarChart3 },
                       ]
                 ).map((item) => {
                   const isActive = activeSectionId === item.id;
@@ -2562,7 +2562,7 @@ export default function PortalMPP() {
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className="text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2"
               >
-                {t("mppPortal.motto.badge")}
+                {t("mppPortal.motto.badge", "MOTTO PELAYANAN PUBLIK")}
               </motion.div>
               <motion.h2 
                 initial={{ opacity: 0, y: 30 }}
@@ -2687,7 +2687,7 @@ export default function PortalMPP() {
                     <StatCounter target={Number(skmScoreAverage) || 0} isDecimal={true} />
                   </span>
                   <span className="font-sans text-[11px] sm:text-xs md:text-sm text-slate-800 dark:text-slate-200 leading-tight uppercase tracking-wider font-bold line-clamp-2">
-                    {t("mppPortal.stats.ikm")}
+                    {t("mppPortal.stats.ikm", "Indeks Kepuasan Masyarakat (IKM)")}
                   </span>
                 </div>
 
@@ -2696,7 +2696,7 @@ export default function PortalMPP() {
                     <StatCounter target={liveAgencies.length} />
                   </span>
                   <span className="font-sans text-[11px] sm:text-xs md:text-sm text-slate-800 dark:text-slate-200 leading-tight uppercase tracking-wider font-bold line-clamp-2">
-                    {t("mppPortal.stats.agencies")}
+                    {t("mppPortal.stats.agencies", "Instansi & Lembaga Terpadu")}
                   </span>
                 </div>
 
@@ -2705,7 +2705,7 @@ export default function PortalMPP() {
                     <StatCounter target={queueMetrics.totalVisitors} />
                   </span>
                   <span className="font-sans text-[11px] sm:text-xs md:text-sm text-slate-800 dark:text-slate-200 leading-tight uppercase tracking-wider font-bold line-clamp-2">
-                    {t("mppPortal.stats.visitors")}
+                    {t("mppPortal.stats.visitors", "Total Pemohon Dilayani")}
                   </span>
                 </div>
               </div>
@@ -2793,7 +2793,7 @@ export default function PortalMPP() {
                 className="pt-2"
               >
                 <Badge variant="status" tone="primary" pulse>
-                  {facilitiesData.length} {t("mppPortal.fasilitas.activeCount")}
+                  {facilitiesData.length} {t("mppPortal.fasilitas.activeCount", "Fasilitas Aktif Siap Melayani")}
                 </Badge>
               </motion.div>
             </div>
@@ -2971,7 +2971,7 @@ export default function PortalMPP() {
                     <div className="pt-3 border-t border-slate-200/80 dark:border-white/[0.07]">
                       <h4 className="text-xs uppercase tracking-widest text-slate-700 dark:text-slate-300 font-bold mb-2.5 flex items-center gap-1.5 font-sans">
                         <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                        {t("mppPortal.fasilitas.specsTitle")}
+                        {t("mppPortal.fasilitas.specsTitle", "Kelengkapan & Sarana Pendukung")}
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {(activeFacility?.features || [])?.map((feature, idx) => (
@@ -3077,7 +3077,7 @@ export default function PortalMPP() {
                     <div className="pt-3.5 border-t border-slate-200 dark:border-slate-800">
                       <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200 mb-3 flex items-center gap-2">
                         <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                        {t("mppPortal.fasilitas.specsTitle")}
+                        {t("mppPortal.fasilitas.specsTitle", "Kelengkapan & Sarana Pendukung")}
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         {(activeFacility?.features || [])?.map((feat, idx) => (
@@ -3176,16 +3176,16 @@ export default function PortalMPP() {
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 space-y-2">
               <span className={`${MPP_TYPOGRAPHY.eyebrow} inline-flex items-center gap-1.5`}>
                 <Layers className="w-3.5 h-3.5 shrink-0" />
-                <span>Navigasi Spasial Gedung</span>
+                <span>{t("sections.floorplan_badge", "Navigasi Spasial Gedung")}</span>
               </span>
               <h2 className={MPP_TYPOGRAPHY.sectionTitle}>
-                {t("sections.skm_title", "Survei Kepuasan Masyarakat (SKM)")}
+                {t("sections.floorplan_title", "Temukan Loket ")}{" "}
                 <span className="text-emerald-700 dark:text-emerald-400">
-                  Anda
+                  {t("sections.floorplan_highlight", "Anda")}
                 </span>
               </h2>
               <p className={`${MPP_TYPOGRAPHY.sectionSubtitle} max-w-2xl mx-auto text-center`}>
-                Cari instansi atau layanan, lalu ikuti panduan rute visual dari pintu masuk utama menuju loket tujuan.
+                {t("sections.floorplan_subtitle", "Cari instansi atau layanan, lalu ikuti panduan rute visual dari pintu masuk utama menuju loket tujuan.")}
               </p>
             </div>
 
@@ -3496,13 +3496,13 @@ export default function PortalMPP() {
             {/* Header Seksi Terpusat — Standardized Zero-Pill Eyebrow + Typography */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 break-words">
               <span className={`${MPP_TYPOGRAPHY.eyebrow} mb-2 inline-block text-center`}>
-                {t("mppPortal.statistik.badge")}
+                {t("mppPortal.statistik.badge", "TRANSPARANSI KINERJA MPP")}
               </span>
               <h2 className={MPP_TYPOGRAPHY.sectionTitle}>
                 {t("mppPortal.statistik.title", "Statistik Pelayanan Publik Terpadu")}
               </h2>
               <p className={`${MPP_TYPOGRAPHY.sectionSubtitle} max-w-2xl mx-auto mt-1.5 mb-3 text-center`}>
-                {t("mppPortal.statistik.subtitle")}
+                {t("mppPortal.statistik.subtitle", "Data real-time pemrosesan dokumen, antrean loket, dan indeks kepuasan masyarakat Kabupaten Luwu.")}
               </p>
             </div>
 
@@ -3562,17 +3562,17 @@ export default function PortalMPP() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6">
                   <div>
                     <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white font-sans text-left">
-                      {t("mppPortal.statistik.chartTitle")}
+                      {t("mppPortal.statistik.chartTitle", "Tren Aktivitas Pemohon Layanan")}
                     </h3>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 text-left font-normal">
-                      {t("mppPortal.statistik.chartSubtitle")}
+                      {t("mppPortal.statistik.chartSubtitle", "Pantauan lonjakan pengunjung untuk optimasi alokasi loket")}
                     </p>
                   </div>
 
                   {/* Filter Tab (min 44px touch target on mobile) */}
                   <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900/80 p-1 rounded-xl border border-slate-200/80 dark:border-white/10 self-start sm:self-auto shadow-inner">
                     {(['harian', 'mingguan', 'bulanan'] as const).map((tab) => {
-                      const label = tab === 'harian' ? t("mppPortal.statistik.harian") : tab === 'mingguan' ? t("mppPortal.statistik.mingguan") : t("mppPortal.statistik.bulanan");
+                      const label = tab === 'harian' ? t("mppPortal.statistik.harian", "Harian") : tab === 'mingguan' ? t("mppPortal.statistik.mingguan", "Mingguan") : t("mppPortal.statistik.bulanan", "Bulanan");
                       const isActive = activeStatTab === tab;
                       return (
                         <button
@@ -3651,20 +3651,20 @@ export default function PortalMPP() {
                       </>
                     ) : activeStatTab === 'mingguan' ? (
                       <>
-                        <span>{t("mppPortal.stats.time.mon")}</span>
-                        <span>{t("mppPortal.stats.time.tue")}</span>
-                        <span>{t("mppPortal.stats.time.wed")}</span>
-                        <span>{t("mppPortal.stats.time.thu")}</span>
-                        <span>{t("mppPortal.stats.time.fri")}</span>
+                        <span>{t("mppPortal.stats.time.mon", "Sen")}</span>
+                        <span>{t("mppPortal.stats.time.tue", "Sel")}</span>
+                        <span>{t("mppPortal.stats.time.wed", "Rab")}</span>
+                        <span>{t("mppPortal.stats.time.thu", "Kam")}</span>
+                        <span>{t("mppPortal.stats.time.fri", "Jum")}</span>
                       </>
                     ) : (
                       <>
-                        <span>{t("mppPortal.stats.time.jan")}</span>
-                        <span>{t("mppPortal.stats.time.mar")}</span>
-                        <span>{t("mppPortal.stats.time.may")}</span>
-                        <span>{t("mppPortal.stats.time.jul")}</span>
-                        <span>{t("mppPortal.stats.time.sep")}</span>
-                        <span>{t("mppPortal.stats.time.dec")}</span>
+                        <span>{t("mppPortal.stats.time.jan", "Jan")}</span>
+                        <span>{t("mppPortal.stats.time.mar", "Mar")}</span>
+                        <span>{t("mppPortal.stats.time.may", "Mei")}</span>
+                        <span>{t("mppPortal.stats.time.jul", "Jul")}</span>
+                        <span>{t("mppPortal.stats.time.sep", "Sep")}</span>
+                        <span>{t("mppPortal.stats.time.dec", "Des")}</span>
                       </>
                     )}
                   </div>
@@ -3680,7 +3680,7 @@ export default function PortalMPP() {
                 className="min-h-[48px] h-12 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white rounded-full px-8 text-xs sm:text-sm font-bold tracking-wide transition-all shadow-lg shadow-black/25 hover:shadow-black/25 cursor-pointer font-sans inline-flex items-center justify-center gap-2 active:scale-95"
               >
                 <BarChart3 className="w-4 h-4 text-emerald-100" />
-                <span>{t("mppPortal.statistik.fullReportBtn")}</span>
+                <span>{t("mppPortal.statistik.fullReportBtn", "Lihat Rekapitulasi Lengkap")}</span>
               </button>
             </div>
               </>
@@ -3699,13 +3699,13 @@ export default function PortalMPP() {
             {/* Header Seksi Terpusat — Standardized Zero-Pill Eyebrow + Typography */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 space-y-2">
               <span className={MPP_TYPOGRAPHY.eyebrow}>
-                {t("sections.skm_badge")}
+                {t("sections.skm_badge", "SURVEI KEPUASAN")}
               </span>
               <h2 className={MPP_TYPOGRAPHY.sectionTitle}>
-                {t("sections.skm_title")}
+                {t("sections.skm_title", "Indeks Kepuasan Masyarakat (IKM)")}
               </h2>
               <p className={`${MPP_TYPOGRAPHY.sectionSubtitle} max-w-2xl mx-auto text-center`}>
-                {t("sections.skm_subtitle")}
+                {t("sections.skm_subtitle", "Evaluasi jujur masyarakat terhadap efektivitas pelayanan loket MPP Simpurusiang Kabupaten Luwu.")}
               </p>
             </div>
 
@@ -3736,13 +3736,13 @@ export default function PortalMPP() {
             {/* Header Seksi Terpusat — Standardized Zero-Pill Eyebrow + Typography */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 space-y-2">
               <span className={MPP_TYPOGRAPHY.eyebrow}>
-                {t("sections.complaint_badge")}
+                {t("sections.complaint_badge", "PENGADUAN & ASPIRASI")}
               </span>
               <h2 className={`${MPP_TYPOGRAPHY.sectionTitle} text-center`}>
                 {t("sections.complaint_title", "Kanal Pengaduan Layanan Publik")}
               </h2>
               <p className={`${MPP_TYPOGRAPHY.sectionSubtitle} max-w-2xl mx-auto text-center`}>
-                {t("sections.complaint_subtitle")}
+                {t("sections.complaint_subtitle", "Membuka saluran pengawasan masyarakat untuk terus meningkatkan efektivitas pelayanan publik MPP Simpurusiang Kabupaten Luwu.")}
               </p>
             </div>
 
@@ -3768,10 +3768,10 @@ export default function PortalMPP() {
                     <MessageSquare className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2]" />
                   </div>
                   <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white font-sans mb-1.5 group-hover:text-emerald-500 transition-colors text-left">
-                    {t("mppPortal.pengaduan.laporTitle")}
+                    {t("mppPortal.pengaduan.laporTitle", "SP4N-LAPOR! Nasional")}
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4 text-left font-normal">
-                    {t("mppPortal.pengaduan.laporDesc")}
+                    {t("mppPortal.pengaduan.laporDesc", "Kanal pengaduan resmi terintegrasi kementerian & lembaga pemerintah pusat.")}
                   </p>
                 </div>
                 <a 
@@ -3780,7 +3780,7 @@ export default function PortalMPP() {
                   rel="noopener noreferrer" 
                   className="min-h-[44px] text-xs sm:text-sm font-bold tracking-wide text-emerald-600 dark:text-emerald-400 mt-auto pt-3 flex items-center justify-between border-t border-slate-100 dark:border-white/10 hover:text-emerald-500 transition-colors group/link font-sans active:scale-95"
                 >
-                  <span>{t("mppPortal.pengaduan.moreDetails")}</span>
+                  <span>{t("mppPortal.pengaduan.moreDetails", "Akses Kanal Bantuan")}</span>
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover/link:bg-emerald-500 group-hover/link:text-white transition-all shadow-sm">
                     <ArrowRight size={14} className="transition-transform group-hover/link:translate-x-0.5" />
                   </div>
@@ -3807,10 +3807,10 @@ export default function PortalMPP() {
                     <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2]" />
                   </div>
                   <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white font-sans mb-1.5 group-hover:text-emerald-500 transition-colors text-left">
-                    {t("mppPortal.pengaduan.internalTitle")}
+                    {t("mppPortal.pengaduan.internalTitle", "Klinik Aduan Internal DPMPTSP")}
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4 text-left font-normal">
-                    {t("mppPortal.pengaduan.internalDesc")}
+                    {t("mppPortal.pengaduan.internalDesc", "Konsultasi langsung kendala berkas perizinan, tata ruang, dan retribusi daerah.")}
                   </p>
                 </div>
                 <a 
@@ -3822,7 +3822,7 @@ export default function PortalMPP() {
                   }}
                   className="min-h-[44px] text-xs sm:text-sm font-bold tracking-wide text-emerald-600 dark:text-emerald-400 mt-auto pt-3 flex items-center justify-between border-t border-slate-100 dark:border-white/10 hover:text-emerald-500 transition-colors cursor-pointer group/link font-sans active:scale-95"
                 >
-                  <span>{t("mppPortal.pengaduan.moreDetails")}</span>
+                  <span>{t("mppPortal.pengaduan.moreDetails", "Akses Kanal Bantuan")}</span>
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover/link:bg-emerald-500 group-hover/link:text-white transition-all shadow-sm">
                     <ArrowRight size={14} className="transition-transform group-hover/link:translate-x-0.5" />
                   </div>
@@ -3849,10 +3849,10 @@ export default function PortalMPP() {
                     <Headphones className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.2]" />
                   </div>
                   <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white font-sans mb-1.5 group-hover:text-emerald-500 transition-colors text-left">
-                    {t("mppPortal.pengaduan.contactCenterTitle")}
+                    {t("mppPortal.pengaduan.contactCenterTitle", "WhatsApp & Call Center Resmi")}
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4 text-left font-normal">
-                    {t("mppPortal.pengaduan.contactCenterDesc")}
+                    {t("mppPortal.pengaduan.contactCenterDesc", "Respon cepat tim operator helpdesk MPP selama jam kerja operasional.")}
                   </p>
                 </div>
                 <a 
@@ -3907,17 +3907,17 @@ export default function PortalMPP() {
                 {/* Kolom Kanan (Konten) */}
                 <div className="p-4 sm:p-7 lg:p-10 flex flex-col justify-center">
                   <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-500 dark:text-emerald-400 mb-1.5 block font-mono text-left">
-                    {t("mppPortal.pengaduan.helpdeskBadge")}
+                    {t("mppPortal.pengaduan.helpdeskBadge", "LAYANAN HELPDESK & KONSULTASI")}
                   </span>
                   <h3 className={`text-base sm:text-lg md:text-xl font-bold mb-2 font-sans text-left leading-snug ${
                     isDark ? 'text-white' : 'text-slate-900'
                   }`}>
-                    {t("mppPortal.pengaduan.helpdeskTitle")}
+                    {t("mppPortal.pengaduan.helpdeskTitle", "Butuh Pendampingan Langsung Petugas?")}
                   </h3>
                   <p className={`text-xs sm:text-sm leading-relaxed mb-3 text-left font-normal ${
                     isDark ? 'text-slate-300' : 'text-slate-600'
                   }`}>
-                    {t("mppPortal.pengaduan.helpdeskDesc")}
+                    {t("mppPortal.pengaduan.helpdeskDesc", "Petugas front office MPP siap membantu verifikasi dokumen persyaratan, panduan sistem OSS-RBA, SIMBG, maupun pencetakan formulir permohonan.")}
                   </p>
 
                   <div className={`space-y-0.5 mb-4 p-2.5 sm:p-3 rounded-xl border ${
@@ -3926,12 +3926,12 @@ export default function PortalMPP() {
                     <span className={`text-[11px] sm:text-xs font-bold block font-sans text-left ${
                       isDark ? 'text-emerald-400' : 'text-slate-900'
                     }`}>
-                      {t("mppPortal.pengaduan.hoursLabel")}
+                      {t("mppPortal.pengaduan.hoursLabel", "Jam Layanan Front Office:")}
                     </span>
                     <span className={`text-[11px] sm:text-xs font-mono block text-left ${
                       isDark ? 'text-slate-300' : 'text-slate-600'
                     }`}>
-                      {t("mppPortal.pengaduan.hoursValue")}
+                      {t("mppPortal.pengaduan.hoursValue", "Senin – Jumat | 08:00 – 15:30 WITA")}
                     </span>
                   </div>
 
@@ -3945,7 +3945,7 @@ export default function PortalMPP() {
                       className="min-h-[48px] bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white text-xs sm:text-sm font-bold tracking-wide py-3 px-5 rounded-xl sm:rounded-2xl flex items-center justify-center gap-2 cursor-pointer transition-all duration-200 shadow-md shadow-black/25 font-sans"
                     >
                       <Headphones className="w-4 h-4 shrink-0" />
-                      <span>{t("mppPortal.pengaduan.contactBtn")}</span>
+                      <span>{t("mppPortal.pengaduan.contactBtn", "Hubungi Petugas Konsultasi")}</span>
                       <ArrowRight size={16} className="shrink-0" />
                     </button>
                     <a
@@ -3959,7 +3959,7 @@ export default function PortalMPP() {
                       }`}
                     >
                       <MessageCircle className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <span>{t("mppPortal.contact.direct")}</span>
+                      <span>{t("mppPortal.contact.direct", "Chat WhatsApp Langsung")}</span>
                     </a>
                   </div>
                 </div>
@@ -3979,13 +3979,13 @@ export default function PortalMPP() {
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-5 sm:mb-8 space-y-2">
               <span className="px-3 py-1 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-400 border border-emerald-300/80 dark:border-emerald-800/60 shadow-xs">
-                {t("sections.workflow_badge")}
+                {t("sections.workflow_badge", "PANDUAN PROSEDUR")}
               </span>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white font-display-sora text-center">
-                {t("sections.workflow_title")}
+                {t("sections.workflow_title", "Alur Pelayanan Digital")}
               </h2>
               <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium max-w-2xl mx-auto text-center leading-relaxed">
-                {t("sections.workflow_subtitle")}
+                {t("sections.workflow_subtitle", "Proses cepat, transparan, dan terintegrasi dalam 4 langkah mudah.")}
               </p>
             </div>
 
@@ -4026,14 +4026,14 @@ export default function PortalMPP() {
                       </div>
                       <div>
                         <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-sans">
-                          {t("mppPortal.alur.modalTitle")}
+                          {t("mppPortal.alur.modalTitle", "Panduan Prosedur Layanan")}
                         </span>
                         <h3 className="text-base sm:text-lg font-medium text-slate-900 dark:text-white font-sans">
                           {activeAlurModal === 'pbg' 
-                            ? t("mppPortal.alur.pbgTitle") 
+                            ? t("mppPortal.alur.pbgTitle", "Persetujuan Bangunan Gedung (PBG)") 
                             : activeAlurModal === 'mpp' 
-                            ? t("mppPortal.alur.mppTitle") 
-                            : t("mppPortal.alur.pkkprTitle")}
+                            ? t("mppPortal.alur.mppTitle", "Pelayanan Terpadu MPP Simpurusiang") 
+                            : t("mppPortal.alur.pkkprTitle", "Kesesuaian Kegiatan Pemanfaatan Ruang (PKKPR)")}
                         </h3>
                       </div>
                     </div>
@@ -4051,10 +4051,10 @@ export default function PortalMPP() {
                   <div className="mt-5 space-y-5">
                     <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-sans">
                       {activeAlurModal === 'pbg' 
-                        ? t("mppPortal.alur.pbg.desc") 
+                        ? t("mppPortal.alur.pbg.desc", "Prosedur permohonan Persetujuan Bangunan Gedung (PBG) melalui sistem SIMBG terintegrasi.") 
                         : activeAlurModal === 'mpp' 
-                        ? t("mppPortal.alur.mpp.desc") 
-                        : t("mppPortal.alur.pkkpr.desc")}
+                        ? t("mppPortal.alur.mpp.desc", "Alur pelayanan terpadu satu pintu di Gedung MPP Simpurusiang Kabupaten Luwu.") 
+                        : t("mppPortal.alur.pkkpr.desc", "Prosedur pengajuan rekomendasi teknis tata ruang dan validasi lokasi investasi.")}
                     </p>
 
                     {/* Timeline Tahapan Alur */}
@@ -4085,19 +4085,19 @@ export default function PortalMPP() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 pt-2">
                       <div className="p-3 rounded-2xl bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block font-sans mb-1">
-                          ⏱️ {t("mppPortal.alur.estTime")}
+                          ⏱️ {t("mppPortal.alur.estTime", "Estimasi Waktu")}
                         </span>
                         <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">
                           {activeAlurModal === 'pbg' 
-                            ? t("mppPortal.alur.pbg.time") 
+                            ? t("mppPortal.alur.pbg.time", "3 - 14 Hari Kerja") 
                             : activeAlurModal === 'mpp' 
-                            ? t("mppPortal.alur.mpp.time") 
-                            : t("mppPortal.alur.pkkpr.time")}
+                            ? t("mppPortal.alur.mpp.time", "15 - 60 Menit") 
+                            : t("mppPortal.alur.pkkpr.time", "1 - 5 Hari Kerja")}
                         </span>
                       </div>
                       <div className="p-3 rounded-2xl bg-sky-500/5 dark:bg-sky-500/10 border border-sky-500/20">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400 block font-sans mb-1">
-                          📄 {t("mppPortal.alur.reqDocs")}
+                          📄 {t("mppPortal.alur.reqDocs", "Dokumen Persyaratan")}
                         </span>
                         <div className="flex flex-wrap gap-1 mt-1">
                           {((activeAlurModal === 'pbg' 
@@ -4120,7 +4120,7 @@ export default function PortalMPP() {
                         onClick={() => setActiveAlurModal(null)}
                         className="flex-1 min-h-[44px] py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold font-sans hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
                       >
-                        {t("common.close") || "Tutup"}
+                        {t("common.close", "Tutup")}
                       </button>
                       <button
                         type="button"
@@ -4131,7 +4131,7 @@ export default function PortalMPP() {
                         }}
                         className="flex-1 min-h-[44px] py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white text-xs sm:text-sm font-semibold font-sans shadow-lg shadow-black/25 transition-all inline-flex items-center justify-center gap-1.5"
                       >
-                        <span>{t("mppPortal.alur.onlinePortalBtn") || "Ambil Antrean Layanan"}</span>
+                        <span>{t("mppPortal.alur.onlinePortalBtn", "Ambil Antrean Layanan")}</span>
                         <ChevronRight className="w-4 h-4" />
                       </button>
                     </div>
@@ -4155,13 +4155,13 @@ export default function PortalMPP() {
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-10 gap-3">
               <div className="space-y-2">
                 <span className={`${MPP_TYPOGRAPHY.eyebrow} inline-block`}>
-                  {t("sections.news_badge")}
+                  {t("sections.news_badge", "PUBLIKASI RESMI")}
                 </span>
                 <h2 className={MPP_TYPOGRAPHY.sectionTitle}>
-                  {t("sections.news_title")}
+                  {t("sections.news_title", "Kabar & Informasi Terkini")}
                 </h2>
                 <p className={`${MPP_TYPOGRAPHY.sectionSubtitle} max-w-2xl`}>
-                  {t("sections.news_subtitle")}
+                  {t("sections.news_subtitle", "Panduan pelayanan terbaru, regulasi kebijakan, dan pengumuman pembaruan sistem MPP Luwu.")}
                 </p>
               </div>
               <button
@@ -4302,13 +4302,13 @@ export default function PortalMPP() {
               className="relative z-10 max-w-2xl mx-auto px-4 text-center mb-6 sm:mb-10 flex flex-col items-center space-y-2"
             >
               <span className={`${MPP_TYPOGRAPHY.eyebrow} inline-block`}>
-                {t("sections.review_badge")}
+                {t("sections.review_badge", "TESTIMONI WARGA")}
               </span>
               <h2 className={`${MPP_TYPOGRAPHY.sectionTitle} text-center`}>
-                {t("sections.review_title")}
+                {t("sections.review_title", "Ulasan Masyarakat")}
               </h2>
               <p className={`${MPP_TYPOGRAPHY.sectionSubtitle} max-w-2xl mx-auto text-center`}>
-                {t("sections.review_subtitle")}
+                {t("sections.review_subtitle", "Pengalaman langsung dan ulasan jujur masyarakat terhadap pelayanan di MPP Simpurusiang Kabupaten Luwu.")}
               </p>
             </motion.div>
 
@@ -4423,13 +4423,13 @@ export default function PortalMPP() {
             {/* Header Seksi Terpusat — Standardized Zero-Pill Eyebrow + Typography */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 break-words">
               <span className={`${MPP_TYPOGRAPHY.eyebrow} mb-2 inline-block text-center`}>
-                {t("mppPortal.kontak.badge")}
+                {t("mppPortal.kontak.badge", "LOKASI & INFORMASI KONTAK")}
               </span>
               <h2 className={`${MPP_TYPOGRAPHY.sectionTitle} mt-1`}>
-                {t("mppPortal.kontak.title")}
+                {t("mppPortal.kontak.title", "Kunjungi Gedung MPP Simpurusiang")}
               </h2>
               <p className={`${MPP_TYPOGRAPHY.sectionSubtitle} max-w-2xl mx-auto mt-1.5 mb-3 text-center`}>
-                {t("mppPortal.kontak.subtitle")}
+                {t("mppPortal.kontak.subtitle", "Akses mudah di pusat Kota Belopa dengan sarana parkir luas, fasilitas ramah disabilitas, dan ruang tunggu ber-AC.")}
               </p>
             </div>
 
@@ -4438,7 +4438,7 @@ export default function PortalMPP() {
               {/* Kolom Kiri (Google Maps Embed) */}
               <div className={`w-full overflow-hidden ${MPP_CARD_SURFACE.radiusMain} relative border border-slate-200/80 dark:border-white/[0.07] min-h-[220px]`}>
                 <iframe 
-                  title={t("mppPortal.kontak.mapTitle")}
+                  title={t("mppPortal.kontak.mapTitle", "Peta Lokasi Gedung MPP Simpurusiang")}
                   src="https://maps.google.com/maps?q=DPMPTSP%20Kabupaten%20Luwu%20Belopa&t=&z=16&ie=UTF8&iwloc=&output=embed"
                   className="w-full h-56 sm:h-72 lg:h-full min-h-[220px] sm:min-h-[280px] border-0 object-cover"
                   allowFullScreen
@@ -4461,10 +4461,10 @@ export default function PortalMPP() {
                     <Clock className="w-5 h-5" />
                   </div>
                   <span className="text-xs font-mono font-medium text-slate-500 dark:text-slate-400 mb-1">
-                    {t("mppPortal.kontak.hoursLabel")}
+                    {t("mppPortal.kontak.hoursLabel", "Jam Operasional Layanan")}
                   </span>
                   <p className="text-sm font-bold text-slate-900 dark:text-slate-50 leading-snug font-mono">
-                    {t("mppPortal.kontak.hoursValue")}
+                    {t("mppPortal.kontak.hoursValue", "Senin - Kamis: 07:30 - 16:00 | Jumat: 07:30 - 16:30")}
                   </p>
                 </motion.div>
 
@@ -4480,10 +4480,10 @@ export default function PortalMPP() {
                     <MapPin className="w-5 h-5" />
                   </div>
                   <span className="text-xs font-mono font-medium text-slate-500 dark:text-slate-400 mb-1">
-                    {t("mppPortal.kontak.addressLabel")}
+                    {t("mppPortal.kontak.addressLabel", "Alamat Gedung MPP")}
                   </span>
                   <p className="text-sm font-semibold text-slate-900 dark:text-slate-50 leading-snug">
-                    {t("mppPortal.kontak.addressValue")}
+                    {t("mppPortal.kontak.addressValue", "Jl. Jenderal Sudirman No. 1, Kompleks Perkantoran Pemkab Luwu, Belopa")}
                   </p>
                 </motion.div>
 
@@ -4499,7 +4499,7 @@ export default function PortalMPP() {
                     <Mail className="w-5 h-5" />
                   </div>
                   <span className="text-xs font-mono font-medium text-slate-500 dark:text-slate-400 mb-1">
-                    {t("mppPortal.kontak.emailLabel")}
+                    {t("mppPortal.kontak.emailLabel", "Email Resmi Pengaduan & Informasi")}
                   </span>
                   <a 
                     href="mailto:dpmptspkabluwu@gmail.com"
@@ -4521,7 +4521,7 @@ export default function PortalMPP() {
                     <Phone className="w-5 h-5" />
                   </div>
                   <span className="text-xs font-mono font-medium text-slate-500 dark:text-slate-400 mb-1">
-                    {t("mppPortal.kontak.centerLabel")}
+                    {t("mppPortal.kontak.centerLabel", "Call Center & WhatsApp")}
                   </span>
                   <a 
                     href="tel:+628114201234"
@@ -4530,7 +4530,7 @@ export default function PortalMPP() {
                     +62 811-420-1234
                   </a>
                   <span className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                    {t("mppPortal.kontak.centerSub")}
+                    {t("mppPortal.kontak.centerSub", "Layanan Respon Cepat MPP Luwu")}
                   </span>
                 </motion.div>
               </div>
@@ -4559,7 +4559,7 @@ export default function PortalMPP() {
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className={`${MPP_TYPOGRAPHY.eyebrow} mb-2 inline-block text-center`}
               >
-                {t("mppPortal.sosialMedia.badge")}
+                {t("mppPortal.sosialMedia.badge", "MEDIA SOSIAL & PUBLIKASI RESMI")}
               </motion.span>
               <motion.h2 
                 initial={{ opacity: 0, y: 30 }}
@@ -4568,7 +4568,7 @@ export default function PortalMPP() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className={`${MPP_TYPOGRAPHY.sectionTitle} mt-1`}
               >
-                {t("mppPortal.sosialMedia.title")}
+                {t("mppPortal.sosialMedia.title", "Ikuti Informasi & Inovasi Layanan Terkini")}
               </motion.h2>
               <motion.p 
                 initial={{ opacity: 0, y: 30 }}
@@ -4577,7 +4577,7 @@ export default function PortalMPP() {
                 transition={{ duration: 0.5, delay: 0.3 }}
                 className={`${MPP_TYPOGRAPHY.sectionSubtitle} max-w-2xl mx-auto mt-1.5 mb-3 text-center`}
               >
-                {t("mppPortal.sosialMedia.subtitle")}
+                {t("mppPortal.sosialMedia.subtitle", "Dapatkan panduan izin terbaru, pengumuman kuota antrean, dan liputan fasilitas langsung dari akun resmi.")}
               </motion.p>
             </div>
 
@@ -4620,7 +4620,7 @@ export default function PortalMPP() {
                       <CheckCircle2 className="w-3.5 h-3.5 text-blue-500 shrink-0 inline" />
                     </span>
                     <span className={`text-[10px] sm:text-[11px] truncate ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                      {t("mppPortal.sosialMedia.igSubtitle")}
+                      {t("mppPortal.sosialMedia.igSubtitle", "Akun Resmi MPP Simpurusiang")}
                     </span>
                   </div>
                   <a 
@@ -4629,7 +4629,7 @@ export default function PortalMPP() {
                     rel="noopener noreferrer" 
                     className="ml-auto min-h-[44px] text-xs font-bold px-3.5 sm:px-4 py-2 rounded-xl sm:rounded-2xl bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white transition-all flex items-center gap-1.5 shrink-0 shadow-sm"
                   >
-                    <span>{t("mppPortal.sosialMedia.followBtn")}</span>
+                    <span>{t("mppPortal.sosialMedia.followBtn", "Ikuti")}</span>
                     <Instagram className="w-3.5 h-3.5" />
                   </a>
                 </div>
@@ -4648,7 +4648,7 @@ export default function PortalMPP() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                   />
                   <div className="absolute top-2.5 right-2.5 bg-black/60 backdrop-blur-md px-3 py-0.5 rounded-lg text-[10px] font-mono font-medium text-white flex items-center gap-1">
-                    <Instagram className="w-3 h-3 text-pink-400" /> {socialMediaData.instagram.tag || t("mppPortal.sosialMedia.igTag")}
+                    <Instagram className="w-3 h-3 text-pink-400" /> {socialMediaData.instagram.tag || t("mppPortal.sosialMedia.igTag", "Liputan Harian")}
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent pointer-events-none"></div>
                 </div>
@@ -4663,11 +4663,11 @@ export default function PortalMPP() {
                       <MessageCircle className="w-4 h-4" />
                       <Share2 className="w-4 h-4" />
                       <span className={`text-[10px] sm:text-[11px] font-mono font-bold ml-auto ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                        {socialMediaData.instagram.stats || t("mppPortal.sosialMedia.igLikes")}
+                        {socialMediaData.instagram.stats || t("mppPortal.sosialMedia.igLikes", "1.240 suka")}
                       </span>
                     </div>
                     <p className={`text-xs leading-normal line-clamp-2 font-normal ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-                      {socialMediaData.instagram.caption || t("mppPortal.sosialMedia.igDesc")}
+                      {socialMediaData.instagram.caption || t("mppPortal.sosialMedia.igDesc", "Pelayanan terpadu satu pintu yang cepat, mudah, dan transparan bagi seluruh masyarakat Kabupaten Luwu.")}
                     </p>
                   </div>
 
@@ -4680,7 +4680,7 @@ export default function PortalMPP() {
                       isDark ? 'border-slate-800' : 'border-gray-100'
                     }`}
                   >
-                    <span>{t("mppPortal.sosialMedia.igBtn")}</span>
+                    <span>{t("mppPortal.sosialMedia.igBtn", "Buka Galeri Instagram")}</span>
                     <ArrowRight size={15} />
                   </a>
                 </div>
@@ -4710,10 +4710,10 @@ export default function PortalMPP() {
                   </div>
                   <div className="flex flex-col min-w-0">
                     <span className="font-bold text-xs sm:text-sm font-sans truncate">
-                      {socialMediaData.youtube.channelName || t("mppPortal.sosialMedia.ytTitle")}
+                      {socialMediaData.youtube.channelName || t("mppPortal.sosialMedia.ytTitle", "MPP Simpurusiang TV")}
                     </span>
                     <span className={`text-[10px] sm:text-[11px] truncate ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                      {t("mppPortal.sosialMedia.ytSubtitle")}
+                      {t("mppPortal.sosialMedia.ytSubtitle", "Saluran Video & Sosialisasi Resmi")}
                     </span>
                   </div>
                   <a 
@@ -4722,7 +4722,7 @@ export default function PortalMPP() {
                     rel="noopener noreferrer" 
                     className="ml-auto min-h-[44px] text-xs font-bold px-3.5 sm:px-4 py-2 rounded-xl sm:rounded-2xl bg-red-600 hover:bg-red-700 active:scale-95 text-white transition-all flex items-center gap-1.5 shrink-0 shadow-sm"
                   >
-                    <span>{t("mppPortal.sosialMedia.subscribeBtn")}</span>
+                    <span>{t("mppPortal.sosialMedia.subscribeBtn", "Subscribe")}</span>
                     <Youtube className="w-3.5 h-3.5" />
                   </a>
                 </div>
@@ -4763,10 +4763,10 @@ export default function PortalMPP() {
                 }`}>
                   <div>
                     <h4 className="font-bold text-xs sm:text-sm font-sans line-clamp-1 leading-snug group-hover:text-emerald-500 transition-colors">
-                      {socialMediaData.youtube.videoTitle || t("mppPortal.sosialMedia.ytVideoTitle")}
+                      {socialMediaData.youtube.videoTitle || t("mppPortal.sosialMedia.ytVideoTitle", "Profil & Inovasi Pelayanan Publik MPP Simpurusiang")}
                     </h4>
                     <p className={`text-[10px] sm:text-[11px] font-mono mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                      {socialMediaData.youtube.stats || t("mppPortal.sosialMedia.ytVideoStats")}
+                      {socialMediaData.youtube.stats || t("mppPortal.sosialMedia.ytVideoStats", "4.8rb ditonton • Publikasi Resmi")}
                     </p>
                   </div>
 
@@ -4779,7 +4779,7 @@ export default function PortalMPP() {
                       isDark ? 'border-slate-800' : 'border-gray-100'
                     }`}
                   >
-                    <span>{t("mppPortal.sosialMedia.ytBtn")}</span>
+                    <span>{t("mppPortal.sosialMedia.ytBtn", "Tonton di YouTube")}</span>
                     <ArrowRight size={15} />
                   </a>
                 </div>
@@ -4809,10 +4809,10 @@ export default function PortalMPP() {
                   </div>
                   <div className="flex flex-col min-w-0">
                     <span className="font-bold text-xs sm:text-sm font-sans truncate">
-                      {socialMediaData.facebook.pageName || t("mppPortal.sosialMedia.fbTitle")}
+                      {socialMediaData.facebook.pageName || t("mppPortal.sosialMedia.fbTitle", "DPMPTSP & MPP Kabupaten Luwu")}
                     </span>
                     <span className={`text-[10px] sm:text-[11px] truncate ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                      {t("mppPortal.sosialMedia.fbSubtitle")}
+                      {t("mppPortal.sosialMedia.fbSubtitle", "Halaman Komunitas & Layanan Warga")}
                     </span>
                   </div>
                   <a 
@@ -4821,7 +4821,7 @@ export default function PortalMPP() {
                     rel="noopener noreferrer" 
                     className="ml-auto min-h-[44px] text-xs font-bold px-3.5 sm:px-4 py-2 rounded-xl sm:rounded-2xl bg-[#1877F2] hover:bg-[#166fe5] active:scale-95 text-white transition-all flex items-center gap-1.5 shrink-0 shadow-sm"
                   >
-                    <span>{t("mppPortal.sosialMedia.followBtn")}</span>
+                    <span>{t("mppPortal.sosialMedia.followBtn", "Ikuti")}</span>
                     <Facebook className="w-3.5 h-3.5" />
                   </a>
                 </div>
@@ -4840,7 +4840,7 @@ export default function PortalMPP() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                   />
                   <div className="absolute top-2.5 right-2.5 bg-black/60 backdrop-blur-md px-3 py-0.5 rounded-lg text-[10px] font-mono font-medium text-white flex items-center gap-1">
-                    <Facebook className="w-3 h-3 text-blue-400" /> {socialMediaData.facebook.tag || t("mppPortal.sosialMedia.fbTag")}
+                    <Facebook className="w-3 h-3 text-blue-400" /> {socialMediaData.facebook.tag || t("mppPortal.sosialMedia.fbTag", "Info Publik")}
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent pointer-events-none"></div>
                 </div>
@@ -4851,10 +4851,10 @@ export default function PortalMPP() {
                 }`}>
                   <div>
                     <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-mono font-medium mb-1.5">
-                      <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>{socialMediaData.facebook.stats || t("mppPortal.sosialMedia.fbStats")}</span>
+                      <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>{socialMediaData.facebook.stats || t("mppPortal.sosialMedia.fbStats", "850 Tanggapan • 140 Bagikan")}</span>
                     </div>
                     <p className={`text-xs leading-normal line-clamp-2 font-normal ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-                      {socialMediaData.facebook.caption || t("mppPortal.sosialMedia.fbDesc")}
+                      {socialMediaData.facebook.caption || t("mppPortal.sosialMedia.fbDesc", "Informasi jadwal pelayanan keliling dan sosialisasi kemudahan perizinan berusaha bagi UMKM Kabupaten Luwu.")}
                     </p>
                   </div>
 
@@ -4867,7 +4867,7 @@ export default function PortalMPP() {
                       isDark ? 'border-slate-800' : 'border-gray-100'
                     }`}
                   >
-                    <span>{t("mppPortal.sosialMedia.fbBtn")}</span>
+                    <span>{t("mppPortal.sosialMedia.fbBtn", "Kunjungi Halaman Facebook")}</span>
                     <ArrowRight size={15} />
                   </a>
                 </div>
@@ -4900,7 +4900,7 @@ export default function PortalMPP() {
                       {socialMediaData.tiktok.handle}
                     </span>
                     <span className={`text-[10px] sm:text-[11px] truncate ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                      {t("mppPortal.sosialMedia.ttSubtitle")}
+                      {t("mppPortal.sosialMedia.ttSubtitle", "Edukasi Singkat & Tips Perizinan")}
                     </span>
                   </div>
                   <a 
@@ -4909,7 +4909,7 @@ export default function PortalMPP() {
                     rel="noopener noreferrer" 
                     className="ml-auto min-h-[44px] text-xs font-bold px-3.5 sm:px-4 py-2 rounded-xl sm:rounded-2xl bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 active:scale-95 text-white transition-all flex items-center gap-1.5 shrink-0 shadow-sm"
                   >
-                    <span>{t("mppPortal.sosialMedia.followBtn")}</span>
+                    <span>{t("mppPortal.sosialMedia.followBtn", "Ikuti")}</span>
                     <Music2 className="w-3.5 h-3.5" />
                   </a>
                 </div>
@@ -4933,14 +4933,14 @@ export default function PortalMPP() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90" 
                   />
                   <div className="absolute top-2.5 right-2.5 bg-black/60 backdrop-blur-md px-3 py-0.5 rounded-lg text-[10px] font-mono font-medium text-white flex items-center gap-1">
-                    <Music2 className="w-3 h-3 text-cyan-400" /> {socialMediaData.tiktok.tag || t("mppPortal.sosialMedia.ttTag")}
+                    <Music2 className="w-3 h-3 text-cyan-400" /> {socialMediaData.tiktok.tag || t("mppPortal.sosialMedia.ttTag", "Video Pendek")}
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent flex flex-col justify-end p-3">
                     <span className="text-white text-xs font-bold font-sans drop-shadow-sm line-clamp-1">
-                      {socialMediaData.tiktok.caption || t("mppPortal.sosialMedia.ttTitle")}
+                      {socialMediaData.tiktok.caption || t("mppPortal.sosialMedia.ttTitle", "Cara Mudah Urus NIB & Izin Usaha di MPP Luwu")}
                     </span>
                     <span className="text-[10px] text-slate-300 mt-0.5 flex items-center gap-1 font-mono">
-                      <Music2 className="w-2.5 h-2.5" /> {t("mppPortal.sosialMedia.ttSound")}
+                      <Music2 className="w-2.5 h-2.5" /> {t("mppPortal.sosialMedia.ttSound", "Suara Asli - MPP Simpurusiang")}
                     </span>
                   </div>
                 </a>
@@ -4950,9 +4950,9 @@ export default function PortalMPP() {
                   isDark ? 'bg-surface/95 text-slate-100' : 'bg-white text-slate-800'
                 }`}>
                   <div className={`flex items-center justify-between text-[10px] sm:text-[11px] font-mono ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                    <span>{socialMediaData.tiktok.stats || t("mppPortal.sosialMedia.ttLikes")}</span>
-                    <span>{t("mppPortal.sosialMedia.ttComments")}</span>
-                    <span>{t("mppPortal.sosialMedia.ttShares")}</span>
+                    <span>{socialMediaData.tiktok.stats || t("mppPortal.sosialMedia.ttLikes", "3.4rb Suka")}</span>
+                    <span>{t("mppPortal.sosialMedia.ttComments", "210 Komentar")}</span>
+                    <span>{t("mppPortal.sosialMedia.ttShares", "540 Bagikan")}</span>
                   </div>
 
                   {/* Tombol CTA */}
@@ -4964,7 +4964,7 @@ export default function PortalMPP() {
                       isDark ? 'border-slate-800' : 'border-gray-100'
                     }`}
                   >
-                    <span>{t("mppPortal.sosialMedia.ttBtn")}</span>
+                    <span>{t("mppPortal.sosialMedia.ttBtn", "Tonton di TikTok")}</span>
                     <ArrowRight size={15} />
                   </a>
                 </div>
@@ -5004,46 +5004,46 @@ export default function PortalMPP() {
                 <p className={`text-xs sm:text-sm leading-relaxed mb-6 max-w-lg ${isDark ? 'text-slate-300 font-medium' : 'text-slate-700 font-medium'}`}>
                   {t("mppPortal.map.geospatialDesc", "Portal MPP Simpurusiang terintegrasi langsung dengan platform spasial cerdas. Analisis potensi lahan, pantau infrastruktur, dan rancang titik lokasi bisnis Anda secara presisi dengan sistem informasi geografis kami.")}
                 </p>
-                <button
-                  type="button"
-                  onClick={() => window.location.href = '/?skipSplash=true'}
-                  className="w-full sm:w-auto flex items-center justify-center sm:justify-between min-h-[48px] bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white px-6 py-3 rounded-xl sm:rounded-2xl font-bold shadow-lg shadow-black/25 transition-all group gap-2 cursor-pointer"
-                >
-                  <Map className="w-4 h-4 shrink-0" />
-                  <span className="text-xs sm:text-sm">{t("mppPortal.map.openInteractive")}</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
-                </button>
-              </div>
+                  <button
+                    type="button"
+                    onClick={() => window.location.href = '/?skipSplash=true'}
+                    className="w-full sm:w-auto flex items-center justify-center sm:justify-between min-h-[48px] bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white px-6 py-3 rounded-xl sm:rounded-2xl font-bold shadow-lg shadow-black/25 transition-all group gap-2 cursor-pointer"
+                  >
+                    <Map className="w-4 h-4 shrink-0" />
+                    <span className="text-xs sm:text-sm">{t("mppPortal.map.openInteractive", "Buka Peta Interaktif WebGIS")}</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
+                  </button>
+                </div>
 
-              <div className="relative z-10 md:w-1/2 w-full mt-4 md:mt-0">
-                <div className="relative w-full overflow-hidden rounded-xl sm:rounded-2xl shadow-xl border border-slate-700/50 group">
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent z-10 pointer-events-none opacity-60"></div>
-                  <img 
-                    src="/images/map-preview.jpg" 
-                    alt="WebGIS Preview"
-                    className="w-full h-[220px] sm:h-[320px] object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = '/assets/images/default-facility.svg';
-                    }}
-                  />
-                  {/* Floating Elements on Map Preview */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center shadow-[0_0_25px_rgba(16,185,129,0.3)] animate-pulse">
-                    <MapPin className="w-6 h-6 text-emerald-400" />
-                  </div>
-                  
-                  {/* Mock UI Overlay */}
-                  <div className="absolute top-3 left-3 z-20 flex flex-col gap-1.5">
-                    <div className="bg-surface/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-slate-700/50 text-[10px] sm:text-xs font-mono font-bold text-emerald-400">
-                      LAT: -2.5768 | LNG: 120.1983
+                <div className="relative z-10 md:w-1/2 w-full mt-4 md:mt-0">
+                  <div className="relative w-full overflow-hidden rounded-xl sm:rounded-2xl shadow-xl border border-slate-700/50 group">
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent z-10 pointer-events-none opacity-60"></div>
+                    <img 
+                      src="/images/map-preview.jpg" 
+                      alt="WebGIS Preview"
+                      className="w-full h-[220px] sm:h-[320px] object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/assets/images/default-facility.svg';
+                      }}
+                    />
+                    {/* Floating Elements on Map Preview */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center shadow-[0_0_25px_rgba(16,185,129,0.3)] animate-pulse">
+                      <MapPin className="w-6 h-6 text-emerald-400" />
                     </div>
-                  </div>
-                  <div className="absolute bottom-3 right-3 z-20">
-                    <div className="bg-surface/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700/50 flex items-center gap-2 shadow-md">
-                      <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></div>
-                      <span className="text-[10px] sm:text-xs font-mono font-bold text-white">{t("mppPortal.status.systemActive")}</span>
+                    
+                    {/* Mock UI Overlay */}
+                    <div className="absolute top-3 left-3 z-20 flex flex-col gap-1.5">
+                      <div className="bg-surface/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-slate-700/50 text-[10px] sm:text-xs font-mono font-bold text-emerald-400">
+                        LAT: -2.5768 | LNG: 120.1983
+                      </div>
                     </div>
-                  </div>
+                    <div className="absolute bottom-3 right-3 z-20">
+                      <div className="bg-surface/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700/50 flex items-center gap-2 shadow-md">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></div>
+                        <span className="text-[10px] sm:text-xs font-mono font-bold text-white">{t("mppPortal.status.systemActive", "Sistem Pelayanan Aktif Realtime")}</span>
+                      </div>
+                    </div>
                 </div>
               </div>
             </div>
@@ -5058,13 +5058,13 @@ export default function PortalMPP() {
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-xl mx-auto text-center px-3 flex flex-col items-center mb-6 sm:mb-10 break-words">
               <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-400 mb-2 inline-block text-center bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-300/80 dark:border-emerald-500/30 px-3 py-1 rounded-full shadow-xs">
-                {t("mppPortal.faq.badge")}
+                {t("mppPortal.faq.badge", "TANYA JAWAB (FAQ)")}
               </span>
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight leading-snug text-slate-900 dark:text-white font-display-sora">
-                {t("mppPortal.faq.title")}
+                {t("mppPortal.faq.title", "Pertanyaan yang Sering Diajukan")}
               </h2>
               <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 max-w-md mx-auto leading-relaxed mt-1.5 mb-3 text-center font-medium">
-                {t("mppPortal.faq.subtitle")}
+                {t("mppPortal.faq.subtitle", "Temukan jawaban cepat terkait persyaratan dokumen, jam operasional, dan prosedur antrean MPP Simpurusiang.")}
               </p>
               <div className="w-10 sm:w-14 h-1.5 mpp-accent-line rounded-full mx-auto mt-2"></div>
             </div>
@@ -5076,7 +5076,7 @@ export default function PortalMPP() {
                 type="text"
                 value={faqSearchQuery}
                 onChange={(e) => setFaqSearchQuery(e.target.value)}
-                placeholder={t("mppPortal.faq.searchPlaceholder")}
+                placeholder={t("mppPortal.faq.searchPlaceholder", "Cari pertanyaan seputar NIB, KTP, atau jam layanan...")}
                 className="w-full min-h-[46px] sm:min-h-[50px] pl-10 sm:pl-12 pr-10 py-2.5 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-slate-800/80 backdrop-blur-xl border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-xs transition-all font-normal"
               />
               {faqSearchQuery && (
@@ -5108,7 +5108,7 @@ export default function PortalMPP() {
                     <div className="text-center py-8 bg-white/60 dark:bg-slate-800/40 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-white/5 p-6">
                       <HelpCircle className="w-8 h-8 text-slate-400 mx-auto mb-2 opacity-60" />
                       <p className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">
-                        {t("mppPortal.faq.noResults")}
+                        {t("mppPortal.faq.noResults", "Pertanyaan tidak ditemukan.")}
                       </p>
                       <button
                         type="button"
@@ -5119,7 +5119,7 @@ export default function PortalMPP() {
                         className="mt-3 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-1.5 min-h-[40px] active:scale-95"
                       >
                         <Headphones className="w-3.5 h-3.5" />
-                        <span>{t("mppPortal.faq.contactHelpdesk")}</span>
+                        <span>{t("mppPortal.faq.contactHelpdesk", "Hubungi Petugas Helpdesk")}</span>
                       </button>
                     </div>
                   );
@@ -5188,10 +5188,10 @@ export default function PortalMPP() {
                 </div>
                 <div>
                   <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
-                    {t("mppPortal.faq.contactHelpdesk")}
+                    {t("mppPortal.faq.contactHelpdesk", "Butuh Bantuan Langsung?")}
                   </h4>
                   <p className="text-[11px] text-slate-500 dark:text-slate-400 font-normal">
-                    {t("mppPortal.pengaduan.helpdeskDesc")}
+                    {t("mppPortal.pengaduan.helpdeskDesc", "Petugas Front Office siap memandu persyaratan dan kendala Anda.")}
                   </p>
                 </div>
               </div>
@@ -5203,7 +5203,7 @@ export default function PortalMPP() {
                 }}
                 className="min-h-[44px] px-4 sm:px-5 py-2 rounded-xl sm:rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 shrink-0 active:scale-95"
               >
-                <span>{t("mppPortal.helpdesk.open")}</span>
+                <span>{t("mppPortal.helpdesk.open", "Hubungi Helpdesk")}</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -5268,13 +5268,13 @@ export default function PortalMPP() {
                         </span>
                       </div>
                       <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                        {t("mppPortal.nav.govName")}
+                        {t("mppPortal.nav.govName", "Pemerintah Kabupaten Luwu")}
                       </span>
                     </div>
                   </div>
 
                   <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-4 max-w-md">
-                    {t("mppPortal.footer.desc")}
+                    {t("mppPortal.footer.desc", "Pusat layanan publik terpadu generasi baru Kabupaten Luwu. Mengintegrasikan perizinan berusaha, layanan kependudukan, perpajakan, serta informasi geospasial dalam satu atap.")}
                   </p>
                 </div>
 
@@ -5285,7 +5285,7 @@ export default function PortalMPP() {
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                     </span>
-                    <span>{t("mppPortal.footer.hoursText")}</span>
+                    <span>{t("mppPortal.footer.hoursText", "Senin - Kamis (07:30 - 16:00) • Jumat (07:30 - 16:30 WITA)")}</span>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2 text-slate-500 dark:text-slate-400 text-xs">
@@ -5308,7 +5308,7 @@ export default function PortalMPP() {
                   <div className="flex items-center gap-2 mb-3.5 pb-2 border-b border-slate-200/60 dark:border-white/10 sm:border-0 sm:pb-0">
                     <div className="w-1.5 h-4 rounded-full bg-emerald-500 shrink-0" />
                     <h4 className="font-sans text-xs sm:text-sm font-bold tracking-wider text-slate-900 dark:text-white uppercase truncate">
-                      {t("mppPortal.footer.tautanPintas")}
+                      {t("mppPortal.footer.tautanPintas", "Tautan Pintas")}
                     </h4>
                   </div>
                   <ul className="flex flex-col gap-1 sm:gap-1.5">
@@ -5321,7 +5321,7 @@ export default function PortalMPP() {
                           document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' });
                         }}
                       >
-                        <span className="truncate">{t("mppPortal.footer.beranda")}</span>
+                        <span className="truncate">{t("mppPortal.footer.beranda", "Beranda Utama")}</span>
                         <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
                       </a>
                     </li>
@@ -5334,7 +5334,7 @@ export default function PortalMPP() {
                           document.getElementById('layanan')?.scrollIntoView({ behavior: 'smooth' });
                         }}
                       >
-                        <span className="truncate">{t("mppPortal.footer.daftarLayanan")}</span>
+                        <span className="truncate">{t("mppPortal.footer.daftarLayanan", "Daftar 120+ Layanan")}</span>
                         <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
                       </a>
                     </li>
@@ -5347,7 +5347,7 @@ export default function PortalMPP() {
                           document.getElementById('instansi')?.scrollIntoView({ behavior: 'smooth' });
                         }}
                       >
-                        <span className="truncate">{t("mppPortal.instansi.title")}</span>
+                        <span className="truncate">{t("mppPortal.instansi.title", "Instansi Terdaftar")}</span>
                         <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
                       </a>
                     </li>
@@ -5373,7 +5373,7 @@ export default function PortalMPP() {
                           document.getElementById('statistik')?.scrollIntoView({ behavior: 'smooth' });
                         }}
                       >
-                        <span className="truncate">{t("mppPortal.statistik.title")}</span>
+                        <span className="truncate">{t("mppPortal.statistik.title", "Statistik Kunjungan")}</span>
                         <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
                       </a>
                     </li>
@@ -5472,7 +5472,7 @@ export default function PortalMPP() {
                   <div className="flex items-center gap-2 mb-3.5 pb-2 border-b border-slate-200/60 dark:border-white/10 sm:border-0 sm:pb-0">
                     <div className="w-1.5 h-4 rounded-full bg-teal-500 shrink-0" />
                     <h4 className="font-sans text-xs sm:text-sm font-bold tracking-wider text-slate-900 dark:text-white uppercase truncate">
-                      {t("mppPortal.footer.dukungan")}
+                      {t("mppPortal.footer.dukungan", "Bantuan & Informasi")}
                     </h4>
                   </div>
                   <ul className="flex flex-col gap-1 sm:gap-1.5">
@@ -5481,7 +5481,7 @@ export default function PortalMPP() {
                         className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200" 
                         href="#fasilitas"
                       >
-                        <span className="truncate">{t("mppPortal.footer.informasiFasilitas")}</span>
+                        <span className="truncate">{t("mppPortal.footer.informasiFasilitas", "Fasilitas & Denah Gedung")}</span>
                         <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
                       </a>
                     </li>
@@ -5490,7 +5490,7 @@ export default function PortalMPP() {
                         className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200" 
                         href="#faq"
                       >
-                        <span className="truncate">{t("mppPortal.footer.tanyaJawab") || "Tanya Jawab (FAQ)"}</span>
+                        <span className="truncate">{t("mppPortal.footer.tanyaJawab", "Tanya Jawab (FAQ)")}</span>
                         <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
                       </a>
                     </li>
@@ -5501,7 +5501,7 @@ export default function PortalMPP() {
                         target="_blank" 
                         rel="noreferrer"
                       >
-                        <span className="truncate">{t("mppPortal.footer.webgis")}</span>
+                        <span className="truncate">{t("mppPortal.footer.webgis", "WebGIS Peta Ruang Luwu")}</span>
                         <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-500 transition-colors shrink-0" />
                       </a>
                     </li>
@@ -5513,7 +5513,7 @@ export default function PortalMPP() {
                       >
                         <span className="flex items-center gap-2 truncate">
                           <Sparkles className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span className="truncate">{t("mppPortal.footer.konsultasiAi")}</span>
+                          <span className="truncate">{t("mppPortal.footer.konsultasiAi", "Konsultasi Virtual Asisten")}</span>
                         </span>
                         <span className="text-[10px] uppercase tracking-wider font-extrabold px-1.5 py-0.5 rounded-md bg-emerald-500 text-white dark:text-slate-950 font-sans shrink-0">
                           AI
@@ -5534,7 +5534,7 @@ export default function PortalMPP() {
               </div>
               <div className="flex items-center gap-2 text-center md:text-right font-medium text-slate-600 dark:text-slate-300">
                 <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>{t("mppPortal.footer.agencyText")}</span>
+                <span>{t("mppPortal.footer.agencyText", "Dikelola oleh DPMPTSP Kabupaten Luwu")}</span>
               </div>
             </div>
           </motion.div>
@@ -5552,7 +5552,7 @@ export default function PortalMPP() {
             className="flex flex-col items-center justify-center gap-1 text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 active:text-emerald-700 min-h-[44px] min-w-[48px] transition-colors cursor-pointer"
           >
             <Home className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
-            <span className="text-[10px] font-bold font-sans">{t("mppPortal.nav.beranda")}</span>
+            <span className="text-[10px] font-bold font-sans">{t("mppPortal.nav.beranda", "Beranda")}</span>
           </button>
 
           <button 
@@ -5564,7 +5564,7 @@ export default function PortalMPP() {
             className="flex flex-col items-center justify-center gap-1 text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 active:text-emerald-700 min-h-[44px] min-w-[48px] transition-colors cursor-pointer"
           >
             <LayoutGrid className="w-5 h-5" />
-            <span className="text-[10px] font-bold font-sans">{t("mppPortal.nav.layanan")}</span>
+            <span className="text-[10px] font-bold font-sans">{t("mppPortal.nav.layanan", "Layanan")}</span>
           </button>
 
           {/* Integrated Flush Center Action: Asisten MPP */}
@@ -5594,7 +5594,7 @@ export default function PortalMPP() {
             className="flex flex-col items-center justify-center gap-1 text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 active:text-emerald-700 min-h-[44px] min-w-[48px] transition-colors cursor-pointer"
           >
             <Building2 className="w-5 h-5" />
-            <span className="text-[10px] font-bold font-sans">{t("mppPortal.nav.instansi")}</span>
+            <span className="text-[10px] font-bold font-sans">{t("mppPortal.nav.instansi", "Instansi")}</span>
           </button>
 
           <button 
@@ -5606,7 +5606,7 @@ export default function PortalMPP() {
             className="flex flex-col items-center justify-center gap-1 text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 active:text-emerald-700 min-h-[44px] min-w-[48px] transition-colors cursor-pointer"
           >
             <Armchair className="w-5 h-5" />
-            <span className="text-[10px] font-bold font-sans">{t("mppPortal.nav.fasilitas")}</span>
+            <span className="text-[10px] font-bold font-sans">{t("mppPortal.nav.fasilitas", "Fasilitas")}</span>
           </button>
         </nav>
 
@@ -5637,10 +5637,10 @@ export default function PortalMPP() {
                     </span>
                   </div>
                   <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white font-sans mt-1.5">
-                    {t("mppPortal.helpdeskModal.title")}
+                    {t("mppPortal.helpdeskModal.title", "Layanan Bantuan & Konsultasi MPP")}
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                    {t("mppPortal.helpdeskModal.subtitle")}
+                    {t("mppPortal.helpdeskModal.subtitle", "Sampaikan pertanyaan perizinan, persyaratan, atau kendala antrean Anda kepada petugas Front Office.")}
                   </p>
                 </div>
                 <button
@@ -5664,10 +5664,10 @@ export default function PortalMPP() {
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
                   <h4 className="text-lg font-bold text-slate-900 dark:text-white font-sans">
-                    {t("mppPortal.helpdeskModal.successTitle")}
+                    {t("mppPortal.helpdeskModal.successTitle", "Pesan Konsultasi Terkirim")}
                   </h4>
                   <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 max-w-sm">
-                    {t("mppPortal.helpdeskModal.successDesc")}
+                    {t("mppPortal.helpdeskModal.successDesc", "Tim Helpdesk MPP Simpurusiang akan segera merespons pesan Anda melalui nomor WhatsApp yang terdaftar.")}
                   </p>
                   <div className="flex flex-col sm:flex-row items-center gap-2.5 mt-6 w-full">
                     <button
@@ -5675,7 +5675,7 @@ export default function PortalMPP() {
                       onClick={() => setIsHelpdeskModalOpen(false)}
                       className="w-full sm:flex-1 min-h-[44px] px-6 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold font-sans hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
                     >
-                      {t("common.close") || "Selesai"}
+                      {t("common.close", "Selesai")}
                     </button>
                     <a
                       href={`https://wa.me/628114201234?text=${encodeURIComponent(`Halo Petugas Helpdesk MPP Simpurusiang, nama saya ${helpdeskForm.nama || 'Warga'}, topik: ${helpdeskForm.kategori}. Pesan: ${helpdeskForm.pesan}`)}`}
@@ -5684,7 +5684,7 @@ export default function PortalMPP() {
                       className="w-full sm:flex-1 min-h-[44px] px-6 py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs sm:text-sm font-semibold font-sans shadow-md shadow-black/25 transition-all flex items-center justify-center gap-1.5"
                     >
                       <MessageCircle className="w-4 h-4" />
-                      <span>{t("mppPortal.contact.chatWhatsapp")}</span>
+                      <span>{t("mppPortal.contact.chatWhatsapp", "Lanjut Chat di WhatsApp")}</span>
                     </a>
                   </div>
                 </motion.div>
@@ -5699,14 +5699,14 @@ export default function PortalMPP() {
                   {/* Nama */}
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 font-sans">
-                      {t("mppPortal.helpdeskModal.nameLabel")}
+                      {t("mppPortal.helpdeskModal.nameLabel", "Nama Lengkap")}
                     </label>
                     <input
                       type="text"
                       required
                       value={helpdeskForm.nama}
                       onChange={(e) => setHelpdeskForm(prev => ({ ...prev, nama: e.target.value }))}
-                      placeholder={t("mppPortal.helpdeskModal.namePlaceholder")}
+                      placeholder={t("mppPortal.helpdeskModal.namePlaceholder", "Masukkan nama lengkap Anda")}
                       className="w-full min-h-[44px] px-3.5 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                     />
                   </div>
@@ -5714,14 +5714,14 @@ export default function PortalMPP() {
                   {/* Telepon / WhatsApp */}
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 font-sans">
-                      {t("mppPortal.helpdeskModal.phoneLabel")}
+                      {t("mppPortal.helpdeskModal.phoneLabel", "Nomor WhatsApp Aktif")}
                     </label>
                     <input
                       type="tel"
                       required
                       value={helpdeskForm.telepon}
                       onChange={(e) => setHelpdeskForm(prev => ({ ...prev, telepon: e.target.value }))}
-                      placeholder={t("mppPortal.helpdeskModal.phonePlaceholder")}
+                      placeholder={t("mppPortal.helpdeskModal.phonePlaceholder", "Contoh: 081234567890")}
                       className="w-full min-h-[44px] px-3.5 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                     />
                   </div>
@@ -5729,33 +5729,33 @@ export default function PortalMPP() {
                   {/* Topik Layanan */}
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 font-sans">
-                      {t("mppPortal.helpdeskModal.topicLabel")}
+                      {t("mppPortal.helpdeskModal.topicLabel", "Topik / Instansi Tujuan")}
                     </label>
                     <select
                       value={helpdeskForm.kategori}
                       onChange={(e) => setHelpdeskForm(prev => ({ ...prev, kategori: e.target.value }))}
                       className="w-full min-h-[44px] px-3.5 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                     >
-                      <option value="Perizinan DPMPTSP">{t("mppPortal.helpdesk.topics.dpmptsp")}</option>
-                      <option value="PBG & Tata Ruang">{t("mppPortal.helpdesk.topics.pbg")}</option>
-                      <option value="Kependudukan Dukcapil">{t("mppPortal.helpdesk.topics.disdukcapil")}</option>
-                      <option value="Pajak Daerah Bapenda">{t("mppPortal.helpdesk.topics.bapenda")}</option>
-                      <option value="SAMSAT & Kepolisian">{t("mppPortal.helpdesk.topics.samsat")}</option>
-                      <option value="Lainnya">{t("mppPortal.helpdesk.topics.other")}</option>
+                      <option value="Perizinan DPMPTSP">{t("mppPortal.helpdesk.topics.dpmptsp", "Perizinan & NIB (DPMPTSP)")}</option>
+                      <option value="PBG & Tata Ruang">{t("mppPortal.helpdesk.topics.pbg", "PBG & Tata Ruang (PUPTR)")}</option>
+                      <option value="Kependudukan Dukcapil">{t("mppPortal.helpdesk.topics.disdukcapil", "Kependudukan & KTP-el (Dukcapil)")}</option>
+                      <option value="Pajak Daerah Bapenda">{t("mppPortal.helpdesk.topics.bapenda", "Pajak & Retribusi Daerah (Bapenda)")}</option>
+                      <option value="SAMSAT & Kepolisian">{t("mppPortal.helpdesk.topics.samsat", "Pajak Kendaraan & SKCK (SAMSAT/Polres)")}</option>
+                      <option value="Lainnya">{t("mppPortal.helpdesk.topics.other", "Layanan Instansi Lainnya")}</option>
                     </select>
                   </div>
 
                   {/* Rincian Pesan */}
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 font-sans">
-                      {t("mppPortal.helpdeskModal.msgLabel")}
+                      {t("mppPortal.helpdeskModal.msgLabel", "Pertanyaan / Rincian Kendala")}
                     </label>
                     <textarea
                       rows={3}
                       required
                       value={helpdeskForm.pesan}
                       onChange={(e) => setHelpdeskForm(prev => ({ ...prev, pesan: e.target.value }))}
-                      placeholder={t("mppPortal.helpdeskModal.msgPlaceholder")}
+                      placeholder={t("mppPortal.helpdeskModal.msgPlaceholder", "Tuliskan pertanyaan atau bantuan layanan yang Anda butuhkan...")}
                       className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none resize-none"
                     />
                   </div>
@@ -5767,14 +5767,14 @@ export default function PortalMPP() {
                       onClick={() => setIsHelpdeskModalOpen(false)}
                       className="flex-1 min-h-[44px] py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs sm:text-sm font-semibold font-sans hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
                     >
-                      {t("common.close") || "Batal"}
+                      {t("common.close", "Batal")}
                     </button>
                     <button
                       type="submit"
                       className="flex-1 min-h-[44px] py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white text-xs sm:text-sm font-semibold font-sans shadow-lg shadow-black/25 transition-all flex items-center justify-center gap-2"
                     >
                       <Send className="w-4 h-4" />
-                      <span>{t("mppPortal.helpdeskModal.sendBtn")}</span>
+                      <span>{t("mppPortal.helpdeskModal.sendBtn", "Kirim Pesan")}</span>
                     </button>
                   </div>
                 </form>
@@ -5841,14 +5841,14 @@ export default function PortalMPP() {
               <div className="mt-5 space-y-4">
                 <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-white/5">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1 font-sans">
-                    {t("agencyModal.about")}
+                    {t("agencyModal.about", "Profil & Tugas Pelayanan")}
                   </span>
                   <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
                     {activeAgency.deskripsi || activeAgency.layanan}
                   </p>
                   <div className="mt-3 pt-3 border-t border-slate-200/60 dark:border-white/5 flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
                     <Clock3 className="w-4 h-4" />
-                    <span>{t("agencyModal.schedule")}: {activeAgency.jamLayanan || "Senin - Kamis (07:30 - 16:00) | Jumat (07:30 - 16:30 WITA)"}</span>
+                    <span>{t("agencyModal.schedule", "Jam Operasional")}: {activeAgency.jamLayanan || "Senin - Kamis (07:30 - 16:00) | Jumat (07:30 - 16:30 WITA)"}</span>
                   </div>
                 </div>
 
@@ -5856,7 +5856,7 @@ export default function PortalMPP() {
                 <div>
                   <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-2.5 font-sans flex items-center gap-2">
                     <FileCheck className="w-4 h-4 text-emerald-500" />
-                    <span>{t("agencyModal.serviceList")}</span>
+                    <span>{t("agencyModal.serviceList", "Daftar Layanan Terpadu")}</span>
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
                     {(activeAgency.layananList || [activeAgency.layanan]).map((layanan, lIdx) => (
@@ -5878,7 +5878,7 @@ export default function PortalMPP() {
                   <div className="p-4 rounded-2xl bg-blue-50/80 dark:bg-sky-950/30 border border-blue-200 dark:border-sky-800/50">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700 dark:text-sky-400 block mb-2 font-sans flex items-center gap-1.5">
                       <AlertCircle className="w-3.5 h-3.5" />
-                      <span>{t("agencyModal.requirements")}</span>
+                      <span>{t("agencyModal.requirements", "Persyaratan Umum")}</span>
                     </span>
                     <ul className="space-y-1 text-xs text-slate-600 dark:text-slate-300">
                       {activeAgency.syaratUmum.map((syarat, sIdx) => (
@@ -5910,7 +5910,7 @@ export default function PortalMPP() {
                     className="w-full sm:flex-1 min-h-[48px] py-3 px-5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white text-xs sm:text-sm font-semibold font-sans shadow-lg shadow-black/25 transition-all flex items-center justify-center gap-2"
                   >
                     <Ticket className="w-4 h-4" />
-                    <span>{t("agencyModal.bookQueueBtn")}</span>
+                    <span>{t("agencyModal.bookQueueBtn", "Ambil Antrean Loket Ini")}</span>
                   </button>
                   <button
                     type="button"
@@ -5926,7 +5926,7 @@ export default function PortalMPP() {
                     className="w-full sm:flex-1 min-h-[48px] py-3 px-5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold font-sans transition-all flex items-center justify-center gap-2"
                   >
                     <Headphones className="w-4 h-4 text-emerald-500" />
-                    <span>{t("agencyModal.helpdeskBtn")}</span>
+                    <span>{t("agencyModal.helpdeskBtn", "Tanya Petugas Helpdesk")}</span>
                   </button>
                 </div>
               </div>
@@ -5963,12 +5963,12 @@ export default function PortalMPP() {
                       </span>
                     </div>
                     <h3 className="text-base sm:text-lg font-medium text-slate-900 dark:text-white font-sans mt-1.5">
-                      {isQueueSubmitted && generatedTicket ? t("bookingModal.ticketDigitalTitle", "Tiket Digital & Evaluasi Layanan") : t("bookingModal.title")}
+                      {isQueueSubmitted && generatedTicket ? t("bookingModal.ticketDigitalTitle", "Tiket Digital & Evaluasi Layanan") : t("bookingModal.title", "Pendaftaran Antrean Online MPP")}
                     </h3>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                       {isQueueSubmitted && generatedTicket 
                         ? t("bookingModal.ticketDigitalSubtitle", "E-Pass resmi antrean MPP Luwu & portal Survei Kepuasan Masyarakat") 
-                        : t("bookingModal.subtitle")}
+                        : t("bookingModal.subtitle", "Pilih instansi, layanan, dan jadwal kedatangan untuk mendapatkan tiket antrean digital tanpa menunggu lama.")}
                     </p>
                   </div>
                   <button
@@ -6035,9 +6035,9 @@ export default function PortalMPP() {
                     <div className="flex items-center justify-between border-b border-white/20 pb-3 mb-4">
                       <div>
                         <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-200">
-                          {t("bookingModal.ticketCardTitle")}
+                          {t("bookingModal.ticketCardTitle", "E-TICKET ANTREAN LAYANAN")}
                         </span>
-                        <div className="text-xs font-bold text-white">{t("mppPortal.general.mppLuwu")}</div>
+                        <div className="text-xs font-bold text-white">{t("mppPortal.general.mppLuwu", "MPP Simpurusiang Kab. Luwu")}</div>
                       </div>
                       <span className="px-4 py-0.5 rounded-full bg-white/20 text-[10px] font-bold uppercase tracking-wider text-white">
                         {t("bookingModal.officialPass", "E-Pass Resmi")}
@@ -6046,7 +6046,7 @@ export default function PortalMPP() {
 
                     <div className="text-center py-2">
                       <span className="text-xs text-emerald-200 uppercase tracking-wider font-semibold">
-                        {t("bookingModal.ticketNumberLabel")}
+                        {t("bookingModal.ticketNumberLabel", "Nomor Antrean Anda")}
                       </span>
                       <div className="text-4xl sm:text-5xl font-black font-sans tracking-tight text-white my-1 drop-shadow-md">
                         {generatedTicket.number}
@@ -6065,23 +6065,23 @@ export default function PortalMPP() {
                     {/* Metadata Tiket */}
                     <div className="space-y-2 text-xs text-emerald-100">
                       <div className="flex justify-between">
-                        <span className="text-emerald-200">{t("bookingModal.applicantName")}:</span>
+                        <span className="text-emerald-200">{t("bookingModal.applicantName", "Nama Pemohon")}:</span>
                         <span className="font-bold text-white">{generatedTicket.name}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-emerald-200">{t("bookingModal.agencyLabel")}:</span>
+                        <span className="text-emerald-200">{t("bookingModal.agencyLabel", "Instansi Tujuan")}:</span>
                         <span className="font-bold text-white">{generatedTicket.agency}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-emerald-200">{t("bookingModal.serviceLabel")}:</span>
+                        <span className="text-emerald-200">{t("bookingModal.serviceLabel", "Jenis Layanan")}:</span>
                         <span className="font-bold text-white text-right max-w-[200px] truncate">{generatedTicket.service}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-emerald-200">{t("bookingModal.dateLabel")}:</span>
+                        <span className="text-emerald-200">{t("bookingModal.dateLabel", "Tanggal Kunjungan")}:</span>
                         <span className="font-bold text-white">{generatedTicket.date}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-emerald-200">{t("bookingModal.estArrival")}:</span>
+                        <span className="text-emerald-200">{t("bookingModal.estArrival", "Estimasi Kedatangan")}:</span>
                         <span className="font-bold text-white">{generatedTicket.estimation}</span>
                       </div>
                     </div>
@@ -6243,7 +6243,7 @@ export default function PortalMPP() {
                   {/* Feedback Bar Tiket Disematkan */}
                   <div className="mt-3 p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-700 dark:text-emerald-300 flex items-center gap-2 w-full">
                     <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span>{t("bookingModal.pinnedNotice")}</span>
+                    <span>{t("bookingModal.pinnedNotice", "Tiket antrean ini telah disematkan pada layar beranda untuk memudahkan pemantauan panggilan.")}</span>
                   </div>
 
                   {/* Action Buttons */}
@@ -6260,12 +6260,12 @@ export default function PortalMPP() {
                       {isTicketCopied ? (
                         <>
                           <Check className="w-4 h-4 text-emerald-500" />
-                          <span>{t("mppPortal.general.copied")}</span>
+                          <span>{t("mppPortal.general.copied", "Kode Disalin")}</span>
                         </>
                       ) : (
                         <>
                           <Copy className="w-4 h-4" />
-                          <span>{t("bookingModal.copyCodeBtn")}</span>
+                          <span>{t("bookingModal.copyCodeBtn", "Salin Nomor Antrean")}</span>
                         </>
                       )}
                     </button>
@@ -6275,7 +6275,7 @@ export default function PortalMPP() {
                       className="min-h-[42px] px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold font-sans transition-all flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <Printer className="w-4 h-4" />
-                      <span>{t("bookingModal.printTicketBtn")}</span>
+                      <span>{t("bookingModal.printTicketBtn", "Cetak / Unduh Tiket")}</span>
                     </button>
                     <button
                       type="button"
@@ -6313,7 +6313,7 @@ export default function PortalMPP() {
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 font-sans">
-                        {t("bookingModal.fullNameLabel")} <span className="text-rose-500">*</span>
+                        {t("bookingModal.fullNameLabel", "Nama Lengkap Sesuai KTP")} <span className="text-rose-500">*</span>
                       </label>
                       {isNameFormatValid(queueForm.nama) && (
                         <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -6339,7 +6339,7 @@ export default function PortalMPP() {
                         }
                       }}
                       onBlur={() => setQueueFormTouched(prev => ({ ...prev, nama: true }))}
-                      placeholder={t("bookingModal.fullNamePlaceholder")}
+                      placeholder={t("bookingModal.fullNamePlaceholder", "Masukkan nama lengkap sesuai KTP-el")}
                       className={`w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none transition-all ${
                         isCitizenRegistered ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 cursor-not-allowed border-dashed' : ''
                       } ${
@@ -6363,7 +6363,7 @@ export default function PortalMPP() {
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 font-sans">
-                          {t("bookingModal.nikLabel")} <span className="text-rose-500">*</span>
+                          {t("bookingModal.nikLabel", "NIK KTP-el (16 Digit)")} <span className="text-rose-500">*</span>
                         </label>
                         <div className="flex items-center gap-1.5">
                           {isLookingUpNik ? (
@@ -6431,7 +6431,7 @@ export default function PortalMPP() {
                           }
                         }}
                         onBlur={() => setQueueFormTouched(prev => ({ ...prev, nik: true }))}
-                        placeholder={t("mppPortal.placeholders.nik")}
+                        placeholder={t("mppPortal.placeholders.nik", "Masukkan 16 digit NIK Anda")}
                         className={`w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs sm:text-sm font-mono text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none transition-all ${
                           queueFormTouched.nik && queueFormErrors.nik
                             ? 'border-rose-400 dark:border-rose-600 focus:ring-2 focus:ring-rose-500'
@@ -6455,7 +6455,7 @@ export default function PortalMPP() {
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 font-sans">
-                          {t("bookingModal.phoneLabel")} <span className="text-rose-500">*</span>
+                          {t("bookingModal.phoneLabel", "Nomor WhatsApp / HP")} <span className="text-rose-500">*</span>
                         </label>
                         {isPhoneFormatValid(queueForm.phone) && (
                           <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -6484,7 +6484,7 @@ export default function PortalMPP() {
                           }
                         }}
                         onBlur={() => setQueueFormTouched(prev => ({ ...prev, phone: true }))}
-                        placeholder={t("mppPortal.placeholders.phone")}
+                        placeholder={t("mppPortal.placeholders.phone", "Nomor WhatsApp (misal: 08123456789)")}
                         className={`w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs sm:text-sm font-mono text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none transition-all ${
                           isCitizenRegistered ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 cursor-not-allowed border-dashed' : ''
                         } ${
@@ -6576,7 +6576,7 @@ export default function PortalMPP() {
                   {/* Instansi Tujuan */}
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1 font-sans">
-                      {t("bookingModal.selectAgencyLabel")} <span className="text-rose-500">*</span>
+                      {t("bookingModal.selectAgencyLabel", "Pilih Instansi Tujuan")} <span className="text-rose-500">*</span>
                     </label>
                     <select
                       value={queueForm.agency}
@@ -6605,7 +6605,7 @@ export default function PortalMPP() {
                   {/* Layanan Spesifik */}
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1 font-sans">
-                      {t("bookingModal.serviceTypeLabel")} <span className="text-rose-500">*</span>
+                      {t("bookingModal.serviceTypeLabel", "Jenis Layanan")} <span className="text-rose-500">*</span>
                     </label>
                     {(() => {
                       const currentInstansi = liveAgencies.find(a => a.nama === queueForm.agency);
@@ -6632,7 +6632,7 @@ export default function PortalMPP() {
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 font-sans">
-                          {t("bookingModal.visitDateLabel")} <span className="text-rose-500">*</span>
+                          {t("bookingModal.visitDateLabel", "Tanggal Kunjungan")} <span className="text-rose-500">*</span>
                         </label>
                       </div>
                       <input
@@ -6657,7 +6657,7 @@ export default function PortalMPP() {
                     </div>
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1 font-sans">
-                        {t("bookingModal.sessionLabel")} <span className="text-rose-500">*</span>
+                        {t("bookingModal.sessionLabel", "Sesi Kedatangan")} <span className="text-rose-500">*</span>
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         <button
@@ -6712,7 +6712,7 @@ export default function PortalMPP() {
                       onClick={() => setIsQueueBookingOpen(false)}
                       className="flex-1 min-h-[44px] py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs sm:text-sm font-semibold font-sans hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
                     >
-                      {t("common.close") || "Batal"}
+                      {t("common.close", "Batal")}
                     </button>
                     <button
                       type="submit"
@@ -6727,7 +6727,7 @@ export default function PortalMPP() {
                       ) : (
                         <>
                           <Ticket className="w-4 h-4" />
-                          <span>{t("bookingModal.submitBtn")}</span>
+                          <span>{t("bookingModal.submitBtn", "Terbitkan Nomor Antrean")}</span>
                         </>
                       )}
                     </button>
@@ -6795,7 +6795,7 @@ export default function PortalMPP() {
                       ? '🔊 PANGGILAN LOKET!'
                       : activeTicket.status === 'selesai_langsung'
                       ? 'Tiket Selesai • Buka E-Pass'
-                      : t("mppPortal.status.activeQueue")}
+                      : t("mppPortal.status.activeQueue", "Antrean Aktif Saat Ini")}
                   </p>
                   <p className="text-lg sm:text-xl font-black font-sans leading-none mt-0.5 group-hover:underline">{activeTicket.number}</p>
                 </div>
@@ -6986,7 +6986,7 @@ export default function PortalMPP() {
                       SKM PermenPAN-RB 14/2017
                     </span>
                     <h3 className="text-lg sm:text-2xl font-extrabold tracking-tight mt-1 text-slate-900 dark:text-white font-sans">
-                      {t("mppPortal.survey.modalTitle")}
+                      {t("mppPortal.survey.modalTitle", "Survei Kepuasan Masyarakat (SKM)")}
                     </h3>
                   </div>
                   <button
