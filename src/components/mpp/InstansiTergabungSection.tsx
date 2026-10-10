@@ -215,8 +215,8 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
                     </Badge>
                   </div>
 
-                  {/* Theme-Adaptive Wide Logo Pedestal (Accommodates Wide & Crest Logos Cleanly) */}
-                  <div className={`w-48 h-28 sm:w-56 sm:h-32 rounded-2xl ${MPP_CARD_SURFACE.layer2} ring-1 ring-slate-900/[0.03] dark:ring-white/[0.05] shadow-sm flex items-center justify-center px-4 py-2.5 mt-1 group-hover:scale-[1.03] group-hover:shadow-md group-hover:border-emerald-500/40 transition-all duration-300 overflow-hidden relative z-10`}>
+                  {/* Theme-Adaptive Wide Logo Pedestal (Ultra-thin 0.5px & Very Soft Frame Border in Light/Dark) */}
+                  <div className="w-48 h-28 sm:w-56 sm:h-32 rounded-2xl bg-slate-50/80 dark:bg-[#143755]/90 border-[0.5px] border-slate-200/55 dark:border-white/[0.05] shadow-[0_1px_3px_rgba(15,23,42,0.02)] dark:shadow-none flex items-center justify-center px-4 py-2.5 mt-1 group-hover:scale-[1.03] group-hover:border-emerald-500/25 dark:group-hover:border-emerald-400/20 transition-all duration-300 overflow-hidden relative z-10">
                     <img
                       src={getImageUrl(tenant.logo, 'agency')}
                       alt={tenant.name}

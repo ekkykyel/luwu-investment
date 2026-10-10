@@ -331,7 +331,7 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
                       <div>
                         {/* Card Top: Logo, Kategori & Loket Badge */}
                         <div className="flex items-start justify-between gap-3 mb-3">
-                          <div className="w-32 h-24 sm:w-36 sm:h-28 rounded-2xl bg-white dark:bg-[#143755] border border-slate-200/90 dark:border-white/10 px-2.5 py-2 flex items-center justify-center shrink-0 overflow-hidden shadow-sm group-hover:scale-[1.03] group-hover:border-emerald-500/40 transition-all">
+                          <div className="w-32 h-24 sm:w-36 sm:h-28 rounded-2xl bg-white/90 dark:bg-[#143755]/90 border-[0.5px] border-slate-200/55 dark:border-white/[0.05] px-2.5 py-2 flex items-center justify-center shrink-0 overflow-hidden shadow-[0_1px_3px_rgba(15,23,42,0.02)] dark:shadow-none group-hover:scale-[1.03] group-hover:border-emerald-500/25 dark:group-hover:border-emerald-400/20 transition-all">
                             <img
                               src={getImageUrl(agency.logo, 'agency')}
                               alt={agency.nama}
