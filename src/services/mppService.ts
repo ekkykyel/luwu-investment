@@ -306,10 +306,10 @@ export const mppService = {
       nextNumber = lastQueue[0].queue_number + 1;
     }
 
-    // Format Antrean Resmi: 001-KODE (contoh: 001-DPMPTSP, 001-PUPTR, atau P-001-DPMPTSP untuk prioritas)
+    // Format Antrean Resmi: KODE-001 (contoh: DPMPTSP-001, DISDUKCAPIL-001, atau P-DPMPTSP-001 untuk prioritas)
     const padded = String(nextNumber).padStart(3, '0');
     const tenantCode = (tenant.code || 'MPP').toUpperCase();
-    const ticketCode = params.isPriority ? `P-${padded}-${tenantCode}` : `${padded}-${tenantCode}`;
+    const ticketCode = params.isPriority ? `P-${tenantCode}-${padded}` : `${tenantCode}-${padded}`;
 
     // Upsert pemohon jika informasi nama disertakan
     if (params.citizenName) {

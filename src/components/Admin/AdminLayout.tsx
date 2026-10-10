@@ -41,8 +41,9 @@ import ManajemenASN from "./Views/ManajemenASN";
 import TataRuangInvestasi from "./Views/TataRuangInvestasi";
 import PengaturanWeb from "./Views/PengaturanWeb";
 import PortalMppManagement from "./Views/PortalMppManagement";
+import MppQueueScheduleAdmin from "./Views/MppQueueScheduleAdmin";
 import { MppAdminReport } from "../mpp/MppAdminReport";
-import { Star } from "lucide-react";
+import { Star, CalendarClock } from "lucide-react";
 
 interface NavItem {
   id: string;
@@ -59,6 +60,13 @@ const NAV_ITEMS: NavItem[] = [
     path: "/admin/beranda",
     icon: LayoutDashboard,
     description: "Ringkasan metrik operasional, loket aktif & kepuasan masyarakat"
+  },
+  {
+    id: "atur-antrean",
+    label: "Atur Jadwal & Buka-Tutup Antrean",
+    path: "/admin/atur-antrean",
+    icon: CalendarClock,
+    description: "Jadwal buka-tutup otomatis WITA, kalender hari libur & reset nomor 001"
   },
   {
     id: "laporan-mpp",
@@ -642,6 +650,7 @@ export default function AdminLayout() {
           
           {/* Sub-view Rendering based on Active Nav */}
           {currentNav.id === "beranda" && <BerandaDashboardView operatorUser={operatorUser} isDark={isDark} />}
+          {currentNav.id === "atur-antrean" && <MppQueueScheduleAdmin isDark={isDark} />}
           {currentNav.id === "loket-pelayanan" && <LoketPelayanan isDark={isDark} />}
           {currentNav.id === "manajemen-asn" && <ManajemenASN isDark={isDark} />}
           {currentNav.id === "kelola-portal" && <PortalMppManagement isDark={isDark} />}

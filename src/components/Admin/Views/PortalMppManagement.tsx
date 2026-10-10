@@ -48,6 +48,7 @@ import { MppSocialMediaAdminManager } from "../../mpp/MppSocialMediaAdminManager
 import { DEFAULT_OFFICIAL_MPP_FACILITIES, syncOrSeedMppFacilitiesToSupabase } from "../../../data/mppFacilitiesData";
 import { ReprimandModal } from "../../mpp/ReprimandModal";
 import { uploadImageToSupabase, getImageUrl, handleImageError, ImageFallbackType } from "../../../utils/imageFallbacks";
+import MppQueueScheduleAdmin from "./MppQueueScheduleAdmin";
 
 interface ImageUploadFieldProps {
   id: string;
@@ -2799,82 +2800,8 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
             ===================================================================== */}
         {activeTab === "kontrol-antrean" && (
           <div className="space-y-6 animate-in fade-in-50 duration-200">
-            {/* Queue Control */}
-            <form onSubmit={handleSaveQueueSettings} className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 shadow-sm space-y-4">
-              <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2 font-sans">
-                <Radio className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
-                <span>Kontrol Operasional Antrean Online</span>
-              </h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                Buka/tutup kuota antrean harian, monitoring nomor aktif, serta reset nomor tiket antrean harian.
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 dark:bg-slate-800/60 p-4 rounded-xl border border-gray-200 dark:border-slate-700">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <strong className="text-xs text-gray-900 dark:text-white block">Status Layanan Antrean</strong>
-                      <span className="text-[10px] text-gray-500 dark:text-gray-400">Menutup pendaftaran online jika di-nonaktifkan</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setQueueStatus({ ...queueStatus, is_active: !queueStatus.is_active })}
-                      className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase transition-all flex items-center gap-1 cursor-pointer ${
-                        queueStatus.is_active ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30" : "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30"
-                      }`}
-                    >
-                      {queueStatus.is_active ? <Unlock size={12} /> : <Lock size={12} />}
-                      <span>{queueStatus.is_active ? "Buka (Open)" : "Tutup (Closed)"}</span>
-                    </button>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-200 block">Kuota Maksimum Antrean Harian</label>
-                    <input
-                      type="number"
-                      value={queueStatus.max_online_queues}
-                      onChange={(e) => setQueueStatus({ ...queueStatus, max_online_queues: Number(e.target.value) })}
-                      className="w-full p-2.5 rounded-xl border bg-white text-gray-900 border-gray-300 placeholder-gray-400 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 dark:bg-slate-800 dark:text-white dark:border-slate-600 dark:placeholder-slate-400 dark:focus:border-emerald-500 dark:focus:ring-emerald-500 outline-none text-xs font-mono"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="space-y-1">
-                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-200 block">Panggilan Loket Terakhir (Loket A - Kependudukan)</label>
-                    <input
-                      type="number"
-                      value={queueStatus.current_number_a}
-                      onChange={(e) => setQueueStatus({ ...queueStatus, current_number_a: Number(e.target.value) })}
-                      className="w-full p-2.5 rounded-xl border bg-white text-gray-900 border-gray-300 placeholder-gray-400 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 dark:bg-slate-800 dark:text-white dark:border-slate-600 dark:placeholder-slate-400 dark:focus:border-emerald-500 dark:focus:ring-emerald-500 outline-none text-xs font-mono"
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-200 block">Panggilan Loket Terakhir (Loket B - Perizinan/Pajak)</label>
-                    <input
-                      type="number"
-                      value={queueStatus.current_number_b}
-                      onChange={(e) => setQueueStatus({ ...queueStatus, current_number_b: Number(e.target.value) })}
-                      className="w-full p-2.5 rounded-xl border bg-white text-gray-900 border-gray-300 placeholder-gray-400 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 dark:bg-slate-800 dark:text-white dark:border-slate-600 dark:placeholder-slate-400 dark:focus:border-emerald-500 dark:focus:ring-emerald-500 outline-none text-xs font-mono"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-                <span className="text-[10px] text-gray-500 dark:text-slate-400 flex items-center gap-1">
-                  <Calendar size={12} /> Last reset: {queueStatus.last_reset}
-                </span>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow flex items-center gap-1.5 self-end cursor-pointer"
-                >
-                  <Save className="w-4 h-4" />
-                  <span>Update Operasional Antrean</span>
-                </button>
-              </div>
-            </form>
+            {/* Master Queue Schedule & Operational Engine */}
+            <MppQueueScheduleAdmin isDark={isDark} />
 
             {/* Self-service Kiosk (Layanan Mandiri) Settings */}
             <form onSubmit={handleSaveKioskSettings} className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 shadow-sm space-y-4">

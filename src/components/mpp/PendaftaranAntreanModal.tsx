@@ -10,6 +10,7 @@ import { supabase, safeFetchLayerData } from '../../lib/supabaseClient';
 import { MPPTenant, MPPService, MPPCitizen } from '../../types/mpp';
 import { KioskAudioEngine } from './MppKioskAudioAnnouncer';
 import { getMasyarakatDummyEmail, checkFieldUniqueness } from '../../services/authService';
+import { evaluateQueueOperationalStatus } from '../../services/mppQueueScheduleService';
 
 export interface PendaftaranAntreanModalProps {
   isOpen: boolean;
@@ -290,6 +291,14 @@ export const PendaftaranAntreanModal: React.FC<PendaftaranAntreanModalProps> = (
     setIsSubmitting(true);
 
     try {
+      // 0. Validasi Jadwal Pelayanan & Kalender Hari Libur (WITA)
+      const opStatus = evaluateQueueOperationalStatus();
+      if (!opStatus.canRegister) {
+        setSubmitError(`Pendaftaran antrean online ditutup: ${opStatus.reason} (${opStatus.nextOpenTimeDesc})`);
+        setIsSubmitting(false);
+        return;
+      }
+
       const cleanPhone = phoneNumber.replace(/[^\d+]/g, '');
       const cleanNik = nik.trim();
 

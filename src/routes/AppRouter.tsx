@@ -77,6 +77,7 @@ const AdminRouteDispatcher: React.FC = () => {
     profileEmail === 'nilambintangselatan@gmail.com' ||
     storedEmail === 'nilambintangselatan@gmail.com' ||
     location.pathname.startsWith('/admin/beranda') ||
+    location.pathname.startsWith('/admin/atur-antrean') ||
     location.pathname.startsWith('/admin/laporan-mpp') ||
     location.pathname.startsWith('/admin/loket-pelayanan') ||
     location.pathname.startsWith('/admin/tata-ruang-investasi') ||
@@ -181,6 +182,7 @@ export const AppRouter: React.FC = () => {
         {/* 5. MPP ADMIN SUB-ROUTES (BERANDA, LOKET, LAPORAN, E-OFFICE, DLL)  */}
         {/* ================================================================= */}
         <Route path="/admin/beranda" element={<AdminLayout />} />
+        <Route path="/admin/atur-antrean" element={<AdminLayout />} />
         <Route path="/admin/laporan-mpp" element={<AdminLayout />} />
         <Route path="/admin/loket-pelayanan" element={<AdminLayout />} />
         <Route path="/admin/tata-ruang-investasi" element={<AdminLayout />} />

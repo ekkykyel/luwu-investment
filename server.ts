@@ -14835,7 +14835,39 @@ function getWitaTimeDetails() {
   };
 }
 
-function validateMppOperationalHours(visitDate: string, session: string = 'pagi', allowOffHours: boolean = true): { isValid: boolean; message?: string } {
+let cachedQueueSchedule: any = null;
+let lastQueueScheduleFetch = 0;
+
+async function getOrFetchQueueSchedule() {
+  const now = Date.now();
+  if (cachedQueueSchedule && (now - lastQueueScheduleFetch < 30000)) {
+    return cachedQueueSchedule;
+  }
+  try {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('setting_value')
+      .eq('setting_key', 'mpp_queue_schedule_config')
+      .maybeSingle();
+    if (data && data.setting_value) {
+      cachedQueueSchedule = typeof data.setting_value === 'string' 
+        ? JSON.parse(data.setting_value) 
+        : data.setting_value;
+      lastQueueScheduleFetch = now;
+      return cachedQueueSchedule;
+    }
+  } catch (err) {
+    console.warn('[QueueSchedule Cache] Warning fetching schedule:', err);
+  }
+  return null;
+}
+
+function validateMppOperationalHours(
+  visitDate: string,
+  session: string = 'pagi',
+  allowOffHours: boolean = false,
+  scheduleConfig?: any
+): { isValid: boolean; message?: string } {
   const wita = getWitaTimeDetails();
 
   if (visitDate < wita.todayStr) {
@@ -14845,32 +14877,65 @@ function validateMppOperationalHours(visitDate: string, session: string = 'pagi'
     };
   }
 
-  // Jika allowOffHours disetel (default true untuk registrasi online 24/7), lewati pembatasan jam operasional fisik
+  const config = scheduleConfig || cachedQueueSchedule;
+
+  // 1. Cek Mode Override Pengelola MPP
+  if (config?.overrideMode === 'force_open') {
+    return { isValid: true };
+  }
+  if (config?.overrideMode === 'force_closed') {
+    return {
+      isValid: false,
+      message: config?.overrideReason || "Mesin dan pendaftaran antrean online ditutup sementara oleh Admin Pengelola MPP (Pemeliharaan Sistem / Penutupan Darurat)."
+    };
+  }
+
+  // 2. Cek Hari Libur Nasional, Cuti Bersama, & Hari Raya Keagamaan
+  if (config?.holidays && Array.isArray(config.holidays)) {
+    const holiday = config.holidays.find((h: any) => h.isActive && h.date === visitDate);
+    if (holiday) {
+      const catLabel = holiday.category === 'cuti_bersama' 
+        ? 'Cuti Bersama' 
+        : holiday.category === 'keagamaan' 
+          ? 'Hari Raya Keagamaan' 
+          : 'Hari Libur Nasional';
+      return {
+        isValid: false,
+        message: `Pendaftaran antrean online ditutup karena ${catLabel}: ${holiday.name}. Silakan ambil nomor antrean pada hari kerja berikutnya.`
+      };
+    }
+  }
+
+  // Jika bypass off hours secara eksplisit diminta
   if (allowOffHours) {
     return { isValid: true };
   }
 
-  // 1. Cek hari libur akhir pekan pada tanggal kunjungan yang dipilih
+  // 3. Cek Hari Libur Akhir Pekan (Sabtu & Minggu Tutup)
   const targetDateObj = new Date(`${visitDate}T12:00:00+08:00`);
   const targetDay = targetDateObj.getDay();
   if (targetDay === 0 || targetDay === 6) {
     return {
       isValid: false,
-      message: "MPP Simpurusiang tidak beroperasi pada akhir pekan (Sabtu & Minggu). Silakan pilih tanggal kunjungan hari kerja (Senin s.d. Jumat)."
+      message: "MPP Simpurusiang tidak beroperasi pada akhir pekan (Sabtu & Minggu). Layanan dibuka setiap hari kerja (Senin s.d. Jumat) pukul 07:30 WITA."
     };
   }
 
-  // 2. Validasi jika pendaftaran untuk hari ini (Hari H)
+  // 4. Validasi Jam Operasional Hari Kerja Berjalan (Hari H)
   if (visitDate === wita.todayStr) {
     if (wita.isWeekend) {
       return {
         isValid: false,
-        message: "Hari ini adalah akhir pekan. Layanan tatap muka MPP Simpurusiang buka pada hari kerja (Senin s.d. Jumat)."
+        message: "Hari ini adalah akhir pekan. Layanan tatap muka MPP Simpurusiang buka pada hari kerja (Senin s.d. Jumat) pukul 07:30 WITA."
       };
     }
 
-    const closingHour = wita.isFriday ? 16.0 : 15.5;
-    const closingLabel = wita.isFriday ? "16:00 WITA" : "15:30 WITA";
+    // Jadwal Resmi Pemkab Luwu:
+    // Senin - Kamis: 07:30 - 16:00 WITA
+    // Jumat: 07:30 - 16:30 WITA
+    const isFriday = wita.isFriday;
+    const closingHour = isFriday ? 16.5 : 16.0;
+    const closingLabel = isFriday ? "16:30 WITA" : "16:00 WITA";
 
     if (wita.timeDecimal < 7.5) {
       return {
@@ -14880,17 +14945,10 @@ function validateMppOperationalHours(visitDate: string, session: string = 'pagi'
     }
 
     if (wita.timeDecimal >= closingHour) {
+      const nextDayDesc = isFriday ? "hari Senin pukul 07:30 WITA" : "besok hari pukul 07:30 WITA";
       return {
         isValid: false,
-        message: `Jam operasional pendaftaran antrean hari ini telah ditutup (${closingLabel}). Silakan jadwalkan kunjungan Anda pada hari kerja berikutnya.`
-      };
-    }
-
-    const normSession = (session || 'pagi').toLowerCase();
-    if (normSession === 'pagi' && wita.timeDecimal >= 12.0) {
-      return {
-        isValid: false,
-        message: "Pendaftaran Sesi Pagi (07:30 - 12:00 WITA) untuk hari ini telah berakhir. Silakan pilih Sesi Siang (13:00 - 15:30 WITA) atau jadwalkan pada hari kerja berikutnya."
+        message: `Jam operasional pendaftaran antrean hari ini telah ditutup (${closingLabel}). Pendaftaran antrean online ditutup hingga menunggu jam pelayanan dibuka kembali pada ${nextDayDesc}.`
       };
     }
   }
@@ -15140,7 +15198,7 @@ app.post("/api/mpp/register-citizen", async (req, res) => {
       }
 
       const paddedNum = String(nextNum).padStart(3, "0");
-      const ticketCode = is_priority ? `P-${paddedNum}-${tCode}` : `${paddedNum}-${tCode}`;
+      const ticketCode = is_priority ? `P-${tCode}-${paddedNum}` : `${tCode}-${paddedNum}`;
 
       const { data: qData, error: qErr } = await supabase
         .from("mpp_queues")
@@ -15374,7 +15432,7 @@ app.post("/api/mpp/queues", async (req, res) => {
 
         // Format Nomor Antrean Resmi: 001-KODE (contoh: 001-DPMPTSP, 001-PUPTR, atau P-001-DPMPTSP jika prioritas)
         const paddedNum = String(nextNum).padStart(3, "0");
-        const ticketCode = is_priority ? `P-${paddedNum}-${tenantCode}` : `${paddedNum}-${tenantCode}`;
+        const ticketCode = is_priority ? `P-${tenantCode}-${paddedNum}` : `${tenantCode}-${paddedNum}`;
 
         const finalUserId = user_id || (`cit-${citizen_nik}`);
         let passHash: string | null = null;

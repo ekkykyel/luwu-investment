@@ -9,6 +9,7 @@ import { getPreciseServicesForAgency } from '../data/mppAgenciesData';
 import { getMasyarakatDummyEmail, checkFieldUniqueness } from '../services/authService';
 import { printMppQueueTicket, MppTicketData } from '../utils/mppTicketPrinter';
 import { speakCallingAnnouncement, triggerVibration, playAirportChime } from '../utils/airportAudioAlert';
+import { evaluateQueueOperationalStatus, formatMppQueueNumber, getWitaDateTime } from '../services/mppQueueScheduleService';
 
 interface Props {
   isOpen: boolean;
@@ -51,6 +52,13 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode,
   const [selectedDesaName, setSelectedDesaName] = useState<string>('');
   const [loadingKecamatan, setLoadingKecamatan] = useState(false);
   const [loadingDesa, setLoadingDesa] = useState(false);
+  const [queueOpStatus, setQueueOpStatus] = useState(() => evaluateQueueOperationalStatus());
+
+  useEffect(() => {
+    if (isOpen) {
+      setQueueOpStatus(evaluateQueueOperationalStatus());
+    }
+  }, [isOpen]);
 
   // Form validation states
   const [formErrors, setFormErrors] = useState<{
@@ -377,6 +385,14 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode,
       const { data: { user } } = await supabase.auth.getUser();
       const verifiedUserId = user?.id || `cit-${verifiedNik}`;
 
+      // Validasi Jadwal Buka-Tutup Pelayanan & Kalender Libur (WITA)
+      const opStatus = evaluateQueueOperationalStatus();
+      if (!opStatus.canRegister) {
+        setSubmitError(`Pendaftaran antrean online saat ini ditutup: ${opStatus.reason} (${opStatus.nextOpenTimeDesc})`);
+        setIsSubmitting(false);
+        return;
+      }
+
       // Pengecekan NIK & Nomor WhatsApp Unik: Mencegah pendaftaran ganda jika NIK atau Nomor WhatsApp sudah memiliki antrean aktif hari ini
       const uniqueCheck = await checkFieldUniqueness({
         nik: currentNik,
@@ -465,7 +481,7 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode,
         const nextNum = (lastQueue && lastQueue.length > 0 && lastQueue[0].queue_number) ? lastQueue[0].queue_number + 1 : 1;
         const paddedNum = String(nextNum).padStart(3, '0');
         const tenantCode = (selectedTenant.code || 'MPP').toUpperCase();
-        const ticketCode = isPriorityLane ? `P-${paddedNum}-${tenantCode}` : `${paddedNum}-${tenantCode}`;
+        const ticketCode = isPriorityLane ? `P-${tenantCode}-${paddedNum}` : `${tenantCode}-${paddedNum}`;
 
         const { data: directQ, error: directErr } = await supabase
           .from('mpp_queues')
@@ -600,6 +616,28 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode,
 
         {/* Body */}
         <div className="p-6 overflow-y-auto max-h-[70vh] custom-scrollbar">
+          {/* Operational Hours Alert Banner */}
+          {!queueOpStatus.canRegister && (
+            <div className="mb-6 p-4 rounded-xl border border-rose-300 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-200 text-xs flex items-start gap-3 shadow-xs">
+              <Lock className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-rose-200 dark:bg-rose-900 text-rose-900 dark:text-rose-100">
+                    Layanan Ditutup ({queueOpStatus.statusBadge})
+                  </span>
+                  <span className="font-mono text-[11px] text-rose-700 dark:text-rose-300">
+                    {queueOpStatus.todayScheduleDesc}
+                  </span>
+                </div>
+                <p className="font-semibold text-rose-900 dark:text-rose-100">
+                  {queueOpStatus.reason}
+                </p>
+                <p className="text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-400">
+                  🕒 {queueOpStatus.nextOpenTimeDesc}
+                </p>
+              </div>
+            </div>
+          )}
           
           {/* Stepper */}
           {step < 4 && (
