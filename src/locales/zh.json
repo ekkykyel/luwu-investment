@@ -85,5 +85,187 @@
     "apply": "申请服务",
     "estimated_value": "预计投资价值",
     "roi_projection": "投资回报率预测"
+  },
+  "mppPortal": {
+    "nav": {
+      "govName": "鲁武县政府",
+      "beranda": "首页",
+      "layanan": "服务",
+      "instansi": "机构",
+      "fasilitas": "便民设施",
+      "umkm": "中小企业目录",
+      "statistik": "数据统计",
+      "asistenAi": "智能助手"
+    },
+    "quickActions": {
+      "antrean": "在线排队取号",
+      "antreanDesc": "选择服务、时间与电子号",
+      "cekStatus": "追踪申请进度",
+      "cekStatusDesc": "实时查询审批执照进度",
+      "mandiri": "自助服务终端",
+      "mandiriDesc": "自助打印扫描指南",
+      "izinOss": "OSS企业许可",
+      "izinOssDesc": "NIB、PBG与SLF要求",
+      "vipDesk": "投资VIP专柜",
+      "vipDeskDesc": "联络官与对接",
+      "petaSpasial": "RDTR空间规划图",
+      "petaSpasialDesc": "分区规划与潜力地理信息"
+    },
+    "quickNav": {
+      "liveQueue": "排队雷达",
+      "tracking": "查验进度",
+      "floorPlan": "3D互动平面图",
+      "operational": "服务时间",
+      "requirements": "申请材料",
+      "survey": "满意度调查",
+      "vipInvestor": "投资服务"
+    },
+    "motto": {
+      "badge": "公共服务座右铭",
+      "title": "卓越便民利民服务",
+      "magatti": "MAGATTI (廉洁、便捷、高效、精准、创新)"
+    },
+    "statistik": {
+      "badge": "MPP绩效透明度",
+      "title": "综合政务服务统计",
+      "subtitle": "鲁武县政务服务办件量、窗口排队与公众满意度实时数据。",
+      "chartTitle": "服务申请趋势",
+      "chartSubtitle": "办事流量监控与窗口调度优化",
+      "harian": "日统计",
+      "mingguan": "周统计",
+      "bulanan": "月统计",
+      "dailyAvg": "日均办理",
+      "weeklyAvg": "周均办理",
+      "monthlyAvg": "月均办理",
+      "yearlyAvg": "年度累计总办件",
+      "fullReportBtn": "查看完整统计报表"
+    },
+    "pengaduan": {
+      "badge": "投诉与建言通道",
+      "subtitle": "畅通公众监督渠道，持续提升鲁武县政务服务中心服务质效。",
+      "laporTitle": "国家统一政务投诉平台",
+      "laporDesc": "对接中央政府部门的国家官方政务投诉渠道。",
+      "internalTitle": "投资与审批局内部帮办诊所",
+      "internalDesc": "审批办件、规划许可与收费答疑即时专席。",
+      "contactCenterTitle": "官方微信/客服热线",
+      "contactCenterDesc": "工作时间内政务大厅客服团队实时响应。",
+      "moreDetails": "进入服务渠道",
+      "helpdeskBadge": "咨询台与帮办服务",
+      "helpdeskTitle": "需要现场专人辅导协助吗？",
+      "helpdeskDesc": "政务服务大厅前台专员随时协助核验证件材料、指导OSS-RBA与SIMBG系统操作及申报表打印。",
+      "hoursLabel": "大厅服务时间:",
+      "hoursValue": "周一至周五 | 08:00 – 15:30 (WITA)",
+      "contactBtn": "联系专职服务人员"
+    },
+    "kontak": {
+      "badge": "地理位置与联络方式",
+      "title": "莅临鲁武县政务大楼",
+      "subtitle": "坐落于贝洛帕核心区，配备开阔停车场、无障碍通道及舒适空调等候厅。",
+      "mapTitle": "政务中心地图导航",
+      "hoursLabel": "办公时间",
+      "hoursValue": "周一至周四: 07:30 - 16:00 | 周五: 07:30 - 16:30",
+      "addressLabel": "详细地址",
+      "addressValue": "鲁武县贝洛帕苏迪曼将军路1号政府综合办公区",
+      "emailLabel": "官方电子邮箱",
+      "centerLabel": "咨询热线与微信服务",
+      "centerSub": "高效便捷响应专线"
+    },
+    "sosialMedia": {
+      "badge": "官方媒体与公开动态",
+      "title": "关注便民动态与政策宣讲",
+      "subtitle": "第一时间获取指南指引、号源动态及服务大厅实况。",
+      "followBtn": "关注",
+      "subscribeBtn": "订阅",
+      "igTag": "卓越政务服务",
+      "igLikes": "1.2k 点赞 • 84 评论",
+      "igDesc": "政务服务大厅最新排班与图解指引。",
+      "igSubtitle": "@dpmptspkabluwu • 官方Instagram",
+      "igBtn": "前往Instagram浏览 ↗",
+      "ytTitle": "政务服务中心官方频道",
+      "ytSubtitle": "@mppsimpurusiangluwu • 官方YouTube",
+      "ytVideoTitle": "鲁武县政务大楼一站式办证办事宣传片",
+      "ytVideoStats": "10.4k 播放 • 2天前",
+      "ytBtn": "在YouTube观看 ↗",
+      "fbTitle": "鲁武县投资审批局官方脸书",
+      "fbSubtitle": "官方Facebook主页",
+      "fbTag": "公共政务资讯",
+      "fbStats": "2.8k 关注者 • 实时动态",
+      "fbDesc": "发布投资准入新规、涉企优惠政策及便民服务车动态。",
+      "fbBtn": "打开Facebook主页 ↗",
+      "ttTitle": "便民申报快问快答",
+      "ttSubtitle": "@mpp_luwubisa • 官方TikTok",
+      "ttTag": "办事指南短视频",
+      "ttSound": "官方原声",
+      "ttLikes": "4.5k 赞",
+      "ttComments": "128 评论",
+      "ttShares": "524 转发",
+      "ttBtn": "在TikTok浏览 ↗"
+    },
+    "footer": {
+      "official": "官方认证",
+      "desc": "鲁武县政府政务服务与投资审批一网通办门户，为您提供高效、便捷、透明的一站式便民利企服务。",
+      "hoursText": "周一至周五: 08:00 – 15:30 (WITA)",
+      "integratedService": "综合便民服务",
+      "tautanPintas": "快捷导航",
+      "beranda": "首页",
+      "daftarLayanan": "120+ 项服务清单",
+      "dukungan": "帮办与指引",
+      "informasiFasilitas": "大楼设施与平面图",
+      "tanyaJawab": "常见问题解答 (FAQ)",
+      "webgis": "鲁武空间规划WebGIS",
+      "konsultasiAi": "AI智能虚拟导办",
+      "integratedServiceDot": "政务服务一网通办。",
+      "agencyText": "由鲁武县投资与政务审批局运维管理"
+    },
+    "sections": {
+      "skm_badge": "满意度调查",
+      "skm_title": "群众满意度调查 (SKM)",
+      "skm_subtitle": "对 MPP Simpurusiang 窗口服务效率的真实反馈。",
+      "complaint_badge": "投诉与建议",
+      "complaint_title": "公共服务投诉渠道",
+      "complaint_subtitle": "公开投诉渠道，助力提升 MPP Simpurusiang 的便民服务质量。",
+      "workflow_badge": "办事流程指南",
+      "workflow_title": "一站式办事流程",
+      "workflow_subtitle": "鲁武县 MPP Simpurusiang 标准化政务办事指南。",
+      "news_badge": "官方公告",
+      "news_title": "最新新闻与公告",
+      "news_subtitle": "鲁武县最新的服务指南、政策法规及系统升级公告。",
+      "review_badge": "市民口碑",
+      "review_title": "MPP Simpurusiang 市民反馈",
+      "review_subtitle": "市民对 MPP Simpurusiang 服务体验的真实评价与建议。"
+    },
+    "instansi": {
+      "title": "入驻机构"
+    },
+    "tooltips": {
+      "openAi": "打开AI智能助手"
+    },
+    "news": {
+      "badge": "官方新闻与公告",
+      "subtitle": "鲁武县政务服务与政策最新动态。",
+      "viewAll": "查看全部新闻"
+    },
+    "stats": {
+      "visitors": "累计服务人次",
+      "agencies": "入驻部门与机构",
+      "queueUnit": "开通便民服务项",
+      "ikm": "群众满意度指数 (IKM)"
+    },
+    "status": {
+      "activeQueue": "当前实时排队号",
+      "beingCalledAt": "请到窗口办理 {{counter}}",
+      "calledOpenScreen": "打开叫号大屏",
+      "openTicket": "出示排队小票",
+      "systemActive": "全流程政务系统在线运行"
+    },
+    "persona": {
+      "semua": "全部办事对象",
+      "warga": "公众与市民",
+      "investor": "企业与投资者"
+    },
+    "placeholders": {
+      "nik": "请输入16位公民身份证号",
+      "phone": "联系电话/微信"
+    }
   }
 }

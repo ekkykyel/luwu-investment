@@ -2001,13 +2001,13 @@ export default function PortalMPP() {
                   MPP Simpurusiang
                 </span>
                 <span className="hidden sm:block text-[10px] sm:text-xs font-semibold tracking-wide whitespace-nowrap font-sans text-emerald-800 dark:text-emerald-500">
-                  {t("mppPortal.nav.govName")}
+                  {t("mppPortal.nav.govName", "PEMKAB LUWU")}
                 </span>
               </div>
             </div>
 
             {/* Desktop Navigation - Balanced Center Aligned */}
-            <nav className="hidden lg:flex items-center gap-6 xl:gap-8 mx-auto font-sans">
+            <nav className="hidden lg:flex items-center gap-5 xl:gap-8 mx-auto font-sans pl-6 sm:pl-8">
               <a 
                 className="text-emerald-700 dark:text-emerald-400 border-b-2 border-emerald-600 dark:border-emerald-400 pb-0.5 font-sans text-xs sm:text-sm font-bold hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer whitespace-nowrap" 
                 href="#hero"
@@ -2016,7 +2016,7 @@ export default function PortalMPP() {
                   document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' });
                 }}
               >
-                {t("mppPortal.nav.beranda")}
+                {t("mppPortal.nav.beranda", "Beranda")}
               </a>
               <a 
                 className="text-slate-700 dark:text-slate-300 font-sans text-xs sm:text-sm font-semibold hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer whitespace-nowrap" 
@@ -2026,7 +2026,7 @@ export default function PortalMPP() {
                   document.getElementById('layanan')?.scrollIntoView({ behavior: 'smooth' });
                 }}
               >
-                {t("mppPortal.nav.layanan")}
+                {t("mppPortal.nav.layanan", "Layanan")}
               </a>
               <a 
                 className="text-slate-700 dark:text-slate-300 font-sans text-xs sm:text-sm font-semibold hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer whitespace-nowrap" 
@@ -2036,7 +2036,7 @@ export default function PortalMPP() {
                   document.getElementById('instansi')?.scrollIntoView({ behavior: 'smooth' });
                 }}
               >
-                {t("mppPortal.nav.instansi")}
+                {t("mppPortal.nav.instansi", "Instansi")}
               </a>
               <a 
                 className="text-slate-700 dark:text-slate-300 font-sans text-xs sm:text-sm font-semibold hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer whitespace-nowrap" 
@@ -2046,7 +2046,7 @@ export default function PortalMPP() {
                   document.getElementById('fasilitas')?.scrollIntoView({ behavior: 'smooth' });
                 }}
               >
-                {t("mppPortal.nav.fasilitas")}
+                {t("mppPortal.nav.fasilitas", "Fasilitas")}
               </a>
               <a 
                 className="text-slate-700 dark:text-slate-300 font-sans text-xs sm:text-sm font-semibold hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors cursor-pointer whitespace-nowrap" 
@@ -2066,7 +2066,7 @@ export default function PortalMPP() {
                   document.getElementById('statistik')?.scrollIntoView({ behavior: 'smooth' });
                 }}
               >
-                {t("mppPortal.nav.statistik")}
+                {t("mppPortal.nav.statistik", "Statistik")}
               </a>
             </nav>
 
@@ -2120,10 +2120,10 @@ export default function PortalMPP() {
                 type="button" 
                 onClick={() => setIsAiModalOpen(true)}
                 className="hidden sm:flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-3 py-1.5 rounded-xl text-xs font-semibold font-sans transition-all active:scale-95 shadow-xs cursor-pointer shrink-0"
-                title={t("mppPortal.tooltips.openAi")}
+                title={t("mppPortal.tooltips.openAi", "Buka Asisten Virtual AI MPP")}
               >
                 <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                <span>{t("mppPortal.nav.asistenAi")}</span>
+                <span className="whitespace-nowrap">{t("mppPortal.nav.asistenAi", "Tanya AI")}</span>
               </button>
             </div>
           </div>
@@ -2403,10 +2403,10 @@ export default function PortalMPP() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <span className="block font-sans text-xs sm:text-sm font-extrabold text-slate-900 dark:text-slate-50 tracking-tight leading-snug group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
-                          {t("mppPortal.quickActions.antrean")}
+                          {t("mppPortal.quickActions.antrean", "Ambil Antrean Online")}
                         </span>
                         <span className="block text-[11px] text-slate-700 dark:text-slate-300 font-semibold truncate mt-0.5">
-                          {t("mppPortal.quickActions.antreanDesc")}
+                          {t("mppPortal.quickActions.antreanDesc", "Pilih layanan, jam & tiket digital")}
                         </span>
                       </div>
                     </div>
@@ -2420,10 +2420,10 @@ export default function PortalMPP() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <span className="block font-sans text-xs sm:text-sm font-extrabold text-slate-900 dark:text-slate-50 tracking-tight leading-snug group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
-                          {t("mppPortal.quickActions.cekStatus")}
+                          {t("mppPortal.quickActions.cekStatus", "Lacak Berkas Permohonan")}
                         </span>
                         <span className="block text-[11px] text-slate-700 dark:text-slate-300 font-semibold truncate mt-0.5">
-                          {t("mppPortal.quickActions.cekStatusDesc")}
+                          {t("mppPortal.quickActions.cekStatusDesc", "Cek status SK, PBG & izin realtime")}
                         </span>
                       </div>
                     </div>
@@ -2440,10 +2440,10 @@ export default function PortalMPP() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <span className="block font-sans text-xs sm:text-sm font-extrabold text-slate-900 dark:text-slate-50 tracking-tight leading-snug group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
-                          {t("mppPortal.quickActions.mandiri")}
+                          {t("mppPortal.quickActions.mandiri", "Anjungan Mandiri (Kiosk)")}
                         </span>
                         <span className="block text-[11px] text-slate-700 dark:text-slate-300 font-semibold truncate mt-0.5">
-                          {t("mppPortal.quickActions.mandiriDesc")}
+                          {t("mppPortal.quickActions.mandiriDesc", "Panduan cetak dokumen & scan mandiri")}
                         </span>
                       </div>
                     </div>
@@ -3700,13 +3700,13 @@ export default function PortalMPP() {
             {/* Header Seksi Terpusat — Standardized Zero-Pill Eyebrow + Typography */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 space-y-2">
               <span className={MPP_TYPOGRAPHY.eyebrow}>
-                {t("sections.skm_badge", t("mppPortal.survey.badge", "Survei Kepuasan"))}
+                {t("sections.skm_badge")}
               </span>
-              <h2 className={`${MPP_TYPOGRAPHY.sectionTitle} text-center`}>
-                {t("sections.skm_title", "Survei Kepuasan Masyarakat (SKM)")}
+              <h2 className={MPP_TYPOGRAPHY.sectionTitle}>
+                {t("sections.skm_title")}
               </h2>
               <p className={`${MPP_TYPOGRAPHY.sectionSubtitle} max-w-2xl mx-auto text-center`}>
-                {t("sections.skm_subtitle", t("mppPortal.survey.subtitle", "Evaluasi jujur masyarakat terhadap efektivitas pelayanan loket MPP Simpurusiang Kabupaten Luwu."))}
+                {t("sections.skm_subtitle")}
               </p>
             </div>
 
@@ -3737,13 +3737,13 @@ export default function PortalMPP() {
             {/* Header Seksi Terpusat — Standardized Zero-Pill Eyebrow + Typography */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 space-y-2">
               <span className={MPP_TYPOGRAPHY.eyebrow}>
-                {t("sections.complaint_badge", t("mppPortal.pengaduan.badge", "Pengaduan & Aspirasi"))}
+                {t("sections.complaint_badge")}
               </span>
               <h2 className={`${MPP_TYPOGRAPHY.sectionTitle} text-center`}>
-                {t("sections.complaint_title", "Kanal Pengaduan Layanan Publik")}
+                {t("sections.complaint_title")}
               </h2>
               <p className={`${MPP_TYPOGRAPHY.sectionSubtitle} max-w-2xl mx-auto text-center`}>
-                {t("sections.complaint_subtitle", t("mppPortal.pengaduan.subtitle", "Membuka saluran pengawasan masyarakat untuk terus meningkatkan efektivitas pelayanan publik MPP Simpurusiang Kabupaten Luwu."))}
+                {t("sections.complaint_subtitle")}
               </p>
             </div>
 
@@ -3980,13 +3980,13 @@ export default function PortalMPP() {
             {/* Header Seksi Terpusat */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-5 sm:mb-8 space-y-2">
               <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60 font-sans">
-                {t("sections.workflow_badge", t("mppPortal.alur.badge", "Panduan Prosedur"))}
+                {t("sections.workflow_badge")}
               </span>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white font-sans text-center">
-                {t("sections.workflow_title", "Alur Pelayanan Layanan Terpadu")}
+                {t("sections.workflow_title")}
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto text-center leading-relaxed">
-                {t("sections.workflow_subtitle", t("mppPortal.alur.subtitle", "Berikut adalah alur pelayanan standar terpadu di MPP Simpurusiang Kabupaten Luwu."))}
+                {t("sections.workflow_subtitle")}
               </p>
             </div>
 
@@ -4156,13 +4156,13 @@ export default function PortalMPP() {
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-10 gap-3">
               <div className="space-y-2">
                 <span className={`${MPP_TYPOGRAPHY.eyebrow} inline-block`}>
-                  {t("sections.news_badge", t("mppPortal.news.badge", "Publikasi Resmi"))}
+                  {t("sections.news_badge")}
                 </span>
                 <h2 className={MPP_TYPOGRAPHY.sectionTitle}>
-                  {t("sections.news_title", "Berita & Pengumuman Terbaru")}
+                  {t("sections.news_title")}
                 </h2>
                 <p className={`${MPP_TYPOGRAPHY.sectionSubtitle} max-w-2xl`}>
-                  {t("sections.news_subtitle", t("mppPortal.news.subtitle", "Panduan pelayanan terbaru, regulasi kebijakan, dan pengumuman pembaruan sistem MPP Luwu."))}
+                  {t("sections.news_subtitle")}
                 </p>
               </div>
               <button
@@ -4303,13 +4303,13 @@ export default function PortalMPP() {
               className="relative z-10 max-w-2xl mx-auto px-4 text-center mb-6 sm:mb-10 flex flex-col items-center space-y-2"
             >
               <span className={`${MPP_TYPOGRAPHY.eyebrow} inline-block`}>
-                {t("sections.review_badge", t("mppPortal.ulasan.badge", "Testimoni Warga"))}
+                {t("sections.review_badge")}
               </span>
               <h2 className={`${MPP_TYPOGRAPHY.sectionTitle} text-center`}>
-                {t("sections.review_title", "Ulasan Masyarakat MPP Simpurusiang")}
+                {t("sections.review_title")}
               </h2>
               <p className={`${MPP_TYPOGRAPHY.sectionSubtitle} max-w-2xl mx-auto text-center`}>
-                {t("sections.review_subtitle", t("mppPortal.ulasan.subtitle", "Pengalaman langsung dan ulasan jujur masyarakat terhadap pelayanan di MPP Simpurusiang Kabupaten Luwu."))}
+                {t("sections.review_subtitle")}
               </p>
             </motion.div>
 

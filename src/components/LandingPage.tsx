@@ -2182,7 +2182,6 @@ export default function LandingPage({
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-1 lg:space-x-2">
-              <LanguageSwitcher />
               {[
                 { name: t("nav.dashboard"), id: "hero-section" },
                 {

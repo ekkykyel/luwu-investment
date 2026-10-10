@@ -41,7 +41,7 @@
   "nav": {
     "home": "Home",
     "dashboard": "Dashboard",
-    "gis": "GIS Analytic",
+    "gis": "GIS Analytics",
     "potensi": "Potential",
     "infrastruktur": "Infrastructure",
     "simulasi": "Pre-Investment Simulation",
@@ -85,5 +85,187 @@
     "apply": "Apply for Service",
     "estimated_value": "Estimated Investment Value",
     "roi_projection": "ROI Projection"
+  },
+  "mppPortal": {
+    "nav": {
+      "govName": "LUWU REGENCY",
+      "beranda": "Home",
+      "layanan": "Services",
+      "instansi": "Agencies",
+      "fasilitas": "Facilities",
+      "umkm": "SME Catalog",
+      "statistik": "Statistics",
+      "asistenAi": "Ask AI"
+    },
+    "quickActions": {
+      "antrean": "Online Queue Booking",
+      "antreanDesc": "Select service, time & digital ticket",
+      "cekStatus": "Track Application",
+      "cekStatusDesc": "Check decree, permit & license status",
+      "mandiri": "Self-Service Kiosk",
+      "mandiriDesc": "Scan & print official documents",
+      "izinOss": "OSS Business Licensing",
+      "izinOssDesc": "NIB, PBG & SLF Requirements",
+      "vipDesk": "Investment VIP Desk",
+      "vipDeskDesc": "Liaison Officer & Facilitation",
+      "petaSpasial": "RDTR Spatial Map",
+      "petaSpasialDesc": "Zoning & Potential WebGIS"
+    },
+    "quickNav": {
+      "liveQueue": "Queue Radar",
+      "tracking": "Track Documents",
+      "floorPlan": "Interactive 3D Floor Plan",
+      "operational": "Service Hours",
+      "requirements": "Document Requirements",
+      "survey": "Satisfaction Survey",
+      "vipInvestor": "Investor Desk"
+    },
+    "motto": {
+      "badge": "PUBLIC SERVICE MOTTO",
+      "title": "Excellent Citizen-Centric Service",
+      "magatti": "MAGATTI (Affordable, Easy, Fast, Accurate, Innovative)"
+    },
+    "statistik": {
+      "badge": "MPP PERFORMANCE TRANSPARENCY",
+      "title": "Integrated Public Service Statistics",
+      "subtitle": "Real-time data on document processing, counter queues, and public satisfaction index in Luwu Regency.",
+      "chartTitle": "Applicant Activity Trend",
+      "chartSubtitle": "Visitor traffic tracking for counter allocation optimization",
+      "harian": "Daily",
+      "mingguan": "Weekly",
+      "bulanan": "Monthly",
+      "dailyAvg": "Daily Average",
+      "weeklyAvg": "Weekly Average",
+      "monthlyAvg": "Monthly Average",
+      "yearlyAvg": "Yearly Total Applicants",
+      "fullReportBtn": "View Complete Report"
+    },
+    "pengaduan": {
+      "badge": "COMPLAINTS & ASPIRATIONS",
+      "subtitle": "Opening citizen oversight channels to continuously enhance public service quality of MPP Simpurusiang Luwu.",
+      "laporTitle": "National SP4N-LAPOR!",
+      "laporDesc": "Official national complaint portal integrated with central ministries & agencies.",
+      "internalTitle": "DPMPTSP Internal Helpdesk",
+      "internalDesc": "Direct assistance for licensing, zoning, and regional retribution obstacles.",
+      "contactCenterTitle": "Official WhatsApp & Hotline",
+      "contactCenterDesc": "Fast response from MPP helpdesk operator team during working hours.",
+      "moreDetails": "Access Help Channel",
+      "helpdeskBadge": "HELPDESK & CONSULTATION",
+      "helpdeskTitle": "Need Direct Officer Assistance?",
+      "helpdeskDesc": "MPP front office officers are ready to assist with document verification, OSS-RBA guidance, SIMBG, and application form printing.",
+      "hoursLabel": "Front Office Service Hours:",
+      "hoursValue": "Monday – Friday | 08:00 – 15:30 WITA",
+      "contactBtn": "Contact Officer"
+    },
+    "kontak": {
+      "badge": "LOCATION & CONTACT INFO",
+      "title": "Visit MPP Simpurusiang Building",
+      "subtitle": "Conveniently located in central Belopa with spacious parking, disability-friendly facilities, and air-conditioned lounges.",
+      "mapTitle": "MPP Simpurusiang Map Location",
+      "hoursLabel": "Operating Hours",
+      "hoursValue": "Monday - Thursday: 07:30 - 16:00 | Friday: 07:30 - 16:30",
+      "addressLabel": "Office Address",
+      "addressValue": "Jl. Jenderal Sudirman No. 1, Luwu Regency Gov Complex, Belopa",
+      "emailLabel": "Official Email",
+      "centerLabel": "Call Center & WhatsApp",
+      "centerSub": "Quick Response Service"
+    },
+    "sosialMedia": {
+      "badge": "OFFICIAL SOCIAL MEDIA",
+      "title": "Follow Latest Service Updates & Innovations",
+      "subtitle": "Get licensing guides, queue announcements, and facility features directly from official channels.",
+      "followBtn": "Follow Account",
+      "subscribeBtn": "Subscribe YouTube",
+      "igTag": "Prime Service MPP",
+      "igLikes": "1.2k Likes • 84 Comments",
+      "igDesc": "Photos and schedule infographics of MPP Simpurusiang.",
+      "igSubtitle": "@dpmptspkabluwu • Official Instagram",
+      "igBtn": "View on Instagram ↗",
+      "ytTitle": "MPP Simpurusiang Channel",
+      "ytSubtitle": "@mppsimpurusiangluwu • Official YouTube",
+      "ytVideoTitle": "Profile Video & Integrated Service Flow of MPP Simpurusiang",
+      "ytVideoStats": "10.4k Views • 2 Days Ago",
+      "ytBtn": "Watch on YouTube ↗",
+      "fbTitle": "DPMPTSP Luwu Regency",
+      "fbSubtitle": "Official Facebook Page",
+      "fbTag": "Public Info",
+      "fbStats": "2.8k Followers • Latest Updates",
+      "fbDesc": "News broadcasts on operational licenses, investment regulations, and mobile service schedules.",
+      "fbBtn": "Open Facebook Page ↗",
+      "ttTitle": "Quick Licensing Tips",
+      "ttSubtitle": "@mpp_luwubisa • Official TikTok",
+      "ttTag": "Service Education Video",
+      "ttSound": "Original Sound • MPP Simpurusiang",
+      "ttLikes": "4.5k Likes",
+      "ttComments": "128 Comments",
+      "ttShares": "524 Shares",
+      "ttBtn": "Watch on TikTok ↗"
+    },
+    "footer": {
+      "official": "Official",
+      "desc": "Integrated Public Service & Investment Licensing Portal of Luwu Regency Government. Delivering fast, easy, transparent, and integrated services under one roof.",
+      "hoursText": "Monday – Friday: 08:00 – 15:30 WITA",
+      "integratedService": "Integrated Public Service",
+      "tautanPintas": "Quick Links",
+      "beranda": "Main Home",
+      "daftarLayanan": "120+ Services Directory",
+      "dukungan": "Help & Support",
+      "informasiFasilitas": "Facilities & Floor Plan",
+      "tanyaJawab": "Frequently Asked Questions",
+      "webgis": "Luwu Spatial WebGIS",
+      "konsultasiAi": "Virtual Assistant Consultation",
+      "integratedServiceDot": "Integrated Public Services.",
+      "agencyText": "Managed by DPMPTSP Luwu Regency"
+    },
+    "sections": {
+      "skm_badge": "Satisfaction Survey",
+      "skm_title": "Public Satisfaction Survey (SKM)",
+      "skm_subtitle": "Honest evaluation from the public on the effectiveness of MPP Simpurusiang services.",
+      "complaint_badge": "Complaints & Aspirations",
+      "complaint_title": "Public Complaint Channels",
+      "complaint_subtitle": "Open channels for public oversight to improve the effectiveness of MPP Simpurusiang services.",
+      "workflow_badge": "Procedure Guide",
+      "workflow_title": "Integrated Service Workflow",
+      "workflow_subtitle": "Standardized integrated service workflow at MPP Simpurusiang, Luwu Regency.",
+      "news_badge": "Official Publication",
+      "news_title": "Latest News & Announcements",
+      "news_subtitle": "Latest service guides, policy regulations, and MPP system updates in Luwu.",
+      "review_badge": "Citizen Testimonials",
+      "review_title": "MPP Simpurusiang Citizen Reviews",
+      "review_subtitle": "Direct experiences and honest reviews from the community regarding MPP Simpurusiang services."
+    },
+    "instansi": {
+      "title": "Registered Agencies"
+    },
+    "tooltips": {
+      "openAi": "Open Virtual AI Assistant"
+    },
+    "news": {
+      "badge": "OFFICIAL NEWS & ANNOUNCEMENTS",
+      "subtitle": "Latest updates on public services and investment policies in Luwu Regency.",
+      "viewAll": "View All News"
+    },
+    "stats": {
+      "visitors": "Total Served Citizens",
+      "agencies": "Integrated Agencies",
+      "queueUnit": "Active Public Services",
+      "ikm": "Public Satisfaction Index (IKM)"
+    },
+    "status": {
+      "activeQueue": "Active Queue Today",
+      "beingCalledAt": "BEING CALLED AT COUNTER {{counter}}",
+      "calledOpenScreen": "Open Calling Screen",
+      "openTicket": "Open Queue Ticket",
+      "systemActive": "Realtime Active Service System"
+    },
+    "persona": {
+      "semua": "All Applicants",
+      "warga": "Citizens & Public",
+      "investor": "Investors & Business"
+    },
+    "placeholders": {
+      "nik": "Enter 16-digit ID number",
+      "phone": "WhatsApp number (e.g., 08123456789)"
+    }
   }
 }

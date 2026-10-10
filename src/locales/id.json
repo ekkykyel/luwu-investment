@@ -41,7 +41,7 @@
   "nav": {
     "home": "Beranda",
     "dashboard": "Dashboard",
-    "gis": "GIS Analystic",
+    "gis": "GIS Analytics",
     "potensi": "Potensi",
     "infrastruktur": "Infrastruktur",
     "simulasi": "Simulasi Pra-Investasi",
@@ -85,5 +85,187 @@
     "apply": "Ajukan Layanan",
     "estimated_value": "Estimasi Nilai Investasi",
     "roi_projection": "Proyeksi ROI"
+  },
+  "mppPortal": {
+    "nav": {
+      "govName": "PEMKAB LUWU",
+      "beranda": "Beranda",
+      "layanan": "Layanan",
+      "instansi": "Instansi",
+      "fasilitas": "Fasilitas",
+      "umkm": "Katalog UMKM",
+      "statistik": "Statistik",
+      "asistenAi": "Tanya AI"
+    },
+    "quickActions": {
+      "antrean": "Ambil Antrean Online",
+      "antreanDesc": "Pilih layanan, jam & tiket digital",
+      "cekStatus": "Lacak Berkas Permohonan",
+      "cekStatusDesc": "Cek status SK, PBG & izin realtime",
+      "mandiri": "Anjungan Mandiri (Kiosk)",
+      "mandiriDesc": "Panduan cetak dokumen & scan mandiri",
+      "izinOss": "Izin Usaha OSS",
+      "izinOssDesc": "Syarat NIB, PBG & SLF",
+      "vipDesk": "Eksekutif Desk Investasi",
+      "vipDeskDesc": "Liaison Officer & Fasilitasi",
+      "petaSpasial": "Peta Spasial RDTR",
+      "petaSpasialDesc": "WebGIS Zonasi & Potensi"
+    },
+    "quickNav": {
+      "liveQueue": "Radar Antrean",
+      "tracking": "Lacak Berkas",
+      "floorPlan": "Denah 3D Interaktif",
+      "operational": "Jam Layanan",
+      "requirements": "Persyaratan Dokumen",
+      "survey": "Survei Kepuasan SKM",
+      "vipInvestor": "Layanan Investor"
+    },
+    "motto": {
+      "badge": "MOTTO PELAYANAN PUBLIK",
+      "title": "Pelayanan Prima Berorientasi Masyarakat",
+      "magatti": "MAGATTI (Murah, Gampang, Cepat, Tepat, Inovatif)"
+    },
+    "statistik": {
+      "badge": "TRANSPARANSI KINERJA MPP",
+      "title": "Statistik Pelayanan Publik Terpadu",
+      "subtitle": "Data real-time pemrosesan dokumen, antrean loket, dan indeks kepuasan masyarakat Kabupaten Luwu.",
+      "chartTitle": "Tren Aktivitas Pemohon Layanan",
+      "chartSubtitle": "Pantauan lonjakan pengunjung untuk optimasi alokasi loket",
+      "harian": "Harian",
+      "mingguan": "Mingguan",
+      "bulanan": "Bulanan",
+      "dailyAvg": "Rata-rata Harian",
+      "weeklyAvg": "Rata-rata Mingguan",
+      "monthlyAvg": "Rata-rata Bulanan",
+      "yearlyAvg": "Total Pemohon / Tahun",
+      "fullReportBtn": "Lihat Rekapitulasi Lengkap"
+    },
+    "pengaduan": {
+      "badge": "LAYANAN PENGADUAN & ASPIRASI",
+      "subtitle": "Membuka saluran pengawasan masyarakat untuk terus meningkatkan efektivitas pelayanan publik MPP Simpurusiang Kabupaten Luwu.",
+      "laporTitle": "SP4N-LAPOR! Nasional",
+      "laporDesc": "Kanal pengaduan resmi terintegrasi kementerian & lembaga pemerintah pusat.",
+      "internalTitle": "Klinik Aduan Internal DPMPTSP",
+      "internalDesc": "Konsultasi langsung kendala berkas perizinan, tata ruang, dan retribusi daerah.",
+      "contactCenterTitle": "WhatsApp & Call Center Resmi",
+      "contactCenterDesc": "Respon cepat tim operator helpdesk MPP selama jam kerja operasional.",
+      "moreDetails": "Akses Kanal Bantuan",
+      "helpdeskBadge": "LAYANAN HELPDESK & KONSULTASI",
+      "helpdeskTitle": "Butuh Pendampingan Langsung Petugas?",
+      "helpdeskDesc": "Petugas front office MPP siap membantu verifikasi dokumen persyaratan, panduan sistem OSS-RBA, SIMBG, maupun pencetakan formulir permohonan.",
+      "hoursLabel": "Jam Layanan Front Office:",
+      "hoursValue": "Senin – Jumat | 08:00 – 15:30 WITA",
+      "contactBtn": "Hubungi Petugas Konsultasi"
+    },
+    "kontak": {
+      "badge": "LOKASI & INFORMASI KONTAK",
+      "title": "Kunjungi Gedung MPP Simpurusiang",
+      "subtitle": "Akses mudah di pusat Kota Belopa dengan sarana parkir luas, fasilitas ramah disabilitas, dan ruang tunggu ber-AC.",
+      "mapTitle": "Peta Lokasi Gedung MPP Simpurusiang",
+      "hoursLabel": "Jam Operasional Layanan",
+      "hoursValue": "Senin - Kamis: 07:30 - 16:00 | Jumat: 07:30 - 16:30",
+      "addressLabel": "Alamat Gedung MPP",
+      "addressValue": "Jl. Jenderal Sudirman No. 1, Kompleks Perkantoran Pemkab Luwu, Belopa",
+      "emailLabel": "Email Resmi Pengaduan & Informasi",
+      "centerLabel": "Call Center & WhatsApp",
+      "centerSub": "Layanan Respon Cepat MPP Luwu"
+    },
+    "sosialMedia": {
+      "badge": "MEDIA SOSIAL & PUBLIKASI RESMI",
+      "title": "Ikuti Informasi & Inovasi Layanan Terkini",
+      "subtitle": "Dapatkan panduan izin terbaru, pengumuman kuota antrean, dan liputan fasilitas langsung dari akun resmi.",
+      "followBtn": "Ikuti Akun",
+      "subscribeBtn": "Langganan YouTube",
+      "igTag": "Pelayanan Prima MPP",
+      "igLikes": "1.2k Suka • 84 Komentar",
+      "igDesc": "Foto dan infografis jadwal pelayanan terpadu gerai MPP Simpurusiang.",
+      "igSubtitle": "@dpmptspkabluwu • Instagram Resmi",
+      "igBtn": "Lihat di Instagram ↗",
+      "ytTitle": "MPP Simpurusiang Channel",
+      "ytSubtitle": "@mppsimpurusiangluwu • YouTube Resmi",
+      "ytVideoTitle": "Video Profil & Alur Pelayanan Terpadu Satu Pintu MPP Simpurusiang",
+      "ytVideoStats": "10.4k Tayangan • 2 Hari yang Lalu",
+      "ytBtn": "Tonton Video di YouTube ↗",
+      "fbTitle": "DPMPTSP Kabupaten Luwu",
+      "fbSubtitle": "Halaman Facebook Resmi",
+      "fbTag": "Informasi Publik",
+      "fbStats": "2.8k Pengikut • Pembaruan Terkini",
+      "fbDesc": "Siaran berita izin operasional, regulasi investasi daerah, dan jadwal mobil keliling.",
+      "fbBtn": "Buka Halaman Facebook ↗",
+      "ttTitle": "Tips Izin Cepat & Praktis",
+      "ttSubtitle": "@mpp_luwubisa • TikTok Resmi",
+      "ttTag": "Video Edukasi Layanan",
+      "ttSound": "Suara Asli • MPP Simpurusiang Edukasi",
+      "ttLikes": "4.5k Suka",
+      "ttComments": "128 Komentar",
+      "ttShares": "524 Dibagikan",
+      "ttBtn": "Tonton di TikTok ↗"
+    },
+    "footer": {
+      "official": "Resmi",
+      "desc": "Portal Integrasi Pelayanan Publik dan Perizinan Investasi Pemerintah Kabupaten Luwu. Menghadirkan layanan yang cepat, mudah, transparan, dan terintegrasi dalam satu atap.",
+      "hoursText": "Senin – Jumat: 08:00 – 15:30 WITA",
+      "integratedService": "Pelayanan Publik Terintegrasi",
+      "tautanPintas": "Tautan Pintas",
+      "beranda": "Beranda Utama",
+      "daftarLayanan": "Daftar 120+ Layanan",
+      "dukungan": "Bantuan & Informasi",
+      "informasiFasilitas": "Fasilitas & Denah Gedung",
+      "tanyaJawab": "Tanya Jawab (FAQ)",
+      "webgis": "WebGIS Peta Ruang Luwu",
+      "konsultasiAi": "Konsultasi Virtual Asisten",
+      "integratedServiceDot": "Pelayanan Publik Terintegrasi.",
+      "agencyText": "Dikelola oleh DPMPTSP Kabupaten Luwu"
+    },
+    "sections": {
+      "skm_badge": "Survei Kepuasan",
+      "skm_title": "Survei Kepuasan Masyarakat (SKM)",
+      "skm_subtitle": "Evaluasi jujur masyarakat terhadap efektivitas pelayanan loket MPP Simpurusiang Kabupaten Luwu.",
+      "complaint_badge": "Pengaduan & Aspirasi",
+      "complaint_title": "Kanal Pengaduan Layanan Publik",
+      "complaint_subtitle": "Membuka saluran pengawasan masyarakat untuk terus meningkatkan efektivitas pelayanan publik MPP Simpurusiang Kabupaten Luwu.",
+      "workflow_badge": "Panduan Prosedur",
+      "workflow_title": "Alur Pelayanan Layanan Terpadu",
+      "workflow_subtitle": "Berikut adalah alur pelayanan standar terpadu di MPP Simpurusiang Kabupaten Luwu.",
+      "news_badge": "Publikasi Resmi",
+      "news_title": "Berita & Pengumuman Terbaru",
+      "news_subtitle": "Panduan pelayanan terbaru, regulasi kebijakan, dan pengumuman pembaruan sistem MPP Luwu.",
+      "review_badge": "Testimoni Warga",
+      "review_title": "Ulasan Masyarakat MPP Simpurusiang",
+      "review_subtitle": "Pengalaman langsung dan ulasan jujur masyarakat terhadap pelayanan di MPP Simpurusiang Kabupaten Luwu."
+    },
+    "instansi": {
+      "title": "Instansi Terdaftar"
+    },
+    "tooltips": {
+      "openAi": "Buka Asisten Virtual AI MPP"
+    },
+    "news": {
+      "badge": "BERITA & PENGUMUMAN RESMI",
+      "subtitle": "Kabar terkini seputar pelayanan terpadu dan kebijakan perizinan Kabupaten Luwu.",
+      "viewAll": "Lihat Semua Berita"
+    },
+    "stats": {
+      "visitors": "Total Pemohon Dilayani",
+      "agencies": "Instansi & Lembaga Terpadu",
+      "queueUnit": "Layanan Publik Aktif",
+      "ikm": "Indeks Kepuasan Masyarakat (IKM)"
+    },
+    "status": {
+      "activeQueue": "Antrean Aktif Saat Ini",
+      "beingCalledAt": "SEDANG DIPANGGIL DI LOKET {{counter}}",
+      "calledOpenScreen": "Buka Layar Panggilan",
+      "openTicket": "Buka Nomor Antrean",
+      "systemActive": "Sistem Pelayanan Aktif Realtime"
+    },
+    "persona": {
+      "semua": "Semua Pemohon",
+      "warga": "Warga & Publik",
+      "investor": "Investor & Pelaku Usaha"
+    },
+    "placeholders": {
+      "nik": "Masukkan 16 digit NIK Anda",
+      "phone": "Nomor WhatsApp (misal: 08123456789)"
+    }
   }
 }
