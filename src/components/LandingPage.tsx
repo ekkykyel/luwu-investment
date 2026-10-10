@@ -2555,13 +2555,13 @@ export default function LandingPage({
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12 pointer-events-none transform-gpu"
               />
 
-              {/* Dual-Theme Smooth Aesthetic Vignette & Ultra-Soft Edge Inset Shadow (Slightly Increased Smooth Vignette) */}
-              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_68%,rgba(7,23,39,0.22)_88%,rgba(7,23,39,0.42)_100%)] dark:bg-[radial-gradient(ellipse_at_center,transparent_66%,rgba(7,23,39,0.26)_88%,rgba(7,23,39,0.48)_100%)] z-10 transition-colors duration-300" />
-              <div className="absolute inset-0 pointer-events-none rounded-2xl sm:rounded-3xl shadow-[inset_0_0_32px_rgba(7,23,39,0.22)] dark:shadow-[inset_0_0_36px_rgba(7,23,39,0.32)] z-10 transition-shadow duration-300" />
+              {/* Dual-Theme Smooth Aesthetic Vignette & Ultra-Soft Edge Inset Shadow (Bright White Smooth Vignette) */}
+              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_66%,rgba(255,255,255,0.28)_88%,rgba(255,255,255,0.55)_100%)] dark:bg-[radial-gradient(ellipse_at_center,transparent_68%,rgba(255,255,255,0.22)_88%,rgba(255,255,255,0.45)_100%)] z-10 transition-colors duration-300" />
+              <div className="absolute inset-0 pointer-events-none rounded-2xl sm:rounded-3xl shadow-[inset_0_0_34px_rgba(255,255,255,0.38)] dark:shadow-[inset_0_0_30px_rgba(255,255,255,0.28)] z-10 transition-shadow duration-300" />
 
-              {/* Smooth Soft Scrim Overlays — Gradasi Batas Halus & Alami */}
-              <div className="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-[#071727]/20 dark:from-[#0A2238]/24 via-transparent to-transparent pointer-events-none z-10" />
-              <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#071727]/32 dark:from-[#0A2238]/38 via-transparent to-transparent pointer-events-none z-10" />
+              {/* Smooth Soft Scrim Overlays — Gradasi Batas Putih Cerah Halus & Alami */}
+              <div className="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-white/25 dark:from-white/15 via-transparent to-transparent pointer-events-none z-10" />
+              <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white/35 dark:from-white/25 via-transparent to-transparent pointer-events-none z-10" />
               <div className="absolute inset-0 bg-slate-900/[0.04] dark:bg-[#0A2238]/[0.07] pointer-events-none z-10" />
 
               {/* Cartographic Topography Contour Overlay */}
