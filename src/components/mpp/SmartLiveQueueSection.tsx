@@ -119,7 +119,7 @@ export const SmartLiveQueueSection: React.FC<SmartLiveQueueSectionProps> = ({
         }
       }
 
-      if (!error && foundQueues && foundQueues.length > 0) {
+      if (foundQueues && foundQueues.length > 0) {
         const found = foundQueues[0];
         const tenantName = found.mpp_tenants?.name || found.service_name || 'Loket Pelayanan Terpadu';
         const currentNum = `A-${String(Math.max(1, (found.queue_number || 1) - 2)).padStart(3, '0')}`;

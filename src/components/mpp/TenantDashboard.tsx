@@ -224,7 +224,7 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
         }
       }
 
-      if (tErr) console.warn('Could not fetch tracking items:', tErr);
+      if (resTrk.error) console.warn('Could not fetch tracking items:', resTrk.error);
       if (tData) {
         const tenantTrackings = tData.filter((item: any) => {
           return item.queue?.service?.service_name;
