@@ -63,135 +63,48 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
   });
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
   const [isManualPause, setIsManualPause] = useState(false);
 
   const touchStartXRef = useRef<number | null>(null);
-  const resumeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const rafRef = useRef<number | null>(null);
   const shouldReduceMotion = useReducedMotion();
 
-  // Handle dynamic screen resizing
+  // Handle dynamic screen resizing cleanly via matchMedia
   useEffect(() => {
-    const handleResize = () => {
+    const updateItemsPerView = () => {
       const width = window.innerWidth;
-      let newCount = 1;
-      if (width >= 1024) newCount = 3;
-      else if (width >= 768) newCount = 2;
-
-      setItemsPerView((prev) => {
-        if (prev !== newCount) {
-          setIsAnimating(false);
-          setActiveIndex((curr) => curr % Math.max(1, totalItems));
-        }
-        return newCount;
-      });
+      const nextCount = width >= 1024 ? 3 : width >= 768 ? 2 : 1;
+      setItemsPerView(nextCount);
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [totalItems]);
-
-  useEffect(() => {
-    return () => {
-      if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
+    updateItemsPerView();
+    window.addEventListener('resize', updateItemsPerView, { passive: true });
+    return () => window.removeEventListener('resize', updateItemsPerView);
   }, []);
 
-  const canLoop = totalItems > itemsPerView;
-
-  // Append cloned head items to the end so desktop ALWAYS displays 3 full cards with zero empty space
-  const trackTenants = canLoop
-    ? [...formattedTenants, ...formattedTenants.slice(0, itemsPerView)]
-    : formattedTenants;
+  const maxIndex = Math.max(0, totalItems - itemsPerView);
+  const canSlide = maxIndex > 0;
+  const clampedIndex = Math.min(activeIndex, maxIndex);
 
   const handleNext = useCallback(() => {
-    if (!canLoop) return;
-    setActiveIndex((prev) => {
-      if (prev >= totalItems) {
-        // Already at clone boundary: snap to 0 then advance to 1 smoothly
-        setIsAnimating(false);
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        rafRef.current = requestAnimationFrame(() => {
-          rafRef.current = requestAnimationFrame(() => {
-            setIsAnimating(true);
-            setActiveIndex(1);
-          });
-        });
-        return 0;
-      }
-      setIsAnimating(true);
-      return prev + 1;
-    });
-  }, [canLoop, totalItems]);
+    if (!canSlide) return;
+    setActiveIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+  }, [canSlide, maxIndex]);
 
   const handlePrev = useCallback(() => {
-    if (!canLoop) return;
-    setActiveIndex((prev) => {
-      if (prev <= 0) {
-        // Jump silently to the clone boundary (visually identical to 0) then glide back to totalItems - 1
-        setIsAnimating(false);
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        rafRef.current = requestAnimationFrame(() => {
-          rafRef.current = requestAnimationFrame(() => {
-            setIsAnimating(true);
-            setActiveIndex(totalItems - 1);
-          });
-        });
-        return totalItems;
-      }
-      setIsAnimating(true);
-      return prev - 1;
-    });
-  }, [canLoop, totalItems]);
+    if (!canSlide) return;
+    setActiveIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+  }, [canSlide, maxIndex]);
 
-  // Seamless reset when reaching the cloned boundary at the end of the track
-  const handleTrackTransitionEnd = () => {
-    if (activeIndex >= totalItems) {
-      setIsAnimating(false);
-      setActiveIndex(0);
-    }
-  };
-
-  const triggerTemporaryPause = (action: () => void) => {
-    setIsPaused(true);
-    action();
-    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
-    if (!isManualPause) {
-      resumeTimeoutRef.current = setTimeout(() => {
-        setIsPaused(false);
-      }, 4500);
-    }
-  };
-
-  // Smooth Auto-Glide (every 3.2 seconds, 1 card step)
+  // Lightweight Auto-Slide (every 3.8 seconds, pauses on hover/touch or manual pause)
   useEffect(() => {
-    if (isPaused || isManualPause || shouldReduceMotion || !canLoop) return;
-    const timer = setInterval(() => {
-      handleNext();
-    }, 3200);
+    if (isPaused || isManualPause || shouldReduceMotion || !canSlide) return;
+    const timer = setInterval(handleNext, 3800);
     return () => clearInterval(timer);
-  }, [isPaused, isManualPause, shouldReduceMotion, canLoop, handleNext]);
-
-  const handleMouseEnter = () => {
-    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
-    setIsPaused(true);
-  };
-
-  const handleMouseLeave = () => {
-    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
-    if (!isManualPause) {
-      resumeTimeoutRef.current = setTimeout(() => {
-        setIsPaused(false);
-      }, 1800);
-    }
-  };
+  }, [isPaused, isManualPause, shouldReduceMotion, canSlide, handleNext]);
 
   // Touch Swipe Handlers for mobile/tablet
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
     setIsPaused(true);
     touchStartXRef.current = e.touches[0].clientX;
   };
@@ -206,16 +119,10 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
       }
       touchStartXRef.current = null;
     }
-    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
-    if (!isManualPause) {
-      resumeTimeoutRef.current = setTimeout(() => {
-        setIsPaused(false);
-      }, 3000);
-    }
+    setIsPaused(false);
   };
 
-  const normalizedActiveIndex = totalItems > 0 ? activeIndex % totalItems : 0;
-  const translatePercentage = -(activeIndex * (100 / itemsPerView));
+  const translatePercentage = -(clampedIndex * (100 / itemsPerView));
 
   return (
     <section
@@ -243,18 +150,18 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
         </p>
       </div>
 
-      {/* 2. SEAMLESS GPU-ACCELERATED CAROUSEL TRACK */}
+      {/* 2. LIGHTWEIGHT GPU-ACCELERATED CAROUSEL TRACK */}
       <div
         className="relative"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
         {/* Navigation Left Button */}
         <button
           type="button"
-          onClick={() => triggerTemporaryPause(handlePrev)}
+          onClick={handlePrev}
           aria-label="Instansi Sebelumnya"
           className="absolute -left-2 sm:-left-4 lg:-left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-white/95 dark:bg-[#0F2D4A]/95 backdrop-blur-md border border-slate-200/90 dark:border-white/15 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/50 hover:scale-105 flex items-center justify-center transition-all shadow-md dark:shadow-lg active:scale-95 cursor-pointer"
         >
@@ -264,7 +171,7 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
         {/* Navigation Right Button */}
         <button
           type="button"
-          onClick={() => triggerTemporaryPause(handleNext)}
+          onClick={handleNext}
           aria-label="Instansi Berikutnya"
           className="absolute -right-2 sm:-right-4 lg:-right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-white/95 dark:bg-[#0F2D4A]/95 backdrop-blur-md border border-slate-200/90 dark:border-white/15 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/50 hover:scale-105 flex items-center justify-center transition-all shadow-md dark:shadow-lg active:scale-95 cursor-pointer"
         >
@@ -274,19 +181,17 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
         {/* Viewport Mask */}
         <div className="overflow-hidden -mx-2.5 lg:-mx-3 px-1 py-3">
           <div
-            onTransitionEnd={handleTrackTransitionEnd}
             style={{
               transform: `translate3d(${translatePercentage}%, 0, 0)`,
-              transition: isAnimating && !shouldReduceMotion
-                ? 'transform 620ms cubic-bezier(0.22, 1, 0.36, 1)'
-                : 'none',
-              willChange: 'transform'
+              transition: shouldReduceMotion
+                ? 'none'
+                : 'transform 520ms cubic-bezier(0.25, 1, 0.5, 1)'
             }}
-            className="flex items-stretch w-full"
+            className="flex items-stretch w-full will-change-transform"
           >
-            {trackTenants.map((tenant, idx) => (
+            {formattedTenants.map((tenant, idx) => (
               <div
-                key={`${tenant.id || idx}-${idx}`}
+                key={tenant.id || idx}
                 style={{
                   flex: `0 0 ${100 / itemsPerView}%`,
                   maxWidth: `${100 / itemsPerView}%`
@@ -310,13 +215,13 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
                     </Badge>
                   </div>
 
-                  {/* Luminous High-Contrast Logo Pedestal (Ensures dark/navy logos like PT. Taspen remain crystal clear in Dark Mode) */}
-                  <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl bg-white dark:bg-slate-50 border border-slate-200/90 dark:border-white/20 ring-4 ring-slate-900/[0.03] dark:ring-white/[0.06] shadow-sm flex items-center justify-center p-3 mt-1 group-hover:scale-105 group-hover:shadow-md group-hover:border-emerald-500/40 transition-all duration-300 overflow-hidden relative z-10">
+                  {/* Theme-Adaptive Logo Pedestal (Follows Light/Dark Theme Surface Tokens) */}
+                  <div className={`w-28 h-28 sm:w-32 sm:h-32 rounded-2xl ${MPP_CARD_SURFACE.layer2} ring-1 ring-slate-900/[0.03] dark:ring-white/[0.05] shadow-sm flex items-center justify-center p-3 mt-1 group-hover:scale-105 group-hover:shadow-md group-hover:border-emerald-500/40 transition-all duration-300 overflow-hidden relative z-10`}>
                     <img
                       src={getImageUrl(tenant.logo, 'agency')}
                       alt={tenant.name}
                       loading="lazy"
-                      className={`max-h-full max-w-full object-contain transition-transform duration-300 ${getAgencyLogoScaleClass(tenant.name)}`}
+                      className={`max-h-full max-w-full object-contain transition-transform duration-300 dark:drop-shadow-[0_2px_8px_rgba(255,255,255,0.14)] ${getAgencyLogoScaleClass(tenant.name)}`}
                       onError={(e) => handleImageError(e, 'agency')}
                     />
                   </div>
@@ -351,7 +256,7 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
       </div>
 
       {/* 3. MODERN INTERACTIVE PROGRESS & CONTROL BAR */}
-      {canLoop && (
+      {canSlide && (
         <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-1">
           {/* Play / Pause Auto-Slide Toggle */}
           <button
@@ -375,20 +280,16 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
 
           {/* Compact Segmented Dots Indicator */}
           <div className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-slate-100/80 dark:bg-[#0F2D4A]/80 border border-slate-200/80 dark:border-white/10">
-            {formattedTenants.map((tenant, idx) => {
-              const isCurrent = idx === normalizedActiveIndex;
+            {Array.from({ length: maxIndex + 1 }).map((_, idx) => {
+              const isCurrent = idx === clampedIndex;
+              const tenant = formattedTenants[idx];
               return (
                 <button
-                  key={tenant.id || idx}
+                  key={tenant?.id || idx}
                   type="button"
-                  onClick={() => {
-                    triggerTemporaryPause(() => {
-                      setIsAnimating(true);
-                      setActiveIndex(idx);
-                    });
-                  }}
-                  title={tenant.name}
-                  aria-label={`Tampilkan ${tenant.name}`}
+                  onClick={() => setActiveIndex(idx)}
+                  title={tenant?.name || `Slide ${idx + 1}`}
+                  aria-label={`Tampilkan ${tenant?.name || `Slide ${idx + 1}`}`}
                   className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                     isCurrent
                       ? 'w-7 bg-emerald-600 dark:bg-emerald-400'
@@ -401,7 +302,7 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
 
           {/* Numeric Counter */}
           <span className="text-xs font-mono font-bold text-slate-600 dark:text-slate-400 tabular-nums">
-            {String(normalizedActiveIndex + 1).padStart(2, '0')} / {String(totalItems).padStart(2, '0')}
+            {String(clampedIndex + 1).padStart(2, '0')} / {String(maxIndex + 1).padStart(2, '0')}
           </span>
         </div>
       )}
