@@ -1413,10 +1413,8 @@ export function InteractiveFloorPlan({
 
   // Sync zoom states when isFullscreen changes
   useEffect(() => {
-    if (!isFullscreen) {
-      setFullscreenScale(1);
-      setFullscreenPosition({ x: 0, y: 0 });
-    }
+    setFullscreenScale(1);
+    setFullscreenPosition({ x: 0, y: 0 });
   }, [isFullscreen]);
 
   const handleFullscreenMouseDown = (e: React.MouseEvent) => {
@@ -2033,13 +2031,21 @@ export function InteractiveFloorPlan({
       )}
 
       {/* ───────────────────────────────────────────────────────────────── */}
-      {/* 3. WORKSPACE CONTAINER (DESKTOP: SPLIT VIEW | MOBILE: TABS)        */}
+      {/* 3. WORKSPACE CONTAINER (DESKTOP: SPLIT VIEW | FULLSCREEN: CENTERED) */}
       {/* ───────────────────────────────────────────────────────────────── */}
-      <div className="w-full flex flex-col lg:flex-row lg:items-start gap-5 p-2 sm:p-4">
-        {/* LEFT DIRECTORY PANEL (Desktop: Always on left | Mobile: visible when viewMode === 'list') */}
-        <div className={`w-full lg:w-[320px] xl:w-[360px] shrink-0 flex flex-col gap-2.5 ${
-          viewMode === 'list' ? 'block' : 'hidden lg:flex'
-        }`}>
+      <div className={
+        isFullscreen
+          ? "w-full h-full flex-1 flex items-center justify-center p-0 m-0 overflow-hidden"
+          : "w-full flex flex-col lg:flex-row lg:items-start gap-5 p-2 sm:p-4"
+      }>
+        {/* LEFT DIRECTORY PANEL (Desktop: Always on left | Mobile: visible when viewMode === 'list' | Hidden in Fullscreen Mode for Perfect Centering) */}
+        <div className={
+          isFullscreen
+            ? "hidden"
+            : `w-full lg:w-[320px] xl:w-[360px] shrink-0 flex flex-col gap-2.5 ${
+                viewMode === 'list' ? 'block' : 'hidden lg:flex'
+              }`
+        }>
           <div className="flex items-center justify-between px-2 pt-1 pb-1">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 font-mono">
               Daftar Loket ({filteredNodes.length})
@@ -2101,17 +2107,19 @@ export function InteractiveFloorPlan({
           </div>
         </div>
 
-        {/* RIGHT SPATIAL MAP CANVAS (Desktop: Always on right | Mobile: visible when viewMode === 'map') */}
-        <div className={`flex-1 min-w-0 w-full ${
-          viewMode === 'map' ? 'block' : 'hidden lg:block'
-        }`}>
+        {/* RIGHT SPATIAL MAP CANVAS (Desktop: Always on right / Fully Centered in Fullscreen) */}
+        <div className={
+          isFullscreen
+            ? "w-full h-full flex-1 flex items-center justify-center p-0 m-0 overflow-hidden"
+            : `flex-1 min-w-0 w-full ${viewMode === 'map' ? 'block' : 'hidden lg:block'}`
+        }>
           <div 
             ref={containerRef}
             className={isFullscreen
-              ? "relative w-full h-full overflow-hidden flex flex-col items-center justify-center p-0 touch-pan-x touch-pan-y bg-[#0A2238]"
+              ? "relative w-full h-full max-w-full max-h-full overflow-hidden flex items-center justify-center p-0 m-0 touch-pan-x touch-pan-y bg-[#0A2238]"
               : "relative w-full max-w-full overflow-hidden flex flex-col items-center justify-center p-1 sm:p-2 lg:p-3 xl:p-4 touch-pan-x touch-pan-y min-h-[580px] sm:min-h-[660px] lg:h-[82vh] xl:h-[86vh] 2xl:h-[89vh] lg:max-h-[1150px]"
             }
-            style={isFullscreen ? { height: '100dvh', width: '100vw' } : undefined}
+            style={isFullscreen ? { height: '100dvh', width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' } : undefined}
           >
             {/* Active Filter Live Status Toast Banner on Map Canvas */}
             {isAnyFilterActive && !isEmergencyMode && (
@@ -2269,14 +2277,19 @@ export function InteractiveFloorPlan({
           {/* Custom Interactive Transform Wrapper with Centered Origin */}
           <div 
             className={isFullscreen 
-              ? "w-full h-full cursor-grab active:cursor-grabbing flex items-center justify-center mx-auto my-auto select-none overflow-hidden touch-none" 
+              ? "w-full h-full flex items-center justify-center mx-auto my-auto select-none overflow-hidden touch-none cursor-grab active:cursor-grabbing" 
               : "relative w-full h-full max-w-full flex items-center justify-center mx-auto my-auto transition-transform duration-300 overflow-hidden"
             }
             style={isFullscreen 
               ? { 
                   transform: `translate(${fullscreenPosition.x}px, ${fullscreenPosition.y}px) scale(${fullscreenScale})`,
                   transformOrigin: 'center center',
-                  transition: isDraggingRef.current ? 'none' : 'transform 0.15s ease-out'
+                  transition: isDraggingRef.current ? 'none' : 'transform 0.15s ease-out',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  height: '100%'
                 } 
               : { 
                   transform: `scale(${zoomLevel})`,
@@ -2296,7 +2309,7 @@ export function InteractiveFloorPlan({
               viewBox="-10 5 1282 875"
               preserveAspectRatio="xMidYMid meet"
               className={isFullscreen 
-                ? "w-full h-full max-h-screen object-contain block mx-auto my-auto select-none drop-shadow-md pointer-events-auto"
+                ? "w-auto h-auto max-w-[94vw] max-h-[86vh] object-contain block mx-auto my-auto select-none drop-shadow-2xl pointer-events-auto"
                 : "w-full h-full max-w-full max-h-[80vh] xl:max-h-[85vh] 2xl:max-h-[88vh] object-contain block mx-auto my-auto select-none drop-shadow-md pointer-events-auto"
               }
               style={{

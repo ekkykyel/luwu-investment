@@ -2503,7 +2503,7 @@ export default function LandingPage({
           {/* ───────────────────────────────────────────────────────────────────────────── */}
           {/* GRAND IMMERSIVE SHOWCASE HERO FRAME — PITA NAVY ELEGAN NUSANTARA (#0A2238) */}
           {/* ───────────────────────────────────────────────────────────────────────────── */}
-          <div className="relative w-full min-h-[520px] sm:min-h-[580px] lg:min-h-[620px] flex flex-col justify-between rounded-2xl sm:rounded-3xl overflow-hidden border border-[#D9B96E]/20 dark:border-white/[0.08] ring-1 ring-inset ring-white/15 dark:ring-white/[0.05] shadow-2xl bg-[#071727] dark:bg-[#071727] group transition-colors duration-300">
+          <div className="relative w-full min-h-[520px] sm:min-h-[580px] lg:min-h-[620px] flex flex-col justify-between rounded-2xl sm:rounded-3xl overflow-hidden border border-[#D9B96E]/10 dark:border-white/[0.04] ring-1 ring-inset ring-white/[0.03] dark:ring-white/[0.02] shadow-2xl bg-[#071727] dark:bg-[#071727] group transition-colors duration-300">
             
             {/* 1. Background Investment Photo Slideshow with Parallax & Light Sweep */}
             <motion.div
@@ -2554,8 +2554,8 @@ export default function LandingPage({
               />
 
               {/* Dual-Theme Smooth Aesthetic Vignette & Ultra-Soft Edge Inset Shadow */}
-              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_84%,rgba(248,250,252,0.18)_100%)] dark:bg-[radial-gradient(circle_at_center,transparent_84%,rgba(10,34,56,0.24)_100%)] z-10 transition-colors duration-300" />
-              <div className="absolute inset-0 pointer-events-none rounded-xl sm:rounded-3xl shadow-[inset_0_0_12px_2px_rgba(248,250,252,0.25)] dark:shadow-[inset_0_0_12px_2px_rgba(10,34,56,0.32)] z-10 transition-shadow duration-300" />
+              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_90%,rgba(248,250,252,0.06)_100%)] dark:bg-[radial-gradient(circle_at_center,transparent_90%,rgba(10,34,56,0.08)_100%)] z-10 transition-colors duration-300" />
+              <div className="absolute inset-0 pointer-events-none rounded-xl sm:rounded-3xl shadow-[inset_0_0_20px_rgba(248,250,252,0.06)] dark:shadow-[inset_0_0_20px_rgba(10,34,56,0.12)] z-10 transition-shadow duration-300" />
 
               {/* Smooth Soft Scrim Overlays — Gradasi Batas Halus & Alami */}
               <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-[#F8FAFC]/10 dark:from-[#0A2238]/12 via-transparent to-transparent pointer-events-none z-10" />

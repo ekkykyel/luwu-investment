@@ -56,7 +56,7 @@ body {
   --hero-bg-base: #FAF7F0;
   --hero-surface-start: #FFFFFF;
   --hero-surface-end: #F3EEDF;
-  --hero-gold-line: rgba(133, 90, 20, 0.30);
+  --hero-gold-line: rgba(133, 90, 20, 0.12);
   --hero-text-primary: #10261E;
   --hero-text-secondary: #334155;
   --hero-accent-gold: #855A14;
@@ -66,7 +66,7 @@ body {
   --hero-scrim-top: rgba(250, 247, 240, 0.88);
   --hero-scrim-mid: rgba(250, 247, 240, 0.55);
   --hero-scrim-bottom: rgba(250, 247, 240, 0.22);
-  --hero-card-border: rgba(160, 122, 40, 0.28);
+  --hero-card-border: rgba(160, 122, 40, 0.12);
   --hero-chip-bg: rgba(255, 255, 255, 0.85);
   --hero-chip-border: rgba(160, 122, 40, 0.25);
 
@@ -178,7 +178,7 @@ body {
   --hero-bg-base: #06130F;
   --hero-surface-start: #0B2A20;
   --hero-surface-end: #08201A;
-  --hero-gold-line: rgba(201, 162, 75, 0.35);
+  --hero-gold-line: rgba(201, 162, 75, 0.15);
   --hero-text-primary: #F6F1E4;
   --hero-text-secondary: #B9C4BC;
   --hero-accent-gold: #C9A24B;
@@ -188,7 +188,7 @@ body {
   --hero-scrim-top: rgba(6, 19, 15, 0.88);
   --hero-scrim-mid: rgba(6, 19, 15, 0.55);
   --hero-scrim-bottom: rgba(6, 19, 15, 0.22);
-  --hero-card-border: rgba(201, 162, 75, 0.35);
+  --hero-card-border: rgba(201, 162, 75, 0.15);
   --hero-chip-bg: rgba(11, 42, 32, 0.70);
   --hero-chip-border: rgba(201, 162, 75, 0.30);
 }
