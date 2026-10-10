@@ -2502,12 +2502,15 @@ export default function LandingPage({
           {/* ───────────────────────────────────────────────────────────────────────────── */}
           {/* GRAND IMMERSIVE SHOWCASE HERO FRAME — PITA NAVY ELEGAN NUSANTARA (#0A2238) */}
           {/* ───────────────────────────────────────────────────────────────────────────── */}
-          <div className="relative w-full min-h-[520px] sm:min-h-[580px] lg:min-h-[620px] flex flex-col justify-between rounded-2xl sm:rounded-3xl overflow-hidden border border-[#D9B96E]/10 dark:border-white/[0.04] ring-1 ring-inset ring-white/[0.03] dark:ring-white/[0.02] shadow-2xl bg-[#071727] dark:bg-[#071727] group transition-colors duration-300">
+          <div className="relative w-full min-h-[550px] sm:min-h-[615px] lg:min-h-[660px] flex flex-col justify-between rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/70 dark:border-white/[0.08] ring-1 ring-slate-900/[0.04] dark:ring-white/[0.04] shadow-2xl bg-[#071727] dark:bg-[#071727] group transition-colors duration-300">
             
+            {/* Ultra-Soft Inner Photo Boundary Line (Garis Batas Foto di Dalam yang Sangat Tipis & Lembut) */}
+            <div className="pointer-events-none absolute inset-[3px] sm:inset-1.5 rounded-[13px] sm:rounded-[20px] border border-white/[0.12] dark:border-white/[0.08] ring-1 ring-inset ring-white/[0.04] z-30" />
+
             {/* 1. Background Investment Photo Slideshow with Parallax & Light Sweep */}
             <motion.div
               style={{ y: shouldReduceMotion ? 0 : yBg }}
-              className="absolute inset-0 z-0 overflow-hidden transform-gpu pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black_96%,transparent_100%)]"
+              className="absolute inset-0 z-0 overflow-hidden transform-gpu pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black_82%,transparent_100%)]"
             >
               {heroImages.map((imgUrl, idx) => (
                 <motion.img
@@ -2552,14 +2555,14 @@ export default function LandingPage({
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12 pointer-events-none transform-gpu"
               />
 
-              {/* Dual-Theme Smooth Aesthetic Vignette & Ultra-Soft Edge Inset Shadow */}
-              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_90%,rgba(248,250,252,0.06)_100%)] dark:bg-[radial-gradient(circle_at_center,transparent_90%,rgba(10,34,56,0.08)_100%)] z-10 transition-colors duration-300" />
-              <div className="absolute inset-0 pointer-events-none rounded-xl sm:rounded-3xl shadow-[inset_0_0_20px_rgba(248,250,252,0.06)] dark:shadow-[inset_0_0_20px_rgba(10,34,56,0.12)] z-10 transition-shadow duration-300" />
+              {/* Dual-Theme Smooth Aesthetic Vignette & Ultra-Soft Edge Inset Shadow (Slightly Increased Smooth Vignette) */}
+              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_68%,rgba(7,23,39,0.22)_88%,rgba(7,23,39,0.42)_100%)] dark:bg-[radial-gradient(ellipse_at_center,transparent_66%,rgba(7,23,39,0.26)_88%,rgba(7,23,39,0.48)_100%)] z-10 transition-colors duration-300" />
+              <div className="absolute inset-0 pointer-events-none rounded-2xl sm:rounded-3xl shadow-[inset_0_0_32px_rgba(7,23,39,0.22)] dark:shadow-[inset_0_0_36px_rgba(7,23,39,0.32)] z-10 transition-shadow duration-300" />
 
               {/* Smooth Soft Scrim Overlays — Gradasi Batas Halus & Alami */}
-              <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-[#F8FAFC]/10 dark:from-[#0A2238]/12 via-transparent to-transparent pointer-events-none z-10" />
-              <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#F8FAFC]/22 dark:from-[#0A2238]/25 via-transparent to-transparent pointer-events-none z-10" />
-              <div className="absolute inset-0 bg-slate-900/[0.03] dark:bg-[#0A2238]/[0.06] pointer-events-none z-10" />
+              <div className="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-[#071727]/20 dark:from-[#0A2238]/24 via-transparent to-transparent pointer-events-none z-10" />
+              <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#071727]/32 dark:from-[#0A2238]/38 via-transparent to-transparent pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-slate-900/[0.04] dark:bg-[#0A2238]/[0.07] pointer-events-none z-10" />
 
               {/* Cartographic Topography Contour Overlay */}
               <TopographicContourOverlay opacity={0.12} />
