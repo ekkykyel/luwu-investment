@@ -699,7 +699,7 @@ export default function LandingPage({
     if (heroImages.length > 1) {
       const interval = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-      }, 3500);
+      }, 6500);
       return () => clearInterval(interval);
     }
   }, [heroImages.length]);
@@ -2773,7 +2773,7 @@ export default function LandingPage({
                 {[
                   {
                     id: 'stat-investment',
-                    label: t("stats.totalInvestment"),
+                    label: t("stats.totalInvestment", "Total Potensi Investasi"),
                     value: totalInvestmentValue > 0 ? formatRupiah(totalInvestmentValue) : t('landing.noRecordedData', 'Belum ada data tersedia'),
                     rawValue: totalInvestmentValue || 0,
                     isCurrency: true,
@@ -2791,7 +2791,7 @@ export default function LandingPage({
                   },
                   {
                     id: 'stat-loi',
-                    label: t("stats.investorLoi"),
+                    label: t("stats.investorLoi", "Minat Investasi (LoI)"),
                     value: loiCount || 0,
                     rawValue: loiCount || 0,
                     isCurrency: false,
@@ -2809,7 +2809,7 @@ export default function LandingPage({
                   },
                   {
                     id: 'stat-opportunities',
-                    label: t("stats.activeOpportunities"),
+                    label: t("stats.activeOpportunities", "Peluang Proyek Aktif"),
                     value: activeOpportunities || 0,
                     rawValue: activeOpportunities || 0,
                     isCurrency: false,
@@ -2827,7 +2827,7 @@ export default function LandingPage({
                   },
                   {
                     id: 'stat-pkkpr',
-                    label: t("stats.pkkprIssued"),
+                    label: t("stats.pkkprIssued", "Persetujuan PKKPR Terbit"),
                     value: pkkprIssuedCount || 0,
                     rawValue: pkkprIssuedCount || 0,
                     isCurrency: false,
@@ -2916,11 +2916,12 @@ export default function LandingPage({
                     {/* Prominent Value Typography with Functional Count-Up Animation */}
                     <div className="h-9 sm:h-11 flex items-center justify-center w-full px-0.5 mb-0.5">
                       {isLoading ? (
-                        <div className="animate-pulse bg-slate-700/50 dark:bg-slate-800/60 rounded-xl h-7 w-28" />
+                        <div className={`animate-pulse ${isDark ? 'bg-slate-800/60' : 'bg-slate-200/80'} rounded-xl h-7 w-28`} />
                       ) : (
                         <HeroStatCounter
                           value={stat.rawValue}
                           isCurrency={stat.isCurrency}
+                          isDark={isDark}
                           duration={650}
                         />
                       )}
@@ -2930,7 +2931,7 @@ export default function LandingPage({
                     <div className="h-7 sm:h-8 flex items-center justify-center text-center w-full px-0.5 mb-1 sm:mb-1.5">
                       <span
                         className={`font-['Plus_Jakarta_Sans',sans-serif] text-[10px] sm:text-[11px] md:text-xs uppercase tracking-wider font-bold leading-tight line-clamp-2 ${
-                          isDark ? 'text-slate-300 group-hover:text-white' : 'text-slate-600 group-hover:text-slate-900'
+                          isDark ? 'text-slate-300 group-hover:text-white' : 'text-slate-700 group-hover:text-slate-950'
                         } transition-colors`}
                       >
                         {stat.label}
@@ -3064,11 +3065,11 @@ export default function LandingPage({
                 {/* Card Body */}
                 <div className="w-full flex flex-col items-center">
                   <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 min-h-[34px] flex items-center justify-center leading-snug px-1 text-balance">
-                    {t("stats.strategicLands")}
+                    {t("stats.strategicLands", "Lahan & Peluang Strategis")}
                   </div>
                   <div className="text-3xl sm:text-4xl font-black tracking-tight my-2 font-mono flex items-baseline justify-center gap-1.5 text-emerald-600 dark:text-emerald-400">
                     <CountUp end={investments?.length || 0} suffix="" />
-                    <span className="text-sm sm:text-base font-bold text-slate-600 dark:text-slate-400 font-sans">{t("stats.locations")}</span>
+                    <span className="text-sm sm:text-base font-bold text-slate-600 dark:text-slate-400 font-sans">{t("stats.locations", "Lokasi")}</span>
                   </div>
                 </div>
 
@@ -3154,7 +3155,7 @@ export default function LandingPage({
                 {/* Card Body */}
                 <div className="w-full flex flex-col items-center">
                   <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 min-h-[34px] flex items-center justify-center leading-snug px-1 text-balance">
-                    {t("stats.aiAssistant")}
+                    {t("stats.aiAssistant", "Asisten AI DPMPTSP")}
                   </div>
                   <div className="text-3xl sm:text-4xl font-black tracking-tight my-2 font-mono flex items-baseline justify-center gap-1.5 whitespace-nowrap text-teal-700 dark:text-teal-300">
                     <span className="tabular-nums">24/7</span>

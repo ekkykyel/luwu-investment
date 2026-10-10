@@ -315,5 +315,20 @@
     "review_badge": "Citizen Testimonials",
     "review_title": "Citizen Reviews",
     "review_subtitle": "Direct experiences and honest reviews from the community regarding MPP Simpurusiang services."
+  },
+  "stats": {
+    "totalInvestment": "Total Investment Potential",
+    "investorLoi": "Investor Interest (LoI)",
+    "activeOpportunities": "Active Opportunities",
+    "pkkprIssued": "PKKPR Approvals Issued",
+    "mappedInfra": "Supporting Infrastructure",
+    "workforceAbsorption": "Workforce Absorption",
+    "subDistricts": "Luwu Sub-District Coverage",
+    "districtsUnit": "Sub-Districts",
+    "strategicLands": "Strategic Lands & Opportunities",
+    "locations": "Locations",
+    "workers": "Workers",
+    "aiAssistant": "DPMPTSP AI Assistant",
+    "active": "Active"
   }
 }

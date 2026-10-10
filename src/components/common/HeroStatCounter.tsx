@@ -4,6 +4,7 @@ import { formatRupiahSingkat, formatRupiah } from '../../lib/formatters';
 interface HeroStatCounterProps {
   value: number | string;
   isCurrency?: boolean;
+  isDark?: boolean;
   duration?: number;
   className?: string;
 }
@@ -11,6 +12,7 @@ interface HeroStatCounterProps {
 export const HeroStatCounter: React.FC<HeroStatCounterProps> = ({
   value,
   isCurrency = false,
+  isDark,
   duration = 650,
   className = ''
 }) => {
@@ -47,26 +49,36 @@ export const HeroStatCounter: React.FC<HeroStatCounterProps> = ({
   }, [numValue, duration]);
 
   if (numValue === 0) {
+    const zeroColorClass = isDark !== undefined
+      ? (isDark ? 'text-slate-300' : 'text-slate-700')
+      : 'text-slate-700 dark:text-slate-300';
     return (
-      <span className={`text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 font-sans tracking-tight ${className}`}>
+      <span className={`text-xs sm:text-sm font-bold ${zeroColorClass} font-sans tracking-tight ${className}`}>
         Segera tersedia
       </span>
     );
   }
 
   if (isCurrency) {
+    const currencyColorClass = isDark !== undefined
+      ? (isDark ? 'text-emerald-300' : 'text-emerald-800')
+      : 'text-emerald-800 dark:text-emerald-300';
     return (
       <span
         title={formatRupiah(numValue)}
-        className={`font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-sm sm:text-base md:text-lg lg:text-xl tracking-tight text-emerald-800 dark:text-emerald-300 tabular-nums whitespace-nowrap ${className}`}
+        className={`font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-sm sm:text-base md:text-lg lg:text-xl tracking-tight ${currencyColorClass} tabular-nums whitespace-nowrap ${className}`}
       >
         {formatRupiahSingkat(displayValue)}
       </span>
     );
   }
 
+  const numberColorClass = isDark !== undefined
+    ? (isDark ? 'text-white' : 'text-slate-900')
+    : 'text-slate-900 dark:text-white';
+
   return (
-    <span className={`font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-lg sm:text-2xl md:text-3xl tracking-tight text-slate-900 dark:text-white tabular-nums whitespace-nowrap ${className}`}>
+    <span className={`font-['Plus_Jakarta_Sans',sans-serif] font-extrabold text-lg sm:text-2xl md:text-3xl tracking-tight ${numberColorClass} tabular-nums whitespace-nowrap ${className}`}>
       {displayValue.toLocaleString('id-ID')}
     </span>
   );

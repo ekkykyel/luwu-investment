@@ -315,5 +315,20 @@
     "review_badge": "Testimoni Warga",
     "review_title": "Ulasan Masyarakat",
     "review_subtitle": "Pengalaman langsung dan ulasan jujur masyarakat terhadap pelayanan di MPP Simpurusiang Kabupaten Luwu."
+  },
+  "stats": {
+    "totalInvestment": "Total Potensi Investasi",
+    "investorLoi": "Minat Investasi (LoI)",
+    "activeOpportunities": "Peluang Proyek Aktif",
+    "pkkprIssued": "Persetujuan PKKPR Terbit",
+    "mappedInfra": "Infrastruktur Pendukung",
+    "workforceAbsorption": "Serapan Tenaga Kerja",
+    "subDistricts": "Cakupan Kecamatan Luwu",
+    "districtsUnit": "Kecamatan",
+    "strategicLands": "Lahan & Peluang Strategis",
+    "locations": "Lokasi",
+    "workers": "Jiwa",
+    "aiAssistant": "Asisten AI DPMPTSP",
+    "active": "Aktif"
   }
 }

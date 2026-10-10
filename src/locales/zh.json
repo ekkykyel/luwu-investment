@@ -315,5 +315,20 @@
     "review_badge": "市民口碑",
     "review_title": "市民评价",
     "review_subtitle": "市民对 MPP Simpurusiang 服务体验的真实评价与建议。"
+  },
+  "stats": {
+    "totalInvestment": "总投资潜力",
+    "investorLoi": "投资意向书 (LoI)",
+    "activeOpportunities": "活跃投资项目",
+    "pkkprIssued": "已签发 PKKPR 许可",
+    "mappedInfra": "配套基础设施",
+    "workforceAbsorption": "带动就业人数",
+    "subDistricts": "鲁武县辖区覆盖",
+    "districtsUnit": "个乡镇",
+    "strategicLands": "战略土地与项目机会",
+    "locations": "处地点",
+    "workers": "人",
+    "aiAssistant": "DPMPTSP 智能助手",
+    "active": "在线"
   }
 }
