@@ -4547,6 +4547,7 @@ app.post("/api/auth/login", async (req, res) => {
   let dbRole = "";
   let userId = "offline-user-id";
   let tokenSession = null;
+  let profile: any = null;
 
   const authClient = createClient(SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || SUPABASE_PUBLISHABLE_KEY || SUPABASE_SERVICE_ROLE_KEY, {
     auth: { persistSession: false, autoRefreshToken: false }
@@ -4659,7 +4660,6 @@ app.post("/api/auth/login", async (req, res) => {
   } else {
     // 2. Map role based on user_metadata, profiles, and official email patterns
     const userMetadataRole = authData.user.user_metadata?.role || "";
-    let profile: any = null;
     try {
       // Query profiles safely using service role to bypass any faulty RLS
       const { data: profData, error: profErr } = await supabase
@@ -4709,7 +4709,8 @@ app.post("/api/auth/login", async (req, res) => {
     tokenSession = authData.session;
 
     // Fallback: If authData was verified directly via PostgreSQL bcrypt and has no session, generate a valid Supabase JWT session
-    if (!tokenSession && SUPABASE_JWT_SECRET) {
+    const jwtSecret = process.env.SUPABASE_JWT_SECRET || '';
+    if (!tokenSession && jwtSecret) {
       try {
         const sbToken = jwt.sign({
           aud: 'authenticated',
@@ -4720,7 +4721,7 @@ app.post("/api/auth/login", async (req, res) => {
           app_metadata: { provider: 'email', providers: ['email'] },
           user_metadata: { role: dbRole || mappedRole, full_name: profile?.full_name || mappedRole },
           role: 'authenticated'
-        }, SUPABASE_JWT_SECRET);
+        }, jwtSecret);
         tokenSession = {
           access_token: sbToken,
           token_type: 'bearer',
