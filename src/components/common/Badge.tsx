@@ -37,9 +37,9 @@ export const Badge: React.FC<BadgeProps> = ({
   ...props
 }) => {
   const sizeClasses = {
-    xs: 'text-[10px] px-2 py-0.5 gap-1',
-    sm: 'text-xs px-2.5 py-0.5 gap-1.5',
-    md: 'text-sm px-3 py-1 gap-2'
+    xs: 'text-[11px] px-2.5 py-0.5 gap-1',
+    sm: 'text-xs px-3 py-1 gap-1.5',
+    md: 'text-sm px-3.5 py-1.5 gap-2'
   }[size];
 
   const toneNormalized: Record<string, string> = {
@@ -55,46 +55,46 @@ export const Badge: React.FC<BadgeProps> = ({
   const toneClasses: Record<string, string> = {
     emerald:
       variant === 'solid'
-        ? 'bg-emerald-600 text-white'
+        ? 'bg-emerald-600 text-white shadow-xs'
         : variant === 'overlay'
-        ? 'bg-emerald-950/70 text-emerald-300 border border-emerald-500/40 backdrop-blur-md'
-        : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30',
+        ? 'bg-emerald-950/75 text-emerald-300 border border-emerald-500/40 backdrop-blur-md shadow-xs'
+        : 'bg-emerald-50 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-400 border border-emerald-300/80 dark:border-emerald-500/30 shadow-xs',
     amber:
       variant === 'solid'
-        ? 'bg-amber-600 text-white'
+        ? 'bg-amber-600 text-white shadow-xs'
         : variant === 'overlay'
-        ? 'bg-amber-950/70 text-amber-300 border border-amber-500/40 backdrop-blur-md'
-        : 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30',
+        ? 'bg-amber-950/75 text-amber-300 border border-amber-500/40 backdrop-blur-md shadow-xs'
+        : 'bg-amber-50 text-amber-800 dark:bg-amber-500/15 dark:text-amber-400 border border-amber-300/80 dark:border-amber-500/30 shadow-xs',
     sky:
       variant === 'solid'
-        ? 'bg-sky-600 text-white'
+        ? 'bg-sky-600 text-white shadow-xs'
         : variant === 'overlay'
-        ? 'bg-sky-950/70 text-sky-300 border border-sky-500/40 backdrop-blur-md'
-        : 'bg-sky-500/15 text-sky-600 dark:text-sky-400 border border-sky-500/30',
+        ? 'bg-sky-950/75 text-sky-300 border border-sky-500/40 backdrop-blur-md shadow-xs'
+        : 'bg-sky-50 text-sky-800 dark:bg-sky-500/15 dark:text-sky-400 border border-sky-300/80 dark:border-sky-500/30 shadow-xs',
     rose:
       variant === 'solid'
-        ? 'bg-rose-600 text-white'
+        ? 'bg-rose-600 text-white shadow-xs'
         : variant === 'overlay'
-        ? 'bg-rose-950/70 text-rose-300 border border-rose-500/40 backdrop-blur-md'
-        : 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30',
+        ? 'bg-rose-950/75 text-rose-300 border border-rose-500/40 backdrop-blur-md shadow-xs'
+        : 'bg-rose-50 text-rose-800 dark:bg-rose-500/15 dark:text-rose-400 border border-rose-300/80 dark:border-rose-500/30 shadow-xs',
     indigo:
       variant === 'solid'
-        ? 'bg-indigo-600 text-white'
+        ? 'bg-indigo-600 text-white shadow-xs'
         : variant === 'overlay'
-        ? 'bg-indigo-950/70 text-indigo-300 border border-indigo-500/40 backdrop-blur-md'
-        : 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30',
+        ? 'bg-indigo-950/75 text-indigo-300 border border-indigo-500/40 backdrop-blur-md shadow-xs'
+        : 'bg-indigo-50 text-indigo-800 dark:bg-indigo-500/15 dark:text-indigo-400 border border-indigo-300/80 dark:border-indigo-500/30 shadow-xs',
     purple:
       variant === 'solid'
-        ? 'bg-purple-600 text-white'
+        ? 'bg-purple-600 text-white shadow-xs'
         : variant === 'overlay'
-        ? 'bg-purple-950/70 text-purple-300 border border-purple-500/40 backdrop-blur-md'
-        : 'bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-purple-500/30',
+        ? 'bg-purple-950/75 text-purple-300 border border-purple-500/40 backdrop-blur-md shadow-xs'
+        : 'bg-purple-50 text-purple-800 dark:bg-purple-500/15 dark:text-purple-400 border border-purple-300/80 dark:border-purple-500/30 shadow-xs',
     neutral:
       variant === 'solid'
-        ? 'bg-slate-700 text-white'
+        ? 'bg-slate-700 text-white shadow-xs'
         : variant === 'overlay'
-        ? 'bg-slate-950/70 text-slate-300 border border-slate-700/50 backdrop-blur-md'
-        : 'bg-slate-500/15 text-slate-600 dark:text-slate-400 border border-slate-500/30'
+        ? 'bg-slate-950/75 text-slate-300 border border-slate-700/50 backdrop-blur-md shadow-xs'
+        : 'bg-slate-100 text-slate-800 dark:bg-slate-500/15 dark:text-slate-400 border border-slate-300/80 dark:border-slate-500/30 shadow-xs'
   };
 
   const dotColor: Record<string, string> = {

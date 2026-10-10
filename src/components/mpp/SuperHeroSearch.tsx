@@ -412,7 +412,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tight leading-[1.18] sm:leading-[1.14] drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)] font-sans max-w-3xl"
+            className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tight leading-[1.18] sm:leading-[1.14] drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)] font-display-sora max-w-3xl"
           >
             {isDefaultIdTitle ? (
               <>

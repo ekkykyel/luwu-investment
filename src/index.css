@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=JetBrains+Mono:ital,wght@0,400..700;1,400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Sora:wght@400;600;700;800&family=JetBrains+Mono:ital,wght@0,400..700;1,400..700&display=swap');
 @import "tailwindcss";
 
 html {
@@ -363,8 +363,8 @@ body {
 @theme {
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-jakarta: "Plus Jakarta Sans", sans-serif;
-  --font-display: "Plus Jakarta Sans", sans-serif;
-  --font-sora: "Plus Jakarta Sans", sans-serif;
+  --font-display: "Sora", "Plus Jakarta Sans", sans-serif;
+  --font-sora: "Sora", "Plus Jakarta Sans", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   
   --color-text-primary: var(--color-text-primary);
@@ -1030,15 +1030,13 @@ table,
 }
 
 /* === ACCESSIBILITY TYPOGRAPHY GUARD (MOBILE/WEBVIEW) === */
-/* Force absolute minimum 12px (text-xs) for microscopic custom font-sizes to ensure readability */
+/* Force absolute minimum 11px for microscopic custom font-sizes (< 11px) to ensure readability */
 .text-\[8px\],
 .text-\[9px\],
 .text-\[10px\],
-.text-\[11px\],
-.text-\[0\.625rem\],
-.text-\[0\.7rem\] {
-  font-size: 12px !important;
-  font-size: 0.75rem !important; /* Exactly equivalent to text-xs */
+.text-\[0\.625rem\] {
+  font-size: 11px !important;
+  font-size: 0.6875rem !important;
 }
 
 /* Establish standard, elegant tracking and leading for readability */
@@ -1456,6 +1454,143 @@ section[id] {
 .status-beacon-green { animation: beaconPulse 2s infinite; }
 .status-beacon-amber { animation: beaconPulseAmber 1.5s infinite; }
 .status-beacon-red { animation: beaconPulseRed 1s infinite; }
+
+/* =========================================================================
+   9. PORTAL MPP SIMPURUSIANG — DESKTOP LIGHT MODE DESIGN SYSTEM UTILITIES
+   ========================================================================= */
+.font-display-sora {
+  font-family: 'Sora', 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.mpp-quick-action-card {
+  background-color: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.03), 0 0 0 1px rgba(15, 23, 42, 0.05);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mpp-quick-action-card:hover {
+  transform: translateY(-2px);
+  background-color: #ffffff;
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.07), 0 4px 10px -4px rgba(16, 185, 129, 0.08), 0 0 0 1px rgba(16, 185, 129, 0.25);
+}
+
+.dark .mpp-quick-action-card {
+  background-color: #0F2D4A;
+  border-color: rgba(255, 255, 255, 0.09);
+  box-shadow: none;
+}
+
+.dark .mpp-quick-action-card:hover {
+  background-color: #143755;
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.4);
+}
+
+.mpp-icon-box {
+  background: linear-gradient(135deg, #f0fdf4 0%, #d1fae5 100%);
+  border: 1px solid rgba(110, 231, 183, 0.65);
+  color: #047857;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.85), 0 1px 2px 0 rgba(5, 150, 105, 0.06);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.group:hover .mpp-icon-box,
+.mpp-quick-action-card:hover .mpp-icon-box {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #059669;
+  color: #ffffff;
+  box-shadow: 0 6px 14px -3px rgba(5, 150, 105, 0.35);
+}
+
+.dark .mpp-icon-box {
+  background: #143755;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #34d399;
+  box-shadow: none;
+}
+
+.dark .group:hover .mpp-icon-box,
+.dark .mpp-quick-action-card:hover .mpp-icon-box {
+  background: #059669;
+  border-color: #10b981;
+  color: #ffffff;
+}
+
+.mpp-facility-card {
+  background-color: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  box-shadow: 0 2px 6px -1px rgba(15, 23, 42, 0.05), 0 1px 3px -1px rgba(15, 23, 42, 0.03), 0 0 0 1px rgba(15, 23, 42, 0.03);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mpp-facility-card:hover {
+  background-color: #ffffff;
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 0 10px 22px -4px rgba(15, 23, 42, 0.07), 0 4px 8px -2px rgba(16, 185, 129, 0.06);
+}
+
+.dark .mpp-facility-card {
+  background-color: rgba(30, 41, 59, 0.55);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.dark .mpp-facility-card:hover {
+  background-color: rgba(30, 41, 59, 0.8);
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 0 16px 32px -6px rgba(0, 0, 0, 0.45);
+}
+
+.mpp-stats-glass {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(240, 253, 244, 0.85) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(167, 243, 208, 0.65);
+  box-shadow: 0 14px 36px -8px rgba(15, 23, 42, 0.06), 0 4px 12px -2px rgba(5, 150, 105, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.dark .mpp-stats-glass {
+  background: rgba(15, 45, 74, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.45), inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.mpp-quick-nav-pill {
+  background-color: #f8fafc;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  color: #334155;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mpp-quick-nav-pill:hover {
+  background-color: #ecfdf5;
+  border-color: rgba(110, 231, 183, 0.9);
+  color: #047857;
+  box-shadow: 0 2px 6px -1px rgba(5, 150, 105, 0.08);
+}
+
+.dark .mpp-quick-nav-pill {
+  background-color: rgba(30, 41, 59, 0.65);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+}
+
+.dark .mpp-quick-nav-pill:hover {
+  background-color: rgba(16, 185, 129, 0.15);
+  border-color: rgba(52, 211, 153, 0.35);
+  color: #34d399;
+}
+
+.mpp-accent-line {
+  height: 2px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent, #10b981, #059669, transparent);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.35);
+}
 
 
 
