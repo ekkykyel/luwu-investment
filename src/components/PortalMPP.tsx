@@ -2571,9 +2571,9 @@ export default function PortalMPP() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white font-display-sora mt-1"
               >
-                {t("mppPortal.motto.title", "Motto Pelayanan Publik")}{" "}
+                {t("mppPortal.motto.title", "Pelayanan Prima Berorientasi Masyarakat")}{" "}
                 <span className="text-emerald-700 dark:text-emerald-400">
-                  {t("mppPortal.motto.magatti")}
+                  {t("mppPortal.motto.magatti", '"Magatti"')}
                 </span>
               </motion.h2>
               
