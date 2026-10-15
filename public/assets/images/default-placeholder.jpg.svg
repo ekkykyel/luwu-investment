@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <rect width="800" height="600" fill="#0A2238"/>
+  <rect x="250" y="160" width="300" height="220" rx="16" fill="#0F2D4A" stroke="#10B981" stroke-width="2"/>
+  <circle cx="330" cy="230" r="22" fill="#34D399"/>
+  <polygon points="280,340 370,270 430,310 490,250 520,340" fill="#143755" stroke="#10B981" stroke-width="2"/>
+  <text x="400" y="440" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="#E2E8F0">
+    MPP Simpurusiang Kab. Luwu
+  </text>
+</svg>
