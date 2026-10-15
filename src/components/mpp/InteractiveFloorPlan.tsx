@@ -63,7 +63,8 @@ import {
 } from './assets/floorplan/overlayData';
 import {
   STAIR_CONFIGS,
-  STAIR_SVG_IDS
+  STAIR_SVG_IDS,
+  computeStairUPath
 } from './assets/floorplan/stairConfig';
 import {
   MPP_CATEGORIES,
@@ -2978,36 +2979,58 @@ export function InteractiveFloorPlan({
                           style={{ vectorEffect: 'non-scaling-stroke' }}
                         />
 
-                        {/* Chevron panah "NAIK" di masing-masing lengan */}
-                        {armCenters.map((cx, idx) => {
-                          const baseY = stair.leftArm.yOpen + chevronOffset;
-                          const tipY = baseY + chevronTipOffset;
-                          const wingW = 12;
+                        {/* U-Shaped Climbing Path (Directive 3) */}
+                        {(() => {
+                          const uPath = computeStairUPath(stair);
                           return (
-                            <g key={`chev-${stair.id}-${idx}`}>
-                              <polyline
-                                points={`${cx - wingW},${baseY} ${cx},${tipY} ${cx + wingW},${baseY}`}
+                            <g>
+                              {/* Titik awal bulat kecil */}
+                              <circle
+                                cx={uPath.startDot.cx}
+                                cy={uPath.startDot.cy}
+                                r={uPath.startDot.r}
+                                fill="var(--fp-stair-chevron, #475569)"
+                                stroke="var(--fp-stair-body, #ffffff)"
+                                strokeWidth="1"
+                                style={{ vectorEffect: 'non-scaling-stroke' }}
+                              />
+                              {/* Garis U-Path tipis netral slate */}
+                              <path
+                                d={uPath.pathD}
                                 fill="none"
-                                stroke="var(--fp-stair-chevron, #38bdf8)"
-                                strokeWidth="2.5"
+                                stroke="var(--fp-stair-chevron, #475569)"
+                                strokeWidth="1.3"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 style={{ vectorEffect: 'non-scaling-stroke' }}
                               />
-                              <text
-                                x={cx}
-                                y={isNorth ? baseY + 18 : baseY - 12}
-                                textAnchor="middle"
-                                fontSize="9"
-                                fontWeight="800"
-                                fill="var(--fp-stair-chevron, #38bdf8)"
-                                letterSpacing="1"
-                              >
-                                NAIK
-                              </text>
+                              {/* Ujung panah statis (menghormati reduced-motion) */}
+                              <path
+                                d={uPath.arrowHeadD}
+                                fill="none"
+                                stroke="var(--fp-stair-chevron, #475569)"
+                                strokeWidth="1.3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                style={{ vectorEffect: 'non-scaling-stroke' }}
+                              />
+                              {/* Label NAIK (hanya saat zoom cukup) */}
+                              {svgRenderScale > 0.4 && (
+                                <text
+                                  x={uPath.labelPos.x}
+                                  y={uPath.labelPos.y}
+                                  textAnchor="middle"
+                                  fontSize="8"
+                                  fontWeight="700"
+                                  fill="var(--fp-stair-chevron, #475569)"
+                                  letterSpacing="0.5"
+                                >
+                                  NAIK
+                                </text>
+                              )}
                             </g>
                           );
-                        })}
+                        })()}
                       </g>
 
                       {/* Debug Overlay bila ?debug=route aktif */}

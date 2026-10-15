@@ -13,6 +13,12 @@ export interface StairArm {
 export interface StairConfigItem {
   id: string; // SVG ID: TANGGA_UTARA | TANGGA_SELATAN_TIMUR | TANGGA_SELATAN_BARAT
   label: string;
+  x0: number; // Sudut atas-kiri tangga
+  y0: number;
+  w: number;
+  h: number;
+  entry: 'kiri' | 'kanan'; // Arah masuk konfigurasi (Directive 3)
+  landingPosition: 'top' | 'bottom';
   leftArm: StairArm;
   rightArm: StairArm;
   landing: {
@@ -37,10 +43,62 @@ export interface StairConfigItem {
   };
 }
 
+/**
+ * Menghitung jalur naik berbentuk U dengan garis tipis netral slate (Directive 3)
+ * - Bordes di bawah: masuk bentangan KANAN (x0+107) dari atas, turun ke bordes, belok ke KIRI (x0+35), naik (panah ATAS)
+ * - Bordes di atas: masuk bentangan KIRI dari bawah, naik ke bordes, belok ke KANAN, turun (panah BAWAH)
+ * - Arah masuk (kiri|kanan) bersifat terkonfigurasi
+ */
+export function computeStairUPath(stair: StairConfigItem): {
+  startDot: { cx: number; cy: number; r: number };
+  pathD: string;
+  arrowHeadD: string;
+  labelPos: { x: number; y: number };
+} {
+  const isBottomLanding = stair.landingPosition === 'bottom';
+  const enterRight = stair.entry === 'kanan';
+
+  const xLeft = stair.x0 + 35;
+  const xRight = stair.x0 + 107;
+  const xIn = enterRight ? xRight : xLeft;
+  const xOut = enterRight ? xLeft : xRight;
+
+  if (isBottomLanding) {
+    const yStart = stair.y0 + 14;
+    const yLanding = stair.y0 + 190;
+    const yEnd = stair.y0 + 20;
+
+    return {
+      startDot: { cx: xIn, cy: yStart, r: 2.5 },
+      pathD: `M ${xIn} ${yStart} L ${xIn} ${yLanding} L ${xOut} ${yLanding} L ${xOut} ${yEnd}`,
+      arrowHeadD: `M ${xOut - 5} ${yEnd + 10} L ${xOut} ${yEnd} L ${xOut + 5} ${yEnd + 10}`,
+      labelPos: { x: xOut, y: yEnd + 26 }
+    };
+  } else {
+    // Bordes di atas (SELATAN_TIMUR)
+    const yStart = stair.y0 + stair.h - 14;
+    const yLanding = stair.y0 + 45.5;
+    const yEnd = stair.y0 + stair.h - 20;
+
+    return {
+      startDot: { cx: xIn, cy: yStart, r: 2.5 },
+      pathD: `M ${xIn} ${yStart} L ${xIn} ${yLanding} L ${xOut} ${yLanding} L ${xOut} ${yEnd}`,
+      arrowHeadD: `M ${xOut - 5} ${yEnd - 10} L ${xOut} ${yEnd} L ${xOut + 5} ${yEnd - 10}`,
+      labelPos: { x: xOut, y: yEnd - 24 }
+    };
+  }
+}
+
 export const STAIR_CONFIGS: StairConfigItem[] = [
   {
     id: 'TANGGA_UTARA',
     label: 'Tangga Akses Sayap Utara',
+    x0: 682,
+    y0: 948,
+    w: 143,
+    h: 236,
+    entry: 'kanan',
+    landingPosition: 'bottom',
     leftArm: {
       xMin: 682,
       xMax: 751,
@@ -77,6 +135,12 @@ export const STAIR_CONFIGS: StairConfigItem[] = [
   {
     id: 'TANGGA_SELATAN_TIMUR',
     label: 'Tangga Akses Sayap Selatan (Timur)',
+    x0: 3022,
+    y0: 268,
+    w: 143,
+    h: 236,
+    entry: 'kiri', // Masuk bentangan KIRI dari bawah, naik ke bordes, belok kanan, turun (panah BAWAH)
+    landingPosition: 'top',
     leftArm: {
       xMin: 3022,
       xMax: 3091,
@@ -113,6 +177,12 @@ export const STAIR_CONFIGS: StairConfigItem[] = [
   {
     id: 'TANGGA_SELATAN_BARAT',
     label: 'Tangga Akses Sayap Selatan (Barat)',
+    x0: 3022,
+    y0: 1175,
+    w: 143,
+    h: 236,
+    entry: 'kanan', // Masuk bentangan KANAN dari atas, turun ke bordes, belok kiri, naik (panah ATAS)
+    landingPosition: 'bottom',
     leftArm: {
       xMin: 3022,
       xMax: 3091,

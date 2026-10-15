@@ -1557,7 +1557,7 @@ section[id] {
   --fp-cat-utilitas: #475569;     /* Slate-600 menengah (7.58:1) - Slate menengah */
   --fp-cat-hukum: #312e81;        /* Deep Indigo-900 (11.42:1) - Alt 1 Non-merah/oranye/hijau */
   --fp-cat-khusus: #db2777;       /* Pink-600 (4.71:1) */
-  --fp-cat-fasilitas: #0f172a;    /* Slate-900 (14.63:1) - Neutral dark */
+  --fp-cat-fasilitas: #64748b;    /* Slate-500 cerah netral (4.76:1) - Opsi 2 Fasilitas Cerah */
 }
 
 .dark {
@@ -1579,7 +1579,7 @@ section[id] {
   --fp-cat-utilitas: #94a3b8;     /* Slate-400 menengah (6.31:1) - Slate menengah */
   --fp-cat-hukum: #818cf8;        /* Indigo-400 (8.11:1) - Alt 1 */
   --fp-cat-khusus: #f472b6;       /* Pink-400 (6.10:1) */
-  --fp-cat-fasilitas: #e2e8f0;    /* Slate-200 abu terang (13.12:1) - Sesuai arahan fasilitas abu terang */
+  --fp-cat-fasilitas: #f1f5f9;    /* Slate-100 platinum cerah (16.30:1) - Opsi 2 Fasilitas Cerah */
 }
 
 /* Fullscreen support via Fullscreen API & backdrop */

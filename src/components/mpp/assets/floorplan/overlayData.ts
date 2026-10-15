@@ -178,11 +178,12 @@ export function parseGeraiOverlay(rawSvg: string): {
       if (cr.length > 0) childRects = cr;
     }
 
-    // Ubah fill hardcode agar bereaksi terhadap currentColor
+    // Ubah fill hardcode agar bereaksi terhadap currentColor, nonaktifkan mix-blend-mode & opacity bawaan
     const innerHtml = rawInner
       .replace(/fill="black"/g, 'fill="currentColor"')
       .replace(/fill="#D9D9D9"/g, 'fill="currentColor"')
-      .replace(/style="mix-blend-mode:\s*color"/g, '');
+      .replace(/\bopacity="0\.4"/g, '')
+      .replace(/style="[^"]*mix-blend-mode:[^"]*"/g, '');
 
     items.push({
       tag,
