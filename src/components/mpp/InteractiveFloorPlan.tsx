@@ -2022,6 +2022,31 @@ export function InteractiveFloorPlan({
     setNodeBBoxes(bboxes);
   }, []);
 
+  // Measure SVG rendered scale for accurate contour stroke width clamping (Directive 3)
+  const [svgRenderScale, setSvgRenderScale] = useState<number>(0.35); // default fallback ~1280px screen
+
+  useEffect(() => {
+    const updateScale = () => {
+      if (svgRef.current) {
+        const rect = svgRef.current.getBoundingClientRect();
+        if (rect && rect.width > 0) {
+          setSvgRenderScale(rect.width / 3646);
+        }
+      } else if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        if (rect && rect.width > 0) {
+          setSvgRenderScale(rect.width / 3646);
+        }
+      }
+    };
+    updateScale();
+    if (typeof ResizeObserver !== 'undefined' && containerRef.current) {
+      const ro = new ResizeObserver(() => updateScale());
+      ro.observe(containerRef.current);
+      return () => ro.disconnect();
+    }
+  }, []);
+
   // Active selected booth ID (for Spotlight & Dimming Focus Mode)
   const selectedBoothId = selectedNode?.id || selectedId || null;
 
@@ -2841,29 +2866,32 @@ export function InteractiveFloorPlan({
                 className="pointer-events-none"
               />
 
-              {/* ── 2. DYNAMIC WAYFINDING PATH FROM ENTRANCE TO TARGET ── */}
-              {selectedNode && wayfindingRoute && (
+              {/* ── 2. DYNAMIC WAYFINDING PATH FROM ENTRANCE TO TARGET (BLUE DASHED, HIDDEN IN EMERGENCY) ── */}
+              {selectedNode && wayfindingRoute && !isEmergencyMode && (
                 <g id="wayfinding-route-layer" pointerEvents="none">
+                  {/* Outer subtle glow */}
                   <path
                     d={wayfindingRoute.path}
                     fill="none"
-                    stroke={isDark ? '#059669' : '#a7f3d0'}
+                    stroke={isDark ? '#0284c7' : '#bae6fd'}
                     strokeWidth="14"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     opacity="0.45"
                   />
+                  {/* Dashed active wayfinding route (Blue #0284c7) */}
                   <path
                     d={wayfindingRoute.path}
                     fill="none"
-                    stroke="#10b981"
-                    strokeWidth="6"
+                    stroke="#0284c7"
+                    strokeWidth="5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    strokeDasharray="10 8"
                     className="animate-dash"
                   />
                   {/* Starting point (Entrance) */}
-                  <circle cx={WP_ENTRANCE.x} cy={WP_ENTRANCE.y} r="14" fill="#10b981" stroke="#ffffff" strokeWidth="4" />
+                  <circle cx={WP_ENTRANCE.x} cy={WP_ENTRANCE.y} r="14" fill="#0284c7" stroke="#ffffff" strokeWidth="4" />
                   <circle cx={WP_ENTRANCE.x} cy={WP_ENTRANCE.y} r="6" fill="#ffffff" />
                 </g>
               )}
@@ -3047,7 +3075,7 @@ export function InteractiveFloorPlan({
 
                   if (isSelected) {
                     nodeOpacity = 1;
-                    nodeFilter = 'drop-shadow(0 0 16px rgba(16, 185, 129, 0.9))';
+                    nodeFilter = 'drop-shadow(0 0 16px rgba(2, 132, 199, 0.9))';
                   } else if (isHovered && isMatching) {
                     nodeOpacity = 0.95;
                     nodeFilter = 'drop-shadow(0 0 10px rgba(56, 189, 248, 0.75))';
@@ -3057,6 +3085,11 @@ export function InteractiveFloorPlan({
 
                   // Check if item has thin contour paths
                   const thinIndices = THIN_CONTOUR_PATH_MAP[item.id];
+
+                  // Dynamic contour stroke width in viewBox units, clamped so rendered screen thickness is 2-5px (Directive 3)
+                  const currentScale = svgRenderScale > 0 ? svgRenderScale : 0.35;
+                  const clampedTargetPx = Math.max(2, Math.min(5, 12 * currentScale));
+                  const contourStrokeWidth = clampedTargetPx / currentScale;
 
                   return (
                     <g
@@ -3100,39 +3133,49 @@ export function InteractiveFloorPlan({
                           style={{ vectorEffect: 'non-scaling-stroke' }}
                         />
                       ) : item.childPaths && item.childPaths.length > 0 ? (
-                        item.childPaths.map((dVal, pIdx) => {
-                          const isThin = thinIndices && thinIndices.includes(pIdx);
-                          if (isThin) {
+                        <>
+                          {/* LAPISAN 1 (BAWAH): KONTUR TIPIS TANPA VECTOR-EFFECT (Stroke diklem 2-5px layar, fill none) */}
+                          {item.childPaths.map((dVal, pIdx) => {
+                            const isThin = thinIndices && thinIndices.includes(pIdx);
+                            if (!isThin) return null;
                             return (
                               <path
-                                key={`path-${pIdx}`}
+                                key={`contour-${pIdx}`}
                                 d={dVal}
                                 fill="none"
                                 stroke="currentColor"
-                                strokeWidth="18"
+                                strokeWidth={contourStrokeWidth}
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            );
+                          })}
+
+                          {/* LAPISAN 2 (ATAS KONTUR): KURSI & MEJA ISI BIASA (Z-order selalu di atas kontur) */}
+                          {item.childPaths.map((dVal, pIdx) => {
+                            const isThin = thinIndices && thinIndices.includes(pIdx);
+                            if (isThin) return null;
+                            // Khusus DPMPTSP_1 dan DUKCAPIL_1 interior meja transparan murni (Directive 2)
+                            const isPureTransparent = (item.id === 'DPMPTSP_1' || item.id === 'DUKCAPIL_1') && dVal.length > 500;
+                            return (
+                              <path
+                                key={`chair-path-${pIdx}`}
+                                d={dVal}
+                                fill={isPureTransparent ? 'none' : 'currentColor'}
+                                fillOpacity={isPureTransparent ? undefined : '0.35'}
+                                stroke="currentColor"
+                                strokeWidth="1.5"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 style={{ vectorEffect: 'non-scaling-stroke' }}
                               />
                             );
-                          }
-                          return (
-                            <path
-                              key={`path-${pIdx}`}
-                              d={dVal}
-                              fill="currentColor"
-                              fillOpacity="0.35"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              style={{ vectorEffect: 'non-scaling-stroke' }}
-                            />
-                          );
-                        })
+                          })}
+                        </>
                       ) : (
                         <g dangerouslySetInnerHTML={{ __html: item.innerHtml }} />
                       )}
+                      {/* LAPISAN 3 (TERATAS): RECT KURSI / DETAIL (Selalu di atas kontur) */}
                       {item.childRects && item.childRects.map((rObj, rIdx) => (
                         <rect
                           key={`rect-${rIdx}`}
@@ -3160,8 +3203,8 @@ export function InteractiveFloorPlan({
                   pointerEvents="none"
                 >
                   {/* Outer Ripple */}
-                  <circle cx={0} cy={0} r={24} fill="#10b981" opacity={0.3} className="animate-ping" />
-                  <circle cx={0} cy={0} r={14} fill="#10b981" stroke="#ffffff" strokeWidth={3} />
+                  <circle cx={0} cy={0} r={24} fill="#0284c7" opacity={0.3} className="animate-ping" />
+                  <circle cx={0} cy={0} r={14} fill="#0284c7" stroke="#ffffff" strokeWidth={3} />
                   <circle cx={0} cy={0} r={5} fill="#ffffff" />
 
                   {/* Target Pill Badge */}
@@ -3173,7 +3216,7 @@ export function InteractiveFloorPlan({
                       height={28}
                       rx={14}
                       fill="#0f172a"
-                      stroke="#10b981"
+                      stroke="#0284c7"
                       strokeWidth={2}
                       filter="drop-shadow(0 4px 10px rgba(0,0,0,0.5))"
                     />

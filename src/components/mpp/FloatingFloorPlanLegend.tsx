@@ -40,13 +40,13 @@ export interface SectorDefinition {
 }
 
 export const SECTOR_ACCENT_COLORS: Record<MppSectorFilter, string> = {
-  all: '#10b981',
-  kependudukan: '#10b981',
-  perizinan: '#06b6d4',
-  perpajakan: '#f59e0b',
-  bpjs_sosial: '#3b82f6',
-  perbankan_bumn: '#8b5cf6',
-  fasilitas_inklusif: '#ec4899'
+  all: '#0284c7',
+  kependudukan: '#0284c7',
+  perizinan: '#7c3aed',
+  perpajakan: '#d97706',
+  bpjs_sosial: '#0f766e',
+  perbankan_bumn: '#1e40af',
+  fasilitas_inklusif: '#64748b'
 };
 
 /**
