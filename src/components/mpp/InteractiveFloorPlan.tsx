@@ -71,6 +71,7 @@ import {
   THIN_CONTOUR_PATH_MAP,
   MppCategoryKey
 } from './assets/floorplan/categoryConfig';
+import { ISLAND_CONTOUR_HULL_MAP } from './assets/floorplan/islandHullPaths';
 
 // ── K3 MODE EVAKUASI TOGGLE (SEMBUNYIKAN DARI UI, KODE DIPERTAHANKAN) ──
 const ENABLE_EMERGENCY_MODE = false;
@@ -3075,10 +3076,10 @@ export function InteractiveFloorPlan({
 
                   if (isSelected) {
                     nodeOpacity = 1;
-                    nodeFilter = 'drop-shadow(0 0 16px rgba(2, 132, 199, 0.9))';
+                    nodeFilter = `drop-shadow(0 0 16px ${categoryColorVar})`;
                   } else if (isHovered && isMatching) {
                     nodeOpacity = 0.95;
-                    nodeFilter = 'drop-shadow(0 0 10px rgba(56, 189, 248, 0.75))';
+                    nodeFilter = `drop-shadow(0 0 10px ${categoryColorVar})`;
                   } else if (!isMatching) {
                     nodeFilter = 'grayscale(100%)';
                   }
@@ -3134,20 +3135,33 @@ export function InteractiveFloorPlan({
                         />
                       ) : item.childPaths && item.childPaths.length > 0 ? (
                         <>
-                          {/* LAPISAN 1 (BAWAH): KONTUR TIPIS TANPA VECTOR-EFFECT (Stroke diklem 2-5px layar, fill none) */}
+                          {/* LAPISAN 1 (BAWAH): KONTUR TIPIS & CONCAVE HULL FILL PULAU TENGAH */}
                           {item.childPaths.map((dVal, pIdx) => {
                             const isThin = thinIndices && thinIndices.includes(pIdx);
                             if (!isThin) return null;
+                            const hullD = ISLAND_CONTOUR_HULL_MAP[item.id]?.[pIdx];
+
                             return (
-                              <path
-                                key={`contour-${pIdx}`}
-                                d={dVal}
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth={contourStrokeWidth}
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
+                              <React.Fragment key={`contour-wrap-${pIdx}`}>
+                                {/* 1A. Concave Hull Fill Layer untuk Pulau Tengah (fill-opacity 0.28 warna kategori) */}
+                                {hullD && (
+                                  <path
+                                    d={hullD}
+                                    fill="currentColor"
+                                    fillOpacity="0.28"
+                                    stroke="none"
+                                  />
+                                )}
+                                {/* 1B. Garis Kontur Asli (Tanpa ubah geometri, tebal diklem 2-5px layar) */}
+                                <path
+                                  d={dVal}
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth={contourStrokeWidth}
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </React.Fragment>
                             );
                           })}
 
@@ -3196,44 +3210,68 @@ export function InteractiveFloorPlan({
               </g>
 
               {/* ── 4. RUNTIME CENTROID TARGET BEACON & LABELS ── */}
-              {selectedNode && selectedSvgId && nodeBBoxes[selectedSvgId] && (
-                <g
-                  id="selected-target-beacon"
-                  transform={`translate(${nodeBBoxes[selectedSvgId].cx}, ${nodeBBoxes[selectedSvgId].cy})`}
-                  pointerEvents="none"
-                >
-                  {/* Outer Ripple */}
-                  <circle cx={0} cy={0} r={24} fill="#0284c7" opacity={0.3} className="animate-ping" />
-                  <circle cx={0} cy={0} r={14} fill="#0284c7" stroke="#ffffff" strokeWidth={3} />
-                  <circle cx={0} cy={0} r={5} fill="#ffffff" />
+              {selectedNode && selectedSvgId && nodeBBoxes[selectedSvgId] && (() => {
+                const selectedCatKey = SVG_ID_TO_CATEGORY[selectedSvgId] || 'fasilitas';
+                const selectedCatMeta = MPP_CATEGORIES[selectedCatKey] || MPP_CATEGORIES.fasilitas;
+                const beaconColor = selectedCatMeta.tokenVar;
 
-                  {/* Target Pill Badge */}
-                  <g transform="translate(0, -32)">
-                    <rect
-                      x={-90}
-                      y={-14}
-                      width={180}
-                      height={28}
-                      rx={14}
-                      fill="#0f172a"
-                      stroke="#0284c7"
-                      strokeWidth={2}
-                      filter="drop-shadow(0 4px 10px rgba(0,0,0,0.5))"
+                return (
+                  <g
+                    id="selected-target-beacon"
+                    transform={`translate(${nodeBBoxes[selectedSvgId].cx}, ${nodeBBoxes[selectedSvgId].cy})`}
+                    pointerEvents="none"
+                  >
+                    {/* Ripple dinamis mengikuti warna kategori; reduced-motion = halo statis */}
+                    <circle
+                      cx={0}
+                      cy={0}
+                      r={24}
+                      fill={beaconColor}
+                      opacity={0.3}
+                      className="motion-safe:animate-ping motion-reduce:hidden"
                     />
-                    <text
-                      x={0}
-                      y={4}
-                      fill="#ffffff"
-                      fontSize={11}
-                      fontWeight="bold"
-                      textAnchor="middle"
-                      className="select-none font-sans"
-                    >
-                      {selectedNode.name.length > 22 ? selectedNode.name.slice(0, 21) + '…' : selectedNode.name}
-                    </text>
+                    {/* Halo statis untuk prefers-reduced-motion */}
+                    <circle
+                      cx={0}
+                      cy={0}
+                      r={26}
+                      fill="none"
+                      stroke={beaconColor}
+                      strokeWidth={3}
+                      opacity={0.4}
+                      className="motion-reduce:block motion-safe:hidden"
+                    />
+                    <circle cx={0} cy={0} r={14} fill={beaconColor} stroke="#ffffff" strokeWidth={3} />
+                    <circle cx={0} cy={0} r={5} fill="#ffffff" />
+
+                    {/* Target Pill Badge */}
+                    <g transform="translate(0, -32)">
+                      <rect
+                        x={-90}
+                        y={-14}
+                        width={180}
+                        height={28}
+                        rx={14}
+                        fill="#0f172a"
+                        stroke={beaconColor}
+                        strokeWidth={2}
+                        filter="drop-shadow(0 4px 10px rgba(0,0,0,0.5))"
+                      />
+                      <text
+                        x={0}
+                        y={4}
+                        fill="#ffffff"
+                        fontSize={11}
+                        fontWeight="bold"
+                        textAnchor="middle"
+                        className="select-none font-sans"
+                      >
+                        {selectedNode.name.length > 22 ? selectedNode.name.slice(0, 21) + '…' : selectedNode.name}
+                      </text>
+                    </g>
                   </g>
-                </g>
-              )}
+                );
+              })()}
 
               {/* ── 5. EMERGENCY EVACUATION (PRESERVED CODE, GUARDED BY ENABLE_EMERGENCY_MODE) ── */}
               {ENABLE_EMERGENCY_MODE && isEmergencyMode && (

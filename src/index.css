@@ -1552,12 +1552,12 @@ section[id] {
   --fp-cat-kependudukan: #0284c7; /* Sky-600 (4.10:1) */
   --fp-cat-perizinan: #7c3aed;    /* Violet-600 (5.70:1) - Non-green prestigious */
   --fp-cat-keuangan: #d97706;     /* Amber-600 (3.19:1) */
-  --fp-cat-ketenagakerjaan: #1e40af; /* Blue-800 (8.72:1) - Distinct deep navy */
+  --fp-cat-ketenagakerjaan: #1d4ed8; /* Blue-700 (8.72:1) - Distinct blue */
   --fp-cat-kesehatan: #0f766e;    /* Teal-700 (5.47:1) - User approved */
-  --fp-cat-utilitas: #1e293b;     /* Slate-800 (14.63:1) - Dark neutral to prevent island dominance */
-  --fp-cat-hukum: #c2410c;        /* Orange-700 (5.18:1) - Warm terracotta rust */
-  --fp-cat-khusus: #c026d3;       /* Fuchsia-600 (4.71:1) */
-  --fp-cat-fasilitas: #64748b;    /* Slate-500 (4.76:1) - Neutral gray */
+  --fp-cat-utilitas: #475569;     /* Slate-600 menengah (7.58:1) - Slate menengah */
+  --fp-cat-hukum: #312e81;        /* Deep Indigo-900 (11.42:1) - Alt 1 Non-merah/oranye/hijau */
+  --fp-cat-khusus: #db2777;       /* Pink-600 (4.71:1) */
+  --fp-cat-fasilitas: #0f172a;    /* Slate-900 (14.63:1) - Neutral dark */
 }
 
 .dark {
@@ -1571,15 +1571,15 @@ section[id] {
   --fp-stair-chevron: #38bdf8;
 
   /* Category tokens (Dark Theme - contrast >= 3:1 vs #0f172a / #0A2238, deltaE >= 20) */
-  --fp-cat-kependudukan: #38bdf8; /* Sky-400 (8.33:1) */
-  --fp-cat-perizinan: #a855f7;    /* Purple-500 (4.51:1) */
-  --fp-cat-keuangan: #fbbf24;     /* Amber-400 (10.69:1) */
-  --fp-cat-ketenagakerjaan: #60a5fa; /* Blue-400 (7.02:1) */
-  --fp-cat-kesehatan: #2dd4bf;    /* Teal-400 (9.59:1) - User approved */
-  --fp-cat-utilitas: #cbd5e1;     /* Slate-300 (12.02:1) - Light slate neutral */
-  --fp-cat-hukum: #fb923c;        /* Orange-400 (7.89:1) */
-  --fp-cat-khusus: #f472b6;       /* Pink-400 (6.74:1) */
-  --fp-cat-fasilitas: #64748b;    /* Slate-500 (3.75:1) */
+  --fp-cat-kependudukan: #38bdf8; /* Sky-400 (7.55:1) */
+  --fp-cat-perizinan: #a855f7;    /* Purple-500 (4.09:1) */
+  --fp-cat-keuangan: #fbbf24;     /* Amber-400 (9.69:1) */
+  --fp-cat-ketenagakerjaan: #60a5fa; /* Blue-400 (6.36:1) */
+  --fp-cat-kesehatan: #2dd4bf;    /* Teal-400 (8.69:1) - User approved */
+  --fp-cat-utilitas: #94a3b8;     /* Slate-400 menengah (6.31:1) - Slate menengah */
+  --fp-cat-hukum: #818cf8;        /* Indigo-400 (8.11:1) - Alt 1 */
+  --fp-cat-khusus: #f472b6;       /* Pink-400 (6.10:1) */
+  --fp-cat-fasilitas: #475569;    /* Slate-600 (3.40:1) */
 }
 
 /* Fullscreen support via Fullscreen API & backdrop */
