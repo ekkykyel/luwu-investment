@@ -377,23 +377,28 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
   return (
     <div className={`${posClass} z-30 max-w-[calc(100vw-24px)] pointer-events-auto ${className}`}>
       {/* ───────────────────────────────────────────────────────────── */}
+      {/* ───────────────────────────────────────────────────────────── */}
       {/* 1. TOGGLE BUTTON (IN TOOLBAR OR COMPACT COLLAPSED PILL)         */}
       {/* ───────────────────────────────────────────────────────────── */}
       {(!isOpen || isToolbar) && (
         <button
           type="button"
           onClick={() => setIsOpen(prev => !prev)}
-          className={`h-12 min-h-[48px] flex items-center gap-2 px-4 rounded-2xl backdrop-blur-md bg-slate-900/95 dark:bg-slate-900/95 text-white border shadow-md transition-all cursor-pointer active:scale-95 group select-none text-xs font-bold ${
-            isOpen
-              ? 'border-emerald-500 ring-2 ring-emerald-500/30 bg-slate-800'
-              : 'border-slate-700/80 hover:border-emerald-500/80 hover:bg-slate-800'
+          className={`h-12 min-h-[48px] flex items-center gap-2 px-4 rounded-2xl backdrop-blur-md border shadow-md transition-all cursor-pointer active:scale-95 group select-none text-xs font-bold ${
+            isDark
+              ? (isOpen
+                  ? 'bg-slate-900/95 text-white border-emerald-500 ring-2 ring-emerald-500/30'
+                  : 'bg-slate-900/95 text-white border-slate-700/80 hover:border-emerald-500/80 hover:bg-slate-800')
+              : (isOpen
+                  ? 'bg-white/95 text-slate-800 border-emerald-500 ring-2 ring-emerald-500/30 shadow-[0_2px_8px_rgba(15,23,42,0.10)]'
+                  : 'bg-white/85 text-slate-800 border-slate-200 hover:border-emerald-500/80 hover:bg-slate-50 shadow-[0_2px_8px_rgba(15,23,42,0.10)]')
           }`}
           title={t('legend.expand', 'Buka Filter & Legenda Denah')}
           aria-label={t('legend.mobileToggle', 'Filter & Legenda')}
           aria-expanded={isOpen}
         >
           <div className="relative flex items-center justify-center">
-            <Filter className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
+            <Filter className="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform" />
             {hasActiveSector && (
               <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
             )}
@@ -403,12 +408,12 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
           </span>
 
           {hasActiveSector && (
-            <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30">
               {currentSectorObj ? t(currentSectorObj.labelKey, currentSectorObj.defaultLabel) : activeSector}
             </span>
           )}
 
-          <ChevronUp className={`w-4 h-4 text-slate-400 group-hover:text-white transition-transform duration-200 ${isOpen ? 'rotate-180 text-emerald-400' : ''}`} />
+          <ChevronUp className={`w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-white transition-transform duration-200 ${isOpen ? 'rotate-180 text-emerald-500' : ''}`} />
         </button>
       )}
 
@@ -420,18 +425,24 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
           isToolbar
             ? 'absolute bottom-full mb-2 left-0'
             : 'mb-2'
-        } w-[calc(100vw-32px)] sm:w-[360px] md:w-[390px] max-h-[70vh] sm:max-h-[72vh] flex flex-col backdrop-blur-md bg-slate-900/95 dark:bg-slate-950/95 text-white border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 z-50`}>
+        } w-[calc(100vw-32px)] sm:w-[360px] md:w-[390px] max-h-[70vh] sm:max-h-[72vh] flex flex-col backdrop-blur-md rounded-2xl overflow-hidden transition-all duration-300 z-50 ${
+          isDark
+            ? 'bg-slate-900/95 dark:bg-slate-950/95 text-white border border-slate-700/80 shadow-2xl'
+            : 'bg-white/90 text-slate-800 border border-slate-200 shadow-[0_2px_8px_rgba(15,23,42,0.10)]'
+        }`}>
           {/* Header Bar */}
-          <div className="px-3.5 py-3 border-b border-slate-800/80 bg-slate-900/90 flex items-center justify-between gap-2 select-none relative z-50">
+          <div className={`px-3.5 py-3 border-b flex items-center justify-between gap-2 select-none relative z-50 ${
+            isDark ? 'border-slate-800/80 bg-slate-900/90 text-slate-100' : 'border-slate-200/80 bg-white/95 text-slate-900'
+          }`}>
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-7 h-7 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+              <div className="w-7 h-7 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 shrink-0">
                 <Sparkles className="w-3.5 h-3.5" />
               </div>
               <div className="min-w-0">
-                <h3 className="text-xs font-bold text-slate-100 tracking-tight flex items-center gap-1.5 truncate">
+                <h3 className="text-xs font-bold tracking-tight flex items-center gap-1.5 truncate">
                   <span>{t('legend.title', 'Legenda & Filter Sektor')}</span>
                   {hasActiveSector && (
-                    <span className="px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    <span className="px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-500/20 text-emerald-500 border border-emerald-500/30">
                       ON
                     </span>
                   )}
@@ -447,10 +458,14 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
                 <button
                   type="button"
                   onClick={() => onSelectSector('all')}
-                  className="h-10 px-2.5 rounded-xl text-[10px] font-bold text-slate-300 hover:text-white hover:bg-slate-800/80 border border-slate-700/60 transition-all flex items-center gap-1 cursor-pointer"
+                  className={`h-10 px-2.5 rounded-xl text-[10px] font-bold border transition-all flex items-center gap-1 cursor-pointer ${
+                    isDark
+                      ? 'text-slate-300 hover:text-white hover:bg-slate-800/80 border-slate-700/60'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border-slate-200'
+                  }`}
                   title={t('legend.resetFilter', 'Tampilkan Semua Sektor')}
                 >
-                  <RotateCcw className="w-3 h-3 text-emerald-400" />
+                  <RotateCcw className="w-3 h-3 text-emerald-500" />
                   <span className="hidden sm:inline">{t('legend.resetFilter', 'Reset')}</span>
                 </button>
               )}
@@ -459,7 +474,9 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
                 type="button"
                 id="fp-legend-close-button"
                 onClick={() => setIsOpen(false)}
-                className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl hover:bg-slate-800 text-slate-300 hover:text-white transition-colors flex items-center justify-center cursor-pointer active:scale-90 relative z-50"
+                className={`w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl transition-colors flex items-center justify-center cursor-pointer active:scale-90 relative z-50 ${
+                  isDark ? 'hover:bg-slate-800 text-slate-300 hover:text-white' : 'hover:bg-slate-100 text-slate-500 hover:text-slate-900'
+                }`}
                 title={t('legend.collapse', 'Tutup')}
                 aria-label="Tutup Filter & Legenda"
               >
@@ -469,14 +486,16 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
           </div>
 
           {/* Sub Navigation Tabs: Sektor Pelayanan vs Status Antrean */}
-          <div className="grid grid-cols-2 p-1.5 bg-slate-950/60 border-b border-slate-800/60 text-[11px] font-bold gap-1 select-none">
+          <div className={`grid grid-cols-2 p-1.5 border-b text-[11px] font-bold gap-1 select-none ${
+            isDark ? 'bg-slate-950/60 border-slate-800/60' : 'bg-slate-50/90 border-slate-200'
+          }`}>
             <button
               type="button"
               onClick={() => setActiveTab('sectors')}
               className={`py-1.5 px-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                 activeTab === 'sectors'
-                  ? 'bg-emerald-600/90 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : (isDark ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50')
               }`}
             >
               <Filter className="w-3 h-3" />
@@ -488,8 +507,8 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
               onClick={() => setActiveTab('status')}
               className={`py-1.5 px-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                 activeTab === 'status'
-                  ? 'bg-emerald-600/90 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : (isDark ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50')
               }`}
             >
               <Info className="w-3 h-3" />
@@ -527,7 +546,9 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
                         className={`flex items-center gap-2 p-2 rounded-xl border text-left transition-all cursor-pointer select-none group relative overflow-hidden ${
                           isSelected
                             ? `${sec.bgActiveClass} shadow-md`
-                            : 'bg-slate-800/40 hover:bg-slate-800/70 border-slate-700/50 text-slate-300 hover:text-white'
+                            : (isDark
+                                ? 'bg-slate-800/40 hover:bg-slate-800/70 border-slate-700/50 text-slate-300 hover:text-white'
+                                : 'bg-slate-50 hover:bg-slate-100/80 border-slate-200 text-slate-700 hover:text-slate-950')
                         }`}
                       >
                         {/* Active Accent Bar Indicator */}
@@ -541,8 +562,8 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
                         <div
                           className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${
                             isSelected
-                              ? 'bg-slate-900/60 shadow-xs'
-                              : 'bg-slate-900/50 border border-slate-700/50'
+                              ? (isDark ? 'bg-slate-900/60 shadow-xs' : 'bg-white shadow-xs')
+                              : (isDark ? 'bg-slate-900/50 border border-slate-700/50' : 'bg-white border border-slate-200')
                           }`}
                           style={{ color: sec.accentColor }}
                         >
@@ -565,14 +586,16 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
                 </div>
 
                 {hasActiveSector && (
-                  <div className="mt-2.5 p-2 rounded-xl bg-slate-950/70 border border-slate-800/80 flex items-center justify-between text-[11px]">
-                    <span className="text-slate-300 text-[10px]">
+                  <div className={`mt-2.5 p-2 rounded-xl border flex items-center justify-between text-[11px] ${
+                    isDark ? 'bg-slate-950/70 border-slate-800/80 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
+                  }`}>
+                    <span className="text-[10px]">
                       {t('legend.activeHighlight', { count: totalMatchingCount || 'semua' })}
                     </span>
                     <button
                       type="button"
                       onClick={() => onSelectSector('all')}
-                      className="text-[10px] text-emerald-400 hover:text-emerald-300 font-bold underline cursor-pointer"
+                      className="text-[10px] text-emerald-500 hover:text-emerald-600 font-bold underline cursor-pointer"
                     >
                       {t('legend.resetFilter', 'Tampilkan Semua')}
                     </button>
@@ -594,7 +617,9 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
                   {statusIndicators.map((item, idx) => (
                     <div
                       key={idx}
-                      className="p-2 rounded-xl bg-slate-800/40 border border-slate-700/50 flex items-start gap-2.5"
+                      className={`p-2 rounded-xl border flex items-start gap-2.5 ${
+                        isDark ? 'bg-slate-800/40 border-slate-700/50' : 'bg-slate-50 border-slate-200'
+                      }`}
                     >
                       <div className="relative pt-0.5 shrink-0">
                         <div className={`w-3.5 h-3.5 rounded-full ${item.colorClass}`} />
@@ -602,10 +627,12 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
 
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between gap-2">
-                          <span className="text-[11px] font-bold text-slate-100">
+                          <span className={`text-[11px] font-bold ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>
                             {item.title}
                           </span>
-                          <span className="px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-900/80 border border-slate-700/60 text-slate-200">
+                          <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold border ${
+                            isDark ? 'bg-slate-900/80 border-slate-700/60 text-slate-200' : 'bg-white border-slate-200 text-slate-700'
+                          }`}>
                             {item.volume}
                           </span>
                         </div>
@@ -617,8 +644,10 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
                   ))}
                 </div>
 
-                <div className="mt-2 p-2 rounded-xl bg-slate-950/60 border border-slate-800 text-[10px] text-slate-400 flex items-center gap-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <div className={`mt-2 p-2 rounded-xl border text-[10px] text-slate-400 flex items-center gap-1.5 ${
+                  isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-slate-50 border-slate-200 text-slate-500'
+                }`}>
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                   <span>Sinkronisasi data antrean otomatis setiap detik melalui Supabase realtime.</span>
                 </div>
               </div>

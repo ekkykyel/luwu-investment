@@ -61,6 +61,7 @@ interface InclusivityAccessibilityBarProps {
   onHighContrastToggle?: (enabled: boolean) => void;
   onFontSizeChange?: (size: 'small' | 'normal' | 'large' | 'xlarge') => void;
   onVoiceSearchQuery?: (query: string) => void;
+  hideFloatingFab?: boolean;
 }
 
 export type ContrastModeType = 'standard' | 'high-contrast-yellow' | 'monochrome';
@@ -71,6 +72,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
   onHighContrastToggle,
   onFontSizeChange,
   onVoiceSearchQuery,
+  hideFloatingFab = false,
 }) => {
   const { i18n, t } = useTranslation();
   
@@ -2416,6 +2418,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
       </AnimatePresence>
 
       {/* Floating Action Button (FAB) Asisten MPP - Khusus Desktop/Tablet (Di Mobile telah terintegrasi di Bottom Nav & Search Bar) */}
+      {!hideFloatingFab && (
       <motion.div
         layout
         initial={{ scale: 0, opacity: 0, y: 20 }}
@@ -2549,6 +2552,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
           )}
         </AnimatePresence>
       </motion.div>
+      )}
     </>
   );
 };

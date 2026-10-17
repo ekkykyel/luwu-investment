@@ -1551,7 +1551,7 @@ section[id] {
   --fp-stair-body: #ffffff; /* Tangga Putih Bersih */
   --fp-stair-tread: #94a3b8; /* slate-400 */
   --fp-stair-stroke: #64748b; /* slate-500 */
-  --fp-stair-chevron: #0284c7; /* Sky-600 Tajam & Jelas */
+  --fp-stair-chevron: #475569; /* Slate-600 netral kontras >= 3:1 */
 
   /* Category tokens (Light Theme - contrast >= 3:1 vs #f8fafc / #ffffff, deltaE >= 20, no green/red) */
   --fp-cat-kependudukan: #0284c7; /* Sky-600 (4.10:1) */
@@ -1562,7 +1562,7 @@ section[id] {
   --fp-cat-utilitas: #d97706;     /* Amber-600 tegas kontras tinggi */
   --fp-cat-hukum: #312e81;        /* Deep Indigo-900 (11.42:1) - Alt 1 Non-merah/oranye/hijau */
   --fp-cat-khusus: #db2777;       /* Pink-600 (4.71:1) */
-  --fp-cat-fasilitas: #0891b2;    /* Cyan-600 cerah segar & profesional (4.54:1) */
+  --fp-cat-fasilitas: #64748b;    /* Slate-500 netral cerah abu kebiruan (4.76:1) */
 }
 
 .dark {
@@ -1570,10 +1570,10 @@ section[id] {
   --fp-surface: #0f172a;
   --fp-wall: rgba(148, 163, 184, 0.35); /* subtle architectural blueprint lines */
   --fp-grid: #10b981;
-  --fp-stair-body: #1e293b; /* Slate-800 - elegant contrast, avoids blinding white in dark theme */
-  --fp-stair-tread: #475569; /* Slate-600 */
+  --fp-stair-body: #e2e8f0; /* Badan #E2E8F0 (Perbaikan E) */
+  --fp-stair-tread: #94a3b8; /* Anak tangga #94A3B8 (Perbaikan E) */
   --fp-stair-stroke: #64748b; /* Slate-500 */
-  --fp-stair-chevron: #38bdf8; /* Sky-400 high contrast */
+  --fp-stair-chevron: #334155; /* Slate-700 kontras >= 3:1 terhadap #e2e8f0 */
 
   /* Category tokens (Dark Theme - contrast >= 3:1 vs #0f172a / #0A2238, deltaE >= 20) */
   --fp-cat-kependudukan: #38bdf8; /* Sky-400 (7.55:1) */
@@ -1584,7 +1584,7 @@ section[id] {
   --fp-cat-utilitas: #fbbf24;     /* Amber/Kuning Cerah (menggantikan abu-abu) */
   --fp-cat-hukum: #818cf8;        /* Indigo-400 (8.11:1) - Alt 1 */
   --fp-cat-khusus: #f472b6;       /* Pink-400 (6.10:1) */
-  --fp-cat-fasilitas: #22d3ee;    /* Cyan-400 cerah kontras tinggi (9.21:1) */
+  --fp-cat-fasilitas: #cbd5e1;    /* Slate-300 netral abu kebiruan terang (10.8:1) */
 }
 
 /* Loket Active Blinking Glow Animation */
