@@ -17479,7 +17479,7 @@ export function removeStyle(id) {
   });
 
   // Start Server on Port 3000 and bind to 0.0.0.0 IMMEDIATELY
-  const server = app.listen(PORT, "0.0.0.0", () => {
+  const server = app.listen(Number(PORT), "0.0.0.0", () => {
     console.log(`[SERVER] Production server listening on http://0.0.0.0:${PORT}`);
 
     // Run database sync in the background (non-blocking)
