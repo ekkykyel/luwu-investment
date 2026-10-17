@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight, ChevronLeft, Building2, ArrowRight, Sparkles } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Building2, ArrowRight } from 'lucide-react';
 import { LOCALIZED_AGENCIES } from '../../data/mppAgenciesData';
 import { Badge } from '../common/Badge';
 import { MPP_TYPOGRAPHY, MPP_CARD_SURFACE } from '../common/MppCard';
-import { getImageUrl, handleImageError, getAgencyLogoScaleClass } from '../../utils/imageFallbacks';
+import { AgencyLogo } from '../common/AgencyLogo';
 
 export interface TenantData {
   id?: string | number;
   name: string;
+  fullName?: string;
   description: string;
   logo: string;
   category?: string;
@@ -25,8 +26,6 @@ export interface InstansiTergabungSectionProps {
   id?: string;
 }
 
-const FALLBACK_LOGO = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='28' fill='%23059669'/%3E%3Cpath d='M60 26L30 46V94H90V46L60 26Z' stroke='%23ffffff' stroke-width='6' stroke-linejoin='round' fill='%2310b981'/%3E%3Ccircle cx='60' cy='62' r='10' fill='%23ffffff'/%3E%3C/svg%3E";
-
 export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> = ({
   tenants: propTenants,
   onSelectTenant,
@@ -34,18 +33,21 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
   className = '',
   id = 'instansi'
 }) => {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const currentLang = i18n?.language || 'id';
   const isEn = currentLang.startsWith('en');
   const isZh = currentLang.startsWith('zh');
 
-  // Format data instansi
+  // Format data instansi with short name for card display and full name for details
   const formattedTenants: TenantData[] = (propTenants && propTenants.length > 0 ? propTenants : LOCALIZED_AGENCIES).map((item: any, idx: number) => {
+    const shortName = item.namaSingkat || item.short_name || item.code || item.nama || item.name || 'Instansi MPP';
+    const fullName = item.namaResmi || item.full_name || item.fullName || item.name || item.nama || shortName;
     return {
       id: item.id || idx,
-      name: item.name || item.nama || 'Instansi MPP',
+      name: shortName,
+      fullName: fullName,
       description: item.description || item.layanan || item.deskripsi || 'Layanan publik dan perizinan terpadu',
-      logo: item.logo || '/logos/dpmptsp.png',
+      logo: item.logo || '',
       category: item.category || item.kategori || 'Instansi Terpadu',
       loket: item.loket || `Gerai ${idx + 1}`,
       rawItem: item
@@ -127,9 +129,7 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
 
   const handleMouseLeave = () => {
     if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
-    resumeTimeoutRef.current = setTimeout(() => {
-      setIsPaused(false);
-    }, 2500);
+    setIsPaused(false);
   };
 
   // Touch Swipe Handlers for mobile
@@ -159,12 +159,12 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
   const startIndex = currentPage * itemsPerPage;
   const visibleTenants = formattedTenants.slice(startIndex, startIndex + itemsPerPage);
 
-  // Smooth, fluid cinematic sliding animation with natural spring dynamics and soft crossfade
+  // Smooth sliding animation
   const slideVariants = {
     enter: (dir: number) => ({
-      x: dir > 0 ? 100 : -100,
+      x: dir > 0 ? 80 : -80,
       opacity: 0,
-      scale: 0.98,
+      scale: 0.99,
     }),
     center: {
       x: 0,
@@ -172,26 +172,33 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
       scale: 1,
       transition: {
         x: { type: 'spring' as const, stiffness: 240, damping: 26, mass: 0.75 },
-        opacity: { duration: 0.35, ease: 'easeOut' as const },
-        scale: { duration: 0.35, ease: 'easeOut' as const },
+        opacity: { duration: 0.3, ease: 'easeOut' as const },
+        scale: { duration: 0.3, ease: 'easeOut' as const },
       }
     },
     exit: (dir: number) => ({
-      x: dir > 0 ? -100 : 100,
+      x: dir > 0 ? -80 : 80,
       opacity: 0,
-      scale: 0.98,
+      scale: 0.99,
       transition: {
         x: { type: 'spring' as const, stiffness: 240, damping: 26, mass: 0.75 },
-        opacity: { duration: 0.25, ease: 'easeIn' as const },
-        scale: { duration: 0.25, ease: 'easeIn' as const },
+        opacity: { duration: 0.2, ease: 'easeIn' as const },
+        scale: { duration: 0.2, ease: 'easeIn' as const },
       }
     })
   };
 
+  // Current counter label (e.g. "1 / 20" or "17 / 20" or "1–3 / 20")
+  const currentCountDisplay = itemsPerPage === 1 
+    ? `${currentPage + 1} / ${formattedTenants.length}`
+    : `${Math.min((currentPage + 1) * itemsPerPage, formattedTenants.length)} / ${formattedTenants.length}`;
+
+  const progressPercent = Math.min(100, Math.round(((currentPage + 1) / totalPages) * 100));
+
   return (
     <section 
       id={id} 
-      className={className || "w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 space-y-8 text-slate-900 dark:text-slate-100 scroll-mt-36 sm:scroll-mt-40"}
+      className={className || "w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-20 space-y-7 text-slate-900 dark:text-slate-100 scroll-mt-36 sm:scroll-mt-40"}
     >
       {/* 1. SECTION HEADER (STANDARDIZED ZERO-PILL EYEBROW & TYPOGRAPHY) */}
       <div className="text-center space-y-2 max-w-3xl mx-auto">
@@ -209,7 +216,7 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
         </p>
       </div>
 
-      {/* 2. CAROUSEL WRAPPER WITH NAVIGATION ARROWS */}
+      {/* 2. CAROUSEL WRAPPER WITH NAVIGATION */}
       <div 
         className="relative"
         onMouseEnter={handleMouseEnter}
@@ -217,28 +224,28 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Navigation Left Button */}
+        {/* Navigation Left Button — Visible on desktop outside of cards; touch devices use swipe & bottom controls */}
         <button
           type="button"
           onClick={() => handleManualAction(handlePrev)}
           aria-label="Halaman Instansi Sebelumnya"
-          className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white dark:bg-[#0F2D4A] border border-slate-200/80 dark:border-white/[0.08] text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/40 flex items-center justify-center transition-all shadow-sm dark:shadow-none active:scale-95 cursor-pointer"
+          className="hidden md:flex absolute -left-4 lg:-left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-xl bg-white dark:bg-[#0F2D4A] border border-slate-200/90 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/40 items-center justify-center transition-all shadow-md active:scale-95 cursor-pointer"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
 
-        {/* Navigation Right Button */}
+        {/* Navigation Right Button — Visible on desktop outside of cards */}
         <button
           type="button"
           onClick={() => handleManualAction(handleNext)}
           aria-label="Halaman Instansi Berikutnya"
-          className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white dark:bg-[#0F2D4A] border border-slate-200/80 dark:border-white/[0.08] text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/40 flex items-center justify-center transition-all shadow-sm dark:shadow-none active:scale-95 cursor-pointer"
+          className="hidden md:flex absolute -right-4 lg:-right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-xl bg-white dark:bg-[#0F2D4A] border border-slate-200/90 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/40 items-center justify-center transition-all shadow-md active:scale-95 cursor-pointer"
         >
           <ChevronRight className="w-5 h-5" />
         </button>
 
         {/* Animated Multi-Card Grid Container */}
-        <div className="overflow-hidden px-1 py-2">
+        <div className="overflow-hidden px-1 py-1">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={currentPage}
@@ -247,17 +254,17 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
               initial="enter"
               animate="center"
               exit="exit"
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 items-stretch"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5 items-stretch"
             >
               {visibleTenants.map((tenant, idx) => (
                 <motion.div
                   key={tenant.id || idx}
-                  whileHover={shouldReduceMotion ? undefined : { y: -5, transition: { duration: 0.2, ease: "easeOut" } }}
+                  whileHover={shouldReduceMotion ? undefined : { y: -4, transition: { duration: 0.18, ease: "easeOut" } }}
                   style={{ willChange: 'transform' }}
-                  className={`relative ${MPP_CARD_SURFACE.paddingLg} ${MPP_CARD_SURFACE.radiusMain} ${MPP_CARD_SURFACE.layer1} hover:border-emerald-500/40 dark:hover:border-white/[0.14] transition-all duration-200 flex flex-col justify-between items-center text-center overflow-hidden group min-h-[320px] sm:min-h-[340px]`}
+                  className={`relative p-4 sm:p-5 ${MPP_CARD_SURFACE.radiusMain} ${MPP_CARD_SURFACE.layer1} hover:border-emerald-500/40 dark:hover:border-white/[0.14] transition-all duration-200 flex flex-col justify-between items-center text-center overflow-hidden group min-h-[280px] sm:min-h-[295px]`}
                 >
                   {/* Top Bar: Loket Number Tag (Category Badge) & Active Status Badge */}
-                  <div className="w-full flex items-center justify-between gap-2 mb-3">
+                  <div className="w-full flex items-center justify-between gap-2 mb-2.5">
                     <Badge variant="category" tone="neutral">
                       {tenant.loket}
                     </Badge>
@@ -266,31 +273,31 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
                     </Badge>
                   </div>
 
-                  {/* Logo Container — Widened frame dengan garis pembungkus tipis dan sangat lembut */}
-                  <div className="w-48 h-32 sm:w-56 sm:h-36 rounded-2xl bg-white/90 dark:bg-[#143755]/90 border border-slate-200/50 dark:border-white/[0.06] flex items-center justify-center px-4 py-2 sm:px-5 sm:py-2.5 mt-1 group-hover:scale-105 group-hover:border-emerald-500/30 dark:group-hover:border-emerald-400/30 transition-all duration-300 overflow-hidden">
-                    <img 
-                      src={getImageUrl(tenant.logo, 'agency')} 
-                      alt={tenant.name} 
-                      className={`max-h-full max-w-full object-contain opacity-100 transition-transform duration-200 ${getAgencyLogoScaleClass(tenant.name)}`}
-                      onError={(e) => handleImageError(e, 'agency')}
+                  {/* Standardized Agency Logo (Token --logo-card: 112px, pure white, 1:1, 10% padding) */}
+                  <div className="my-1.5 group-hover:scale-105 transition-transform duration-300">
+                    <AgencyLogo 
+                      name={tenant.name} 
+                      logo={tenant.logo} 
+                      size="card"
+                      rounded="2xl"
                     />
                   </div>
 
-                  {/* Tenant Details — Standardized Card Title & Body (text-sm) */}
-                  <div className="space-y-1.5 px-1 my-4 w-full">
+                  {/* Tenant Details — Short name on card, clean typography */}
+                  <div className="space-y-1 px-1 my-2.5 w-full">
                     <h3 className={`${MPP_TYPOGRAPHY.cardTitle} line-clamp-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors`}>
                       {tenant.name}
                     </h3>
-                    <p className={`${MPP_TYPOGRAPHY.cardBody} line-clamp-2`}>
+                    <p className={`${MPP_TYPOGRAPHY.cardBody} line-clamp-2 text-xs text-slate-500 dark:text-slate-400`}>
                       {tenant.description}
                     </p>
                   </div>
 
-                  {/* Card Action Button — Layer 2 hover to Primary */}
+                  {/* Card Action Button */}
                   <button 
                     type="button"
                     onClick={() => onSelectTenant?.(tenant.rawItem || tenant)}
-                    className={`w-full min-h-[42px] py-2.5 px-4 ${MPP_CARD_SURFACE.layer2} hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white text-emerald-700 dark:text-emerald-400 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all active:scale-[0.99] cursor-pointer group-hover:bg-emerald-600 group-hover:text-white group-hover:border-emerald-500`}
+                    className={`w-full min-h-[40px] py-2 px-3 ${MPP_CARD_SURFACE.layer2} hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white text-emerald-700 dark:text-emerald-400 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all active:scale-[0.99] cursor-pointer group-hover:bg-emerald-600 group-hover:text-white group-hover:border-emerald-500`}
                   >
                     <span>{isEn ? 'Open Agency Services' : isZh ? '查看机构服务' : 'Buka Layanan Instansi'}</span>
                     <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -302,28 +309,41 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
         </div>
       </div>
 
-      {/* 3. PAGINATION DOTS INDICATOR */}
+      {/* 3. PROGRESS BAR & COUNTER INDICATOR (Replacing 20 dots with "17 / 20" + progress line) */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 pt-2">
-          {Array.from({ length: totalPages }).map((_, idx) => {
-            const isActive = idx === currentPage;
-            return (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => {
-                  setDirection(idx > currentPage ? 1 : -1);
-                  setCurrentPage(idx);
-                }}
-                aria-label={`Buka halaman ${idx + 1}`}
-                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                  isActive 
-                    ? 'w-8 bg-emerald-600 dark:bg-emerald-400 shadow-xs' 
-                    : 'w-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400 dark:hover:bg-slate-600'
-                }`}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 max-w-md mx-auto pt-1 px-2">
+          {/* Mobile Navigation Arrows (Placed safely below card, zero overlap) */}
+          <div className="flex md:hidden items-center gap-2 order-2 sm:order-1">
+            <button
+              type="button"
+              onClick={() => handleManualAction(handlePrev)}
+              aria-label="Sebelumnya"
+              className="w-10 h-10 rounded-xl bg-white dark:bg-[#0F2D4A] border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:text-emerald-600 flex items-center justify-center shadow-xs active:scale-95 cursor-pointer"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleManualAction(handleNext)}
+              aria-label="Selanjutnya"
+              className="w-10 h-10 rounded-xl bg-white dark:bg-[#0F2D4A] border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:text-emerald-600 flex items-center justify-center shadow-xs active:scale-95 cursor-pointer"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Progress Bar & Numerical Counter */}
+          <div className="w-full flex items-center gap-3 order-1 sm:order-2">
+            <div className="flex-1 bg-slate-200/90 dark:bg-slate-700/80 h-1.5 rounded-full overflow-hidden shadow-inner">
+              <div 
+                className="bg-emerald-600 dark:bg-emerald-400 h-full rounded-full transition-all duration-300 ease-out"
+                style={{ width: `${progressPercent}%` }}
               />
-            );
-          })}
+            </div>
+            <div className="text-xs font-mono font-bold text-slate-600 dark:text-slate-400 shrink-0 select-none">
+              <span className="text-emerald-600 dark:text-emerald-400 font-extrabold">{currentCountDisplay}</span>
+            </div>
+          </div>
         </div>
       )}
 

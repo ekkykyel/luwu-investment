@@ -128,6 +128,11 @@ body {
     --bg-elevated: 241 245 249;
     --bg-overlay: #FFFFFF;
     --border-subtle: rgba(226, 232, 240, 0.9);
+
+    /* === UNIFIED AGENCY LOGO TOKENS === */
+    --logo-card: 112px;
+    --logo-modal: 72px;
+    --logo-list: 56px;
   }
 }
 

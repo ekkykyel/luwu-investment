@@ -2692,14 +2692,14 @@ export default function LandingPage({
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12 pointer-events-none transform-gpu"
               />
 
-              {/* Dual-Theme Smooth Aesthetic Vignette & Ultra-Soft Edge Inset Shadow */}
-              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_84%,rgba(248,250,252,0.18)_100%)] dark:bg-[radial-gradient(circle_at_center,transparent_84%,rgba(10,34,56,0.24)_100%)] z-10 transition-colors duration-300" />
-              <div className="absolute inset-0 pointer-events-none rounded-xl sm:rounded-3xl shadow-[inset_0_0_12px_2px_rgba(248,250,252,0.25)] dark:shadow-[inset_0_0_12px_2px_rgba(10,34,56,0.32)] z-10 transition-shadow duration-300" />
+              {/* Soft White Luminous Aesthetic Vignette & Gentle Edge Inset Glow */}
+              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_88%,rgba(255,255,255,0.08)_100%)] dark:bg-[radial-gradient(circle_at_center,transparent_88%,rgba(255,255,255,0.06)_100%)] z-10 transition-colors duration-300" />
+              <div className="absolute inset-0 pointer-events-none rounded-xl sm:rounded-3xl shadow-[inset_0_0_10px_1px_rgba(255,255,255,0.10)] dark:shadow-[inset_0_0_10px_1px_rgba(255,255,255,0.07)] z-10 transition-shadow duration-300" />
 
-              {/* Smooth Soft Scrim Overlays — Gradasi Batas Halus & Alami */}
-              <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-[#F8FAFC]/10 dark:from-[#0A2238]/12 via-transparent to-transparent pointer-events-none z-10" />
-              <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#F8FAFC]/22 dark:from-[#0A2238]/25 via-transparent to-transparent pointer-events-none z-10" />
-              <div className="absolute inset-0 bg-slate-900/[0.03] dark:bg-[#0A2238]/[0.06] pointer-events-none z-10" />
+              {/* Smooth Soft White Scrim Overlays — Gradasi Batas Halus & Alami */}
+              <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-white/[0.06] dark:from-white/[0.04] via-transparent to-transparent pointer-events-none z-10" />
+              <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-white/[0.08] dark:from-white/[0.05] via-transparent to-transparent pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-white/[0.015] pointer-events-none z-10" />
 
               {/* Cartographic Topography Contour Overlay */}
               <TopographicContourOverlay opacity={0.12} />

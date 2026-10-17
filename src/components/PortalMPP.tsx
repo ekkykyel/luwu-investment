@@ -49,6 +49,7 @@ import { AntiCorruptionBanner } from './mpp/AntiCorruptionBanner';
 import { OnlineQueueOnboardingSection } from './mpp/OnlineQueueOnboardingSection';
 import { WaveSectionDivider } from './common/WaveSectionDivider';
 import { InstansiTergabungSection } from './mpp/InstansiTergabungSection';
+import { AgencyLogo } from './common/AgencyLogo';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
@@ -162,6 +163,8 @@ const FACILITIES_CONFIG = [
 
 export interface InstansiItem {
   nama: string;
+  namaSingkat?: string;
+  namaResmi?: string;
   nama_en?: string;
   nama_zh?: string;
   fullName: string;
@@ -5634,104 +5637,139 @@ export default function PortalMPP() {
             onClick={() => setSelectedAgencyDetail(null)}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.92, y: 25 }}
+              initial={{ opacity: 0, scale: 0.94, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.94, y: 20 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="relative w-full max-w-2xl bg-white dark:bg-surface border border-slate-200 dark:border-white/10 rounded-2xl md:rounded-3xl p-5 sm:p-7 shadow-xl overflow-y-auto text-slate-900 dark:text-white font-sans flex flex-col max-h-[90dvh] md:max-h-[85dvh]"
+              className="relative w-full max-w-2xl bg-white dark:bg-surface border border-slate-200 dark:border-white/10 rounded-2xl md:rounded-3xl p-4 sm:p-6 shadow-xl overflow-y-auto text-slate-900 dark:text-white font-sans flex flex-col max-h-[90dvh] md:max-h-[85dvh]"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header Modal Detail Instansi */}
-              <div className="flex items-start justify-between pb-4 sm:pb-5 border-b border-slate-100 dark:border-white/10 gap-3 sm:gap-4">
-                <div className="flex items-center gap-3.5 sm:gap-4 flex-1 min-w-0">
-                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white dark:bg-[#143755] border border-slate-200/90 dark:border-white/10 flex items-center justify-center shrink-0 overflow-hidden shadow-sm p-1.5 sm:p-2">
-                    <img 
-                      src={getImageUrl(activeAgency.logo, 'agency')} 
-                      alt={activeAgency.nama}
-                      referrerPolicy="no-referrer"
-                      className={`max-h-full max-w-full object-contain transition-transform duration-200 ${getAgencyLogoScaleClass(activeAgency.nama || activeAgency.fullName)}`}
-                      onError={(e) => handleImageError(e, 'agency')}
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                      <span className="px-3 py-0.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 font-sans">
-                        {activeAgency.kategori || "Instansi Terintegrasi"}
-                      </span>
-                      <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1 font-sans">
-                        <MapPin className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                        {activeAgency.loket || "Gerai MPP Simpurusiang"}
-                      </span>
-                    </div>
-                    <h3 className="text-base sm:text-lg md:text-xl font-extrabold text-slate-900 dark:text-white font-sans leading-snug">
-                      {activeAgency.fullName || activeAgency.nama}
-                    </h3>
-                  </div>
-                </div>
+              {(() => {
+                const fullCategory = activeAgency.kategori || "Instansi Terpadu";
+                let shortCategory = fullCategory;
+                const catLower = fullCategory.toLowerCase();
+                if (catLower.includes("daerah") || catLower.includes("opd")) {
+                  shortCategory = "Pemerintah Daerah";
+                } else if (catLower.includes("vertikal") || catLower.includes("kementerian") || catLower.includes("lembaga")) {
+                  shortCategory = "Kementerian / Lembaga";
+                } else if (catLower.includes("bumn") || catLower.includes("bumd") || catLower.includes("bank")) {
+                  shortCategory = "BUMN / BUMD";
+                } else if (catLower.includes("polisi") || catLower.includes("hukum") || catLower.includes("kejaksaan")) {
+                  shortCategory = "Kepolisian & Hukum";
+                }
 
-                <button
-                  type="button"
-                  onClick={() => setSelectedAgencyDetail(null)}
-                  className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shrink-0 cursor-pointer"
-                  aria-label={t("common.close", "Tutup")}
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+                const namaResmi = activeAgency.namaResmi || activeAgency.fullName || activeAgency.nama;
 
-              {/* Deskripsi & Jam Pelayanan */}
-              <div className="mt-5 space-y-4">
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-white/5">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1 font-sans">
-                    {t("agencyModal.about")}
-                  </span>
-                  <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
-                    {activeAgency.deskripsi || activeAgency.layanan}
-                  </p>
-                  <div className="mt-3 pt-3 border-t border-slate-200/60 dark:border-white/5 flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
-                    <Clock3 className="w-4 h-4" />
-                    <span>{t("agencyModal.schedule")}: {activeAgency.jamLayanan || "Senin - Kamis (07:30 - 16:00) | Jumat (07:30 - 16:30 WITA)"}</span>
-                  </div>
-                </div>
+                return (
+                  <>
+                    {/* Header Modal Detail Instansi: Grid [Logo 72px | 1fr | Tombol Tutup 44px] */}
+                    <div className="grid grid-cols-[72px_1fr_44px] gap-x-3.5 sm:gap-x-4 gap-y-1.5 pb-4 border-b border-slate-100 dark:border-white/10 items-start">
+                      {/* Kolom 1: Logo 72px mencakup 2 baris */}
+                      <div className="col-start-1 row-start-1 row-span-2">
+                        <AgencyLogo 
+                          name={namaResmi} 
+                          logo={activeAgency.logo} 
+                          size="modal" 
+                          rounded="xl"
+                        />
+                      </div>
 
-                {/* Daftar Layanan Terintegrasi */}
-                <div>
-                  <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-2.5 font-sans flex items-center gap-2">
-                    <FileCheck className="w-4 h-4 text-emerald-500" />
-                    <span>{t("agencyModal.serviceList")}</span>
-                  </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-                    {(activeAgency.layananList || [activeAgency.layanan]).map((layanan, lIdx) => (
-                      <div 
-                        key={lIdx}
-                        className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/60 dark:border-white/5 flex items-start gap-2.5"
-                      >
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                        <span className="text-xs font-medium text-slate-800 dark:text-slate-200 leading-tight">
-                          {layanan}
+                      {/* Kolom 2 Baris 1: Badge Kategori (rounded-md, 11px, nowrap) + Chip Lantai */}
+                      <div className="col-start-2 row-start-1 flex flex-wrap items-center gap-2 min-w-0 pr-1">
+                        <span 
+                          title={fullCategory}
+                          className="px-2 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 whitespace-nowrap cursor-default"
+                        >
+                          {shortCategory}
+                        </span>
+                        <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1 whitespace-nowrap">
+                          <MapPin className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                          {activeAgency.loket || "Lantai 1"}
                         </span>
                       </div>
-                    ))}
-                  </div>
-                </div>
 
-                {/* Ketentuan & Persyaratan Umum */}
-                {activeAgency.syaratUmum && activeAgency.syaratUmum.length > 0 && (
-                  <div className="p-4 rounded-2xl bg-blue-50/80 dark:bg-sky-950/30 border border-blue-200 dark:border-sky-800/50">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700 dark:text-sky-400 block mb-2 font-sans flex items-center gap-1.5">
-                      <AlertCircle className="w-3.5 h-3.5" />
-                      <span>{t("agencyModal.requirements")}</span>
-                    </span>
-                    <ul className="space-y-1 text-xs text-slate-600 dark:text-slate-300">
-                      {activeAgency.syaratUmum.map((syarat, sIdx) => (
-                        <li key={sIdx} className="flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shrink-0"></span>
-                          <span>{syarat}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                      {/* Kolom 3 Baris 1: Tombol Tutup 44px (touch target >= 44px, tidak menimpa judul) */}
+                      <div className="col-start-3 row-start-1 flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedAgencyDetail(null)}
+                          className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shrink-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          aria-label={t("common.close", "Tutup")}
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
+
+                      {/* Kolom 2-3 Baris 2: Judul Memanjang ke Tepi Kanan di Bawah Tombol Tutup */}
+                      <div className="col-start-2 col-span-2 row-start-2 min-w-0 pt-0.5">
+                        <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-snug line-clamp-3">
+                          {namaResmi}
+                        </h3>
+                      </div>
+                    </div>
+
+                    {/* Deskripsi & Jam Pelayanan */}
+                    <div className="mt-4 space-y-3.5">
+                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-white/5">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">
+                          {t("agencyModal.about", "Tentang Instansi")}
+                        </span>
+                        <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                          {activeAgency.deskripsi && activeAgency.deskripsi !== "test" ? activeAgency.deskripsi : activeAgency.layanan}
+                        </p>
+                        
+                        {/* Format Jam Layanan Standar E1 */}
+                        <div className="mt-3 pt-3 border-t border-slate-200/60 dark:border-white/5 flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300">
+                          <Clock3 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                          <div>
+                            <span className="font-bold text-emerald-700 dark:text-emerald-400">Jam Layanan: </span>
+                            <span>{activeAgency.jamLayanan || "Senin–Kamis 07.30–16.00 · Jumat 07.30–16.30 WITA"}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Daftar Layanan Terintegrasi (Jarak Antar-Butir gap-2 / 8px Seragam) */}
+                      <div>
+                        <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                          <FileCheck className="w-4 h-4 text-emerald-500" />
+                          <span>{t("agencyModal.serviceList", "Daftar Layanan")}</span>
+                        </h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {(activeAgency.layananList || [activeAgency.layanan]).map((layanan, lIdx) => (
+                            <div 
+                              key={lIdx}
+                              className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/60 dark:border-white/5 flex items-start gap-2"
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                              <span className="text-xs font-medium text-slate-800 dark:text-slate-200 leading-tight">
+                                {layanan}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Ketentuan & Persyaratan Umum */}
+                      {activeAgency.syaratUmum && activeAgency.syaratUmum.length > 0 && (
+                        <div className="p-3.5 rounded-2xl bg-blue-50/80 dark:bg-sky-950/30 border border-blue-200 dark:border-sky-800/50">
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700 dark:text-sky-400 block mb-1.5 flex items-center gap-1.5">
+                            <AlertCircle className="w-3.5 h-3.5" />
+                            <span>{t("agencyModal.requirements", "Persyaratan Umum")}</span>
+                          </span>
+                          <ul className="space-y-1 text-xs text-slate-600 dark:text-slate-300">
+                            {activeAgency.syaratUmum.map((syarat, sIdx) => (
+                              <li key={sIdx} className="flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shrink-0"></span>
+                                <span>{syarat}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                );
+              })()}
 
                 {/* Tombol Aksi Bawah */}
                 <div className="pt-3 flex flex-col sm:flex-row items-center gap-3">
@@ -5771,9 +5809,8 @@ export default function PortalMPP() {
                     <span>{t("agencyModal.helpdeskBtn")}</span>
                   </button>
                 </div>
-              </div>
-            </motion.div>
-          </div>
+              </motion.div>
+            </div>
           );
         })()}
 

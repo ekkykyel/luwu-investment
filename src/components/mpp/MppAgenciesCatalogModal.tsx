@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   X,
@@ -10,31 +10,33 @@ import {
   CheckCircle2,
   Clock,
   Sparkles,
-  ExternalLink,
-  Layers,
-  FileText,
-  PhoneCall,
-  Zap,
-  Filter
+  Layers
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { getImageUrl, handleImageError, getAgencyLogoScaleClass } from '../../utils/imageFallbacks';
+import { AgencyLogo } from '../common/AgencyLogo';
 
-interface AgencyItem {
-  nama: string;
-  fullName?: string;
-  layanan: string;
-  logo: string;
-  kategori?: string;
-  loket?: string;
-  jamLayanan?: string;
-  deskripsi?: string;
-  layananList?: string[];
-  syaratUmum?: string[];
-  telepon?: string;
-  popularServices?: string[];
-  status?: string;
-  [key: string]: any;
+function checkMppOperatingHours(): boolean {
+  try {
+    const now = new Date();
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const wita = new Date(utc + (3600000 * 8)); // WITA UTC+8
+    const day = wita.getDay(); // 0 Sun, 1 Mon, 5 Fri, 6 Sat
+    const hours = wita.getHours();
+    const minutes = wita.getMinutes();
+    const timeNum = hours + (minutes / 60);
+
+    // Senin - Kamis: 07:30 - 16:00 WITA
+    if (day >= 1 && day <= 4) {
+      return timeNum >= 7.5 && timeNum < 16.0;
+    }
+    // Jumat: 07:30 - 16:30 WITA
+    if (day === 5) {
+      return timeNum >= 7.5 && timeNum < 16.5;
+    }
+    return false;
+  } catch (e) {
+    return true;
+  }
 }
 
 interface MppAgenciesCatalogModalProps {
@@ -53,20 +55,33 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
   isDark: propIsDark,
 }) => {
   const isDark = propIsDark !== undefined ? propIsDark : (typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') : true);
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const currentLang = i18n.language || 'id';
   const isEn = currentLang.startsWith('en');
   const isZh = currentLang.startsWith('zh');
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const tabsContainerRef = useRef<HTMLDivElement>(null);
+  const tabButtonRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
+
+  useEffect(() => {
+    if (selectedCategory && tabButtonRefs.current[selectedCategory]) {
+      tabButtonRefs.current[selectedCategory]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center',
+      });
+    }
+  }, [selectedCategory]);
+
+  const isMppOpenNow = checkMppOperatingHours();
 
   // Categorize agencies automatically with robust categoryId assignment
   const categorizedAgencies = useMemo(() => {
     return (agencies || []).map((ag) => {
       const catLower = String(ag.kategori || ag.kategori_en || ag.kategori_zh || '').toLowerCase();
       const nameLower = String(ag.nama || '').toLowerCase();
-      const fullNameLower = String(ag.fullName || ag.fullName_en || ag.fullName_zh || '').toLowerCase();
 
       let mainCategory = 'opd';
 
@@ -86,20 +101,18 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
       ) {
         mainCategory = 'hukum';
       } else {
-        // Default category is OPD Pemkab Luwu (Dinas, Badan, Kantor Daerah)
         mainCategory = 'opd';
       }
 
-      // Readable Category Display Label based on language
       let displayCategory = ag.kategori;
       if (mainCategory === 'opd') {
-        displayCategory = isEn ? 'Luwu Regional Agencies (OPD)' : isZh ? '鲁乌县政府职能部门 (OPD)' : 'OPD Pemkab Luwu';
+        displayCategory = isEn ? 'Regional (OPD)' : isZh ? '政府职能局 (OPD)' : 'OPD Pemkab';
       } else if (mainCategory === 'vertikal') {
-        displayCategory = isEn ? 'Ministries & State Agencies' : isZh ? '部委与国家直属机构' : 'Kementerian / Lembaga';
+        displayCategory = isEn ? 'State Agencies' : isZh ? '部委与垂直机构' : 'Kementerian / Lembaga';
       } else if (mainCategory === 'bumn') {
-        displayCategory = isEn ? 'SOE / BUMD & Banking' : isZh ? '国有企业 / 地方国企与银行' : 'BUMN / BUMD & Bank';
+        displayCategory = isEn ? 'SOE / Bank' : isZh ? '国企/银行' : 'BUMN / BUMD / Bank';
       } else if (mainCategory === 'hukum') {
-        displayCategory = isEn ? 'Police & Legal Services' : isZh ? '警察与司法政法机构' : 'Kepolisian & Hukum';
+        displayCategory = isEn ? 'Police & Law' : isZh ? '公安与司法' : 'Kepolisian & Hukum';
       }
 
       return {
@@ -120,28 +133,35 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
     };
 
     return [
-      { id: 'all', label: isEn ? 'All Agencies' : isZh ? '全部入驻部门' : 'Semua Instansi', count: counts.all },
-      { id: 'opd', label: isEn ? 'Luwu Regional Agencies' : isZh ? '县政府职能局 (OPD)' : 'OPD Pemkab Luwu', count: counts.opd },
-      { id: 'vertikal', label: isEn ? 'Ministries & State Agencies' : isZh ? '部委与垂直机构' : 'Kementerian / Lembaga', count: counts.vertikal },
-      { id: 'bumn', label: isEn ? 'SOE / BUMD & Banks' : isZh ? '国企/银行 (BUMN)' : 'BUMN / BUMD / Bank', count: counts.bumn },
-      { id: 'hukum', label: isEn ? 'Police & Law' : isZh ? '公安交警与司法' : 'Kepolisian & Hukum', count: counts.hukum },
+      { id: 'all', label: isEn ? 'All Agencies' : isZh ? '全部机构' : 'Semua Instansi', count: counts.all },
+      { id: 'opd', label: isEn ? 'Luwu OPD' : isZh ? 'OPD 县局' : 'OPD Pemkab', count: counts.opd },
+      { id: 'vertikal', label: isEn ? 'Ministries' : isZh ? '部委与垂直' : 'Kementerian / Lembaga', count: counts.vertikal },
+      { id: 'bumn', label: isEn ? 'SOE & Banks' : isZh ? '国企/银行' : 'BUMN / Bank', count: counts.bumn },
+      { id: 'hukum', label: isEn ? 'Police & Law' : isZh ? '公安与司法' : 'Kepolisian & Hukum', count: counts.hukum },
     ];
   }, [categorizedAgencies, isEn, isZh]);
 
+  const totalServicesCount = useMemo(() => {
+    return (agencies || []).reduce((acc, a) => {
+      if (Array.isArray(a.layananList) && a.layananList.length > 0) {
+        return acc + a.layananList.length;
+      }
+      return acc + (a.layanan ? 1 : 1);
+    }, 0);
+  }, [agencies]);
+
   const filteredAgencies = useMemo(() => {
     return categorizedAgencies.filter((ag) => {
-      // Category filter
       if (selectedCategory !== 'all') {
         if (ag.categoryId !== selectedCategory) {
           return false;
         }
       }
 
-      // Search query filter
       if (!searchQuery.trim()) return true;
       const q = searchQuery.toLowerCase();
       const matchName = (ag.nama || '').toLowerCase().includes(q);
-      const matchFullName = (ag.fullName || '').toLowerCase().includes(q);
+      const matchFullName = (ag.fullName || ag.namaResmi || '').toLowerCase().includes(q);
       const matchServices = (ag.layanan || '').toLowerCase().includes(q);
       const matchLoket = (ag.loket || '').toLowerCase().includes(q);
       const matchLayananList = Array.isArray(ag.layananList) && ag.layananList.some((s: string) => String(s).toLowerCase().includes(q));
@@ -154,98 +174,117 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
   return (
     <AnimatePresence>
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-surface/60 backdrop-blur-sm overflow-y-auto font-sans"
+        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/70 backdrop-blur-sm overflow-y-auto font-sans"
         onClick={onClose}
       >
         <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.95 }}
+          initial={{ opacity: 0, y: 25, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 30, scale: 0.95 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-          className={`relative w-full max-w-4xl bg-white dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border ${
+          exit={{ opacity: 0, y: 25, scale: 0.96 }}
+          transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+          className={`relative w-full max-w-4xl bg-white dark:bg-[#0F2942] rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92dvh] md:max-h-[88dvh] border ${
             isDark
-              ? 'border-slate-800 text-white shadow-black/25'
-              : 'border-slate-200 text-slate-900 shadow-slate-300/50'
+              ? 'border-slate-800 text-white shadow-black/40'
+              : 'border-slate-200 text-slate-900 shadow-slate-300/60'
           }`}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Header Mobile Handle & Title Bar */}
-          <div className="relative py-4 sm:py-5 px-5 sm:px-7 border-b border-slate-200/80 dark:border-slate-800 shrink-0 bg-slate-50/80 dark:bg-surface/90 backdrop-blur-md">
+          {/* Header Bar — High-contrast title and clean layout */}
+          <div className="relative py-3.5 sm:py-4 px-4 sm:px-6 border-b border-slate-200/90 dark:border-white/10 shrink-0 bg-white dark:bg-[#0F2942]">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-inner">
-                  <Building2 className="w-6 h-6" />
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-inner">
+                  <Building2 className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
                       {isEn ? 'Official Directory' : isZh ? '官方机构名录' : 'Direktori Resmi'}
                     </span>
                     <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 dark:text-slate-400">
                       <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> {isEn ? 'MPP Simpurusiang Integrated' : isZh ? '辛普鲁西亚政务中心一体化' : 'Terintegrasi MPP Simpurusiang'}
                     </span>
                   </div>
-                  <h2 className="text-base sm:text-lg md:text-xl font-extrabold tracking-tight">
+                  <h2 className="text-base sm:text-lg md:text-xl font-black tracking-tight text-slate-900 dark:text-white">
                     {isEn ? 'Integrated Agencies & Public Service Booths' : isZh ? '已入驻部门机构与公共服务窗口' : 'Instansi & Layanan Publik Tergabung'}
                   </h2>
                 </div>
               </div>
 
+              {/* Close Button: Touch target >= 44px */}
               <button
                 type="button"
                 onClick={onClose}
-                className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shrink-0 cursor-pointer"
+                className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shrink-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 aria-label="Tutup Modal"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Quick KPI Stat Pills Bar */}
-            <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-200/60 dark:border-slate-800">
-              <div className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 flex items-center gap-2">
-                <Building2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                <div className="min-w-0">
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block leading-none">{isEn ? 'Total Agencies' : isZh ? '入驻部门总数' : 'Total Instansi'}</span>
-                  <span className="text-xs font-black text-slate-900 dark:text-white">{categorizedAgencies.length} {isEn ? 'Booths' : isZh ? '个窗口' : 'Gerai'}</span>
+            {/* Quick KPI Stat Bar (Requirement E: single line, short labels, big number inline with small unit, "Buka") */}
+            <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-200/90 dark:border-white/10">
+              {/* Instansi */}
+              <div className="px-2.5 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/80 flex items-center justify-between gap-1.5 min-w-0">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <Building2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300 truncate">
+                    {isEn ? 'Agencies' : isZh ? '机构' : 'Instansi'}
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-1 shrink-0 whitespace-nowrap">
+                  <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-none">{categorizedAgencies.length}</span>
+                  <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">{isEn ? 'Gerai' : isZh ? '个' : 'Gerai'}</span>
                 </div>
               </div>
 
-              <div className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 flex items-center gap-2">
-                <Layers className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                <div className="min-w-0">
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block leading-none">{isEn ? 'Total Services' : isZh ? '服务事项总数' : 'Total Layanan'}</span>
-                  <span className="text-xs font-black text-slate-900 dark:text-white">148+ {isEn ? 'Services' : isZh ? '项服务' : 'Layanan'}</span>
+              {/* Layanan */}
+              <div className="px-2.5 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/80 flex items-center justify-between gap-1.5 min-w-0">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <Layers className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                  <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300 truncate">
+                    {isEn ? 'Services' : isZh ? '事项' : 'Layanan'}
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-1 shrink-0 whitespace-nowrap">
+                  <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-none">{totalServicesCount > 0 ? `${totalServicesCount}+` : '84+'}</span>
+                  <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">{isEn ? 'Jenis' : isZh ? '项' : 'Jenis'}</span>
                 </div>
               </div>
 
-              <div className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 flex items-center gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                <div className="min-w-0">
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold block leading-none">{isEn ? 'Service Hours Status' : isZh ? '窗口运行状态' : 'Status Jam Buka'}</span>
-                  <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    {isEn ? 'Active & Open' : isZh ? '正常办理中' : 'Aktif Buka'}
+              {/* Status */}
+              <div className="px-2.5 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/80 flex items-center justify-between gap-1.5 min-w-0">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300 truncate">
+                    {isEn ? 'Status' : isZh ? '状态' : 'Status'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 shrink-0 whitespace-nowrap">
+                  <span className={`w-1.5 h-1.5 rounded-full ${isMppOpenNow ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+                  <span className={`text-xs sm:text-sm font-black ${isMppOpenNow ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500'}`}>
+                    {isMppOpenNow ? (isEn ? 'Open' : isZh ? '开放' : 'Buka') : (isEn ? 'Closed' : isZh ? '关闭' : 'Tutup')}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Instant Search Bar */}
-            <div className="relative mt-3">
+            {/* Search Input (Short placeholder) */}
+            <div className="relative mt-2.5">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={isEn ? "Search agency or service name (e.g. ID card, Business License, Tax, Police)..." : isZh ? "搜索部门或服务事项 (如: 身份证, 营业执照, 税务, 驾照, 土地局)..." : "Cari instansi atau nama layanan (cth: KTP, NIB, SIM, PBB, BPN)..."}
-                className="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-inner"
+                placeholder="Cari instansi atau layanan"
+                className="w-full pl-10 pr-10 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg"
+                  aria-label="Hapus Pencarian"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -253,64 +292,66 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
             </div>
           </div>
 
-          {/* Category Quick Filter Tabs */}
-          <div className="px-5 sm:px-7 py-2.5 bg-slate-100/70 dark:bg-slate-800/50 border-b border-slate-200/80 dark:border-slate-800 shrink-0 overflow-x-auto no-scrollbar">
-            <div className="flex items-center gap-2 min-w-max">
-              {categoriesList.map((cat) => {
-                const isActive = selectedCategory === cat.id;
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
-                    className={`min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
-                      isActive
-                        ? 'bg-emerald-500 text-slate-950 shadow-md shadow-black/25 font-black'
-                        : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-200 dark:hover:bg-slate-700'
-                    }`}
-                  >
-                    <span>{cat.label}</span>
-                    <span className={`px-2 py-0.5 text-[10px] rounded-full font-extrabold ${
-                      isActive ? 'bg-base/20 text-slate-950' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300'
-                    }`}>
-                      {cat.count}
-                    </span>
-                  </button>
-                );
-              })}
+          {/* Category Chips Bar: Edge fades + Auto-scroll */}
+          <div className="relative border-b border-slate-200/90 dark:border-white/10 shrink-0 bg-slate-100/70 dark:bg-slate-800/60">
+            <div className="pointer-events-none absolute left-0 inset-y-0 w-6 bg-gradient-to-r from-slate-100 dark:from-slate-800 to-transparent z-10" />
+            <div className="pointer-events-none absolute right-0 inset-y-0 w-6 bg-gradient-to-l from-slate-100 dark:from-slate-800 to-transparent z-10" />
+            
+            <div ref={tabsContainerRef} className="px-4 sm:px-6 py-2 overflow-x-auto no-scrollbar scroll-smooth">
+              <div className="flex items-center gap-2 min-w-max">
+                {categoriesList.map((cat) => {
+                  const isActive = selectedCategory === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      ref={(el) => { tabButtonRefs.current[cat.id] = el; }}
+                      onClick={() => setSelectedCategory(cat.id)}
+                      className={`min-h-[34px] px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                        isActive
+                          ? 'bg-emerald-600 text-white shadow-sm font-black'
+                          : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-200 dark:hover:bg-slate-700'
+                      }`}
+                    >
+                      <span>{cat.label}</span>
+                      <span className={`px-1.5 py-0.2 text-[10px] rounded-full font-extrabold ${
+                        isActive ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300'
+                      }`}>
+                        {cat.count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
-          {/* Modal Main Content Area (Symmetric Grid) */}
-          <div className="p-5 sm:p-7 overflow-y-auto space-y-4">
+          {/* Modal Main Content Area (Requirement E: body padding p-4 / 16px) */}
+          <div className="p-4 overflow-y-auto space-y-3">
             {filteredAgencies.length === 0 ? (
               <div className="py-12 text-center space-y-3">
                 <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
                   <Search className="w-6 h-6" />
                 </div>
                 <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                  {isEn ? `No agencies or services found for "${searchQuery}"` : isZh ? `未找到与 "${searchQuery}" 相关的部门或服务` : `Tidak ditemukan instansi atau layanan dengan kata kunci "${searchQuery}"`}
+                  {isEn ? `No agencies found for "${searchQuery}"` : `Tidak ditemukan instansi dengan kata kunci "${searchQuery}"`}
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {isEn ? 'Try keywords like "Disdukcapil", "ID Card", "License", or "BPJS".' : isZh ? '请尝试搜索 "Disdukcapil", "身份证", "许可证", 或 "BPJS"。' : 'Coba kata kunci lain seperti "Disdukcapil", "KTP", "Perizinan", atau "BPJS".'}
-                </p>
                 <button
                   type="button"
                   onClick={() => {
                     setSearchQuery('');
                     setSelectedCategory('all');
                   }}
-                  className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 text-xs font-bold shadow-md cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold shadow-md cursor-pointer"
                 >
-                  {isEn ? 'Reset Search' : isZh ? '重置搜索' : 'Reset Pencarian'}
+                  Reset Pencarian
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {filteredAgencies.map((agency, idx) => {
                   const isOpd = agency.categoryId === 'opd';
                   const isVertikal = agency.categoryId === 'vertikal';
                   const isBumn = agency.categoryId === 'bumn';
-                  const isHukum = agency.categoryId === 'hukum';
 
                   const badgeClass = isOpd
                     ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20'
@@ -320,62 +361,64 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
                     ? 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20'
                     : 'bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20';
 
+                  const shortName = agency.namaSingkat || agency.short_name || agency.nama || 'Instansi MPP';
+
                   return (
                     <motion.div
                       key={agency.nama || idx}
-                      initial={{ opacity: 0, y: 15 }}
+                      initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.2, delay: idx * 0.03 }}
-                      className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 hover:border-emerald-500/50 hover:shadow-lg transition-all flex flex-col justify-between group"
+                      transition={{ duration: 0.18, delay: Math.min(0.2, idx * 0.02) }}
+                      className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-white/10 hover:border-emerald-500/50 hover:shadow-md transition-all flex flex-col justify-between group overflow-hidden"
                     >
                       <div>
-                        {/* Card Top: Logo, Kategori & Loket Badge */}
-                        <div className="flex items-start justify-between gap-3 mb-3">
-                          <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white dark:bg-[#143755] border border-slate-200/90 dark:border-white/10 p-1.5 sm:p-2 flex items-center justify-center shrink-0 overflow-hidden shadow-sm group-hover:scale-105 group-hover:border-emerald-500/40 transition-all">
-                            <img
-                              src={getImageUrl(agency.logo, 'agency')}
-                              alt={agency.nama}
-                              referrerPolicy="no-referrer"
-                              className={`max-h-full max-w-full object-contain transition-transform duration-200 ${getAgencyLogoScaleClass(agency.nama || agency.fullName)}`}
-                              onError={(e) => handleImageError(e, 'agency')}
-                            />
-                          </div>
+                        {/* Card Header: Logo 56px + Category & Loket + Short Name */}
+                        <div className="flex items-start gap-3 mb-2">
+                          <AgencyLogo
+                            name={shortName}
+                            logo={agency.logo}
+                            size="list"
+                            rounded="xl"
+                            className="shrink-0 group-hover:scale-105 transition-transform"
+                          />
 
-                          <div className="flex flex-col items-end gap-1 shrink-0">
-                            <span className={`text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full border ${badgeClass}`}>
-                              {agency.calculatedCategory}
-                            </span>
-                            <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                              <MapPin className="w-3 h-3 text-emerald-500" />
-                              {agency.loket || (isEn ? 'MPP Booth' : isZh ? '政务大厅窗口' : 'Gerai MPP')}
-                            </span>
+                          <div className="min-w-0 flex-1">
+                            {/* Badges on own line with min-w-0 / truncate to prevent any overflow */}
+                            <div className="flex items-center gap-1.5 flex-wrap mb-1 min-w-0">
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${badgeClass} truncate max-w-[150px]`}>
+                                {agency.calculatedCategory}
+                              </span>
+                              <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1 shrink-0">
+                                <MapPin className="w-3 h-3 text-emerald-500" />
+                                {agency.loket || 'Lantai 1'}
+                              </span>
+                            </div>
+
+                            <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white leading-snug line-clamp-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                              {shortName}
+                            </h3>
                           </div>
                         </div>
 
-                        {/* Agency Name */}
-                        <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white leading-snug mb-1.5 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                          {agency.fullName || agency.nama}
-                        </h3>
-
                         {/* Services Summary */}
-                        <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed mb-3 text-justify">
+                        <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed mb-2">
                           {agency.layanan}
                         </p>
 
                         {/* Service Chips Highlight */}
                         {Array.isArray(agency.layananList) && agency.layananList.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 mb-3">
-                            {agency.layananList.slice(0, 3).map((sItem: string, sIdx: number) => (
+                          <div className="flex flex-wrap gap-1 mb-2">
+                            {agency.layananList.slice(0, 2).map((sItem: string, sIdx: number) => (
                               <span
                                 key={sIdx}
-                                className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-200/60 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 line-clamp-1 max-w-[220px]"
+                                className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-700/70 text-slate-700 dark:text-slate-300 truncate max-w-[170px]"
                               >
                                 {sItem}
                               </span>
                             ))}
-                            {agency.layananList.length > 3 && (
+                            {agency.layananList.length > 2 && (
                               <span className="text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 self-center">
-                                +{agency.layananList.length - 3} {isEn ? 'more' : isZh ? '项' : 'lainnya'}
+                                +{agency.layananList.length - 2} lainnya
                               </span>
                             )}
                           </div>
@@ -383,10 +426,10 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
                       </div>
 
                       {/* Bottom Action Footer */}
-                      <div className="pt-3 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between gap-2">
-                        <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          <span>Senin-Kamis (07.30-16.00) | Jumat (07.30-16.30 WITA)</span>
+                      <div className="pt-2.5 border-t border-slate-200/80 dark:border-white/10 flex items-center justify-between gap-2 mt-1">
+                        <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1 truncate">
+                          <Clock className="w-3 h-3 shrink-0" />
+                          <span className="truncate">Senin–Kamis 07.30–16.00 · Jumat 07.30–16.30 WITA</span>
                         </span>
 
                         <button
@@ -395,9 +438,9 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
                             onClose();
                             onSelectAgency(agency);
                           }}
-                          className="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs flex items-center gap-1 transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
+                          className="px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1 transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
                         >
-                          <span>{isEn ? 'View Details' : isZh ? '查看详情' : 'Lihat Detail'}</span>
+                          <span>{isEn ? 'Details' : 'Detail'}</span>
                           <ChevronRight className="w-3.5 h-3.5" />
                         </button>
                       </div>
@@ -409,16 +452,17 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
           </div>
 
           {/* Modal Footer Bar */}
-          <div className="p-4 px-5 sm:px-7 bg-slate-50 dark:bg-slate-800/90 border-t border-slate-200/80 dark:border-slate-800 shrink-0 flex items-center justify-between gap-3">
-            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-500" /> {isEn ? 'Luwu Regency Integrated One-Stop Public Service' : isZh ? '鲁乌县一门式公共政务综合服务大厅' : 'Layanan Terintegrasi Satu Pintu Pemkab Luwu'}
+          <div className="p-3.5 px-4 sm:px-6 bg-slate-50 dark:bg-slate-800/90 border-t border-slate-200/90 dark:border-white/10 shrink-0 flex items-center justify-between gap-3">
+            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5 truncate">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <span className="truncate">Layanan Terintegrasi Satu Pintu Pemkab Luwu</span>
             </span>
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 text-xs font-extrabold transition-all cursor-pointer shadow-md"
+              className="px-4 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 text-xs font-extrabold transition-all cursor-pointer shadow-sm shrink-0"
             >
-              {isEn ? 'Close' : isZh ? '关闭' : 'Selesai'}
+              {isEn ? 'Close' : 'Tutup'}
             </button>
           </div>
         </motion.div>
@@ -427,3 +471,4 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
   );
 };
 
+export default MppAgenciesCatalogModal;

@@ -18,6 +18,7 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import multer from "multer";
 import bcrypt from "bcryptjs";
+import sharp from "sharp";
 import { createRequire } from "module";
 
 // Completely removed pdf-parse requirements to prevent serverless crash
@@ -4303,6 +4304,175 @@ app.post("/api/storage/upload", upload.single('photo'), async (req, res) => {
   } catch (err: any) {
     console.error("Error uploading photo via storage upload alias:", err);
     res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * Admin Pipeline Unggah Logo Instansi (Standardized Square 512px Canvas WebP q85)
+ * - Validasi tipe: PNG, JPG, WebP, SVG
+ * - Validasi batas: sisi pendek >= 128 px, ukuran <= 2 MB
+ * - Sanitasi SVG (Anti-XSS / script injection)
+ * - Pangkas margin transparan/putih (trimming)
+ * - Tempatkan pada kanvas persegi 512 px dengan padding aman 8% (area aktif 430 px)
+ * - Keluaran WebP q85 + simpan berkas asli
+ * - Deteksi peringatan rasio > 2.5 atau resolusi rendah
+ */
+app.post("/api/admin/upload-agency-logo", upload.single('logo'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: "Berkas logo wajib dilampirkan" });
+
+    // 1. Validasi Ukuran <= 2 MB
+    if (req.file.size > 2 * 1024 * 1024) {
+      return res.status(400).json({ error: "Ukuran berkas logo melebihi batas maksimal 2 MB" });
+    }
+
+    // 2. Validasi Tipe Berkas
+    const mime = req.file.mimetype || "";
+    const originalName = req.file.originalname || "logo.png";
+    const fileExt = originalName.split('.').pop()?.toLowerCase() || 'png';
+    const isSvg = mime.includes("svg") || fileExt === "svg";
+    const isRaster = ['png', 'jpg', 'jpeg', 'webp'].includes(fileExt) || mime.startsWith("image/");
+
+    if (!isSvg && !isRaster) {
+      return res.status(400).json({ error: "Hanya format PNG, JPG, WebP, atau SVG yang didukung" });
+    }
+
+    let processedBuffer: Buffer;
+    let originalWidth = 512;
+    let originalHeight = 512;
+    let ratio = 1.0;
+    const warnings: string[] = [];
+
+    if (isSvg) {
+      // Sanitasi SVG (remove scripts, handlers, onload, etc.)
+      let svgStr = req.file.buffer.toString("utf-8");
+      svgStr = svgStr.replace(/<script[\s\S]*?<\/script>/gi, '')
+                     .replace(/\son\w+="[^"]*"/gi, '')
+                     .replace(/\son\w+='[^']*'/gi, '')
+                     .replace(/javascript:[^"']*/gi, '');
+      const sanitizedSvgBuffer = Buffer.from(svgStr, "utf-8");
+
+      // Rasterize sanitized SVG onto 512x512 canvas with 8% edge padding (max dimension 430px)
+      const svgMeta = await sharp(sanitizedSvgBuffer).metadata();
+      originalWidth = svgMeta.width || 512;
+      originalHeight = svgMeta.height || 512;
+      ratio = Number((originalWidth / Math.max(1, originalHeight)).toFixed(2));
+
+      // Resize SVG within 430x430 inner box
+      const resizedSvg = await sharp(sanitizedSvgBuffer)
+        .resize(430, 430, { fit: 'inside', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+        .toBuffer();
+
+      // Composite onto 512x512 transparent canvas
+      processedBuffer = await sharp({
+        create: {
+          width: 512,
+          height: 512,
+          channels: 4,
+          background: { r: 255, g: 255, b: 255, alpha: 0 }
+        }
+      })
+      .composite([{ input: resizedSvg, gravity: 'center' }])
+      .webp({ quality: 85 })
+      .toBuffer();
+    } else {
+      // Raster (PNG/JPG/WebP)
+      const meta = await sharp(req.file.buffer).metadata();
+      originalWidth = meta.width || 0;
+      originalHeight = meta.height || 0;
+
+      if (!originalWidth || !originalHeight) {
+        return res.status(400).json({ error: "Gagal memproses metadata gambar" });
+      }
+
+      // Validasi sisi terpendek >= 128 px
+      const shortEdge = Math.min(originalWidth, originalHeight);
+      if (shortEdge < 128) {
+        return res.status(400).json({ 
+          error: `Resolusi logo terlalu rendah: sisi terpendek minimal 128 px (ukuran saat ini: ${originalWidth}x${originalHeight} px)` 
+        });
+      }
+
+      ratio = Number((originalWidth / originalHeight).toFixed(2));
+
+      if (ratio > 2.5) {
+        warnings.push("Rasio logo sangat melebar (> 2.5 : 1). Direkomendasikan menggunakan lambang kotak/emblem agar tidak tertekan.");
+      } else if (ratio < 0.4) {
+        warnings.push("Rasio logo sangat tinggi / vertikal (< 0.4 : 1).");
+      }
+      if (shortEdge < 256) {
+        warnings.push("Resolusi gambar sedang (< 256 px). Untuk ketajaman maksimal pada layar retina, gunakan resolusi 512 px.");
+      }
+
+      // Trim transparent/white margins (threshold 12)
+      let trimmedBuffer: Buffer;
+      try {
+        trimmedBuffer = await sharp(req.file.buffer).trim({ threshold: 12 }).toBuffer();
+      } catch (trimErr) {
+        trimmedBuffer = req.file.buffer;
+      }
+
+      // Fit within 430x430 (512px with 8% edge padding)
+      const innerLogo = await sharp(trimmedBuffer)
+        .resize(430, 430, { fit: 'inside', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+        .toBuffer();
+
+      // Composite onto 512x512 canvas centered
+      processedBuffer = await sharp({
+        create: {
+          width: 512,
+          height: 512,
+          channels: 4,
+          background: { r: 255, g: 255, b: 255, alpha: 0 }
+        }
+      })
+      .composite([{ input: innerLogo, gravity: 'center' }])
+      .webp({ quality: 85 })
+      .toBuffer();
+    }
+
+    const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    const processedFilename = `tenants/512_${uniqueId}.webp`;
+    const originalFilename = `tenants/originals/${uniqueId}.${fileExt}`;
+
+    // Upload processed WebP q85
+    let uploadRes = await supabase.storage.from('mpp-images').upload(processedFilename, processedBuffer, {
+      contentType: 'image/webp',
+      upsert: true
+    });
+    let activeBucket = 'mpp-images';
+    if (uploadRes.error) {
+      uploadRes = await supabase.storage.from('public-assets').upload(processedFilename, processedBuffer, {
+        contentType: 'image/webp',
+        upsert: true
+      });
+      activeBucket = 'public-assets';
+    }
+
+    // Save original file (non-destructive)
+    await supabase.storage.from(activeBucket).upload(originalFilename, req.file.buffer, {
+      contentType: req.file.mimetype,
+      upsert: true
+    });
+
+    const { data: urlData } = supabase.storage.from(activeBucket).getPublicUrl(processedFilename);
+    const { data: origData } = supabase.storage.from(activeBucket).getPublicUrl(originalFilename);
+
+    res.json({
+      success: true,
+      url: urlData.publicUrl,
+      originalUrl: origData.publicUrl,
+      width: 512,
+      height: 512,
+      originalWidth,
+      originalHeight,
+      ratio,
+      format: 'webp',
+      warnings: warnings.length > 0 ? warnings : null
+    });
+  } catch (err: any) {
+    console.error("[upload-agency-logo] Error:", err);
+    res.status(500).json({ error: err.message || "Gagal memproses unggah logo instansi" });
   }
 });
 
