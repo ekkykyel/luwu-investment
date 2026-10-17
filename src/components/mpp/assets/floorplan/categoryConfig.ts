@@ -12,7 +12,8 @@ export type MppCategoryKey =
   | 'utilitas_lainnya'
   | 'hukum'
   | 'layanan_khusus'
-  | 'fasilitas';
+  | 'fasilitas'
+  | 'area_terbatas';
 
 export interface MppCategoryMeta {
   key: MppCategoryKey;
@@ -65,6 +66,11 @@ export const MPP_CATEGORIES: Record<MppCategoryKey, MppCategoryMeta> = {
     key: 'fasilitas',
     label: 'Fasilitas Umum',
     tokenVar: 'var(--fp-cat-fasilitas)'
+  },
+  area_terbatas: {
+    key: 'area_terbatas',
+    label: 'Area Staf',
+    tokenVar: 'var(--fp-cat-area-terbatas)'
   }
 };
 
@@ -127,12 +133,15 @@ export const SVG_ID_TO_CATEGORY: Record<string, MppCategoryKey> = {
   SMOKING_AREA: 'fasilitas',
   MUSHALLA: 'fasilitas',
   POS_SECURITY: 'fasilitas',
-  GUDANG: 'fasilitas',
-  DUKCAPIL_SERVER: 'fasilitas',
   PINTU_MASUK: 'fasilitas',
   TANGGA_UTARA: 'fasilitas',
   TANGGA_SELATAN_TIMUR: 'fasilitas',
-  TANGGA_SELATAN_BARAT: 'fasilitas'
+  TANGGA_SELATAN_BARAT: 'fasilitas',
+
+  // Area Terbatas / Khusus Petugas (Non-Publik)
+  GUDANG: 'area_terbatas',
+  DUKCAPIL_SERVER: 'area_terbatas',
+  GUDANG_2: 'area_terbatas'
 };
 
 /**

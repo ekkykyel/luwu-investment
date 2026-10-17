@@ -82,6 +82,9 @@ export const SVG_ID_MAP: Record<string, string> = {
   'M_KIOSK': 'layanan_mandiri_1',
   'POS_SECURITY': 'pos_keamanan',
   'PINTU_MASUK': 'gerbang_masuk',
+  'DUKCAPIL_SERVER': 'dukcapil_server',
+  'GUDANG': 'gudang',
+  'GUDANG_2': 'gudang_2',
 
   // needsReview
   'PT_HAS': 'PT_HAS',

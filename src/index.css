@@ -1563,6 +1563,7 @@ section[id] {
   --fp-cat-hukum: #312e81;        /* Deep Indigo-900 (11.42:1) - Alt 1 Non-merah/oranye/hijau */
   --fp-cat-khusus: #db2777;       /* Pink-600 (4.71:1) */
   --fp-cat-fasilitas: #64748b;    /* Slate-500 netral cerah abu kebiruan (4.76:1) */
+  --fp-cat-area-terbatas: #475569; /* Slate-600 abu netral staf/khusus petugas (delta-E >= 31 vs 8 kategori) */
 }
 
 .dark {
@@ -1585,6 +1586,7 @@ section[id] {
   --fp-cat-hukum: #818cf8;        /* Indigo-400 (8.11:1) - Alt 1 */
   --fp-cat-khusus: #f472b6;       /* Pink-400 (6.10:1) */
   --fp-cat-fasilitas: #cbd5e1;    /* Slate-300 netral abu kebiruan terang (10.8:1) */
+  --fp-cat-area-terbatas: #94a3b8; /* Slate-400 abu netral staf/khusus petugas (delta-E >= 31 vs 8 kategori) */
 }
 
 /* Loket Active Blinking Glow Animation */

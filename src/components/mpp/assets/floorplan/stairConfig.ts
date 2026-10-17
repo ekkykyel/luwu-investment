@@ -13,6 +13,7 @@ export interface StairArm {
 export interface StairConfigItem {
   id: string; // SVG ID: TANGGA_UTARA | TANGGA_SELATAN_TIMUR | TANGGA_SELATAN_BARAT
   label: string;
+  directionLabel?: string; // Konfigurasi arah tangga (contoh: 'Ke Lantai 2')
   x0: number; // Sudut atas-kiri tangga
   y0: number;
   w: number;
@@ -96,6 +97,7 @@ export const STAIR_CONFIGS: StairConfigItem[] = [
   {
     id: 'TANGGA_UTARA',
     label: 'Tangga Akses Sayap Utara',
+    directionLabel: 'Ke Lantai 2',
     x0: 682,
     y0: 948,
     w: 143,
@@ -138,6 +140,7 @@ export const STAIR_CONFIGS: StairConfigItem[] = [
   {
     id: 'TANGGA_SELATAN_TIMUR',
     label: 'Tangga Akses Sayap Selatan (Timur)',
+    directionLabel: 'Ke Lantai 2',
     x0: 3022,
     y0: 268,
     w: 143,
@@ -180,6 +183,7 @@ export const STAIR_CONFIGS: StairConfigItem[] = [
   {
     id: 'TANGGA_SELATAN_BARAT',
     label: 'Tangga Akses Sayap Selatan (Barat)',
+    directionLabel: 'Ke Lantai 2',
     x0: 3022,
     y0: 1175,
     w: 143,

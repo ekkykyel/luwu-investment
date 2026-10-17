@@ -14,7 +14,8 @@ import {
   X, 
   Info,
   Sparkles,
-  RotateCcw
+  RotateCcw,
+  Lock
 } from 'lucide-react';
 
 export type MppSectorFilter =
@@ -24,7 +25,8 @@ export type MppSectorFilter =
   | 'perpajakan'
   | 'bpjs_sosial'
   | 'perbankan_bumn'
-  | 'fasilitas_inklusif';
+  | 'fasilitas_inklusif'
+  | 'area_staf';
 
 export interface SectorDefinition {
   id: MppSectorFilter;
@@ -46,7 +48,8 @@ export const SECTOR_ACCENT_COLORS: Record<MppSectorFilter, string> = {
   perpajakan: '#d97706',
   bpjs_sosial: '#0f766e',
   perbankan_bumn: '#1e40af',
-  fasilitas_inklusif: '#0891b2'
+  fasilitas_inklusif: '#0891b2',
+  area_staf: '#64748b'
 };
 
 /**
@@ -170,6 +173,17 @@ export function isNodeInSector(
       );
 
     case 'fasilitas_inklusif':
+      // Exclude staff-only restricted areas
+      if (
+        nodeCategory === 'area_terbatas' ||
+        id === 'gudang' ||
+        id === 'gudang_2' ||
+        id === 'dukcapil_server' ||
+        id.includes('server') ||
+        id.includes('gudang')
+      ) {
+        return false;
+      }
       return (
         nodeCategory === 'facility' ||
         nodeCategory === 'disability' ||
@@ -203,6 +217,18 @@ export function isNodeInSector(
         name.includes('pos jaga') ||
         name.includes('tangga') ||
         name.includes('pintu')
+      );
+
+    case 'area_staf':
+      return (
+        nodeCategory === 'area_terbatas' ||
+        id === 'gudang' ||
+        id === 'gudang_2' ||
+        id === 'dukcapil_server' ||
+        id.includes('server') ||
+        id.includes('gudang') ||
+        name.includes('server') ||
+        name.includes('gudang')
       );
 
     default:
@@ -330,6 +356,18 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
       ringClass: 'ring-pink-500',
       bgActiveClass: 'bg-pink-500/20 text-pink-300 border-pink-500/60',
       badgeText: 'Inklusif'
+    },
+    {
+      id: 'area_staf',
+      labelKey: 'legend.area_staf',
+      defaultLabel: 'Area Staf',
+      subLabelKey: 'legend.area_stafSub',
+      subLabelDefault: 'Ruang Server & Gudang (Khusus Petugas)',
+      icon: Lock,
+      accentColor: '#64748b',
+      ringClass: 'ring-slate-500',
+      bgActiveClass: 'bg-slate-500/20 text-slate-300 border-slate-500/60',
+      badgeText: 'Staf'
     }
   ];
 

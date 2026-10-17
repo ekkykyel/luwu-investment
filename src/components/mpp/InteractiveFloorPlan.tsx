@@ -38,7 +38,8 @@ import {
   Siren,
   AlertTriangle,
   Flame,
-  Footprints
+  Footprints,
+  Lock
 } from 'lucide-react';
 import FloatingFloorPlanLegend, { 
   MppSectorFilter, 
@@ -236,7 +237,9 @@ export interface FloorNode {
   id: string;
   name: string;
   subName?: string;
-  category: 'counter' | 'facility' | 'disability';
+  category: 'counter' | 'facility' | 'disability' | 'area_terbatas';
+  floorLevel?: string;
+  roomType?: 'public' | 'area_terbatas';
   zone: string;
   x?: number;
   y?: number;
@@ -1755,30 +1758,50 @@ const FLOOR_NODES: FloorNode[] = [
   {
     "id": "gudang",
     "svgId": "GUDANG",
-    "name": "Ruang Gudang & Logistik",
-    "subName": "Penyimpanan Perlengkapan Operasional MPP",
-    "category": "facility",
+    "name": "Gudang",
+    "subName": "Gudang Penyimpanan Logistik (Lantai 1)",
+    "category": "area_terbatas",
+    "floorLevel": "Lantai 1",
+    "roomType": "area_terbatas",
     "zone": "South Wing (Sayap Selatan)",
     "accent": "#64748b",
-    "status": "open",
-    "services": ["Penyimpanan Berkas", "Logistik Kantor"],
+    "status": "closed",
+    "services": [],
     "isDisabilityFriendly": false,
-    "operatingHours": "08:00 - 16:00 WITA",
-    "wayfindingTips": "Sayap Selatan dekat tangga darurat."
+    "operatingHours": "Akses Khusus Petugas",
+    "wayfindingTips": "Sayap Selatan samping Tangga Selatan Timur."
   },
   {
     "id": "dukcapil_server",
     "svgId": "DUKCAPIL_SERVER",
-    "name": "Ruang Server DUKCAPIL",
-    "subName": "Infrastruktur Jaringan & Server SIAK",
-    "category": "facility",
+    "name": "Ruang Server",
+    "subName": "Ruang Server Jaringan & Database SIAK (Lantai 1)",
+    "category": "area_terbatas",
+    "floorLevel": "Lantai 1",
+    "roomType": "area_terbatas",
     "zone": "North Wing (Sayap Utara)",
     "accent": "#64748b",
-    "status": "open",
-    "services": ["Infrastruktur SIAK Terpusat", "Sistem Database Kependudukan"],
+    "status": "closed",
+    "services": [],
     "isDisabilityFriendly": false,
-    "operatingHours": "24 Jam Operasional",
-    "wayfindingTips": "Sayap Utara di belakang loket Dukcapil."
+    "operatingHours": "24 Jam Operasional (Khusus Operator)",
+    "wayfindingTips": "Sayap Utara samping Tangga Utara."
+  },
+  {
+    "id": "gudang_2",
+    "svgId": "GUDANG_2",
+    "name": "Gudang (Usulan)",
+    "subName": "Ruang Gudang Sayap Selatan-Barat (Lantai 1 - Menunggu Konfirmasi)",
+    "category": "area_terbatas",
+    "floorLevel": "Lantai 1",
+    "roomType": "area_terbatas",
+    "zone": "South Wing (Sayap Selatan)",
+    "accent": "#64748b",
+    "status": "closed",
+    "services": [],
+    "isDisabilityFriendly": false,
+    "operatingHours": "Akses Khusus Petugas",
+    "wayfindingTips": "Sayap Selatan samping Tangga Selatan Barat."
   }
 ];
 
@@ -2403,17 +2426,22 @@ export function InteractiveFloorPlan({
 
   const handleSelectNode = (node: FloorNode) => {
     setSelectedNode(node);
-    setIsWayfindingActive(true);
+    if (node.category === 'area_terbatas') {
+      setIsWayfindingActive(false);
+    } else {
+      setIsWayfindingActive(true);
+    }
     setIsDetailModalOpen(true);
     if (onSelectElement) {
       const isFacility = node.category === 'facility';
+      const isStaffArea = node.category === 'area_terbatas';
       const facilityInfo = FACILITY_DETAILS[node.id];
       const selectedItem: SelectedFloorItem = {
         id: node.id,
         code: node.id,
         name: isFacility && facilityInfo ? facilityInfo.name : node.name,
         subName: node.subName,
-        type: isFacility ? 'facility' : 'tenant',
+        type: isStaffArea ? ('staff_area' as any) : isFacility ? 'facility' : 'tenant',
         category: node.category,
         zone: translateZoneToId(node.zone),
         status: node.status === 'open' ? 'open' : 'busy',
@@ -3029,6 +3057,25 @@ export function InteractiveFloorPlan({
                     <path d={stair.d} />
                   </clipPath>
                 ))}
+
+                {/* Diagonal hatch pattern for Area Staf (Staff Only / Restricted) */}
+                <pattern
+                  id="fp-pattern-area-staf"
+                  width="12"
+                  height="12"
+                  patternTransform="rotate(45 0 0)"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <line
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="12"
+                    stroke={effectiveIsDark ? "#94a3b8" : "#475569"}
+                    strokeWidth="1.2"
+                    strokeOpacity={effectiveIsDark ? "0.40" : "0.35"}
+                  />
+                </pattern>
               </defs>
 
               {/* ── 1. AUTHENTIC ARCHITECTURAL BASELINE: DENAH_VEKTOR.min.svg ── */}
@@ -3179,20 +3226,18 @@ export function InteractiveFloorPlan({
                                 strokeLinejoin="round"
                                 shapeRendering="geometricPrecision"
                               />
-                              {/* Label NAIK sangat kecil, hanya muncul saat zoom */}
-                              {isZoomedIn && (
-                                <text
-                                  x={uPath.labelPos.x}
-                                  y={uPath.labelPos.y}
-                                  textAnchor="middle"
-                                  fontSize="9"
-                                  fontWeight="800"
-                                  fill={stairColors.chevron}
-                                  letterSpacing="0.8"
-                                >
-                                  NAIK
-                                </text>
-                              )}
+                              {/* Label Arah Tangga Terkonfigurasi (default: 'Ke Lantai 2') */}
+                              <text
+                                x={uPath.labelPos.x}
+                                y={uPath.labelPos.y}
+                                textAnchor="middle"
+                                fontSize={isZoomedIn ? "9" : "8"}
+                                fontWeight="800"
+                                fill={stairColors.chevron}
+                                letterSpacing="0.8"
+                              >
+                                {stair.directionLabel || 'Ke Lantai 2'}
+                              </text>
                             </g>
                           );
                         })()}
