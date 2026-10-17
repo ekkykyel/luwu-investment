@@ -299,7 +299,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
       {/* ───────────────────────────────────────────────────────────────────────────── */}
       {/* EDGE-TO-EDGE IMMERSIVE HERO CANVAS WITH PARALLAX SCROLL & EXOTIC SHINE */}
       {/* ───────────────────────────────────────────────────────────────────────────── */}
-      <div className="relative w-full min-h-[520px] sm:min-h-[580px] lg:min-h-[620px] flex flex-col justify-center rounded-2xl sm:rounded-3xl overflow-hidden border border-[#D9B96E]/20 dark:border-white/[0.08] ring-1 ring-inset ring-white/15 dark:ring-white/[0.05] shadow-2xl bg-[#071727] dark:bg-[#071727] group transition-colors duration-300">
+      <div className="relative w-full min-h-[520px] sm:min-h-[580px] lg:min-h-[620px] flex flex-col justify-center rounded-2xl sm:rounded-3xl overflow-hidden border border-white/40 dark:border-white/20 ring-0 shadow-xl bg-[#071727] dark:bg-[#071727] group transition-colors duration-300">
         
         {/* 1. Background Architecture Showcase Photo (Parallax Shifted via bgY) */}
         <motion.div

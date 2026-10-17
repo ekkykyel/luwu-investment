@@ -1554,7 +1554,7 @@ section[id] {
   --fp-cat-keuangan: #d97706;     /* Amber-600 (3.19:1) */
   --fp-cat-ketenagakerjaan: #1d4ed8; /* Blue-700 (8.72:1) - Distinct blue */
   --fp-cat-kesehatan: #0f766e;    /* Teal-700 (5.47:1) - User approved */
-  --fp-cat-utilitas: #64748b;     /* Slate-500 cerah (naik dari 475569 agar pastel tidak gelap) */
+  --fp-cat-utilitas: #f59e0b;     /* Amber/Kuning Cerah (menggantikan abu-abu) */
   --fp-cat-hukum: #312e81;        /* Deep Indigo-900 (11.42:1) - Alt 1 Non-merah/oranye/hijau */
   --fp-cat-khusus: #db2777;       /* Pink-600 (4.71:1) */
   --fp-cat-fasilitas: #0891b2;    /* Cyan-600 cerah segar & profesional (4.54:1) */
@@ -1576,10 +1576,26 @@ section[id] {
   --fp-cat-keuangan: #fbbf24;     /* Amber-400 (9.69:1) */
   --fp-cat-ketenagakerjaan: #60a5fa; /* Blue-400 (6.36:1) */
   --fp-cat-kesehatan: #2dd4bf;    /* Teal-400 (8.69:1) - User approved */
-  --fp-cat-utilitas: #cbd5e1;     /* Slate-300 cerah (pastel cerah jelas pada ukuran kecil) */
+  --fp-cat-utilitas: #fbbf24;     /* Amber/Kuning Cerah (menggantikan abu-abu) */
   --fp-cat-hukum: #818cf8;        /* Indigo-400 (8.11:1) - Alt 1 */
   --fp-cat-khusus: #f472b6;       /* Pink-400 (6.10:1) */
   --fp-cat-fasilitas: #22d3ee;    /* Cyan-400 cerah kontras tinggi (9.21:1) */
+}
+
+/* Loket Active Blinking Glow Animation */
+@keyframes loketBlinkGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 25px currentColor) brightness(1.75);
+    opacity: 1;
+  }
+  50% {
+    filter: drop-shadow(0 0 2px currentColor) brightness(1.1);
+    opacity: 0.55;
+  }
+}
+
+.loket-blinking-active {
+  animation: loketBlinkGlow 0.9s ease-in-out infinite !important;
 }
 
 /* Fullscreen support via Fullscreen API & backdrop */

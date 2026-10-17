@@ -46,7 +46,7 @@ export const SECTOR_ACCENT_COLORS: Record<MppSectorFilter, string> = {
   perpajakan: '#d97706',
   bpjs_sosial: '#0f766e',
   perbankan_bumn: '#1e40af',
-  fasilitas_inklusif: '#64748b'
+  fasilitas_inklusif: '#0891b2'
 };
 
 /**

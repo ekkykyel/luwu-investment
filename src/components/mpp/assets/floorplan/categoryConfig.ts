@@ -97,15 +97,15 @@ export const SVG_ID_TO_CATEGORY: Record<string, MppCategoryKey> = {
   DINAS_KESEHATAN: 'kesehatan_sosial',
   DINAS_SOSIAL: 'kesehatan_sosial',
 
-  // Utilitas & Lainnya
-  PDAM: 'utilitas_lainnya',
-  PT_NEVIS: 'utilitas_lainnya',
-  PT_HAS: 'utilitas_lainnya',
-  BPS: 'utilitas_lainnya',
-  DINAS_PUPTR: 'utilitas_lainnya',
-  DINAS_KOMINFO: 'utilitas_lainnya',
-  DINAS_PERIKANAN: 'utilitas_lainnya',
-  DEKRANASDA: 'utilitas_lainnya',
+  // Utilitas & Instansi Khusus (Diwarnai Biru Cerah & Kuning Cerah, Anti Abu-abu)
+  PDAM: 'kependudukan_sipil',    // Biru Cerah (Sky Blue)
+  PT_NEVIS: 'kependudukan_sipil', // Biru Cerah (Sky Blue)
+  PT_HAS: 'utilitas_lainnya',     // Kuning Cerah (Amber Gold)
+  BPS: 'utilitas_lainnya',        // Kuning Cerah (Amber Gold)
+  DINAS_PUPTR: 'utilitas_lainnya', // Kuning Cerah (Amber Gold)
+  DINAS_KOMINFO: 'kependudukan_sipil', // Biru Cerah (Sky Blue)
+  DINAS_PERIKANAN: 'kependudukan_sipil', // Biru Cerah (Sky Blue)
+  DEKRANASDA: 'utilitas_lainnya',  // Kuning Cerah (Amber Gold)
 
   // Hukum
   KEJAKSAAN_NEGERI: 'hukum',
