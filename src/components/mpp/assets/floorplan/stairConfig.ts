@@ -64,27 +64,30 @@ export function computeStairUPath(stair: StairConfigItem): {
   const xOut = enterRight ? xLeft : xRight;
 
   if (isBottomLanding) {
-    const yStart = stair.y0 + 14;
-    const yLanding = stair.y0 + 190;
-    const yEnd = stair.y0 + 20;
+    // Bordes di bawah (UTARA, SELATAN_BARAT): masuk di bentangan KANAN (x0+107) dari atas,
+    // turun ke tengah bordes, belok ke bentangan KIRI (x0+35), naik; panah menghadap ATAS.
+    const yStart = stair.y0 + 16;
+    const yLanding = stair.y0 + 192;
+    const yEnd = stair.y0 + 26;
 
     return {
-      startDot: { cx: xIn, cy: yStart, r: 2.5 },
+      startDot: { cx: xIn, cy: yStart, r: 4.5 },
       pathD: `M ${xIn} ${yStart} L ${xIn} ${yLanding} L ${xOut} ${yLanding} L ${xOut} ${yEnd}`,
-      arrowHeadD: `M ${xOut - 5} ${yEnd + 10} L ${xOut} ${yEnd} L ${xOut + 5} ${yEnd + 10}`,
-      labelPos: { x: xOut, y: yEnd + 26 }
+      arrowHeadD: `M ${xOut - 8} ${yEnd + 14} L ${xOut} ${yEnd} L ${xOut + 8} ${yEnd + 14}`,
+      labelPos: { x: xOut, y: yEnd + 28 }
     };
   } else {
-    // Bordes di atas (SELATAN_TIMUR)
-    const yStart = stair.y0 + stair.h - 14;
-    const yLanding = stair.y0 + 45.5;
-    const yEnd = stair.y0 + stair.h - 20;
+    // Bordes di atas (SELATAN_TIMUR): masuk di bentangan KIRI (x0+35) dari bawah,
+    // naik ke tengah bordes, belok ke bentangan KANAN (x0+107), turun; panah menghadap BAWAH.
+    const yStart = stair.y0 + stair.h - 16;
+    const yLanding = stair.y0 + 46;
+    const yEnd = stair.y0 + stair.h - 26;
 
     return {
-      startDot: { cx: xIn, cy: yStart, r: 2.5 },
+      startDot: { cx: xIn, cy: yStart, r: 4.5 },
       pathD: `M ${xIn} ${yStart} L ${xIn} ${yLanding} L ${xOut} ${yLanding} L ${xOut} ${yEnd}`,
-      arrowHeadD: `M ${xOut - 5} ${yEnd - 10} L ${xOut} ${yEnd} L ${xOut + 5} ${yEnd - 10}`,
-      labelPos: { x: xOut, y: yEnd - 24 }
+      arrowHeadD: `M ${xOut - 8} ${yEnd - 14} L ${xOut} ${yEnd} L ${xOut + 8} ${yEnd - 14}`,
+      labelPos: { x: xOut, y: yEnd - 26 }
     };
   }
 }
@@ -139,7 +142,7 @@ export const STAIR_CONFIGS: StairConfigItem[] = [
     y0: 268,
     w: 143,
     h: 236,
-    entry: 'kanan', // Masuk bentangan KANAN dari bawah, naik ke bordes, belok ke KIRI (posisi panah & teks NAIK berada di lengan KIRI)
+    entry: 'kiri', // Masuk bentangan KIRI (x0+35) dari bawah, naik ke bordes, belok KANAN (x0+107), turun (panah BAWAH)
     landingPosition: 'top',
     leftArm: {
       xMin: 3022,

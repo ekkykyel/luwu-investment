@@ -1879,6 +1879,29 @@ export function InteractiveFloorPlan({
     setFullscreenPosition({ x: 0, y: 0 });
   }, [isFullscreen]);
 
+  // Stair style variants (Varian A vs Varian B per user directive)
+  const [stairVariant, setStairVariant] = useState<'A' | 'B'>('A');
+
+  const stairColors = useMemo(() => {
+    if (stairVariant === 'B') {
+      return {
+        body: effectiveIsDark ? '#1E3A5F' : '#EEF2F7',
+        tread: '#ffffff',
+        stroke: '#64748b',
+        chevron: effectiveIsDark ? '#cbd5e1' : '#475569',
+        dotStroke: effectiveIsDark ? '#1E3A5F' : '#EEF2F7'
+      };
+    }
+    // Varian A (Default: Putih kebiruan / bersih)
+    return {
+      body: effectiveIsDark ? '#e2e8f0' : '#ffffff',
+      tread: effectiveIsDark ? '#94a3b8' : '#B6C4D6',
+      stroke: '#64748b',
+      chevron: effectiveIsDark ? '#334155' : '#475569',
+      dotStroke: effectiveIsDark ? '#e2e8f0' : '#ffffff'
+    };
+  }, [stairVariant, effectiveIsDark]);
+
   const handleFullscreenMouseDown = (e: React.MouseEvent) => {
     if (!isFullscreen) return;
     e.preventDefault();
@@ -2694,7 +2717,7 @@ export function InteractiveFloorPlan({
             ref={containerRef}
             className={isFullscreen
               ? "relative w-full h-full max-w-full max-h-full overflow-hidden flex items-center justify-center p-0 m-0 touch-pan-x touch-pan-y"
-              : "relative w-full max-w-full overflow-hidden flex flex-col items-center justify-center p-1 sm:p-2 lg:p-3 xl:p-4 touch-pan-x touch-pan-y min-h-[580px] sm:min-h-[660px] lg:h-[82vh] xl:h-[86vh] 2xl:h-[89vh] lg:max-h-[1150px]"
+              : "relative w-full max-w-full overflow-hidden flex flex-col items-center justify-center p-1 sm:p-2 lg:p-3 touch-pan-x touch-pan-y"
             }
             style={isFullscreen ? { height: '100dvh', width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--fp-bg)' } : undefined}
           >
@@ -2753,28 +2776,51 @@ export function InteractiveFloorPlan({
             <div className="absolute top-3 sm:top-4 inset-x-3 sm:inset-x-4 z-50 flex items-center justify-between gap-2 pointer-events-auto select-none">
               {/* Left: Badge Mode Presentasi with Tooltip */}
               <div 
-                className="flex items-center gap-2 min-w-0 px-3 py-2 sm:px-4 sm:py-2 rounded-2xl bg-slate-900/95 text-white backdrop-blur-md border border-emerald-500/60 shadow-2xl"
+                className={`flex items-center gap-2 min-w-0 px-3 py-2 sm:px-4 sm:py-2 rounded-2xl backdrop-blur-md border select-none ${
+                  effectiveIsDark
+                    ? 'bg-slate-900/95 text-white border-emerald-500/60 shadow-2xl'
+                    : 'bg-white/85 text-slate-800 border-slate-200 shadow-[0_2px_8px_rgba(15,23,42,0.10)]'
+                }`}
                 title="Mode Presentasi Juri (Theater Fullscreen) • Tekan [F] atau [ESC]"
               >
-                <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                 <span className="text-xs font-black font-sans tracking-wide truncate">
                   Mode Presentasi
                 </span>
-                <span className="hidden md:inline text-[10px] bg-slate-800 text-emerald-300 font-mono px-2 py-0.5 rounded-md border border-emerald-500/30 shrink-0">
+                <span className={`hidden md:inline text-[10px] font-mono px-2 py-0.5 rounded-md border shrink-0 ${
+                  effectiveIsDark
+                    ? 'bg-slate-800 text-emerald-300 border-emerald-500/30'
+                    : 'bg-slate-100 text-slate-600 border-slate-200'
+                }`}>
                   [F] • [ESC]
                 </span>
               </div>
 
-              {/* Right: Actions Cluster (Theme Toggle & Keluar) with >= 44px touch targets on mobile */}
+              {/* Right: Actions Cluster (Stair Variant Toggle, Theme Toggle & Keluar) with >= 44px touch targets on mobile */}
               <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                {/* Stair Variant Toggle */}
+                <button
+                  type="button"
+                  onClick={() => setStairVariant(prev => prev === 'A' ? 'B' : 'A')}
+                  className={`min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center gap-1 px-3 py-2 rounded-2xl border transition-all cursor-pointer active:scale-95 text-xs font-black ${
+                    effectiveIsDark
+                      ? 'bg-slate-900/95 text-slate-200 border-slate-700 hover:bg-slate-800 shadow-2xl'
+                      : 'bg-white/85 text-slate-800 border-slate-200 hover:bg-slate-100 shadow-[0_2px_8px_rgba(15,23,42,0.10)]'
+                  }`}
+                  title={`Gaya Tangga: Varian ${stairVariant} (Klik untuk berganti ke Varian ${stairVariant === 'A' ? 'B' : 'A'})`}
+                >
+                  <span className="text-[10px] font-mono text-emerald-500">Tangga:</span>
+                  <span>Varian {stairVariant}</span>
+                </button>
+
                 {/* Theme Toggle Button in Fullscreen */}
                 <button
                   type="button"
                   onClick={() => setLocalIsDark(!effectiveIsDark)}
-                  className={`min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center gap-1.5 px-3 py-2 rounded-2xl shadow-2xl border transition-all cursor-pointer active:scale-95 text-xs font-black ${
+                  className={`min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center gap-1.5 px-3 py-2 rounded-2xl border transition-all cursor-pointer active:scale-95 text-xs font-black ${
                     effectiveIsDark
-                      ? 'bg-slate-900/95 text-amber-300 border-slate-700 hover:bg-slate-800'
-                      : 'bg-white/95 text-slate-800 border-slate-300 hover:bg-slate-100'
+                      ? 'bg-slate-900/95 text-amber-300 border-slate-700 hover:bg-slate-800 shadow-2xl'
+                      : 'bg-white/85 text-slate-800 border-slate-200 hover:bg-slate-100 shadow-[0_2px_8px_rgba(15,23,42,0.10)]'
                   }`}
                   title={effectiveIsDark ? 'Beralih ke Tema Terang' : 'Beralih ke Tema Gelap'}
                   aria-label={effectiveIsDark ? 'Beralih ke Tema Terang' : 'Beralih ke Tema Gelap'}
@@ -2791,13 +2837,19 @@ export function InteractiveFloorPlan({
                     setIsFullscreen(false);
                     setTimeout(() => fullscreenBtnRef.current?.focus(), 50);
                   }}
-                  className="min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 rounded-2xl bg-slate-900/95 hover:bg-rose-600 text-slate-100 hover:text-white shadow-2xl border border-slate-700 hover:border-rose-500 transition-all cursor-pointer active:scale-95 text-xs font-black"
+                  className={`min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 rounded-2xl border transition-all cursor-pointer active:scale-95 text-xs font-black ${
+                    effectiveIsDark
+                      ? 'bg-slate-900/95 hover:bg-rose-600 text-slate-100 hover:text-white border-slate-700 hover:border-rose-500 shadow-2xl'
+                      : 'bg-white/85 hover:bg-rose-50 text-slate-800 hover:text-rose-700 border-slate-200 hover:border-rose-300 shadow-[0_2px_8px_rgba(15,23,42,0.10)]'
+                  }`}
                   title="Tutup Mode Layar Lebar (Esc)"
                   aria-label="Keluar Mode Layar Lebar"
                 >
                   <X className="w-4 h-4" />
                   <span className="hidden sm:inline">Keluar</span>
-                  <span className="hidden sm:[@media(pointer:fine)]:inline text-[10px] font-mono bg-black/40 px-1.5 py-0.5 rounded text-rose-200">ESC</span>
+                  <span className={`hidden sm:[@media(pointer:fine)]:inline text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                    effectiveIsDark ? 'bg-black/40 text-rose-200' : 'bg-slate-100 text-slate-600'
+                  }`}>ESC</span>
                 </button>
               </div>
             </div>
@@ -2805,11 +2857,17 @@ export function InteractiveFloorPlan({
 
           {/* Small floating Zoom controls on bottom-right of the fullscreen map */}
           {isFullscreen && (
-            <div className="absolute bottom-4 right-4 z-50 flex items-center gap-1 p-1 rounded-2xl bg-slate-900/95 backdrop-blur-md border border-slate-700 shadow-2xl select-none text-white pointer-events-auto">
+            <div className={`absolute bottom-4 right-4 z-50 flex items-center gap-1 p-1 rounded-2xl backdrop-blur-md select-none pointer-events-auto border ${
+              effectiveIsDark
+                ? 'bg-slate-900/95 text-white border-slate-700 shadow-2xl'
+                : 'bg-white/85 text-slate-800 border-slate-200 shadow-[0_2px_8px_rgba(15,23,42,0.10)]'
+            }`}>
               <button
                 type="button"
                 onClick={() => setFullscreenScale(prev => Math.min(5, prev + 0.3))}
-                className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-800 text-slate-200 transition-colors cursor-pointer active:scale-90"
+                className={`w-9 h-9 flex items-center justify-center rounded-xl transition-colors cursor-pointer active:scale-90 ${
+                  effectiveIsDark ? 'hover:bg-slate-800 text-slate-200' : 'hover:bg-slate-100 text-slate-700'
+                }`}
                 title="Perbesar"
               >
                 <ZoomIn className="w-4 h-4" />
@@ -2817,7 +2875,9 @@ export function InteractiveFloorPlan({
               <button
                 type="button"
                 onClick={() => setFullscreenScale(prev => Math.max(0.8, prev - 0.3))}
-                className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-800 text-slate-200 transition-colors cursor-pointer active:scale-90"
+                className={`w-9 h-9 flex items-center justify-center rounded-xl transition-colors cursor-pointer active:scale-90 ${
+                  effectiveIsDark ? 'hover:bg-slate-800 text-slate-200' : 'hover:bg-slate-100 text-slate-700'
+                }`}
                 title="Perkecil"
               >
                 <ZoomOut className="w-4 h-4" />
@@ -2825,7 +2885,9 @@ export function InteractiveFloorPlan({
               <button
                 type="button"
                 onClick={handleResetAll}
-                className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-slate-800 text-slate-200 transition-colors cursor-pointer active:scale-90"
+                className={`w-9 h-9 flex items-center justify-center rounded-xl transition-colors cursor-pointer active:scale-90 ${
+                  effectiveIsDark ? 'hover:bg-slate-800 text-slate-200' : 'hover:bg-slate-100 text-slate-700'
+                }`}
                 title="Reset Tampilan & Filter"
               >
                 <RotateCcw className="w-4 h-4" />
@@ -2957,18 +3019,6 @@ export function InteractiveFloorPlan({
                   }
                 `}</style>
 
-                {/* Filter from GERAI_OVERLAY.svg */}
-                <filter id="filter0_d_39_31" x="3018" y="268" width="150.943" height="243.684" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-                  <feFlood floodOpacity="0" result="BackgroundImageFix"/>
-                  <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-                  <feOffset dy="4"/>
-                  <feGaussianBlur stdDeviation="2"/>
-                  <feComposite in2="hardAlpha" operator="out"/>
-                  <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
-                  <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_39_31"/>
-                  <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_39_31" result="shape"/>
-                </filter>
-
                 <filter id="mpp-focus-glow" x="-20%" y="-20%" width="140%" height="140%">
                   <feDropShadow dx="0" dy="0" stdDeviation="8" floodColor="#10b981" floodOpacity="0.8" />
                 </filter>
@@ -3025,7 +3075,6 @@ export function InteractiveFloorPlan({
               <g className="fp-stair-treads" aria-hidden="true">
                 {STAIR_CONFIGS.map((stair) => {
                   const clipId = `clip-${stair.id}`;
-                  const isNorth = stair.openEndDirection === 'up';
 
                   // Hitung garis horizontal tapak tiap 14 unit (treadSpacing = 14)
                   const treadSpacing = 14;
@@ -3047,22 +3096,14 @@ export function InteractiveFloorPlan({
                   addArmTreads(stair.leftArm, `${stair.id}-left`);
                   addArmTreads(stair.rightArm, `${stair.id}-right`);
 
-                  // Chevron indicator "NAIK" di kedua lengan dekat ujung terbuka (openEnd)
-                  const chevronOffset = isNorth ? 18 : -18;
-                  const chevronTipOffset = isNorth ? -10 : 10;
-                  const armCenters = [
-                    (stair.leftArm.xMin + stair.leftArm.xMax) / 2,
-                    (stair.rightArm.xMin + stair.rightArm.xMax) / 2
-                  ];
-
                   return (
                     <g key={stair.id} id={`procedural-${stair.id}`} pointerEvents="none">
                       <title>Tangga</title>
-                      {/* Badan Tangga dengan Token --fp-stair-body */}
+                      {/* Badan Tangga dengan Token Varian A / B */}
                       <path
                         d={stair.d}
-                        fill="var(--fp-stair-body, #2b3a52)"
-                        stroke="var(--fp-stair-stroke, #475569)"
+                        fill={stairColors.body}
+                        stroke={stairColors.stroke}
                         strokeWidth="calc(var(--px, 1) * 1.0)"
                         shapeRendering="geometricPrecision"
                       />
@@ -3076,7 +3117,7 @@ export function InteractiveFloorPlan({
                             y1={line.y}
                             x2={line.x2}
                             y2={line.y}
-                            stroke="var(--fp-stair-tread, #8aa0bf)"
+                            stroke={stairColors.tread}
                             strokeWidth="calc(var(--px, 1) * 1.0)"
                             shapeRendering="geometricPrecision"
                           />
@@ -3088,7 +3129,7 @@ export function InteractiveFloorPlan({
                           y1={Math.min(stair.leftArm.yOpen, stair.leftArm.yLanding)}
                           x2={stair.leftArm.xMin}
                           y2={Math.max(stair.leftArm.yOpen, stair.leftArm.yLanding)}
-                          stroke="var(--fp-stair-stroke, #475569)"
+                          stroke={stairColors.stroke}
                           strokeWidth="calc(var(--px, 1) * 1.0)"
                           shapeRendering="geometricPrecision"
                         />
@@ -3097,58 +3138,61 @@ export function InteractiveFloorPlan({
                           y1={Math.min(stair.rightArm.yOpen, stair.rightArm.yLanding)}
                           x2={stair.rightArm.xMax}
                           y2={Math.max(stair.rightArm.yOpen, stair.rightArm.yLanding)}
-                          stroke="var(--fp-stair-stroke, #475569)"
+                          stroke={stairColors.stroke}
                           strokeWidth="calc(var(--px, 1) * 1.0)"
                           shapeRendering="geometricPrecision"
                         />
 
-                        {/* U-Shaped Climbing Path (Directive 3) */}
-                        {(() => {
+                        {/* U-Shaped Climbing Path (Directive 3 & Perbaikan D) - Disembunyikan saat mode darurat K3 */}
+                        {!isEmergencyMode && (() => {
                           const uPath = computeStairUPath(stair);
+                          const isZoomedIn = (isFullscreen ? fullscreenScale : zoomLevel) > 1.3;
                           return (
                             <g className="fp-stair-upath">
                               {/* Titik awal bulat kecil */}
                               <circle
                                 cx={uPath.startDot.cx}
                                 cy={uPath.startDot.cy}
-                                r={4}
-                                fill="var(--fp-stair-chevron, #0284c7)"
-                                stroke={effectiveIsDark ? "#0A2238" : "#ffffff"}
+                                r={uPath.startDot.r}
+                                fill={stairColors.chevron}
+                                stroke={stairColors.dotStroke}
                                 strokeWidth="calc(var(--px, 1) * 1.0)"
                                 shapeRendering="geometricPrecision"
                               />
-                              {/* Garis U-Path kontras tajam (Target 1.2 px) */}
+                              {/* Garis U-Path kontras tajam (Target 1.5 px) */}
                               <path
                                 d={uPath.pathD}
                                 fill="none"
-                                stroke="var(--fp-stair-chevron, #0284c7)"
-                                strokeWidth="calc(var(--px, 1) * 1.2)"
+                                stroke={stairColors.chevron}
+                                strokeWidth="calc(var(--px, 1) * 1.5)"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 shapeRendering="geometricPrecision"
                               />
-                              {/* Ujung panah statis (Target 1.2 px) */}
+                              {/* Ujung panah statis terbaca 1x zoom */}
                               <path
                                 d={uPath.arrowHeadD}
                                 fill="none"
-                                stroke="var(--fp-stair-chevron, #0284c7)"
-                                strokeWidth="calc(var(--px, 1) * 1.2)"
+                                stroke={stairColors.chevron}
+                                strokeWidth="calc(var(--px, 1) * 1.5)"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 shapeRendering="geometricPrecision"
                               />
-                              {/* Label NAIK */}
-                              <text
-                                x={uPath.labelPos.x}
-                                y={uPath.labelPos.y}
-                                textAnchor="middle"
-                                fontSize="9"
-                                fontWeight="800"
-                                fill="var(--fp-stair-chevron, #0284c7)"
-                                letterSpacing="0.8"
-                              >
-                                NAIK
-                              </text>
+                              {/* Label NAIK sangat kecil, hanya muncul saat zoom */}
+                              {isZoomedIn && (
+                                <text
+                                  x={uPath.labelPos.x}
+                                  y={uPath.labelPos.y}
+                                  textAnchor="middle"
+                                  fontSize="9"
+                                  fontWeight="800"
+                                  fill={stairColors.chevron}
+                                  letterSpacing="0.8"
+                                >
+                                  NAIK
+                                </text>
+                              )}
                             </g>
                           );
                         })()}
@@ -3240,6 +3284,7 @@ export function InteractiveFloorPlan({
                   const contourStrokeWidth = `calc(var(--px, 1) * ${contourTargetPx.toFixed(3)})`;
 
                   const isProminentBooth = item.id === 'DUKCAPIL_1' || item.id === 'DPMPTSP_1';
+                  const isLargeFacility = item.id === 'MUSHALLA' || item.id === 'RUANG_RAPAT' || item.id === 'TIM_TEKNIS';
                   const isFacility = catKey === 'fasilitas' || NON_INTERACTIVE_SVG_IDS.has(item.id);
                   const itemStrokeWidth = isProminentBooth
                     ? `calc(var(--px, 1) * ${contourTargetPx.toFixed(3)})`
@@ -3248,10 +3293,16 @@ export function InteractiveFloorPlan({
                     : `calc(var(--px, 1) * 1.25)`;
                   const tableChairStrokeWidth = `calc(var(--px, 1) * 1.25)`;
 
-                  const boothFillOpacity = effectiveIsDark 
-                    ? (isFacility ? "0.55" : "0.65") 
-                    : (isFacility ? "0.65" : "0.75");
-                  const detailFillOpacity = effectiveIsDark ? "0.55" : "0.70";
+                  // Opacity per specification:
+                  // Area besar fasilitas (MUSHALLA, RUANG_RAPAT, TIM_TEKNIS): 0.15 (0.12 - 0.18)
+                  // Fasilitas biasa & blok server/gudang: 0.22 terang / 0.26 gelap
+                  // Meja biasa & loket utama: 0.40 gelap (naik dari 0.28/0.35) / 0.55 terang
+                  const boothFillOpacity = isLargeFacility
+                    ? "0.15"
+                    : isFacility
+                    ? (effectiveIsDark ? "0.26" : "0.20")
+                    : (effectiveIsDark ? "0.40" : "0.55");
+                  const detailFillOpacity = effectiveIsDark ? "0.40" : "0.55";
 
                   return (
                     <g
@@ -3296,7 +3347,7 @@ export function InteractiveFloorPlan({
                         />
                       ) : item.childPaths && item.childPaths.length > 0 ? (
                         <>
-                          {/* LAPISAN 1 (BAWAH): KONTUR TIPIS & CONCAVE HULL FILL PULAU TENGAH */}
+                          {/* LAPISAN 1 (BAWAH): KONTUR TIPIS, PULAU TENGAH CONCAVE HULL & TINT DUKCAPIL_1/DPMPTSP_1 */}
                           {item.childPaths.map((dVal, pIdx) => {
                             const isThin = thinIndices && thinIndices.includes(pIdx);
                             if (!isThin) return null;
@@ -3304,16 +3355,25 @@ export function InteractiveFloorPlan({
 
                             return (
                               <React.Fragment key={`contour-wrap-${pIdx}`}>
-                                {/* 1A. Concave Hull Fill Layer untuk Pulau Tengah (fill-opacity 0.65 warna kategori) */}
+                                {/* 1A. Concave Hull Fill Layer untuk Pulau Tengah (fill-opacity 0.40 gelap / 0.45 terang) */}
                                 {hullD && (
                                   <path
                                     d={hullD}
                                     fill="currentColor"
-                                    fillOpacity={effectiveIsDark ? "0.50" : "0.65"}
+                                    fillOpacity={effectiveIsDark ? "0.40" : "0.45"}
                                     stroke="none"
                                   />
                                 )}
-                                {/* 1B. Garis Kontur Asli (Tanpa ubah geometri, clamp 1.5 - 3.0 px layar) */}
+                                {/* 1B. Tint tipis sebagai layer terpisah untuk DUKCAPIL_1 dan DPMPTSP_1 (fill-opacity 0.12 warna kategori) */}
+                                {isProminentBooth && (
+                                  <path
+                                    d={dVal}
+                                    fill="currentColor"
+                                    fillOpacity="0.12"
+                                    stroke="none"
+                                  />
+                                )}
+                                {/* 1C. Garis Kontur Asli (Tanpa ubah geometri, clamp 1.5 - 3.0 px layar) */}
                                 <path
                                   d={dVal}
                                   fill="none"
@@ -3327,18 +3387,24 @@ export function InteractiveFloorPlan({
                             );
                           })}
 
-                          {/* LAPISAN 2 (ATAS KONTUR): KURSI & MEJA ISI BIASA (Z-order selalu di atas kontur) */}
+                          {/* LAPISAN 2 (ATAS KONTUR): KURSI & MEJA ISI BIASA & PITA PADAT DUKCAPIL_2/DPMPTSP_2 */}
                           {item.childPaths.map((dVal, pIdx) => {
                             const isThin = thinIndices && thinIndices.includes(pIdx);
                             if (isThin) return null;
+
+                            // Pita padat DUKCAPIL_2 dan DPMPTSP_2: tampilkan sebagai isi tipis (fill-opacity 0.20) + garis tepi 1.5 px
+                            const isPitaPadat = (item.id === 'DUKCAPIL_2' || item.id === 'DPMPTSP_2') && pIdx === 0;
+                            const pathFillOpacity = isPitaPadat ? "0.20" : detailFillOpacity;
+                            const pathStrokeWidth = isPitaPadat ? `calc(var(--px, 1) * 1.5)` : tableChairStrokeWidth;
+
                             return (
                               <path
                                 key={`chair-path-${pIdx}`}
                                 d={dVal}
                                 fill="currentColor"
-                                fillOpacity={detailFillOpacity}
+                                fillOpacity={pathFillOpacity}
                                 stroke="currentColor"
-                                strokeWidth={tableChairStrokeWidth}
+                                strokeWidth={pathStrokeWidth}
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 shapeRendering="geometricPrecision"
@@ -3367,6 +3433,77 @@ export function InteractiveFloorPlan({
                     </g>
                   );
                 })}
+              </g>
+
+              {/* ── 3.5 FACILITY LINE ICONS (IKON KECIL BERGAYA GARIS IKUT WARNA FASILITAS) ── */}
+              <g id="facility-line-icons" aria-hidden="true" pointerEvents="none">
+                {/* Mushalla (Kubah & Bulan Sabit) */}
+                <g id="icon-mushalla" transform="translate(1019, 1519)" opacity={0.88}>
+                  <path
+                    d="M -16 12 C -16 -4, 16 -4, 16 12 Z M -18 12 L 18 12"
+                    fill="none"
+                    stroke="var(--fp-cat-fasilitas, #64748b)"
+                    strokeWidth="calc(var(--px, 1) * 1.5)"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M 0 -4 L 0 -10 M -3 -13 C -1 -17, 4 -17, 6 -13 C 3 -13, 1 -11, 1 -8"
+                    fill="none"
+                    stroke="var(--fp-cat-fasilitas, #64748b)"
+                    strokeWidth="calc(var(--px, 1) * 1.3)"
+                    strokeLinecap="round"
+                  />
+                </g>
+
+                {/* Ruang Laktasi (Ibu & Anak / Simbol Kasih Ibu) */}
+                <g id="icon-ruang-laktasi" transform="translate(1096, 1192)" opacity={0.88}>
+                  <path
+                    d="M -8 -4 L -8 14 C -8 18, 8 18, 8 14 L 8 -4 Z M -11 -4 L 11 -4 M -6 -4 L -6 -8 L 6 -8 L 6 -4 M -3 -8 L -3 -12 C -3 -14, 3 -14, 3 -12 L 3 -8"
+                    fill="none"
+                    stroke="var(--fp-cat-fasilitas, #64748b)"
+                    strokeWidth="calc(var(--px, 1) * 1.5)"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </g>
+
+                {/* Pos Security (Perisai Jaga K3) */}
+                <g id="icon-pos-security" transform="translate(1731, 1891)" opacity={0.88}>
+                  <path
+                    d="M 0 -14 L 12 -9 C 12 4, 8 14, 0 18 C -8 14, -12 4, -12 -9 Z M 0 -8 L 0 12"
+                    fill="none"
+                    stroke="var(--fp-cat-fasilitas, #64748b)"
+                    strokeWidth="calc(var(--px, 1) * 1.5)"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </g>
+
+                {/* Gudang (Kotak Geometris 3D Wireframe) */}
+                <g id="icon-gudang" transform="translate(2983, 422)" opacity={0.88}>
+                  <path
+                    d="M 0 -12 L 12 -5 L 12 9 L 0 16 L -12 9 L -12 -5 Z M 0 -12 L 0 16 M -12 -5 L 0 2 L 12 -5"
+                    fill="none"
+                    stroke="var(--fp-cat-fasilitas, #64748b)"
+                    strokeWidth="calc(var(--px, 1) * 1.5)"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </g>
+
+                {/* Dukcapil Server (Rak Server Stack) */}
+                <g id="icon-dukcapil-server" transform="translate(866, 1070)" opacity={0.88}>
+                  <rect x="-10" y="-14" width="20" height="7" rx="1.5" fill="none" stroke="var(--fp-cat-fasilitas, #64748b)" strokeWidth="calc(var(--px, 1) * 1.3)" />
+                  <rect x="-10" y="-4" width="20" height="7" rx="1.5" fill="none" stroke="var(--fp-cat-fasilitas, #64748b)" strokeWidth="calc(var(--px, 1) * 1.3)" />
+                  <rect x="-10" y="6" width="20" height="7" rx="1.5" fill="none" stroke="var(--fp-cat-fasilitas, #64748b)" strokeWidth="calc(var(--px, 1) * 1.3)" />
+                </g>
+
+                {/* Toilet Wanita & Pria */}
+                <g id="icon-toilet-wanita" transform="translate(244, 705)" opacity={0.88}>
+                  <circle cx="0" cy="-10" r="3" fill="none" stroke="var(--fp-cat-fasilitas, #64748b)" strokeWidth="calc(var(--px, 1) * 1.3)" />
+                  <path d="M -6 6 L -3 -5 L 3 -5 L 6 6 Z M -2 6 L -2 14 M 2 6 L 2 14" fill="none" stroke="var(--fp-cat-fasilitas, #64748b)" strokeWidth="calc(var(--px, 1) * 1.3)" strokeLinecap="round" strokeLinejoin="round" />
+                </g>
               </g>
 
               {/* ── 4. RUNTIME CENTROID TARGET BEACON & LABELS ── */}
@@ -3463,16 +3600,16 @@ export function InteractiveFloorPlan({
         </div>
 
         {/* ───────────────────────────────────────────────────────────── */}
-        {/* MAP-TOOLBAR STATIS (BUKAN fixed/sticky) TEPAT DI BAWAH KANVAS  */}
+        {/* MAP-TOOLBAR STATIS (BUKAN fixed/sticky) TEPAT DI BAWAH KANVAS (12px) */}
         {/* ───────────────────────────────────────────────────────────── */}
         {!isFullscreen && (
-          <div className="map-toolbar w-full flex items-center justify-between gap-2 h-12 min-h-[48px] mt-2.5 px-0.5 relative z-30 select-none">
+          <div className="map-toolbar w-full flex items-center justify-between gap-2 h-12 min-h-[48px] mt-3 px-0.5 relative z-30 select-none">
             {/* Kiri: Filter & Legenda */}
             <div className="relative">
               <FloatingFloorPlanLegend
                 activeSector={activeSector}
                 onSelectSector={handleSectorFilterChange}
-                isDark={isDark}
+                isDark={effectiveIsDark}
                 position="toolbar"
                 totalMatchingCount={matchingSectorCount}
                 isOpenControlled={isLegendOpen}
@@ -3480,23 +3617,40 @@ export function InteractiveFloorPlan({
               />
             </div>
 
-            {/* Kanan: Lihat Layar Lebar */}
-            <button
-              ref={fullscreenBtnRef}
-              type="button"
-              onClick={() => setIsFullscreen(true)}
-              className="h-12 min-h-[48px] w-12 sm:w-auto p-0 sm:px-4 flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md border border-emerald-400/80 transition-all cursor-pointer active:scale-95 group shrink-0"
-              title={isPointerCoarse ? "Lihat Layar Lebar (Landscape)" : "Lihat Layar Lebar (Landscape) • Pintasan: F"}
-              aria-label="Lihat Layar Lebar (Landscape)"
-            >
-              <Maximize2 className="w-5 h-5 group-hover:scale-110 transition-transform shrink-0" />
-              <span className="hidden sm:inline whitespace-nowrap">Lihat Layar Lebar (Landscape)</span>
-              {!isPointerCoarse && (
-                <span className="hidden sm:[@media(pointer:fine)]:inline-flex text-[10px] font-mono bg-black/40 px-2 py-0.5 rounded text-emerald-200">
-                  F
-                </span>
-              )}
-            </button>
+            {/* Kanan: Stair Variant Toggle & Lihat Layar Lebar */}
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => setStairVariant(prev => prev === 'A' ? 'B' : 'A')}
+                className={`h-12 min-h-[48px] px-3.5 rounded-2xl text-xs font-bold border transition-all cursor-pointer active:scale-95 flex items-center gap-1.5 ${
+                  effectiveIsDark
+                    ? 'bg-slate-900/95 text-slate-200 border-slate-700 hover:bg-slate-800 shadow-md'
+                    : 'bg-white/85 text-slate-800 border-slate-200 hover:bg-slate-100 shadow-[0_2px_8px_rgba(15,23,42,0.10)]'
+                }`}
+                title={`Gaya Tangga: Varian ${stairVariant} (Klik untuk berganti ke Varian ${stairVariant === 'A' ? 'B' : 'A'})`}
+                aria-label="Ganti Varian Tangga"
+              >
+                <span className="text-[10px] font-mono text-emerald-500 font-bold">Tangga:</span>
+                <span>Varian {stairVariant}</span>
+              </button>
+
+              <button
+                ref={fullscreenBtnRef}
+                type="button"
+                onClick={() => setIsFullscreen(true)}
+                className="h-12 min-h-[48px] w-12 sm:w-auto p-0 sm:px-4 flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md border border-emerald-400/80 transition-all cursor-pointer active:scale-95 group shrink-0"
+                title={isPointerCoarse ? "Lihat Layar Lebar (Landscape)" : "Lihat Layar Lebar (Landscape) • Pintasan: F"}
+                aria-label="Lihat Layar Lebar (Landscape)"
+              >
+                <Maximize2 className="w-5 h-5 group-hover:scale-110 transition-transform shrink-0" />
+                <span className="hidden sm:inline whitespace-nowrap">Lihat Layar Lebar (Landscape)</span>
+                {!isPointerCoarse && (
+                  <span className="hidden sm:[@media(pointer:fine)]:inline-flex text-[10px] font-mono bg-black/40 px-2 py-0.5 rounded text-emerald-200">
+                    F
+                  </span>
+                )}
+              </button>
+            </div>
           </div>
         )}
       </div>

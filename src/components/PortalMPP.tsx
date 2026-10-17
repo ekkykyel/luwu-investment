@@ -1971,7 +1971,7 @@ export default function PortalMPP() {
         )}
 
         {/* Inclusivity & Accessibility Bar (Mode Ramah Disabilitas, Text-to-Speech & High Contrast) */}
-        <InclusivityAccessibilityBar isDark={isDark} />
+        <InclusivityAccessibilityBar isDark={isDark} hideFloatingFab={true} />
 
         {/* UNIFIED STICKY NAVBAR (SOLID BACKGROUND - NO TOP HEADER BLEED) */}
         <div className="sticky top-0 z-40 w-full border-b transition-colors bg-white dark:bg-[#0F2D4A] border-slate-200/90 dark:border-white/[0.07] shadow-sm dark:shadow-none">

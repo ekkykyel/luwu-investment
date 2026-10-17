@@ -170,19 +170,31 @@ export const GlobalHelpdeskFab: React.FC<GlobalHelpdeskFabProps> = ({
           </motion.button>
         )}
 
-        {/* Main FAB Trigger */}
+        {/* Unified Asisten MPP FAB Trigger */}
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-14 h-14 rounded-2xl sm:rounded-3xl shadow-xl flex items-center justify-center text-white transition-all transform active:scale-90 cursor-pointer ${
+          className={`h-12 min-h-[48px] px-3.5 sm:px-4 rounded-2xl shadow-xl flex items-center gap-2.5 text-white transition-all transform active:scale-95 cursor-pointer backdrop-blur-xl border border-emerald-400/40 select-none ${
             isOpen
-              ? 'bg-slate-800 dark:bg-slate-700 rotate-90 shadow-slate-900/30'
-              : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-black/25 hover:scale-105'
+              ? 'bg-slate-800 dark:bg-slate-700 shadow-slate-900/40 border-slate-600'
+              : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-emerald-950/30 hover:scale-[1.02]'
           }`}
-          title="Pusat Bantuan & Kontak Cepat"
-          aria-label="Toggle Helpdesk Floating Menu"
+          title="Asisten MPP & Pusat Layanan Cepat"
+          aria-label="Asisten MPP"
         >
-          {isOpen ? <X className="w-6 h-6" /> : <Headphones className="w-6 h-6" />}
+          <div className="relative flex items-center justify-center shrink-0">
+            {isOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4 text-amber-300" />
+                <Headphones className="w-3.5 h-3.5 text-white -ml-1" />
+              </>
+            )}
+          </div>
+          <span className="text-xs font-black tracking-tight whitespace-nowrap">
+            {isOpen ? 'Tutup' : 'Asisten MPP'}
+          </span>
         </button>
       </div>
     </div>
