@@ -218,6 +218,8 @@ export interface FloatingFloorPlanLegendProps {
   isDark?: boolean;
   totalMatchingCount?: number;
   initialCollapsed?: boolean;
+  isOpenControlled?: boolean;
+  onToggleControlled?: (nextOpen: boolean) => void;
 }
 
 export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = ({
@@ -227,10 +229,21 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
   className = '',
   isDark = true,
   totalMatchingCount,
-  initialCollapsed = false
+  initialCollapsed = false,
+  isOpenControlled,
+  onToggleControlled
 }) => {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState(!initialCollapsed);
+  const [internalIsOpen, setInternalIsOpen] = useState(!initialCollapsed);
+  const isOpen = isOpenControlled !== undefined ? isOpenControlled : internalIsOpen;
+  const setIsOpen = (next: boolean | ((prev: boolean) => boolean)) => {
+    const val = typeof next === 'function' ? next(isOpen) : next;
+    if (onToggleControlled) {
+      onToggleControlled(val);
+    } else {
+      setInternalIsOpen(val);
+    }
+  };
   const [activeTab, setActiveTab] = useState<'sectors' | 'status'>('sectors');
 
   const sectors: SectorDefinition[] = [
@@ -367,7 +380,7 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2 px-3.5 py-2.5 rounded-2xl backdrop-blur-md bg-slate-900/90 text-white border border-slate-700/80 shadow-2xl hover:border-emerald-500/80 hover:bg-slate-800 transition-all cursor-pointer active:scale-95 group select-none"
+          className="h-12 min-h-[48px] flex items-center gap-2 px-4 rounded-2xl backdrop-blur-md bg-slate-900/95 dark:bg-slate-900/95 text-white border border-slate-700/80 shadow-2xl hover:border-emerald-500/80 hover:bg-slate-800 transition-all cursor-pointer active:scale-95 group select-none text-xs font-bold"
           title={t('legend.expand', 'Buka Filter & Legenda Denah')}
         >
           <div className="relative flex items-center justify-center">
@@ -376,7 +389,7 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
               <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
             )}
           </div>
-          <span className="text-xs font-bold tracking-tight">
+          <span className="tracking-tight">
             {t('legend.mobileToggle', 'Filter & Legenda')}
           </span>
 
@@ -394,9 +407,9 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
       {/* 2. EXPANDED GLASSMORPHIC LEGEND & SECTOR FILTER PANEL         */}
       {/* ───────────────────────────────────────────────────────────── */}
       {isOpen && (
-        <div className="w-[320px] sm:w-[360px] md:w-[390px] max-h-[82vh] sm:max-h-[76vh] flex flex-col backdrop-blur-md bg-slate-900/92 dark:bg-slate-950/92 text-white border border-slate-700/70 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300">
+        <div className="w-[calc(100vw-24px)] sm:w-[360px] md:w-[390px] max-h-[82vh] sm:max-h-[76vh] flex flex-col backdrop-blur-md bg-slate-900/95 dark:bg-slate-950/95 text-white border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 z-50 mb-2">
           {/* Header Bar */}
-          <div className="px-3.5 py-3 border-b border-slate-800/80 bg-slate-900/80 flex items-center justify-between gap-2 select-none">
+          <div className="px-3.5 py-3 border-b border-slate-800/80 bg-slate-900/90 flex items-center justify-between gap-2 select-none relative z-50">
             <div className="flex items-center gap-2 min-w-0">
               <div className="w-7 h-7 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
                 <Sparkles className="w-3.5 h-3.5" />
@@ -416,12 +429,12 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
               </div>
             </div>
 
-            <div className="flex items-center gap-1 shrink-0">
+            <div className="flex items-center gap-1.5 shrink-0">
               {hasActiveSector && (
                 <button
                   type="button"
                   onClick={() => onSelectSector('all')}
-                  className="px-2 py-1 rounded-lg text-[10px] font-bold text-slate-300 hover:text-white hover:bg-slate-800/80 border border-slate-700/60 transition-all flex items-center gap-1 cursor-pointer"
+                  className="h-10 px-2.5 rounded-xl text-[10px] font-bold text-slate-300 hover:text-white hover:bg-slate-800/80 border border-slate-700/60 transition-all flex items-center gap-1 cursor-pointer"
                   title={t('legend.resetFilter', 'Tampilkan Semua Sektor')}
                 >
                   <RotateCcw className="w-3 h-3 text-emerald-400" />
@@ -431,11 +444,13 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
 
               <button
                 type="button"
+                id="fp-legend-close-button"
                 onClick={() => setIsOpen(false)}
-                className="w-7 h-7 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors flex items-center justify-center cursor-pointer active:scale-90"
+                className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl hover:bg-slate-800 text-slate-300 hover:text-white transition-colors flex items-center justify-center cursor-pointer active:scale-90 relative z-50"
                 title={t('legend.collapse', 'Tutup')}
+                aria-label="Tutup Filter & Legenda"
               >
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className="w-5 h-5" />
               </button>
             </div>
           </div>

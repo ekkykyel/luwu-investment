@@ -1543,10 +1543,10 @@ section[id] {
   --fp-surface: #ffffff;
   --fp-wall: #334155; /* slate-700 */
   --fp-grid: #94a3b8; /* slate-400 */
-  --fp-stair-body: #d5dde8;
-  --fp-stair-tread: #64748b; /* slate-500 */
-  --fp-stair-stroke: #94a3b8;
-  --fp-stair-chevron: #475569;
+  --fp-stair-body: #ffffff; /* Tangga Putih Bersih */
+  --fp-stair-tread: #94a3b8; /* slate-400 */
+  --fp-stair-stroke: #64748b; /* slate-500 */
+  --fp-stair-chevron: #0284c7; /* Sky-600 Tajam & Jelas */
 
   /* Category tokens (Light Theme - contrast >= 3:1 vs #f8fafc / #ffffff, deltaE >= 20, no green/red) */
   --fp-cat-kependudukan: #0284c7; /* Sky-600 (4.10:1) */
@@ -1554,10 +1554,10 @@ section[id] {
   --fp-cat-keuangan: #d97706;     /* Amber-600 (3.19:1) */
   --fp-cat-ketenagakerjaan: #1d4ed8; /* Blue-700 (8.72:1) - Distinct blue */
   --fp-cat-kesehatan: #0f766e;    /* Teal-700 (5.47:1) - User approved */
-  --fp-cat-utilitas: #475569;     /* Slate-600 menengah (7.58:1) - Slate menengah */
+  --fp-cat-utilitas: #64748b;     /* Slate-500 cerah (naik dari 475569 agar pastel tidak gelap) */
   --fp-cat-hukum: #312e81;        /* Deep Indigo-900 (11.42:1) - Alt 1 Non-merah/oranye/hijau */
   --fp-cat-khusus: #db2777;       /* Pink-600 (4.71:1) */
-  --fp-cat-fasilitas: #64748b;    /* Slate-500 cerah netral (4.76:1) - Opsi 2 Fasilitas Cerah */
+  --fp-cat-fasilitas: #0891b2;    /* Cyan-600 cerah segar & profesional (4.54:1) */
 }
 
 .dark {
@@ -1565,10 +1565,10 @@ section[id] {
   --fp-surface: #0f172a;
   --fp-wall: rgba(255, 255, 255, 0.45);
   --fp-grid: #10b981;
-  --fp-stair-body: #2b3a52;
-  --fp-stair-tread: #8aa0bf;
-  --fp-stair-stroke: #475569;
-  --fp-stair-chevron: #38bdf8;
+  --fp-stair-body: #ffffff; /* Tangga Putih Bersih Kontras di Tema Gelap */
+  --fp-stair-tread: #64748b; /* Slate-500 */
+  --fp-stair-stroke: #cbd5e1; /* Slate-300 */
+  --fp-stair-chevron: #0284c7; /* Sky-600 Kontras Tajam di atas Tangga Putih */
 
   /* Category tokens (Dark Theme - contrast >= 3:1 vs #0f172a / #0A2238, deltaE >= 20) */
   --fp-cat-kependudukan: #38bdf8; /* Sky-400 (7.55:1) */
@@ -1576,10 +1576,10 @@ section[id] {
   --fp-cat-keuangan: #fbbf24;     /* Amber-400 (9.69:1) */
   --fp-cat-ketenagakerjaan: #60a5fa; /* Blue-400 (6.36:1) */
   --fp-cat-kesehatan: #2dd4bf;    /* Teal-400 (8.69:1) - User approved */
-  --fp-cat-utilitas: #94a3b8;     /* Slate-400 menengah (6.31:1) - Slate menengah */
+  --fp-cat-utilitas: #cbd5e1;     /* Slate-300 cerah (pastel cerah jelas pada ukuran kecil) */
   --fp-cat-hukum: #818cf8;        /* Indigo-400 (8.11:1) - Alt 1 */
   --fp-cat-khusus: #f472b6;       /* Pink-400 (6.10:1) */
-  --fp-cat-fasilitas: #f1f5f9;    /* Slate-100 platinum cerah (16.30:1) - Opsi 2 Fasilitas Cerah */
+  --fp-cat-fasilitas: #22d3ee;    /* Cyan-400 cerah kontras tinggi (9.21:1) */
 }
 
 /* Fullscreen support via Fullscreen API & backdrop */

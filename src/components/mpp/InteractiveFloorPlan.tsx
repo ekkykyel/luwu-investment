@@ -1808,9 +1808,35 @@ export function InteractiveFloorPlan({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isEmergencyMode, setIsEmergencyMode] = useState(false);
   const [localIsDark, setLocalIsDark] = useState<boolean | null>(null);
+  const [isLegendOpen, setIsLegendOpen] = useState(false);
+
+  // Ref untuk container chip tab
+  const chipsContainerRef = useRef<HTMLDivElement>(null);
+
+  // Mobile screen detection for cropped building viewBox (memenuhi lebar layar)
+  const [isMobileScreen, setIsMobileScreen] = useState(() => {
+    return typeof window !== 'undefined' ? window.innerWidth < 640 : false;
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileScreen(window.innerWidth < 640);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Sync or override local theme state
   const effectiveIsDark = localIsDark !== null ? localIsDark : isDark;
+
+  // Auto-scroll chip aktif ke tengah
+  useEffect(() => {
+    if (!chipsContainerRef.current) return;
+    const activeBtn = chipsContainerRef.current.querySelector<HTMLElement>('[data-active="true"]');
+    if (activeBtn) {
+      activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }, [activeFilter, activeSector]);
 
   // Debug overlay detection (?debug=route)
   const isDebugRoute = useMemo(() => {
@@ -2287,6 +2313,14 @@ export function InteractiveFloorPlan({
     }
   };
 
+  const handleCenterMap = () => {
+    setZoomLevel(1.05);
+    setFullscreenScale(1);
+    setFullscreenPosition({ x: 0, y: 0 });
+    setSelectedNode(null);
+    setHoveredNodeId(null);
+  };
+
   const handleSelectNode = (node: FloorNode) => {
     setSelectedNode(node);
     setIsWayfindingActive(true);
@@ -2431,19 +2465,15 @@ export function InteractiveFloorPlan({
             >
               <RotateCcw className="w-4 h-4" />
             </button>
+            <button
+              type="button"
+              onClick={handleCenterMap}
+              title="Pusatkan Peta (Kembalikan ke posisi awal)"
+              className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
+            >
+              <Compass className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            </button>
           </div>
-
-          {/* Fullscreen Maximize Button */}
-          <button
-            type="button"
-            onClick={() => setIsFullscreen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-all cursor-pointer shadow-2xs active:scale-95 whitespace-nowrap"
-            title="Tampilkan Denah Layar Lebar / Mode Presentasi (Shortcut: Tekan F)"
-          >
-            <Maximize2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-            <span>Ketuk Layar Lebar</span>
-            <span className="hidden lg:inline text-[10px] font-mono opacity-80 bg-emerald-200/50 dark:bg-emerald-900/50 px-1 py-0.2 rounded">F</span>
-          </button>
         </div>
       </div>
       )}
@@ -2452,60 +2482,68 @@ export function InteractiveFloorPlan({
       {/* 2. FILTER CHIPS (TOP BAR CATEGORIES)                              */}
       {/* ───────────────────────────────────────────────────────────────── */}
       {!isFullscreen && (
-        <div className={`px-4 sm:px-6 py-2.5 border-b flex items-center justify-between gap-3 overflow-x-auto no-scrollbar ${
-          isDark ? 'border-slate-800/80 bg-base/60' : 'border-slate-100 bg-slate-50/70'
-        }`}>
-          <div className="flex items-center gap-2 shrink-0">
-            {filterChips.map(chip => {
-              const Icon = chip.icon;
-              const isSelected = activeFilter === chip.id && activeSector === (chip.id === 'facility' ? 'fasilitas_inklusif' : 'all');
-              
-              const chipCount = 
-                chip.id === 'all' ? FLOOR_NODES.length :
-                chip.id === 'counter' ? FLOOR_NODES.filter(n => n.category === 'counter').length :
-                chip.id === 'facility' ? FLOOR_NODES.filter(n => n.category === 'facility').length :
-                FLOOR_NODES.filter(n => n.isDisabilityFriendly).length;
+        <div className="relative border-b overflow-hidden">
+          <div 
+            ref={chipsContainerRef}
+            className={`px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3 overflow-x-auto no-scrollbar scroll-smooth ${
+              isDark ? 'border-slate-800/80 bg-base/60' : 'border-slate-100 bg-slate-50/70'
+            }`}
+          >
+            <div className="flex items-center gap-2 shrink-0">
+              {filterChips.map(chip => {
+                const Icon = chip.icon;
+                const isSelected = activeFilter === chip.id && activeSector === (chip.id === 'facility' ? 'fasilitas_inklusif' : 'all');
+                
+                const chipCount = 
+                  chip.id === 'all' ? FLOOR_NODES.length :
+                  chip.id === 'counter' ? FLOOR_NODES.filter(n => n.category === 'counter').length :
+                  chip.id === 'facility' ? FLOOR_NODES.filter(n => n.category === 'facility').length :
+                  FLOOR_NODES.filter(n => n.isDisabilityFriendly).length;
 
-              return (
-                <button
-                  key={chip.id}
-                  type="button"
-                  onClick={() => handleTopFilterClick(chip.id)}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
-                    isSelected
-                      ? 'bg-emerald-600 text-white shadow-md shadow-black/25'
-                      : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 hover:border-slate-300'
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{chip.label}</span>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold ${
-                    isSelected ? 'bg-emerald-700/80 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
-                  }`}>
-                    {chipCount}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+                return (
+                  <button
+                    key={chip.id}
+                    type="button"
+                    data-active={isSelected ? "true" : "false"}
+                    onClick={() => handleTopFilterClick(chip.id)}
+                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
+                      isSelected
+                        ? 'bg-emerald-600 text-white shadow-md shadow-black/25'
+                        : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 hover:border-slate-300'
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{chip.label}</span>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold ${
+                      isSelected ? 'bg-emerald-700/80 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
+                    }`}>
+                      {chipCount}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
 
-          {/* Quick Legend status */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            <div className="hidden sm:flex items-center gap-3 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Buka</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                <span>Ramai</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-slate-400" />
-                <span>Tutup</span>
-              </span>
+            {/* Quick Legend status */}
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              <div className="hidden sm:flex items-center gap-3 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Buka</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                  <span>Ramai</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-slate-400" />
+                  <span>Tutup</span>
+                </span>
+              </div>
             </div>
           </div>
+          {/* Subtle Right Fade Gradient */}
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-slate-100/90 dark:from-slate-900/90 to-transparent sm:hidden" />
         </div>
       )}
 
@@ -2729,6 +2767,18 @@ export function InteractiveFloorPlan({
           {/* Floating Kiosk Quick-Access Overlay on Map Canvas */}
           {!isFullscreen && (
             <div className="absolute top-3 sm:top-4 right-3 sm:right-4 z-40 pointer-events-auto flex items-center gap-2 max-w-[calc(100%-1.5rem)] sm:max-w-none justify-end">
+              {/* Tombol Pusatkan Peta Cepat */}
+              <button
+                type="button"
+                onClick={handleCenterMap}
+                className="h-9 px-3 flex items-center gap-1.5 rounded-2xl backdrop-blur-md bg-slate-900/90 text-white border border-slate-700/80 shadow-2xl hover:border-emerald-500/80 hover:bg-slate-800 transition-all cursor-pointer active:scale-95 text-xs font-bold select-none"
+                title="Pusatkan Peta (Kembalikan ke posisi awal)"
+                aria-label="Pusatkan Peta"
+              >
+                <Compass className="w-4 h-4 text-emerald-400" />
+                <span className="hidden sm:inline">Pusatkan Peta</span>
+              </button>
+
               {/* Floating Emergency Button (Guarded by ENABLE_EMERGENCY_MODE) */}
               {ENABLE_EMERGENCY_MODE && (
               <button
@@ -2745,19 +2795,6 @@ export function InteractiveFloorPlan({
                 <span className="hidden sm:inline">{isEmergencyMode ? 'Evakuasi ON' : 'Mode Evakuasi K3'}</span>
               </button>
               )}
-
-              {/* Floating Fullscreen Button */}
-              <button
-                type="button"
-                onClick={() => setIsFullscreen(true)}
-                className="flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black shadow-2xl border-2 border-emerald-300/80 transition-all cursor-pointer active:scale-95 group ring-4 ring-emerald-500/20 shrink-0"
-                title="Tampilkan Denah Layar Lebar / Mode Presentasi Juri (Shortcut: Tekan F)"
-              >
-                <Maximize2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                <span className="hidden sm:inline">Lihat Layar Lebar (Landscape)</span>
-                <span className="sm:hidden">Layar Lebar</span>
-                <span className="hidden lg:inline text-[10px] font-mono bg-black/40 px-2 py-0.5 rounded text-emerald-200">F</span>
-              </button>
             </div>
           )}
 
@@ -2804,7 +2841,7 @@ export function InteractiveFloorPlan({
             
 <svg
               ref={svgRef}
-              viewBox="0 0 3646 2497"
+              viewBox={isMobileScreen ? "640 40 2560 2010" : "0 0 3646 2497"}
               preserveAspectRatio="xMidYMid meet"
               className={isFullscreen 
                 ? "w-auto h-auto max-w-[94vw] max-h-[86vh] object-contain block mx-auto my-auto select-none drop-shadow-2xl pointer-events-auto"
@@ -2983,51 +3020,49 @@ export function InteractiveFloorPlan({
                         {(() => {
                           const uPath = computeStairUPath(stair);
                           return (
-                            <g>
+                            <g className="fp-stair-upath">
                               {/* Titik awal bulat kecil */}
                               <circle
                                 cx={uPath.startDot.cx}
                                 cy={uPath.startDot.cy}
-                                r={uPath.startDot.r}
-                                fill="var(--fp-stair-chevron, #475569)"
-                                stroke="var(--fp-stair-body, #ffffff)"
-                                strokeWidth="1"
+                                r={4}
+                                fill="var(--fp-stair-chevron, #0284c7)"
+                                stroke="#ffffff"
+                                strokeWidth="1.5"
                                 style={{ vectorEffect: 'non-scaling-stroke' }}
                               />
-                              {/* Garis U-Path tipis netral slate */}
+                              {/* Garis U-Path kontras tajam */}
                               <path
                                 d={uPath.pathD}
                                 fill="none"
-                                stroke="var(--fp-stair-chevron, #475569)"
-                                strokeWidth="1.3"
+                                stroke="var(--fp-stair-chevron, #0284c7)"
+                                strokeWidth="2.8"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 style={{ vectorEffect: 'non-scaling-stroke' }}
                               />
-                              {/* Ujung panah statis (menghormati reduced-motion) */}
+                              {/* Ujung panah statis */}
                               <path
                                 d={uPath.arrowHeadD}
                                 fill="none"
-                                stroke="var(--fp-stair-chevron, #475569)"
-                                strokeWidth="1.3"
+                                stroke="var(--fp-stair-chevron, #0284c7)"
+                                strokeWidth="2.8"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 style={{ vectorEffect: 'non-scaling-stroke' }}
                               />
-                              {/* Label NAIK (hanya saat zoom cukup) */}
-                              {svgRenderScale > 0.4 && (
-                                <text
-                                  x={uPath.labelPos.x}
-                                  y={uPath.labelPos.y}
-                                  textAnchor="middle"
-                                  fontSize="8"
-                                  fontWeight="700"
-                                  fill="var(--fp-stair-chevron, #475569)"
-                                  letterSpacing="0.5"
-                                >
-                                  NAIK
-                                </text>
-                              )}
+                              {/* Label NAIK */}
+                              <text
+                                x={uPath.labelPos.x}
+                                y={uPath.labelPos.y}
+                                textAnchor="middle"
+                                fontSize="9"
+                                fontWeight="800"
+                                fill="var(--fp-stair-chevron, #0284c7)"
+                                letterSpacing="0.8"
+                              >
+                                NAIK
+                              </text>
                             </g>
                           );
                         })()}
@@ -3192,14 +3227,12 @@ export function InteractiveFloorPlan({
                           {item.childPaths.map((dVal, pIdx) => {
                             const isThin = thinIndices && thinIndices.includes(pIdx);
                             if (isThin) return null;
-                            // Khusus DPMPTSP_1 dan DUKCAPIL_1 interior meja transparan murni (Directive 2)
-                            const isPureTransparent = (item.id === 'DPMPTSP_1' || item.id === 'DUKCAPIL_1') && dVal.length > 500;
                             return (
                               <path
                                 key={`chair-path-${pIdx}`}
                                 d={dVal}
-                                fill={isPureTransparent ? 'none' : 'currentColor'}
-                                fillOpacity={isPureTransparent ? undefined : '0.35'}
+                                fill="currentColor"
+                                fillOpacity="0.35"
                                 stroke="currentColor"
                                 strokeWidth="1.5"
                                 strokeLinecap="round"
@@ -3325,14 +3358,49 @@ export function InteractiveFloorPlan({
 
                   </div>
 
-          {/* Floating Interactive Legend & Sector Filter Overlay */}
-          <FloatingFloorPlanLegend
-            activeSector={activeSector}
-            onSelectSector={handleSectorFilterChange}
-            isDark={isDark}
-            position="bottom-left"
-            totalMatchingCount={matchingSectorCount}
-          />
+          {/* ───────────────────────────────────────────────────────────── */}
+          {/* BOTTOM FLOATING ACTION BAR: Filter & Legenda + Layar Lebar    */}
+          {/* ───────────────────────────────────────────────────────────── */}
+          {!isFullscreen && (
+            <div 
+              className="fixed left-3 right-3 z-40 flex items-center justify-between gap-2 pointer-events-none select-none"
+              style={{
+                position: 'fixed',
+                bottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
+                left: '12px',
+                right: '12px',
+                zIndex: 40
+              }}
+            >
+              {/* Left: Floating Interactive Legend & Sector Filter Overlay */}
+              <div className="pointer-events-auto">
+                <FloatingFloorPlanLegend
+                  activeSector={activeSector}
+                  onSelectSector={handleSectorFilterChange}
+                  isDark={isDark}
+                  position="bottom-left"
+                  totalMatchingCount={matchingSectorCount}
+                  isOpenControlled={isLegendOpen}
+                  onToggleControlled={setIsLegendOpen}
+                />
+              </div>
+
+              {/* Right: Fullscreen Maximize Button aligned on bottom row */}
+              <div className="pointer-events-auto flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsFullscreen(true)}
+                  className="h-12 min-h-[48px] w-12 sm:w-auto p-0 sm:px-4 flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black shadow-2xl border-2 border-emerald-300/80 transition-all cursor-pointer active:scale-95 group ring-4 ring-emerald-500/20 shrink-0"
+                  title="Lihat Layar Lebar (Landscape)"
+                  aria-label="Lihat Layar Lebar (Landscape)"
+                >
+                  <Maximize2 className="w-5 h-5 group-hover:scale-110 transition-transform shrink-0" />
+                  <span className="hidden sm:inline whitespace-nowrap">Lihat Layar Lebar (Landscape)</span>
+                  <span className="hidden sm:[@media(pointer:fine)]:inline text-[10px] font-mono bg-black/40 px-2 py-0.5 rounded text-emerald-200">F</span>
+                </button>
+              </div>
+            </div>
+          )}
           </div>
         </div>
       </div>
