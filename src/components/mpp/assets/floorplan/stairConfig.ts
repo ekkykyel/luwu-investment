@@ -139,7 +139,7 @@ export const STAIR_CONFIGS: StairConfigItem[] = [
     y0: 268,
     w: 143,
     h: 236,
-    entry: 'kiri', // Masuk bentangan KIRI dari bawah, naik ke bordes, belok kanan, turun (panah BAWAH)
+    entry: 'kanan', // Masuk bentangan KANAN dari bawah, naik ke bordes, belok ke KIRI (posisi panah & teks NAIK berada di lengan KIRI)
     landingPosition: 'top',
     leftArm: {
       xMin: 3022,
