@@ -2050,30 +2050,47 @@ export function InteractiveFloorPlan({
     setNodeBBoxes(bboxes);
   }, []);
 
-  // Measure SVG rendered scale for accurate contour stroke width clamping (Directive 3)
-  const [svgRenderScale, setSvgRenderScale] = useState<number>(0.35); // default fallback ~1280px screen
+  // Single Source of Truth: Compute --px = viewBoxWidth / (lebar tampil svg dalam px CSS * zoom)
+  // Dipasang sebagai CSS variable --px pada SVG root, diperbarui lewat requestAnimationFrame saat zoom/resize
+  const [pxScale, setPxScale] = useState<number>(() => {
+    return isMobileScreen ? 2560 / (360 * 0.94) : 3646 / 1200;
+  });
+
+  const rafPxRef = useRef<number | null>(null);
+
+  const updatePx = useCallback(() => {
+    if (rafPxRef.current) {
+      cancelAnimationFrame(rafPxRef.current);
+    }
+    rafPxRef.current = requestAnimationFrame(() => {
+      if (!svgRef.current) return;
+      const vbWidth = isMobileScreen ? 2560 : 3646;
+      const currentZoom = isFullscreen ? fullscreenScale : zoomLevel;
+      const rect = svgRef.current.getBoundingClientRect();
+      const effectiveWidth = (rect && rect.width > 0)
+        ? rect.width
+        : ((svgRef.current.clientWidth || 360) * (currentZoom || 1));
+
+      const computedPx = vbWidth / Math.max(1, effectiveWidth);
+      svgRef.current.style.setProperty('--px', computedPx.toFixed(6));
+      setPxScale(computedPx);
+    });
+  }, [isMobileScreen, isFullscreen, fullscreenScale, zoomLevel]);
 
   useEffect(() => {
-    const updateScale = () => {
-      if (svgRef.current) {
-        const rect = svgRef.current.getBoundingClientRect();
-        if (rect && rect.width > 0) {
-          setSvgRenderScale(rect.width / 3646);
-        }
-      } else if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        if (rect && rect.width > 0) {
-          setSvgRenderScale(rect.width / 3646);
-        }
-      }
-    };
-    updateScale();
+    updatePx();
     if (typeof ResizeObserver !== 'undefined' && containerRef.current) {
-      const ro = new ResizeObserver(() => updateScale());
+      const ro = new ResizeObserver(() => updatePx());
       ro.observe(containerRef.current);
-      return () => ro.disconnect();
+      return () => {
+        ro.disconnect();
+        if (rafPxRef.current) cancelAnimationFrame(rafPxRef.current);
+      };
     }
-  }, []);
+    return () => {
+      if (rafPxRef.current) cancelAnimationFrame(rafPxRef.current);
+    };
+  }, [updatePx]);
 
   // Active selected booth ID (for Spotlight & Dimming Focus Mode)
   const selectedBoothId = selectedNode?.id || selectedId || null;
@@ -2688,49 +2705,56 @@ export function InteractiveFloorPlan({
             </div>
           )}
 
-          {/* Top Theater Mode Presentation Header Banner */}
+          {/* Top Theater Mode Presentation Header Unified Bar */}
           {isFullscreen && (
-            <div className="absolute top-4 left-4 z-50 flex items-center gap-3 pointer-events-auto">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900/95 text-white backdrop-blur-md border border-emerald-500/60 shadow-2xl">
-                <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-xs font-black font-sans tracking-wide">MODE PRESENTASI JURI (THEATER FULLSCREEN)</span>
-                <span className="hidden sm:inline text-[10px] bg-slate-800 text-emerald-300 font-mono px-2 py-0.5 rounded-md border border-emerald-500/30">
-                  [F] Fullscreen • [ESC] Tutup
+            <div className="absolute top-3 sm:top-4 inset-x-3 sm:inset-x-4 z-50 flex items-center justify-between gap-2 pointer-events-auto select-none">
+              {/* Left: Badge Mode Presentasi with Tooltip */}
+              <div 
+                className="flex items-center gap-2 min-w-0 px-3 py-2 sm:px-4 sm:py-2 rounded-2xl bg-slate-900/95 text-white backdrop-blur-md border border-emerald-500/60 shadow-2xl"
+                title="Mode Presentasi Juri (Theater Fullscreen) • Tekan [F] atau [ESC]"
+              >
+                <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <span className="text-xs font-black font-sans tracking-wide truncate">
+                  Mode Presentasi
+                </span>
+                <span className="hidden md:inline text-[10px] bg-slate-800 text-emerald-300 font-mono px-2 py-0.5 rounded-md border border-emerald-500/30 shrink-0">
+                  [F] • [ESC]
                 </span>
               </div>
-            </div>
-          )}
 
-          {/* Floating Close button & Theater control on top-right */}
-          {isFullscreen && (
-            <div className="absolute top-4 right-4 z-50 flex items-center gap-2 pointer-events-auto">
-              {/* Theme Toggle Button in Fullscreen */}
-              <button
-                type="button"
-                onClick={() => setLocalIsDark(!effectiveIsDark)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-2xl shadow-2xl border transition-all cursor-pointer active:scale-95 text-xs font-black ${
-                  effectiveIsDark
-                    ? 'bg-slate-900/95 text-amber-300 border-slate-700 hover:bg-slate-800'
-                    : 'bg-white/95 text-slate-800 border-slate-300 hover:bg-slate-100'
-                }`}
-                title={effectiveIsDark ? 'Beralih ke Tema Terang' : 'Beralih ke Tema Gelap'}
-              >
-                {effectiveIsDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
-                <span className="hidden sm:inline">{effectiveIsDark ? 'Terang' : 'Gelap'}</span>
-              </button>
+              {/* Right: Actions Cluster (Theme Toggle & Keluar) with >= 44px touch targets on mobile */}
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                {/* Theme Toggle Button in Fullscreen */}
+                <button
+                  type="button"
+                  onClick={() => setLocalIsDark(!effectiveIsDark)}
+                  className={`min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center gap-1.5 px-3 py-2 rounded-2xl shadow-2xl border transition-all cursor-pointer active:scale-95 text-xs font-black ${
+                    effectiveIsDark
+                      ? 'bg-slate-900/95 text-amber-300 border-slate-700 hover:bg-slate-800'
+                      : 'bg-white/95 text-slate-800 border-slate-300 hover:bg-slate-100'
+                  }`}
+                  title={effectiveIsDark ? 'Beralih ke Tema Terang' : 'Beralih ke Tema Gelap'}
+                  aria-label={effectiveIsDark ? 'Beralih ke Tema Terang' : 'Beralih ke Tema Gelap'}
+                >
+                  {effectiveIsDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
+                  <span className="hidden sm:inline">{effectiveIsDark ? 'Terang' : 'Gelap'}</span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedNode(null);
-                  setIsFullscreen(false);
-                }}
-                className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900/95 hover:bg-rose-600 text-slate-100 hover:text-white shadow-2xl border border-slate-700 hover:border-rose-500 transition-all cursor-pointer active:scale-95 text-xs font-black"
-                title="Tutup Mode Layar Lebar (Esc)"
-              >
-                <X className="w-4 h-4" />
-                <span>Keluar (Esc)</span>
-              </button>
+                {/* Exit Fullscreen Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedNode(null);
+                    setIsFullscreen(false);
+                  }}
+                  className="min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 rounded-2xl bg-slate-900/95 hover:bg-rose-600 text-slate-100 hover:text-white shadow-2xl border border-slate-700 hover:border-rose-500 transition-all cursor-pointer active:scale-95 text-xs font-black"
+                  title="Tutup Mode Layar Lebar (Esc)"
+                  aria-label="Keluar Mode Layar Lebar"
+                >
+                  <X className="w-4 h-4" />
+                  <span className="hidden sm:inline">Keluar</span>
+                </button>
+              </div>
             </div>
           )}
 
@@ -2848,6 +2872,7 @@ export function InteractiveFloorPlan({
                 : "w-full h-full max-w-full max-h-[80vh] xl:max-h-[85vh] 2xl:max-h-[88vh] object-contain block mx-auto my-auto select-none drop-shadow-md pointer-events-auto"
               }
               style={{
+                ['--px' as any]: pxScale.toFixed(6),
                 textRendering: 'optimizeLegibility',
                 WebkitFontSmoothing: 'antialiased',
                 MozOsxFontSmoothing: 'grayscale',
@@ -2899,10 +2924,11 @@ export function InteractiveFloorPlan({
               {/* ── 1. AUTHENTIC ARCHITECTURAL BASELINE: DENAH_VEKTOR.min.svg ── */}
               <path
                 d={DENAH_VEKTOR_PATH}
-                stroke={effectiveIsDark ? "rgba(255, 255, 255, 0.45)" : "var(--fp-wall, #334155)"}
-                strokeWidth="1.5"
+                stroke={effectiveIsDark ? "rgba(148, 163, 184, 0.35)" : "var(--fp-wall, #334155)"}
+                strokeWidth="calc(var(--px, 1) * 1.25)"
                 fill="none"
                 className="pointer-events-none"
+                shapeRendering="geometricPrecision"
               />
 
               {/* ── 2. DYNAMIC WAYFINDING PATH FROM ENTRANCE TO TARGET (BLUE DASHED, HIDDEN IN EMERGENCY) ── */}
@@ -2977,8 +3003,8 @@ export function InteractiveFloorPlan({
                         d={stair.d}
                         fill="var(--fp-stair-body, #2b3a52)"
                         stroke="var(--fp-stair-stroke, #475569)"
-                        strokeWidth="1.5"
-                        style={{ vectorEffect: 'non-scaling-stroke' }}
+                        strokeWidth="calc(var(--px, 1) * 1.0)"
+                        shapeRendering="geometricPrecision"
                       />
 
                       {/* Tapak Anak Tangga (Treads) yang di-clip ke path tangga */}
@@ -2991,8 +3017,8 @@ export function InteractiveFloorPlan({
                             x2={line.x2}
                             y2={line.y}
                             stroke="var(--fp-stair-tread, #8aa0bf)"
-                            strokeWidth="2"
-                            style={{ vectorEffect: 'non-scaling-stroke' }}
+                            strokeWidth="calc(var(--px, 1) * 1.0)"
+                            shapeRendering="geometricPrecision"
                           />
                         ))}
 
@@ -3003,8 +3029,8 @@ export function InteractiveFloorPlan({
                           x2={stair.leftArm.xMin}
                           y2={Math.max(stair.leftArm.yOpen, stair.leftArm.yLanding)}
                           stroke="var(--fp-stair-stroke, #475569)"
-                          strokeWidth="2"
-                          style={{ vectorEffect: 'non-scaling-stroke' }}
+                          strokeWidth="calc(var(--px, 1) * 1.0)"
+                          shapeRendering="geometricPrecision"
                         />
                         <line
                           x1={stair.rightArm.xMax}
@@ -3012,8 +3038,8 @@ export function InteractiveFloorPlan({
                           x2={stair.rightArm.xMax}
                           y2={Math.max(stair.rightArm.yOpen, stair.rightArm.yLanding)}
                           stroke="var(--fp-stair-stroke, #475569)"
-                          strokeWidth="2"
-                          style={{ vectorEffect: 'non-scaling-stroke' }}
+                          strokeWidth="calc(var(--px, 1) * 1.0)"
+                          shapeRendering="geometricPrecision"
                         />
 
                         {/* U-Shaped Climbing Path (Directive 3) */}
@@ -3027,29 +3053,29 @@ export function InteractiveFloorPlan({
                                 cy={uPath.startDot.cy}
                                 r={4}
                                 fill="var(--fp-stair-chevron, #0284c7)"
-                                stroke="#ffffff"
-                                strokeWidth="1.5"
-                                style={{ vectorEffect: 'non-scaling-stroke' }}
+                                stroke={effectiveIsDark ? "#0A2238" : "#ffffff"}
+                                strokeWidth="calc(var(--px, 1) * 1.0)"
+                                shapeRendering="geometricPrecision"
                               />
-                              {/* Garis U-Path kontras tajam */}
+                              {/* Garis U-Path kontras tajam (Target 1.2 px) */}
                               <path
                                 d={uPath.pathD}
                                 fill="none"
                                 stroke="var(--fp-stair-chevron, #0284c7)"
-                                strokeWidth="2.8"
+                                strokeWidth="calc(var(--px, 1) * 1.2)"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
-                                style={{ vectorEffect: 'non-scaling-stroke' }}
+                                shapeRendering="geometricPrecision"
                               />
-                              {/* Ujung panah statis */}
+                              {/* Ujung panah statis (Target 1.2 px) */}
                               <path
                                 d={uPath.arrowHeadD}
                                 fill="none"
                                 stroke="var(--fp-stair-chevron, #0284c7)"
-                                strokeWidth="2.8"
+                                strokeWidth="calc(var(--px, 1) * 1.2)"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
-                                style={{ vectorEffect: 'non-scaling-stroke' }}
+                                shapeRendering="geometricPrecision"
                               />
                               {/* Label NAIK */}
                               <text
@@ -3145,10 +3171,22 @@ export function InteractiveFloorPlan({
                   // Check if item has thin contour paths
                   const thinIndices = THIN_CONTOUR_PATH_MAP[item.id];
 
-                  // Dynamic contour stroke width in viewBox units, clamped so rendered screen thickness is 2-5px (Directive 3)
-                  const currentScale = svgRenderScale > 0 ? svgRenderScale : 0.35;
-                  const clampedTargetPx = Math.max(2, Math.min(5, 12 * currentScale));
-                  const contourStrokeWidth = clampedTargetPx / currentScale;
+                  // Target stroke calculations per spec:
+                  // kontur pulau tengah, DUKCAPIL_1, DPMPTSP_1: clamp(1.5, 1.5 + 0.4*log2(zoom), 3)
+                  // garis tepi meja biasa: 1.25 px
+                  // fasilitas: garis tepi 1.0 px
+                  const currentZoom = isFullscreen ? fullscreenScale : zoomLevel;
+                  const contourTargetPx = Math.min(3.0, Math.max(1.5, 1.5 + 0.4 * Math.log2(Math.max(0.1, currentZoom))));
+                  const contourStrokeWidth = `calc(var(--px, 1) * ${contourTargetPx.toFixed(3)})`;
+
+                  const isProminentBooth = item.id === 'DUKCAPIL_1' || item.id === 'DPMPTSP_1';
+                  const isFacility = catKey === 'fasilitas' || NON_INTERACTIVE_SVG_IDS.has(item.id);
+                  const itemStrokeWidth = isProminentBooth
+                    ? `calc(var(--px, 1) * ${contourTargetPx.toFixed(3)})`
+                    : isFacility
+                    ? `calc(var(--px, 1) * 1.0)`
+                    : `calc(var(--px, 1) * 1.25)`;
+                  const tableChairStrokeWidth = `calc(var(--px, 1) * 1.25)`;
 
                   return (
                     <g
@@ -3172,12 +3210,12 @@ export function InteractiveFloorPlan({
                         <path
                           d={item.d}
                           fill="currentColor"
-                          fillOpacity="0.35"
+                          fillOpacity={isFacility ? "0.28" : "0.35"}
                           stroke="currentColor"
-                          strokeWidth="1.5"
+                          strokeWidth={itemStrokeWidth}
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          style={{ vectorEffect: 'non-scaling-stroke' }}
+                          shapeRendering="geometricPrecision"
                         />
                       ) : item.x !== undefined && item.y !== undefined && item.width !== undefined && item.height !== undefined ? (
                         <rect
@@ -3186,10 +3224,10 @@ export function InteractiveFloorPlan({
                           width={item.width}
                           height={item.height}
                           fill="currentColor"
-                          fillOpacity="0.35"
+                          fillOpacity={isFacility ? "0.28" : "0.35"}
                           stroke="currentColor"
-                          strokeWidth="1.5"
-                          style={{ vectorEffect: 'non-scaling-stroke' }}
+                          strokeWidth={itemStrokeWidth}
+                          shapeRendering="geometricPrecision"
                         />
                       ) : item.childPaths && item.childPaths.length > 0 ? (
                         <>
@@ -3210,7 +3248,7 @@ export function InteractiveFloorPlan({
                                     stroke="none"
                                   />
                                 )}
-                                {/* 1B. Garis Kontur Asli (Tanpa ubah geometri, tebal diklem 2-5px layar) */}
+                                {/* 1B. Garis Kontur Asli (Tanpa ubah geometri, clamp 1.5 - 3.0 px layar) */}
                                 <path
                                   d={dVal}
                                   fill="none"
@@ -3218,6 +3256,7 @@ export function InteractiveFloorPlan({
                                   strokeWidth={contourStrokeWidth}
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
+                                  shapeRendering="geometricPrecision"
                                 />
                               </React.Fragment>
                             );
@@ -3234,10 +3273,10 @@ export function InteractiveFloorPlan({
                                 fill="currentColor"
                                 fillOpacity="0.35"
                                 stroke="currentColor"
-                                strokeWidth="1.5"
+                                strokeWidth={tableChairStrokeWidth}
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
-                                style={{ vectorEffect: 'non-scaling-stroke' }}
+                                shapeRendering="geometricPrecision"
                               />
                             );
                           })}
@@ -3256,8 +3295,8 @@ export function InteractiveFloorPlan({
                           fill="currentColor"
                           fillOpacity="0.35"
                           stroke="currentColor"
-                          strokeWidth="1.5"
-                          style={{ vectorEffect: 'non-scaling-stroke' }}
+                          strokeWidth={tableChairStrokeWidth}
+                          shapeRendering="geometricPrecision"
                         />
                       ))}
                     </g>

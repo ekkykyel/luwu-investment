@@ -1563,12 +1563,12 @@ section[id] {
 .dark {
   --fp-bg: #0A2238; /* dark navy */
   --fp-surface: #0f172a;
-  --fp-wall: rgba(255, 255, 255, 0.45);
+  --fp-wall: rgba(148, 163, 184, 0.35); /* subtle architectural blueprint lines */
   --fp-grid: #10b981;
-  --fp-stair-body: #ffffff; /* Tangga Putih Bersih Kontras di Tema Gelap */
-  --fp-stair-tread: #64748b; /* Slate-500 */
-  --fp-stair-stroke: #cbd5e1; /* Slate-300 */
-  --fp-stair-chevron: #0284c7; /* Sky-600 Kontras Tajam di atas Tangga Putih */
+  --fp-stair-body: #1e293b; /* Slate-800 - elegant contrast, avoids blinding white in dark theme */
+  --fp-stair-tread: #475569; /* Slate-600 */
+  --fp-stair-stroke: #64748b; /* Slate-500 */
+  --fp-stair-chevron: #38bdf8; /* Sky-400 high contrast */
 
   /* Category tokens (Dark Theme - contrast >= 3:1 vs #0f172a / #0A2238, deltaE >= 20) */
   --fp-cat-kependudukan: #38bdf8; /* Sky-400 (7.55:1) */
