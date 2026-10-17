@@ -213,7 +213,7 @@ export function isNodeInSector(
 export interface FloatingFloorPlanLegendProps {
   activeSector: MppSectorFilter;
   onSelectSector: (sector: MppSectorFilter) => void;
-  position?: 'bottom-left' | 'bottom-right';
+  position?: 'bottom-left' | 'bottom-right' | 'toolbar';
   className?: string;
   isDark?: boolean;
   totalMatchingCount?: number;
@@ -364,24 +364,33 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
     }
   ];
 
-  const posClass = position === 'bottom-right'
-    ? 'bottom-3 right-3 md:bottom-5 md:right-5'
-    : 'bottom-3 left-3 md:bottom-5 md:left-5';
+  const isToolbar = position === 'toolbar';
+  const posClass = isToolbar
+    ? 'relative inline-block'
+    : position === 'bottom-right'
+    ? 'absolute bottom-3 right-3 md:bottom-5 md:right-5'
+    : 'absolute bottom-3 left-3 md:bottom-5 md:left-5';
 
   const hasActiveSector = activeSector !== 'all';
   const currentSectorObj = sectors.find(s => s.id === activeSector);
 
   return (
-    <div className={`absolute ${posClass} z-20 max-w-[calc(100vw-24px)] pointer-events-auto ${className}`}>
+    <div className={`${posClass} z-30 max-w-[calc(100vw-24px)] pointer-events-auto ${className}`}>
       {/* ───────────────────────────────────────────────────────────── */}
-      {/* 1. COMPACT MOBILE / DESKTOP TOGGLE PILL WHEN COLLAPSED         */}
+      {/* 1. TOGGLE BUTTON (IN TOOLBAR OR COMPACT COLLAPSED PILL)         */}
       {/* ───────────────────────────────────────────────────────────── */}
-      {!isOpen && (
+      {(!isOpen || isToolbar) && (
         <button
           type="button"
-          onClick={() => setIsOpen(true)}
-          className="h-12 min-h-[48px] flex items-center gap-2 px-4 rounded-2xl backdrop-blur-md bg-slate-900/95 dark:bg-slate-900/95 text-white border border-slate-700/80 shadow-2xl hover:border-emerald-500/80 hover:bg-slate-800 transition-all cursor-pointer active:scale-95 group select-none text-xs font-bold"
+          onClick={() => setIsOpen(prev => !prev)}
+          className={`h-12 min-h-[48px] flex items-center gap-2 px-4 rounded-2xl backdrop-blur-md bg-slate-900/95 dark:bg-slate-900/95 text-white border shadow-md transition-all cursor-pointer active:scale-95 group select-none text-xs font-bold ${
+            isOpen
+              ? 'border-emerald-500 ring-2 ring-emerald-500/30 bg-slate-800'
+              : 'border-slate-700/80 hover:border-emerald-500/80 hover:bg-slate-800'
+          }`}
           title={t('legend.expand', 'Buka Filter & Legenda Denah')}
+          aria-label={t('legend.mobileToggle', 'Filter & Legenda')}
+          aria-expanded={isOpen}
         >
           <div className="relative flex items-center justify-center">
             <Filter className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
@@ -389,7 +398,7 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
               <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
             )}
           </div>
-          <span className="tracking-tight">
+          <span className="tracking-tight whitespace-nowrap">
             {t('legend.mobileToggle', 'Filter & Legenda')}
           </span>
 
@@ -399,7 +408,7 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
             </span>
           )}
 
-          <ChevronUp className="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" />
+          <ChevronUp className={`w-4 h-4 text-slate-400 group-hover:text-white transition-transform duration-200 ${isOpen ? 'rotate-180 text-emerald-400' : ''}`} />
         </button>
       )}
 
@@ -407,7 +416,11 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
       {/* 2. EXPANDED GLASSMORPHIC LEGEND & SECTOR FILTER PANEL         */}
       {/* ───────────────────────────────────────────────────────────── */}
       {isOpen && (
-        <div className="w-[calc(100vw-24px)] sm:w-[360px] md:w-[390px] max-h-[82vh] sm:max-h-[76vh] flex flex-col backdrop-blur-md bg-slate-900/95 dark:bg-slate-950/95 text-white border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 z-50 mb-2">
+        <div className={`${
+          isToolbar
+            ? 'absolute bottom-full mb-2 left-0'
+            : 'mb-2'
+        } w-[calc(100vw-32px)] sm:w-[360px] md:w-[390px] max-h-[70vh] sm:max-h-[72vh] flex flex-col backdrop-blur-md bg-slate-900/95 dark:bg-slate-950/95 text-white border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 z-50`}>
           {/* Header Bar */}
           <div className="px-3.5 py-3 border-b border-slate-800/80 bg-slate-900/90 flex items-center justify-between gap-2 select-none relative z-50">
             <div className="flex items-center gap-2 min-w-0">

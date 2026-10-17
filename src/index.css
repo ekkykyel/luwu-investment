@@ -1541,7 +1541,7 @@ section[id] {
 :root {
   --fp-bg: #f8fafc; /* slate-50 */
   --fp-surface: #ffffff;
-  --fp-wall: #334155; /* slate-700 */
+  --fp-wall: #1e293b; /* slate-800 - crisp blueprint lines */
   --fp-grid: #94a3b8; /* slate-400 */
   --fp-stair-body: #ffffff; /* Tangga Putih Bersih */
   --fp-stair-tread: #94a3b8; /* slate-400 */
@@ -1554,7 +1554,7 @@ section[id] {
   --fp-cat-keuangan: #d97706;     /* Amber-600 (3.19:1) */
   --fp-cat-ketenagakerjaan: #1d4ed8; /* Blue-700 (8.72:1) - Distinct blue */
   --fp-cat-kesehatan: #0f766e;    /* Teal-700 (5.47:1) - User approved */
-  --fp-cat-utilitas: #f59e0b;     /* Amber/Kuning Cerah (menggantikan abu-abu) */
+  --fp-cat-utilitas: #d97706;     /* Amber-600 tegas kontras tinggi */
   --fp-cat-hukum: #312e81;        /* Deep Indigo-900 (11.42:1) - Alt 1 Non-merah/oranye/hijau */
   --fp-cat-khusus: #db2777;       /* Pink-600 (4.71:1) */
   --fp-cat-fasilitas: #0891b2;    /* Cyan-600 cerah segar & profesional (4.54:1) */

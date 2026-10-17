@@ -214,6 +214,21 @@ export const FLOOR_ZONES: FloorZone[] = [
   }
 ];
 
+/**
+ * Terjemahkan nama zona denah ke Bahasa Indonesia standar tanpa jargon teknis
+ */
+export function translateZoneToId(zone: string): string {
+  if (!zone) return '';
+  const z = zone.trim();
+  if (z === 'Central Atrium' || z.toLowerCase().includes('atrium')) return 'Atrium Pusat';
+  if (z === 'Entrance Flow (Selasar Masuk)' || z.toLowerCase().includes('entrance') || z.toLowerCase().includes('selasar')) return 'Selasar Masuk';
+  if (z === 'East Wing (Sayap Timur)' || z.toLowerCase().includes('east wing') || z.toLowerCase().includes('timur')) return 'Sayap Timur';
+  if (z === 'West Wing (Sayap Barat)' || z.toLowerCase().includes('west wing') || z.toLowerCase().includes('barat')) return 'Sayap Barat';
+  if (z === 'North Wing (Sayap Utara)' || z.toLowerCase().includes('north wing') || z.toLowerCase().includes('utara')) return 'Sayap Utara';
+  if (z === 'South Wing (Sayap Selatan)' || z.toLowerCase().includes('south wing') || z.toLowerCase().includes('selatan')) return 'Sayap Selatan';
+  return z;
+}
+
 export interface FloorNode {
   svgId?: string;
   hidden?: boolean;
@@ -222,7 +237,7 @@ export interface FloorNode {
   name: string;
   subName?: string;
   category: 'counter' | 'facility' | 'disability';
-  zone: 'West Wing (Sayap Barat)' | 'East Wing (Sayap Timur)' | 'Central Atrium' | 'Entrance Flow (Selasar Masuk)' | 'North Wing (Sayap Utara)' | 'South Wing (Sayap Selatan)';
+  zone: string;
   x?: number;
   y?: number;
   w?: number;
@@ -659,8 +674,7 @@ const FLOOR_NODES: FloorNode[] = [
     "isDisabilityFriendly": true,
     "operatingHours": "07:30 - 15:30 WITA",
     "wayfindingTips": "Setelah pintu kaca masuk, berada di sayap kanan koridor selasar.",
-    "svgId": "layanan_mandiri_2",
-    "hidden": true
+    "svgId": "layanan_mandiri_2"
   },
   {
     "id": "front_office",
@@ -803,8 +817,7 @@ const FLOOR_NODES: FloorNode[] = [
     "deskType": "booth",
     "operatingHours": "08:00 - 15:30 WITA",
     "wayfindingTips": "Lingkar Atrium Sisi Timur Bagian Tengah.",
-    "svgId": "HAS",
-    "hidden": true
+    "svgId": "HAS"
   },
   {
     "id": "BPJS_KET",
@@ -968,8 +981,7 @@ const FLOOR_NODES: FloorNode[] = [
     "isDisabilityFriendly": true,
     "operatingHours": "08:00 - 15:30 WITA",
     "wayfindingTips": "Lingkar Atrium Sisi Barat Bagian Bawah.",
-    "svgId": "TASPEN",
-    "hidden": true
+    "svgId": "TASPEN"
   },
   {
     "id": "NERVIS",
@@ -992,8 +1004,7 @@ const FLOOR_NODES: FloorNode[] = [
     "deskType": "booth",
     "operatingHours": "08:00 - 15:30 WITA",
     "wayfindingTips": "Lingkar Atrium Sisi Barat Bagian Tengah.",
-    "svgId": "NERVIS",
-    "hidden": true
+    "svgId": "NERVIS"
   },
   {
     "id": "BPN",
@@ -1017,8 +1028,7 @@ const FLOOR_NODES: FloorNode[] = [
     "isDisabilityFriendly": true,
     "operatingHours": "08:00 - 15:30 WITA",
     "wayfindingTips": "Lingkar Atrium Sisi Barat Laut.",
-    "svgId": "BPN",
-    "hidden": true
+    "svgId": "BPN"
   },
   {
     "id": "DUKCAPIL_N",
@@ -1066,8 +1076,7 @@ const FLOOR_NODES: FloorNode[] = [
     "isDisabilityFriendly": true,
     "operatingHours": "07:30 - 16:00 WITA",
     "wayfindingTips": "Sayap Barat luar, dekat toilet wanita.",
-    "svgId": "DUKCAPIL_W1",
-    "hidden": true
+    "svgId": "DUKCAPIL_W1"
   },
   {
     "id": "DUKCAPIL_W2",
@@ -1091,8 +1100,7 @@ const FLOOR_NODES: FloorNode[] = [
     "isDisabilityFriendly": true,
     "operatingHours": "07:30 - 16:00 WITA",
     "wayfindingTips": "Sayap Barat dalam, bersebelahan dengan DUKCAPIL W1.",
-    "svgId": "DUKCAPIL_W2",
-    "hidden": true
+    "svgId": "DUKCAPIL_W2"
   },
   {
     "id": "DUKCAPIL_W3",
@@ -1116,8 +1124,7 @@ const FLOOR_NODES: FloorNode[] = [
     "isDisabilityFriendly": true,
     "operatingHours": "07:30 - 16:00 WITA",
     "wayfindingTips": "Sayap Barat dalam, di atas Ruang Laktasi.",
-    "svgId": "DUKCAPIL_W3",
-    "hidden": true
+    "svgId": "DUKCAPIL_W3"
   },
   {
     "id": "layanan_disabilitas",
@@ -1210,8 +1217,7 @@ const FLOOR_NODES: FloorNode[] = [
     ],
     "operatingHours": "07:00 - 17:00 WITA",
     "wayfindingTips": "Sayap Barat bersebelahan dengan toilet wanita.",
-    "svgId": "ruang_istirahat",
-    "hidden": true
+    "svgId": "ruang_istirahat"
   },
   {
     "id": "mushalla",
@@ -1418,8 +1424,7 @@ const FLOOR_NODES: FloorNode[] = [
     ],
     "operatingHours": "07:30 - 16:00 WITA",
     "wayfindingTips": "Sayap Timur bagian selatan, bersebelahan dengan Lobby Timur.",
-    "svgId": "ruang_bermain_anak",
-    "hidden": true
+    "svgId": "ruang_bermain_anak"
   },
   {
     "id": "SAMSAT",
@@ -1626,8 +1631,7 @@ const FLOOR_NODES: FloorNode[] = [
     "isDisabilityFriendly": true,
     "operatingHours": "07:30 - 16:00 WITA",
     "wayfindingTips": "Di sebelah kiri E-KIOSK 1 (Sayap Utara).",
-    "svgId": "lobby_kiri",
-    "hidden": true
+    "svgId": "lobby_kiri"
   },
   {
     "id": "lobby_kanan",
@@ -1650,8 +1654,7 @@ const FLOOR_NODES: FloorNode[] = [
     "isDisabilityFriendly": true,
     "operatingHours": "07:30 - 16:00 WITA",
     "wayfindingTips": "Di sebelah kanan E-KIOSK 2 (Sayap Selatan).",
-    "svgId": "lobby_kanan",
-    "hidden": true
+    "svgId": "lobby_kanan"
   },
   {
     "id": "PT_HAS",
@@ -1809,6 +1812,24 @@ export function InteractiveFloorPlan({
   const [isEmergencyMode, setIsEmergencyMode] = useState(false);
   const [localIsDark, setLocalIsDark] = useState<boolean | null>(null);
   const [isLegendOpen, setIsLegendOpen] = useState(false);
+
+  // Ref untuk root section dan tombol fullscreen untuk kembalikan fokus
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const fullscreenBtnRef = useRef<HTMLButtonElement>(null);
+
+  // Deteksi pointer coarse (layar sentuh mobile) untuk sembunyikan badge F & tooltip
+  const [isPointerCoarse, setIsPointerCoarse] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(pointer: coarse)').matches;
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(pointer: coarse)');
+    const handler = (e: MediaQueryListEvent) => setIsPointerCoarse(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   // Ref untuk container chip tab
   const chipsContainerRef = useRef<HTMLDivElement>(null);
@@ -1980,12 +2001,30 @@ export function InteractiveFloorPlan({
 
       if (e.key === 'Escape') {
         if (isFullscreen) {
+          e.preventDefault();
           setIsFullscreen(false);
           setSelectedNode(null);
+          setTimeout(() => {
+            fullscreenBtnRef.current?.focus();
+          }, 50);
         }
       } else if ((e.key === 'f' || e.key === 'F') && !isInputActive && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        e.preventDefault();
-        setIsFullscreen(prev => !prev);
+        // Aktif HANYA bila fokus berada di dalam section peta atau saat sedang fullscreen
+        const isFocusInsideSection = sectionRef.current && (
+          sectionRef.current.contains(activeElement) || activeElement === sectionRef.current
+        );
+        if (isFullscreen || isFocusInsideSection) {
+          e.preventDefault();
+          setIsFullscreen(prev => {
+            const next = !prev;
+            if (!next) {
+              setTimeout(() => {
+                fullscreenBtnRef.current?.focus();
+              }, 50);
+            }
+            return next;
+          });
+        }
       }
     };
 
@@ -2194,7 +2233,7 @@ export function InteractiveFloorPlan({
         const query = searchQuery.toLowerCase();
         const matchName = node.name.toLowerCase().includes(query);
         const matchSub = (node.subName || '').toLowerCase().includes(query);
-        const matchZone = node.zone.toLowerCase().includes(query);
+        const matchZone = node.zone.toLowerCase().includes(query) || translateZoneToId(node.zone).toLowerCase().includes(query);
         const matchServices = node.services.some(s => s.toLowerCase().includes(query));
         if (!matchName && !matchSub && !matchZone && !matchServices) return false;
       }
@@ -2224,7 +2263,8 @@ export function InteractiveFloorPlan({
         node.name.toLowerCase().includes(q) ||
         (node.subName || '').toLowerCase().includes(q) ||
         node.services.some(s => s.toLowerCase().includes(q)) ||
-        node.zone.toLowerCase().includes(q)
+        node.zone.toLowerCase().includes(q) ||
+        translateZoneToId(node.zone).toLowerCase().includes(q)
       );
       if (!matchSearch) return false;
     }
@@ -2352,12 +2392,12 @@ export function InteractiveFloorPlan({
         subName: node.subName,
         type: isFacility ? 'facility' : 'tenant',
         category: node.category,
-        zone: node.zone,
+        zone: translateZoneToId(node.zone),
         status: node.status === 'open' ? 'open' : 'busy',
         services: isFacility && facilityInfo ? facilityInfo.amenities : node.services,
         description: isFacility && facilityInfo 
           ? facilityInfo.description 
-          : `${node.name} - ${node.subName || ''}. Lokasi: ${node.zone}`,
+          : `${node.name} - ${node.subName || ''}. Lokasi: ${translateZoneToId(node.zone)}`,
         capacity: facilityInfo?.capacity,
         amenities: facilityInfo?.amenities,
         isAccessibleDisability: facilityInfo?.isAccessibleDisability ?? node.isDisabilityFriendly,
@@ -2371,15 +2411,18 @@ export function InteractiveFloorPlan({
   };
 
   return (
-    <div className={`fp-root ${isFullscreen 
-      ? "fixed inset-0 z-[9999] p-0 flex flex-col justify-center items-center overflow-hidden select-none"
-      : `w-full max-w-full rounded-3xl border transition-all duration-300 overflow-hidden shadow-sm flex flex-col ${
-          effectiveIsDark ? 'bg-surface/95 border-slate-800 text-slate-100' : 'bg-white border-slate-100 text-slate-900'
-        } ${className}`
-    }`}
-    style={{
-      backgroundColor: 'var(--fp-bg)'
-    }}>
+    <div 
+      ref={sectionRef}
+      tabIndex={-1}
+      className={`fp-root outline-none ${isFullscreen 
+        ? "fixed inset-0 z-[9999] p-0 flex flex-col justify-center items-center overflow-hidden select-none"
+        : `w-full max-w-full rounded-3xl border transition-all duration-300 overflow-hidden shadow-sm flex flex-col ${
+            effectiveIsDark ? 'bg-surface/95 border-slate-800 text-slate-100' : 'bg-white border-slate-100 text-slate-900'
+          } ${className}`
+      }`}
+      style={{
+        backgroundColor: 'var(--fp-bg)'
+      }}>
 
       {/* ───────────────────────────────────────────────────────────────── */}
       {/* 1. TOP BAR: TITLE, FILTER CHIPS, SEARCH & ZOOM CONTROLS           */}
@@ -2581,7 +2624,7 @@ export function InteractiveFloorPlan({
               }`
         }>
           <div className="flex items-center justify-between px-2 pt-1 pb-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 font-mono">
+            <span className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400 font-sans">
               Daftar Loket ({filteredNodes.length})
             </span>
             <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
@@ -2611,8 +2654,8 @@ export function InteractiveFloorPlan({
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono">
-                        {node.zone}
+                      <span className="text-[12px] font-bold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400 font-sans">
+                        {translateZoneToId(node.zone)}
                       </span>
                       <StatusPill status={node.status === 'open' ? 'buka' : node.status === 'busy' ? 'ramai' : 'tutup'} />
                     </div>
@@ -2746,6 +2789,7 @@ export function InteractiveFloorPlan({
                   onClick={() => {
                     setSelectedNode(null);
                     setIsFullscreen(false);
+                    setTimeout(() => fullscreenBtnRef.current?.focus(), 50);
                   }}
                   className="min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 rounded-2xl bg-slate-900/95 hover:bg-rose-600 text-slate-100 hover:text-white shadow-2xl border border-slate-700 hover:border-rose-500 transition-all cursor-pointer active:scale-95 text-xs font-black"
                   title="Tutup Mode Layar Lebar (Esc)"
@@ -2753,6 +2797,7 @@ export function InteractiveFloorPlan({
                 >
                   <X className="w-4 h-4" />
                   <span className="hidden sm:inline">Keluar</span>
+                  <span className="hidden sm:[@media(pointer:fine)]:inline text-[10px] font-mono bg-black/40 px-1.5 py-0.5 rounded text-rose-200">ESC</span>
                 </button>
               </div>
             </div>
@@ -2785,6 +2830,21 @@ export function InteractiveFloorPlan({
               >
                 <RotateCcw className="w-4 h-4" />
               </button>
+            </div>
+          )}
+
+          {/* Bottom-left in Fullscreen: Filter & Legenda so user can filter in theater mode */}
+          {isFullscreen && (
+            <div className="absolute bottom-4 left-4 z-50 pointer-events-auto select-none">
+              <FloatingFloorPlanLegend
+                activeSector={activeSector}
+                onSelectSector={handleSectorFilterChange}
+                isDark={isDark}
+                position="toolbar"
+                totalMatchingCount={matchingSectorCount}
+                isOpenControlled={isLegendOpen}
+                onToggleControlled={setIsLegendOpen}
+              />
             </div>
           )}
 
@@ -2924,8 +2984,8 @@ export function InteractiveFloorPlan({
               {/* ── 1. AUTHENTIC ARCHITECTURAL BASELINE: DENAH_VEKTOR.min.svg ── */}
               <path
                 d={DENAH_VEKTOR_PATH}
-                stroke={effectiveIsDark ? "rgba(148, 163, 184, 0.35)" : "var(--fp-wall, #334155)"}
-                strokeWidth="calc(var(--px, 1) * 1.25)"
+                stroke={effectiveIsDark ? "rgba(148, 163, 184, 0.45)" : "var(--fp-wall, #1e293b)"}
+                strokeWidth="calc(var(--px, 1) * 1.5)"
                 fill="none"
                 className="pointer-events-none"
                 shapeRendering="geometricPrecision"
@@ -3155,17 +3215,17 @@ export function InteractiveFloorPlan({
                   const catMeta = MPP_CATEGORIES[catKey] || MPP_CATEGORIES.fasilitas;
                   const categoryColorVar = catMeta.tokenVar;
 
-                  let nodeOpacity = isMatching ? 1.0 : 0.25;
+                  let nodeOpacity = isMatching ? 1.0 : 0.35;
                   let nodeFilter: string | undefined = undefined;
 
                   if (isSelected) {
                     nodeOpacity = 1;
                     nodeFilter = `drop-shadow(0 0 16px ${categoryColorVar})`;
                   } else if (isHovered && isMatching) {
-                    nodeOpacity = 0.95;
+                    nodeOpacity = 0.98;
                     nodeFilter = `drop-shadow(0 0 10px ${categoryColorVar})`;
                   } else if (!isMatching) {
-                    nodeFilter = 'grayscale(100%)';
+                    nodeFilter = 'grayscale(80%)';
                   }
 
                   // Check if item has thin contour paths
@@ -3187,6 +3247,11 @@ export function InteractiveFloorPlan({
                     ? `calc(var(--px, 1) * 1.0)`
                     : `calc(var(--px, 1) * 1.25)`;
                   const tableChairStrokeWidth = `calc(var(--px, 1) * 1.25)`;
+
+                  const boothFillOpacity = effectiveIsDark 
+                    ? (isFacility ? "0.55" : "0.65") 
+                    : (isFacility ? "0.65" : "0.75");
+                  const detailFillOpacity = effectiveIsDark ? "0.55" : "0.70";
 
                   return (
                     <g
@@ -3210,7 +3275,7 @@ export function InteractiveFloorPlan({
                         <path
                           d={item.d}
                           fill="currentColor"
-                          fillOpacity={isFacility ? "0.28" : "0.35"}
+                          fillOpacity={boothFillOpacity}
                           stroke="currentColor"
                           strokeWidth={itemStrokeWidth}
                           strokeLinecap="round"
@@ -3224,7 +3289,7 @@ export function InteractiveFloorPlan({
                           width={item.width}
                           height={item.height}
                           fill="currentColor"
-                          fillOpacity={isFacility ? "0.28" : "0.35"}
+                          fillOpacity={boothFillOpacity}
                           stroke="currentColor"
                           strokeWidth={itemStrokeWidth}
                           shapeRendering="geometricPrecision"
@@ -3239,12 +3304,12 @@ export function InteractiveFloorPlan({
 
                             return (
                               <React.Fragment key={`contour-wrap-${pIdx}`}>
-                                {/* 1A. Concave Hull Fill Layer untuk Pulau Tengah (fill-opacity 0.28 warna kategori) */}
+                                {/* 1A. Concave Hull Fill Layer untuk Pulau Tengah (fill-opacity 0.65 warna kategori) */}
                                 {hullD && (
                                   <path
                                     d={hullD}
                                     fill="currentColor"
-                                    fillOpacity="0.28"
+                                    fillOpacity={effectiveIsDark ? "0.50" : "0.65"}
                                     stroke="none"
                                   />
                                 )}
@@ -3271,7 +3336,7 @@ export function InteractiveFloorPlan({
                                 key={`chair-path-${pIdx}`}
                                 d={dVal}
                                 fill="currentColor"
-                                fillOpacity="0.35"
+                                fillOpacity={detailFillOpacity}
                                 stroke="currentColor"
                                 strokeWidth={tableChairStrokeWidth}
                                 strokeLinecap="round"
@@ -3293,7 +3358,7 @@ export function InteractiveFloorPlan({
                           width={rObj.width}
                           height={rObj.height}
                           fill="currentColor"
-                          fillOpacity="0.35"
+                          fillOpacity={detailFillOpacity}
                           stroke="currentColor"
                           strokeWidth={tableChairStrokeWidth}
                           shapeRendering="geometricPrecision"
@@ -3394,55 +3459,48 @@ export function InteractiveFloorPlan({
                 </g>
               )}
             </svg>
-
-                  </div>
-
-          {/* ───────────────────────────────────────────────────────────── */}
-          {/* BOTTOM FLOATING ACTION BAR: Filter & Legenda + Layar Lebar    */}
-          {/* ───────────────────────────────────────────────────────────── */}
-          {!isFullscreen && (
-            <div 
-              className="fixed left-3 right-3 z-40 flex items-center justify-between gap-2 pointer-events-none select-none"
-              style={{
-                position: 'fixed',
-                bottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
-                left: '12px',
-                right: '12px',
-                zIndex: 40
-              }}
-            >
-              {/* Left: Floating Interactive Legend & Sector Filter Overlay */}
-              <div className="pointer-events-auto">
-                <FloatingFloorPlanLegend
-                  activeSector={activeSector}
-                  onSelectSector={handleSectorFilterChange}
-                  isDark={isDark}
-                  position="bottom-left"
-                  totalMatchingCount={matchingSectorCount}
-                  isOpenControlled={isLegendOpen}
-                  onToggleControlled={setIsLegendOpen}
-                />
-              </div>
-
-              {/* Right: Fullscreen Maximize Button aligned on bottom row */}
-              <div className="pointer-events-auto flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsFullscreen(true)}
-                  className="h-12 min-h-[48px] w-12 sm:w-auto p-0 sm:px-4 flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black shadow-2xl border-2 border-emerald-300/80 transition-all cursor-pointer active:scale-95 group ring-4 ring-emerald-500/20 shrink-0"
-                  title="Lihat Layar Lebar (Landscape)"
-                  aria-label="Lihat Layar Lebar (Landscape)"
-                >
-                  <Maximize2 className="w-5 h-5 group-hover:scale-110 transition-transform shrink-0" />
-                  <span className="hidden sm:inline whitespace-nowrap">Lihat Layar Lebar (Landscape)</span>
-                  <span className="hidden sm:[@media(pointer:fine)]:inline text-[10px] font-mono bg-black/40 px-2 py-0.5 rounded text-emerald-200">F</span>
-                </button>
-              </div>
-            </div>
-          )}
           </div>
         </div>
+
+        {/* ───────────────────────────────────────────────────────────── */}
+        {/* MAP-TOOLBAR STATIS (BUKAN fixed/sticky) TEPAT DI BAWAH KANVAS  */}
+        {/* ───────────────────────────────────────────────────────────── */}
+        {!isFullscreen && (
+          <div className="map-toolbar w-full flex items-center justify-between gap-2 h-12 min-h-[48px] mt-2.5 px-0.5 relative z-30 select-none">
+            {/* Kiri: Filter & Legenda */}
+            <div className="relative">
+              <FloatingFloorPlanLegend
+                activeSector={activeSector}
+                onSelectSector={handleSectorFilterChange}
+                isDark={isDark}
+                position="toolbar"
+                totalMatchingCount={matchingSectorCount}
+                isOpenControlled={isLegendOpen}
+                onToggleControlled={setIsLegendOpen}
+              />
+            </div>
+
+            {/* Kanan: Lihat Layar Lebar */}
+            <button
+              ref={fullscreenBtnRef}
+              type="button"
+              onClick={() => setIsFullscreen(true)}
+              className="h-12 min-h-[48px] w-12 sm:w-auto p-0 sm:px-4 flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md border border-emerald-400/80 transition-all cursor-pointer active:scale-95 group shrink-0"
+              title={isPointerCoarse ? "Lihat Layar Lebar (Landscape)" : "Lihat Layar Lebar (Landscape) • Pintasan: F"}
+              aria-label="Lihat Layar Lebar (Landscape)"
+            >
+              <Maximize2 className="w-5 h-5 group-hover:scale-110 transition-transform shrink-0" />
+              <span className="hidden sm:inline whitespace-nowrap">Lihat Layar Lebar (Landscape)</span>
+              {!isPointerCoarse && (
+                <span className="hidden sm:[@media(pointer:fine)]:inline-flex text-[10px] font-mono bg-black/40 px-2 py-0.5 rounded text-emerald-200">
+                  F
+                </span>
+              )}
+            </button>
+          </div>
+        )}
       </div>
+    </div>
 
       {/* ───────────────────────────────────────────────────────────────── */}
       {/* 4. FLOATING DETAIL CARD / MODAL POPOVER                             */}
