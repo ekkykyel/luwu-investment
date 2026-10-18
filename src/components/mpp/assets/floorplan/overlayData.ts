@@ -17,6 +17,7 @@ export interface GeraiOverlayItem {
   innerHtml: string;
   childPaths?: string[]; // Array of d attributes of child paths
   childRects?: Array<{ x: number; y: number; width: number; height: number }>;
+  bbox?: { x: number; y: number; w: number; h: number; cx: number; cy: number };
 }
 
 // ── WAYPOINTS ACUAN RUTE EVAKUASI / WAYFINDING RESMI FIGMA ──
@@ -132,9 +133,15 @@ export function parseGeraiOverlay(rawSvg: string): {
   const defsMatch = rawSvg.match(/<defs[^>]*>([\s\S]*?)<\/defs>/i);
   const defs = defsMatch ? defsMatch[1].trim() : '';
 
-  // Ekstrak isi grup <g id="GERAI_OVERLAY"> secara tangguh (toleran terhadap defs, </svg>, atau EOF)
-  const innerMatch = rawSvg.match(/<g id="GERAI_OVERLAY">([\s\S]*?)<\/g>\s*(?:<defs|<\/svg|$)/i);
-  const inner = innerMatch ? innerMatch[1] : rawSvg;
+  // Ekstrak isi grup <g id="GERAI_OVERLAY"> secara tangguh & performan
+  let inner = rawSvg;
+  const geraiStartTag = '<g id="GERAI_OVERLAY">';
+  const startIndex = rawSvg.indexOf(geraiStartTag);
+  if (startIndex !== -1) {
+    const contentAfterStart = rawSvg.slice(startIndex + geraiStartTag.length);
+    const lastClosingG = contentAfterStart.lastIndexOf('</g>');
+    inner = lastClosingG !== -1 ? contentAfterStart.slice(0, lastClosingG) : contentAfterStart;
+  }
 
   const regex = /<(g|path|rect|circle)\s+id="([^"]+)"([^>]*)(?:\/>|>([\s\S]*?)<\/\1>)/g;
   const items: GeraiOverlayItem[] = [];
@@ -191,20 +198,61 @@ export function parseGeraiOverlay(rawSvg: string): {
       .replace(/\bfilter="[^"]*"/g, '')
       .replace(/style="[^"]*mix-blend-mode:[^"]*"/g, '');
 
+    // Hitung bounding box secara instan saat parsing modul (0 cost di runtime React)
+    let bbox: { x: number; y: number; w: number; h: number; cx: number; cy: number } | undefined = undefined;
+    const xVal = xMatch ? Number(xMatch[1]) : undefined;
+    const yVal = yMatch ? Number(yMatch[1]) : undefined;
+    const wVal = wMatch ? Number(wMatch[1]) : undefined;
+    const hVal = hMatch ? Number(hMatch[1]) : undefined;
+    const dVal = dMatch ? dMatch[1] : undefined;
+
+    if (xVal !== undefined && yVal !== undefined && wVal !== undefined && hVal !== undefined) {
+      bbox = { x: xVal, y: yVal, w: wVal, h: hVal, cx: xVal + wVal / 2, cy: yVal + hVal / 2 };
+    } else {
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      const updateFromD = (dStr: string) => {
+        const nums = dStr.match(/[-+]?[0-9]*\.?[0-9]+/g);
+        if (!nums) return;
+        for (let i = 0; i < nums.length - 1; i += 2) {
+          const px = parseFloat(nums[i]);
+          const py = parseFloat(nums[i + 1]);
+          if (isNaN(px) || isNaN(py)) continue;
+          if (px < minX) minX = px;
+          if (px > maxX) maxX = px;
+          if (py < minY) minY = py;
+          if (py > maxY) maxY = py;
+        }
+      };
+      if (dVal) updateFromD(dVal);
+      if (childPaths) childPaths.forEach(updateFromD);
+      if (childRects) {
+        childRects.forEach(r => {
+          minX = Math.min(minX, r.x);
+          maxX = Math.max(maxX, r.x + r.width);
+          minY = Math.min(minY, r.y);
+          maxY = Math.max(maxY, r.y + r.height);
+        });
+      }
+      if (isFinite(minX) && isFinite(maxX) && maxX > minX) {
+        bbox = { x: minX, y: minY, w: maxX - minX, h: maxY - minY, cx: (minX + maxX) / 2, cy: (minY + maxY) / 2 };
+      }
+    }
+
     items.push({
       tag,
       id,
-      d: dMatch ? dMatch[1] : undefined,
-      x: xMatch ? Number(xMatch[1]) : undefined,
-      y: yMatch ? Number(yMatch[1]) : undefined,
-      width: wMatch ? Number(wMatch[1]) : undefined,
-      height: hMatch ? Number(hMatch[1]) : undefined,
+      d: dVal,
+      x: xVal,
+      y: yVal,
+      width: wVal,
+      height: hVal,
       cx: cxMatch ? Number(cxMatch[1]) : undefined,
       cy: cyMatch ? Number(cyMatch[1]) : undefined,
       r: rMatch ? Number(rMatch[1]) : undefined,
       innerHtml,
       childPaths,
-      childRects
+      childRects,
+      bbox
     });
   }
 

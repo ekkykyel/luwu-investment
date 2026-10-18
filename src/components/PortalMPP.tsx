@@ -26,7 +26,11 @@ import { triggerFullAirportCallingAlert } from '../utils/airportAudioAlert';
 import { printMppQueueTicket } from '../utils/mppTicketPrinter';
 import { LiveMarketTicker } from './LiveMarketTicker';
 import { SmartLiveQueue } from './mpp/SmartLiveQueue';
-import { InteractiveFloorPlan, SelectedFloorItem } from './mpp/InteractiveFloorPlan';
+import type { SelectedFloorItem } from './mpp/InteractiveFloorPlan';
+
+const LazyInteractiveFloorPlan = React.lazy(() =>
+  import('./mpp/InteractiveFloorPlan').then(m => ({ default: m.InteractiveFloorPlan }))
+);
 import { SmartServiceFinder } from './mpp/SmartServiceFinder';
 import { SmartDocumentTracker } from './mpp/SmartDocumentTracker';
 import { SmartRequirementAssistant } from './mpp/SmartRequirementAssistant';
@@ -342,6 +346,7 @@ export default function PortalMPP() {
   // Two-way interactive floor plan & smart finder synchronization
   const [selectedFloorItem, setSelectedFloorItem] = useState<SelectedFloorItem | null>(null);
   const floorPlanSectionRef = useRef<HTMLDivElement>(null);
+  const isFloorPlanInView = useInView(floorPlanSectionRef, { once: true, margin: '600px 0px 600px 0px' });
 
   // Animations & Viewport Scroll-Trigger Refs (Reduced-Motion compliant)
   const shouldReduceMotion = useReducedMotion();
@@ -2854,19 +2859,41 @@ export default function PortalMPP() {
               </p>
             </div>
 
-            {/* Denah Floor Plan & Direktori Terpadu */}
+            {/* Denah Floor Plan & Direktori Terpadu (Code-Split + IntersectionObserver Lazy Loaded) */}
             <div ref={floorPlanSectionRef} className="w-full scroll-mt-36 sm:scroll-mt-40">
-              <InteractiveFloorPlan 
-                isDark={isDark} 
-                selectedId={selectedFloorItem?.id || selectedFloorItem?.code}
-                onSelectElement={(item) => {
-                  setSelectedFloorItem(item);
-                }}
-                onOpenQueueBooking={(serviceName) => {
-                  if (serviceName) setQueueForm(prev => ({ ...prev, service: serviceName }));
-                  setIsQueueBookingOpen(true);
-                }}
-              />
+              {(isFloorPlanInView || Boolean(selectedFloorItem)) ? (
+                <React.Suspense
+                  fallback={
+                    <div className="w-full h-[480px] sm:h-[620px] rounded-3xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 flex flex-col items-center justify-center p-6 text-center">
+                      <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 mb-3 animate-pulse">
+                        <Building2 className="w-6 h-6" />
+                      </div>
+                      <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">Memuat Denah Digital MPP Luwu...</p>
+                      <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Mengoptimalkan akselerasi grafis...</p>
+                    </div>
+                  }
+                >
+                  <LazyInteractiveFloorPlan 
+                    isDark={isDark} 
+                    selectedId={selectedFloorItem?.id || selectedFloorItem?.code}
+                    onSelectElement={(item) => {
+                      setSelectedFloorItem(item);
+                    }}
+                    onOpenQueueBooking={(serviceName) => {
+                      if (serviceName) setQueueForm(prev => ({ ...prev, service: serviceName }));
+                      setIsQueueBookingOpen(true);
+                    }}
+                  />
+                </React.Suspense>
+              ) : (
+                <div className="w-full h-[480px] sm:h-[620px] rounded-3xl bg-slate-100/50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800/60 flex flex-col items-center justify-center p-6 text-center">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-200/60 dark:bg-slate-800/60 flex items-center justify-center text-slate-400 mb-3">
+                    <Building2 className="w-6 h-6" />
+                  </div>
+                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Denah Interaktif MPP Luwu</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Akan dimuat otomatis saat mendekati tampilan</p>
+                </div>
+              )}
             </div>
           </div>
 

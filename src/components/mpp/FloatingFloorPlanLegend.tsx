@@ -49,7 +49,7 @@ export const SECTOR_ACCENT_COLORS: Record<MppSectorFilter, string> = {
   bpjs_sosial: '#0f766e',
   perbankan_bumn: '#1e40af',
   fasilitas_inklusif: '#0891b2',
-  area_staf: '#64748b'
+  area_staf: '#f97316'
 };
 
 /**
@@ -422,14 +422,14 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
         <button
           type="button"
           onClick={() => setIsOpen(prev => !prev)}
-          className={`h-12 min-h-[48px] flex items-center gap-2 px-4 rounded-2xl backdrop-blur-md border shadow-md transition-all cursor-pointer active:scale-95 group select-none text-xs font-bold ${
+          className={`h-12 min-h-[48px] flex items-center gap-2 px-4 rounded-2xl border shadow-md transition-all cursor-pointer active:scale-95 group select-none text-xs font-bold ${
             isDark
               ? (isOpen
-                  ? 'bg-slate-900/95 text-white border-emerald-500 ring-2 ring-emerald-500/30'
-                  : 'bg-slate-900/95 text-white border-slate-700/80 hover:border-emerald-500/80 hover:bg-slate-800')
+                  ? 'bg-slate-900 text-white border-emerald-500 ring-2 ring-emerald-500/30'
+                  : 'bg-slate-900 text-white border-slate-700/80 hover:border-emerald-500/80 hover:bg-slate-800')
               : (isOpen
-                  ? 'bg-white/95 text-slate-800 border-emerald-500 ring-2 ring-emerald-500/30 shadow-[0_2px_8px_rgba(15,23,42,0.10)]'
-                  : 'bg-white/85 text-slate-800 border-slate-200 hover:border-emerald-500/80 hover:bg-slate-50 shadow-[0_2px_8px_rgba(15,23,42,0.10)]')
+                  ? 'bg-white text-slate-800 border-emerald-500 ring-2 ring-emerald-500/30 shadow-[0_2px_8px_rgba(15,23,42,0.10)]'
+                  : 'bg-white text-slate-800 border-slate-200 hover:border-emerald-500/80 hover:bg-slate-50 shadow-[0_2px_8px_rgba(15,23,42,0.10)]')
           }`}
           title={t('legend.expand', 'Buka Filter & Legenda Denah')}
           aria-label={t('legend.mobileToggle', 'Filter & Legenda')}
@@ -438,7 +438,7 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
           <div className="relative flex items-center justify-center">
             <Filter className="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform" />
             {hasActiveSector && (
-              <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+              <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-400 motion-safe:animate-ping motion-reduce:hidden" />
             )}
           </div>
           <span className="tracking-tight whitespace-nowrap">
@@ -463,14 +463,14 @@ export const FloatingFloorPlanLegend: React.FC<FloatingFloorPlanLegendProps> = (
           isToolbar
             ? 'absolute bottom-full mb-2 left-0'
             : 'mb-2'
-        } w-[calc(100vw-32px)] sm:w-[360px] md:w-[390px] max-h-[70vh] sm:max-h-[72vh] flex flex-col backdrop-blur-md rounded-2xl overflow-hidden transition-all duration-300 z-50 ${
+        } w-[calc(100vw-32px)] sm:w-[360px] md:w-[390px] max-h-[70vh] sm:max-h-[72vh] flex flex-col rounded-2xl overflow-hidden transition-all duration-300 z-50 ${
           isDark
-            ? 'bg-slate-900/95 dark:bg-slate-950/95 text-white border border-slate-700/80 shadow-2xl'
-            : 'bg-white/90 text-slate-800 border border-slate-200 shadow-[0_2px_8px_rgba(15,23,42,0.10)]'
+            ? 'bg-slate-900 text-white border border-slate-700/80 shadow-2xl'
+            : 'bg-white text-slate-800 border border-slate-200 shadow-[0_2px_8px_rgba(15,23,42,0.10)]'
         }`}>
           {/* Header Bar */}
           <div className={`px-3.5 py-3 border-b flex items-center justify-between gap-2 select-none relative z-50 ${
-            isDark ? 'border-slate-800/80 bg-slate-900/90 text-slate-100' : 'border-slate-200/80 bg-white/95 text-slate-900'
+            isDark ? 'border-slate-800/80 bg-slate-900 text-slate-100' : 'border-slate-200/80 bg-white text-slate-900'
           }`}>
             <div className="flex items-center gap-2 min-w-0">
               <div className="w-7 h-7 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 shrink-0">
