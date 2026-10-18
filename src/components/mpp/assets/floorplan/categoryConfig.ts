@@ -25,52 +25,52 @@ export const MPP_CATEGORIES: Record<MppCategoryKey, MppCategoryMeta> = {
   kependudukan_sipil: {
     key: 'kependudukan_sipil',
     label: 'Kependudukan & Sipil',
-    tokenVar: 'var(--fp-cat-kependudukan)'
+    tokenVar: 'var(--fp-cat-kependudukan, #0284c7)'
   },
   perizinan_investasi: {
     key: 'perizinan_investasi',
     label: 'Perizinan & Investasi',
-    tokenVar: 'var(--fp-cat-perizinan)'
+    tokenVar: 'var(--fp-cat-perizinan, #7c3aed)'
   },
   keuangan_pajak: {
     key: 'keuangan_pajak',
     label: 'Keuangan & Pajak',
-    tokenVar: 'var(--fp-cat-keuangan)'
+    tokenVar: 'var(--fp-cat-keuangan, #d97706)'
   },
   ketenagakerjaan_jamsos: {
     key: 'ketenagakerjaan_jamsos',
     label: 'Ketenagakerjaan & Jamsos',
-    tokenVar: 'var(--fp-cat-ketenagakerjaan)'
+    tokenVar: 'var(--fp-cat-ketenagakerjaan, #1d4ed8)'
   },
   kesehatan_sosial: {
     key: 'kesehatan_sosial',
     label: 'Kesehatan & Sosial',
-    tokenVar: 'var(--fp-cat-kesehatan)'
+    tokenVar: 'var(--fp-cat-kesehatan, #0f766e)'
   },
   utilitas_lainnya: {
     key: 'utilitas_lainnya',
     label: 'Utilitas & Lainnya',
-    tokenVar: 'var(--fp-cat-utilitas)'
+    tokenVar: 'var(--fp-cat-utilitas, #d97706)'
   },
   hukum: {
     key: 'hukum',
     label: 'Hukum',
-    tokenVar: 'var(--fp-cat-hukum)'
+    tokenVar: 'var(--fp-cat-hukum, #312e81)'
   },
   layanan_khusus: {
     key: 'layanan_khusus',
     label: 'Layanan Khusus',
-    tokenVar: 'var(--fp-cat-khusus)'
+    tokenVar: 'var(--fp-cat-khusus, #db2777)'
   },
   fasilitas: {
     key: 'fasilitas',
     label: 'Fasilitas Umum',
-    tokenVar: 'var(--fp-cat-fasilitas)'
+    tokenVar: 'var(--fp-cat-fasilitas, #64748b)'
   },
   area_terbatas: {
     key: 'area_terbatas',
     label: 'Area Staf',
-    tokenVar: 'var(--fp-cat-area-terbatas)'
+    tokenVar: 'var(--fp-cat-area-terbatas, #475569)'
   }
 };
 

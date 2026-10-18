@@ -129,11 +129,12 @@ export function parseGeraiOverlay(rawSvg: string): {
   defs: string;
   items: GeraiOverlayItem[];
 } {
-  const defsMatch = rawSvg.match(/<defs>([\s\S]*?)<\/defs>/);
+  const defsMatch = rawSvg.match(/<defs[^>]*>([\s\S]*?)<\/defs>/i);
   const defs = defsMatch ? defsMatch[1].trim() : '';
 
-  const innerMatch = rawSvg.match(/<g id="GERAI_OVERLAY">([\s\S]*?)<\/g>\s*(?:<defs>|$)/);
-  const inner = innerMatch ? innerMatch[1] : '';
+  // Ekstrak isi grup <g id="GERAI_OVERLAY"> secara tangguh (toleran terhadap defs, </svg>, atau EOF)
+  const innerMatch = rawSvg.match(/<g id="GERAI_OVERLAY">([\s\S]*?)<\/g>\s*(?:<defs|<\/svg|$)/i);
+  const inner = innerMatch ? innerMatch[1] : rawSvg;
 
   const regex = /<(g|path|rect|circle)\s+id="([^"]+)"([^>]*)(?:\/>|>([\s\S]*?)<\/\1>)/g;
   const items: GeraiOverlayItem[] = [];
@@ -142,6 +143,7 @@ export function parseGeraiOverlay(rawSvg: string): {
   while ((m = regex.exec(inner)) !== null) {
     const tag = m[1] as 'g' | 'path' | 'rect' | 'circle';
     const id = m[2];
+    if (id === 'GERAI_OVERLAY') continue;
     const rawAttrs = m[3];
     const rawInner = m[4] || '';
 
@@ -181,11 +183,12 @@ export function parseGeraiOverlay(rawSvg: string): {
       if (cr.length > 0) childRects = cr;
     }
 
-    // Ubah fill hardcode agar bereaksi terhadap currentColor, nonaktifkan mix-blend-mode & opacity bawaan
+    // Ubah fill hardcode agar bereaksi terhadap currentColor, bersihkan mix-blend-mode, filter & opacity bawaan
     const innerHtml = rawInner
       .replace(/fill="black"/g, 'fill="currentColor"')
       .replace(/fill="#D9D9D9"/g, 'fill="currentColor"')
       .replace(/\bopacity="0\.4"/g, '')
+      .replace(/\bfilter="[^"]*"/g, '')
       .replace(/style="[^"]*mix-blend-mode:[^"]*"/g, '');
 
     items.push({

@@ -1909,19 +1909,19 @@ export function InteractiveFloorPlan({
     if (stairVariant === 'B') {
       return {
         body: effectiveIsDark ? '#1E3A5F' : '#EEF2F7',
-        tread: '#ffffff',
+        tread: effectiveIsDark ? '#334155' : '#ffffff',
         stroke: '#64748b',
         chevron: effectiveIsDark ? '#cbd5e1' : '#475569',
         dotStroke: effectiveIsDark ? '#1E3A5F' : '#EEF2F7'
       };
     }
-    // Varian A (Default: Putih kebiruan / bersih)
+    // Varian A (Default: Mengikuti token tema denah arsitektur)
     return {
-      body: effectiveIsDark ? '#e2e8f0' : '#ffffff',
-      tread: effectiveIsDark ? '#94a3b8' : '#B6C4D6',
-      stroke: '#64748b',
-      chevron: effectiveIsDark ? '#334155' : '#475569',
-      dotStroke: effectiveIsDark ? '#e2e8f0' : '#ffffff'
+      body: effectiveIsDark ? 'var(--fp-stair-body, #1e293b)' : 'var(--fp-stair-body, #ffffff)',
+      tread: effectiveIsDark ? 'var(--fp-stair-tread, #334155)' : 'var(--fp-stair-tread, #94a3b8)',
+      stroke: 'var(--fp-stair-stroke, #64748b)',
+      chevron: effectiveIsDark ? 'var(--fp-stair-chevron, #94a3b8)' : 'var(--fp-stair-chevron, #475569)',
+      dotStroke: effectiveIsDark ? 'var(--fp-stair-body, #1e293b)' : 'var(--fp-stair-body, #ffffff)'
     };
   }, [stairVariant, effectiveIsDark]);
 
@@ -2192,6 +2192,39 @@ export function InteractiveFloorPlan({
     });
     return map;
   }, []);
+
+  // ── AUDIT & DEV GUARD OVERLAY RENDERING (SOP-D FIX 1.2) ──
+  const isDebugOverlay = typeof window !== 'undefined' && window.location.search.includes('debug=overlay');
+
+  const { renderedOverlayCount, expectedOverlayCount, missingOverlayIds } = useMemo(() => {
+    const expected = GERAI_ITEMS.filter(
+      item => !STAIR_SVG_IDS.has(item.id) && !WAYPOINT_SVG_IDS.has(item.id)
+    );
+    const rendered = expected.filter(item => {
+      const nodeId = SVG_ID_MAP[item.id] || item.id;
+      return !!activeNodesMap[nodeId];
+    });
+    const renderedIds = new Set(rendered.map(item => item.id));
+    const missing = expected.filter(item => !renderedIds.has(item.id)).map(item => item.id);
+    return {
+      renderedOverlayCount: rendered.length,
+      expectedOverlayCount: expected.length,
+      missingOverlayIds: missing
+    };
+  }, [activeNodesMap]);
+
+  useEffect(() => {
+    if (renderedOverlayCount < expectedOverlayCount) {
+      console.warn(
+        `[InteractiveFloorPlan] Overlay Guard: ${expectedOverlayCount - renderedOverlayCount} ID interaktif hilang dari rendering!`,
+        {
+          expected: expectedOverlayCount,
+          rendered: renderedOverlayCount,
+          missingIds: missingOverlayIds
+        }
+      );
+    }
+  }, [renderedOverlayCount, expectedOverlayCount, missingOverlayIds]);
 
   const selectedSvgId = selectedNode ? (NODE_ID_TO_SVG_ID[selectedNode.id] || selectedNode.svgId || selectedNode.id) : null;
 
@@ -2981,6 +3014,13 @@ export function InteractiveFloorPlan({
             }}
           />
 
+          {/* Banner Dev Debug Overlay (?debug=overlay) */}
+          {isDebugOverlay && missingOverlayIds.length > 0 && (
+            <div className="absolute top-3 left-3 z-50 bg-rose-600/90 text-white text-xs px-3 py-1.5 rounded-lg shadow-lg backdrop-blur pointer-events-none">
+              ⚠️ Debug Overlay: {expectedOverlayCount - renderedOverlayCount} ID interaktif hilang ({missingOverlayIds.join(', ')})
+            </div>
+          )}
+
           {/* Custom Interactive Transform Wrapper with Centered Origin */}
           <div 
             className={isFullscreen 
@@ -3275,7 +3315,7 @@ export function InteractiveFloorPlan({
               </g>
 
               {/* ── 3. GERAI & BOOTH OVERLAY LAYER FROM FIGMA (GERAI_OVERLAY.svg) ── */}
-              <g id="gerai-overlay-layer">
+              <g id="gerai-overlay-layer" className="fp-overlay">
                 {GERAI_ITEMS.map((item) => {
                   // Tangga sudah dirender secara prosedural di atas, lewati dari layer item standar
                   if (STAIR_SVG_IDS.has(item.id)) {
@@ -3361,7 +3401,7 @@ export function InteractiveFloorPlan({
                       onMouseLeave={() => setHoveredNodeId(null)}
                       style={{
                         cursor: 'pointer',
-                        color: categoryColorVar,
+                        color: categoryColorVar || 'var(--fp-agency-color, #7dd3fc)',
                         opacity: nodeOpacity,
                         filter: nodeFilter,
                         transition: 'all 0.2s ease'

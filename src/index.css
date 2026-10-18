@@ -1571,10 +1571,10 @@ section[id] {
   --fp-surface: #0f172a;
   --fp-wall: rgba(148, 163, 184, 0.35); /* subtle architectural blueprint lines */
   --fp-grid: #10b981;
-  --fp-stair-body: #e2e8f0; /* Badan #E2E8F0 (Perbaikan E) */
-  --fp-stair-tread: #94a3b8; /* Anak tangga #94A3B8 (Perbaikan E) */
+  --fp-stair-body: #1e293b; /* Slate-800 menyatu dengan denah blueprint gelap */
+  --fp-stair-tread: #334155; /* Slate-700 anak tangga */
   --fp-stair-stroke: #64748b; /* Slate-500 */
-  --fp-stair-chevron: #334155; /* Slate-700 kontras >= 3:1 terhadap #e2e8f0 */
+  --fp-stair-chevron: #94a3b8; /* Slate-400 kontras >= 3:1 */
 
   /* Category tokens (Dark Theme - contrast >= 3:1 vs #0f172a / #0A2238, deltaE >= 20) */
   --fp-cat-kependudukan: #38bdf8; /* Sky-400 (7.55:1) */
@@ -1587,6 +1587,11 @@ section[id] {
   --fp-cat-khusus: #f472b6;       /* Pink-400 (6.10:1) */
   --fp-cat-fasilitas: #cbd5e1;    /* Slate-300 netral abu kebiruan terang (10.8:1) */
   --fp-cat-area-terbatas: #94a3b8; /* Slate-400 abu netral staf/khusus petugas (delta-E >= 31 vs 8 kategori) */
+}
+
+/* Floorplan Overlay Layer Fill Override */
+.fp-overlay g[id] {
+  fill: currentColor;
 }
 
 /* Loket Active Blinking Glow Animation */
