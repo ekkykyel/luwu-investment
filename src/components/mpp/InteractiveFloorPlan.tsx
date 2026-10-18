@@ -47,8 +47,9 @@ import FloatingFloorPlanLegend, {
   SECTOR_ACCENT_COLORS 
 } from './FloatingFloorPlanLegend';
 
-// ── FIGMA EXPORT ASSETS & OVERLAY GEOMETRY ──
-import denahVektorRaw from './assets/floorplan/DENAH_VEKTOR.min.svg?raw';
+// ── FIGMA EXPORT ASSETS & OVERLAY GEOMETRY (ASET BER-HASH & OPTIMAL) ──
+import denahWallLightUrl from './assets/floorplan/DENAH_WALL_LIGHT.svg';
+import denahWallDarkUrl from './assets/floorplan/DENAH_WALL_DARK.svg';
 import geraiOverlayRaw from './assets/floorplan/GERAI_OVERLAY.svg?raw';
 import {
   GeraiOverlayItem,
@@ -78,13 +79,16 @@ import { ISLAND_CONTOUR_HULL_MAP } from './assets/floorplan/islandHullPaths';
 // ── K3 MODE EVAKUASI TOGGLE (SEMBUNYIKAN DARI UI, KODE DIPERTAHANKAN) ──
 const ENABLE_EMERGENCY_MODE = false;
 
-// ── PARSE ASSETS SEKALI SAJA DI TINGKAT MODUL ──
-const DENAH_VEKTOR_PATH = (() => {
-  const m = denahVektorRaw.match(/<path\b[^>]*\bd="([^"]+)"/);
-  return m ? m[1] : '';
-})();
-
+// ── PARSE ASSETS & BBOX SEKALIGUS DI TINGKAT MODUL (0 RUNTIME REFLOW) ──
 const { defs: GERAI_DEFS, items: GERAI_ITEMS } = parseGeraiOverlay(geraiOverlayRaw);
+
+const OVERLAY_BBOXES: Record<string, { x: number; y: number; w: number; h: number; cx: number; cy: number }> = (() => {
+  const map: Record<string, { x: number; y: number; w: number; h: number; cx: number; cy: number }> = {};
+  GERAI_ITEMS.forEach(it => {
+    if (it.bbox) map[it.id] = it.bbox;
+  });
+  return map;
+})();
 
 export type FloorCategory = 'all' | 'counter' | 'facility' | 'disability';
 
@@ -1806,7 +1810,7 @@ const FLOOR_NODES: FloorNode[] = [
 ];
 
 
-export function InteractiveFloorPlan({ 
+function InteractiveFloorPlanComponent({ 
   isDark = false, 
   onOpenQueueBooking,
   className = '',
@@ -1888,18 +1892,68 @@ export function InteractiveFloorPlan({
     return new URLSearchParams(window.location.search).get('debug') === 'route';
   }, []);
 
-  // Fullscreen Pan & Pinch Gesture States (Custom ultra-smooth 0-dependency implementation)
+  // Fullscreen Pan & Pinch Gesture States (Ref + rAF: 0 React re-renders during motion)
   const [fullscreenScale, setFullscreenScale] = useState(1);
   const [fullscreenPosition, setFullscreenPosition] = useState({ x: 0, y: 0 });
+  const [isGestureActive, setIsGestureActive] = useState(false);
 
+  const transformTargetRef = useRef<HTMLDivElement | null>(null);
+  const gestureStateRef = useRef({ x: 0, y: 0, scale: 1 });
   const isDraggingRef = useRef(false);
   const startPanRef = useRef({ x: 0, y: 0 });
   const lastTouchDistanceRef = useRef<number | null>(null);
+  const rafGestureRef = useRef<number | null>(null);
+  const timerIdsRef = useRef<number[]>([]);
+
+  // Device tier & reduced motion detection
+  const isLowEndDevice = useMemo(() => {
+    if (typeof navigator === 'undefined') return false;
+    const nav = navigator as any;
+    const lowMem = nav.deviceMemory && nav.deviceMemory <= 4;
+    const lowCores = nav.hardwareConcurrency && nav.hardwareConcurrency <= 4;
+    const saveData = nav.connection && nav.connection.saveData === true;
+    return Boolean(lowMem || lowCores || saveData);
+  }, []);
+
+  const prefersReducedMotion = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }, []);
+
+  const safeSetTimeout = useCallback((fn: () => void, ms: number) => {
+    const id = window.setTimeout(fn, ms);
+    timerIdsRef.current.push(id);
+    return id;
+  }, []);
+
+  // Bersihkan semua timer aktif saat unmount (mencegah memory leak)
+  useEffect(() => {
+    return () => {
+      timerIdsRef.current.forEach(id => clearTimeout(id));
+      if (rafGestureRef.current !== null) cancelAnimationFrame(rafGestureRef.current);
+    };
+  }, []);
+
+  // Update transform style langsung via rAF (60-120fps direct hardware composition)
+  const scheduleTransformUpdate = useCallback(() => {
+    if (rafGestureRef.current !== null) return;
+    rafGestureRef.current = requestAnimationFrame(() => {
+      if (transformTargetRef.current) {
+        const { x, y, scale } = gestureStateRef.current;
+        transformTargetRef.current.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
+      }
+      rafGestureRef.current = null;
+    });
+  }, []);
 
   // Sync zoom states when isFullscreen changes
   useEffect(() => {
+    gestureStateRef.current = { x: 0, y: 0, scale: 1 };
     setFullscreenScale(1);
     setFullscreenPosition({ x: 0, y: 0 });
+    if (transformTargetRef.current) {
+      transformTargetRef.current.style.transform = '';
+    }
   }, [isFullscreen]);
 
   // Stair style variants (Varian A vs Varian B per user directive)
@@ -1929,9 +1983,10 @@ export function InteractiveFloorPlan({
     if (!isFullscreen) return;
     e.preventDefault();
     isDraggingRef.current = true;
+    setIsGestureActive(true);
     startPanRef.current = {
-      x: e.clientX - fullscreenPosition.x,
-      y: e.clientY - fullscreenPosition.y
+      x: e.clientX - gestureStateRef.current.x,
+      y: e.clientY - gestureStateRef.current.y
     };
   };
 
@@ -1940,17 +1995,23 @@ export function InteractiveFloorPlan({
     const newX = e.clientX - startPanRef.current.x;
     const newY = e.clientY - startPanRef.current.y;
     
-    // Limits / Boundaries relative to scale
-    const limitX = Math.max(0, 800 * (fullscreenScale - 1));
-    const limitY = Math.max(0, 500 * (fullscreenScale - 1));
+    const currentScale = gestureStateRef.current.scale;
+    const limitX = Math.max(0, 800 * (currentScale - 1));
+    const limitY = Math.max(0, 500 * (currentScale - 1));
     const clampedX = Math.max(-limitX, Math.min(limitX, newX));
     const clampedY = Math.max(-limitY, Math.min(limitY, newY));
 
-    setFullscreenPosition({ x: clampedX, y: clampedY });
+    gestureStateRef.current.x = clampedX;
+    gestureStateRef.current.y = clampedY;
+    scheduleTransformUpdate();
   };
 
   const handleFullscreenMouseUpOrLeave = () => {
-    isDraggingRef.current = false;
+    if (isDraggingRef.current) {
+      isDraggingRef.current = false;
+      setIsGestureActive(false);
+      setFullscreenPosition({ x: gestureStateRef.current.x, y: gestureStateRef.current.y });
+    }
   };
 
   const handleFullscreenTouchStart = (e: React.TouchEvent) => {
@@ -1958,14 +2019,16 @@ export function InteractiveFloorPlan({
 
     if (e.touches.length === 1) {
       isDraggingRef.current = true;
+      setIsGestureActive(true);
       const touch = e.touches[0];
       startPanRef.current = {
-        x: touch.clientX - fullscreenPosition.x,
-        y: touch.clientY - fullscreenPosition.y
+        x: touch.clientX - gestureStateRef.current.x,
+        y: touch.clientY - gestureStateRef.current.y
       };
       lastTouchDistanceRef.current = null;
     } else if (e.touches.length === 2) {
-      isDraggingRef.current = false; // Disable dragging when pinching
+      isDraggingRef.current = false;
+      setIsGestureActive(true);
       const touch1 = e.touches[0];
       const touch2 = e.touches[1];
       const distance = Math.hypot(
@@ -1984,12 +2047,15 @@ export function InteractiveFloorPlan({
       const newX = touch.clientX - startPanRef.current.x;
       const newY = touch.clientY - startPanRef.current.y;
 
-      const limitX = Math.max(0, 800 * (fullscreenScale - 1));
-      const limitY = Math.max(0, 500 * (fullscreenScale - 1));
+      const currentScale = gestureStateRef.current.scale;
+      const limitX = Math.max(0, 800 * (currentScale - 1));
+      const limitY = Math.max(0, 500 * (currentScale - 1));
       const clampedX = Math.max(-limitX, Math.min(limitX, newX));
       const clampedY = Math.max(-limitY, Math.min(limitY, newY));
 
-      setFullscreenPosition({ x: clampedX, y: clampedY });
+      gestureStateRef.current.x = clampedX;
+      gestureStateRef.current.y = clampedY;
+      scheduleTransformUpdate();
     } else if (e.touches.length === 2 && lastTouchDistanceRef.current !== null) {
       const touch1 = e.touches[0];
       const touch2 = e.touches[1];
@@ -1999,27 +2065,29 @@ export function InteractiveFloorPlan({
       );
       
       const factor = distance / lastTouchDistanceRef.current;
-      setFullscreenScale(prev => {
-        const nextScale = Math.max(0.8, Math.min(5, prev * factor));
-        return nextScale;
-      });
+      const nextScale = Math.max(0.8, Math.min(5, gestureStateRef.current.scale * factor));
+      gestureStateRef.current.scale = nextScale;
       lastTouchDistanceRef.current = distance;
+      scheduleTransformUpdate();
     }
   };
 
   const handleFullscreenTouchEnd = () => {
     isDraggingRef.current = false;
     lastTouchDistanceRef.current = null;
+    setIsGestureActive(false);
+    setFullscreenPosition({ x: gestureStateRef.current.x, y: gestureStateRef.current.y });
+    setFullscreenScale(gestureStateRef.current.scale);
   };
 
   const handleFullscreenWheel = (e: React.WheelEvent) => {
     if (!isFullscreen) return;
     const zoomFactor = 0.12;
     const direction = e.deltaY < 0 ? 1 : -1;
-    setFullscreenScale(prev => {
-      const nextScale = Math.max(0.8, Math.min(5, prev + direction * zoomFactor));
-      return nextScale;
-    });
+    const nextScale = Math.max(0.8, Math.min(5, gestureStateRef.current.scale + direction * zoomFactor));
+    gestureStateRef.current.scale = nextScale;
+    scheduleTransformUpdate();
+    setFullscreenScale(nextScale);
   };
 
   // Lock scroll when fullscreen mode is active
@@ -2050,7 +2118,7 @@ export function InteractiveFloorPlan({
           e.preventDefault();
           setIsFullscreen(false);
           setSelectedNode(null);
-          setTimeout(() => {
+          safeSetTimeout(() => {
             fullscreenBtnRef.current?.focus();
           }, 50);
         }
@@ -2064,7 +2132,7 @@ export function InteractiveFloorPlan({
           setIsFullscreen(prev => {
             const next = !prev;
             if (!next) {
-              setTimeout(() => {
+              safeSetTimeout(() => {
                 fullscreenBtnRef.current?.focus();
               }, 50);
             }
@@ -2078,7 +2146,7 @@ export function InteractiveFloorPlan({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isFullscreen]);
+  }, [isFullscreen, safeSetTimeout]);
 
   // Sync external selectedId with internal selectedNode
   useEffect(() => {
@@ -2104,39 +2172,11 @@ export function InteractiveFloorPlan({
   // SVG Pan & Zoom reference
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
-  const [nodeBBoxes, setNodeBBoxes] = useState<Record<string, { x: number; y: number; w: number; h: number; cx: number; cy: number }>>({});
 
-  // Runtime getBBox() calculation (Sesuai Butir 2 & Standar SVG)
-  useEffect(() => {
-    if (!svgRef.current) return;
-    const bboxes: Record<string, { x: number; y: number; w: number; h: number; cx: number; cy: number }> = {};
-    const elements = svgRef.current.querySelectorAll('[data-overlay-id]');
-    elements.forEach(el => {
-      try {
-        const svgEl = el as SVGGraphicsElement;
-        if (typeof svgEl.getBBox === 'function') {
-          const b = svgEl.getBBox();
-          const id = el.getAttribute('data-overlay-id');
-          if (id && b && b.width > 0 && b.height > 0) {
-            bboxes[id] = {
-              x: b.x,
-              y: b.y,
-              w: b.width,
-              h: b.height,
-              cx: b.x + b.width / 2,
-              cy: b.y + b.height / 2
-            };
-          }
-        }
-      } catch (err) {
-        // ignore
-      }
-    });
-    setNodeBBoxes(bboxes);
-  }, []);
+  // Precomputed BBoxes dari modul (0 DOM reflow, 0 delay hydration)
+  const nodeBBoxes = OVERLAY_BBOXES;
 
   // Single Source of Truth: Compute --px = viewBoxWidth / (lebar tampil svg dalam px CSS * zoom)
-  // Dipasang sebagai CSS variable --px pada SVG root, diperbarui lewat requestAnimationFrame saat zoom/resize
   const [pxScale, setPxScale] = useState<number>(() => {
     return isMobileScreen ? 2560 / (360 * 0.94) : 3646 / 1200;
   });
@@ -2159,16 +2199,31 @@ export function InteractiveFloorPlan({
       const computedPx = vbWidth / Math.max(1, effectiveWidth);
       svgRef.current.style.setProperty('--px', computedPx.toFixed(6));
       setPxScale(computedPx);
+      rafPxRef.current = null;
     });
   }, [isMobileScreen, isFullscreen, fullscreenScale, zoomLevel]);
 
+  // Observer kontainer stabil (hanya dibind 1x pada mount, tidak re-bind saat zoom)
   useEffect(() => {
     updatePx();
     if (typeof ResizeObserver !== 'undefined' && containerRef.current) {
-      const ro = new ResizeObserver(() => updatePx());
+      const ro = new ResizeObserver(() => {
+        updatePx();
+      });
       ro.observe(containerRef.current);
+
+      const handleVisibilityChange = () => {
+        if (document.hidden) {
+          if (rafPxRef.current) cancelAnimationFrame(rafPxRef.current);
+        } else {
+          updatePx();
+        }
+      };
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+
       return () => {
         ro.disconnect();
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
         if (rafPxRef.current) cancelAnimationFrame(rafPxRef.current);
       };
     }
@@ -2424,7 +2479,7 @@ export function InteractiveFloorPlan({
     setHoveredNodeId(null);
   };
 
-  const handleSelectNode = (node: FloorNode) => {
+  const handleSelectNode = useCallback((node: FloorNode) => {
     setSelectedNode(node);
     if (node.category === 'area_terbatas') {
       setIsWayfindingActive(false);
@@ -2459,7 +2514,41 @@ export function InteractiveFloorPlan({
       };
       onSelectElement(selectedItem);
     }
-  };
+  }, [onSelectElement]);
+
+  // Delegated Event Handlers untuk seluruh gerai (1 listener di root, bukan 117 per-path)
+  const handleDelegatedClick = useCallback((e: React.MouseEvent<SVGGElement>) => {
+    const target = (e.target as Element).closest('[data-overlay-id]');
+    if (!target) return;
+    const overlayId = target.getAttribute('data-overlay-id');
+    if (!overlayId) return;
+    const nodeId = SVG_ID_MAP[overlayId] || overlayId;
+    const node = activeNodesMap[nodeId];
+    if (node) {
+      handleSelectNode(node);
+    }
+  }, [activeNodesMap, handleSelectNode]);
+
+  const handleDelegatedPointerOver = useCallback((e: React.PointerEvent<SVGGElement>) => {
+    if (isPointerCoarse) return; // Abaikan hover pada layar sentuh
+    const target = (e.target as Element).closest('[data-overlay-id]');
+    if (!target) return;
+    const overlayId = target.getAttribute('data-overlay-id');
+    if (!overlayId) return;
+    const nodeId = SVG_ID_MAP[overlayId] || overlayId;
+    const node = activeNodesMap[nodeId];
+    if (node && hoveredNodeId !== node.id) {
+      setHoveredNodeId(node.id);
+    }
+  }, [isPointerCoarse, activeNodesMap, hoveredNodeId]);
+
+  const handleDelegatedPointerOut = useCallback((e: React.PointerEvent<SVGGElement>) => {
+    if (isPointerCoarse) return;
+    const related = (e.relatedTarget as Element)?.closest?.('[data-overlay-id]');
+    if (!related) {
+      setHoveredNodeId(null);
+    }
+  }, [isPointerCoarse]);
 
   return (
     <div 
@@ -2981,22 +3070,23 @@ export function InteractiveFloorPlan({
             }}
           />
 
-          {/* Custom Interactive Transform Wrapper with Centered Origin */}
+          {/* Custom Interactive Transform Wrapper with Centered Origin (Ref + rAF Hardware Acceleration) */}
           <div 
+            ref={transformTargetRef}
             className={isFullscreen 
               ? "w-full h-full flex items-center justify-center mx-auto my-auto select-none overflow-hidden touch-none cursor-grab active:cursor-grabbing" 
               : "relative w-full h-full max-w-full flex items-center justify-center mx-auto my-auto transition-transform duration-300 overflow-hidden"
             }
             style={isFullscreen 
               ? { 
-                  transform: `translate(${fullscreenPosition.x}px, ${fullscreenPosition.y}px) scale(${fullscreenScale})`,
+                  transform: `translate3d(${fullscreenPosition.x}px, ${fullscreenPosition.y}px, 0) scale(${fullscreenScale})`,
                   transformOrigin: 'center center',
-                  transition: isDraggingRef.current ? 'none' : 'transform 0.15s ease-out',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   width: '100%',
-                  height: '100%'
+                  height: '100%',
+                  willChange: isGestureActive ? 'transform' : 'auto'
                 } 
               : { 
                   transform: `scale(${zoomLevel})`,
@@ -3018,15 +3108,15 @@ export function InteractiveFloorPlan({
               viewBox={isMobileScreen ? "640 40 2560 2010" : "0 0 3646 2497"}
               preserveAspectRatio="xMidYMid meet"
               className={isFullscreen 
-                ? "w-auto h-auto max-w-[94vw] max-h-[86vh] object-contain block mx-auto my-auto select-none drop-shadow-2xl pointer-events-auto"
-                : "w-full h-full max-w-full max-h-[80vh] xl:max-h-[85vh] 2xl:max-h-[88vh] object-contain block mx-auto my-auto select-none drop-shadow-md pointer-events-auto"
+                ? "w-auto h-auto max-w-[94vw] max-h-[86vh] object-contain block mx-auto my-auto select-none pointer-events-auto"
+                : "w-full h-full max-w-full max-h-[80vh] xl:max-h-[85vh] 2xl:max-h-[88vh] object-contain block mx-auto my-auto select-none pointer-events-auto"
               }
               style={{
                 ['--px' as any]: pxScale.toFixed(6),
                 textRendering: 'optimizeLegibility',
                 WebkitFontSmoothing: 'antialiased',
                 MozOsxFontSmoothing: 'grayscale',
-                shapeRendering: 'geometricPrecision'
+                shapeRendering: isGestureActive ? 'optimizeSpeed' : 'geometricPrecision'
               }}
             >
               <defs>
@@ -3046,10 +3136,6 @@ export function InteractiveFloorPlan({
                     animation: flowRoute 1.2s linear infinite;
                   }
                 `}</style>
-
-                <filter id="mpp-focus-glow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="0" dy="0" stdDeviation="8" floodColor="#10b981" floodOpacity="0.8" />
-                </filter>
 
                 {/* Stair ClipPaths for procedural tread clipping */}
                 {STAIR_CONFIGS.map((stair) => (
@@ -3078,14 +3164,15 @@ export function InteractiveFloorPlan({
                 </pattern>
               </defs>
 
-              {/* ── 1. AUTHENTIC ARCHITECTURAL BASELINE: DENAH_VEKTOR.min.svg ── */}
-              <path
-                d={DENAH_VEKTOR_PATH}
-                stroke={effectiveIsDark ? "rgba(148, 163, 184, 0.45)" : "var(--fp-wall, #1e293b)"}
-                strokeWidth="calc(var(--px, 1) * 1.5)"
-                fill="none"
+              {/* ── 1. AUTHENTIC ARCHITECTURAL BASELINE: Static Wall Image (Hashed asset, Browser Raster Cache, 0 VDOM nodes) ── */}
+              <image
+                href={effectiveIsDark ? denahWallDarkUrl : denahWallLightUrl}
+                x="0"
+                y="0"
+                width="3646"
+                height="2497"
+                preserveAspectRatio="xMidYMid meet"
                 className="pointer-events-none"
-                shapeRendering="geometricPrecision"
               />
 
               {/* ── 2. DYNAMIC WAYFINDING PATH FROM ENTRANCE TO TARGET (BLUE DASHED, HIDDEN IN EMERGENCY) ── */}
@@ -3101,7 +3188,7 @@ export function InteractiveFloorPlan({
                     strokeLinejoin="round"
                     opacity="0.45"
                   />
-                  {/* Dashed active wayfinding route (Blue #0284c7) */}
+                  {/* Dashed active wayfinding route (Blue #0284c7; static on low-end device to save battery/GPU) */}
                   <path
                     d={wayfindingRoute.path}
                     fill="none"
@@ -3110,7 +3197,7 @@ export function InteractiveFloorPlan({
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeDasharray="10 8"
-                    className="animate-dash"
+                    className={isLowEndDevice || prefersReducedMotion ? "" : "animate-dash"}
                   />
                   {/* Starting point (Entrance) */}
                   <circle cx={WP_ENTRANCE.x} cy={WP_ENTRANCE.y} r="14" fill="#0284c7" stroke="#ffffff" strokeWidth="4" />
@@ -3122,26 +3209,30 @@ export function InteractiveFloorPlan({
               <g className="fp-stair-treads" aria-hidden="true">
                 {STAIR_CONFIGS.map((stair) => {
                   const clipId = `clip-${stair.id}`;
+                  const effectiveScale = isFullscreen ? fullscreenScale : zoomLevel;
+                  const showFineDetails = effectiveScale >= 1.08;
 
                   // Hitung garis horizontal tapak tiap 14 unit (treadSpacing = 14)
                   const treadSpacing = 14;
                   const treadLines: Array<{ key: string; x1: number; x2: number; y: number }> = [];
 
-                  const addArmTreads = (arm: typeof stair.leftArm, prefix: string) => {
-                    const yStart = Math.min(arm.yOpen, arm.yLanding);
-                    const yEnd = Math.max(arm.yOpen, arm.yLanding);
-                    for (let y = yStart + treadSpacing; y < yEnd; y += treadSpacing) {
-                      treadLines.push({
-                        key: `${prefix}-${y}`,
-                        x1: arm.xMin,
-                        x2: arm.xMax,
-                        y: Math.round(y)
-                      });
-                    }
-                  };
+                  if (showFineDetails) {
+                    const addArmTreads = (arm: typeof stair.leftArm, prefix: string) => {
+                      const yStart = Math.min(arm.yOpen, arm.yLanding);
+                      const yEnd = Math.max(arm.yOpen, arm.yLanding);
+                      for (let y = yStart + treadSpacing; y < yEnd; y += treadSpacing) {
+                        treadLines.push({
+                          key: `${prefix}-${y}`,
+                          x1: arm.xMin,
+                          x2: arm.xMax,
+                          y: Math.round(y)
+                        });
+                      }
+                    };
 
-                  addArmTreads(stair.leftArm, `${stair.id}-left`);
-                  addArmTreads(stair.rightArm, `${stair.id}-right`);
+                    addArmTreads(stair.leftArm, `${stair.id}-left`);
+                    addArmTreads(stair.rightArm, `${stair.id}-right`);
+                  }
 
                   return (
                     <g key={stair.id} id={`procedural-${stair.id}`} pointerEvents="none">
@@ -3155,9 +3246,9 @@ export function InteractiveFloorPlan({
                         shapeRendering="geometricPrecision"
                       />
 
-                      {/* Tapak Anak Tangga (Treads) yang di-clip ke path tangga */}
+                      {/* Tapak Anak Tangga (Treads - LOD: tampil saat zoom cukup) */}
                       <g clipPath={`url(#${clipId})`}>
-                        {treadLines.map((line) => (
+                        {showFineDetails && treadLines.map((line) => (
                           <line
                             key={line.key}
                             x1={line.x1}
@@ -3169,6 +3260,30 @@ export function InteractiveFloorPlan({
                             shapeRendering="geometricPrecision"
                           />
                         ))}
+
+                        {/* Garis batas pembatas tengah (Handrail / Railing luar - LOD) */}
+                        {showFineDetails && (
+                          <>
+                            <line
+                              x1={stair.leftArm.xMin}
+                              y1={Math.min(stair.leftArm.yOpen, stair.leftArm.yLanding)}
+                              x2={stair.leftArm.xMin}
+                              y2={Math.max(stair.leftArm.yOpen, stair.leftArm.yLanding)}
+                              stroke={stairColors.stroke}
+                              strokeWidth="calc(var(--px, 1) * 1.0)"
+                              shapeRendering="geometricPrecision"
+                            />
+                            <line
+                              x1={stair.rightArm.xMax}
+                              y1={Math.min(stair.rightArm.yOpen, stair.rightArm.yLanding)}
+                              x2={stair.rightArm.xMax}
+                              y2={Math.max(stair.rightArm.yOpen, stair.rightArm.yLanding)}
+                              stroke={stairColors.stroke}
+                              strokeWidth="calc(var(--px, 1) * 1.0)"
+                              shapeRendering="geometricPrecision"
+                            />
+                          </>
+                        )}
 
                         {/* Garis batas pembatas tengah (Handrail / Railing luar) */}
                         <line
@@ -3274,8 +3389,13 @@ export function InteractiveFloorPlan({
                 })}
               </g>
 
-              {/* ── 3. GERAI & BOOTH OVERLAY LAYER FROM FIGMA (GERAI_OVERLAY.svg) ── */}
-              <g id="gerai-overlay-layer">
+              {/* ── 3. GERAI & BOOTH OVERLAY LAYER FROM FIGMA (DELEGATED EVENTS & LOD OPTIMIZED) ── */}
+              <g 
+                id="gerai-overlay-layer"
+                onClick={handleDelegatedClick}
+                onPointerOver={handleDelegatedPointerOver}
+                onPointerOut={handleDelegatedPointerOut}
+              >
                 {GERAI_ITEMS.map((item) => {
                   // Tangga sudah dirender secara prosedural di atas, lewati dari layer item standar
                   if (STAIR_SVG_IDS.has(item.id)) {
@@ -3304,27 +3424,15 @@ export function InteractiveFloorPlan({
                   const catMeta = MPP_CATEGORIES[catKey] || MPP_CATEGORIES.fasilitas;
                   const categoryColorVar = catMeta.tokenVar;
 
-                  let nodeOpacity = isMatching ? 1.0 : 0.35;
-                  let nodeFilter: string | undefined = undefined;
-
-                  if (isSelected) {
-                    nodeOpacity = 1;
-                    nodeFilter = `drop-shadow(0 0 16px ${categoryColorVar})`;
-                  } else if (isHovered && isMatching) {
-                    nodeOpacity = 0.98;
-                    nodeFilter = `drop-shadow(0 0 10px ${categoryColorVar})`;
-                  } else if (!isMatching) {
-                    nodeFilter = 'grayscale(80%)';
-                  }
+                  // Opacity padat & kontras tanpa filter GPU berat
+                  const nodeOpacity = !isMatching ? 0.22 : (isSelected || isHovered) ? 1.0 : 0.88;
 
                   // Check if item has thin contour paths
                   const thinIndices = THIN_CONTOUR_PATH_MAP[item.id];
 
                   // Target stroke calculations per spec:
-                  // kontur pulau tengah, DUKCAPIL_1, DPMPTSP_1: clamp(1.5, 1.5 + 0.4*log2(zoom), 3)
-                  // garis tepi meja biasa: 1.25 px
-                  // fasilitas: garis tepi 1.0 px
                   const currentZoom = isFullscreen ? fullscreenScale : zoomLevel;
+                  const showFineDetails = currentZoom >= 1.08;
                   const contourTargetPx = Math.min(3.0, Math.max(1.5, 1.5 + 0.4 * Math.log2(Math.max(0.1, currentZoom))));
                   const contourStrokeWidth = `calc(var(--px, 1) * ${contourTargetPx.toFixed(3)})`;
 
@@ -3332,18 +3440,18 @@ export function InteractiveFloorPlan({
                   const isLargeFacility = item.id === 'MUSHALLA' || item.id === 'RUANG_RAPAT' || item.id === 'TIM_TEKNIS';
                   const isFacility = catKey === 'fasilitas' || NON_INTERACTIVE_SVG_IDS.has(item.id);
                   const isGudangItem = item.id === 'GUDANG' || item.id === 'GUDANG_2';
-                  const itemStrokeWidth = isProminentBooth
+
+                  // Garis tepi tegas: saat terpilih dibuat tebal kontras (2.2px) tanpa drop-shadow filter GPU
+                  const itemStrokeWidth = isSelected
+                    ? `calc(var(--px, 1) * 2.2)`
+                    : isProminentBooth
                     ? `calc(var(--px, 1) * ${contourTargetPx.toFixed(3)})`
                     : isFacility || isGudangItem
                     ? `calc(var(--px, 1) * 1.5)`
                     : `calc(var(--px, 1) * 1.25)`;
                   const tableChairStrokeWidth = `calc(var(--px, 1) * 1.25)`;
 
-                  // Opacity per specification:
-                  // Gudang: 0.15 terang / 0.18 gelap (tembus pandang / translucent sesuai permintaan user)
-                  // Area besar fasilitas (MUSHALLA, RUANG_RAPAT, TIM_TEKNIS): 0.24 terang / 0.28 gelap
-                  // Fasilitas biasa (Pos Jaga, Ruang Baca, Ruang Laktasi, Toilet, dll): 0.30 terang / 0.34 gelap (cerah dan kontras)
-                  // Meja biasa & loket utama: 0.40 gelap / 0.55 terang
+                  // Opacity per specification
                   const boothFillOpacity = isGudangItem
                     ? (effectiveIsDark ? "0.18" : "0.14")
                     : isLargeFacility
@@ -3362,15 +3470,17 @@ export function InteractiveFloorPlan({
                       data-overlay-id={item.id}
                       role="button"
                       tabIndex={0}
-                      onClick={() => handleSelectNode(node)}
-                      onMouseEnter={() => setHoveredNodeId(node.id)}
-                      onMouseLeave={() => setHoveredNodeId(null)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleSelectNode(node);
+                        }
+                      }}
                       style={{
                         cursor: 'pointer',
                         color: categoryColorVar,
                         opacity: nodeOpacity,
-                        filter: nodeFilter,
-                        transition: 'all 0.2s ease'
+                        transition: 'opacity 0.15s ease'
                       }}
                     >
                       {item.d ? (
@@ -3438,13 +3548,17 @@ export function InteractiveFloorPlan({
                             );
                           })}
 
-                          {/* LAPISAN 2 (ATAS KONTUR): KURSI & MEJA ISI BIASA & PITA PADAT DUKCAPIL_2/DPMPTSP_2 */}
+                          {/* LAPISAN 2 (ATAS KONTUR): KURSI & MEJA ISI BIASA & PITA PADAT DUKCAPIL_2/DPMPTSP_2 (LOD) */}
                           {item.childPaths.map((dVal, pIdx) => {
                             const isThin = thinIndices && thinIndices.includes(pIdx);
                             if (isThin) return null;
 
-                            // Pita padat DUKCAPIL_2 dan DPMPTSP_2: tampilkan sebagai isi tipis (fill-opacity 0.20) + garis tepi 1.5 px
+                            // Pita padat DUKCAPIL_2 dan DPMPTSP_2: selalu tampil
                             const isPitaPadat = (item.id === 'DUKCAPIL_2' || item.id === 'DPMPTSP_2') && pIdx === 0;
+
+                            // LOD: Sembunyikan detail kursi/meja halus saat zoom jauh
+                            if (!showFineDetails && !isPitaPadat) return null;
+
                             const pathFillOpacity = isPitaPadat ? "0.20" : detailFillOpacity;
                             const pathStrokeWidth = isPitaPadat ? `calc(var(--px, 1) * 1.5)` : tableChairStrokeWidth;
 
@@ -3466,22 +3580,25 @@ export function InteractiveFloorPlan({
                       ) : !item.childRects || item.childRects.length === 0 ? (
                         <g dangerouslySetInnerHTML={{ __html: item.innerHtml }} />
                       ) : null}
-                      {/* LAPISAN 3 (TERATAS): RECT KURSI / DETAIL / GUDANG (Selalu di atas kontur) */}
-                      {item.childRects && item.childRects.map((rObj, rIdx) => (
-                        <rect
-                          key={`rect-${rIdx}`}
-                          x={rObj.x}
-                          y={rObj.y}
-                          width={rObj.width}
-                          height={rObj.height}
-                          fill="currentColor"
-                          fillOpacity={isGudangItem ? (effectiveIsDark ? "0.18" : "0.14") : detailFillOpacity}
-                          stroke="currentColor"
-                          strokeWidth={isGudangItem ? `calc(var(--px, 1) * 1.5)` : tableChairStrokeWidth}
-                          strokeDasharray={isGudangItem ? "5 3" : undefined}
-                          shapeRendering="geometricPrecision"
-                        />
-                      ))}
+                      {/* LAPISAN 3 (TERATAS): RECT KURSI / DETAIL / GUDANG (LOD: sembunyikan kursi saat zoom jauh) */}
+                      {item.childRects && item.childRects.map((rObj, rIdx) => {
+                        if (!showFineDetails && !isGudangItem) return null;
+                        return (
+                          <rect
+                            key={`rect-${rIdx}`}
+                            x={rObj.x}
+                            y={rObj.y}
+                            width={rObj.width}
+                            height={rObj.height}
+                            fill="currentColor"
+                            fillOpacity={isGudangItem ? (effectiveIsDark ? "0.18" : "0.14") : detailFillOpacity}
+                            stroke="currentColor"
+                            strokeWidth={isGudangItem ? `calc(var(--px, 1) * 1.5)` : tableChairStrokeWidth}
+                            strokeDasharray={isGudangItem ? "5 3" : undefined}
+                            shapeRendering="geometricPrecision"
+                          />
+                        );
+                      })}
                     </g>
                   );
                 })}
@@ -3934,5 +4051,6 @@ export function InteractiveFloorPlan({
   );
 }
 
+export const InteractiveFloorPlan = React.memo(InteractiveFloorPlanComponent);
 export const MppFloorPlan = InteractiveFloorPlan;
 export default InteractiveFloorPlan;
