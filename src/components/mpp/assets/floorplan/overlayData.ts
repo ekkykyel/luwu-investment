@@ -132,8 +132,14 @@ export function parseGeraiOverlay(rawSvg: string): {
   const defsMatch = rawSvg.match(/<defs>([\s\S]*?)<\/defs>/);
   const defs = defsMatch ? defsMatch[1].trim() : '';
 
-  const innerMatch = rawSvg.match(/<g id="GERAI_OVERLAY">([\s\S]*?)<\/g>\s*(?:<defs>|$)/);
-  const inner = innerMatch ? innerMatch[1] : '';
+  let inner = '';
+  const geraiStartTag = '<g id="GERAI_OVERLAY">';
+  const startIndex = rawSvg.indexOf(geraiStartTag);
+  if (startIndex !== -1) {
+    const contentAfterStart = rawSvg.slice(startIndex + geraiStartTag.length);
+    const lastClosingG = contentAfterStart.lastIndexOf('</g>');
+    inner = lastClosingG !== -1 ? contentAfterStart.slice(0, lastClosingG) : contentAfterStart;
+  }
 
   const regex = /<(g|path|rect|circle)\s+id="([^"]+)"([^>]*)(?:\/>|>([\s\S]*?)<\/\1>)/g;
   const items: GeraiOverlayItem[] = [];

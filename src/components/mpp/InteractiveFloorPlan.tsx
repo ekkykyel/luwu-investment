@@ -622,7 +622,7 @@ const FLOOR_NODES: FloorNode[] = [
     "w": 60,
     "h": 65,
     "rx": 6,
-    "accent": "#64748b",
+    "accent": "#0891b2",
     "status": "open",
     "services": [
       "Pemeriksaan Keamanan Awal",
@@ -997,7 +997,7 @@ const FLOOR_NODES: FloorNode[] = [
     "w": 78,
     "h": 50,
     "rx": 8,
-    "accent": "#64748b",
+    "accent": "#d97706",
     "status": "open",
     "services": [
       "Permintaan Data Statistik Luwu",
@@ -1188,7 +1188,7 @@ const FLOOR_NODES: FloorNode[] = [
     "w": 105,
     "h": 85,
     "rx": 8,
-    "accent": "#64748b",
+    "accent": "#0891b2",
     "status": "open",
     "services": [
       "Kloset Duduk Ramah Disabilitas",
@@ -1279,7 +1279,7 @@ const FLOOR_NODES: FloorNode[] = [
     "w": 92,
     "h": 82,
     "rx": 8,
-    "accent": "#64748b",
+    "accent": "#0891b2",
     "status": "open",
     "services": [
       "Urinoir Otomatis",
@@ -1396,7 +1396,7 @@ const FLOOR_NODES: FloorNode[] = [
     "w": 115,
     "h": 82,
     "rx": 8,
-    "accent": "#64748b",
+    "accent": "#0891b2",
     "status": "open",
     "services": [
       "Area Merokok Khusus Terbuka",
@@ -1764,7 +1764,7 @@ const FLOOR_NODES: FloorNode[] = [
     "floorLevel": "Lantai 1",
     "roomType": "area_terbatas",
     "zone": "South Wing (Sayap Selatan)",
-    "accent": "#64748b",
+    "accent": "#f97316",
     "status": "closed",
     "services": [],
     "isDisabilityFriendly": false,
@@ -1780,7 +1780,7 @@ const FLOOR_NODES: FloorNode[] = [
     "floorLevel": "Lantai 1",
     "roomType": "area_terbatas",
     "zone": "North Wing (Sayap Utara)",
-    "accent": "#64748b",
+    "accent": "#f97316",
     "status": "closed",
     "services": [],
     "isDisabilityFriendly": false,
@@ -1796,7 +1796,7 @@ const FLOOR_NODES: FloorNode[] = [
     "floorLevel": "Lantai 1",
     "roomType": "area_terbatas",
     "zone": "South Wing (Sayap Selatan)",
-    "accent": "#64748b",
+    "accent": "#f97316",
     "status": "closed",
     "services": [],
     "isDisabilityFriendly": false,
@@ -3331,23 +3331,29 @@ export function InteractiveFloorPlan({
                   const isProminentBooth = item.id === 'DUKCAPIL_1' || item.id === 'DPMPTSP_1';
                   const isLargeFacility = item.id === 'MUSHALLA' || item.id === 'RUANG_RAPAT' || item.id === 'TIM_TEKNIS';
                   const isFacility = catKey === 'fasilitas' || NON_INTERACTIVE_SVG_IDS.has(item.id);
+                  const isGudangItem = item.id === 'GUDANG' || item.id === 'GUDANG_2';
                   const itemStrokeWidth = isProminentBooth
                     ? `calc(var(--px, 1) * ${contourTargetPx.toFixed(3)})`
-                    : isFacility
-                    ? `calc(var(--px, 1) * 1.0)`
+                    : isFacility || isGudangItem
+                    ? `calc(var(--px, 1) * 1.5)`
                     : `calc(var(--px, 1) * 1.25)`;
                   const tableChairStrokeWidth = `calc(var(--px, 1) * 1.25)`;
 
                   // Opacity per specification:
-                  // Area besar fasilitas (MUSHALLA, RUANG_RAPAT, TIM_TEKNIS): 0.15 (0.12 - 0.18)
-                  // Fasilitas biasa & blok server/gudang: 0.22 terang / 0.26 gelap
-                  // Meja biasa & loket utama: 0.40 gelap (naik dari 0.28/0.35) / 0.55 terang
-                  const boothFillOpacity = isLargeFacility
-                    ? "0.15"
+                  // Gudang: 0.15 terang / 0.18 gelap (tembus pandang / translucent sesuai permintaan user)
+                  // Area besar fasilitas (MUSHALLA, RUANG_RAPAT, TIM_TEKNIS): 0.24 terang / 0.28 gelap
+                  // Fasilitas biasa (Pos Jaga, Ruang Baca, Ruang Laktasi, Toilet, dll): 0.30 terang / 0.34 gelap (cerah dan kontras)
+                  // Meja biasa & loket utama: 0.40 gelap / 0.55 terang
+                  const boothFillOpacity = isGudangItem
+                    ? (effectiveIsDark ? "0.18" : "0.14")
+                    : isLargeFacility
+                    ? (effectiveIsDark ? "0.28" : "0.24")
                     : isFacility
-                    ? (effectiveIsDark ? "0.26" : "0.20")
+                    ? (effectiveIsDark ? "0.34" : "0.30")
                     : (effectiveIsDark ? "0.40" : "0.55");
-                  const detailFillOpacity = effectiveIsDark ? "0.40" : "0.55";
+                  const detailFillOpacity = isGudangItem
+                    ? (effectiveIsDark ? "0.18" : "0.14")
+                    : (effectiveIsDark ? "0.40" : "0.55");
 
                   return (
                     <g
@@ -3457,10 +3463,10 @@ export function InteractiveFloorPlan({
                             );
                           })}
                         </>
-                      ) : (
+                      ) : !item.childRects || item.childRects.length === 0 ? (
                         <g dangerouslySetInnerHTML={{ __html: item.innerHtml }} />
-                      )}
-                      {/* LAPISAN 3 (TERATAS): RECT KURSI / DETAIL (Selalu di atas kontur) */}
+                      ) : null}
+                      {/* LAPISAN 3 (TERATAS): RECT KURSI / DETAIL / GUDANG (Selalu di atas kontur) */}
                       {item.childRects && item.childRects.map((rObj, rIdx) => (
                         <rect
                           key={`rect-${rIdx}`}
@@ -3469,9 +3475,10 @@ export function InteractiveFloorPlan({
                           width={rObj.width}
                           height={rObj.height}
                           fill="currentColor"
-                          fillOpacity={detailFillOpacity}
+                          fillOpacity={isGudangItem ? (effectiveIsDark ? "0.18" : "0.14") : detailFillOpacity}
                           stroke="currentColor"
-                          strokeWidth={tableChairStrokeWidth}
+                          strokeWidth={isGudangItem ? `calc(var(--px, 1) * 1.5)` : tableChairStrokeWidth}
+                          strokeDasharray={isGudangItem ? "5 3" : undefined}
                           shapeRendering="geometricPrecision"
                         />
                       ))}
@@ -3487,7 +3494,7 @@ export function InteractiveFloorPlan({
                   <path
                     d="M -16 12 C -16 -4, 16 -4, 16 12 Z M -18 12 L 18 12"
                     fill="none"
-                    stroke="var(--fp-cat-fasilitas, #64748b)"
+                    stroke="var(--fp-cat-fasilitas, #0891b2)"
                     strokeWidth="calc(var(--px, 1) * 1.5)"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -3495,7 +3502,7 @@ export function InteractiveFloorPlan({
                   <path
                     d="M 0 -4 L 0 -10 M -3 -13 C -1 -17, 4 -17, 6 -13 C 3 -13, 1 -11, 1 -8"
                     fill="none"
-                    stroke="var(--fp-cat-fasilitas, #64748b)"
+                    stroke="var(--fp-cat-fasilitas, #0891b2)"
                     strokeWidth="calc(var(--px, 1) * 1.3)"
                     strokeLinecap="round"
                   />
@@ -3506,7 +3513,7 @@ export function InteractiveFloorPlan({
                   <path
                     d="M -8 -4 L -8 14 C -8 18, 8 18, 8 14 L 8 -4 Z M -11 -4 L 11 -4 M -6 -4 L -6 -8 L 6 -8 L 6 -4 M -3 -8 L -3 -12 C -3 -14, 3 -14, 3 -12 L 3 -8"
                     fill="none"
-                    stroke="var(--fp-cat-fasilitas, #64748b)"
+                    stroke="var(--fp-cat-fasilitas, #0891b2)"
                     strokeWidth="calc(var(--px, 1) * 1.5)"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -3518,36 +3525,36 @@ export function InteractiveFloorPlan({
                   <path
                     d="M 0 -14 L 12 -9 C 12 4, 8 14, 0 18 C -8 14, -12 4, -12 -9 Z M 0 -8 L 0 12"
                     fill="none"
-                    stroke="var(--fp-cat-fasilitas, #64748b)"
+                    stroke="var(--fp-cat-fasilitas, #0891b2)"
                     strokeWidth="calc(var(--px, 1) * 1.5)"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                 </g>
 
-                {/* Gudang (Kotak Geometris 3D Wireframe) */}
-                <g id="icon-gudang" transform="translate(2983, 422)" opacity={0.88}>
+                {/* Gudang (Kotak Geometris 3D Wireframe Cerah) */}
+                <g id="icon-gudang" transform="translate(2983, 422)" opacity={0.92}>
                   <path
                     d="M 0 -12 L 12 -5 L 12 9 L 0 16 L -12 9 L -12 -5 Z M 0 -12 L 0 16 M -12 -5 L 0 2 L 12 -5"
                     fill="none"
-                    stroke="var(--fp-cat-fasilitas, #64748b)"
+                    stroke="var(--fp-cat-area-terbatas, #f97316)"
                     strokeWidth="calc(var(--px, 1) * 1.5)"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                 </g>
 
-                {/* Dukcapil Server (Rak Server Stack) */}
-                <g id="icon-dukcapil-server" transform="translate(866, 1070)" opacity={0.88}>
-                  <rect x="-10" y="-14" width="20" height="7" rx="1.5" fill="none" stroke="var(--fp-cat-fasilitas, #64748b)" strokeWidth="calc(var(--px, 1) * 1.3)" />
-                  <rect x="-10" y="-4" width="20" height="7" rx="1.5" fill="none" stroke="var(--fp-cat-fasilitas, #64748b)" strokeWidth="calc(var(--px, 1) * 1.3)" />
-                  <rect x="-10" y="6" width="20" height="7" rx="1.5" fill="none" stroke="var(--fp-cat-fasilitas, #64748b)" strokeWidth="calc(var(--px, 1) * 1.3)" />
+                {/* Dukcapil Server (Rak Server Stack Cerah) */}
+                <g id="icon-dukcapil-server" transform="translate(866, 1070)" opacity={0.92}>
+                  <rect x="-10" y="-14" width="20" height="7" rx="1.5" fill="none" stroke="var(--fp-cat-area-terbatas, #f97316)" strokeWidth="calc(var(--px, 1) * 1.3)" />
+                  <rect x="-10" y="-4" width="20" height="7" rx="1.5" fill="none" stroke="var(--fp-cat-area-terbatas, #f97316)" strokeWidth="calc(var(--px, 1) * 1.3)" />
+                  <rect x="-10" y="6" width="20" height="7" rx="1.5" fill="none" stroke="var(--fp-cat-area-terbatas, #f97316)" strokeWidth="calc(var(--px, 1) * 1.3)" />
                 </g>
 
                 {/* Toilet Wanita & Pria */}
                 <g id="icon-toilet-wanita" transform="translate(244, 705)" opacity={0.88}>
-                  <circle cx="0" cy="-10" r="3" fill="none" stroke="var(--fp-cat-fasilitas, #64748b)" strokeWidth="calc(var(--px, 1) * 1.3)" />
-                  <path d="M -6 6 L -3 -5 L 3 -5 L 6 6 Z M -2 6 L -2 14 M 2 6 L 2 14" fill="none" stroke="var(--fp-cat-fasilitas, #64748b)" strokeWidth="calc(var(--px, 1) * 1.3)" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="0" cy="-10" r="3" fill="none" stroke="var(--fp-cat-fasilitas, #0891b2)" strokeWidth="calc(var(--px, 1) * 1.3)" />
+                  <path d="M -6 6 L -3 -5 L 3 -5 L 6 6 Z M -2 6 L -2 14 M 2 6 L 2 14" fill="none" stroke="var(--fp-cat-fasilitas, #0891b2)" strokeWidth="calc(var(--px, 1) * 1.3)" strokeLinecap="round" strokeLinejoin="round" />
                 </g>
               </g>
 

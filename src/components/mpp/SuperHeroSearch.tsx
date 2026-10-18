@@ -294,7 +294,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
   const isDefaultIdTitle = fullTitle === 'Ekosistem Layanan Publik Tanpa Hambatan';
 
   return (
-    <div ref={heroRef} className="w-full max-w-6xl mx-auto pb-2 px-2 sm:px-4 relative z-10">
+    <div ref={heroRef} className="w-full max-w-6xl mx-auto p-2 sm:px-4 sm:pb-2 relative z-10">
       
       {/* ───────────────────────────────────────────────────────────────────────────── */}
       {/* EDGE-TO-EDGE IMMERSIVE HERO CANVAS WITH PARALLAX SCROLL & EXOTIC SHINE */}

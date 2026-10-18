@@ -2593,7 +2593,7 @@ export default function LandingPage({
         {/* 1. HERO SECTION WITH IMMERSIVE GRAND CANVAS BACKGROUND & INTEGRATED OVERLAYS */}
         <div
           id="hero-section"
-          className="scroll-mt-24 sm:scroll-mt-28 w-full max-w-6xl mx-auto pb-2 px-2 sm:px-4 relative z-10"
+          className="scroll-mt-24 sm:scroll-mt-28 w-full max-w-6xl mx-auto p-2 sm:px-4 sm:pb-2 relative z-10"
         >
           <style>{`
             @keyframes aurora1 {

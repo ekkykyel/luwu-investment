@@ -49,7 +49,7 @@ export const SECTOR_ACCENT_COLORS: Record<MppSectorFilter, string> = {
   bpjs_sosial: '#0f766e',
   perbankan_bumn: '#1e40af',
   fasilitas_inklusif: '#0891b2',
-  area_staf: '#64748b'
+  area_staf: '#f97316'
 };
 
 /**

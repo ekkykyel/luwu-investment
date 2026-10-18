@@ -33,7 +33,8 @@ export const FALLBACK_AGENCY_IMAGE = "/assets/images/default-agency.svg";
 export const FALLBACK_FACILITY_IMAGE = "/assets/images/default-facility.svg";
 export const FALLBACK_UMKM_IMAGE = "/assets/images/default-product.svg";
 export const FALLBACK_NEWS_IMAGE = "/assets/images/default-news.svg";
-export const FALLBACK_HERO_IMAGE = "/assets/images/default-hero.webp";
+export const FALLBACK_HERO_IMAGE = "/assets/images/hero-mpp-simpurusiang.webp";
+export const FALLBACK_HERO_IMAGE_INVESTMENT = "/assets/images/hero-investasi-luwu.webp";
 export const FALLBACK_HERO_IMAGE_SVG = "/assets/images/default-hero.svg";
 export const FALLBACK_GENERIC_IMAGE = "/assets/images/default-facility.svg";
 
