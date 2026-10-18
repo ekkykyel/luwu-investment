@@ -52,7 +52,7 @@ export const GlobalHelpdeskFab: React.FC<GlobalHelpdeskFabProps> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.9 }}
             transition={{ duration: 0.2 }}
-            className="p-3 bg-white/95 dark:bg-surface/95 backdrop-blur-xl border border-slate-200/90 dark:border-slate-800 rounded-3xl shadow-2xl flex flex-col gap-2 min-w-[220px]"
+            className="p-3 bg-white dark:bg-surface border border-slate-200/90 dark:border-slate-800 rounded-3xl shadow-2xl flex flex-col gap-2 min-w-[220px]"
           >
             <div className="px-3 py-1.5 border-b border-slate-100 dark:border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               {isEn ? 'Help Center & Fast Contacts' : isZh ? '帮助中心与快捷联系' : 'Pusat Bantuan & Kontak Cepat'}
