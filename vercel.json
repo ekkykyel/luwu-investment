@@ -10,71 +10,15 @@
   },
   "rewrites": [
     {
-      "source": "/api/health",
-      "destination": "/api/health"
-    },
-    {
-      "source": "/api/auth/login",
-      "destination": "/api/auth/login"
-    },
-    {
-      "source": "/api/investment-interests",
-      "destination": "/api/investment-interests"
-    },
-    {
-      "source": "/api/site-settings",
-      "destination": "/api/site-settings"
-    },
-    {
-      "source": "/api/market-ticker",
-      "destination": "/api/market-ticker"
-    },
-    {
-      "source": "/api/infrastruktur",
-      "destination": "/api/infrastruktur"
-    },
-    {
-      "source": "/api/infrastruktur/(.*)",
-      "destination": "/api/infrastruktur"
-    },
-    {
-      "source": "/api/testimonials",
-      "destination": "/api/testimonials"
-    },
-    {
-      "source": "/api/testimonials/(.*)",
-      "destination": "/api/testimonials"
-    },
-    {
-      "source": "/api/weather/current",
-      "destination": "/api/weather/current"
-    },
-    {
-      "source": "/api/spatial-layers",
-      "destination": "/api/spatial-layers"
-    },
-    {
-      "source": "/api/spatial-layers/(.*)",
-      "destination": "/api/spatial-layers"
-    },
-    {
-      "source": "/api/gemini/chat",
-      "destination": "/api/gemini/chat"
-    },
-    {
       "source": "/gemini/chat",
       "destination": "/api/gemini/chat"
     },
     {
-      "source": "/api/(.*)",
-      "destination": "/api"
-    },
-    {
       "source": "/gemini/(.*)",
-      "destination": "/api"
+      "destination": "/api/gemini/chat"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
   ],
