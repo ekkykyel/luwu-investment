@@ -84,6 +84,7 @@ import { PreLaunchBanner } from "./common/PreLaunchBanner";
 import { TopographicContourOverlay } from "./common/TopographicContourOverlay";
 import { lazyWithRetry } from "../utils/lazyWithRetry";
 import { ResponsiveHeroPicture } from "./common/ResponsiveHeroPicture";
+import { ResponsiveOfficerPicture } from "./common/ResponsiveOfficerPicture";
 
 const RoiAiAnalysisModal = lazyWithRetry(() => import("./RoiAiAnalysisModal"));
 const SpatialBufferAiModal = lazyWithRetry(() => import("./SpatialBufferAiModal"));
@@ -5114,7 +5115,7 @@ export default function LandingPage({
               <div className="emerald-divider-diamond">
                 <span className="emerald-diamond-icon" />
               </div>
-              <p className={`text-sm sm:text-base leading-relaxed ${textMuted} max-w-2xl mx-auto font-medium`}>
+              <p className="text-sm sm:text-base leading-relaxed text-slate-700 dark:text-slate-200 max-w-2xl mx-auto font-medium">
                 {t("mppBanner.description", "Pusat akselerasi perizinan investasi terpadu dan modern. Mengintegrasikan administrasi perizinan, tata ruang, dan pengawasan dalam satu atap fisik dan digital.")}
               </p>
             </div>
@@ -5262,43 +5263,27 @@ export default function LandingPage({
                     </div>
 
                     {/* Staff Photos Container with Smooth Elevation */}
-                    {(() => {
-                      const LOCAL_FALLBACK_OFFICER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 320' fill='none'%3E%3Crect width='240' height='320' rx='24' fill='%230f172a' fill-opacity='0.08'/%3E%3Ccircle cx='120' cy='95' r='42' fill='%2310b981' fill-opacity='0.25' stroke='%23059669' stroke-width='2'/%3E%3Cpath d='M45 280 C45 200, 80 160, 120 160 C160 160, 195 200, 195 280 Z' fill='%2310b981' fill-opacity='0.2' stroke='%23059669' stroke-width='2'/%3E%3C/svg%3E";
-                      const finalLeft = staffImageLeft || LOCAL_FALLBACK_OFFICER;
-                      const finalRight = staffImageRight || LOCAL_FALLBACK_OFFICER;
+                    <div className="flex items-end justify-center gap-1 sm:gap-3 w-full relative z-10 px-2">
+                      {/* Petugas Front Office Kiri */}
+                      <div className="relative flex-1 flex flex-col items-center justify-end group">
+                        <ResponsiveOfficerPicture
+                          officerKey="officer-left"
+                          customSrc={staffImageLeft}
+                          alt="Petugas Front Office DPMPTSP MPP Simpurusiang (Kiri)"
+                          className="group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_12px_24px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_14px_28px_rgba(0,0,0,0.7)]"
+                        />
+                      </div>
 
-                      return (
-                        <div className="flex items-end justify-center gap-1 sm:gap-3 w-full relative z-10 px-2">
-                          {/* Petugas Front Office Kiri */}
-                          <div className="relative flex-1 flex flex-col items-center justify-end group">
-                            <img
-                              src={finalLeft}
-                              alt="Petugas Front Office DPMPTSP MPP Simpurusiang (Kiri)"
-                              referrerPolicy="no-referrer"
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = LOCAL_FALLBACK_OFFICER;
-                              }}
-                              className="w-full max-h-72 sm:max-h-80 md:max-h-92 object-contain object-bottom bg-transparent transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_12px_24px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_14px_28px_rgba(0,0,0,0.7)]"
-                            />
-                          </div>
-
-                          {/* Petugas Front Office Kanan */}
-                          <div className="relative flex-1 flex flex-col items-center justify-end group">
-                            <img
-                              src={finalRight}
-                              alt="Petugas Front Office DPMPTSP MPP Simpurusiang (Kanan)"
-                              referrerPolicy="no-referrer"
-                              onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = LOCAL_FALLBACK_OFFICER;
-                              }}
-                              className="w-full max-h-72 sm:max-h-80 md:max-h-92 object-contain object-bottom bg-transparent transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_12px_24px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_14px_28px_rgba(0,0,0,0.7)]"
-                            />
-                          </div>
-                        </div>
-                      );
-                    })()}
+                      {/* Petugas Front Office Kanan */}
+                      <div className="relative flex-1 flex flex-col items-center justify-end group">
+                        <ResponsiveOfficerPicture
+                          officerKey="officer-right"
+                          customSrc={staffImageRight}
+                          alt="Petugas Front Office DPMPTSP MPP Simpurusiang (Kanan)"
+                          className="group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_12px_24px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_14px_28px_rgba(0,0,0,0.7)]"
+                        />
+                      </div>
+                    </div>
 
                     {/* Elegant Frosted Pedestal Plinth at Base */}
                     <div className="w-full relative z-20 -mt-3 sm:-mt-4">

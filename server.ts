@@ -17467,7 +17467,7 @@ export function removeStyle(id) {
 
   app.get("*", (req, res) => {
     // If it's an asset request (.js, .css, etc.) that was NOT matched, return 404 with proper JS MIME type to prevent HTML MIME type errors
-    if (req.path.startsWith("/assets/") || req.path.match(/\.(js|mjs|css|ico|png|jpg|jpeg|svg|woff|woff2|ttf|eot|json|webmanifest)$/)) {
+    if (req.path.startsWith("/assets/") || req.path.startsWith("/images/") || req.path.match(/\.(js|mjs|css|ico|png|jpg|jpeg|svg|webp|avif|woff|woff2|ttf|eot|json|webmanifest)$/)) {
       if (req.path.endsWith('.js') || req.path.endsWith('.mjs') || req.path.startsWith('/assets/')) {
         res.setHeader("Content-Type", "application/javascript");
         return res.status(404).send("// 404: Asset not found");
