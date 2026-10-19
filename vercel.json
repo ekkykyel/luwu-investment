@@ -2,19 +2,10 @@
   "version": 2,
   "buildCommand": "npm run build",
   "functions": {
-    "api/index.ts": {
-      "memory": 1024,
-      "maxDuration": 15,
-      "includeFiles": "{dist/server.cjs,dist/**}"
-    },
-    "api/[...all].ts": {
-      "memory": 1024,
-      "maxDuration": 15,
-      "includeFiles": "{dist/server.cjs,dist/**}"
-    },
     "api/**/*.ts": {
-      "memory": 512,
-      "maxDuration": 10
+      "memory": 1024,
+      "maxDuration": 15,
+      "includeFiles": "dist/**"
     }
   },
   "rewrites": [

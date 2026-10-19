@@ -1,49 +1,39 @@
-// Dynamic lazy import to protect against native module or resolution failures on Vercel Lambda
+// Catch-all serverless function: meneruskan semua /api/* ke Express (dist/server.cjs)
 let cachedApp: any = null;
-let loadAttempted = false;
+let loadError: any = null;
+
+function unwrap(mod: any) {
+  let m = mod;
+  for (let i = 0; i < 3 && m && typeof m !== "function"; i++) {
+    m = m.default ?? m.app;
+  }
+  return typeof m === "function" ? m : null;
+}
 
 async function getExpressApp() {
   if (cachedApp) return cachedApp;
-  if (loadAttempted) return null;
-  loadAttempted = true;
+  if (loadError) throw loadError;
   try {
     // @ts-ignore
-    const serverModule = await import("../dist/server.cjs");
-    cachedApp = serverModule?.default || serverModule;
-    return cachedApp;
-  } catch (err: any) {
-    console.warn("[Vercel CatchAll] dist/server.cjs could not be loaded dynamically:", err?.message || err);
-    return null;
+    const mod = await import("../dist/server.cjs");
+    const app = unwrap(mod);
+    if (!app) throw new Error("dist/server.cjs tidak mengekspor fungsi Express");
+    cachedApp = app;
+    return app;
+  } catch (err) {
+    loadError = err;
+    console.error("[Vercel CatchAll] gagal memuat dist/server.cjs:", err);
+    throw err;
   }
 }
 
-// Catch-all serverless function handler for Vercel
 export default async function handler(req: any, res: any) {
   try {
-    // If Vercel rewrote req.url to '/api', restore original requested path from x-matched-path for Express router
-    if (req.url === "/api" || req.url === "/api/" || req.url?.startsWith("/api?")) {
-      const originalPath = req.headers?.["x-matched-path"] || req.headers?.["x-forwarded-uri"];
-      if (originalPath && !originalPath.startsWith("/api/health") && !originalPath.startsWith("/api/auth/login")) {
-        const queryIndex = req.url.indexOf("?");
-        const queryStr = queryIndex !== -1 ? req.url.slice(queryIndex) : "";
-        req.url = originalPath + queryStr;
-      }
-    }
-
     const app = await getExpressApp();
-    if (typeof app === "function") {
-      return app(req, res);
-    }
-
-    res.setHeader("Content-Type", "application/json");
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    return res.status(200).json({ success: true, data: [], message: "Serverless fallback OK" });
+    return app(req, res);
   } catch (err: any) {
-    console.warn("[Vercel Handler Exception]:", err?.message || err);
     if (!res.headersSent) {
-      res.setHeader("Content-Type", "application/json");
-      res.setHeader("Access-Control-Allow-Origin", "*");
-      return res.status(200).json({ success: false, data: [], error: err?.message || "Handler notice" });
+      res.status(500).json({ success: false, error: err?.message || "Server failed to start" });
     }
   }
 }
