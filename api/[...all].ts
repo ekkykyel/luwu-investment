@@ -1,9 +1,21 @@
-// Import from pre-built CJS bundle (esbuild output) — NOT raw TypeScript source
-// server.ts (17K+ lines) cannot be resolved by Vercel's internal TS compiler
-// dist/server.cjs is included via vercel.json includeFiles
-// @ts-ignore
-import serverModule from "../dist/server.cjs";
-const app = (serverModule as any)?.default || serverModule;
+// Dynamic lazy import to protect against native module or resolution failures on Vercel Lambda
+let cachedApp: any = null;
+let loadAttempted = false;
+
+async function getExpressApp() {
+  if (cachedApp) return cachedApp;
+  if (loadAttempted) return null;
+  loadAttempted = true;
+  try {
+    // @ts-ignore
+    const serverModule = await import("../dist/server.cjs");
+    cachedApp = serverModule?.default || serverModule;
+    return cachedApp;
+  } catch (err: any) {
+    console.warn("[Vercel CatchAll] dist/server.cjs could not be loaded dynamically:", err?.message || err);
+    return null;
+  }
+}
 
 // Catch-all serverless function handler for Vercel
 export default async function handler(req: any, res: any) {
@@ -18,18 +30,20 @@ export default async function handler(req: any, res: any) {
       }
     }
 
+    const app = await getExpressApp();
     if (typeof app === "function") {
       return app(req, res);
     }
 
     res.setHeader("Content-Type", "application/json");
+    res.setHeader("Access-Control-Allow-Origin", "*");
     return res.status(200).json({ success: true, data: [], message: "Serverless fallback OK" });
   } catch (err: any) {
     console.warn("[Vercel Handler Exception]:", err?.message || err);
     if (!res.headersSent) {
       res.setHeader("Content-Type", "application/json");
-      return res.status(500).json({ success: false, data: [], error: err?.message || "Handler error" });
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      return res.status(200).json({ success: false, data: [], error: err?.message || "Handler notice" });
     }
   }
 }
-

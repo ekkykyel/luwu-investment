@@ -2,10 +2,19 @@
   "version": 2,
   "buildCommand": "npm run build",
   "functions": {
-    "api/**/*.ts": {
+    "api/index.ts": {
       "memory": 1024,
       "maxDuration": 15,
-      "includeFiles": "{dist/server.cjs,dist/**,src/**}"
+      "includeFiles": "{dist/server.cjs,dist/**}"
+    },
+    "api/[...all].ts": {
+      "memory": 1024,
+      "maxDuration": 15,
+      "includeFiles": "{dist/server.cjs,dist/**}"
+    },
+    "api/**/*.ts": {
+      "memory": 512,
+      "maxDuration": 10
     }
   },
   "rewrites": [
@@ -16,6 +25,46 @@
     {
       "source": "/api/auth/login",
       "destination": "/api/auth/login"
+    },
+    {
+      "source": "/api/investment-interests",
+      "destination": "/api/investment-interests"
+    },
+    {
+      "source": "/api/site-settings",
+      "destination": "/api/site-settings"
+    },
+    {
+      "source": "/api/market-ticker",
+      "destination": "/api/market-ticker"
+    },
+    {
+      "source": "/api/infrastruktur",
+      "destination": "/api/infrastruktur"
+    },
+    {
+      "source": "/api/infrastruktur/(.*)",
+      "destination": "/api/infrastruktur"
+    },
+    {
+      "source": "/api/testimonials",
+      "destination": "/api/testimonials"
+    },
+    {
+      "source": "/api/testimonials/(.*)",
+      "destination": "/api/testimonials"
+    },
+    {
+      "source": "/api/weather/current",
+      "destination": "/api/weather/current"
+    },
+    {
+      "source": "/api/spatial-layers",
+      "destination": "/api/spatial-layers"
+    },
+    {
+      "source": "/api/spatial-layers/(.*)",
+      "destination": "/api/spatial-layers"
     },
     {
       "source": "/api/(.*)",

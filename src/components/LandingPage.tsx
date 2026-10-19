@@ -607,7 +607,7 @@ export default function LandingPage({
           .from("site_settings")
           .select("setting_value")
           .eq("setting_key", "mpp_instansi_count")
-          .single();
+          .maybeSingle();
         if (!error && data?.setting_value) {
           const count = parseInt(data.setting_value, 10);
           if (!isNaN(count) && count > 0) {
