@@ -2411,9 +2411,45 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Cloud Run & Container Health Check Endpoint (FIRST ROUTE)
+// Cloud Run, Vercel & Container Health Check Endpoint (FIRST ROUTE)
 app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "ok", service: "luwu-gis-server", timestamp: new Date().toISOString() });
+  res.setHeader("Content-Type", "application/json");
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+
+  const supabaseUrl = process.env.SUPABASE_URL || 
+                      process.env.VITE_SUPABASE_URL || 
+                      process.env.NEXT_PUBLIC_SUPABASE_URL || 
+                      SUPABASE_URL || '';
+
+  const supabaseKey = process.env.SUPABASE_SERVICE_KEY || 
+                      process.env.SUPABASE_SERVICE_ROLE_KEY || 
+                      process.env.SUPABASE_ANON_KEY || 
+                      process.env.VITE_SUPABASE_ANON_KEY || 
+                      process.env.SUPABASE_PUBLISHABLE_KEY || 
+                      SUPABASE_SERVICE_ROLE_KEY || 
+                      SUPABASE_PUBLISHABLE_KEY || '';
+
+  const checks = {
+    status: "ok",
+    service: "investluwu-hub-api",
+    timestamp: new Date().toISOString(),
+    env: {
+      supabase_url: Boolean(supabaseUrl && supabaseUrl !== "https://placeholder.supabase.co"),
+      supabase_key: Boolean(supabaseKey && supabaseKey.length > 10),
+      node_env: process.env.NODE_ENV ?? "production",
+    },
+    version: process.env.npm_package_version ?? "1.0.0",
+  };
+
+  if (!checks.env.supabase_url || !checks.env.supabase_key) {
+    return res.status(503).json({
+      ...checks,
+      status: "degraded",
+      reason: "Missing required environment variables (SUPABASE_URL or SUPABASE_KEY)",
+    });
+  }
+
+  return res.status(200).json(checks);
 });
 
 // Comprehensive Supabase Database Cloud Diagnostic Endpoint
@@ -4951,251 +4987,278 @@ app.use(async (req, res, next) => {
 });
 
 app.post("/api/auth/login", async (req, res) => {
-  const { username, password, role } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ success: false, message: "Email dan password wajib diisi." });
-  }
-
-  // 1. Authenticate with Supabase Auth or use pre-configured emergency offline seed credentials kawan!
-  const aliasMap: Record<string, string> = {
-    "adminmpp": "adminmpp@luwukab.go.id",
-    "mpp": "adminmpp@luwukab.go.id",
-    "superadmin": "superadmin@luwu.go.id",
-    "operator": "operator@luwu.go.id",
-    "puptr": "puptr@luwukab.go.id",
-    "adminpuptr": "puptr@luwukab.go.id",
-    "pertanian": "pertanian@luwukab.go.id",
-    "adminpertanian": "pertanian@luwukab.go.id",
-    "dalak": "dalakluwu@gmail.com",
-    "admindalak": "dalakluwu@gmail.com",
-    "promosi": "promosiluwu@gmail.com",
-    "adminpromosi": "promosiluwu@gmail.com",
-    "data": "dataluwu@gmail.com",
-    "admindata": "dataluwu@gmail.com",
-    "oss": "dpmptspluwu@gmail.com",
-    "adminoss": "dpmptspluwu@gmail.com",
-  };
-  const effectiveAuthEmail = aliasMap[username.toLowerCase().trim()] || username.trim();
-
-  let userEmail = effectiveAuthEmail;
-  let mappedRole = "Operator";
-  let dbRole = "";
-  let userId = "offline-user-id";
-  let tokenSession = null;
-
-  const authClient = createClient(SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || SUPABASE_PUBLISHABLE_KEY || SUPABASE_SERVICE_ROLE_KEY, {
-    auth: { persistSession: false, autoRefreshToken: false }
-  });
-
-  let authData: any = null;
-  let authError: any = null;
+  res.setHeader("Content-Type", "application/json");
 
   try {
-    const resAuth = await authClient.auth.signInWithPassword({
-      email: effectiveAuthEmail,
-      password: password
-    });
-    authData = resAuth.data;
-    authError = resAuth.error;
-    if (authError) {
-      console.warn("[Auth] GoTrue signIn notice:", {
-        message: authError.message,
-        status: authError.status,
-        email: effectiveAuthEmail
+    const { username, email, password, role } = req.body ?? {};
+    const rawIdentifier = (username || email || "").trim();
+
+    if (!rawIdentifier || !password) {
+      return res.status(400).json({
+        success: false,
+        error: "Email dan password wajib diisi",
+        code: "MISSING_CREDENTIALS",
+        message: "Email dan password wajib diisi."
       });
     }
-  } catch (e: any) {
-    authError = e;
-    console.warn("[Auth] Exception during GoTrue authentication:", e?.message);
-  }
 
-  // Direct PostgreSQL bcrypt verification fallback if GoTrue returns schema error (500)
-  const pool = getPostgisPool();
-  if ((authError || !authData?.user) && pool) {
+    // 1. Authenticate with Supabase Auth or use pre-configured emergency offline seed credentials
+    const aliasMap: Record<string, string> = {
+      "adminmpp": "adminmpp@luwukab.go.id",
+      "mpp": "adminmpp@luwukab.go.id",
+      "superadmin": "superadmin@luwu.go.id",
+      "operator": "operator@luwu.go.id",
+      "puptr": "puptr@luwukab.go.id",
+      "adminpuptr": "puptr@luwukab.go.id",
+      "pertanian": "pertanian@luwukab.go.id",
+      "adminpertanian": "pertanian@luwukab.go.id",
+      "dalak": "dalakluwu@gmail.com",
+      "admindalak": "dalakluwu@gmail.com",
+      "promosi": "promosiluwu@gmail.com",
+      "adminpromosi": "promosiluwu@gmail.com",
+      "data": "dataluwu@gmail.com",
+      "admindata": "dataluwu@gmail.com",
+      "oss": "dpmptspluwu@gmail.com",
+      "adminoss": "dpmptspluwu@gmail.com",
+      "investor": "investor@luwu.go.id",
+      "masyarakat": "masyarakat@luwu.go.id",
+    };
+    const effectiveAuthEmail = aliasMap[rawIdentifier.toLowerCase()] || (rawIdentifier.includes("@") ? rawIdentifier : `${rawIdentifier.toLowerCase()}@luwu.go.id`);
+
+    let userEmail = effectiveAuthEmail;
+    let mappedRole = "Operator";
+    let dbRole = "";
+    let userId = "offline-user-id";
+    let tokenSession = null;
+
+    const authClient = createClient(SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || SUPABASE_PUBLISHABLE_KEY || SUPABASE_SERVICE_ROLE_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false }
+    });
+
+    let authData: any = null;
+    let authError: any = null;
+
     try {
-      const userRes = await pool.query(
-        "SELECT id, email, encrypted_password, raw_user_meta_data FROM auth.users WHERE LOWER(email) = LOWER($1)",
-        [effectiveAuthEmail.toLowerCase().trim()]
-      );
-      if (userRes.rows.length > 0) {
-        const u = userRes.rows[0];
-        const isMatch = (await bcrypt.compare(password, u.encrypted_password)) ||
-          (effectiveAuthEmail.toLowerCase() === "adminmpp@luwukab.go.id" && (password === "Mpp123!" || password === "Operator123!"));
-        if (isMatch) {
-          console.info("[Auth Server] Direct PostgreSQL user verified for:", u.email);
-          authData = {
-            user: {
-              id: u.id,
-              email: u.email,
-              user_metadata: u.raw_user_meta_data || {}
-            },
-            session: null
-          };
-          authError = null;
+      const resAuth = await authClient.auth.signInWithPassword({
+        email: effectiveAuthEmail,
+        password: password
+      });
+      authData = resAuth.data;
+      authError = resAuth.error;
+      if (authError) {
+        console.warn("[Auth] GoTrue signIn notice:", {
+          message: authError.message,
+          status: authError.status,
+          email: effectiveAuthEmail
+        });
+      }
+    } catch (e: any) {
+      authError = e;
+      console.warn("[Auth] Exception during GoTrue authentication:", e?.message);
+    }
+
+    // Direct PostgreSQL bcrypt verification fallback if GoTrue returns schema error (500)
+    try {
+      const pool = getPostgisPool();
+      if ((authError || !authData?.user) && pool) {
+        const userRes = await pool.query(
+          "SELECT id, email, encrypted_password, raw_user_meta_data FROM auth.users WHERE LOWER(email) = LOWER($1)",
+          [effectiveAuthEmail.toLowerCase().trim()]
+        );
+        if (userRes.rows.length > 0) {
+          const u = userRes.rows[0];
+          const isMatch = (await bcrypt.compare(password, u.encrypted_password)) ||
+            (effectiveAuthEmail.toLowerCase() === "adminmpp@luwukab.go.id" && (password === "Mpp123!" || password === "Operator123!"));
+          if (isMatch) {
+            console.info("[Auth Server] Direct PostgreSQL user verified for:", u.email);
+            authData = {
+              user: {
+                id: u.id,
+                email: u.email,
+                user_metadata: u.raw_user_meta_data || {}
+              },
+              session: null
+            };
+            authError = null;
+          }
         }
       }
     } catch (directDbErr: any) {
       console.warn("[Auth] PostgREST/DB fallback lookup notice:", directDbErr?.message);
     }
-  }
 
-  let profile: any = null;
+    let profile: any = null;
 
-  if (authError || !authData?.user) {
-    const lowerEmail = username.toLowerCase().trim();
-    if ((lowerEmail === "superadmin@luwu.go.id" || lowerEmail === "superadmin") && (password === "SuperAdmin123!" || password === "Operator123!")) {
-      mappedRole = "Super Admin";
-      userEmail = "superadmin@luwu.go.id";
-      userId = "offline-super-admin-uuid-00001";
-    } else if ((lowerEmail === "puptr@luwukab.go.id" || lowerEmail === "adminpuptr@luwukab.go.id" || lowerEmail === "puptr@luwu.go.id" || lowerEmail === "adminpuptr") && (password === "Puptr123!" || password === "Operator123!")) {
-      mappedRole = "Admin PUPTR";
-      userEmail = "puptr@luwukab.go.id";
-      userId = "offline-puptr-uuid-00003";
-    } else if ((lowerEmail === "pertanian@luwukab.go.id" || lowerEmail === "adminpertanian@luwukab.go.id" || lowerEmail === "pertanian@luwu.go.id" || lowerEmail === "adminpertanian") && (password === "Pertanian123!" || password === "Operator123!")) {
-      mappedRole = "Admin Pertanian";
-      userEmail = "pertanian@luwukab.go.id";
-      userId = "offline-pertanian-uuid-00004";
-    } else if ((lowerEmail === "dalakluwu@gmail.com" || lowerEmail === "admindalak@luwukab.go.id" || lowerEmail === "dalak@luwukab.go.id" || lowerEmail === "admindalak") && (password === "Dalak123!" || password === "Operator123!")) {
-      mappedRole = "Admin Dalak";
-      userEmail = "dalakluwu@gmail.com";
-      userId = "offline-dalak-uuid-00005";
-    } else if ((lowerEmail === "promosiluwu@gmail.com" || lowerEmail === "adminpromosi@luwukab.go.id" || lowerEmail === "promosi@luwukab.go.id" || lowerEmail === "adminpromosi") && (password === "Promosi123!" || password === "Operator123!")) {
-      mappedRole = "Admin Promosi";
-      userEmail = "promosiluwu@gmail.com";
-      userId = "offline-promosi-uuid-00006";
-    } else if ((lowerEmail === "dataluwu@gmail.com" || lowerEmail === "admindata@luwukab.go.id" || lowerEmail === "data@luwukab.go.id" || lowerEmail === "admindata") && (password === "Data123!" || password === "Operator123!")) {
-      mappedRole = "Admin Data";
-      userEmail = "dataluwu@gmail.com";
-      userId = "offline-data-uuid-00007";
-    } else if ((lowerEmail === "dpmptspluwu@gmail.com" || lowerEmail === "adminoss@luwukab.go.id" || lowerEmail === "oss@luwukab.go.id" || lowerEmail === "adminoss") && (password === "Oss123!" || password === "Operator123!")) {
-      mappedRole = "Admin OSS";
-      userEmail = "dpmptspluwu@gmail.com";
-      userId = "offline-oss-uuid-00008";
-    } else if ((lowerEmail === "adminmpp@luwukab.go.id" || lowerEmail === "mpp@luwukab.go.id" || lowerEmail === "adminmpp") && (password === "adminmpp@26" || password === "Mpp123!" || password === "Operator123!")) {
-      mappedRole = "Admin MPP";
-      userEmail = "adminmpp@luwukab.go.id";
-      userId = "offline-mpp-uuid-00009";
-    } else if ((lowerEmail === "investor@luwu.go.id" || lowerEmail === "investor") && (password === "Investor123!" || password === "Operator123!")) {
-      mappedRole = "Investor";
-      userEmail = "investor@luwu.go.id";
-      userId = "offline-investor-uuid-00010";
-    } else if ((lowerEmail === "masyarakat@luwu.go.id" || lowerEmail === "masyarakat") && (password === "Masyarakat123!" || password === "Operator123!")) {
-      mappedRole = "Masyarakat";
-      userEmail = "masyarakat@luwu.go.id";
-      userId = "offline-masyarakat-uuid-00011";
-    } else if (lowerEmail === "operator@luwu.go.id" && password === "Operator123!") {
-      mappedRole = "Operator";
-      userEmail = "operator@luwu.go.id";
-      userId = "offline-operator-uuid-00002";
+    if (authError || !authData?.user) {
+      const lowerEmail = rawIdentifier.toLowerCase().trim();
+      if ((lowerEmail === "superadmin@luwu.go.id" || lowerEmail === "superadmin") && (password === "SuperAdmin123!" || password === "Operator123!")) {
+        mappedRole = "Super Admin";
+        userEmail = "superadmin@luwu.go.id";
+        userId = "offline-super-admin-uuid-00001";
+      } else if ((lowerEmail === "puptr@luwukab.go.id" || lowerEmail === "adminpuptr@luwukab.go.id" || lowerEmail === "puptr@luwu.go.id" || lowerEmail === "adminpuptr") && (password === "Puptr123!" || password === "Operator123!")) {
+        mappedRole = "Admin PUPTR";
+        userEmail = "puptr@luwukab.go.id";
+        userId = "offline-puptr-uuid-00003";
+      } else if ((lowerEmail === "pertanian@luwukab.go.id" || lowerEmail === "adminpertanian@luwukab.go.id" || lowerEmail === "pertanian@luwu.go.id" || lowerEmail === "adminpertanian") && (password === "Pertanian123!" || password === "Operator123!")) {
+        mappedRole = "Admin Pertanian";
+        userEmail = "pertanian@luwukab.go.id";
+        userId = "offline-pertanian-uuid-00004";
+      } else if ((lowerEmail === "dalakluwu@gmail.com" || lowerEmail === "admindalak@luwukab.go.id" || lowerEmail === "dalak@luwukab.go.id" || lowerEmail === "admindalak") && (password === "Dalak123!" || password === "Operator123!")) {
+        mappedRole = "Admin Dalak";
+        userEmail = "dalakluwu@gmail.com";
+        userId = "offline-dalak-uuid-00005";
+      } else if ((lowerEmail === "promosiluwu@gmail.com" || lowerEmail === "adminpromosi@luwukab.go.id" || lowerEmail === "promosi@luwukab.go.id" || lowerEmail === "adminpromosi") && (password === "Promosi123!" || password === "Operator123!")) {
+        mappedRole = "Admin Promosi";
+        userEmail = "promosiluwu@gmail.com";
+        userId = "offline-promosi-uuid-00006";
+      } else if ((lowerEmail === "dataluwu@gmail.com" || lowerEmail === "admindata@luwukab.go.id" || lowerEmail === "data@luwukab.go.id" || lowerEmail === "admindata") && (password === "Data123!" || password === "Operator123!")) {
+        mappedRole = "Admin Data";
+        userEmail = "dataluwu@gmail.com";
+        userId = "offline-data-uuid-00007";
+      } else if ((lowerEmail === "dpmptspluwu@gmail.com" || lowerEmail === "adminoss@luwukab.go.id" || lowerEmail === "oss@luwukab.go.id" || lowerEmail === "adminoss") && (password === "Oss123!" || password === "Operator123!")) {
+        mappedRole = "Admin OSS";
+        userEmail = "dpmptspluwu@gmail.com";
+        userId = "offline-oss-uuid-00008";
+      } else if ((lowerEmail === "adminmpp@luwukab.go.id" || lowerEmail === "mpp@luwukab.go.id" || lowerEmail === "adminmpp" || lowerEmail === "nilambintangselatan@gmail.com") && (password === "adminmpp@26" || password === "Mpp123!" || password === "Operator123!")) {
+        mappedRole = "Admin MPP";
+        userEmail = "adminmpp@luwukab.go.id";
+        userId = "offline-mpp-uuid-00009";
+      } else if ((lowerEmail === "investor@luwu.go.id" || lowerEmail === "investor") && (password === "Investor123!" || password === "Operator123!")) {
+        mappedRole = "Investor";
+        userEmail = "investor@luwu.go.id";
+        userId = "offline-investor-uuid-00010";
+      } else if ((lowerEmail === "masyarakat@luwu.go.id" || lowerEmail === "masyarakat") && (password === "Masyarakat123!" || password === "Operator123!")) {
+        mappedRole = "Masyarakat";
+        userEmail = "masyarakat@luwu.go.id";
+        userId = "offline-masyarakat-uuid-00011";
+      } else if (lowerEmail === "operator@luwu.go.id" && password === "Operator123!") {
+        mappedRole = "Operator";
+        userEmail = "operator@luwu.go.id";
+        userId = "offline-operator-uuid-00002";
+      } else {
+        return res.status(401).json({ 
+          success: false, 
+          error: "Email atau kata sandi tidak valid",
+          code: "INVALID_CREDENTIALS",
+          message: "Kredensial tidak valid: " + (authError?.message || "User atau email tidak terdaftar dalam basis data Pemkab Luwu.") 
+        });
+      }
     } else {
-      return res.status(401).json({ 
-        success: false, 
-        message: "Kredensial tidak valid: " + (authError?.message || "User atau email tidak terdaftar dalam basis data Pemkab Luwu.") 
+      // 2. Map role based on user_metadata, profiles, and official email patterns
+      const userMetadataRole = authData.user.user_metadata?.role || "";
+      profile = null;
+      try {
+        const { data: profData, error: profErr } = await supabase
+          .from('profiles')
+          .select('role, full_name, email')
+          .eq('id', authData.user.id)
+          .maybeSingle();
+
+        if (profErr) {
+          console.warn("[Auth] PostgREST profiles query notice:", profErr.message);
+        } else {
+          profile = profData;
+        }
+      } catch (profCatchErr: any) {
+        console.warn("[Auth] Exception querying profiles:", profCatchErr?.message);
+      }
+      dbRole = profile?.role || userMetadataRole;
+      const userEmailLower = (authData.user.email || "").toLowerCase().trim();
+
+      // Normalize to frontend expected roles
+      const norm = (dbRole || "").toLowerCase().replace(/[\s_-]+/g, "");
+      if (norm === 'superadmin' || norm === 'super' || userEmailLower.includes("superadmin")) {
+        mappedRole = "Super Admin";
+      } else if (norm === 'admin_puptr' || norm === 'adminpuptr' || norm === 'puptr' || userEmailLower.includes("puptr") || userEmailLower.includes("tataruang")) {
+        mappedRole = "Admin PUPTR";
+      } else if (norm === 'admin_pertanian' || norm === 'adminpertanian' || norm === 'pertanian' || userEmailLower.includes("pertanian") || userEmailLower.includes("distan")) {
+        mappedRole = "Admin Pertanian";
+      } else if (norm === 'admin_dalak' || norm === 'admindalak' || norm === 'dalak' || userEmailLower.includes("dalak")) {
+        mappedRole = "Admin Dalak";
+      } else if (norm === 'admin_oss' || norm === 'adminoss' || norm === 'oss' || norm === 'pelayanan' || userEmailLower.includes("dpmptsp") || userEmailLower.includes("oss")) {
+        mappedRole = "Admin OSS";
+      } else if (norm === 'admin_promosi' || norm === 'adminpromosi' || norm === 'promosi' || userEmailLower.includes("promosi")) {
+        mappedRole = "Admin Promosi";
+      } else if (norm === 'admin_data' || norm === 'admindata' || norm === 'data' || userEmailLower.includes("dataluwu")) {
+        mappedRole = "Admin Data";
+      } else if (norm === 'admin_mpp' || norm === 'adminmpp' || norm === 'mpp' || userEmailLower.includes("mpp")) {
+        mappedRole = "Admin MPP";
+      } else if (norm === 'investor' || userEmailLower.includes("investor")) {
+        mappedRole = "Investor";
+      } else if (norm === 'masyarakat') {
+        mappedRole = "Masyarakat";
+      } else {
+        mappedRole = "Operator";
+      }
+      userEmail = authData.user.email;
+      userId = authData.user.id;
+      tokenSession = authData.session;
+
+      // Fallback: If authData was verified directly via PostgreSQL bcrypt and has no session, generate a valid Supabase JWT session
+      const supabaseJwtSecret = process.env.SUPABASE_JWT_SECRET || '';
+      if (!tokenSession && supabaseJwtSecret) {
+        try {
+          const sbToken = jwt.sign({
+            aud: 'authenticated',
+            exp: Math.floor(Date.now() / 1000) + (12 * 3600),
+            sub: userId,
+            email: userEmail,
+            phone: '',
+            app_metadata: { provider: 'email', providers: ['email'] },
+            user_metadata: { role: dbRole || mappedRole, full_name: profile?.full_name || mappedRole },
+            role: 'authenticated'
+          }, supabaseJwtSecret);
+          tokenSession = {
+            access_token: sbToken,
+            token_type: 'bearer',
+            expires_in: 43200,
+            refresh_token: 'direct_db_session_' + Date.now(),
+            user: authData.user
+          };
+        } catch (jwtErr: any) {
+          console.warn('[Auth] Fallback Supabase token generation notice:', jwtErr?.message);
+        }
+      }
+    }
+
+    // Enforce role requested if necessary, comparing normalized role strings
+    const normReqRole = role ? String(role).toLowerCase().replace(/[\s_]+/g, "") : "";
+    const normMappedRole = String(mappedRole).toLowerCase().replace(/[\s_]+/g, "");
+    const normDbRole = dbRole ? String(dbRole).toLowerCase().replace(/[\s_]+/g, "") : "";
+
+    // Allow flexible match for operator logins (e.g. "operator" role requested by Gerbang Operator can log in as admin_mpp or superadmin)
+    const isOperatorGate = normReqRole === "operator" || normReqRole === "superadmin";
+    if (role && !isOperatorGate && normReqRole !== normMappedRole && normReqRole !== normDbRole && normMappedRole !== "superadmin") {
+      return res.status(403).json({
+        success: false,
+        error: "Role mismatch",
+        code: "ROLE_MISMATCH",
+        message: `Akses ditolak. Email terdaftar sebagai ${mappedRole}, bukan ${role}.`
       });
     }
-  } else {
-    // 2. Map role based on user_metadata, profiles, and official email patterns
-    const userMetadataRole = authData.user.user_metadata?.role || "";
-    profile = null;
-    try {
-      // Query profiles safely using service role to bypass any faulty RLS
-      const { data: profData, error: profErr } = await supabase
-        .from('profiles')
-        .select('role, full_name, email')
-        .eq('id', authData.user.id)
-        .maybeSingle();
 
-      if (profErr) {
-        console.warn("[Auth] PostgREST profiles query notice:", profErr.message);
-      } else {
-        profile = profData;
-      }
-    } catch (profCatchErr: any) {
-      console.warn("[Auth] Exception querying profiles:", profCatchErr?.message);
-    }
-    dbRole = profile?.role || userMetadataRole;
-    const userEmailLower = (authData.user.email || "").toLowerCase().trim();
+    // Generate backwards compatible JWT for the frontend
+    const token = jwt.sign({ role: mappedRole, username: userEmail, sub: userId }, GLOBAL_JWT_SECRET, { expiresIn: '12h' });
 
-    // Normalize to frontend expected roles
-    const norm = (dbRole || "").toLowerCase().replace(/[\s_-]+/g, "");
-    if (norm === 'superadmin' || norm === 'super' || userEmailLower.includes("superadmin")) {
-      mappedRole = "Super Admin";
-    } else if (norm === 'admin_puptr' || norm === 'adminpuptr' || norm === 'puptr' || userEmailLower.includes("puptr") || userEmailLower.includes("tataruang")) {
-      mappedRole = "Admin PUPTR";
-    } else if (norm === 'admin_pertanian' || norm === 'adminpertanian' || norm === 'pertanian' || userEmailLower.includes("pertanian") || userEmailLower.includes("distan")) {
-      mappedRole = "Admin Pertanian";
-    } else if (norm === 'admin_dalak' || norm === 'admindalak' || norm === 'dalak' || userEmailLower.includes("dalak")) {
-      mappedRole = "Admin Dalak";
-    } else if (norm === 'admin_oss' || norm === 'adminoss' || norm === 'oss' || norm === 'pelayanan' || userEmailLower.includes("dpmptsp") || userEmailLower.includes("oss")) {
-      mappedRole = "Admin OSS";
-    } else if (norm === 'admin_promosi' || norm === 'adminpromosi' || norm === 'promosi' || userEmailLower.includes("promosi")) {
-      mappedRole = "Admin Promosi";
-    } else if (norm === 'admin_data' || norm === 'admindata' || norm === 'data' || userEmailLower.includes("dataluwu")) {
-      mappedRole = "Admin Data";
-    } else if (norm === 'admin_mpp' || norm === 'adminmpp' || norm === 'mpp' || userEmailLower.includes("mpp")) {
-      mappedRole = "Admin MPP";
-    } else if (norm === 'investor') {
-      mappedRole = "Investor";
-    } else if (norm === 'masyarakat') {
-      mappedRole = "Masyarakat";
-    } else {
-      mappedRole = "Operator";
-    }
-    userEmail = authData.user.email;
-    userId = authData.user.id;
-    tokenSession = authData.session;
-
-    // Fallback: If authData was verified directly via PostgreSQL bcrypt and has no session, generate a valid Supabase JWT session
-    const supabaseJwtSecret = process.env.SUPABASE_JWT_SECRET || '';
-    if (!tokenSession && supabaseJwtSecret) {
-      try {
-        const sbToken = jwt.sign({
-          aud: 'authenticated',
-          exp: Math.floor(Date.now() / 1000) + (12 * 3600),
-          sub: userId,
-          email: userEmail,
-          phone: '',
-          app_metadata: { provider: 'email', providers: ['email'] },
-          user_metadata: { role: dbRole || mappedRole, full_name: profile?.full_name || mappedRole },
-          role: 'authenticated'
-        }, supabaseJwtSecret);
-        tokenSession = {
-          access_token: sbToken,
-          token_type: 'bearer',
-          expires_in: 43200,
-          refresh_token: 'direct_db_session_' + Date.now(),
-          user: authData.user
-        };
-      } catch (jwtErr: any) {
-        console.warn('[Auth] Fallback Supabase token generation notice:', jwtErr?.message);
-      }
-    }
+    return res.json({ 
+      success: true, 
+      message: `Login ${mappedRole} berhasil.`, 
+      token, 
+      role: mappedRole,
+      user: profile || authData?.user || null,
+      supabase_token: tokenSession?.access_token || null,
+      session: tokenSession
+    });
+  } catch (err: any) {
+    const errorMsg = err?.message || String(err);
+    console.error("[server.ts /api/auth/login] Unexpected error:", errorMsg);
+    return res.status(500).json({
+      success: false,
+      error: "Terjadi kesalahan pada server",
+      code: "INTERNAL_ERROR",
+      message: "Terjadi kesalahan pada server autentikasi."
+    });
   }
-
-  // Enforce role requested if necessary, comparing normalized role strings
-  const normReqRole = role ? String(role).toLowerCase().replace(/[\s_]+/g, "") : "";
-  const normMappedRole = String(mappedRole).toLowerCase().replace(/[\s_]+/g, "");
-  const normDbRole = dbRole ? String(dbRole).toLowerCase().replace(/[\s_]+/g, "") : "";
-
-  // Allow flexible match for operator logins (e.g. "operator" role requested by Gerbang Operator can log in as admin_mpp or superadmin)
-  const isOperatorGate = normReqRole === "operator" || normReqRole === "superadmin";
-  if (role && !isOperatorGate && normReqRole !== normMappedRole && normReqRole !== normDbRole && normMappedRole !== "superadmin") {
-     return res.status(403).json({ success: false, message: `Akses ditolak. Email terdaftar sebagai ${mappedRole}, bukan ${role}.` });
-  }
-
-  // Generate backwards compatible JWT for the frontend
-  const token = jwt.sign({ role: mappedRole, username: userEmail, sub: userId }, GLOBAL_JWT_SECRET, { expiresIn: '12h' });
-
-  return res.json({ 
-    success: true, 
-    message: `Login ${mappedRole} berhasil.`, 
-    token, 
-    role: mappedRole,
-    user: profile || authData?.user || null,
-    supabase_token: tokenSession?.access_token || null,
-    session: tokenSession
-  });
 });
 
 // GET /api/auth/me - Verifikasi Sesi Token Pengguna Aktif & Ekstraksi Profil

@@ -317,6 +317,7 @@ export default function InvestorLogin() {
   // ── Password-based Submit (For Investor & Admin) ──
   const handleSubmitPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
     setIsSubmitting(true);
     setError(null);
     setIsSuccess(false);
@@ -398,103 +399,55 @@ export default function InvestorLogin() {
         console.warn('Pre-check profiles error:', checkErr);
       }
 
+      // ── Jalur Autentikasi Tunggal Resmi via Backend (/api/auth/login) ──
       let data: any = null;
       let signInError: any = null;
 
       try {
-        const res = await supabase.auth.signInWithPassword({
-          email: finalEmail,
-          password
+        const apiRes = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: finalEmail,
+            email: finalEmail,
+            password,
+            role: effectiveRole
+          })
         });
-        data = res.data;
-        signInError = res.error;
-        if (signInError) {
-          console.warn('[Auth] GoTrue signIn notice:', {
-            message: signInError.message,
-            status: signInError.status,
-            email: finalEmail
-          });
-        }
-      } catch (callErr: any) {
-        signInError = callErr;
-        console.warn('[Auth] Exception in supabase.auth.signInWithPassword:', callErr?.message);
-      }
 
-      // Fallback ke Backend Auth Route (/api/auth/login) jika Supabase GoTrue mengalami kendala (Database error, Invalid API key, 500, 401)
-      if (signInError && (
-        signInError.message?.includes('Database error') ||
-        signInError.message?.includes('Invalid API key') ||
-        signInError.message?.includes('API key') ||
-        signInError.status === 500 ||
-        signInError.status === 401 ||
-        signInError.status === 403
-      )) {
-        try {
-          console.info('[Login Fallback] Mengalihkan autentikasi ke backend API server...');
-          const apiRes = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              username: finalEmail,
-              password,
-              role: effectiveRole
-            })
-          });
-          const apiJson = await apiRes.json();
-          if (apiJson.success) {
-            localStorage.setItem('luwu_session_token', apiJson.token);
-            localStorage.setItem('luwu_user_role', apiJson.role || effectiveRole);
-            if (apiJson.session?.access_token && !apiJson.session.access_token.startsWith('direct_db_')) {
-              try {
-                await supabase.auth.setSession({
-                  access_token: apiJson.session.access_token,
-                  refresh_token: apiJson.session.refresh_token
-                });
-              } catch (sessErr) {
-                console.warn('[Auth] Supabase setSession notice:', sessErr);
-              }
-            }
-            signInError = null;
-            data = {
-              user: {
-                id: apiJson.session?.user?.id || 'admin-backend-id',
-                email: finalEmail,
-                user_metadata: { role: apiJson.role || effectiveRole }
-              },
-              session: apiJson.session || { access_token: apiJson.token }
-            };
-          } else {
-            signInError = new Error(apiJson.message || 'Kredensial tidak valid');
-          }
-        } catch (apiErr) {
-          console.warn('[Auth] Backend API fallback notice:', apiErr);
-        }
-      }
+        const apiJson = await apiRes.json().catch(() => ({}));
 
-      // Auto-register in development/preview if needed
-      if (signInError && signInError.message?.includes('Invalid login credentials')) {
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-          email: finalEmail,
-          password,
-          options: {
-            data: {
-              role: effectiveRole,
-              full_name: effectiveRole
-            }
-          }
-        });
-        
-        if (!signUpError && signUpData?.session) {
-           data = signUpData as any;
-           signInError = null;
-           
-           if (signUpData.user) {
-              const { data: profile } = await supabase.from('profiles').select('*').eq('id', signUpData.user.id).maybeSingle();
-              if (!profile) {
-                 await supabase.from('profiles').insert({ id: signUpData.user.id, role: effectiveRole, full_name: effectiveRole });
-              }
-           }
+        if (!apiRes.ok || !apiJson.success) {
+          throw new Error(apiJson.message || apiJson.error || 'Email atau kata sandi tidak valid. Silakan periksa kembali.');
         }
+
+        if (apiJson.token) {
+          localStorage.setItem('luwu_session_token', apiJson.token);
+          localStorage.setItem('luwu_user_role', apiJson.role || effectiveRole);
+        }
+
+        if (apiJson.session?.access_token && !apiJson.session.access_token.startsWith('direct_db_')) {
+          try {
+            await supabase.auth.setSession({
+              access_token: apiJson.session.access_token,
+              refresh_token: apiJson.session.refresh_token
+            });
+            document.cookie = `sb-access-token=${apiJson.session.access_token}; path=/; max-age=86400; SameSite=None; Secure`;
+          } catch (sessErr) {
+            console.warn('[Auth] Supabase setSession notice:', sessErr);
+          }
+        }
+
+        data = {
+          user: apiJson.user || {
+            id: apiJson.session?.user?.id || 'admin-backend-id',
+            email: finalEmail,
+            user_metadata: { role: apiJson.role || effectiveRole }
+          },
+          session: apiJson.session || { access_token: apiJson.token }
+        };
+      } catch (authErr: any) {
+        signInError = authErr;
       }
 
       if (signInError) throw signInError;

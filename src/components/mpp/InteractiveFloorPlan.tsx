@@ -3520,7 +3520,7 @@ function InteractiveFloorPlanComponent({
                       style={{
                         cursor: 'pointer',
                         color: categoryColorVar || 'var(--fp-agency-color, #7dd3fc)',
-                        opacity: nodeOpacity,
+                        opacity: nodeOpacity ?? 1,
                         transition: 'opacity 0.15s ease'
                       }}
                     >

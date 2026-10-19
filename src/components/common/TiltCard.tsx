@@ -114,7 +114,7 @@ export const TiltCard: React.FC<TiltCardProps> = ({
           <motion.div
             className="absolute inset-0 pointer-events-none z-20 rounded-[inherit] transition-opacity duration-300"
             style={{
-              opacity: isHovered ? safeGlareOpacity : 0,
+              opacity: isHovered ? (safeGlareOpacity ?? 0.2) : 0,
               background: glareBackground,
             }}
           />

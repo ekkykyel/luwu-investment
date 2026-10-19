@@ -788,9 +788,9 @@ export function MppFloorPlan({
         onMouseLeave={handleMouseLeave}
         style={{
           transformOrigin: `${midX}px ${midY}px`,
-          opacity: nodeOpacity,
-          filter: nodeFilter,
-          transform: isSelected ? 'scale(1.05)' : undefined
+          opacity: nodeOpacity ?? 1,
+          filter: nodeFilter || 'none',
+          transform: isSelected ? 'scale(1.05)' : 'none'
         }}
         className={nodeClass}
       >

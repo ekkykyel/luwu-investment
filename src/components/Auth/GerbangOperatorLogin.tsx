@@ -66,6 +66,7 @@ export default function GerbangOperatorLogin({ onSuccess }: GerbangOperatorLogin
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return;
     setErrorMessage("");
 
     const cleanInput = email.trim();
@@ -85,7 +86,7 @@ export default function GerbangOperatorLogin({ onSuccess }: GerbangOperatorLogin
         ? cleanInput 
         : `${cleanInput.toLowerCase().replace(/\s+/g, '')}@luwu.go.id`;
 
-      // 1. Check emergency seed fallback
+      // 1. Check emergency seed fallback (offline capability)
       if (
         (effectiveEmail === "superadmin@luwu.go.id" || cleanInput === "superadmin") &&
         password === "SuperAdmin123!"
@@ -108,99 +109,56 @@ export default function GerbangOperatorLogin({ onSuccess }: GerbangOperatorLogin
         return;
       }
 
-      // 2. Autentikasi via Supabase Auth
-      let data: any = null;
-      let authError: any = null;
-      try {
-        const res = await supabase.auth.signInWithPassword({
+      // 2. Jalur Autentikasi Tunggal Resmi via Backend (/api/auth/login)
+      const apiRes = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: cleanInput,
           email: effectiveEmail,
           password: password,
-        });
-        data = res.data;
-        authError = res.error;
-        if (authError) {
-          console.warn('[Auth] GoTrue signIn notice:', {
-            message: authError.message,
-            status: (authError as any).status,
-            email: effectiveEmail
-          });
-        }
-      } catch (callErr: any) {
-        authError = callErr;
-        console.warn('[Auth] Exception in supabase.auth.signInWithPassword:', callErr?.message);
-      }
+          role: selectedRole
+        })
+      });
 
-      if (authError) {
-        // Fallback: Jika akun menggunakan API lokal backend
-        try {
-          const apiRes = await fetch("/api/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username: cleanInput, password })
-          });
-          const apiData = await apiRes.json();
-          if (apiData.success && apiData.token) {
-            const determinedRole = apiData.role ? String(apiData.role).toLowerCase().replace(/[\s-]+/g, "_") : effectiveRoleToStore;
-            localStorage.setItem("luwu_session_token", apiData.token);
-            localStorage.setItem("luwu_user_role", determinedRole);
-            if (apiData.session?.access_token && !apiData.session.access_token.startsWith("direct_db_")) {
-              try {
-                await supabase.auth.setSession({
-                  access_token: apiData.session.access_token,
-                  refresh_token: apiData.session.refresh_token
-                });
-              } catch (sessErr) {
-                console.warn('[Auth] Supabase setSession fallback notice:', sessErr);
-              }
-            }
-            if (onSuccess) onSuccess();
-            navigate("/admin/beranda", { replace: true });
-            return;
-          }
-        } catch (apiErr) {
-          console.warn('[Auth] Backend API fallback notice:', apiErr);
-        }
+      const apiData = await apiRes.json().catch(() => ({}));
 
+      if (!apiRes.ok || !apiData.success) {
         setErrorMessage(
-          authError.message === "Invalid login credentials"
-            ? "Kredensial tidak cocok. Periksa kembali email dan kata sandi dinas Anda."
-            : `Gagal masuk: ${authError.message}`
+          apiData.message || 
+          apiData.error || 
+          "Kredensial tidak cocok. Periksa kembali email dan kata sandi dinas Anda."
         );
         setIsLoading(false);
         return;
       }
 
-      if (data?.session) {
-        let finalRole = effectiveRoleToStore;
+      // Login berhasil: Simpan token dan tentukan role
+      const determinedRole = apiData.role 
+        ? String(apiData.role).toLowerCase().replace(/[\s-]+/g, "_") 
+        : effectiveRoleToStore;
+
+      localStorage.setItem("luwu_session_token", apiData.token);
+      localStorage.setItem("luwu_user_role", determinedRole);
+
+      if (apiData.session?.access_token && !apiData.session.access_token.startsWith("direct_db_")) {
         try {
-          const { data: prof, error: profErr } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', data.session.user.id)
-            .maybeSingle();
-          if (profErr) {
-            console.warn('[Auth] PostgREST profiles lookup notice:', profErr.message);
-          } else if (prof?.role) {
-            finalRole = prof.role;
-          }
-        } catch (profCatchErr: any) {
-          console.warn('[Auth] Exception querying profiles:', profCatchErr?.message);
+          await supabase.auth.setSession({
+            access_token: apiData.session.access_token,
+            refresh_token: apiData.session.refresh_token
+          });
+          document.cookie = `sb-access-token=${apiData.session.access_token}; path=/; max-age=86400; SameSite=None; Secure`;
+        } catch (sessErr) {
+          console.warn('[Auth] Supabase setSession fallback notice:', sessErr);
         }
-
-        // Simpan sesi, token, dan role
-        localStorage.setItem("luwu_session_token", data.session.access_token);
-        localStorage.setItem("luwu_user_role", finalRole);
-        
-        // Simpan cookie untuk middleware
-        document.cookie = `sb-access-token=${data.session.access_token}; path=/; max-age=86400; SameSite=None; Secure`;
-
-        if (onSuccess) onSuccess();
-        navigate("/admin/beranda", { replace: true });
       }
+
+      if (onSuccess) onSuccess();
+      navigate("/admin/beranda", { replace: true });
     } catch (err: any) {
       setErrorMessage("Terjadi gangguan jaringan saat menghubungi server autentikasi.");
     } finally {
-      setIsLoading(false);
+      setTimeout(() => setIsLoading(false), 500);
     }
   };
 

@@ -21,7 +21,7 @@ export const TopographicContourOverlay: React.FC<TopographicContourOverlayProps>
     <div
       aria-hidden="true"
       className={`absolute inset-0 pointer-events-none overflow-hidden select-none z-10 ${className}`}
-      style={{ opacity: safeOpacity }}
+      style={{ opacity: safeOpacity ?? 0.08 }}
     >
       <svg
         className="w-full h-full object-cover text-[#C9A24B] dark:text-[#E0BE6A]"

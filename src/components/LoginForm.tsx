@@ -93,6 +93,7 @@ export default function LoginForm({ onLogin, onClose }: LoginFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return;
     setErrorMsg("");
     if (!username.trim() || !password) {
       setErrorMsg("Harap masukkan username/email dan kata sandi.");

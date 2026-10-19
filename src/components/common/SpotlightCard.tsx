@@ -55,7 +55,7 @@ export const SpotlightCard: React.FC<SpotlightCardProps> = ({
       <motion.div
         className="pointer-events-none absolute -inset-px rounded-[inherit] transition-opacity duration-300 z-0"
         style={{
-          opacity,
+          opacity: opacity ?? 0,
           background,
         }}
       />

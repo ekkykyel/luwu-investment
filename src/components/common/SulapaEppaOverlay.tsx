@@ -20,7 +20,7 @@ export const SulapaEppaOverlay: React.FC<SulapaEppaOverlayProps> = ({
     <div
       aria-hidden="true"
       className={`absolute inset-0 pointer-events-none overflow-hidden select-none z-10 ${className}`}
-      style={{ opacity: safeOpacity }}
+      style={{ opacity: safeOpacity ?? 0.05 }}
     >
       <svg
         className="w-full h-full text-[#A07A28] dark:text-[#C9A24B]"
