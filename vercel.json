@@ -5,7 +5,7 @@
     "api/**/*.ts": {
       "memory": 1024,
       "maxDuration": 15,
-      "includeFiles": "{dist/server.cjs,server.js,src/**}"
+      "includeFiles": "{dist/server.cjs,dist/**,src/**}"
     }
   },
   "rewrites": [

@@ -1,7 +1,22 @@
-import app from "../server";
+// Import from pre-built CJS bundle (esbuild output) — NOT raw TypeScript source
+// server.ts (17K+ lines) cannot be resolved by Vercel's internal TS compiler
+// dist/server.cjs is included via vercel.json includeFiles
+// @ts-ignore
+import serverModule from "../dist/server.cjs";
+const app = (serverModule as any)?.default || serverModule;
 
 export default async function handler(req: any, res: any) {
   try {
+    // If Vercel rewrote req.url to '/api', restore original requested path from x-matched-path for Express router
+    if (req.url === "/api" || req.url === "/api/" || req.url?.startsWith("/api?")) {
+      const originalPath = req.headers?.["x-matched-path"] || req.headers?.["x-forwarded-uri"];
+      if (originalPath && !originalPath.startsWith("/api/health") && !originalPath.startsWith("/api/auth/login")) {
+        const queryIndex = req.url.indexOf("?");
+        const queryStr = queryIndex !== -1 ? req.url.slice(queryIndex) : "";
+        req.url = originalPath + queryStr;
+      }
+    }
+
     if (typeof app === "function") {
       return app(req, res);
     }

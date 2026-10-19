@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
-    "build": "cross-env NODE_OPTIONS=--max-old-space-size=2048 vite build && esbuild server.ts --platform=node --format=cjs --packages=external --outfile=dist/server.cjs",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=2048 vite build && esbuild server.ts --platform=node --format=cjs --packages=external --bundle --resolve-extensions=.ts,.tsx,.js,.json --outfile=dist/server.cjs",
     "start": "node dist/server.cjs",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
