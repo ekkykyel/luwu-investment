@@ -82,17 +82,20 @@ import GisTransitionLoader from "./GisTransitionLoader";
 import { supabase, safeFetchLayerData } from "../lib/supabaseClient";
 import { PreLaunchBanner } from "./common/PreLaunchBanner";
 import { TopographicContourOverlay } from "./common/TopographicContourOverlay";
-import RoiAiAnalysisModal from "./RoiAiAnalysisModal";
-import SpatialBufferAiModal from "./SpatialBufferAiModal";
-import LuwuInvestmentAiModal from "./LuwuInvestmentAiModal";
-import DistrictsDirectoryModal from "./modals/DistrictsDirectoryModal";
-import IproCatalogModal from "./modals/IproCatalogModal";
-import WorkforceAbsorptionModal from "./modals/WorkforceAbsorptionModal";
-import RtrwZoningCheckerModal from "./RtrwZoningCheckerModal";
-import IncentiveCalculatorModal from "./IncentiveCalculatorModal";
-import ProximityDistanceMatrixModal from "./ProximityDistanceMatrixModal";
-import IproPitchDeckModal from "./IproPitchDeckModal";
-import { FastTrackConsultationModal } from "./FastTrackConsultationModal";
+import { lazyWithRetry } from "../utils/lazyWithRetry";
+import { ResponsiveHeroPicture } from "./common/ResponsiveHeroPicture";
+
+const RoiAiAnalysisModal = lazyWithRetry(() => import("./RoiAiAnalysisModal"));
+const SpatialBufferAiModal = lazyWithRetry(() => import("./SpatialBufferAiModal"));
+const LuwuInvestmentAiModal = lazyWithRetry(() => import("./LuwuInvestmentAiModal"));
+const DistrictsDirectoryModal = lazyWithRetry(() => import("./modals/DistrictsDirectoryModal"));
+const IproCatalogModal = lazyWithRetry(() => import("./modals/IproCatalogModal"));
+const WorkforceAbsorptionModal = lazyWithRetry(() => import("./modals/WorkforceAbsorptionModal"));
+const RtrwZoningCheckerModal = lazyWithRetry(() => import("./RtrwZoningCheckerModal"));
+const IncentiveCalculatorModal = lazyWithRetry(() => import("./IncentiveCalculatorModal"));
+const ProximityDistanceMatrixModal = lazyWithRetry(() => import("./ProximityDistanceMatrixModal"));
+const IproPitchDeckModal = lazyWithRetry(() => import("./IproPitchDeckModal"));
+const FastTrackConsultationModal = lazyWithRetry(() => import("./FastTrackConsultationModal").then(m => ({ default: m.FastTrackConsultationModal })));
 import SmartMatrixFilterPanel, { SmartFilterState } from "./SmartMatrixFilterPanel";
 import InvestmentReadinessPillars from "./InvestmentReadinessPillars";
 import SpatialRdtrBanner from "./SpatialRdtrBanner";
@@ -130,13 +133,13 @@ import { center as turfCenter } from "@turf/turf";
 import { useTranslation } from "react-i18next";
 import LanguageToggle from '@/components/LanguageToggle';
 import { LiveMarketTicker, CommodityItem } from "./LiveMarketTicker";
-import { MppVisionModal } from "./MppVisionModal";
+const MppVisionModal = lazyWithRetry(() => import("./MppVisionModal").then(m => ({ default: m.MppVisionModal })));
 import { TiltCard } from "./common/TiltCard";
 import { SpotlightCard } from "./common/SpotlightCard";
 import { MagneticButton } from "./common/MagneticButton";
 import { SonarRadarPulse } from "./common/SonarRadarPulse";
 import { CountUpNumber, Reveal } from "../lib/motion";
-import { InfrastructureDetailModal } from "./InfrastructureDetailModal";
+const InfrastructureDetailModal = lazyWithRetry(() => import("./InfrastructureDetailModal").then(m => ({ default: m.InfrastructureDetailModal })));
 import { 
   fetchInfrastructureItems, 
   InfrastructureItem, 
@@ -247,8 +250,8 @@ function getSectorI18nKey(sector: string) {
 // Fallback slides hanya berisi aset resmi. Jika Supabase kosong → array kosong [].
 // Tidak ada placeholder fiktif — Honest Fallback Policy.
 const DEFAULT_INVESTMENT_HERO_SLIDES = [
+  "/assets/images/hero-investasi-luwu.webp",
   "/assets/images/default-hero.webp",
-  "/assets/images/default-hero.svg",
 ];
 
 // Staggered Entrance Variants for Hero Section (High-Performance GPU-Accelerated)
@@ -431,6 +434,8 @@ export default function LandingPage({
   const [staffImageLeft, setStaffImageLeft] = useState<string | null>(null);
   const [staffImageRight, setStaffImageRight] = useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isTabVisible, setIsTabVisible] = useState(true);
+  const [isCarouselIdleReady, setIsCarouselIdleReady] = useState(false);
 
   // Mobile Executive Live Stats Carousel State & Auto-Slide
   const statsScrollContainerRef = useRef<HTMLDivElement>(null);
@@ -800,28 +805,41 @@ export default function LandingPage({
     };
   }, []);
 
+  // Tab visibility tracker: pause carousel when tab is inactive to preserve resources
   useEffect(() => {
-    if (heroImages.length > 1) {
-      const interval = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-      }, 3500);
-      return () => clearInterval(interval);
-    }
-  }, [heroImages.length]);
+    const handleVisibilityChange = () => {
+      setIsTabVisible(document.visibilityState === 'visible');
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
 
-  // Zero-latency Hero Image Preloader for instant initial render
+  // Idle preloader for subsequent carousel slides after LCP is painted
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    heroImages.forEach((src, index) => {
-      if (!src) return;
-      const img = new Image();
-      img.decoding = 'async';
-      if (index === 0) {
-        (img as any).fetchPriority = 'high';
+    const idleCallback = (window as any).requestIdleCallback || ((cb: any) => setTimeout(cb, 1500));
+    const handle = idleCallback(() => {
+      setIsCarouselIdleReady(true);
+      if (heroImages.length > 1 && heroImages[1]) {
+        const img = new Image();
+        img.decoding = 'async';
+        img.src = heroImages[1];
       }
-      img.src = src;
     });
+    return () => {
+      if ((window as any).cancelIdleCallback) (window as any).cancelIdleCallback(handle);
+      else clearTimeout(handle);
+    };
   }, [heroImages]);
+
+  useEffect(() => {
+    if (heroImages.length > 1 && isTabVisible && isCarouselIdleReady) {
+      const interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+      }, 4500);
+      return () => clearInterval(interval);
+    }
+  }, [heroImages.length, isTabVisible, isCarouselIdleReady]);
 
   const [activeSection, setActiveSection] = useState<string>("hero-section");
 
@@ -2647,34 +2665,52 @@ export default function LandingPage({
               style={{ y: shouldReduceMotion ? 0 : yBg }}
               className="absolute inset-0 z-0 overflow-hidden transform-gpu pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black_96%,transparent_100%)]"
             >
-              {heroImages.map((imgUrl, idx) => (
-                <motion.img
-                  key={`${imgUrl}-${idx}`}
-                  src={imgUrl}
-                  alt={`Potensi Investasi Luwu Slide ${idx + 1}`}
-                  initial={false}
-                  animate={{
-                    opacity: idx === currentSlide ? 1 : 0,
-                    scale: idx === currentSlide ? 1.025 : 1.0,
-                  }}
-                  transition={{
-                    opacity: { duration: 0.5, ease: "easeInOut" },
-                    scale: { duration: 6, ease: "easeOut" }
-                  }}
-                  onError={(e) => {
-                    const target = e.currentTarget;
-                    const fallback = DEFAULT_INVESTMENT_HERO_SLIDES[idx % DEFAULT_INVESTMENT_HERO_SLIDES.length];
-                    if (target.src !== fallback) {
-                      target.src = fallback;
-                    }
-                  }}
-                  style={{ willChange: 'opacity, transform' }}
-                  className="absolute inset-0 w-full h-full object-cover object-[center_top] origin-top pointer-events-none filter brightness-[0.98] contrast-[1.02]"
-                  loading={idx === 0 ? "eager" : "lazy"}
-                  {...({ fetchpriority: idx === 0 ? "high" : "low" } as any)}
-                  decoding="async"
-                />
-              ))}
+              {heroImages.map((imgUrl, idx) => {
+                const isSlideActive = idx === currentSlide;
+                if (idx === 0) {
+                  return (
+                    <div
+                      key={`${imgUrl}-${idx}`}
+                      className={`absolute inset-0 w-full h-full transition-opacity duration-500 ${isSlideActive ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                    >
+                      <ResponsiveHeroPicture
+                        heroKey="investasi"
+                        alt="Potensi Investasi Luwu Slide 1"
+                        priority={true}
+                        customSrc={imgUrl.startsWith('http') ? imgUrl : undefined}
+                      />
+                    </div>
+                  );
+                }
+                if (!isCarouselIdleReady && !isSlideActive) return null;
+                return (
+                  <motion.img
+                    key={`${imgUrl}-${idx}`}
+                    src={imgUrl}
+                    alt={`Potensi Investasi Luwu Slide ${idx + 1}`}
+                    initial={false}
+                    animate={{
+                      opacity: isSlideActive ? 1 : 0,
+                      scale: isSlideActive ? 1.025 : 1.0,
+                    }}
+                    transition={{
+                      opacity: { duration: 0.5, ease: "easeInOut" },
+                      scale: { duration: 6, ease: "easeOut" }
+                    }}
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      const fallback = DEFAULT_INVESTMENT_HERO_SLIDES[idx % DEFAULT_INVESTMENT_HERO_SLIDES.length];
+                      if (target.src !== fallback) {
+                        target.src = fallback;
+                      }
+                    }}
+                    style={{ willChange: 'opacity, transform' }}
+                    className="absolute inset-0 w-full h-full object-cover object-[center_top] origin-top pointer-events-none filter brightness-[0.98] contrast-[1.02]"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                );
+              })}
 
               {/* Exotic Light Beam Sweep Effect */}
               <motion.div
@@ -7017,6 +7053,7 @@ export default function LandingPage({
         />
       </div>
 
+      <React.Suspense fallback={null}>
       {/* 4 Executive Metric Modals: Districts Directory, IPRO Catalog, Workforce, & Luwu AI */}
       <AnimatePresence>
         {isDistrictsModalOpen && (
@@ -7241,6 +7278,7 @@ export default function LandingPage({
         }}
         isDark={isDark}
       />
+      </React.Suspense>
 
       {/* Android Native-Style Bottom Navigation Dock for Landing Page */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-white/85 dark:bg-[#0A2238]/95 backdrop-blur-xl border-t border-slate-200/80 dark:border-white/[0.09] px-3 py-1.5 flex items-center justify-around shadow-2xl shadow-black/40 pb-[calc(env(safe-area-inset-bottom,0px)+6px)]">

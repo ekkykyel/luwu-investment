@@ -99,10 +99,10 @@ const AdminRouteDispatcher: React.FC = () => {
 const PageFadeTransition: React.FC<{ children: React.ReactNode; pageKey: string }> = ({ children, pageKey }) => (
   <motion.div
     key={pageKey}
-    initial={{ opacity: 0 }}
+    initial={false}
     animate={{ opacity: 1 }}
     transition={{
-      duration: 0.35,
+      duration: 0.25,
       ease: [0.16, 1, 0.3, 1], // Cubic bezier for snappy, elegant entrance
     }}
     className="w-full min-h-screen"

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { TopographicContourOverlay } from '../common/TopographicContourOverlay';
 import { supabase } from '../../lib/supabaseClient';
 import { FALLBACK_HERO_IMAGE, handleImageError, getSafeImageUrl } from '../../utils/imageFallbacks';
+import { ResponsiveHeroPicture } from '../common/ResponsiveHeroPicture';
 
 export interface SuperHeroSearchProps {
   onSearchSubmit?: (query: string) => void;
@@ -70,19 +71,37 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
   });
   const shouldReduceMotion = useReducedMotion();
 
-  // Zero-latency Hero Image Preloader for instant initial render
+  const [isTabActive, setIsTabActive] = useState(true);
+  const [isCarouselIdleReady, setIsCarouselIdleReady] = useState(false);
+
+  // Tab visibility tracker: pause carousel when tab is inactive to preserve resources
+  useEffect(() => {
+    const handleVis = () => {
+      setIsTabActive(document.visibilityState === 'visible');
+    };
+    document.addEventListener('visibilitychange', handleVis);
+    return () => document.removeEventListener('visibilitychange', handleVis);
+  }, []);
+
+  // Idle preloader for subsequent carousel slides after LCP is painted
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    heroSlides.forEach((slide, index) => {
-      const src = getSafeImageUrl(slide.url, FALLBACK_HERO_IMAGE);
-      if (!src) return;
-      const img = new Image();
-      img.decoding = 'async';
-      if (index === 0) {
-        (img as any).fetchPriority = 'high';
+    const idleCallback = (window as any).requestIdleCallback || ((cb: any) => setTimeout(cb, 1500));
+    const handle = idleCallback(() => {
+      setIsCarouselIdleReady(true);
+      if (heroSlides.length > 1) {
+        const secondary = heroSlides[1];
+        if (secondary?.url) {
+          const img = new Image();
+          img.decoding = 'async';
+          img.src = getSafeImageUrl(secondary.url, FALLBACK_HERO_IMAGE);
+        }
       }
-      img.src = src;
     });
+    return () => {
+      if ((window as any).cancelIdleCallback) (window as any).cancelIdleCallback(handle);
+      else clearTimeout(handle);
+    };
   }, [heroSlides]);
 
   // Instant sync when bannerUrl prop changes
@@ -266,13 +285,13 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
   const contentOpacity = useTransform(scrollY, [0, 350], [1, 0.88]);
 
   useEffect(() => {
-    if (shouldReduceMotion || !isInView || heroSlides.length <= 1) return;
+    if (shouldReduceMotion || !isInView || !isTabActive || !isCarouselIdleReady || heroSlides.length <= 1) return;
     const timer = setInterval(() => {
       setActiveTaglineIndex((prev) => (prev + 1) % HERO_TAGLINES.length);
       setActiveSlideIndex((prev) => (prev + 1) % heroSlides.length);
-    }, 4000);
+    }, 4500);
     return () => clearInterval(timer);
-  }, [shouldReduceMotion, isInView, heroSlides.length]);
+  }, [shouldReduceMotion, isInView, isTabActive, isCarouselIdleReady, heroSlides.length]);
 
   // Clean, minimal top chips (3 primary quick actions)
   const PRIMARY_CHIPS = [
@@ -306,28 +325,46 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
           style={{ y: shouldReduceMotion ? 0 : bgY }}
           className="absolute inset-0 z-0 overflow-hidden transform-gpu pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black_86%,transparent_100%)]"
         >
-          {heroSlides.map((slide, idx) => (
-            <motion.img
-              key={slide.url || idx}
-              src={getSafeImageUrl(slide.url, FALLBACK_HERO_IMAGE)}
-              alt={slide.alt}
-              initial={false}
-              animate={{
-                opacity: idx === (activeSlideIndex % heroSlides.length) ? 1 : 0,
-                scale: idx === (activeSlideIndex % heroSlides.length) ? 1.025 : 1.0,
-              }}
-              transition={{
-                opacity: { duration: 0.6, ease: "easeInOut" },
-                scale: { duration: 6, ease: "easeOut" }
-              }}
-              onError={(e) => handleImageError(e, 'hero')}
-              style={{ willChange: 'opacity, transform' }}
-              className="absolute inset-0 w-full h-full object-cover object-[center_top] origin-top pointer-events-none filter brightness-[0.98] contrast-[1.02]"
-              loading={idx === 0 ? "eager" : "lazy"}
-              {...({ fetchpriority: idx === 0 ? "high" : "low" } as any)}
-              decoding="async"
-            />
-          ))}
+          {heroSlides.map((slide, idx) => {
+            const isSlideActive = idx === (activeSlideIndex % heroSlides.length);
+            if (idx === 0) {
+              return (
+                <div
+                  key={slide.url || idx}
+                  className={`absolute inset-0 w-full h-full transition-opacity duration-500 ${isSlideActive ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                >
+                  <ResponsiveHeroPicture
+                    heroKey="mpp"
+                    alt={slide.alt}
+                    priority={true}
+                    customSrc={slide.url.startsWith('http') ? slide.url : undefined}
+                  />
+                </div>
+              );
+            }
+            if (!isCarouselIdleReady && !isSlideActive) return null;
+            return (
+              <motion.img
+                key={slide.url || idx}
+                src={getSafeImageUrl(slide.url, FALLBACK_HERO_IMAGE)}
+                alt={slide.alt}
+                initial={false}
+                animate={{
+                  opacity: isSlideActive ? 1 : 0,
+                  scale: isSlideActive ? 1.025 : 1.0,
+                }}
+                transition={{
+                  opacity: { duration: 0.6, ease: "easeInOut" },
+                  scale: { duration: 6, ease: "easeOut" }
+                }}
+                onError={(e) => handleImageError(e, 'hero')}
+                style={{ willChange: 'opacity, transform' }}
+                className="absolute inset-0 w-full h-full object-cover object-[center_top] origin-top pointer-events-none filter brightness-[0.98] contrast-[1.02]"
+                loading="lazy"
+                decoding="async"
+              />
+            );
+          })}
 
           {/* Exotic Light Beam Sweep Effect (Shimmering Diagonal Ray) */}
           <motion.div

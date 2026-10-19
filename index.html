@@ -38,6 +38,7 @@
     <!-- Preconnect & Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" as="style" />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://basemaps.cartocdn.com" />
     <link rel="preconnect" href="https://mt1.google.com" />
@@ -48,9 +49,16 @@
     <link rel="preconnect" href="https://svxugvxchjsjuyfeddor.supabase.co" crossorigin />
     <link rel="dns-prefetch" href="https://svxugvxchjsjuyfeddor.supabase.co" />
 
-    <!-- High-Priority Hero Banner Preload for Instant LCP on Mobile / Android -->
-    <link rel="preload" as="image" href="/assets/images/hero-mpp-simpurusiang.webp" type="image/webp" fetchpriority="high" />
-    <link rel="preload" as="image" href="/assets/images/hero-investasi-luwu.webp" type="image/webp" fetchpriority="high" />
+    <!-- High-Priority Responsive Hero Banner Preload with imagesrcset for Instant LCP -->
+    <link 
+      rel="preload" 
+      as="image" 
+      href="/assets/images/hero-investasi-luwu-1280.webp" 
+      imagesrcset="/assets/images/hero-investasi-luwu-480.avif 480w, /assets/images/hero-investasi-luwu-768.avif 768w, /assets/images/hero-investasi-luwu-1280.avif 1280w, /assets/images/hero-investasi-luwu-1920.avif 1920w" 
+      imagesizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1280px" 
+      type="image/avif" 
+      fetchpriority="high" 
+    />
 
     <!-- Structured Data (JSON-LD) for Google Search Rich Results -->
     <script type="application/ld+json">
@@ -86,7 +94,7 @@
     }
     </script>
 
-    <script src="/turf.min.js"></script>
+    <script src="/turf.min.js" defer></script>
     <!-- Development mode Service Worker unregister and Cache clear hotfix -->
     <script>
       (function() {

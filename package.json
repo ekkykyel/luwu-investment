@@ -13,6 +13,7 @@
     "test": "vitest run",
     "test:perf": "node scripts/test-floorplan-leak.mjs",
     "audit:floorplan": "node scripts/audit-floorplan.mjs",
+    "optimize:hero": "node scripts/optimize-hero.mjs",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:generate": "drizzle-kit generate",

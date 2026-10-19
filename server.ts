@@ -17443,12 +17443,26 @@ export function removeStyle(id) {
 
   // Static serving for public assets and pre-built dist
   const publicPath = path.join(process.cwd(), "public");
+  const staticCacheOptions = {
+    etag: true,
+    lastModified: true,
+    maxAge: 0,
+    setHeaders: (res: express.Response, filePath: string) => {
+      // Hashed assets from Vite build in /assets/ (immutable)
+      if (filePath.includes(path.sep + "assets" + path.sep) && !filePath.includes("images")) {
+        res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+      } else if (/\.(webp|avif|png|jpg|jpeg|svg|ico)$/i.test(filePath)) {
+        res.setHeader("Cache-Control", "public, max-age=2592000, stale-while-revalidate=86400");
+      }
+    }
+  };
+
   if (fs.existsSync(publicPath)) {
-    app.use(express.static(publicPath));
+    app.use(express.static(publicPath, staticCacheOptions));
   }
 
   if (hasDist) {
-    app.use(express.static(distPath));
+    app.use(express.static(distPath, staticCacheOptions));
   }
 
   app.get("*", (req, res) => {

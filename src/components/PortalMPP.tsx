@@ -20,8 +20,9 @@ import { WeatherWidget } from './WeatherWidget';
 import ThemeToggle from './ThemeToggle';
 import LanguageToggle from './LanguageToggle';
 import { useTranslation } from 'react-i18next';
-import { MppVisionModal } from './MppVisionModal';
-import { AirportCallingAlertModal } from './mpp/AirportCallingAlertModal';
+import { lazyWithRetry } from '../utils/lazyWithRetry';
+const MppVisionModal = lazyWithRetry(() => import('./MppVisionModal').then(m => ({ default: m.MppVisionModal })));
+const AirportCallingAlertModal = lazyWithRetry(() => import('./mpp/AirportCallingAlertModal').then(m => ({ default: m.AirportCallingAlertModal })));
 import { triggerFullAirportCallingAlert } from '../utils/airportAudioAlert';
 import { printMppQueueTicket } from '../utils/mppTicketPrinter';
 import { LiveMarketTicker } from './LiveMarketTicker';
@@ -40,14 +41,15 @@ import { OperationalHeatmap } from './mpp/OperationalHeatmap';
 import { SkmBentoGrid } from './mpp/SkmBentoGrid';
 import { MppMaklumatSlaRadar } from './mpp/MppMaklumatSlaRadar';
 import { MppCitizenSurveyMenu } from './mpp/MppCitizenSurveyMenu';
-import { MppVisitorAnalyticsModal } from './mpp/MppVisitorAnalyticsModal';
-import { MppAgenciesCatalogModal } from './mpp/MppAgenciesCatalogModal';
-import { MppServicesMatrixModal } from './mpp/MppServicesMatrixModal';
-import { MppServiceDetailModal, ServiceDetailItem } from './mpp/MppServiceDetailModal';
+const MppVisitorAnalyticsModal = lazyWithRetry(() => import('./mpp/MppVisitorAnalyticsModal').then(m => ({ default: m.MppVisitorAnalyticsModal })));
+const MppAgenciesCatalogModal = lazyWithRetry(() => import('./mpp/MppAgenciesCatalogModal').then(m => ({ default: m.MppAgenciesCatalogModal })));
+const MppServicesMatrixModal = lazyWithRetry(() => import('./mpp/MppServicesMatrixModal').then(m => ({ default: m.MppServicesMatrixModal })));
+import type { ServiceDetailItem } from './mpp/MppServiceDetailModal';
+const MppServiceDetailModal = lazyWithRetry(() => import('./mpp/MppServiceDetailModal').then(m => ({ default: m.MppServiceDetailModal })));
 import { MppServicesWorkflowCarousel } from './mpp/MppServicesWorkflowCarousel';
 import { FlowchartLevelLayanan } from './mpp/FlowchartLevelLayanan';
 import { AlurPelayananDiagram } from './mpp/AlurPelayananDiagram';
-import { MppNewsCatalogModal } from './mpp/MppNewsCatalogModal';
+const MppNewsCatalogModal = lazyWithRetry(() => import('./mpp/MppNewsCatalogModal').then(m => ({ default: m.MppNewsCatalogModal })));
 import { MppMagattiGallerySlideshow } from './mpp/MppMagattiGallerySlideshow';
 import { AntiCorruptionBanner } from './mpp/AntiCorruptionBanner';
 import { OnlineQueueOnboardingSection } from './mpp/OnlineQueueOnboardingSection';
@@ -62,7 +64,7 @@ import { AnimatedSectionHeader } from './common/AnimatedSectionHeader';
 import { TiltCard } from './common/TiltCard';
 import { SpotlightCard } from './common/SpotlightCard';
 import { SuperHeroSearch } from './mpp/SuperHeroSearch';
-import { GRPArchitectureModal } from './mpp/GRPArchitectureModal';
+const GRPArchitectureModal = lazyWithRetry(() => import('./mpp/GRPArchitectureModal').then(m => ({ default: m.GRPArchitectureModal })));
 import { BentoLiveQueueRadar } from './mpp/BentoLiveQueueRadar';
 import { InteractiveRequirementStepper } from './mpp/InteractiveRequirementStepper';
 import { CekPersyaratanLayananPilot } from './mpp/CekPersyaratanLayananPilot';
@@ -80,12 +82,13 @@ import {
   SOCIAL_MEDIA_UPDATE_EVENT, 
   SOCIAL_MEDIA_STORAGE_KEY 
 } from '../data/mppSocialMediaData';
-import TenantDashboard from './mpp/TenantDashboard';
-import { PetugasGeraiLoginModal } from './mpp/PetugasGeraiLoginModal';
-import { FoOfficerLoginModal } from './mpp/FoOfficerLoginModal';
-import { MppAirportKioskModal } from './MppAirportKioskModal';
-import { MppCommandPalette } from './mpp/MppCommandPalette';
-import { PkkprTechnicalRecommendationModal, PkkprRecommendationData } from './mpp/PkkprTechnicalRecommendationModal';
+const TenantDashboard = lazyWithRetry(() => import('./mpp/TenantDashboard'));
+const PetugasGeraiLoginModal = lazyWithRetry(() => import('./mpp/PetugasGeraiLoginModal').then(m => ({ default: m.PetugasGeraiLoginModal })));
+const FoOfficerLoginModal = lazyWithRetry(() => import('./mpp/FoOfficerLoginModal').then(m => ({ default: m.FoOfficerLoginModal })));
+const MppAirportKioskModal = lazyWithRetry(() => import('./MppAirportKioskModal').then(m => ({ default: m.MppAirportKioskModal })));
+const MppCommandPalette = lazyWithRetry(() => import('./mpp/MppCommandPalette').then(m => ({ default: m.MppCommandPalette })));
+import type { PkkprRecommendationData } from './mpp/PkkprTechnicalRecommendationModal';
+const PkkprTechnicalRecommendationModal = lazyWithRetry(() => import('./mpp/PkkprTechnicalRecommendationModal').then(m => ({ default: m.PkkprTechnicalRecommendationModal })));
 import { useGlobalFullscreenBackHandler } from '../hooks/useModalFullscreenLifecycle';
 import { ensureFullscreen } from '../utils/fullscreen';
 import { LUWU_LOGO_BASE64 } from '../lib/logoBase64';
@@ -6747,6 +6750,7 @@ export default function PortalMPP() {
           )}
         </AnimatePresence>
 
+        <React.Suspense fallback={null}>
         {/* Airport Calling Alert Modal (Layar Panggilan Bandara & Bell Pemohon) */}
         <AirportCallingAlertModal
           isOpen={isCallingAlertOpen}
@@ -6984,6 +6988,7 @@ export default function PortalMPP() {
           onClose={() => setIsGrpModalOpen(false)}
           isDarkMode={isDark}
         />
+        </React.Suspense>
 
         {/* Material Design 3 Desktop Super-App Global Helpdesk Floating Action Button */}
         <GlobalHelpdeskFab
