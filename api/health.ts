@@ -30,6 +30,11 @@ export default async function handler(req: any, res: any) {
     env: {
       supabase_url: Boolean(supabaseUrl && supabaseUrl !== 'https://placeholder.supabase.co'),
       supabase_key: Boolean(supabaseKey && supabaseKey.length > 10),
+      gemini_keys_configured: [
+        process.env.GEMINI_API_KEY_FIRST,
+        process.env.GEMINI_API_KEY_2,
+        process.env.GEMINI_API_KEY,
+      ].filter(k => Boolean(k && k.length > 10)).length,
       node_env: process.env.NODE_ENV ?? 'production',
     },
     version: process.env.npm_package_version ?? '1.0.0',

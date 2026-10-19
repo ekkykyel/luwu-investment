@@ -50,8 +50,11 @@ export class GeminiService {
       rawKeys.push(
         process.env.GEMINI_API_KEY_FIRST,
         process.env.GEMINI_API_KEY_2,
+        process.env.GEMINI_API_KEY_SECOND,
         process.env.GEMINI_API_KEY,
         process.env.API_KEY,
+        process.env.VITE_GEMINI_API_KEY_FIRST,
+        process.env.VITE_GEMINI_API_KEY_2,
         process.env.VITE_GEMINI_API_KEY,
         process.env.NEXT_PUBLIC_GEMINI_API_KEY,
         process.env.GEMINI_API_KEY_1,

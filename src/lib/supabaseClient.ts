@@ -7,9 +7,8 @@ const DEFAULT_SUPABASE_ANON_KEY = "sb_publishable_nycP7MydQUR1hT7lOCRD5w_HCdldhg
 const isInvalidAnonKey = (k?: string | null): boolean => {
   if (!k || typeof k !== 'string') return true;
   const trimmed = k.trim().replace(/^["']|["']$/g, '');
-  if (!trimmed) return true;
-  // Legacy JWT anon keys are revoked/invalid on project yeezhpdgafbefwipmldl (must use sb_publishable_...)
-  return trimmed.includes("GrlyUjBklIk6sSFeBrqYqN2gDfTMfRxaQ0SX2glspkk") || trimmed.startsWith("eyJ");
+  if (!trimmed || trimmed.includes("placeholder") || trimmed.includes("your_anon_key")) return true;
+  return false;
 };
 
 const sanitizeSupabaseUrl = (u?: string | null): string => {
