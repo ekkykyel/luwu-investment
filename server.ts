@@ -199,7 +199,6 @@ const TRANSPARENT_1X1_PNG = Buffer.from(
 );
 
 import { createClient } from "@supabase/supabase-js";
-import { createSupabaseContext } from "@supabase/server";
 import { GLOBAL_JWT_SECRET, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_SECRET_KEY, SUPABASE_PUBLISHABLE_KEY, SUPABASE_JWKS_URL, SUPABASE_JWT_SECRET, DATABASE_URL, isSupabaseConfigured } from "./src/config/env.js";
 
 // Service/Admin Client initialized with SUPABASE_SECRET_KEY / SUPABASE_SERVICE_ROLE_KEY for privileged backend operations

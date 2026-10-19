@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
 import { createClient } from '@supabase/supabase-js';
-import { createSupabaseContext } from '@supabase/server';
 import jwt from 'jsonwebtoken';
 
 import { GLOBAL_JWT_SECRET, SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from "./src/config/env.js";
@@ -88,64 +87,28 @@ export async function requireAuthMiddleware(req: Request, res: Response, next: N
       }
     }
 
-    // C. Supabase Auth Verification via @supabase/server & Client Fallback
+    // C. Supabase Auth Verification via Standard Supabase Client auth.getUser(token)
     let error: any = null;
     if (!user) {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || SUPABASE_URL;
       const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || SUPABASE_PUBLISHABLE_KEY;
 
       try {
-        const reqUrl = `${req.protocol || 'https'}://${req.get('host') || 'localhost'}${req.originalUrl || req.url || '/'}`;
-        const webReq = new Request(reqUrl, {
-          method: req.method,
-          headers: new Headers(req.headers as Record<string, string>)
+        const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+          auth: { autoRefreshToken: false, persistSession: false },
+          global: { headers: { Authorization: `Bearer ${token}` } }
         });
 
-        const ctxResult = await Promise.race([
-          createSupabaseContext(webReq, {
-            env: {
-              url: supabaseUrl,
-              publishableKeys: { default: supabaseAnonKey }
-            }
-          }),
-          new Promise<any>((resolve) => 
-            setTimeout(() => resolve({ data: null, error: { message: "@supabase/server verification timeout" } }), 2000)
-          )
-        ]);
+        const authPromise = supabase.auth.getUser(token);
+        const timeoutPromise = new Promise<any>((resolve) => 
+          setTimeout(() => resolve({ data: { user: null }, error: { message: "Auth verification timeout" } }), 2500)
+        );
 
-        if (ctxResult?.data?.jwtClaims || ctxResult?.data?.userClaims) {
-          const claims = ctxResult.data.jwtClaims || ctxResult.data.userClaims;
-          user = {
-            id: claims?.sub || claims?.id || "supabase-user-id",
-            email: claims?.email || claims?.user_metadata?.email || "user@luwu.go.id",
-            user_metadata: claims?.user_metadata || { role: claims?.role || "operator" }
-          };
-        } else {
-          error = ctxResult?.error;
-        }
+        const resData = await Promise.race([authPromise, timeoutPromise]);
+        user = resData.data?.user;
+        if (resData.error && !error) error = resData.error;
       } catch (err: any) {
-        error = err;
-      }
-
-      // Fallback: Standard Supabase Client auth.getUser(token)
-      if (!user) {
-        try {
-          const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-            auth: { autoRefreshToken: false, persistSession: false },
-            global: { headers: { Authorization: `Bearer ${token}` } }
-          });
-
-          const authPromise = supabase.auth.getUser(token);
-          const timeoutPromise = new Promise<any>((resolve) => 
-            setTimeout(() => resolve({ data: { user: null }, error: { message: "Auth verification timeout" } }), 2000)
-          );
-
-          const resData = await Promise.race([authPromise, timeoutPromise]);
-          user = resData.data?.user;
-          if (resData.error && !error) error = resData.error;
-        } catch (err: any) {
-          if (!error) error = err;
-        }
+        if (!error) error = err;
       }
     }
 
