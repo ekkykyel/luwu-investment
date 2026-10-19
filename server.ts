@@ -17581,7 +17581,7 @@ export function removeStyle(id) {
 const isMainModule = (() => {
   try {
     if (!process.argv || !process.argv[1]) return true;
-    const currentScript = fileURLToPath(import.meta.url);
+    const currentScript = typeof __filename !== "undefined" ? __filename : (typeof import.meta !== "undefined" && import.meta.url ? fileURLToPath(import.meta.url) : process.argv[1]);
     const resolvedArg = path.resolve(process.argv[1]);
     const resolvedScript = path.resolve(currentScript);
     return resolvedArg === resolvedScript || resolvedArg.endsWith("server.ts") || resolvedArg.endsWith("server.cjs");
