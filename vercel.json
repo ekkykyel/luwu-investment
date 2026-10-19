@@ -67,6 +67,14 @@
       "destination": "/api/spatial-layers"
     },
     {
+      "source": "/api/gemini/chat",
+      "destination": "/api/gemini/chat"
+    },
+    {
+      "source": "/gemini/chat",
+      "destination": "/api/gemini/chat"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api"
     },

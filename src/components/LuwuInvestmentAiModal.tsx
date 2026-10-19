@@ -166,12 +166,12 @@ export default function LuwuInvestmentAiModal({
         data = { text: text || "" };
       }
 
-      if (data.text || data.reply) {
+      if (res.ok && (data.text || data.reply) && !String(data.text || "").includes("FUNCTION_INVOCATION_FAILED")) {
         setMessages((prev) => [
           ...prev,
           { role: "model", text: data.text || data.reply },
         ]);
-      } else if (res.ok) {
+      } else if (res.ok && !text.includes("A server error has occurred")) {
         setMessages((prev) => [
           ...prev,
           { role: "model", text: "Respon asisten selesai, Bapak/Ibu. Silakan ajukan pertanyaan berikutnya seputar potensi dan perizinan investasi Luwu." },
@@ -181,9 +181,9 @@ export default function LuwuInvestmentAiModal({
           ...prev,
           {
             role: "model",
-            text: data.error 
+            text: (data.error && typeof data.error === "string")
               ? `Mohon maaf Bapak/Ibu: ${data.error}`
-              : "Sistem Asisten AI Luwu sedang melakukan pembaruan berkala. Silakan ajukan kembali pertanyaan Anda atau hubungi Meja Informasi MPP Simpurusiang Belopa.",
+              : "Sistem Asisten AI Luwu sedang melakukan sinkronisasi berkala. Silakan ajukan kembali pertanyaan Anda atau hubungi Meja Konsultasi VIP MPP Simpurusiang Belopa.",
           },
         ]);
       }
