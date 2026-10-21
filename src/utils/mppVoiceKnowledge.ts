@@ -1156,7 +1156,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
       "Tiga, Konsultasi teknis perencanaan dan penetapan besaran retribusi daerah. " +
       "Empat, Pembayaran retribusi di loket Bank Sulselbar MPP. " +
       "Lima, Penerbitan dokumen resmi izin PBG bertandatangan elektronik oleh Kepala D P M P T S P Luwu. " +
-      "Estimasi waktu proses adalah tiga sampai empat belas hari kerja.";
+      "Estimasi waktu proses adalah paling lama 28 hari kerja sesuai Peraturan Pemerintah Nomor 16 Tahun 2021.";
 
     return {
       matched: true,
@@ -1167,7 +1167,7 @@ function internalResolveMppVoiceQuery(query: string, lang: 'id' | 'en' | 'zh' = 
       persyaratan,
       alurProses,
       biaya: "Sesuai Perda Retribusi Bangunan Gedung (Dihitung berdasarkan indeks fungsi, kompleksitas, dan luas lantai bangunan) dibayar via Bank Sulselbar.",
-      sla: "3 s.d. 14 Hari Kerja",
+      sla: "Maksimal 28 Hari Kerja (PP No. 16/2021)",
       lokasiLoket: "Loket 04 & 05 (Helpdesk SIMBG & Penataan Ruang) Lantai 1 MPP",
       targetSectionId: "layanan",
       category: "Perizinan & Tata Ruang"

@@ -57,7 +57,7 @@ export function SmartRequirementAssistant({ isDark = false }: { isDark?: boolean
           agency: 'PUPR Dept & Licensing Dept',
           loket: 'Counter 05',
           officialCost: 'Per Local Regulation (Online Simulation)',
-          processingTime: '3 - 7 Working Days',
+          processingTime: 'Max 28 Working Days (Gov Reg No. 16/2021)',
           documents: [
             { id: 'doc-pbg-1', name: 'Land Title Certificate (SHM / HGB)', required: true },
             { id: 'doc-pbg-2', name: 'Architectural & Structural Engineering Drawings', required: true },
@@ -149,7 +149,7 @@ export function SmartRequirementAssistant({ isDark = false }: { isDark?: boolean
           agency: '公共工程局 (PUPR) 与许可局',
           loket: '05 号窗口',
           officialCost: '按地方规费标准 (在线模拟)',
-          processingTime: '3 - 7 个工作日',
+          processingTime: '最长 28 个工作日 (印尼 2021 年第 16 号政府条例)',
           documents: [
             { id: 'doc-pbg-1', name: '土地产权证明 (SHM / HGB)', required: true },
             { id: 'doc-pbg-2', name: '建筑与结构工程设计图纸', required: true },
@@ -241,7 +241,7 @@ export function SmartRequirementAssistant({ isDark = false }: { isDark?: boolean
         agency: 'Dinas PUPR & DPMPTSP',
         loket: 'Loket 05',
         officialCost: 'Sesuai Retribusi Daerah (Simulasi Online)',
-        processingTime: '3 - 7 Hari Kerja',
+        processingTime: 'Maksimal 28 Hari Kerja (PP No. 16/2021)',
         documents: [
           { id: 'doc-pbg-1', name: 'Bukti Kepemilikan Hak Atas Tanah (SHM / HGB)', required: true },
           { id: 'doc-pbg-2', name: 'Gambar Rencana Arsitektur & Struktur Gedung', required: true },

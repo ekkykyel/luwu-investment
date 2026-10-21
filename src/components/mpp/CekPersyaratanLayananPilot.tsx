@@ -103,7 +103,7 @@ export const PILOT_SERVICE_REQUIREMENTS: ServiceRequirementItem[] = [
     agency: 'Dinas PUPR & DPMPTSP Luwu',
     loket: 'Loket 05',
     officialCost: 'Sesuai Retribusi Daerah (Simulasi Online)',
-    processingTime: '3 - 7 Hari Kerja',
+    processingTime: 'Maksimal 28 Hari Kerja (PP No. 16/2021)',
     popular: true,
     documents: [
       { id: 'pbg-1', name: 'KTP Pemohon & Bukti Kepemilikan Tanah (SHM/HGB)', desc: 'Sertipikat hak atas tanah yang sah dan tidak dalam sengketa hukum', required: true },

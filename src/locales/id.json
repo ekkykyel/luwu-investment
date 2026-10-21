@@ -2352,7 +2352,7 @@
           "Penerbitan Surat Ketetapan Retribusi Daerah (SKRD) dan pembayaran via Bank Sulselbar.",
           "Penerbitan dokumen resmi PBG / SLF secara digital oleh DPMPTSP Kab. Luwu."
         ],
-        "time": "3 - 7 Hari Kerja (Tergantung kelengkapan berkas teknis)",
+        "time": "Maksimal 28 Hari Kerja (Sesuai PP No. 16/2021)",
         "docs": [
           "KTP Pemohon / Badan Usaha",
           "Bukti Kepemilikan Lahan",
@@ -4248,7 +4248,7 @@
         "category": "Tata Ruang & Bangunan",
         "agency": "Dinas PUPR & DPMPTSP Luwu",
         "officialCost": "Sesuai Retribusi Daerah (Simulasi Online)",
-        "processingTime": "3 - 7 Hari Kerja",
+        "processingTime": "Maksimal 28 Hari Kerja (PP No. 16/2021)",
         "documents": {
           "pbg-1": {
             "name": "KTP Pemohon & Bukti Kepemilikan Tanah (SHM/HGB)",

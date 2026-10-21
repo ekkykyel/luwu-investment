@@ -13,3 +13,5 @@ service-account-key.json
 node-compile-cache/
 *.hm
 .de913477188f48fb-0.hm
+.aistudio/
+public/assets/aistudio/
