@@ -17425,7 +17425,7 @@ app.get("/gis_:layer.json", (req, res) => {
 // ---------------------------------------------------------
 
 async function startServer() {
-  const PORT = process.env.PORT || 3000;
+  const PORT = (process.env.PORT && process.env.PORT !== "8080" && process.env.PORT !== process.env.NGINX_PORT) ? process.env.PORT : (process.env.DEFAULT_APP_PORT || 3000);
   const distPath = path.join(process.cwd(), "dist");
   const distIndexPath = path.join(distPath, "index.html");
   const hasDist = fs.existsSync(distIndexPath);
