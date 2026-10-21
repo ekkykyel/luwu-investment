@@ -2,10 +2,11 @@
   "version": 2,
   "buildCommand": "npm run build",
   "functions": {
-    "api/**/*.ts": {
-      "memory": 1024,
-      "maxDuration": 15,
-      "includeFiles": "dist/**"
+    "api/[...all].ts": {
+      "maxDuration": 15
+    },
+    "api/gemini/chat.ts": {
+      "maxDuration": 30
     }
   },
   "rewrites": [
@@ -16,6 +17,14 @@
     {
       "source": "/gemini/(.*)",
       "destination": "/api/gemini/chat"
+    },
+    {
+      "source": "/api/gemini/chat",
+      "destination": "/api/gemini/chat"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/[...all]"
     },
     {
       "source": "/((?!api/).*)",
