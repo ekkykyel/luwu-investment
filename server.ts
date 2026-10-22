@@ -2672,6 +2672,41 @@ const fetchActiveDocuments = async () => {
   return `\n[TABEL KNOWLEDGE SUPABASE: DAFTAR DOKUMEN LITERASI RESMI KABUPATEN LUWU]\nAnda terhubung langsung ke tabel knowledge_documents Supabase (PostgreSQL) Pemkab Luwu dengan dokumen literasi resmi aktif sebagai berikut:\n${docList}\n`;
 };
 
+/**
+ * Exact Internal Rate of Return (IRR) Calculator via Bisection Method.
+ * Mathematical definition: Finds rate 'r' such that NPV(r) = -CAPEX + sum_{t=1}^T [CF_t / (1 + r)^t] = 0.
+ * Guarantees mathematical convergence within 60 iterations (machine precision < 1e-4).
+ */
+function calculateIterativeBisectionIrr(
+  capex: number,
+  annualNetProfit: number,
+  tenorYears: number = 8
+): number {
+  if (capex <= 0 || annualNetProfit <= 0 || tenorYears <= 0) return 0;
+  const totalUndiscountedCF = annualNetProfit * tenorYears;
+  if (totalUndiscountedCF <= capex) return 0;
+
+  let low = -0.50; // -50%
+  let high = 5.0;  // +500%
+  let bisectionIrr = 0;
+
+  for (let i = 0; i < 60; i++) {
+    bisectionIrr = (low + high) / 2;
+    let npv = -capex;
+    for (let t = 1; t <= tenorYears; t++) {
+      npv += annualNetProfit / Math.pow(1 + bisectionIrr, t);
+    }
+    if (Math.abs(npv) < 1e-4) break;
+    if (npv > 0) {
+      low = bisectionIrr;
+    } else {
+      high = bisectionIrr;
+    }
+  }
+
+  return Math.max(0, Number((bisectionIrr * 100).toFixed(2)));
+}
+
 // FIX 2: Ditambahkan parameter aktual simulator (roi, irr, npv, paybackPeriod, discountRate)
 // agar fallback response menggunakan angka yang SAMA dengan yang ditampilkan di UI simulator,
 // bukan menghitung ulang dengan rumus heuristik internal yang menghasilkan angka berbeda.
@@ -2704,7 +2739,7 @@ function buildDetailedRoiDossier(
 
   const displayIrr = (irrActual !== undefined && !isNaN(irrActual))
     ? irrActual.toFixed(2)
-    : (net > 0 ? Math.min(36.5, Math.max(3.5, (net / inv) * 85)).toFixed(2) : '0.00');
+    : calculateIterativeBisectionIrr(inv, net, 8).toFixed(2);
 
   const displayNpv = (npvActual !== undefined && !isNaN(npvActual))
     ? Math.round(npvActual)
@@ -3090,6 +3125,7 @@ app.post("/api/gemini/chat", async (req, res) => {
       history, 
       investmentContext, 
       simulationContext, 
+      isFollowUp,
       language, 
       locale,
       investment_amount,
@@ -3116,6 +3152,21 @@ app.post("/api/gemini/chat", async (req, res) => {
         const name = simulationContext?.name || investmentContext?.name || "Proyek Investasi Prioritas";
         const opex = simulationContext?.opex;
         const rev = simulationContext?.revenue || simulationContext?.asumsiPendapatan;
+
+        // If it's a follow-up chat inquiry, return a conversational standby response rather than repeating the full dossier
+        const isFollowUpChat = isFollowUp === true || (Array.isArray(history) && history.length > 0);
+        if (isFollowUpChat) {
+          const formattedCapex = Number(inv).toLocaleString(activeLang === 'en' ? 'en-US' : activeLang === 'zh' ? 'zh-CN' : 'id-ID');
+          let standbyChat = "";
+          if (activeLang === 'en') {
+            standbyChat = `Greetings. The AI assistant is currently operating in regional standby mode. Regarding your inquiry on project "${name}" (CAPEX: IDR ${formattedCapex}), your simulation parameters are safely registered. For real-time consultation on spatial suitability, local incentives, or OSS-RBA licensing, please connect directly with the VIP Concierge Desk at Simpurusiang Public Service Mall (MPP), Belopa.`;
+          } else if (activeLang === 'zh') {
+            standbyChat = `您好，AI 助手当前处于区域备用模式。关于您对项目 "${name}" (拟投资额: ${formattedCapex} 印尼盾) 的进一步咨询，测算参数已完整保存。如需深入咨询空间规划合规性、地方税费减免或投资意向对接，欢迎莅临芦梧县 Simpurusiang 公共服务中心 (MPP) 1层 VIP 招商专席。`;
+          } else {
+            standbyChat = `Tabe' Bapak/Ibu, sistem asisten AI saat ini sedang dalam mode siaga regional sementara. Terkait pertanyaan lanjutan Anda mengenai proyek "${name}" (rencana CAPEX Rp ${formattedCapex}), seluruh parameter simulasi telah terekam secara aman. Anda dapat berkonsultasi langsung dengan Tim Pendamping VIP Desk DPMPTSP di MPP Simpurusiang Belopa untuk fasilitasi perizinan OSS-RBA, kesesuaian tata ruang (PKKPR), dan insentif daerah.`;
+          }
+          return res.json({ text: standbyChat, sources: [], isFallback: true });
+        }
         
         // FIX 3: Pass angka aktual dari simulator — bukan biarkan dossier menghitung ulang
         const fallbackText = buildDetailedRoiDossier(
@@ -3381,7 +3432,20 @@ app.post("/api/gemini/chat", async (req, res) => {
 
     }
 
-    let isRoiSimulation = !!simulationContext || (typeof message === 'string' && (message.includes("Analisis Kelayakan") || message.includes("Executive Feasibility Dossier") || message.includes("ROI") || message.includes("simulasi potensi investasi") || message.includes("Investment Feasibility")));
+    const hasHistory = Array.isArray(formattedHistory) && formattedHistory.length > 0;
+    const msgStr = typeof message === 'string' ? message : '';
+    const isExplicitDossierRequest = 
+      msgStr.includes("Analisis Kelayakan") || 
+      msgStr.includes("Executive Feasibility Dossier") || 
+      msgStr.includes("Hasilkan laporan analisis lengkap") ||
+      msgStr.includes("Format strictly adhering to:") ||
+      msgStr.includes("必须严格遵循以下结构输出") ||
+      msgStr.includes("generate an in-depth Investment Feasibility") ||
+      msgStr.includes("simulasi potensi investasi");
+
+    const isFollowUpChat = isFollowUp === true || (hasHistory && !isExplicitDossierRequest);
+    const isRoiDossierMode = !isFollowUpChat && (!!simulationContext || isExplicitDossierRequest);
+    let isRoiSimulation = isRoiDossierMode;
 
     let simulationInjection = "";
     if (simulationContext) {
@@ -3399,7 +3463,28 @@ app.post("/api/gemini/chat", async (req, res) => {
       const formattedIrr = typeof rawIrr === 'number' ? `${rawIrr.toFixed(2)}%` : String(rawIrr || "0%");
 
       if (activeLang === "en") {
-        simulationInjection = `\n\n[MANDATORY TASK: SENIOR INVESTMENT ANALYST FOR LUWU REGENCY]
+        if (isFollowUpChat) {
+          simulationInjection = `\n\n[ESTABLISHED PROJECT PARAMETERS & FINANCIAL BASELINE - MPP SIMPURISIANG VIP CONCIERGE]
+The investor is actively consulting on the following simulated project in Luwu Regency:
+- Project Name: ${simulationContext.name || "Priority Investment Project"}
+- Sector / Category: ${simulationContext.sector || "Regional Priority Sector"}
+- Capital Expenditure (CAPEX): IDR ${Number(rawCapex || 0).toLocaleString("en-US")}
+- Annual Operating Expenditure (OPEX / Year): IDR ${Number(rawOpex || 0).toLocaleString("en-US")}
+- Projected Gross Revenue (Revenue / Year): IDR ${Number(rawRev || 0).toLocaleString("en-US")}
+- Return on Investment (ROI): ${formattedRoi}
+- Amortization / Payback Period (BEP): ${formattedBep} Years
+- Net Present Value (NPV): IDR ${Number(rawNpv || 0).toLocaleString("en-US")}
+- Internal Rate of Return (IRR): ${formattedIrr}
+- Benchmark Discount Rate (WACC): ${rawDiscountRate}%
+
+INTERACTION DIRECTIVE: INTERACTIVE FOLLOW-UP CONSULTATION
+The investor is asking a specific follow-up question regarding their project or Luwu investment landscape.
+1. Answer the user's specific inquiry directly, concisely, and warmly.
+2. DO NOT output the formal 5-section (A-E) feasibility report structure unless explicitly requested. Answer conversationally as a senior investment concierge.
+3. Integrate relevant Luwu spatial zoning (RTRW 2024-2044), logistics connectivity (Bua Airport, Belopa Port), local incentives (Tax Allowance up to 35% for 60% local hiring), or OSS-RBA licensing details as applicable.
+4. Maintain financial consistency: reference the established project metrics above whenever relevant without altering any numbers.`;
+        } else {
+          simulationInjection = `\n\n[MANDATORY TASK: SENIOR INVESTMENT ANALYST FOR LUWU REGENCY]
 Analyze the provided ROI parameters and generate a comprehensive investment feasibility report (minimum 500-800+ words).
 STRICT REQUIREMENT: You MUST generate the ENTIRE output, headings, metrics analysis, risk assessment, and recommendations strictly in ENGLISH. Do not include any Indonesian words in the output.
 
@@ -3446,8 +3531,30 @@ Include 5-Year Cash Flow Projection Table.
 ### E. ACTIONABLE NEXT STEPS FOR INVESTOR CONCIERGE (MPP SIMPURUSIANG)
 - Fast-Track OSS-RBA VIP Desk Assistance at Simpurusiang Public Service Mall, Belopa.
 - Steps to Submit Letter of Intent (LoI) & Schedule Priority Site Survey.`;
+        }
       } else if (activeLang === "zh") {
-        simulationInjection = `\n\n[核心任务：印尼芦梧县高级投资分析专家]
+        if (isFollowUpChat) {
+          simulationInjection = `\n\n[已确认的项目核心财务基准 - 芦梧县 MPP SIMPURISIANG VIP 招商专席]
+投资者当前正在就以下重点招商项目进行深入咨询：
+- 项目名称: ${simulationContext.name || "重点招商引资项目"}
+- 所属产业 / 行业: ${simulationContext.sector || "区域重点支持产业"}
+- 拟投资金额 (CAPEX): ${Number(rawCapex || 0).toLocaleString("zh-CN")} 印尼盾
+- 年度运营支出 (OPEX / 年): ${Number(rawOpex || 0).toLocaleString("zh-CN")} 印尼盾
+- 预计年营业总收入: ${Number(rawRev || 0).toLocaleString("zh-CN")} 印尼盾
+- 投资回报率 (ROI): ${formattedRoi}
+- 预计投资回收期 (BEP): ${formattedBep} 年
+- 5年期累计净现值 (NPV): ${Number(rawNpv || 0).toLocaleString("zh-CN")} 印尼盾
+- 内部收益率 (IRR): ${formattedIrr}
+- 基准折现率 (WACC): ${rawDiscountRate}%
+
+交互指引：交互式后续问答与深度咨询
+投资者正在就该项目或芦梧县投资环境提出具体后续问题。
+1. 针对投资者的具体问题进行直接、聚焦且专业的解答，避免生硬冗余。
+2. 切勿重复输出格式僵化的 5 大模块 (A-E) 完整可行性报告。以资深投资顾问的温和专业语气进行对话式解答。
+3. 根据问题需要，自然融入芦梧县国土空间规划 (RTRW 2024-2044)、物流基础设施网络 (Bua 机场、Belopa 港口)、地方税费减免政策 (最高减免 35% 针对吸纳 60% 本地员工项目) 或 OSS-RBA 审批流程。
+4. 恪守数据一致性：涉及项目财务数据时严格引用上述参数，严禁篡改或编造矛盾数字。`;
+        } else {
+          simulationInjection = `\n\n[核心任务：印尼芦梧县高级投资分析专家]
 请根据提供的 ROI 参数生成一份全面的投资可行性分析报告 (字数不少于 500-800 字)。
 强制要求： 您必须完全使用简体中文 (Simplified Chinese) 生成所有分析内容、标题、风险评估及建议。严禁出现印尼语单词。
 
@@ -3494,13 +3601,35 @@ Include 5-Year Cash Flow Projection Table.
 ### E. 投资绿色通道行动指南 (MPP SIMPURUSIANG VIP CONCIERGE)
 - 芦梧县公共服务大楼 (MPP Simpurusiang) 1 层 VIP 专席 13 位 NIB 及 PKKPR 空间许可绿色审批通道。
 - 提交投资意向书 (LoI) 与实地政企联合考察对接安排。`;
+        }
       } else {
         const formattedCapex = typeof rawCapex === 'number' ? `Rp ${rawCapex.toLocaleString("id-ID")}` : String(rawCapex || "0");
         const formattedOpex = typeof rawOpex === 'number' ? `Rp ${rawOpex.toLocaleString("id-ID")}` : String(rawOpex || "0");
         const formattedRev = typeof rawRev === 'number' ? `Rp ${rawRev.toLocaleString("id-ID")}` : String(rawRev || "0");
         const formattedNpv = typeof rawNpv === 'number' ? `Rp ${rawNpv.toLocaleString("id-ID")}` : String(rawNpv || "0");
 
-        simulationInjection = `\n\n[MANDAT KHUSUS: PAKAR ANALIS INVESTASI & EKONOMI SPASIAL LUWU]
+        if (isFollowUpChat) {
+          simulationInjection = `\n\n[BASIS DATA FINANSIAL PROYEK AKTUAL - VIP DESK MPP SIMPURISIANG]
+Calon investor saat ini sedang menganalisis proyek investasi di Kabupaten Luwu dengan parameter:
+- Nama Potensi / Rencana Kegiatan: ${simulationContext.name}
+- Sektor / Kategori: ${simulationContext.sector || 'Sektor Prioritas Daerah'}
+- Estimasi Nilai Investasi (CAPEX): ${formattedCapex}
+- Biaya Operasional (OPEX / Tahun): ${formattedOpex}
+- Proyeksi Pendapatan (Revenue / Tahun): ${formattedRev}
+- Return on Investment (ROI): ${formattedRoi}
+- Amortisasi / Payback Period (BEP): ${formattedBep} Tahun
+- Net Present Value (NPV): ${formattedNpv}
+- Internal Rate of Return (IRR): ${formattedIrr}
+- Suku Bunga Acuan (Discount Rate / WACC): ${rawDiscountRate}%
+
+PANDUAN INTERAKSI: KONSULTASI INTERAKTIF LANJUTAN (FOLLOW-UP CHAT)
+Investor sedang mengajukan pertanyaan spesifik lanjutan terkait proyek atau potensi investasi di Luwu.
+1. Jawab pertanyaan pengguna secara langsung, lugas, ramah, dan profesional sesuai keahlian konsultan investasi MPP Simpurusiang.
+2. DILARANG memaksakan struktur formal laporan 5-seksi (A sampai E) secara kaku jika pengguna hanya bertanya hal spesifik (seperti regulasi tata ruang, insentif, jarak logistik, perizinan OSS-RBA, dll).
+3. Kaitkan jawaban Anda dengan regulasi daerah (Perda RTRW No. 06/2011, RPJPD 2025-2045), kesiapan infrastruktur Luwu (Bandara Bua, Pelabuhan Belopa/Tadokko, Jalan Nasional), dan kemudahan MPP Simpurusiang.
+4. Jaga integritas finansial: jika pengguna menanyakan metrik atau angka, rujuk angka aktual di atas secara konsisten tanpa mengubah nilai.`;
+        } else {
+          simulationInjection = `\n\n[MANDAT KHUSUS: PAKAR ANALIS INVESTASI & EKONOMI SPASIAL LUWU]
 Anda adalah Pakar Analis Investasi & Ekonomi Spasial Luwu. Tugas Anda adalah memberikan laporan Analisis Kelayakan Investasi dan ROI Simulator yang SANGAT MENDETAIL, MENDALAM, DAN KOMPREHENSIF (panjang minimal 500-800+ kata analisis mendalam).
 PERSYARATAN UTAMA: Anda HARUS menghasilkan seluruh output, judul, analisis risiko, dan rekomendasi dalam BAHASA INDONESIA yang baku dan profesional.
 
@@ -3579,6 +3708,7 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
 ### E. REKOMENDASI STRATEGIS & ACTION PLAN (MPP SIMPURISIANG)
 - Langkah percepatan perizinan di DPMPTSP / MPP Simpurusiang (Fast-Track OSS-RBA VIP Desk).
 - Panduan pengajuan Letter of Intent (LoI) dan penjadwalan survey lapangan.`;
+        }
       }
     }
 
@@ -3912,6 +4042,7 @@ ${languageInstruction}`;
 
     if (req.body?.simulationContext || req.body?.investmentContext) {
       const { simulationContext, investmentContext } = req.body;
+      const isFollowUp = req.body?.isFollowUp || (Array.isArray(req.body?.history) && req.body.history.length > 0);
       const inv = simulationContext?.capex || req.body?.investment_amount || investmentContext?.investmentValue || 5000000000;
       const sek = simulationContext?.sector || req.body?.sector || investmentContext?.sector || "Sektor Unggulan Daerah";
       const name = simulationContext?.name || investmentContext?.name || "Proyek Investasi Prioritas";
@@ -3923,6 +4054,19 @@ ${languageInstruction}`;
         ? "en"
         : "id";
       
+      if (isFollowUp) {
+        const formattedCapex = Number(inv).toLocaleString(fallbackLang === 'en' ? 'en-US' : fallbackLang === 'zh' ? 'zh-CN' : 'id-ID');
+        let standbyChat = "";
+        if (fallbackLang === 'en') {
+          standbyChat = `Greetings. The AI assistant is currently operating in regional standby mode. Regarding your inquiry on project "${name}" (CAPEX: IDR ${formattedCapex}), your simulation parameters are safely registered. For real-time consultation on spatial suitability, local incentives, or OSS-RBA licensing, please connect directly with the VIP Concierge Desk at Simpurusiang Public Service Mall (MPP), Belopa.`;
+        } else if (fallbackLang === 'zh') {
+          standbyChat = `您好，AI 助手当前处于区域备用模式。关于您对项目 "${name}" (拟投资额: ${formattedCapex} 印尼盾) 的进一步咨询，测算参数已完整保存。如需深入咨询空间规划合规性、地方税费减免或投资意向对接，欢迎莅临芦梧县 Simpurusiang 公共服务中心 (MPP) 1层 VIP 招商专席。`;
+        } else {
+          standbyChat = `Tabe' Bapak/Ibu, sistem asisten AI saat ini sedang dalam mode siaga regional sementara. Terkait pertanyaan lanjutan Anda mengenai proyek "${name}" (rencana CAPEX Rp ${formattedCapex}), seluruh parameter simulasi telah terekam secara aman. Anda dapat berkonsultasi langsung dengan Tim Pendamping VIP Desk DPMPTSP di MPP Simpurusiang Belopa untuk fasilitasi perizinan OSS-RBA, kesesuaian tata ruang (PKKPR), dan insentif daerah.`;
+        }
+        return res.json({ text: standbyChat, sources: [], isFallback: true });
+      }
+
       // FIX 3: Pass angka aktual dari simulator — bukan biarkan dossier menghitung ulang
       const fallbackText = buildDetailedRoiDossier(
         Number(inv), sek, name, Number(opex), Number(rev), fallbackLang,

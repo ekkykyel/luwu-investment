@@ -38,6 +38,43 @@ export interface HeuristicRoiResult {
 }
 
 /**
+ * Exact Internal Rate of Return (IRR) Calculator via Bisection Method.
+ * Mathematical definition: Finds rate 'r' such that NPV(r) = -CAPEX + sum_{t=1}^T [CF_t / (1 + r)^t] = 0.
+ * Guarantees mathematical convergence within 60 iterations (machine precision < 1e-4).
+ */
+export const calculateIterativeBisectionIrr = (
+  capex: number,
+  annualNetProfit: number,
+  tenorYears: number = 8
+): number => {
+  if (capex <= 0 || annualNetProfit <= 0 || tenorYears <= 0) return 0;
+
+  // If total undiscounted cash flow cannot cover initial capex over the tenor, IRR is zero
+  const totalUndiscountedCF = annualNetProfit * tenorYears;
+  if (totalUndiscountedCF <= capex) return 0;
+
+  let low = -0.50; // -50%
+  let high = 5.0;  // +500%
+  let bisectionIrr = 0;
+
+  for (let i = 0; i < 60; i++) {
+    bisectionIrr = (low + high) / 2;
+    let npv = -capex;
+    for (let t = 1; t <= tenorYears; t++) {
+      npv += annualNetProfit / Math.pow(1 + bisectionIrr, t);
+    }
+    if (Math.abs(npv) < 1e-4) break;
+    if (npv > 0) {
+      low = bisectionIrr;
+    } else {
+      high = bisectionIrr;
+    }
+  }
+
+  return Math.max(0, Number((bisectionIrr * 100).toFixed(2)));
+};
+
+/**
  * Heuristic Fallback Analysis Engine (Anti-Fail & Honest Financial Integrity)
  * Formulates a deep, comprehensive financial model strictly honoring zero-dummy & honest fallback.
  */
@@ -82,7 +119,7 @@ export const generateHeuristicRoiAnalysis = (data: {
   if (data.irr !== undefined && !isNaN(data.irr)) {
     estIrrNum = data.irr;
   } else {
-    estIrrNum = netProfit > 0 ? Math.min(38.5, Math.max(16.5, rawRoi * 0.88)) : 0;
+    estIrrNum = calculateIterativeBisectionIrr(inv, netProfit, tenor);
   }
   const estIrr = `${estIrrNum.toFixed(2)}%`;
 

@@ -303,6 +303,7 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
         signal: controller.signal,
         body: JSON.stringify({
           message: userPrompt,
+          isFollowUp: false,
           history: [],
           language: aiLanguage,
           locale: aiLanguage,
@@ -436,6 +437,7 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
         signal: controller.signal,
         body: JSON.stringify({
           message: userMessageText,
+          isFollowUp: true,
           history: currentHistory.map((m) => ({
             role: m.role,
             text: m.text,
