@@ -835,8 +835,8 @@ export default function ProximityDistanceMatrixModal({
                           <span className={`text-[10px] font-medium ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                             {t((item as any).typeKey, item.type)}
                           </span>
-                          <span className={`text-[9px] px-1.5 py-0.2 rounded border font-mono font-semibold ${
-                            isDark ? "bg-black text-slate-300 border-neutral-800" : "bg-white/5 text-slate-300 border border-white/10 dark:text-slate-200 border-slate-200"
+                          <span className={`text-[9px] px-1.5 py-0.5 rounded border font-mono font-semibold ${
+                            isDark ? "bg-slate-900 text-slate-300 border-slate-800" : "bg-slate-100 text-slate-700 border-slate-300"
                           }`}>
                             {(item as any).mstClassKey ? t((item as any).mstClassKey, item.mstClass) : item.mstClass}
                           </span>

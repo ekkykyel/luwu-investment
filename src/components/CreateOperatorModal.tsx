@@ -99,23 +99,23 @@ export default function CreateOperatorAccountModal({ onClose, currentRole }: Cre
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-surface/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4">
-      <motion.div initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 10 }} transition={{ type: "spring", stiffness: 300, damping: 30 }} className="bg-white/90 backdrop-blur-md dark:bg-surface/90 rounded-2xl w-full max-w-md shadow-2xl border border-white/40 dark:border-slate-700/50 overflow-hidden flex flex-col">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4">
+      <motion.div initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 10 }} transition={{ type: "spring", stiffness: 300, damping: 30 }} className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="bg-base text-white p-5 flex justify-between items-center border-b border-slate-800 relative overflow-hidden">
+        <div className="bg-slate-900 text-white p-5 flex justify-between items-center border-b border-slate-800 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-teal-500"></div>
           <div className="flex items-center gap-3">
             <div className="bg-emerald-500/20 p-2 rounded-lg border border-emerald-500/30">
-              <UserPlus className="h-5 w-5 text-emerald-700 dark:text-emerald-400" />
+              <UserPlus className="h-5 w-5 text-emerald-400" />
             </div>
             <div>
-              <h2 className="font-bold font-display text-base uppercase tracking-wider">Akun Operator</h2>
-              <p className="text-[10px] text-slate-600 dark:text-slate-400 font-mono mt-0.5">Buat kredensial akses petugas/operator baru</p>
+              <h2 className="font-bold font-display text-base uppercase tracking-wider text-white">Akun Operator</h2>
+              <p className="text-[10px] text-slate-300 font-mono mt-0.5">Buat kredensial akses petugas/operator baru</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-white rounded-lg transition-colors"
+            className="p-2 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -124,22 +124,22 @@ export default function CreateOperatorAccountModal({ onClose, currentRole }: Cre
         {/* Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5 ml-1">Nama Lengkap</label>
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 ml-1">Nama Lengkap</label>
             <div className="relative">
-              <User className="absolute left-3.5 top-3 h-4 w-4 text-slate-600 dark:text-slate-400" />
+              <User className="absolute left-3.5 top-3 h-4 w-4 text-slate-400 dark:text-slate-500" />
               <input
                 type="text"
                 value={operatorName}
                 onChange={(e) => setOperatorName(e.target.value)}
                 placeholder="Masukkan nama operator..."
-                className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-sm"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-sm"
               />
             </div>
           </div>
           <div>
-            <label htmlFor="operator-email" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5 ml-1">Alamat Email / Username</label>
+            <label htmlFor="operator-email" className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 ml-1">Alamat Email / Username</label>
             <div className="relative">
-              <Mail className="absolute left-3.5 top-3 h-4 w-4 text-slate-600 dark:text-slate-400" />
+              <Mail className="absolute left-3.5 top-3 h-4 w-4 text-slate-400 dark:text-slate-500" />
               <input
                 id="operator-email"
                 name="email"
@@ -148,14 +148,14 @@ export default function CreateOperatorAccountModal({ onClose, currentRole }: Cre
                 value={operatorEmail}
                 onChange={(e) => setOperatorEmail(e.target.value)}
                 placeholder="operator@example.com"
-                className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-sm"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-sm"
               />
             </div>
           </div>
           <div>
-            <label htmlFor="operator-password" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5 ml-1">Password Akses</label>
+            <label htmlFor="operator-password" className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 ml-1">Password Akses</label>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-3 h-4 w-4 text-slate-600 dark:text-slate-400" />
+              <Lock className="absolute left-3.5 top-3 h-4 w-4 text-slate-400 dark:text-slate-500" />
               <input
                 id="operator-password"
                 name="password"
@@ -164,36 +164,36 @@ export default function CreateOperatorAccountModal({ onClose, currentRole }: Cre
                 value={operatorPassword}
                 onChange={(e) => setOperatorPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-sm"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-sm"
               />
             </div>
           </div>
 
           <div className="mb-4">
-            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5 ml-1">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 ml-1">
               Pilih Bidang (Role) *
             </label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-sm appearance-none"
+              className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-sm"
               required
             >
-              <option value="admin_promosi">Bidang Promosi & Penanaman Modal</option>
-              <option value="admin_dalak">Bidang Pengendalian Pelaksanaan & Pengawasan (DALAK)</option>
-              <option value="admin_pelayanan">Bidang Pelayanan & Perizinan (DPMPTSP)</option>
-              <option value="admin_puptr">Admin Dinas PUPTR (Tata Ruang & Studio GIS)</option>
-              <option value="admin_pertanian">Admin Dinas Pertanian (LP2B & Lahan Basah)</option>
-              <option value="admin_mpp">Admin MPP (Pengelola Mal Pelayanan Publik)</option>
-              <option value="super_admin">Super Admin (Administrator Utama)</option>
+              <option value="admin_promosi" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Bidang Promosi & Penanaman Modal</option>
+              <option value="admin_dalak" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Bidang Pengendalian Pelaksanaan & Pengawasan (DALAK)</option>
+              <option value="admin_pelayanan" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Bidang Pelayanan & Perizinan (DPMPTSP)</option>
+              <option value="admin_puptr" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Admin Dinas PUPTR (Tata Ruang & Studio GIS)</option>
+              <option value="admin_pertanian" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Admin Dinas Pertanian (LP2B & Lahan Basah)</option>
+              <option value="admin_mpp" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Admin MPP (Pengelola Mal Pelayanan Publik)</option>
+              <option value="super_admin" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Super Admin (Administrator Utama)</option>
             </select>
           </div>
 
-          <div className="pt-4 border-t border-slate-100">
+          <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full bg-slate-900 hover:bg-slate-800 text-white rounded-xl py-3 font-bold text-sm shadow-xl shadow-slate-900/10 transition-all flex flex-center gap-2 items-center justify-center ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+              className={`w-full bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl py-3 font-bold text-sm shadow-xl shadow-emerald-900/20 transition-all flex flex-center gap-2 items-center justify-center ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               <UserPlus className="h-4 w-4" /> {isLoading ? "Memproses..." : "Simpan Akun Operator"}
             </button>

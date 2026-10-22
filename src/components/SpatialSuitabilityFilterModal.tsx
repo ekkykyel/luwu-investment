@@ -311,10 +311,10 @@ export default function SpatialSuitabilityFilterModal({
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm sm:text-base font-bold uppercase font-mono tracking-wider text-emerald-400 flex items-center gap-1.5">
+                  <h3 className="text-sm sm:text-base font-bold uppercase font-mono tracking-wider text-emerald-800 dark:text-emerald-400 flex items-center gap-1.5">
                     Filter Spasial Kesesuaian Lahan & Kualitas Tanah
                   </h3>
-                  <span className="px-2 py-0.5 rounded-full text-[9px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
+                  <span className="px-2 py-0.5 rounded-full text-[9px] font-mono bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30 font-bold">
                     FAO Soil Framework
                   </span>
                 </div>
@@ -340,8 +340,8 @@ export default function SpatialSuitabilityFilterModal({
           <div className="p-4 sm:p-6 overflow-y-auto custom-scrollbar space-y-6 flex-1">
             {/* 1. SELECT TARGET COMMODITY */}
             <div>
-              <label className="text-[10px] font-bold uppercase font-mono tracking-widest text-emerald-400 block mb-2.5 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <label className="text-[10px] font-bold uppercase font-mono tracking-widest text-emerald-700 dark:text-emerald-400 block mb-2.5 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                 1. Pilih Komoditas Target (Commodity Profile)
               </label>
 
@@ -354,16 +354,16 @@ export default function SpatialSuitabilityFilterModal({
                       onClick={() => setFilterState(prev => ({ ...prev, commodity: comm.id }))}
                       className={`p-2.5 rounded-2xl border text-left transition-all duration-200 flex flex-col justify-between min-h-[90px] cursor-pointer relative ${
                         isSelected 
-                          ? "bg-emerald-500/20 border-emerald-400 text-white shadow-lg shadow-black/25 ring-2 ring-emerald-500/40" 
+                          ? "bg-emerald-600 text-white border-emerald-500 shadow-md ring-2 ring-emerald-400/50" 
                           : isDarkMode
                             ? "bg-base/60 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-800/50"
-                            : "bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100"
+                            : "bg-slate-50 border-slate-300 text-slate-800 hover:bg-slate-100"
                       }`}
                     >
                       <div className="flex justify-between items-start">
                         <span className="text-2xl">{comm.icon}</span>
                         {isSelected && (
-                          <span className="p-0.5 rounded-full bg-emerald-500 text-slate-950">
+                          <span className="p-0.5 rounded-full bg-white text-emerald-700 shadow-sm">
                             <Check className="w-3 h-3 stroke-[3]" />
                           </span>
                         )}
@@ -378,29 +378,31 @@ export default function SpatialSuitabilityFilterModal({
 
               {/* Selected Commodity Technical Specs Card */}
               <div className={`mt-3 p-3.5 rounded-2xl border flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between ${
-                isDarkMode ? "bg-base/80 border-slate-800" : "bg-emerald-50/50 border-emerald-200"
+                isDarkMode ? "bg-base/80 border-slate-800" : "bg-emerald-50/70 border-emerald-300"
               }`}>
                 <div className="space-y-1 max-w-xl">
                   <div className="flex items-center gap-2">
                     <span className="text-xl">{selectedCommodityProfile.icon}</span>
-                    <h4 className="text-xs sm:text-sm font-bold text-emerald-400">
+                    <h4 className="text-xs sm:text-sm font-bold text-emerald-800 dark:text-emerald-400">
                       Spesifikasi Lahan Kritis: {selectedCommodityProfile.name}
                     </h4>
                   </div>
-                  <p className={`text-[11px] leading-relaxed ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>
+                  <p className={`text-[11px] leading-relaxed ${isDarkMode ? "text-slate-300" : "text-slate-800"}`}>
                     {selectedCommodityProfile.description}
                   </p>
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-slate-400 font-mono pt-1">
-                    <span>🌱 Tanah: <strong className="text-white">{selectedCommodityProfile.idealSoil}</strong></span>
-                    <span>🧪 pH Ideal: <strong className="text-emerald-300">{selectedCommodityProfile.idealpH}</strong></span>
-                    <span>⛰️ Elevasi: <strong className="text-sky-300">{selectedCommodityProfile.idealElevation}</strong></span>
+                  <div className={`flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] font-mono pt-1 ${isDarkMode ? "text-slate-400" : "text-slate-700"}`}>
+                    <span>🌱 Tanah: <strong className="text-slate-950 dark:text-white">{selectedCommodityProfile.idealSoil}</strong></span>
+                    <span>🧪 pH Ideal: <strong className="text-emerald-700 dark:text-emerald-300 font-bold">{selectedCommodityProfile.idealpH}</strong></span>
+                    <span>⛰️ Elevasi: <strong className="text-sky-700 dark:text-sky-300 font-bold">{selectedCommodityProfile.idealElevation}</strong></span>
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 shrink-0 text-right font-mono min-w-[180px]">
-                  <span className="text-[9px] uppercase text-slate-400 block font-bold">Est. Yield Produksi</span>
-                  <span className="text-xs font-bold text-amber-400 block mt-0.5">{selectedCommodityProfile.estimatedYieldHa}</span>
-                  <span className="text-[9px] text-emerald-400 block mt-1">
+                <div className={`p-3 rounded-xl border shrink-0 text-right font-mono min-w-[180px] ${
+                  isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white border-slate-300 shadow-sm"
+                }`}>
+                  <span className={`text-[9px] uppercase block font-bold ${isDarkMode ? "text-slate-400" : "text-slate-600"}`}>Est. Yield Produksi</span>
+                  <span className="text-xs font-bold text-amber-600 dark:text-amber-400 block mt-0.5">{selectedCommodityProfile.estimatedYieldHa}</span>
+                  <span className="text-[9px] text-emerald-700 dark:text-emerald-400 font-semibold block mt-1">
                     Kecamatan Utama: {selectedCommodityProfile.topDistricts.slice(0, 3).join(", ")}
                   </span>
                 </div>
@@ -408,10 +410,10 @@ export default function SpatialSuitabilityFilterModal({
             </div>
 
             {/* 2. PARAMETER SOIL QUALITY & SUITABILITY CLASS */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2 border-t border-slate-800">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2 border-t border-slate-200 dark:border-slate-800">
               {/* Left Column: Soil Quality Class & Minimum Score */}
               <div className="space-y-4">
-                <label className="text-[10px] font-bold uppercase font-mono tracking-widest text-emerald-400 flex items-center gap-1.5">
+                <label className="text-[10px] font-bold uppercase font-mono tracking-widest text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
                   <Sliders className="w-3.5 h-3.5" />
                   2. Kelas Kesesuaian Lahan (FAO Soil Rating)
                 </label>
@@ -431,7 +433,7 @@ export default function SpatialSuitabilityFilterModal({
                           ? "bg-emerald-600 text-white border-emerald-400 font-bold shadow-md"
                           : isDarkMode
                             ? "bg-base border-slate-800 text-slate-400 hover:text-white"
-                            : "bg-slate-100 border-slate-200 text-slate-700"
+                            : "bg-slate-100 border-slate-300 text-slate-800 hover:bg-slate-200"
                       }`}
                     >
                       <span className="text-xs font-mono font-bold block">{grade.label}</span>
@@ -441,10 +443,10 @@ export default function SpatialSuitabilityFilterModal({
                 </div>
 
                 {/* Minimum Suitability Score Slider */}
-                <div className={`p-3.5 rounded-2xl border ${isDarkMode ? "bg-base/60 border-slate-800" : "bg-slate-50 border-slate-200"}`}>
+                <div className={`p-3.5 rounded-2xl border ${isDarkMode ? "bg-base/60 border-slate-800" : "bg-slate-50 border-slate-300"}`}>
                   <div className="flex justify-between items-center text-xs mb-2">
-                    <span className="font-bold text-slate-300">Skor Kesesuaian Minimum:</span>
-                    <span className="font-mono font-bold text-emerald-400 text-sm bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                    <span className="font-bold text-slate-800 dark:text-slate-200">Skor Kesesuaian Minimum:</span>
+                    <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400 text-sm bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
                       {filterState.minSuitabilityScore}%
                     </span>
                   </div>
@@ -455,9 +457,9 @@ export default function SpatialSuitabilityFilterModal({
                     step="5"
                     value={filterState.minSuitabilityScore}
                     onChange={(e) => setFilterState(prev => ({ ...prev, minSuitabilityScore: Number(e.target.value) }))}
-                    className="w-full accent-emerald-500 cursor-pointer h-2 bg-slate-800 rounded-full appearance-none"
+                    className="w-full accent-emerald-500 cursor-pointer h-2 bg-slate-300 dark:bg-slate-800 rounded-full appearance-none"
                   />
-                  <div className="flex justify-between text-[9px] text-slate-500 font-mono mt-1">
+                  <div className="flex justify-between text-[9px] text-slate-600 dark:text-slate-400 font-mono mt-1">
                     <span>40% (Longgar)</span>
                     <span>70% (Standar Investor)</span>
                     <span>95% (Presisi Eksklusif)</span>
@@ -467,16 +469,16 @@ export default function SpatialSuitabilityFilterModal({
 
               {/* Right Column: Slope & Environmental Risk Filters */}
               <div className="space-y-4">
-                <label className="text-[10px] font-bold uppercase font-mono tracking-widest text-emerald-400 flex items-center gap-1.5">
-                  <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
+                <label className="text-[10px] font-bold uppercase font-mono tracking-widest text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+                  <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
                   3. Topografi & Proteksi Kerentanan Bencana
                 </label>
 
                 {/* Slope Control */}
-                <div className={`p-3.5 rounded-2xl border ${isDarkMode ? "bg-base/60 border-slate-800" : "bg-slate-50 border-slate-200"}`}>
+                <div className={`p-3.5 rounded-2xl border ${isDarkMode ? "bg-base/60 border-slate-800" : "bg-slate-50 border-slate-300"}`}>
                   <div className="flex justify-between items-center text-xs mb-2">
-                    <span className="font-bold text-slate-300">Kemiringan Lahan Maksimum:</span>
-                    <span className="font-mono font-bold text-sky-400 text-xs bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20">
+                    <span className="font-bold text-slate-800 dark:text-slate-200">Kemiringan Lahan Maksimum:</span>
+                    <span className="font-mono font-bold text-sky-700 dark:text-sky-400 text-xs bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20">
                       &lt; {filterState.maxSlopeDegree}° ({filterState.maxSlopeDegree <= 8 ? "Datar" : filterState.maxSlopeDegree <= 15 ? "Bergelombang" : "Curam"})
                     </span>
                   </div>
@@ -508,15 +510,27 @@ export default function SpatialSuitabilityFilterModal({
                     onClick={() => setFilterState(prev => ({ ...prev, avoidFloodRisk: !prev.avoidFloodRisk }))}
                     className={`p-3 rounded-2xl border text-left transition-all flex items-center gap-2.5 ${
                       filterState.avoidFloodRisk
-                        ? "bg-blue-500/20 border-blue-400 text-blue-300"
-                        : "bg-base/40 border-slate-800 text-slate-500 opacity-60"
+                        ? isDarkMode
+                          ? "bg-blue-500/20 border-blue-400 text-blue-200"
+                          : "bg-blue-50 border-blue-500 text-blue-950 shadow-sm"
+                        : isDarkMode
+                          ? "bg-base/40 border-slate-800 text-slate-400 opacity-60"
+                          : "bg-slate-100 border-slate-300 text-slate-600 opacity-70"
                     }`}
                   >
-                    <span className={`p-1.5 rounded-lg ${filterState.avoidFloodRisk ? "bg-blue-500 text-slate-950" : "bg-slate-800"}`}>
+                    <span className={`p-1.5 rounded-lg ${
+                      filterState.avoidFloodRisk 
+                        ? "bg-blue-600 text-white shadow-sm" 
+                        : isDarkMode ? "bg-slate-800 text-slate-400" : "bg-slate-200 text-slate-600"
+                    }`}>
                       <CheckCircle2 className="w-3.5 h-3.5" />
                     </span>
                     <div>
-                      <span className="text-[11px] font-bold block">Bebas Risiko Banjir</span>
+                      <span className={`text-[11px] font-bold block ${
+                        filterState.avoidFloodRisk 
+                          ? isDarkMode ? "text-blue-300" : "text-blue-950 font-bold" 
+                          : isDarkMode ? "text-slate-300" : "text-slate-800"
+                      }`}>Bebas Risiko Banjir</span>
                       <span className="text-[9px] opacity-80 block">Abaikan kawasan genangan pasang</span>
                     </div>
                   </button>
@@ -525,15 +539,27 @@ export default function SpatialSuitabilityFilterModal({
                     onClick={() => setFilterState(prev => ({ ...prev, avoidLandslideRisk: !prev.avoidLandslideRisk }))}
                     className={`p-3 rounded-2xl border text-left transition-all flex items-center gap-2.5 ${
                       filterState.avoidLandslideRisk
-                        ? "bg-rose-500/20 border-rose-400 text-rose-300"
-                        : "bg-base/40 border-slate-800 text-slate-500 opacity-60"
+                        ? isDarkMode
+                          ? "bg-rose-500/20 border-rose-400 text-rose-200"
+                          : "bg-rose-50 border-rose-500 text-rose-950 shadow-sm"
+                        : isDarkMode
+                          ? "bg-base/40 border-slate-800 text-slate-400 opacity-60"
+                          : "bg-slate-100 border-slate-300 text-slate-600 opacity-70"
                     }`}
                   >
-                    <span className={`p-1.5 rounded-lg ${filterState.avoidLandslideRisk ? "bg-rose-500 text-slate-950" : "bg-slate-800"}`}>
+                    <span className={`p-1.5 rounded-lg ${
+                      filterState.avoidLandslideRisk 
+                        ? "bg-rose-600 text-white shadow-sm" 
+                        : isDarkMode ? "bg-slate-800 text-slate-400" : "bg-slate-200 text-slate-600"
+                    }`}>
                       <CheckCircle2 className="w-3.5 h-3.5" />
                     </span>
                     <div>
-                      <span className="text-[11px] font-bold block">Bebas Longsor</span>
+                      <span className={`text-[11px] font-bold block ${
+                        filterState.avoidLandslideRisk 
+                          ? isDarkMode ? "text-rose-300" : "text-rose-950 font-bold" 
+                          : isDarkMode ? "text-slate-300" : "text-slate-800"
+                      }`}>Bebas Longsor</span>
                       <span className="text-[9px] opacity-80 block">Abaikan zona lereng kritis</span>
                     </div>
                   </button>
@@ -543,18 +569,18 @@ export default function SpatialSuitabilityFilterModal({
 
             {/* 3. SIMULATED ANALYTICS MATCHED RESULTS */}
             <div className={`p-4 rounded-2xl border space-y-3 ${
-              isDarkMode ? "bg-base/90 border-slate-800" : "bg-slate-50 border-slate-200"
+              isDarkMode ? "bg-base/90 border-slate-800" : "bg-slate-50 border-slate-300 shadow-sm"
             }`}>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
                 <div className="flex items-center gap-2">
-                  <Award className="w-4 h-4 text-emerald-400" />
-                  <h4 className="text-xs font-bold text-white uppercase font-mono tracking-wider">
+                  <Award className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase font-mono tracking-wider">
                     Hasil Filter Spasial: {matchedAnalysis.matched.length} Polygon Area Terverifikasi
                   </h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono text-slate-400">Skor Rata-Rata:</span>
-                  <span className="px-2 py-0.5 rounded text-xs font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                  <span className="text-[10px] font-mono text-slate-600 dark:text-slate-400">Skor Rata-Rata:</span>
+                  <span className="px-2 py-0.5 rounded text-xs font-mono font-bold bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border border-emerald-500/30">
                     {matchedAnalysis.stats.avgScore}% Match
                   </span>
                 </div>
@@ -562,27 +588,35 @@ export default function SpatialSuitabilityFilterModal({
 
               {/* Summary Stats Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="p-3 rounded-xl bg-slate-900 border border-slate-800">
-                  <span className="text-[9px] font-mono uppercase text-slate-400 block">Total Luas Lahan</span>
-                  <span className="text-sm font-bold text-emerald-400 font-mono block mt-1">
+                <div className={`p-3 rounded-xl border ${
+                  isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200 shadow-sm"
+                }`}>
+                  <span className={`text-[9px] font-mono uppercase block font-semibold ${isDarkMode ? "text-slate-400" : "text-slate-600"}`}>Total Luas Lahan</span>
+                  <span className="text-sm font-bold text-emerald-700 dark:text-emerald-400 font-mono block mt-1">
                     {formatNumber(matchedAnalysis.stats.totalHa)} Ha
                   </span>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-900 border border-slate-800">
-                  <span className="text-[9px] font-mono uppercase text-slate-400 block">Est. Nilai Potensi</span>
-                  <span className="text-sm font-bold text-amber-400 font-mono block mt-1">
+                <div className={`p-3 rounded-xl border ${
+                  isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200 shadow-sm"
+                }`}>
+                  <span className={`text-[9px] font-mono uppercase block font-semibold ${isDarkMode ? "text-slate-400" : "text-slate-600"}`}>Est. Nilai Potensi</span>
+                  <span className="text-sm font-bold text-amber-700 dark:text-amber-400 font-mono block mt-1">
                     {formatRupiah(matchedAnalysis.stats.totalVal)}
                   </span>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-900 border border-slate-800">
-                  <span className="text-[9px] font-mono uppercase text-slate-400 block">Sebaran Kualitas (FAO)</span>
-                  <span className="text-xs font-bold text-white font-mono block mt-1">
-                    <span className="text-emerald-400">{matchedAnalysis.stats.s1Count} S1</span> / <span className="text-sky-400">{matchedAnalysis.stats.s2Count} S2</span> / <span className="text-amber-400">{matchedAnalysis.stats.s3Count} S3</span>
+                <div className={`p-3 rounded-xl border ${
+                  isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200 shadow-sm"
+                }`}>
+                  <span className={`text-[9px] font-mono uppercase block font-semibold ${isDarkMode ? "text-slate-400" : "text-slate-600"}`}>Sebaran Kualitas (FAO)</span>
+                  <span className="text-xs font-bold font-mono block mt-1 text-slate-900 dark:text-white">
+                    <span className="text-emerald-700 dark:text-emerald-400 font-bold">{matchedAnalysis.stats.s1Count} S1</span> / <span className="text-sky-700 dark:text-sky-400 font-bold">{matchedAnalysis.stats.s2Count} S2</span> / <span className="text-amber-700 dark:text-amber-400 font-bold">{matchedAnalysis.stats.s3Count} S3</span>
                   </span>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-900 border border-slate-800">
-                  <span className="text-[9px] font-mono uppercase text-slate-400 block">Proyeksi Yield Panen</span>
-                  <span className="text-xs font-bold text-sky-300 font-mono block mt-1">
+                <div className={`p-3 rounded-xl border ${
+                  isDarkMode ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200 shadow-sm"
+                }`}>
+                  <span className={`text-[9px] font-mono uppercase block font-semibold ${isDarkMode ? "text-slate-400" : "text-slate-600"}`}>Proyeksi Yield Panen</span>
+                  <span className="text-xs font-bold text-sky-700 dark:text-sky-300 font-mono block mt-1">
                     ~{formatNumber(Math.round(matchedAnalysis.stats.totalHa * (parseFloat(selectedCommodityProfile.estimatedYieldHa) || 1.5)))} Ton/Th
                   </span>
                 </div>
@@ -591,7 +625,7 @@ export default function SpatialSuitabilityFilterModal({
               {/* List of Matched Top Areas */}
               {matchedAnalysis.matched.length > 0 ? (
                 <div className="space-y-2 pt-2">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase font-mono block">
+                  <span className="text-[10px] font-bold text-slate-700 dark:text-slate-400 uppercase font-mono block">
                     Top 5 Area Lahan Paling Sesuai untuk Komoditas {selectedCommodityProfile.name}:
                   </span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1 dark-scroll">
@@ -603,32 +637,38 @@ export default function SpatialSuitabilityFilterModal({
                           if (onFocusDistrict && item.districtId) onFocusDistrict(item.districtId);
                           onClose();
                         }}
-                        className="p-2.5 rounded-xl border bg-surface/90 border-slate-800 hover:border-emerald-500/50 transition-all cursor-pointer flex justify-between items-center group"
+                        className={`p-2.5 rounded-xl border transition-all cursor-pointer flex justify-between items-center group ${
+                          isDarkMode 
+                            ? "bg-surface/90 border-slate-800 hover:border-emerald-500/50" 
+                            : "bg-white border-slate-200 hover:border-emerald-500 shadow-sm"
+                        }`}
                       >
                         <div>
                           <div className="flex items-center gap-1.5">
                             <span className="text-xs">{selectedCommodityProfile.icon}</span>
-                            <h5 className="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors">{item.name}</h5>
+                            <h5 className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">{item.name}</h5>
                           </div>
-                          <p className="text-[10px] text-slate-400 font-mono mt-0.5">
+                          <p className="text-[10px] text-slate-600 dark:text-slate-400 font-mono mt-0.5">
                             Kec. {districts.find(d => String(d.id) === String(item.districtId))?.name || item.locationName || "Kab. Luwu"} • {item.areaHa} Ha
                           </p>
                         </div>
 
                         <div className="text-right">
                           <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold block ${
-                            item.calculatedSuitabilityScore >= 85 ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-sky-500/20 text-sky-400 border border-sky-500/30"
+                            item.calculatedSuitabilityScore >= 85 
+                              ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border border-emerald-500/30" 
+                              : "bg-sky-500/20 text-sky-800 dark:text-sky-400 border border-sky-500/30"
                           }`}>
                             {item.calculatedSuitabilityScore}% ({item.suitabilityGrade})
                           </span>
-                          <span className="text-[9px] text-amber-400 font-mono mt-0.5 block">{formatRupiah(item.investmentValue)}</span>
+                          <span className="text-[9px] text-amber-700 dark:text-amber-400 font-mono font-bold mt-0.5 block">{formatRupiah(item.investmentValue)}</span>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
               ) : (
-                <div className="p-4 rounded-xl border border-dashed border-slate-800 text-center text-xs text-slate-400 font-mono italic">
+                <div className="p-4 rounded-xl border border-dashed border-slate-300 dark:border-slate-800 text-center text-xs text-slate-600 dark:text-slate-400 font-mono italic">
                   Tidak ditemukan polygon lahan yang memenuhi kriteria ketat untuk komoditas ini. Cobalah melonggarkan skor minimum atau kemiringan lahan.
                 </div>
               )}
@@ -642,7 +682,11 @@ export default function SpatialSuitabilityFilterModal({
             <button
               type="button"
               onClick={handleReset}
-              className="px-4 py-2 rounded-xl border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 font-mono text-xs font-semibold transition-colors flex items-center gap-1.5"
+              className={`px-4 py-2 rounded-xl border font-mono text-xs font-semibold transition-colors flex items-center gap-1.5 ${
+                isDarkMode 
+                  ? "border-slate-800 text-slate-400 hover:text-white hover:border-slate-700" 
+                  : "border-slate-300 text-slate-700 hover:text-slate-950 hover:bg-slate-100"
+              }`}
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Reset Filter
@@ -652,7 +696,11 @@ export default function SpatialSuitabilityFilterModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl border border-slate-800 text-slate-300 hover:bg-slate-800 font-mono text-xs transition-colors"
+                className={`px-4 py-2 rounded-xl border font-mono text-xs font-semibold transition-colors ${
+                  isDarkMode 
+                    ? "border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white" 
+                    : "border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-950"
+                }`}
               >
                 Batal
               </button>

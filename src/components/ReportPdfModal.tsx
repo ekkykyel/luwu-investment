@@ -570,17 +570,17 @@ export default function ReportPdfModal({
       <motion.div initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 10 }} transition={{ type: "spring", stiffness: 300, damping: 30 }} className="bg-slate-100 rounded-3xl w-full max-w-5xl h-[95vh] shadow-2xl border border-slate-200 overflow-hidden flex flex-col">
         
         {/* 1. TOP WINDOW BAR */}
-        <div className="bg-base text-white px-6 py-4 flex justify-between items-center border-b border-slate-800">
+        <div className="bg-slate-900 text-white px-6 py-4 flex justify-between items-center border-b border-slate-800">
           <div className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-emerald-700 dark:text-emerald-400" />
+            <FileText className="h-5 w-5 text-emerald-400" />
             <div>
-              <h3 className="text-xs font-mono font-bold tracking-widest text-emerald-700 dark:text-emerald-400">PDF GENERATOR ENGINE</h3>
-              <span className="text-sm font-display font-bold">Laporan Kinerja Spasial & Investasi Luwu</span>
+              <h3 className="text-xs font-mono font-bold tracking-widest text-emerald-400">PDF GENERATOR ENGINE</h3>
+              <span className="text-sm font-display font-bold text-white">Laporan Kinerja Spasial & Investasi Luwu</span>
             </div>
           </div>
           <button 
             onClick={onClose}
-            className="p-1.5 hover:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-white rounded-xl transition-all h-8 w-8 flex items-center justify-center cursor-pointer"
+            className="p-1.5 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl transition-all h-8 w-8 flex items-center justify-center cursor-pointer"
           >
             <X className="h-4 w-4" />
           </button>
@@ -611,8 +611,8 @@ export default function ReportPdfModal({
               onClick={() => setReportType("district")}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all whitespace-nowrap ${
                 reportType === "district" 
-                  ? "bg-base text-white shadow-md shadow-slate-950/10" 
-                  : "bg-slate-100 text-slate-650 hover:bg-slate-200"
+                  ? "bg-slate-900 text-white shadow-md shadow-slate-950/10" 
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
               <Layers className="h-4 w-4" />
@@ -622,8 +622,8 @@ export default function ReportPdfModal({
               onClick={() => setReportType("investment")}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all whitespace-nowrap ${
                 reportType === "investment" 
-                  ? "bg-base text-white shadow-md shadow-slate-950/10" 
-                  : "bg-slate-100 text-slate-650 hover:bg-slate-200"
+                  ? "bg-slate-900 text-white shadow-md shadow-slate-950/10" 
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
               <FileText className="h-4 w-4" />
@@ -1027,7 +1027,7 @@ export default function ReportPdfModal({
                 </div>
 
                 {/* Investment Meta Main Info Block */}
-                <div className="bg-base text-white p-5 rounded-2xl shadow-xl flex gap-6 relative overflow-hidden items-center border border-slate-800">
+                <div className="bg-slate-900 text-white p-5 rounded-2xl shadow-xl flex gap-6 relative overflow-hidden items-center border border-slate-800">
                   <div className="absolute top-0 right-0 h-32 w-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
                   
                   {/* Visual Layout Map Image fallback */}
@@ -1035,15 +1035,15 @@ export default function ReportPdfModal({
                     src={getImageUrl(currentInvestment.photoUrl, 'facility')}
                     referrerPolicy="no-referrer"
                     alt={currentInvestment.name}
-                    className="w-28 h-20 rounded-xl object-cover shrink-0 border border-slate-850 bg-slate-900"
+                    className="w-28 h-20 rounded-xl object-cover shrink-0 border border-slate-800 bg-slate-900"
                     onError={(e) => handleImageError(e, 'facility')}
                   />
 
                   <div className="flex-1 flex flex-col gap-1 hover:brightness-110 transition-all font-sans">
-                    <span className="text-[9px] text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-wider font-mono">Peluang Nilai Pembiayaan</span>
+                    <span className="text-[9px] text-emerald-400 font-bold uppercase tracking-wider font-mono">Peluang Nilai Pembiayaan</span>
                     <h3 className="text-lg font-extrabold font-mono text-white leading-none">{formatRupiah(currentInvestment.investmentValue)}</h3>
-                    <p className="text-[10px] text-slate-600 dark:text-slate-400 font-mono mt-1 leading-relaxed">
-                      Kebutuhan Lahan Kerja: <span className="text-amber-700 dark:text-amber-400 font-bold">{isNaN(Number(currentInvestment.areaHa)) ? currentInvestment.areaHa : Number(currentInvestment.areaHa).toFixed(2)} Hektar</span> dengan sertifikasi <span className="font-semibold text-white">{currentInvestment.landStatus}</span>.
+                    <p className="text-[10px] text-slate-300 font-mono mt-1 leading-relaxed">
+                      Kebutuhan Lahan Kerja: <span className="text-amber-400 font-bold">{isNaN(Number(currentInvestment.areaHa)) ? currentInvestment.areaHa : Number(currentInvestment.areaHa).toFixed(2)} Hektar</span> dengan sertifikasi <span className="font-semibold text-white">{currentInvestment.landStatus}</span>.
                     </p>
                   </div>
                 </div>

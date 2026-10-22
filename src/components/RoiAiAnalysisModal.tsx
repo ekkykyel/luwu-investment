@@ -52,6 +52,25 @@ export default function RoiAiAnalysisModal({
   const [sending, setSending] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [loadingStep, setLoadingStep] = useState(0);
+
+  // Synchronize active theme with document.documentElement.classList to prevent light/dark desync
+  const [effectiveDark, setEffectiveDark] = useState<boolean>(() => {
+    if (typeof document !== 'undefined') {
+      return document.documentElement.classList.contains('dark');
+    }
+    return Boolean(isDarkMode);
+  });
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const updateTheme = () => {
+      setEffectiveDark(document.documentElement.classList.contains('dark'));
+    };
+    updateTheme();
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, [isDarkMode]);
   
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -545,7 +564,7 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
 
   if (!isOpen) return null;
 
-  // Simple, elegant custom markdown formatter to turn text into beautiful JSX
+  // Simple, elegant custom markdown formatter to turn text into beautiful, high-contrast JSX
   const formatTextToJsx = (text: string) => {
     const lines = text.split("\n");
     return lines.map((line, idx) => {
@@ -554,23 +573,23 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
       // Headers
       if (trimmed.startsWith("###")) {
         return (
-          <h4 key={idx} className="text-sm font-semibold text-slate-900 dark:text-blue-300 mt-5 mb-2 flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-800 pb-1 uppercase tracking-wide">
-            <TrendingUp size={16} className="text-blue-500" />
+          <h4 key={idx} className="text-sm font-bold text-slate-950 dark:text-blue-300 mt-5 mb-2 flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-800 pb-1 uppercase tracking-wide">
+            <TrendingUp size={16} className="text-blue-600 dark:text-blue-400" />
             {trimmed.replace("###", "").trim()}
           </h4>
         );
       }
       if (trimmed.startsWith("##")) {
         return (
-          <h3 key={idx} className="text-base font-bold text-indigo-600 dark:text-indigo-400 mt-6 mb-3 flex items-center gap-2 border-b border-indigo-100 dark:border-indigo-900/40 pb-1">
-            <Sparkles size={18} className="text-indigo-500 animate-pulse" />
+          <h3 key={idx} className="text-base font-extrabold text-indigo-950 dark:text-indigo-400 mt-6 mb-3 flex items-center gap-2 border-b border-indigo-200 dark:border-indigo-900/40 pb-1">
+            <Sparkles size={18} className="text-indigo-600 dark:text-indigo-400 animate-pulse" />
             {trimmed.replace("##", "").trim()}
           </h3>
         );
       }
       if (trimmed.startsWith("#")) {
         return (
-          <h2 key={idx} className="text-lg font-black text-slate-900 dark:text-white mt-7 mb-4">
+          <h2 key={idx} className="text-lg font-black text-slate-950 dark:text-white mt-7 mb-4">
             {trimmed.replace("#", "").trim()}
           </h2>
         );
@@ -580,7 +599,7 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
       if (trimmed.startsWith("-") || trimmed.startsWith("*")) {
         const content = trimmed.substring(1).trim();
         return (
-          <li key={idx} className="ml-4 list-disc text-sm sm:text-base font-medium text-slate-900 dark:text-slate-100 mb-2.5 leading-relaxed">
+          <li key={idx} className="ml-4 list-disc text-sm sm:text-base font-medium text-slate-950 dark:text-slate-100 mb-2.5 leading-relaxed">
             {parseBoldText(content)}
           </li>
         );
@@ -592,21 +611,21 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
       }
 
       return (
-        <p key={idx} className="text-sm sm:text-base font-medium text-slate-900 dark:text-slate-100 leading-relaxed mb-3.5">
+        <p key={idx} className="text-sm sm:text-base font-medium text-slate-950 dark:text-slate-100 leading-relaxed mb-3.5">
           {parseBoldText(trimmed)}
         </p>
       );
     });
   };
 
-  // Helper to parse **bold** text in paragraphs
+  // Helper to parse **bold** text in paragraphs with guaranteed high-contrast styling
   const parseBoldText = (text: string) => {
     const parts = text.split(/\*\*([\s\S]*?)\*\*/g);
     return parts.map((part, i) => {
       if (i % 2 === 1) {
-        return <strong key={i} className="font-extrabold text-blue-700 dark:text-cyan-300">{part}</strong>;
+        return <strong key={i} className="font-extrabold text-blue-900 dark:text-cyan-300">{part}</strong>;
       }
-      return part;
+      return <span key={i} className="text-slate-950 dark:text-slate-100 font-medium">{part}</span>;
     });
   };
 
@@ -630,24 +649,24 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         id="roi-ai-modal-container"
         className={`w-[calc(100vw-20px)] sm:w-full h-[92vh] sm:h-auto max-h-[92vh] sm:max-h-[94vh] max-w-5xl rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col transform transition-transform duration-300 ${
-          isDarkMode 
+          effectiveDark 
             ? "bg-slate-900 border border-slate-800 text-slate-100" 
-            : "bg-white text-slate-800 border border-slate-100"
+            : "bg-white text-slate-900 border border-slate-200 shadow-xl"
         }`}
       >
         {/* MODAL HEADER - Compact Android-First & Desktop Sleek */}
         <div className={`p-2.5 sm:px-5 sm:py-2.5 flex items-center justify-between border-b shrink-0 gap-2 ${
-          isDarkMode ? "bg-surface/95 border-slate-800" : "bg-slate-50/95 border-slate-200/80"
+          effectiveDark ? "bg-slate-900/95 border-slate-800" : "bg-slate-50/95 border-slate-200"
         }`}>
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-md text-white shrink-0">
               <Bot size={16} className="animate-pulse" />
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="font-extrabold text-xs sm:text-sm tracking-wide uppercase text-slate-900 dark:text-white truncate leading-tight">
+              <h3 className="font-extrabold text-xs sm:text-sm tracking-wide uppercase text-slate-950 dark:text-white truncate leading-tight">
                 {t('roiAiModal.title', 'Analisis Kelayakan Finansial AI')}
               </h3>
-              <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-semibold truncate leading-tight">
+              <p className="text-[10px] sm:text-xs text-slate-600 dark:text-slate-300 font-bold truncate leading-tight">
                 {investmentName} {sector ? `• ${sector}` : ''}
               </p>
             </div>
@@ -696,7 +715,7 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
               id="close-roi-ai-modal-top"
               onClick={onClose}
               className={`p-1.5 rounded-lg transition-colors shrink-0 flex items-center justify-center ${
-                isDarkMode ? "hover:bg-slate-800 text-slate-400 hover:text-slate-200" : "hover:bg-slate-200/60 text-slate-500 hover:text-slate-800"
+                effectiveDark ? "hover:bg-slate-800 text-slate-300 hover:text-white" : "hover:bg-slate-200/80 text-slate-700 hover:text-slate-950"
               }`}
               aria-label={t('roiAiModal.closeLabel', 'Tutup form')}
             >
@@ -707,51 +726,51 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
 
         {/* METRICS PREVIEW BAR - Directly below Header with minimal gap */}
         <div className={`px-2.5 sm:px-5 py-1.5 sm:py-2 border-b grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 shrink-0 ${
-          isDarkMode ? "bg-base/60 border-slate-800/80" : "bg-slate-100/70 border-slate-200/80"
+          effectiveDark ? "bg-slate-950/60 border-slate-800" : "bg-slate-100/80 border-slate-200"
         }`}>
-          <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white/70 dark:bg-surface/70 border border-slate-200/60 dark:border-slate-800 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm">
-            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-blue-500/10 dark:bg-blue-400/10 flex items-center justify-center shrink-0">
-              <DollarSign size={13} className="text-blue-600 dark:text-blue-400" />
+          <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700/80 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm">
+            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-blue-500/10 dark:bg-blue-400/15 flex items-center justify-center shrink-0">
+              <DollarSign size={13} className="text-blue-700 dark:text-blue-400 font-bold" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500 truncate">{t('roiAiModal.capexLabel', 'CAPEX')}</p>
-              <p className="text-xs sm:text-sm font-bold font-sans tracking-tight text-slate-800 dark:text-slate-100 truncate leading-none" title={formatRupiah(capex)}>
+              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-extrabold text-slate-600 dark:text-slate-400 truncate">{t('roiAiModal.capexLabel', 'CAPEX')}</p>
+              <p className="text-xs sm:text-sm font-extrabold font-sans tracking-tight text-slate-950 dark:text-white truncate leading-none" title={formatRupiah(capex)}>
                 {formatRupiahSingkat(capex)}
               </p>
             </div>
           </div>
 
-          <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white/70 dark:bg-surface/70 border border-slate-200/60 dark:border-slate-800 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm">
-            <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-md ${isNpvPositive ? "bg-emerald-500/10 dark:bg-emerald-400/10" : "bg-rose-500/10 dark:bg-rose-400/10"} flex items-center justify-center shrink-0`}>
-              <TrendingUp size={13} className={isNpvPositive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"} />
+          <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700/80 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm">
+            <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-md ${isNpvPositive ? "bg-emerald-500/15 dark:bg-emerald-400/15" : "bg-rose-500/15 dark:bg-rose-400/15"} flex items-center justify-center shrink-0`}>
+              <TrendingUp size={13} className={isNpvPositive ? "text-emerald-700 dark:text-emerald-400 font-bold" : "text-rose-700 dark:text-rose-400 font-bold"} />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500 truncate">NPV ({discountRate}%)</p>
-              <p className={`text-xs sm:text-sm font-bold font-sans tracking-tight truncate leading-none ${isNpvPositive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`} title={formatRupiah(npv)}>
+              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-extrabold text-slate-600 dark:text-slate-400 truncate">NPV ({discountRate}%)</p>
+              <p className={`text-xs sm:text-sm font-extrabold font-sans tracking-tight truncate leading-none ${isNpvPositive ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400"}`} title={formatRupiah(npv)}>
                 {isNpvPositive ? "+" : ""}{formatRupiahSingkat(npv)}
               </p>
             </div>
           </div>
 
-          <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white/70 dark:bg-surface/70 border border-slate-200/60 dark:border-slate-800 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm">
-            <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-md ${isIrrFeasible ? "bg-emerald-500/10 dark:bg-emerald-400/10" : "bg-amber-500/10 dark:bg-amber-400/10"} flex items-center justify-center shrink-0`}>
-              <Calculator size={13} className={isIrrFeasible ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"} />
+          <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700/80 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm">
+            <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-md ${isIrrFeasible ? "bg-emerald-500/15 dark:bg-emerald-400/15" : "bg-amber-500/15 dark:bg-amber-400/15"} flex items-center justify-center shrink-0`}>
+              <Calculator size={13} className={isIrrFeasible ? "text-emerald-700 dark:text-emerald-400 font-bold" : "text-amber-700 dark:text-amber-400 font-bold"} />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500 truncate">{t('roiAiModal.irrProjected', 'Proyeksi IRR')}</p>
-              <p className={`text-xs sm:text-sm font-black font-mono truncate leading-none ${isIrrFeasible ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}`}>
+              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-extrabold text-slate-600 dark:text-slate-400 truncate">{t('roiAiModal.irrProjected', 'Proyeksi IRR')}</p>
+              <p className={`text-xs sm:text-sm font-black font-mono truncate leading-none ${isIrrFeasible ? "text-emerald-700 dark:text-emerald-400" : "text-amber-700 dark:text-amber-400"}`}>
                 {(Number(irr) || 0).toFixed(1)}%
               </p>
             </div>
           </div>
 
-          <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white/70 dark:bg-surface/70 border border-slate-200/60 dark:border-slate-800 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm">
-            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-indigo-500/10 dark:bg-indigo-400/10 flex items-center justify-center shrink-0">
-              <RefreshCw size={12} className="text-indigo-600 dark:text-indigo-400" />
+          <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700/80 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm">
+            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-indigo-500/15 dark:bg-indigo-400/15 flex items-center justify-center shrink-0">
+              <RefreshCw size={12} className="text-indigo-700 dark:text-indigo-400 font-bold" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500 truncate">Payback (BEP)</p>
-              <p className="text-xs sm:text-sm font-black font-mono text-slate-800 dark:text-slate-100 truncate leading-none">
+              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-extrabold text-slate-600 dark:text-slate-400 truncate">Payback (BEP)</p>
+              <p className="text-xs sm:text-sm font-black font-mono text-slate-950 dark:text-slate-100 truncate leading-none">
                 {(Number(paybackPeriod) || 0).toFixed(1)} {t('roiAiModal.paybackUnit', 'Thn')}
               </p>
             </div>
@@ -793,26 +812,26 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
           {messages.length > 0 && (
             <div className={`px-3 py-2 rounded-xl flex items-center justify-between gap-2.5 shrink-0 backdrop-blur-sm border shadow-sm ${
               isNpvPositive && isIrrFeasible 
-                ? "bg-emerald-500/10 dark:bg-emerald-950/30 border-emerald-500/30 text-emerald-800 dark:text-emerald-300" 
-                : "bg-amber-500/10 dark:bg-amber-950/30 border-amber-500/30 text-amber-800 dark:text-amber-300"
+                ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800/60 text-emerald-950 dark:text-emerald-200" 
+                : "bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800/60 text-amber-950 dark:text-amber-200"
             }`}>
               <div className="flex items-center gap-2 min-w-0">
-                <div className={`p-1 rounded-md shrink-0 ${isNpvPositive ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400" : "bg-amber-500/20 text-amber-600 dark:text-amber-400"}`}>
+                <div className={`p-1 rounded-md shrink-0 ${isNpvPositive ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-amber-500/20 text-amber-700 dark:text-amber-400"}`}>
                   {isNpvPositive ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertTriangle className="w-3.5 h-3.5" />}
                 </div>
                 <div className="min-w-0">
                   <div className="text-xs font-black uppercase tracking-wider truncate">
                     {isNpvPositive && isIrrFeasible ? "Status: Layak & Feasible Secara Finansial" : "Status: Zona Moderat / Perlu Mitigasi"}
                   </div>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate">
+                  <div className="text-[10px] text-slate-700 dark:text-slate-300 font-semibold truncate">
                     NPV Positif • IRR &gt; WACC ({discountRate}%) • Evaluasi Otomatis AI
                   </div>
                 </div>
               </div>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 border ${
+              <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full shrink-0 border ${
                 isNpvPositive && isIrrFeasible
-                  ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
-                  : "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/30"
+                  ? "bg-emerald-100 text-emerald-900 dark:bg-emerald-500/20 dark:text-emerald-300 border-emerald-300 dark:border-emerald-500/30"
+                  : "bg-amber-100 text-amber-900 dark:bg-amber-500/20 dark:text-amber-300 border-amber-300 dark:border-amber-500/30"
               }`}>
                 {isNpvPositive && isIrrFeasible ? "Score: A+" : "Score: B"}
               </span>
@@ -829,22 +848,22 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
                       <Bot size={13} />
                     </div>
                     <div className={`flex-1 min-w-0 px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-2xl rounded-tl-sm border shadow-sm ${
-                      isDarkMode 
-                        ? "bg-surface/90 border-slate-700/60 text-slate-100 backdrop-blur-md" 
-                        : "bg-white border-slate-200/80 text-slate-900 backdrop-blur-md"
+                      effectiveDark 
+                        ? "bg-slate-900/90 border-slate-700/60 text-slate-100 backdrop-blur-md" 
+                        : "bg-white border-slate-200/90 text-slate-950 shadow-sm"
                     }`}>
-                      <div className="flex items-center justify-between gap-2 mb-1 pb-1 border-b border-slate-100 dark:border-slate-800">
+                      <div className="flex items-center justify-between gap-2 mb-1 pb-1 border-b border-slate-200 dark:border-slate-800">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] uppercase font-bold text-indigo-600 dark:text-indigo-400 tracking-wider">
+                          <span className="text-[10px] uppercase font-bold text-indigo-700 dark:text-indigo-400 tracking-wider">
                             {t('roiAiModal.assistantHeader', 'Asisten AI Finansial')}
                           </span>
-                          <span className="text-[10px] text-slate-400">• Kab. Luwu</span>
+                          <span className="text-[10px] text-slate-600 dark:text-slate-400 font-semibold">• Kab. Luwu</span>
                         </div>
-                        <span className="text-[9px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5">
+                        <span className="text-[9px] font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-0.5">
                           <ShieldCheck className="w-3 h-3" /> Terverifikasi
                         </span>
                       </div>
-                      <div className="prose prose-sm dark:prose-invert max-w-none w-full space-y-1 overflow-y-auto ai-custom-scrollbar pr-1 leading-relaxed text-xs sm:text-sm">
+                      <div className="prose prose-sm dark:prose-invert max-w-none w-full space-y-1 overflow-y-auto ai-custom-scrollbar pr-1 leading-relaxed text-xs sm:text-sm text-slate-950 dark:text-slate-100">
                         {formatTextToJsx(msg.text)}
                       </div>
                     </div>
@@ -854,7 +873,7 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
                 return (
                   <div key={index} className="flex gap-2 items-start max-w-[95%] sm:max-w-[85%] self-end justify-end ml-auto animate-in fade-in slide-in-from-right-2 duration-300">
                     <div className={`px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl rounded-tr-sm border text-right shadow-sm ${
-                      isDarkMode 
+                      effectiveDark 
                         ? "bg-indigo-950/80 border-indigo-700/60 text-slate-100" 
                         : "bg-indigo-600 text-white border-indigo-500 shadow-indigo-600/20"
                     }`}>
@@ -887,7 +906,7 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
 
         {/* STICKY CHAT INPUT & FOOTER */}
         <div className={`p-2.5 sm:p-3.5 border-t shrink-0 ${
-          isDarkMode ? "bg-surface/95 border-slate-800" : "bg-slate-50/95 border-slate-200/80"
+          effectiveDark ? "bg-slate-900 border-slate-800" : "bg-slate-50 border-slate-200"
         }`}>
           <ResponsiveChatInput
             value={inputText}
@@ -895,12 +914,12 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
             onSubmit={handleSendMessage}
             isTyping={loading || sending}
             placeholder={t('roiAiModal.inputPlaceholder', 'Ajukan pertanyaan atau tanyakan potensi di wilayah Luwu...')}
-            isDarkMode={isDarkMode}
+            isDarkMode={effectiveDark}
             className="p-0 border-0 bg-transparent dark:bg-transparent"
           />
-          <div className="mt-1.5 px-1 flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500">
+          <div className="mt-1.5 px-1 flex items-center justify-between text-[10px] text-slate-600 dark:text-slate-400 font-medium">
             <span className="truncate">{t('roiAiModal.disclaimer', 'Dianalisis menggunakan Gemini Enterprise AI Spasial Luwu')}</span>
-            <span className="hidden sm:inline-block font-mono">MPP Simpurusiang</span>
+            <span className="hidden sm:inline-block font-mono font-semibold">MPP Simpurusiang</span>
           </div>
         </div>
       </motion.div>

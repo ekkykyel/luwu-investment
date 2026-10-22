@@ -176,21 +176,25 @@ export default function SpatialQueryPanel({
         <button
           type="button"
           onClick={onOpenSuitabilityModal}
-          className="p-3 rounded-2xl bg-gradient-to-r from-emerald-600/20 via-emerald-500/10 to-teal-500/20 border border-emerald-500/40 text-white hover:border-emerald-400 transition-all shadow-md group text-left cursor-pointer relative z-10"
+          className={`p-3 rounded-2xl border transition-all shadow-md group text-left cursor-pointer relative z-10 ${
+            isDarkMode 
+              ? "bg-gradient-to-r from-emerald-600/20 via-emerald-500/10 to-teal-500/20 border-emerald-500/40 text-white hover:border-emerald-400" 
+              : "bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-100/60 border-emerald-300 text-slate-900 hover:border-emerald-500 shadow-sm"
+          }`}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-xl group-hover:scale-110 transition-transform">🌱</span>
               <div>
-                <span className="text-[11px] font-bold text-emerald-400 block font-mono">
+                <span className="text-[11px] font-bold text-emerald-800 dark:text-emerald-400 block font-mono">
                   Filter Spasial Kesesuaian Lahan & Tanah
                 </span>
-                <span className="text-[9.5px] text-slate-300 block">
+                <span className="text-[9.5px] text-slate-700 dark:text-slate-300 block">
                   Analisis kualitas tanah FAO untuk komoditas Kakao, Kopi, Udang, Padi & Mineral
                 </span>
               </div>
             </div>
-            <Sparkles className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform" />
+            <Sparkles className="w-4 h-4 text-amber-500 group-hover:rotate-12 transition-transform" />
           </div>
         </button>
       )}
@@ -459,17 +463,21 @@ export default function SpatialQueryPanel({
         
         {/* Active Shortest Path Route Card (pgRouting Topology) */}
         {activeRouteInfo && (
-          <div className="p-3.5 rounded-2xl bg-surface/95 border border-emerald-500/50 shadow-[0_10px_25px_rgba(16,185,129,0.15)] text-white flex flex-col gap-2 relative overflow-hidden">
+          <div className={`p-3.5 rounded-2xl border shadow-lg flex flex-col gap-2 relative overflow-hidden ${
+            isDarkMode 
+              ? "bg-slate-900/95 border-emerald-500/50 shadow-[0_10px_25px_rgba(16,185,129,0.15)] text-white" 
+              : "bg-white border-emerald-600/40 text-slate-950 shadow-md"
+          }`}>
             <div className="flex justify-between items-center border-b border-emerald-500/20 pb-2">
               <div className="flex items-center gap-1.5">
-                <Route className="w-4 h-4 text-emerald-700 dark:text-emerald-400 animate-pulse" />
-                <span className="text-[10px] font-extrabold uppercase font-mono tracking-wider text-emerald-300">Rute Aksesibilitas Tercepat (pgRouting)</span>
+                <Route className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-pulse" />
+                <span className="text-[10px] font-extrabold uppercase font-mono tracking-wider text-emerald-800 dark:text-emerald-300">Rute Aksesibilitas Tercepat (pgRouting)</span>
               </div>
               {onClearShortestPathRoute && (
                 <button
                   type="button"
                   onClick={onClearShortestPathRoute}
-                  className="p-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-600 dark:text-slate-400 hover:text-white transition-colors"
+                  className="p-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white transition-colors"
                   title="Tutup Rute"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -478,17 +486,17 @@ export default function SpatialQueryPanel({
             </div>
 
             <div className="flex flex-col gap-1 text-[10.5px]">
-              <div className="flex justify-between items-center text-slate-300">
+              <div className="flex justify-between items-center text-slate-800 dark:text-slate-300">
                 <span className="text-slate-600 dark:text-slate-400 font-mono text-[9.5px]">Awal:</span>
-                <span className="font-bold text-emerald-300 truncate max-w-[180px]">{activeRouteInfo.infraName}</span>
+                <span className="font-bold text-emerald-800 dark:text-emerald-300 truncate max-w-[180px]">{activeRouteInfo.infraName}</span>
               </div>
-              <div className="flex justify-between items-center text-slate-300">
+              <div className="flex justify-between items-center text-slate-800 dark:text-slate-300">
                 <span className="text-slate-600 dark:text-slate-400 font-mono text-[9.5px]">Tujuan:</span>
-                <span className="font-bold text-amber-300 truncate max-w-[180px]">{activeRouteInfo.investmentName}</span>
+                <span className="font-bold text-amber-700 dark:text-amber-300 truncate max-w-[180px]">{activeRouteInfo.investmentName}</span>
               </div>
             </div>
 
-            <div className="mt-1 pt-2 border-t border-slate-800 flex justify-between items-center">
+            <div className="mt-1 pt-2 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center">
               <div>
                 <span className="text-[8.5px] font-mono text-slate-600 dark:text-slate-400 block uppercase">Metode Topologi</span>
                 <span className="text-[9.5px] font-bold text-emerald-700 dark:text-emerald-400 font-mono flex items-center gap-1">
@@ -498,7 +506,7 @@ export default function SpatialQueryPanel({
               </div>
               <div className="text-right">
                 <span className="text-[8.5px] font-mono text-slate-600 dark:text-slate-400 block uppercase">Jarak Presisi</span>
-                <span className="text-xs font-black font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-500/30">
+                <span className="text-xs font-black font-mono text-emerald-800 dark:text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-500/30">
                   {formatJarakMeter(activeRouteInfo.distanceMeters)}
                 </span>
               </div>
