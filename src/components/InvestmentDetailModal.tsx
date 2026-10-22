@@ -11,6 +11,7 @@ import IproPitchDeckModal from "./IproPitchDeckModal";
 import SpatialInfrastructureInspectorModal from "./SpatialInfrastructureInspectorModal";
 import EsgRiskDueDiligenceModal from "./EsgRiskDueDiligenceModal";
 import SpatialLp2bOverlapModal from "./SpatialLp2bOverlapModal";
+import SpatialSwipeComparisonModal from "./SpatialSwipeComparisonModal";
 import AutoTranslatedText from "./AutoTranslatedText";
 import { ProgressiveImage } from "./ProgressiveImage";
 import { generateInvestmentResumePdf, captureActiveMapSnapshot } from "../services/PdfExportService";
@@ -19,6 +20,7 @@ import { checkPkkprSpatialZoning, checkPkkprSuitabilityAsync, PkkprZoningResult,
 import { LUWU_INFRASTRUCTURE_NODES, calculateHaversineDistanceKm } from "../lib/constants";
 import {
   X,
+  Sliders,
   Map as MapIcon,
   Link as LinkIcon,
   Download,
@@ -194,6 +196,7 @@ export function InvestmentDetailModal({
   const [isIncentiveModalOpen, setIsIncentiveModalOpen] = useState(false);
   const [isProximityModalOpen, setIsProximityModalOpen] = useState(false);
   const [isLp2bModalOpen, setIsLp2bModalOpen] = useState(false);
+  const [isSwipeModalOpen, setIsSwipeModalOpen] = useState(false);
 
   // Letter of Intent (LoI) modal states
   const [isLoiModalOpen, setIsLoiModalOpen] = useState(false);
@@ -1900,7 +1903,7 @@ export function InvestmentDetailModal({
                           "Persetujuan KKPR Otomatis (RTRW/RDTR Compliant) melalui integrasi OSS-RBA DPMPTSP."}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-2 shrink-0 flex-wrap">
                       <button
                         type="button"
                         onClick={() => setIsLp2bModalOpen(true)}
@@ -1909,6 +1912,15 @@ export function InvestmentDetailModal({
                       >
                         <Wheat className="w-3.5 h-3.5 text-teal-200" />
                         Uji LP2B / Sawah
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsSwipeModalOpen(true)}
+                        className="px-3 py-1.5 rounded-lg bg-cyan-700 hover:bg-cyan-600 text-white font-semibold text-[11px] flex items-center gap-1.5 transition-colors shadow-sm cursor-pointer"
+                        title="Mode Tirai Perbandingan (Swipe): Citra Satelit vs Pola Ruang & LP2B"
+                      >
+                        <Sliders className="w-3.5 h-3.5 text-cyan-200" />
+                        Mode Tirai (Swipe)
                       </button>
                       <button
                         type="button"
@@ -3538,6 +3550,18 @@ export function InvestmentDetailModal({
           onClose={() => setIsLp2bModalOpen(false)}
           selectedInvestment={profileData as any}
           isDark={effectiveDarkMode}
+        />
+
+        <SpatialSwipeComparisonModal
+          isOpen={isSwipeModalOpen}
+          onClose={() => setIsSwipeModalOpen(false)}
+          investments={profileData ? [profileData as any] : []}
+          isDark={effectiveDarkMode}
+          initialCenter={
+            profileData?.longitude && profileData?.latitude
+              ? [Number(profileData.longitude), Number(profileData.latitude)]
+              : undefined
+          }
         />
 
         <RtrwZoningCheckerModal

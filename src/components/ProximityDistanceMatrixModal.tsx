@@ -15,7 +15,16 @@ import {
   Compass,
   ArrowUpRight,
   Sparkles,
+  HeartPulse,
+  Activity,
+  Download,
+  FileText,
+  Building2,
+  CircleDot,
+  Layers,
+  Printer
 } from "lucide-react";
+import jsPDF from "jspdf";
 import { Investment } from "../types";
 import { point, distance } from "@turf/turf";
 import { formatRupiahSingkat, formatRupiah as globalFormatRupiah } from "../lib/formatters";
@@ -168,6 +177,23 @@ const LUWU_INFRASTRUCTURE_NODES = [
     mstClass: "Pusat Kota Belopa",
     mstClassKey: "node_gov_class",
   },
+  {
+    id: "rsud_batara_guru",
+    name: "RSUD Batara Guru Belopa (Tipe B)",
+    nameKey: "node_hospital_title",
+    type: "Fasilitas Kesehatan & Rujukan Utama (K3 Industri)",
+    typeKey: "card_hospital",
+    category: "HEALTH_EMERGENCY",
+    coordinates: [120.364405, -3.336128] as [number, number], // Synchronized with PostGIS Master DB
+    icon: HeartPulse,
+    color: "red",
+    desc: "Pusat rujukan medis regional, trauma center K3 ketenagakerjaan industri & IGD 24 Jam terpadu Kabupaten Luwu",
+    descKey: "node_hospital_desc",
+    capacity: "Rumah Sakit Rujukan Tipe B · Trauma Center 24 Jam",
+    capacityKey: "node_hospital_cap",
+    mstClass: "Jl. Tomakaka No. 1, Lebani, Belopa",
+    mstClassKey: "node_hospital_class",
+  },
 ];
 
 export default function ProximityDistanceMatrixModal({
@@ -180,12 +206,18 @@ export default function ProximityDistanceMatrixModal({
 }: ProximityDistanceMatrixModalProps) {
   const { t } = useTranslation();
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
+  const [selectedRadiusRing, setSelectedRadiusRing] = useState<string>("ALL");
+  const [chosenInvId, setChosenInvId] = useState<string | null>(null);
   const [apiSpatialData, setApiSpatialData] = useState<any>(null);
 
-  // Active Project Selection
+  // Active Project Selection (supports dropdown switcher)
   const currentInv = useMemo(() => {
+    if (chosenInvId) {
+      const match = investments.find((inv) => String(inv.id) === String(chosenInvId));
+      if (match) return match;
+    }
     return selectedInvestment || (investments.length > 0 ? investments[0] : null);
-  }, [selectedInvestment, investments]);
+  }, [chosenInvId, selectedInvestment, investments]);
 
   // Synchronize with API spatial analysis endpoint for exact PostGIS pgRouting matching
   React.useEffect(() => {
@@ -339,6 +371,25 @@ export default function ProximityDistanceMatrixModal({
       }
 
       const estMinutes = Math.round((roadDistKm / avgTruckSpeedKmH) * 60);
+      const estCarMinutes = Math.max(1, Math.round((roadDistKm / (isMountainNode ? 40 : 65)) * 60));
+
+      // Multi-radius ring zones for strategic accessibility
+      let radiusRing = "RING_4";
+      let radiusRingLabel = "Ring 4 (> 30 km)";
+      let radiusRingColor = "text-rose-600 dark:text-rose-400 border-rose-500/30 bg-rose-500/10";
+      if (roadDistKm <= 5) {
+        radiusRing = "RING_1";
+        radiusRingLabel = "Ring 1 (< 5 km)";
+        radiusRingColor = "text-emerald-700 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10";
+      } else if (roadDistKm <= 15) {
+        radiusRing = "RING_2";
+        radiusRingLabel = "Ring 2 (5 - 15 km)";
+        radiusRingColor = "text-teal-700 dark:text-teal-400 border-teal-500/30 bg-teal-500/10";
+      } else if (roadDistKm <= 30) {
+        radiusRing = "RING_3";
+        radiusRingLabel = "Ring 3 (15 - 30 km)";
+        radiusRingColor = "text-amber-700 dark:text-amber-400 border-amber-500/30 bg-amber-500/10";
+      }
 
       // Logistical Efficiency Status for Investors
       let status = "SANGAT_DEKAT";
@@ -360,6 +411,10 @@ export default function ProximityDistanceMatrixModal({
         roadDistKm: Number(roadDistKm.toFixed(1)),
         routingMethod,
         estMinutes,
+        estCarMinutes,
+        radiusRing,
+        radiusRingLabel,
+        radiusRingColor,
         status,
         statusColor,
         estFreightPerTon,
@@ -369,11 +424,24 @@ export default function ProximityDistanceMatrixModal({
     });
   }, [projectPoint, isMountainLocation, currentInv, apiSpatialData]);
 
+  // Multi-Radius Counts
+  const ringStats = useMemo(() => {
+    return {
+      ring1: distanceMatrixResults.filter((r) => r.radiusRing === "RING_1").length,
+      ring2: distanceMatrixResults.filter((r) => r.radiusRing === "RING_2").length,
+      ring3: distanceMatrixResults.filter((r) => r.radiusRing === "RING_3").length,
+      ring4: distanceMatrixResults.filter((r) => r.radiusRing === "RING_4").length,
+    };
+  }, [distanceMatrixResults]);
+
   // Filtered Results
   const filteredMatrixResults = useMemo(() => {
-    if (selectedCategory === "ALL") return distanceMatrixResults;
-    return distanceMatrixResults.filter((node) => node.category === selectedCategory);
-  }, [distanceMatrixResults, selectedCategory]);
+    return distanceMatrixResults.filter((node) => {
+      const matchCat = selectedCategory === "ALL" || node.category === selectedCategory;
+      const matchRing = selectedRadiusRing === "ALL" || node.radiusRing === selectedRadiusRing;
+      return matchCat && matchRing;
+    });
+  }, [distanceMatrixResults, selectedCategory, selectedRadiusRing]);
 
   // Overall Accessibility Score (0 - 100)
   const accessibilityScore = useMemo(() => {
@@ -383,6 +451,98 @@ export default function ProximityDistanceMatrixModal({
     let score = Math.max(65, Math.min(99, Math.round(100 - avgDist * 0.72)));
     return score;
   }, [distanceMatrixResults]);
+
+  const handleExportPdf = () => {
+    try {
+      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pageWidth = doc.internal.pageSize.getWidth();
+
+      // Header Banner
+      doc.setFillColor(15, 23, 42); // slate-900
+      doc.rect(0, 0, pageWidth, 28, "F");
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(14);
+      doc.setTextColor(255, 255, 255);
+      doc.text("PEMERINTAH KABUPATEN LUWU", pageWidth / 2, 10, { align: "center" });
+
+      doc.setFontSize(9.5);
+      doc.setFont("helvetica", "normal");
+      doc.text("DINAS PENANAMAN MODAL DAN PELAYANAN TERPADU SATU PINTU (DPMPTSP)", pageWidth / 2, 16, { align: "center" });
+      doc.text("LAPORAN RESMI MATRIKS AKSESIBILITAS & SIMPUL LOGISTIK SPASIAL", pageWidth / 2, 22, { align: "center" });
+
+      // Sub-header details
+      doc.setFontSize(8.5);
+      doc.setTextColor(30, 41, 59);
+      doc.text(`Nama Proyek: ${(currentInv as any)?.name || (currentInv as any)?.title || "Proyek Pilihan Investor"}`, 14, 35);
+      doc.text(`Lokasi: Kec. ${(currentInv as any)?.districtName || (currentInv as any)?.districtId || (currentInv as any)?.lokasi || "Kabupaten Luwu"} (${projectPoint[1].toFixed(5)}, ${projectPoint[0].toFixed(5)})`, 14, 40);
+      doc.text(`Skor Konektivitas Spasial: ${accessibilityScore} / 100`, 14, 45);
+      doc.text(`Distribusi Simpul: Ring 1 (<5km): ${ringStats.ring1} | Ring 2 (5-15km): ${ringStats.ring2} | Ring 3 (15-30km): ${ringStats.ring3} | Ring 4 (>30km): ${ringStats.ring4}`, 14, 50);
+      doc.text(`Tanggal Cetak: ${new Date().toLocaleDateString("id-ID", { dateStyle: "long" })}`, pageWidth - 14, 35, { align: "right" });
+
+      // Table Header
+      let y = 56;
+      doc.setFillColor(241, 245, 249);
+      doc.rect(14, y, pageWidth - 28, 8, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(7.5);
+      doc.setTextColor(15, 23, 42);
+      doc.text("NO", 16, y + 5);
+      doc.text("SIMPUL INFRASTRUKTUR STRATEGIS", 24, y + 5);
+      doc.text("ZONA RADIUS", 85, y + 5);
+      doc.text("JARAK (KM)", 122, y + 5);
+      doc.text("TRUK / MOBIL", 148, y + 5);
+      doc.text("EST. BIAYA / TON", 175, y + 5);
+
+      y += 8;
+      doc.setFont("helvetica", "normal");
+      distanceMatrixResults.forEach((item, index) => {
+        if (index % 2 === 1) {
+          doc.setFillColor(248, 250, 252);
+          doc.rect(14, y, pageWidth - 28, 7, "F");
+        }
+        doc.text(String(index + 1), 16, y + 5);
+        doc.text(item.name.substring(0, 36), 24, y + 5);
+        doc.text(item.radiusRingLabel, 85, y + 5);
+        doc.text(`${item.roadDistKm} km`, 122, y + 5);
+        doc.text(`${item.estMinutes}m / ${item.estCarMinutes}m`, 148, y + 5);
+        doc.text(formatRupiah(item.estFreightPerTon), 175, y + 5);
+        y += 7;
+      });
+
+      // Clearance Statement
+      y += 6;
+      doc.setFillColor(236, 253, 245);
+      doc.setDrawColor(16, 185, 129);
+      doc.rect(14, y, pageWidth - 28, 22, "FD");
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8);
+      doc.setTextColor(6, 95, 70);
+      doc.text("KESIMPULAN & REKOMENDASI KELAYAKAN LOGISTIK SPASIAL (DPMPTSP LUWU):", 18, y + 6);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7);
+      doc.text(`Lokasi investasi ini memiliki aksesibilitas logistik berkategori ${accessibilityScore >= 80 ? "SANGAT STRATEGIS" : "STRATEGIS & TERJANGKAU"}.`, 18, y + 11);
+      doc.text(`Simpul utama (Bandara Lagaligo Bua, Pelabuhan Kargo Belopa, Jalur Trans-Sulawesi, Gardu Induk PLN 150kV, dan RSUD Batara Guru)`, 18, y + 15);
+      doc.text(`dapat diakses dalam radius aman, mendukung kelayakan rantai pasok industri dan standar K3 di Kabupaten Luwu.`, 18, y + 19);
+
+      // Signatures
+      y += 30;
+      doc.setFontSize(7.5);
+      doc.setTextColor(30, 41, 59);
+      doc.text("Mengetahui,", 14, y);
+      doc.text("Belopa, " + new Date().toLocaleDateString("id-ID", { dateStyle: "long" }), pageWidth - 60, y);
+      doc.text("Kepala DPMPTSP Kab. Luwu", 14, y + 5);
+      doc.text("Tim Analis GIS & Tata Ruang", pageWidth - 60, y + 5);
+
+      doc.text("(.............................................)", 14, y + 22);
+      doc.text("(.............................................)", pageWidth - 60, y + 22);
+
+      doc.save(`Matriks_Logistik_Luwu_${((currentInv as any)?.name || "Proyek").replace(/[^a-zA-Z0-9]/g, "_")}.pdf`);
+    } catch (e) {
+      console.error("Gagal cetak PDF:", e);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -432,20 +592,30 @@ export default function ProximityDistanceMatrixModal({
               </h3>
             </div>
           </div>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onClose();
-            }}
-            className={`p-2.5 rounded-xl active:scale-95 transition-all cursor-pointer shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center border ${
-              isDark 
-                ? "bg-neutral-900 active:bg-neutral-800 text-slate-300 hover:text-white border-neutral-800" 
-                : "bg-slate-100 active:bg-slate-200 text-slate-800 dark:text-slate-200 hover:text-slate-900 border-slate-200"
-            }`}
-            aria-label="Tutup"
-          >
-            <X size={20} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleExportPdf}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
+              title="Cetak Laporan PDF Resmi DPMPTSP"
+            >
+              <Printer size={15} />
+              <span className="hidden sm:inline">Cetak PDF</span>
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose();
+              }}
+              className={`p-2.5 rounded-xl active:scale-95 transition-all cursor-pointer shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center border ${
+                isDark 
+                  ? "bg-neutral-900 active:bg-neutral-800 text-slate-300 hover:text-white border-neutral-800" 
+                  : "bg-slate-100 active:bg-slate-200 text-slate-800 dark:text-slate-200 hover:text-slate-900 border-slate-200"
+              }`}
+              aria-label="Tutup"
+            >
+              <X size={20} />
+            </button>
+          </div>
         </div>
 
         {/* Content Body */}
@@ -514,22 +684,47 @@ export default function ProximityDistanceMatrixModal({
             </div>
           )}
 
-          {/* Active Project Card */}
+          {/* Active Project Card with Project Dropdown Switcher */}
           <div className={`p-3.5 sm:p-4 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md ${
             isDark ? "bg-neutral-900/90 border-neutral-800" : "bg-white border-slate-200 text-slate-900"
           }`}>
-            <div className="flex items-center gap-3 min-w-0">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
               <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shrink-0">
                 <MapPin size={20} />
               </div>
-              <div className="min-w-0">
-                <span className={`text-[10px] font-bold uppercase tracking-wider block ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>
-                  {t('matrix_point_title', 'TITIK PROYEK PELUANG INVESTASI')}
-                </span>
-                <h4 className={`text-xs sm:text-sm font-bold truncate ${isDark ? "text-white" : "text-slate-900"}`}>
-                  {(currentInv as any)?.name || (currentInv as any)?.title || "Proyek Pilihan Investor"}
-                </h4>
-                <span className={`text-[11px] block sm:inline ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-2">
+                  <span className={`text-[10px] font-bold uppercase tracking-wider block ${isDark ? "text-slate-400" : "text-slate-600"}`}>
+                    {t('matrix_point_title', 'TITIK PROYEK PELUANG INVESTASI')}
+                  </span>
+                  {investments.length > 1 && (
+                    <span className="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                      Ganti Proyek:
+                    </span>
+                  )}
+                </div>
+
+                {investments.length > 1 ? (
+                  <select
+                    value={(currentInv as any)?.id || ""}
+                    onChange={(e) => setChosenInvId(e.target.value)}
+                    className={`mt-0.5 text-xs sm:text-sm font-bold truncate rounded-lg p-1.5 border w-full max-w-md focus:outline-none cursor-pointer ${
+                      isDark ? "bg-black text-white border-neutral-700" : "bg-slate-50 text-slate-900 border-slate-300"
+                    }`}
+                  >
+                    {investments.map((inv) => (
+                      <option key={inv.id} value={inv.id} className={isDark ? "bg-neutral-900 text-white" : "bg-white text-slate-900"}>
+                        {(inv as any).name || (inv as any).title} (Kec. {(inv as any).districtName || (inv as any).districtId || (inv as any).lokasi || "Luwu"})
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <h4 className={`text-xs sm:text-sm font-bold truncate ${isDark ? "text-white" : "text-slate-900"}`}>
+                    {(currentInv as any)?.name || (currentInv as any)?.title || "Proyek Pilihan Investor"}
+                  </h4>
+                )}
+
+                <span className={`text-[11px] block mt-1 ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                   Kecamatan {(currentInv as any)?.districtName || (currentInv as any)?.districtId || (currentInv as any)?.lokasi || "Belopa/Bua"} (
                   {projectPoint[1].toFixed(4)}°, {projectPoint[0].toFixed(4)}°)
                 </span>
@@ -539,12 +734,44 @@ export default function ProximityDistanceMatrixModal({
             <div className={`w-full sm:w-auto px-4 py-2 border border-emerald-500/30 rounded-xl text-left sm:text-right shrink-0 flex sm:block items-center justify-between ${
               isDark ? "bg-black" : "bg-emerald-50/60"
             }`}>
-              <span className={`text-[10px] font-bold uppercase ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+              <span className={`text-[10px] font-bold uppercase ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                 {t('matrix_score', 'SKOR KONEKTIVITAS SPASIAL')}
               </span>
-              <span className="text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400 font-mono">
+              <span className="text-base sm:text-lg font-black text-emerald-500 dark:text-emerald-400 font-mono">
                 {accessibilityScore} / 100
               </span>
+            </div>
+          </div>
+
+          {/* Multi-Radius Concentric Rings Filter */}
+          <div className={`p-2.5 sm:p-3 rounded-2xl border flex flex-col sm:flex-row gap-2 sm:items-center ${
+            isDark ? "bg-neutral-900/90 border-neutral-800" : "bg-white border-slate-200"
+          }`}>
+            <span className={`text-[10px] font-bold uppercase tracking-wider shrink-0 px-1 ${isDark ? "text-slate-400" : "text-slate-600"}`}>
+              ZONA RADIUS KONSENTRIS:
+            </span>
+            <div className="overflow-x-auto no-scrollbar flex items-center gap-1.5 snap-x scroll-smooth pb-0.5">
+              {[
+                { key: "ALL", label: `Semua Zona (${distanceMatrixResults.length})` },
+                { key: "RING_1", label: `Ring 1 (< 5 km): ${ringStats.ring1} Simpul` },
+                { key: "RING_2", label: `Ring 2 (5-15 km): ${ringStats.ring2} Simpul` },
+                { key: "RING_3", label: `Ring 3 (15-30 km): ${ringStats.ring3} Simpul` },
+                { key: "RING_4", label: `Ring 4 (> 30 km): ${ringStats.ring4} Simpul` },
+              ].map((ring) => (
+                <button
+                  key={ring.key}
+                  onClick={() => setSelectedRadiusRing(ring.key)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer snap-start active:scale-95 shrink-0 ${
+                    selectedRadiusRing === ring.key
+                      ? "bg-emerald-600 text-white font-bold shadow-md"
+                      : isDark
+                      ? "bg-black text-slate-300 hover:text-white border border-neutral-800"
+                      : "bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200"
+                  }`}
+                >
+                  {ring.label}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -552,16 +779,17 @@ export default function ProximityDistanceMatrixModal({
           <div className={`p-2.5 sm:p-3 rounded-2xl border flex flex-col sm:flex-row gap-2 sm:items-center ${
             isDark ? "bg-neutral-900/90 border-neutral-800" : "bg-white border-slate-200"
           }`}>
-            <span className={`text-[10px] font-bold uppercase tracking-wider shrink-0 px-1 ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+            <span className={`text-[10px] font-bold uppercase tracking-wider shrink-0 px-1 ${isDark ? "text-slate-400" : "text-slate-600"}`}>
               {t('filter_nodes', 'FILTER SIMPUL INFRASTRUKTUR:')}
             </span>
             <div className="overflow-x-auto no-scrollbar flex items-center gap-1.5 snap-x scroll-smooth pb-0.5">
               {[
-                { key: "ALL", label: `${t('filter_all', 'Semua Simpul')} (${LUWU_INFRASTRUCTURE_NODES.length})` },
-                { key: "LOGISTICS_HUB", label: t('filter_port_airport', 'Pelabuhan & Bandara') },
-                { key: "INDUSTRIAL_ZONE", label: t('filter_kib_industrial', 'KIB & Kawasan Industri') },
+                { key: "ALL", label: `${t('filter_all', 'Semua Kategori')} (${LUWU_INFRASTRUCTURE_NODES.length})` },
+                { key: "LOGISTICS_HUB", label: t('filter_port_airport', 'Pelabuhan & Bandara Bua') },
+                { key: "HEALTH_EMERGENCY", label: "RSUD & Layanan Medis K3" },
                 { key: "ROAD_NETWORK", label: t('filter_trans_sulawesi', 'Jalan Trans-Sulawesi') },
-                { key: "UTILITY", label: t('filter_electricity_water', 'Listrik & Air Bersih') },
+                { key: "UTILITY", label: t('filter_electricity_water', 'Gardu PLN & Air Bersih') },
+                { key: "INDUSTRIAL_ZONE", label: t('filter_kib_industrial', 'KIB Bua & Sentra Agro') },
                 { key: "ADMIN", label: t('filter_gov_center', 'Pusat Pemerintahan') },
               ].map((cat) => (
                 <button
@@ -604,7 +832,7 @@ export default function ProximityDistanceMatrixModal({
                           {(item as any).nameKey ? t((item as any).nameKey, item.name) : item.name}
                         </h5>
                         <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
-                          <span className={`text-[10px] font-medium ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>
+                          <span className={`text-[10px] font-medium ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                             {t((item as any).typeKey, item.type)}
                           </span>
                           <span className={`text-[9px] px-1.5 py-0.2 rounded border font-mono font-semibold ${
@@ -616,11 +844,16 @@ export default function ProximityDistanceMatrixModal({
                       </div>
                     </div>
 
-                    <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold border whitespace-nowrap shrink-0 ${item.statusColor}`}
-                    >
-                      {item.status === 'SANGAT_DEKAT' ? t('status_very_close', 'SANGAT DEKAT') : t('status_close', 'CUKUP / DEKAT')}
-                    </span>
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold border whitespace-nowrap ${item.radiusRingColor}`}>
+                        {item.radiusRingLabel}
+                      </span>
+                      <span
+                        className={`px-1.5 py-0.2 rounded text-[9px] font-semibold border whitespace-nowrap ${item.statusColor}`}
+                      >
+                        {item.status === 'SANGAT_DEKAT' ? t('status_very_close', 'SANGAT DEKAT') : t('status_close', 'CUKUP / DEKAT')}
+                      </span>
+                    </div>
                   </div>
 
                   <p className={`text-[11px] leading-snug ${isDark ? "text-slate-300" : "text-slate-600"}`}>
@@ -631,47 +864,47 @@ export default function ProximityDistanceMatrixModal({
                   <div className={`px-2.5 py-1.5 rounded-xl border text-[10px] flex items-center justify-between ${
                     isDark ? "bg-black/80 border-neutral-800 text-slate-300" : "bg-slate-50 border-slate-200 text-slate-800 dark:text-slate-200"
                   }`}>
-                    <span className={`${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"} font-medium`}>{t('metric_operational_capacity', 'Kapasitas Operasional:')}</span>
-                    <span className="font-bold text-amber-600 dark:text-amber-300 text-right truncate ml-2">
+                    <span className={`${isDark ? "text-slate-400" : "text-slate-600"} font-medium`}>{t('metric_operational_capacity', 'Kapasitas Operasional:')}</span>
+                    <span className="font-bold text-amber-500 dark:text-amber-300 text-right truncate ml-2">
                       {(item as any).capacityKey ? t((item as any).capacityKey, item.capacity) : item.capacity}
                     </span>
                   </div>
 
                   <div className={`grid grid-cols-3 gap-1.5 sm:gap-2 pt-2.5 border-t text-center ${isDark ? "border-neutral-800/80" : "border-slate-200"}`}>
                     <div className={`p-2 rounded-xl border ${isDark ? "bg-black border-neutral-800/60" : "bg-slate-50 border-slate-200"}`}>
-                      <span className={`text-[9px] font-bold uppercase block whitespace-nowrap ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>
+                      <span className={`text-[9px] font-bold uppercase block whitespace-nowrap ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                         {t('metric_travel_distance', 'JARAK TEMPUH')}
                       </span>
-                      <span className="text-xs font-bold text-amber-600 dark:text-amber-300 font-mono block mt-0.5">
+                      <span className="text-xs font-bold text-amber-500 dark:text-amber-300 font-mono block mt-0.5">
                         {item.roadDistKm} km
                       </span>
-                      <span className={`text-[9px] block ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>
+                      <span className={`text-[9px] block ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                         {item.routingMethod === 'NETWORK' 
-                          ? '🛣️ Rute GIS Supabase' 
+                          ? '🛣️ Rute GIS PostGIS' 
                           : t('metric_direct_distance', { distance: `${item.distKm} km` })}
                       </span>
                     </div>
 
                     <div className={`p-2 rounded-xl border ${isDark ? "bg-black border-neutral-800/60" : "bg-slate-50 border-slate-200"}`}>
-                      <span className={`text-[9px] font-bold uppercase block whitespace-nowrap ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>
-                        {t('metric_est_trucking', 'ESTIMASI TRUCKING')}
+                      <span className={`text-[9px] font-bold uppercase block whitespace-nowrap ${isDark ? "text-slate-400" : "text-slate-600"}`}>
+                        {t('metric_est_trucking', 'ESTIMASI WAKTU')}
                       </span>
-                      <span className="text-xs font-bold text-emerald-600 dark:text-emerald-300 font-mono block mt-0.5">
-                        {t('metric_minutes', { minutes: item.estMinutes })}
+                      <span className="text-xs font-bold text-emerald-500 dark:text-emerald-300 font-mono block mt-0.5">
+                        {item.estMinutes} mnt <span className="text-[10px] font-normal text-slate-400">(Truk)</span>
                       </span>
-                      <span className={`text-[9px] block ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>
-                        {t('metric_speed', { speed: item.avgTruckSpeedKmH })}
+                      <span className={`text-[9px] block text-cyan-400`}>
+                        {item.estCarMinutes} mnt (Mobil)
                       </span>
                     </div>
 
                     <div className={`p-2 rounded-xl border ${isDark ? "bg-black border-neutral-800/60" : "bg-slate-50 border-slate-200"}`}>
-                      <span className={`text-[9px] font-bold uppercase block whitespace-nowrap ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>
+                      <span className={`text-[9px] font-bold uppercase block whitespace-nowrap ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                         {t('metric_cost_per_ton', 'BIAYA / TON')}
                       </span>
-                      <span className="text-xs font-bold text-amber-600 dark:text-amber-300 font-mono block mt-0.5">
+                      <span className="text-xs font-bold text-amber-500 dark:text-amber-300 font-mono block mt-0.5">
                         {formatRupiah(item.estFreightPerTon)}
                       </span>
-                      <span className={`text-[9px] block ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>
+                      <span className={`text-[9px] block ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                         {t('metric_vehicle_type', '(Konteiner/Fuso)')}
                       </span>
                     </div>

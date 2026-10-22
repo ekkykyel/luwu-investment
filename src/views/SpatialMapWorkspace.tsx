@@ -60,6 +60,8 @@ const MapPrintScaleModal = lazyWithRetry(() => import('../components/MapPrintSca
 const SpatialBufferAiModal = lazyWithRetry(() => import('../components/SpatialBufferAiModal'));
 const SpatialSuitabilityFilterModal = lazyWithRetry(() => import('../components/SpatialSuitabilityFilterModal'));
 const SpatialLp2bOverlapModal = lazyWithRetry(() => import('../components/SpatialLp2bOverlapModal'));
+const SpatialSwipeComparisonModal = lazyWithRetry(() => import('../components/SpatialSwipeComparisonModal'));
+const ProximityDistanceMatrixModal = lazyWithRetry(() => import('../components/ProximityDistanceMatrixModal'));
 const ProjectComparisonModal = lazyWithRetry(() => import('../components/ProjectComparisonModal').then(m => ({ default: m.ProjectComparisonModal })));
 const ImageLightbox = lazyWithRetry(() => import('../components/ImageLightbox'));
 import LazyImage from "../components/LazyImage";
@@ -171,6 +173,9 @@ import {
   Smartphone,
   Download,
   FolderSearch,
+  Sliders,
+  Navigation,
+  Truck,
   Ticket,
   LocateFixed
 } from 'lucide-react';
@@ -722,6 +727,8 @@ export default function SpatialMapWorkspace() {
   const [showInfrastructure, setShowInfrastructure] = useState(false);
   const [isSuitabilityModalOpen, setIsSuitabilityModalOpen] = useState(false);
   const [isLp2bModalOpen, setIsLp2bModalOpen] = useState(false);
+  const [isSwipeModalOpen, setIsSwipeModalOpen] = useState(false);
+  const [isProximityModalOpen, setIsProximityModalOpen] = useState(false);
   const [activeSuitabilityFilterIds, setActiveSuitabilityFilterIds] = useState<string[] | null>(null);
 
   // ─── Spatial Suitability & Proximity Card States (E2) ───
@@ -6333,6 +6340,56 @@ export default function SpatialMapWorkspace() {
                 </motion.button>
               </div>
 
+              {/* OPSI A: Mode Tirai Spasial (Swipe Comparison) Button */}
+              <div 
+                style={{
+                  backgroundColor: spatialTheme.bg.card(gisPanelOpacity, 0.9)
+                }}
+                className={`border p-2.5 sm:p-3 rounded-2xl flex flex-col gap-2 relative overflow-hidden group flex-shrink-0 transition-all duration-300 backdrop-blur-md ${isDarkMode ? "border-slate-700/50 shadow-2xl" : "border-slate-200 shadow-md"}`}
+              >
+                <div className={`absolute -right-4 -top-4 w-20 h-20 bg-cyan-600/10 rounded-full blur-2xl ${isDarkMode ? "group-hover:bg-cyan-500/20" : "group-hover:bg-cyan-300/30"} transition-all`} />
+                <motion.button whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsSwipeModalOpen(true)}
+                  className="py-2.5 px-3.5 bg-gradient-to-r from-cyan-800 to-blue-800 hover:from-cyan-700 hover:to-blue-700 text-white text-[11px] font-bold rounded-xl font-['Plus_Jakarta_Sans',sans-serif] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(0,0,0,0.1)] active:scale-95 border border-cyan-500 ring-2 ring-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.2)] flex justify-between items-center gap-2 tracking-wide relative z-10 w-full cursor-pointer"
+                  title="Mode Tirai Perbandingan (Swipe): Citra Satelit vs Pola Ruang & LP2B"
+                >
+                  <div className="flex items-center gap-2">
+                    <Sliders className="h-4 w-4 text-cyan-200" />
+                    <span className="text-left font-bold leading-tight">
+                      Mode Tirai (Swipe Satelit)
+                    </span>
+                  </div>
+                  <div className="bg-white/20 p-1.5 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                    <Layers className="h-3.5 w-3.5 text-cyan-100" />
+                  </div>
+                </motion.button>
+              </div>
+
+              {/* OPSI B: Matriks Jarak Multi-Radius (Logistik Luwu) Button */}
+              <div 
+                style={{
+                  backgroundColor: spatialTheme.bg.card(gisPanelOpacity, 0.9)
+                }}
+                className={`border p-2.5 sm:p-3 rounded-2xl flex flex-col gap-2 relative overflow-hidden group flex-shrink-0 transition-all duration-300 backdrop-blur-md ${isDarkMode ? "border-slate-700/50 shadow-2xl" : "border-slate-200 shadow-md"}`}
+              >
+                <div className={`absolute -right-4 -top-4 w-20 h-20 bg-amber-600/10 rounded-full blur-2xl ${isDarkMode ? "group-hover:bg-amber-500/20" : "group-hover:bg-amber-300/30"} transition-all`} />
+                <motion.button whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsProximityModalOpen(true)}
+                  className="py-2.5 px-3.5 bg-gradient-to-r from-amber-800 to-orange-800 hover:from-amber-700 hover:to-orange-700 text-white text-[11px] font-bold rounded-xl font-['Plus_Jakarta_Sans',sans-serif] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(0,0,0,0.1)] active:scale-95 border border-amber-500 ring-2 ring-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.2)] flex justify-between items-center gap-2 tracking-wide relative z-10 w-full cursor-pointer"
+                  title="Matriks Aksesibilitas Multi-Radius ke Simpul Strategis (Bandara Bua, Pelabuhan, PLN, RSUD, Trans-Sulawesi)"
+                >
+                  <div className="flex items-center gap-2">
+                    <Navigation className="h-4 w-4 text-amber-200" />
+                    <span className="text-left font-bold leading-tight">
+                      Matriks Jarak Multi-Radius
+                    </span>
+                  </div>
+                  <div className="bg-white/20 p-1.5 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                    <Truck className="h-3.5 w-3.5 text-amber-100" />
+                  </div>
+                </motion.button>
+              </div>
+
               {/* Spatial Control Panel */}
               <div 
                 style={{
@@ -7314,6 +7371,20 @@ export default function SpatialMapWorkspace() {
                           <Wheat className="h-4 w-4 text-emerald-200" /> Uji LP2B
                         </motion.button>
                         <motion.button whileTap={{ scale: 0.95 }}
+                          onClick={() => setIsSwipeModalOpen(true)}
+                          className="p-2 border rounded-xl transition-all font-sans font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm cursor-pointer border-cyan-500/50 bg-gradient-to-r from-cyan-800 to-blue-800 hover:from-cyan-700 hover:to-blue-700 text-white flex-1 md:flex-none ring-1 ring-cyan-400/20"
+                          title="Mode Tirai Perbandingan (Swipe): Satelit vs Pola Ruang & LP2B"
+                        >
+                          <Sliders className="h-4 w-4 text-cyan-200" /> Mode Tirai
+                        </motion.button>
+                        <motion.button whileTap={{ scale: 0.95 }}
+                          onClick={() => setIsProximityModalOpen(true)}
+                          className="p-2 border rounded-xl transition-all font-sans font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm cursor-pointer border-amber-500/50 bg-gradient-to-r from-amber-800 to-orange-800 hover:from-amber-700 hover:to-orange-700 text-white flex-1 md:flex-none ring-1 ring-amber-400/20"
+                          title="Matriks Jarak Multi-Radius Simpul Logistik Luwu"
+                        >
+                          <Navigation className="h-4 w-4 text-amber-200" /> Matriks Logistik
+                        </motion.button>
+                        <motion.button whileTap={{ scale: 0.95 }}
                           onClick={() => setIsMapPrintModalOpen(true)}
                           className={`p-2 border rounded-xl transition-all font-sans font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm cursor-pointer ${
                             isDarkMode
@@ -7969,6 +8040,30 @@ export default function SpatialMapWorkspace() {
           investments={investments}
           districts={districts}
           villages={villages}
+          isDark={isDarkMode}
+        />
+      </Suspense>
+
+      {/* ── OPSI A: SPATIAL SWIPE COMPARISON MODAL ── */}
+      <Suspense fallback={null}>
+        <SpatialSwipeComparisonModal
+          isOpen={isSwipeModalOpen}
+          onClose={() => setIsSwipeModalOpen(false)}
+          spatialLayers={filteredSpatialLayers}
+          investments={filteredInvestments}
+          districts={districts}
+          isDark={isDarkMode}
+          initialCenter={focusCoordinate ? [focusCoordinate.lng, focusCoordinate.lat] : undefined}
+        />
+      </Suspense>
+
+      {/* ── OPSI B: MULTI-RADIUS PROXIMITY & LOGISTICS MATRIX MODAL ── */}
+      <Suspense fallback={null}>
+        <ProximityDistanceMatrixModal
+          isOpen={isProximityModalOpen}
+          onClose={() => setIsProximityModalOpen(false)}
+          selectedInvestment={selectedInvestment || null}
+          investments={filteredInvestments}
           isDark={isDarkMode}
         />
       </Suspense>
