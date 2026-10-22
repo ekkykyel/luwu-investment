@@ -59,6 +59,7 @@ const ReportPdfModal = lazyWithRetry(() => import('../components/ReportPdfModal'
 const MapPrintScaleModal = lazyWithRetry(() => import('../components/MapPrintScaleModal'));
 const SpatialBufferAiModal = lazyWithRetry(() => import('../components/SpatialBufferAiModal'));
 const SpatialSuitabilityFilterModal = lazyWithRetry(() => import('../components/SpatialSuitabilityFilterModal'));
+const SpatialLp2bOverlapModal = lazyWithRetry(() => import('../components/SpatialLp2bOverlapModal'));
 const ProjectComparisonModal = lazyWithRetry(() => import('../components/ProjectComparisonModal').then(m => ({ default: m.ProjectComparisonModal })));
 const ImageLightbox = lazyWithRetry(() => import('../components/ImageLightbox'));
 import LazyImage from "../components/LazyImage";
@@ -138,6 +139,8 @@ import {
   RefreshCw,
   Printer,
   Clock,
+  Wheat,
+  Sprout,
   AlertTriangle,
   AlertOctagon,
   Info,
@@ -718,6 +721,7 @@ export default function SpatialMapWorkspace() {
   const [temporalYear, setTemporalYear] = useState<number>(new Date().getFullYear());
   const [showInfrastructure, setShowInfrastructure] = useState(false);
   const [isSuitabilityModalOpen, setIsSuitabilityModalOpen] = useState(false);
+  const [isLp2bModalOpen, setIsLp2bModalOpen] = useState(false);
   const [activeSuitabilityFilterIds, setActiveSuitabilityFilterIds] = useState<string[] | null>(null);
 
   // ─── Spatial Suitability & Proximity Card States (E2) ───
@@ -6304,6 +6308,31 @@ export default function SpatialMapWorkspace() {
                 </motion.button>
               </div>
 
+              {/* Uji Tumpang Tindih LP2B Button */}
+              <div 
+                style={{
+                  backgroundColor: spatialTheme.bg.card(gisPanelOpacity, 0.9)
+                }}
+                className={`border p-2.5 sm:p-3 rounded-2xl flex flex-col gap-2 relative overflow-hidden group flex-shrink-0 transition-all duration-300 backdrop-blur-md ${isDarkMode ? "border-slate-700/50 shadow-2xl" : "border-slate-200 shadow-md"}`}
+              >
+                <div className={`absolute -right-4 -top-4 w-20 h-20 bg-emerald-600/10 rounded-full blur-2xl ${isDarkMode ? "group-hover:bg-emerald-500/20" : "group-hover:bg-emerald-300/30"} transition-all`} />
+                <motion.button whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsLp2bModalOpen(true)}
+                  className="py-2.5 px-3.5 bg-gradient-to-r from-emerald-800 to-teal-800 hover:from-emerald-700 hover:to-teal-700 text-white text-[11px] font-bold rounded-xl font-['Plus_Jakarta_Sans',sans-serif] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_10px_20px_rgba(0,0,0,0.1)] active:scale-95 border border-emerald-500 ring-2 ring-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.2)] flex justify-between items-center gap-2 tracking-wide relative z-10 w-full cursor-pointer"
+                  title="Uji Tumpang Tindih Lahan Pertanian Pangan Berkelanjutan (LP2B) & Sawah Dilindungi"
+                >
+                  <div className="flex items-center gap-2">
+                    <Wheat className="h-4 w-4 text-emerald-200" />
+                    <span className="text-left font-bold leading-tight">
+                      Uji Tumpang Tindih LP2B
+                    </span>
+                  </div>
+                  <div className="bg-white/20 p-1.5 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                    <Sprout className="h-3.5 w-3.5 text-emerald-100" />
+                  </div>
+                </motion.button>
+              </div>
+
               {/* Spatial Control Panel */}
               <div 
                 style={{
@@ -7278,6 +7307,13 @@ export default function SpatialMapWorkspace() {
                           <Sparkles className="h-4 w-4" /> Tanya AI
                         </motion.button>
                         <motion.button whileTap={{ scale: 0.95 }}
+                          onClick={() => setIsLp2bModalOpen(true)}
+                          className="p-2 border rounded-xl transition-all font-sans font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm cursor-pointer border-emerald-500/50 bg-gradient-to-r from-emerald-800 to-teal-800 hover:from-emerald-700 hover:to-teal-700 text-white flex-1 md:flex-none ring-1 ring-emerald-400/20"
+                          title="Uji Tumpang Tindih LP2B & Lahan Sawah Dilindungi (PP No. 1/2011)"
+                        >
+                          <Wheat className="h-4 w-4 text-emerald-200" /> Uji LP2B
+                        </motion.button>
+                        <motion.button whileTap={{ scale: 0.95 }}
                           onClick={() => setIsMapPrintModalOpen(true)}
                           className={`p-2 border rounded-xl transition-all font-sans font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm cursor-pointer ${
                             isDarkMode
@@ -7920,6 +7956,20 @@ export default function SpatialMapWorkspace() {
           }
           isDarkMode={isDarkMode}
           selectedInvestment={selectedInvestment || null}
+        />
+      </Suspense>
+
+      {/* ── SPATIAL LP2B OVERLAP MODAL ── */}
+      <Suspense fallback={null}>
+        <SpatialLp2bOverlapModal
+          isOpen={isLp2bModalOpen}
+          onClose={() => setIsLp2bModalOpen(false)}
+          selectedInvestment={selectedInvestment || null}
+          drawnGeoJson={drawnGeoJson}
+          investments={investments}
+          districts={districts}
+          villages={villages}
+          isDark={isDarkMode}
         />
       </Suspense>
 

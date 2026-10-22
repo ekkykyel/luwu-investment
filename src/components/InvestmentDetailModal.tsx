@@ -10,6 +10,7 @@ import ProximityDistanceMatrixModal from "./ProximityDistanceMatrixModal";
 import IproPitchDeckModal from "./IproPitchDeckModal";
 import SpatialInfrastructureInspectorModal from "./SpatialInfrastructureInspectorModal";
 import EsgRiskDueDiligenceModal from "./EsgRiskDueDiligenceModal";
+import SpatialLp2bOverlapModal from "./SpatialLp2bOverlapModal";
 import AutoTranslatedText from "./AutoTranslatedText";
 import { ProgressiveImage } from "./ProgressiveImage";
 import { generateInvestmentResumePdf, captureActiveMapSnapshot } from "../services/PdfExportService";
@@ -74,7 +75,8 @@ import {
   HardHat,
   CheckSquare,
   Square,
-  ArrowUpRight
+  ArrowUpRight,
+  Wheat
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { polygon, multiPolygon, area, length, lineString } from "@turf/turf";
@@ -191,6 +193,7 @@ export function InvestmentDetailModal({
   const [isRtrwModalOpen, setIsRtrwModalOpen] = useState(false);
   const [isIncentiveModalOpen, setIsIncentiveModalOpen] = useState(false);
   const [isProximityModalOpen, setIsProximityModalOpen] = useState(false);
+  const [isLp2bModalOpen, setIsLp2bModalOpen] = useState(false);
 
   // Letter of Intent (LoI) modal states
   const [isLoiModalOpen, setIsLoiModalOpen] = useState(false);
@@ -1897,14 +1900,25 @@ export function InvestmentDetailModal({
                           "Persetujuan KKPR Otomatis (RTRW/RDTR Compliant) melalui integrasi OSS-RBA DPMPTSP."}
                       </p>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setIsRtrwModalOpen(true)}
-                      className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-[11px] flex items-center gap-1.5 transition-colors shrink-0 shadow-sm"
-                    >
-                      <FileCheck className="w-3.5 h-3.5" />
-                      Simulasi & Matriks RTRW
-                    </button>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => setIsLp2bModalOpen(true)}
+                        className="px-3 py-1.5 rounded-lg bg-teal-700 hover:bg-teal-600 text-white font-semibold text-[11px] flex items-center gap-1.5 transition-colors shadow-sm cursor-pointer"
+                        title="Uji Tumpang Tindih LP2B & Lahan Sawah Dilindungi"
+                      >
+                        <Wheat className="w-3.5 h-3.5 text-teal-200" />
+                        Uji LP2B / Sawah
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsRtrwModalOpen(true)}
+                        className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-[11px] flex items-center gap-1.5 transition-colors shadow-sm cursor-pointer"
+                      >
+                        <FileCheck className="w-3.5 h-3.5" />
+                        Simulasi & Matriks RTRW
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -2864,7 +2878,7 @@ export function InvestmentDetailModal({
                       <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
                         {t('rtrwZoning.integratedTitle', 'Matriks & Analisis Terpadu Luwu:')}
                       </span>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         <button
                           type="button"
                           onClick={() => setIsRtrwModalOpen(true)}
@@ -2872,6 +2886,16 @@ export function InvestmentDetailModal({
                         >
                           <ShieldCheck size={14} />
                           <span>{t('rtrwZoning.shortButton', 'Kesesuaian RTRW')}</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setIsLp2bModalOpen(true)}
+                          className="p-2.5 rounded-md bg-teal-500/10 hover:bg-teal-500/20 text-teal-600 dark:text-teal-300 border border-teal-500/30 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                          title="Uji Tumpang Tindih LP2B & Lahan Sawah Dilindungi"
+                        >
+                          <Wheat size={14} />
+                          <span>Uji LP2B Sawah</span>
                         </button>
 
                         <button
@@ -3509,6 +3533,13 @@ export function InvestmentDetailModal({
 
       {/* ADVANCED SPATIAL & INCENTIVE MODALS */}
       <div onClick={(e) => e.stopPropagation()}>
+        <SpatialLp2bOverlapModal
+          isOpen={isLp2bModalOpen}
+          onClose={() => setIsLp2bModalOpen(false)}
+          selectedInvestment={profileData as any}
+          isDark={effectiveDarkMode}
+        />
+
         <RtrwZoningCheckerModal
           isOpen={isRtrwModalOpen}
           onClose={() => setIsRtrwModalOpen(false)}
