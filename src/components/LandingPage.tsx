@@ -74,6 +74,7 @@ import {
   BarChart2,
   ExternalLink,
   CheckCircle2,
+  Ruler,
 } from "lucide-react";
 import { Role, Investment, District, SektorInvestasi } from "../types";
 import { formatRupiah, formatRupiahSingkat, formatRupiahKompak } from "../lib/formatters";
@@ -325,12 +326,236 @@ export interface LandingPageProps {
 
 function getSectorColor(sector: string) {
   switch (sector) {
-    case 'Kelautan dan Perikanan': return { border: 'hover:border-sky-400/60', glow: 'hover:shadow-sky-500/25', badgeBg: 'font-semibold bg-sky-100 dark:bg-sky-400/20 text-sky-800 dark:text-sky-300 border border-sky-200 dark:border-sky-400/30 backdrop-blur-sm shadow-sm', progress: 'bg-gradient-to-r from-sky-400 to-blue-500' };
-    case 'Pertanian': return { border: 'hover:border-emerald-400/60', glow: 'hover:shadow-black/25', badgeBg: 'font-semibold bg-emerald-100 dark:bg-emerald-400/20 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-400/30 backdrop-blur-sm shadow-sm', progress: 'bg-gradient-to-r from-emerald-400 to-teal-500' };
-    case 'Pariwisata': return { border: 'hover:border-teal-400/60', glow: 'hover:shadow-black/25', badgeBg: 'font-semibold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-500/30 backdrop-blur-sm shadow-sm', progress: 'bg-gradient-to-r from-teal-500 to-emerald-500' };
-    case 'Pertambangan': return { border: 'hover:border-[#C9A24B]/60', glow: 'hover:shadow-black/25', badgeBg: 'font-semibold bg-[#C9A24B]/10 text-[#A07A28] dark:text-[#C9A24B] border border-[#A07A28]/30 dark:border-[rgba(201,162,75,0.30)] backdrop-blur-sm shadow-sm', progress: 'bg-gradient-to-r from-[#0F6B4F] via-[#1F9D74] to-[#C9A24B]' };
-    default: return { border: 'hover:border-emerald-400/60', glow: 'hover:shadow-black/25', badgeBg: 'font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30 backdrop-blur-sm shadow-sm', progress: 'bg-gradient-to-r from-emerald-500 to-teal-500' };
+    case 'Kelautan dan Perikanan':
+      return {
+        border: 'hover:border-sky-400/60',
+        glow: 'hover:shadow-sky-500/25',
+        badgeBg: 'bg-sky-100 dark:bg-sky-400/20 text-sky-800 dark:text-sky-300 border border-sky-200 dark:border-sky-400/30 backdrop-blur-sm shadow-sm',
+        progress: 'bg-gradient-to-r from-sky-400 to-blue-500',
+        dot: 'bg-sky-400',
+        gradient: 'from-sky-600 to-blue-800',
+      };
+    case 'Pertanian':
+      return {
+        border: 'hover:border-emerald-400/60',
+        glow: 'hover:shadow-black/25',
+        badgeBg: 'bg-emerald-100 dark:bg-emerald-400/20 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-400/30 backdrop-blur-sm shadow-sm',
+        progress: 'bg-gradient-to-r from-emerald-400 to-teal-500',
+        dot: 'bg-emerald-400',
+        gradient: 'from-emerald-600 to-teal-800',
+      };
+    case 'Pariwisata':
+      return {
+        border: 'hover:border-teal-400/60',
+        glow: 'hover:shadow-black/25',
+        badgeBg: 'bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-500/30 backdrop-blur-sm shadow-sm',
+        progress: 'bg-gradient-to-r from-teal-500 to-emerald-500',
+        dot: 'bg-teal-400',
+        gradient: 'from-teal-600 to-emerald-800',
+      };
+    case 'Pertambangan':
+      return {
+        border: 'hover:border-[#C9A24B]/60',
+        glow: 'hover:shadow-black/25',
+        badgeBg: 'bg-[#C9A24B]/10 text-[#A07A28] dark:text-[#C9A24B] border border-[#A07A28]/30 dark:border-[rgba(201,162,75,0.30)] backdrop-blur-sm shadow-sm',
+        progress: 'bg-gradient-to-r from-[#0F6B4F] via-[#1F9D74] to-[#C9A24B]',
+        dot: 'bg-[#C9A24B]',
+        gradient: 'from-[#0F6B4F] to-[#C9A24B]',
+      };
+    default:
+      return {
+        border: 'hover:border-emerald-400/60',
+        glow: 'hover:shadow-black/25',
+        badgeBg: 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30 backdrop-blur-sm shadow-sm',
+        progress: 'bg-gradient-to-r from-emerald-500 to-teal-500',
+        dot: 'bg-emerald-400',
+        gradient: 'from-emerald-700 to-teal-900',
+      };
   }
+}
+
+function InvestmentCardSkeleton({ isDark }: { isDark: boolean }) {
+  const base = isDark ? 'bg-slate-800' : 'bg-slate-200';
+  return (
+    <div
+      className={`rounded-2xl border overflow-hidden animate-pulse ${
+        isDark ? 'bg-slate-900/40 border-slate-800' : 'bg-white border-slate-200'
+      }`}
+    >
+      <div className={`h-44 w-full ${base}`} />
+      <div className="p-4 space-y-3">
+        <div className={`h-4 ${base} rounded w-3/4`} />
+        <div className={`h-3 ${base} rounded w-1/2`} />
+        <div className={`h-5 ${base} rounded w-2/3`} />
+        <div className={`h-1 ${base} rounded-full w-full`} />
+        <div className="flex gap-2 pt-2">
+          <div className={`h-10 flex-1 ${base} rounded-xl`} />
+          <div className={`h-10 flex-1 ${base} rounded-xl`} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InvestmentCard({
+  inv,
+  isDark,
+  districts,
+  onSelectInvestment,
+  onNavigate,
+  formatAreaHa,
+}: {
+  inv: Investment;
+  isDark: boolean;
+  districts: District[];
+  onSelectInvestment?: (id: string) => void;
+  onNavigate: (path: string) => void;
+  formatAreaHa: (area: number | string | undefined | null) => string;
+}) {
+  const sectorColor = getSectorColor(inv.sector);
+  const districtName =
+    districts.find((d) => d.id === inv.districtId)?.name ||
+    (inv as any).districtName ||
+    (inv as any).lokasi ||
+    inv.districtId ||
+    "Kabupaten Luwu";
+
+  const rawPct = (inv as any).realizationPct ?? (inv as any).targetRealisasi;
+  const isTier1 = (inv.investmentValue || 0) >= 1_000_000_000;
+  const pct = rawPct !== undefined ? rawPct : (isTier1 ? 85 : 50);
+
+  return (
+    <div
+      className={`rounded-2xl border overflow-hidden flex flex-col transition-all duration-300 group hover:-translate-y-1.5 hover:shadow-xl ${
+        isDark
+          ? `bg-slate-900/50 border-slate-800 ${sectorColor.border}`
+          : `bg-white border-slate-200 ${sectorColor.border}`
+      }`}
+    >
+      {/* Thumbnail */}
+      <div className="relative h-44 overflow-hidden">
+        {inv.photoUrl ? (
+          <img
+            src={getImageUrl(inv.photoUrl, "facility")}
+            alt={inv.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          <div className={`w-full h-full bg-gradient-to-br ${sectorColor.gradient}`} />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent pointer-events-none" />
+
+        {/* Sektor badge */}
+        <div
+          className={`absolute top-3 left-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium backdrop-blur-md border border-white/20 ${sectorColor.badgeBg}`}
+        >
+          <span className={`w-1.5 h-1.5 rounded-full ${sectorColor.dot}`} />
+          <span>{inv.sector}</span>
+        </div>
+
+        {/* AI score badge */}
+        {(inv.smartData?.aiScore || inv.smartData?.ai_score) && (
+          <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded-full bg-black/55 backdrop-blur-md border border-white/15">
+            <span className="text-yellow-400 text-[10px]">★</span>
+            <span className="text-white text-[10px] font-medium">
+              {inv.smartData?.aiScore || inv.smartData?.ai_score}
+            </span>
+          </div>
+        )}
+
+        {/* Tier badge */}
+        {(inv.investmentValue || 0) >= 1_000_000_000 ? (
+          <div className="absolute bottom-3 left-3 px-2 py-0.5 rounded-full bg-emerald-600/90 text-white text-[9px] font-bold uppercase tracking-wide backdrop-blur-sm">
+            Tier 1 · Ready to Offer
+          </div>
+        ) : (
+          <div className="absolute bottom-3 left-3 px-2 py-0.5 rounded-full bg-sky-600/90 text-white text-[9px] font-bold uppercase tracking-wide backdrop-blur-sm">
+            Tier 2 · Under Dev
+          </div>
+        )}
+      </div>
+
+      {/* Card body — MINIMAL, tidak text-heavy */}
+      <div className="p-4 flex flex-col gap-3 flex-1">
+        <h3 className="text-sm font-semibold leading-snug text-slate-900 dark:text-slate-100 line-clamp-2">
+          {inv.name}
+        </h3>
+
+        {/* Meta row */}
+        <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+          <span className="flex items-center gap-1 truncate max-w-[170px]">
+            <MapPin size={11} className="text-emerald-500 shrink-0" />
+            <span className="truncate">{districtName}</span>
+          </span>
+          <span className="flex items-center gap-1 shrink-0">
+            <Ruler size={11} className="text-teal-500 shrink-0" />
+            <span>{inv.areaHa ? `${formatAreaHa(inv.areaHa)} Ha` : "Pra-FS"}</span>
+          </span>
+        </div>
+
+        {/* Nilai investasi */}
+        <div>
+          <div className="text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-0.5">
+            Estimasi investasi
+          </div>
+          <div className="text-base font-bold text-emerald-600 dark:text-emerald-400">
+            {inv.investmentValue && inv.investmentValue > 0 ? formatRupiah(inv.investmentValue) : "Kajian FS"}
+          </div>
+        </div>
+
+        {/* Progress realisasi */}
+        <div>
+          <div className="flex justify-between text-[10px] mb-1">
+            <span className="text-slate-400 uppercase tracking-wider">
+              Target realisasi
+            </span>
+            <span className="font-medium text-slate-600 dark:text-slate-300 font-mono">
+              {pct}%
+            </span>
+          </div>
+          <div className={`h-1 rounded-full overflow-hidden ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`}>
+            <div
+              className={`h-full rounded-full transition-all duration-700 ${sectorColor.progress}`}
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Card footer — 2 tombol */}
+      <div className={`px-4 pb-4 flex gap-2 border-t pt-3 ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (onSelectInvestment) {
+              onSelectInvestment(inv.id);
+            } else {
+              onNavigate(`/peta-spasial?id=${inv.id}`);
+            }
+          }}
+          className={`flex-1 py-2.5 rounded-xl text-xs font-medium border transition-all min-h-[44px] cursor-pointer flex items-center justify-center gap-1 ${
+            isDark
+              ? 'border-slate-700 text-slate-300 hover:bg-slate-800'
+              : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+          }`}
+        >
+          Detail
+        </button>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            onNavigate("/login?role=investor");
+          }}
+          className="flex-1 py-2.5 rounded-xl text-xs font-medium bg-emerald-600 hover:bg-emerald-500 text-white transition-all min-h-[44px] cursor-pointer flex items-center justify-center gap-1"
+        >
+          Ajukan minat
+        </button>
+      </div>
+    </div>
+  );
 }
 
 // ─── Revenue Calculation Helper ─────────────────────────────────────────────
@@ -1134,10 +1359,43 @@ export default function LandingPage({
     return result;
   }, [investments]);
 
+  const [activeTier, setActiveTier] = useState<string>('all');
+
+  const tier1Count = useMemo(() => {
+    return investments.filter((i) => (i.investmentValue || 0) >= 1_000_000_000).length;
+  }, [investments]);
+
+  const tier2Count = useMemo(() => {
+    return investments.filter((i) => {
+      const val = i.investmentValue || 0;
+      return val < 1_000_000_000 && val >= 100_000_000;
+    }).length;
+  }, [investments]);
+
+  const umkmCount = useMemo(() => {
+    return investments.filter((i: any) => {
+      const val = i.investmentValue || 0;
+      const sec = String(i.sector || "").toLowerCase();
+      return val < 100_000_000 || sec.includes("umkm") || i.isUmkm;
+    }).length;
+  }, [investments]);
+
   const filteredInvestmentsList = useMemo(() => {
     return investments.filter((item) => {
       const i = item as any;
       if (!i.isActive) return false;
+
+      // Tier scale filter
+      if (activeTier === 'tier1') {
+        if ((i.investmentValue || 0) < 1_000_000_000) return false;
+      } else if (activeTier === 'tier2') {
+        const val = i.investmentValue || 0;
+        if (val >= 1_000_000_000 || val < 100_000_000) return false;
+      } else if (activeTier === 'umkm') {
+        const val = i.investmentValue || 0;
+        const sec = String(i.sector || "").toLowerCase();
+        if (val >= 100_000_000 && !sec.includes("umkm") && !i.isUmkm) return false;
+      }
 
       // Search term filter
       if (smartFilterState.searchTerm.trim() !== "") {
@@ -1187,7 +1445,7 @@ export default function LandingPage({
 
       return true;
     });
-  }, [investments, smartFilterState]);
+  }, [investments, smartFilterState, activeTier]);
 
   const sortedInvestmentsList = useMemo(() => {
     return [...filteredInvestmentsList].sort((a, b) => {
@@ -3113,6 +3371,45 @@ export default function LandingPage({
 
           {/* SMART MATRIX FILTER PANEL (Collapsible for cleaner aesthetics) */}
           <div className="mb-6">
+            {/* Filter tier — BARU */}
+            <div className="flex gap-2 mb-4 flex-wrap items-center">
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400 self-center mr-1">
+                Skala:
+              </span>
+              {[
+                { id: 'all',   label: 'Semua',              count: investments?.length ?? 0 },
+                { id: 'tier1', label: 'Strategis (>Rp 1M)', count: tier1Count },
+                { id: 'tier2', label: 'Menengah',           count: tier2Count },
+                { id: 'umkm',  label: 'UMKM / IKM',         count: umkmCount },
+              ].map((tier) => (
+                <button
+                  key={tier.id}
+                  type="button"
+                  onClick={() => setActiveTier(tier.id)}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all min-h-[36px] cursor-pointer ${
+                    activeTier === tier.id
+                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
+                      : isDark
+                        ? 'border-slate-700 text-slate-400 hover:border-slate-500 bg-slate-900/40'
+                        : 'border-slate-300 text-slate-500 hover:border-slate-400 bg-white'
+                  }`}
+                >
+                  {tier.label}
+                  <span
+                    className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+                      activeTier === tier.id
+                        ? 'bg-white/20'
+                        : isDark
+                          ? 'bg-slate-800 text-slate-400'
+                          : 'bg-slate-100 text-slate-600'
+                    }`}
+                  >
+                    {tier.count}
+                  </span>
+                </button>
+              ))}
+            </div>
+
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
                 <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
@@ -3186,21 +3483,8 @@ export default function LandingPage({
 
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3].map((num) => (
-                <div
-                  key={num}
-                  className="rounded-2xl border overflow-hidden flex flex-col h-[480px] animate-pulse bg-slate-200 dark:bg-slate-700 border-transparent"
-                >
-                  <div className="h-56 bg-slate-300 dark:bg-slate-600" />
-                  <div className="p-6 flex flex-col flex-grow gap-4">
-                    <div className="h-6 bg-slate-300 dark:bg-slate-600 rounded w-3/4" />
-                    <div className="space-y-2">
-                      <div className="h-4 bg-slate-300 dark:bg-slate-600 rounded w-1/2" />
-                      <div className="h-4 bg-slate-300 dark:bg-slate-600 rounded w-2/3" />
-                    </div>
-                    <div className="h-10 bg-slate-300 dark:bg-slate-600 rounded-xl mt-auto w-full" />
-                  </div>
-                </div>
+              {[1, 2, 3, 4, 5, 6].map((num) => (
+                <InvestmentCardSkeleton key={num} isDark={isDark} />
               ))}
             </div>
           ) : sortedInvestmentsList.length > 0 ? (
@@ -3208,294 +3492,16 @@ export default function LandingPage({
               {/* RENDER VIEW 1: GRID MODE (3-COLUMNS RESPONSIVE) */}
               {potensiViewMode === "grid" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
-                  {sortedInvestmentsList.map((inv, idx) => (
-<div
-                    key={inv.id}
-                    className="flex flex-col h-full"
-                  >
-                    <TiltCard
-                      maxTilt={4}
-                      scaleOnHover={1.012}
-                      glareOpacity={0.1}
-                      style={{ animationDelay: `${idx * 80}ms` }}
-                      className={`w-full h-full rounded-[26px] sm:rounded-[28px] border overflow-hidden flex flex-col group/card
-                                  transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/50 hover:shadow-2xl hover:shadow-emerald-900/20 glass-crystal glass-card-interactive
-                                  ${isDark ? 'bg-surface/90 border-white/10 shadow-[0_18px_50px_rgba(0,0,0,0.6)]' : 'bg-white/95 border-slate-200/90 shadow-[0_16px_45px_rgba(15,23,42,0.07)]'}`}
-                    >
-                      {/* Header Image Section */}
-                      <div className="h-60 sm:h-64 overflow-hidden relative w-full">
-                        {(() => {
-                          const cardWidth = 380;
-                          const cardOffset = idx * (cardWidth + 24) - potensiScrollLeft;
-                          const parallaxOffset = 0;
-
-                          return (
-                            <LazyImage
-                              src={getImageUrl(inv.photoUrl, 'facility')}
-                              alt={inv.name}
-                              isDark={isDark}
-                              style={{ transform: `translateX(${parallaxOffset}px) scale(1.08)` }}
-                              imgClassName="w-full h-full object-cover transform group-hover/card:scale-108 transition-transform duration-700 ease-out"
-                            />
-                          );
-                        })()}
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-black/25 pointer-events-none" />
-
-                        {/* Top Badges Bar */}
-                        <div className="absolute top-3 inset-x-3 flex items-center justify-between gap-1.5 z-10">
-                          {/* Sector Badge */}
-                          <div
-                            className={`px-3 py-1 rounded-xl text-[11px] font-extrabold tracking-wide uppercase backdrop-blur-md shadow-md border ${getSectorColor(inv.sector).badgeBg}`}
-                          >
-                            {t(getSectorI18nKey(inv.sector))}
-                          </div>
-
-                          {/* Right Badges: AI Score & Tier Badge */}
-                          <div className="flex items-center gap-1.5">
-                            {(inv.smartData?.aiScore || inv.smartData?.ai_score) && (
-                              <div className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-base/85 backdrop-blur-md border border-teal-400/40 text-white shadow-md shrink-0">
-                                <span className="text-teal-400 text-xs">★</span>
-                                <span className="text-[10px] font-black tracking-tight text-teal-300">
-                                  {inv.smartData?.aiScore || inv.smartData?.ai_score}
-                                </span>
-                              </div>
-                            )}
-
-                            {/* Project Readiness Tier (BKPM RI Standard) */}
-                            {(() => {
-                              const isTier1 = (inv as any).readinessTier === 'Tier 1' || 
-                                              (inv as any).readiness_tier === 'Tier 1' || 
-                                              (inv as any).status_kesiapan?.toLowerCase().includes('ready') ||
-                                              Boolean(inv.investmentValue && inv.investmentValue > 0 && inv.areaHa && inv.areaHa > 0 && inv.landStatus);
-
-                              return isTier1 ? (
-                                <div 
-                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-extrabold bg-emerald-950/90 text-emerald-300 border border-emerald-400/60 backdrop-blur-md shadow-md"
-                                  title="Ready to Offer (Tier 1): Full FS Siap, Lahan Clean & Clear, Kesesuaian RTRW Terkonfirmasi (Standar BKPM RI)"
-                                >
-                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                  <span>Tier 1: Ready to Offer</span>
-                                </div>
-                              ) : (
-                                <div 
-                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-extrabold bg-sky-950/90 text-sky-300 border border-sky-400/60 backdrop-blur-md shadow-md"
-                                  title="Under Development (Tier 2): Pre-FS Tersedia, Kajian Tata Ruang Sedang Difinalisasi (Standar BKPM RI)"
-                                >
-                                  <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
-                                  <span>Tier 2: Under Dev</span>
-                                </div>
-                              );
-                            })()}
-                          </div>
-                        </div>
-
-                        {/* Bottom Photo Unified Aero-Glass Geotag Bar */}
-                        <div className="absolute bottom-3 inset-x-3 flex items-center justify-between text-xs text-white z-10 pointer-events-none">
-                          <div className="w-full flex items-center justify-between bg-base/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/15 shadow-md">
-                            <div className="flex items-center gap-1.5 font-semibold text-slate-100 min-w-0 pr-2">
-                              <MapPin size={13} className="text-emerald-400 shrink-0" />
-                              <span className="truncate max-w-[190px] sm:max-w-[220px]">
-                                {districts.find((d) => d.id === inv.districtId)?.name || (inv as any).districtName || (inv as any).lokasi || inv.districtId || "Kabupaten Luwu"}
-                              </span>
-                            </div>
-                            <div className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-300 bg-emerald-950/90 px-2 py-0.5 rounded-lg border border-emerald-500/40 flex items-center gap-1 shrink-0">
-                              <ShieldCheck size={12} className="text-emerald-400" />
-                              <span>GIS Valid</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Card Content Body */}
-                      <div className="p-2.5 sm:p-6 flex flex-col flex-grow">
-                        <div className="mb-4">
-                          {(() => {
-                            const descText = `${inv.name || ""} ${inv.sector || ""} ${(inv as any).subSector || ""} ${inv.description || ""} ${(inv as any).deskripsi_singkat || ""}`.toLowerCase();
-                            const isHilirisasi =
-                              descText.includes("hilirisasi") ||
-                              descText.includes("sentra") ||
-                              descText.includes("smelter") ||
-                              descText.includes("olahan") ||
-                              descText.includes("pengolahan") ||
-                              descText.includes("kakao") ||
-                              descText.includes("kopi");
-
-                            return isHilirisasi ? (
-                              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wider bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/25 mb-2">
-                                <Sparkles size={11} className="text-teal-500" />
-                                <span>Hilirisasi Komoditas</span>
-                              </div>
-                            ) : null;
-                          })()}
-                          <h3 className="text-lg sm:text-xl font-extrabold font-sans line-clamp-2 leading-snug group-hover/card:text-emerald-600 dark:group-hover/card:text-emerald-400 transition-colors tracking-tight text-slate-900 dark:text-white">
-                            {inv.name}
-                          </h3>
-                        </div>
-
-                        {/* Symmetrical 3-Column Bento Metric Matrix 2.0 */}
-                        {(() => {
-                          const rawLabor = inv.komitmenTenagaLokal ?? inv.komitmen_tenaga_lokal ?? inv.tenagaKerja ?? inv.tenaga_kerja ?? inv.tenagaLokal ?? inv.tenaga_lokal ?? inv.tkl ?? 0;
-                          const laborVal = typeof rawLabor === 'number' ? rawLabor : parseFloat(String(rawLabor).replace(/[^0-9.]/g, '')) || 0;
-                          const hasLand = Boolean(inv.areaHa && inv.areaHa > 0);
-                          const hasInvest = Boolean(inv.investmentValue && inv.investmentValue > 0);
-
-                          return (
-                            <div className="grid grid-cols-3 gap-2 sm:gap-2.5 mb-4.5">
-                              {/* Spec 1: Luas Lahan */}
-                              <div className={`p-2.5 rounded-2xl border text-center flex flex-col items-center justify-between transition-all duration-300 ${
-                                isDark ? 'bg-slate-800/40 border-slate-700/60 hover:bg-slate-800/70 hover:border-slate-600' : 'bg-slate-50/80 border-slate-200/80 hover:bg-white hover:border-slate-300 shadow-xs'
-                              }`}>
-                                <div className="flex items-center gap-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                  <div className={`w-4 h-4 rounded-full bg-[#C9A24B]/10 dark:bg-[#C9A24B]/20 flex items-center justify-center shrink-0`}>
-                    <MapPin size={10} className="text-[#A07A28] dark:text-[#C9A24B]" />
-                  </div>
-                                  <span>Lahan</span>
-                                </div>
-                                <span className={`text-xs sm:text-sm font-extrabold ${hasLand ? 'text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400 font-medium text-[11px]'}`}>
-                                  {hasLand ? `${formatAreaHa(inv.areaHa)} Ha` : "Pra-FS"}
-                                </span>
-                              </div>
-
-                              {/* Spec 2: Estimasi Investasi */}
-                              <div className={`p-2.5 rounded-2xl border text-center flex flex-col items-center justify-between transition-all duration-300 ${
-                                isDark ? 'bg-slate-800/40 border-slate-700/60 hover:bg-slate-800/70 hover:border-slate-600' : 'bg-slate-50/80 border-slate-200/80 hover:bg-white hover:border-slate-300 shadow-xs'
-                              }`}>
-                                <div className="flex items-center gap-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                                  <div className="w-4 h-4 rounded-full bg-emerald-500/10 dark:bg-emerald-400/10 flex items-center justify-center shrink-0">
-                                    <Building size={10} className="text-emerald-500" />
-                                  </div>
-                                  <span>Est. Nilai</span>
-                                </div>
-                                <span className={`text-xs sm:text-sm font-extrabold ${hasInvest ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400 font-medium text-[11px]'}`}>
-                                  {hasInvest ? formatRupiah(inv.investmentValue) : "Kajian FS"}
-                                </span>
-                              </div>
-
-                              {/* Spec 3: Tenaga Kerja */}
-                              <div className={`p-2.5 rounded-2xl border text-center flex flex-col items-center justify-between transition-all duration-300 ${
-                                isDark ? 'bg-slate-800/40 border-slate-700/60 hover:bg-slate-800/70 hover:border-slate-600' : 'bg-slate-50/80 border-slate-200/80 hover:bg-white hover:border-slate-300 shadow-xs'
-                              }`}>
-                                <div className="flex items-center gap-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                                  <div className="w-4 h-4 rounded-full bg-teal-500/10 dark:bg-teal-400/10 flex items-center justify-center shrink-0">
-                                    <Users size={10} className="text-teal-500" />
-                                  </div>
-                                  <span>SDM</span>
-                                </div>
-                                <span className={`text-xs sm:text-sm font-extrabold ${laborVal > 0 ? 'text-teal-600 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400 font-medium text-[11px]'}`}>
-                                  {laborVal > 0 ? `${laborVal} Jiwa` : "Lokal / UMKM"}
-                                </span>
-                              </div>
-                            </div>
-                          );
-                        })()}
-
-                        {/* Realization & Spatial Readiness Progress Bar */}
-                        {(() => {
-                          const rawPct = Math.min(100, Math.round(((inv.investmentValue || 0) / INVESTMENT_TARGET_VAL) * 100 * Math.max(investments.length, 1)));
-                          const isTier1 = (inv as any).readinessTier === 'Tier 1' || (inv as any).readiness_tier === 'Tier 1' || Boolean(inv.investmentValue && inv.areaHa);
-                          const pct = typeof rawPct === 'number' && !isNaN(rawPct) && rawPct > 0 ? rawPct : (isTier1 ? 85 : 45);
-                          return (
-                            <div className="mb-4.5">
-                              <div className="flex justify-between items-center mb-1.5">
-                                <div className="flex items-center gap-1.5">
-                                  <span className={`text-[10px] uppercase tracking-wider font-extrabold ${textMuted}`}>
-                                    Kesiapan Proyek & Realisasi
-                                  </span>
-                                </div>
-                                <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 font-mono">{pct}%</span>
-                              </div>
-                              <div className={`h-2 rounded-full overflow-hidden p-0.5 border ${isDark ? 'bg-slate-800/80 border-slate-700/50' : 'bg-slate-100 border-slate-200/80'}`}>
-                                <div
-                                  className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.35)] transition-all duration-700"
-                                  style={{ width: `${pct}%` }}
-                                />
-                              </div>
-                            </div>
-                          );
-                        })()}
-
-                        {/* Action Buttons Section — Streamlined 2 Primary Actions */}
-                        <div className={`mt-auto pt-3.5 flex flex-col gap-2 border-t ${isDark ? 'border-slate-800/80' : 'border-slate-100'}`}>
-                          {/* Row 1: Primary Spatial Exploration & Fast-Track Interest */}
-                          <div className="grid grid-cols-2 gap-2">
-                            <motion.button
-                              whileTap={{ scale: 0.96 }}
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                if (onSelectInvestment) {
-                                  onSelectInvestment(inv.id);
-                                } else {
-                                  window.history.pushState({}, "", `/peta-spasial?id=${inv.id}`);
-                                  if (onEnter) {
-                                    onEnter(Role.INVESTOR);
-                                  } else {
-                                    navigate(`/peta-spasial?id=${inv.id}`);
-                                  }
-                                }
-                              }}
-                              className={`min-h-[42px] py-2 px-3 rounded-xl border text-xs sm:text-sm font-bold transition-all duration-300 flex items-center justify-center gap-1.5 hover:scale-[1.02] active:scale-[0.97] cursor-pointer
-                                          ${isDark
-                                            ? 'border-slate-700/80 bg-slate-800/70 text-slate-200 hover:border-emerald-500/50 hover:bg-slate-800 hover:text-emerald-300 shadow-sm'
-                                            : 'border-slate-200/90 bg-slate-50/90 text-slate-800 hover:border-emerald-400/60 hover:bg-white hover:text-emerald-700 shadow-xs'}`}
-                              title="Buka Peta Spasial GIS & Analisis Lahan"
-                            >
-                              <Search size={14} className="text-slate-400 group-hover/card:text-emerald-500 transition-colors" />
-                              <span>{t("common.detail", "Eksplorasi Spasial")}</span>
-                            </motion.button>
-
-                            <motion.button
-                              whileTap={{ scale: 0.96 }}
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                navigate("/login?role=investor");
-                              }}
-                              className="relative overflow-hidden min-h-[42px] py-2 px-3 rounded-xl text-xs sm:text-sm font-bold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 shadow-md shadow-black/25 flex items-center justify-center gap-1.5 cursor-pointer group/cta"
-                            >
-                              <span className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none animate-shimmer-sweep" />
-                              <span className="relative z-10">{t("landing.ajukanMinat", "Ajukan Minat")}</span>
-                              <ChevronRight size={15} className="relative z-10 transition-transform group-hover/cta:translate-x-0.5" />
-                            </motion.button>
-                          </div>
-
-                          {/* Row 2: Secondary Quick Links (IPRO Teaser & Konsultasi VIP) */}
-                          <div className="flex items-center justify-between gap-2 pt-1 text-[11px] font-bold">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                setSelectedIproForModal(inv);
-                                setIsIproPitchModalOpen(true);
-                              }}
-                              className="flex-1 py-1.5 px-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-emerald-500/25 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                              title="Lihat Dokumen IPRO & Pitch Deck Investasi"
-                            >
-                              <FileText size={13} className="text-emerald-600 dark:text-emerald-400" />
-                              <span>Teaser IPRO</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                setSelectedInvestmentForConsultation(inv);
-                                setIsFastTrackConsultationOpen(true);
-                              }}
-                              className="flex-1 py-1.5 px-2 rounded-lg bg-[#C9A24B]/10 hover:bg-[#C9A24B]/15 text-[#A07A28] dark:text-[#C9A24B] border border-[#A07A28]/25 dark:border-[rgba(201,162,75,0.25)] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                              title="Jadwalkan Konsultasi VIP Fast-Track"
-                            >
-                              <Sparkles size={13} className="text-[#A07A28] dark:text-[#C9A24B]" />
-                              <span>Konsultasi VIP</span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </TiltCard>
-                  </div>
+                  {sortedInvestmentsList.map((inv) => (
+                    <InvestmentCard
+                      key={inv.id}
+                      inv={inv}
+                      isDark={isDark}
+                      districts={districts}
+                      onSelectInvestment={onSelectInvestment}
+                      onNavigate={navigate}
+                      formatAreaHa={formatAreaHa}
+                    />
                   ))}
                 </div>
               )}
@@ -3512,296 +3518,20 @@ export default function LandingPage({
                     className="flex gap-5 sm:gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none"
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                   >
-                    {sortedInvestmentsList.map((inv, idx) => (
-<div
-                    key={inv.id}
-                    className="snap-start shrink-0 w-[88vw] xs:w-[82vw] sm:w-[380px] md:w-[400px] lg:w-[420px] flex flex-col"
-                  >
-                    <TiltCard
-                      maxTilt={5}
-                      scaleOnHover={1.012}
-                      glareOpacity={0.1}
-                      style={{ animationDelay: `${idx * 150}ms` }}
-                      className={`w-full h-full rounded-[26px] sm:rounded-[28px] border overflow-hidden flex flex-col group/card
-                                  transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/50 hover:shadow-2xl hover:shadow-emerald-900/20 glass-crystal glass-card-interactive
-                                  ${isDark ? 'bg-surface/90 border-white/10 shadow-[0_18px_50px_rgba(0,0,0,0.6)]' : 'bg-white/95 border-slate-200/90 shadow-[0_16px_45px_rgba(15,23,42,0.07)]'}`}
-                    >
-                      {/* Header Image Section */}
-                      <div className="h-60 sm:h-64 overflow-hidden relative w-full">
-                        {(() => {
-                          const cardWidth = 380;
-                          const cardOffset = idx * (cardWidth + 24) - potensiScrollLeft;
-                          const parallaxOffset = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
-                            ? 0
-                            : Math.max(-12, Math.min(12, (cardOffset / 1000) * 15));
-
-                          return (
-                            <LazyImage
-                              src={getImageUrl(inv.photoUrl, 'facility')}
-                              alt={inv.name}
-                              isDark={isDark}
-                              style={{ transform: `translateX(${parallaxOffset}px) scale(1.08)` }}
-                              imgClassName="w-full h-full object-cover transform group-hover/card:scale-108 transition-transform duration-700 ease-out"
-                            />
-                          );
-                        })()}
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-black/25 pointer-events-none" />
-
-                        {/* Top Badges Bar */}
-                        <div className="absolute top-3 inset-x-3 flex items-center justify-between gap-1.5 z-10">
-                          {/* Sector Badge */}
-                          <div
-                            className={`px-3 py-1 rounded-xl text-[11px] font-extrabold tracking-wide uppercase backdrop-blur-md shadow-md border ${getSectorColor(inv.sector).badgeBg}`}
-                          >
-                            {t(getSectorI18nKey(inv.sector))}
-                          </div>
-
-                          {/* Right Badges: AI Score & Tier Badge */}
-                          <div className="flex items-center gap-1.5">
-                            {(inv.smartData?.aiScore || inv.smartData?.ai_score) && (
-                              <div className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-base/85 backdrop-blur-md border border-teal-400/40 text-white shadow-md shrink-0">
-                                <span className="text-teal-400 text-xs">★</span>
-                                <span className="text-[10px] font-black tracking-tight text-teal-300">
-                                  {inv.smartData?.aiScore || inv.smartData?.ai_score}
-                                </span>
-                              </div>
-                            )}
-
-                            {/* Project Readiness Tier (BKPM RI Standard) */}
-                            {(() => {
-                              const isTier1 = (inv as any).readinessTier === 'Tier 1' || 
-                                              (inv as any).readiness_tier === 'Tier 1' || 
-                                              (inv as any).status_kesiapan?.toLowerCase().includes('ready') ||
-                                              Boolean(inv.investmentValue && inv.investmentValue > 0 && inv.areaHa && inv.areaHa > 0 && inv.landStatus);
-
-                              return isTier1 ? (
-                                <div 
-                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-extrabold bg-emerald-950/90 text-emerald-300 border border-emerald-400/60 backdrop-blur-md shadow-md"
-                                  title="Ready to Offer (Tier 1): Full FS Siap, Lahan Clean & Clear, Kesesuaian RTRW Terkonfirmasi (Standar BKPM RI)"
-                                >
-                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                  <span>Tier 1: Ready to Offer</span>
-                                </div>
-                              ) : (
-                                <div 
-                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-extrabold bg-sky-950/90 text-sky-300 border border-sky-400/60 backdrop-blur-md shadow-md"
-                                  title="Under Development (Tier 2): Pre-FS Tersedia, Kajian Tata Ruang Sedang Difinalisasi (Standar BKPM RI)"
-                                >
-                                  <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
-                                  <span>Tier 2: Under Dev</span>
-                                </div>
-                              );
-                            })()}
-                          </div>
-                        </div>
-
-                        {/* Bottom Photo Unified Aero-Glass Geotag Bar */}
-                        <div className="absolute bottom-3 inset-x-3 flex items-center justify-between text-xs text-white z-10 pointer-events-none">
-                          <div className="w-full flex items-center justify-between bg-base/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/15 shadow-md">
-                            <div className="flex items-center gap-1.5 font-semibold text-slate-100 min-w-0 pr-2">
-                              <MapPin size={13} className="text-emerald-400 shrink-0" />
-                              <span className="truncate max-w-[190px] sm:max-w-[220px]">
-                                {districts.find((d) => d.id === inv.districtId)?.name || (inv as any).districtName || (inv as any).lokasi || inv.districtId || "Kabupaten Luwu"}
-                              </span>
-                            </div>
-                            <div className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-300 bg-emerald-950/90 px-2 py-0.5 rounded-lg border border-emerald-500/40 flex items-center gap-1 shrink-0">
-                              <ShieldCheck size={12} className="text-emerald-400" />
-                              <span>GIS Valid</span>
-                            </div>
-                          </div>
-                        </div>
+                    {sortedInvestmentsList.map((inv) => (
+                      <div
+                        key={inv.id}
+                        className="snap-start shrink-0 w-[88vw] xs:w-[82vw] sm:w-[360px] md:w-[380px] flex flex-col"
+                      >
+                        <InvestmentCard
+                          inv={inv}
+                          isDark={isDark}
+                          districts={districts}
+                          onSelectInvestment={onSelectInvestment}
+                          onNavigate={navigate}
+                          formatAreaHa={formatAreaHa}
+                        />
                       </div>
-
-                      {/* Card Content Body */}
-                      <div className="p-2.5 sm:p-6 flex flex-col flex-grow">
-                        <div className="mb-4">
-                          {(() => {
-                            const descText = `${inv.name || ""} ${inv.sector || ""} ${(inv as any).subSector || ""} ${inv.description || ""} ${(inv as any).deskripsi_singkat || ""}`.toLowerCase();
-                            const isHilirisasi =
-                              descText.includes("hilirisasi") ||
-                              descText.includes("sentra") ||
-                              descText.includes("smelter") ||
-                              descText.includes("olahan") ||
-                              descText.includes("pengolahan") ||
-                              descText.includes("kakao") ||
-                              descText.includes("kopi");
-
-                            return isHilirisasi ? (
-                              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wider bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/25 mb-2">
-                                <Sparkles size={11} className="text-teal-500" />
-                                <span>Hilirisasi Komoditas</span>
-                              </div>
-                            ) : null;
-                          })()}
-                          <h3 className="text-lg sm:text-xl font-extrabold font-sans line-clamp-2 leading-snug group-hover/card:text-emerald-600 dark:group-hover/card:text-emerald-400 transition-colors tracking-tight text-slate-900 dark:text-white">
-                            {inv.name}
-                          </h3>
-                        </div>
-
-                        {/* Symmetrical 3-Column Bento Metric Matrix 2.0 */}
-                        {(() => {
-                          const rawLabor = inv.komitmenTenagaLokal ?? inv.komitmen_tenaga_lokal ?? inv.tenagaKerja ?? inv.tenaga_kerja ?? inv.tenagaLokal ?? inv.tenaga_lokal ?? inv.tkl ?? 0;
-                          const laborVal = typeof rawLabor === 'number' ? rawLabor : parseFloat(String(rawLabor).replace(/[^0-9.]/g, '')) || 0;
-                          const hasLand = Boolean(inv.areaHa && inv.areaHa > 0);
-                          const hasInvest = Boolean(inv.investmentValue && inv.investmentValue > 0);
-
-                          return (
-                            <div className="grid grid-cols-3 gap-2 sm:gap-2.5 mb-4.5">
-                              {/* Spec 1: Luas Lahan */}
-                              <div className={`p-2.5 rounded-2xl border text-center flex flex-col items-center justify-between transition-all duration-300 ${
-                                isDark ? 'bg-slate-800/40 border-slate-700/60 hover:bg-slate-800/70 hover:border-slate-600' : 'bg-slate-50/80 border-slate-200/80 hover:bg-white hover:border-slate-300 shadow-xs'
-                              }`}>
-                                <div className="flex items-center gap-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                  <div className={`w-4 h-4 rounded-full bg-[#C9A24B]/10 dark:bg-[#C9A24B]/20 flex items-center justify-center shrink-0`}>
-                    <MapPin size={10} className="text-[#A07A28] dark:text-[#C9A24B]" />
-                  </div>
-                                  <span>Lahan</span>
-                                </div>
-                                <span className={`text-xs sm:text-sm font-extrabold ${hasLand ? 'text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400 font-medium text-[11px]'}`}>
-                                  {hasLand ? `${formatAreaHa(inv.areaHa)} Ha` : "Pra-FS"}
-                                </span>
-                              </div>
-
-                              {/* Spec 2: Estimasi Investasi */}
-                              <div className={`p-2.5 rounded-2xl border text-center flex flex-col items-center justify-between transition-all duration-300 ${
-                                isDark ? 'bg-slate-800/40 border-slate-700/60 hover:bg-slate-800/70 hover:border-slate-600' : 'bg-slate-50/80 border-slate-200/80 hover:bg-white hover:border-slate-300 shadow-xs'
-                              }`}>
-                                <div className="flex items-center gap-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                                  <div className="w-4 h-4 rounded-full bg-emerald-500/10 dark:bg-emerald-400/10 flex items-center justify-center shrink-0">
-                                    <Building size={10} className="text-emerald-500" />
-                                  </div>
-                                  <span>Est. Nilai</span>
-                                </div>
-                                <span className={`text-xs sm:text-sm font-extrabold ${hasInvest ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400 font-medium text-[11px]'}`}>
-                                  {hasInvest ? formatRupiah(inv.investmentValue) : "Kajian FS"}
-                                </span>
-                              </div>
-
-                              {/* Spec 3: Tenaga Kerja */}
-                              <div className={`p-2.5 rounded-2xl border text-center flex flex-col items-center justify-between transition-all duration-300 ${
-                                isDark ? 'bg-slate-800/40 border-slate-700/60 hover:bg-slate-800/70 hover:border-slate-600' : 'bg-slate-50/80 border-slate-200/80 hover:bg-white hover:border-slate-300 shadow-xs'
-                              }`}>
-                                <div className="flex items-center gap-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                                  <div className="w-4 h-4 rounded-full bg-teal-500/10 dark:bg-teal-400/10 flex items-center justify-center shrink-0">
-                                    <Users size={10} className="text-teal-500" />
-                                  </div>
-                                  <span>SDM</span>
-                                </div>
-                                <span className={`text-xs sm:text-sm font-extrabold ${laborVal > 0 ? 'text-teal-600 dark:text-teal-400' : 'text-slate-500 dark:text-slate-400 font-medium text-[11px]'}`}>
-                                  {laborVal > 0 ? `${laborVal} Jiwa` : "Lokal / UMKM"}
-                                </span>
-                              </div>
-                            </div>
-                          );
-                        })()}
-
-                        {/* Realization & Spatial Readiness Progress Bar */}
-                        {(() => {
-                          const rawPct = Math.min(100, Math.round(((inv.investmentValue || 0) / INVESTMENT_TARGET_VAL) * 100 * Math.max(investments.length, 1)));
-                          const isTier1 = (inv as any).readinessTier === 'Tier 1' || (inv as any).readiness_tier === 'Tier 1' || Boolean(inv.investmentValue && inv.areaHa);
-                          const pct = typeof rawPct === 'number' && !isNaN(rawPct) && rawPct > 0 ? rawPct : (isTier1 ? 85 : 45);
-                          return (
-                            <div className="mb-4.5">
-                              <div className="flex justify-between items-center mb-1.5">
-                                <div className="flex items-center gap-1.5">
-                                  <span className={`text-[10px] uppercase tracking-wider font-extrabold ${textMuted}`}>
-                                    Kesiapan Proyek & Realisasi
-                                  </span>
-                                </div>
-                                <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 font-mono">{pct}%</span>
-                              </div>
-                              <div className={`h-2 rounded-full overflow-hidden p-0.5 border ${isDark ? 'bg-slate-800/80 border-slate-700/50' : 'bg-slate-100 border-slate-200/80'}`}>
-                                <div
-                                  className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.35)] transition-all duration-700"
-                                  style={{ width: `${pct}%` }}
-                                />
-                              </div>
-                            </div>
-                          );
-                        })()}
-
-                        {/* Action Buttons Section — Streamlined 2 Primary Actions */}
-                        <div className={`mt-auto pt-3.5 flex flex-col gap-2 border-t ${isDark ? 'border-slate-800/80' : 'border-slate-100'}`}>
-                          {/* Row 1: Primary Spatial Exploration & Fast-Track Interest */}
-                          <div className="grid grid-cols-2 gap-2">
-                            <motion.button
-                              whileTap={{ scale: 0.96 }}
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                if (onSelectInvestment) {
-                                  onSelectInvestment(inv.id);
-                                } else {
-                                  window.history.pushState({}, "", `/peta-spasial?id=${inv.id}`);
-                                  if (onEnter) {
-                                    onEnter(Role.INVESTOR);
-                                  } else {
-                                    navigate(`/peta-spasial?id=${inv.id}`);
-                                  }
-                                }
-                              }}
-                              className={`min-h-[42px] py-2 px-3 rounded-xl border text-xs sm:text-sm font-bold transition-all duration-300 flex items-center justify-center gap-1.5 hover:scale-[1.02] active:scale-[0.97] cursor-pointer
-                                          ${isDark
-                                            ? 'border-slate-700/80 bg-slate-800/70 text-slate-200 hover:border-emerald-500/50 hover:bg-slate-800 hover:text-emerald-300 shadow-sm'
-                                            : 'border-slate-200/90 bg-slate-50/90 text-slate-800 hover:border-emerald-400/60 hover:bg-white hover:text-emerald-700 shadow-xs'}`}
-                              title="Buka Peta Spasial GIS & Analisis Lahan"
-                            >
-                              <Search size={14} className="text-slate-400 group-hover/card:text-emerald-500 transition-colors" />
-                              <span>{t("common.detail", "Eksplorasi Spasial")}</span>
-                            </motion.button>
-
-                            <motion.button
-                              whileTap={{ scale: 0.96 }}
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                navigate("/login?role=investor");
-                              }}
-                              className="relative overflow-hidden min-h-[42px] py-2 px-3 rounded-xl text-xs sm:text-sm font-bold text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 shadow-md shadow-black/25 flex items-center justify-center gap-1.5 cursor-pointer group/cta"
-                            >
-                              <span className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none animate-shimmer-sweep" />
-                              <span className="relative z-10">{t("landing.ajukanMinat", "Ajukan Minat")}</span>
-                              <ChevronRight size={15} className="relative z-10 transition-transform group-hover/cta:translate-x-0.5" />
-                            </motion.button>
-                          </div>
-
-                          {/* Row 2: Secondary Quick Links (IPRO Teaser & Konsultasi VIP) */}
-                          <div className="flex items-center justify-between gap-2 pt-1 text-[11px] font-bold">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                setSelectedIproForModal(inv);
-                                setIsIproPitchModalOpen(true);
-                              }}
-                              className="flex-1 py-1.5 px-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-emerald-500/25 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                              title="Lihat Dokumen IPRO & Pitch Deck Investasi"
-                            >
-                              <FileText size={13} className="text-emerald-600 dark:text-emerald-400" />
-                              <span>Teaser IPRO</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                setSelectedInvestmentForConsultation(inv);
-                                setIsFastTrackConsultationOpen(true);
-                              }}
-                              className="flex-1 py-1.5 px-2 rounded-lg bg-[#C9A24B]/10 hover:bg-[#C9A24B]/15 text-[#A07A28] dark:text-[#C9A24B] border border-[#A07A28]/25 dark:border-[rgba(201,162,75,0.25)] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                              title="Jadwalkan Konsultasi VIP Fast-Track"
-                            >
-                              <Sparkles size={13} className="text-[#A07A28] dark:text-[#C9A24B]" />
-                              <span>Konsultasi VIP</span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </TiltCard>
-                  </div>
                     ))}
                   </div>
 
