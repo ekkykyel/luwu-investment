@@ -1,5 +1,11 @@
 {
   "hero": {
+    "badge": "LUWU REGENCY · DIGITAL & SPATIAL INVESTMENT PORTAL",
+    "line1": "Gateway to",
+    "line2": "Digital Investment",
+    "searchPlaceholder": "Search investment potential, sector, or district...",
+    "cta1": "Explore Investment Potential",
+    "cta2": "Investment Consultation",
     "grp_badge": "Regional Spatial Investment Platform",
     "title": "Seamless Public Service Ecosystem",
     "subtitle": "Integrated Public Service Portal of Luwu Regency",
