@@ -912,8 +912,8 @@ export default function LandingPage({
   const textMuted = isDark ? "text-slate-400 font-medium" : "text-slate-600 font-medium";
   const textHighlight = isDark ? "text-sky-300 font-bold" : "text-sky-700 font-bold";
   const inputBg = isDark
-    ? "bg-[#143755] border-white/[0.09] text-slate-100 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all duration-200 font-semibold"
-    : "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-all duration-200 font-semibold";
+    ? "bg-[#143755] border-white/[0.09] !text-white placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all duration-200 font-semibold"
+    : "bg-white border-slate-300 !text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-all duration-200 font-semibold";
 
   const handleToggleTheme = () => {
     const nextDark = !isDark;

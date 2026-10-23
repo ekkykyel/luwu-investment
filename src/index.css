@@ -142,13 +142,13 @@ body {
   input[type="email"],
   select,
   textarea {
-    color: #0f172a;
+    color: #0f172a !important;
   }
 
   input[type="text"]::placeholder,
   input[type="number"]::placeholder,
   textarea::placeholder {
-    color: #94a3b8;
+    color: #94a3b8 !important;
   }
 
   .dark input[type="text"],
@@ -157,13 +157,13 @@ body {
   .dark input[type="email"],
   .dark select,
   .dark textarea {
-    color: #ffffff;
+    color: #ffffff !important;
   }
 
   .dark input[type="text"]::placeholder,
   .dark input[type="number"]::placeholder,
   .dark textarea::placeholder {
-    color: #94a3b8;
+    color: #94a3b8 !important;
   }
 }
 
