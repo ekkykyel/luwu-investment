@@ -2918,205 +2918,203 @@ export default function LandingPage({
       </motion.nav>
 
       <div className="relative z-10 pt-20 sm:pt-24 md:pt-24 lg:pt-24" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 5rem)' }}>
-        {/* 1. HERO SECTION TOTAL REBUILD — FLOATING CONTAINER CARD (SAME AS PORTAL MPP SIMPURUSIANG) */}
-        <div className="w-full px-3 sm:px-6 md:px-8 max-w-6xl lg:max-w-7xl mx-auto pt-2 pb-6">
-          <section
-            id="hero-section"
-            className="relative w-full rounded-2xl sm:rounded-3xl lg:rounded-[2.5rem] overflow-hidden border border-slate-700/60 dark:border-white/12 shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
-            style={{ minHeight: 'clamp(500px, 58vh, 660px)' }}
-          >
-            {/* ── Layer 1: Ken Burns foto background ── */}
-            <div
-              className="absolute inset-0 will-change-transform"
-              style={{
-                animation: 'investluwu-ken-burns 18s ease-in-out infinite',
-                backgroundImage: heroImages?.[0]
-                  ? `url(${heroImages[0]})`
-                  : 'linear-gradient(135deg,#0c3528 0%,#0f4a35 35%,#1a5c40 65%,#0c2340 100%)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center 40%',
-              }}
-            />
+        {/* 1. HERO SECTION TOTAL REBUILD — FULL-BLEED IMMERSIVE HERO */}
+        <section
+          id="hero-section"
+          className="relative w-full overflow-hidden"
+          style={{ minHeight: 'clamp(520px, 60vh, 680px)' }}
+        >
+          {/* ── Layer 1: Ken Burns foto background ── */}
+          <div
+            className="absolute inset-0 will-change-transform"
+            style={{
+              animation: 'investluwu-ken-burns 18s ease-in-out infinite',
+              backgroundImage: heroImages?.[0]
+                ? `url(${heroImages[0]})`
+                : 'linear-gradient(135deg,#0c3528 0%,#0f4a35 35%,#1a5c40 65%,#0c2340 100%)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center 40%',
+            }}
+          />
 
-            {/* ── Layer 2: Aurora blobs ── */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              <div className="absolute rounded-full will-change-transform" style={{
-                width:'42%',height:'60%',top:'-12%',left:'-6%',
-                background:'rgba(16,185,129,.22)',filter:'blur(80px)',
-                animation:'investluwu-aurora-a 12s ease-in-out infinite'
-              }}/>
-              <div className="absolute rounded-full will-change-transform" style={{
-                width:'48%',height:'52%',top:'8%',right:'-10%',
-                background:'rgba(6,182,212,.15)',filter:'blur(80px)',
-                animation:'investluwu-aurora-b 15s ease-in-out infinite'
-              }}/>
-              <div className="absolute rounded-full will-change-transform" style={{
-                width:'36%',height:'44%',bottom:'-8%',left:'32%',
-                background:'rgba(99,102,241,.12)',filter:'blur(80px)',
-                animation:'investluwu-aurora-c 18s ease-in-out infinite'
-              }}/>
+          {/* ── Layer 2: Aurora blobs ── */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute rounded-full will-change-transform" style={{
+              width:'42%',height:'60%',top:'-12%',left:'-6%',
+              background:'rgba(16,185,129,.2)',filter:'blur(80px)',
+              animation:'investluwu-aurora-a 12s ease-in-out infinite'
+            }}/>
+            <div className="absolute rounded-full will-change-transform" style={{
+              width:'48%',height:'52%',top:'8%',right:'-10%',
+              background:'rgba(6,182,212,.13)',filter:'blur(80px)',
+              animation:'investluwu-aurora-b 15s ease-in-out infinite'
+            }}/>
+            <div className="absolute rounded-full will-change-transform" style={{
+              width:'36%',height:'44%',bottom:'-8%',left:'32%',
+              background:'rgba(99,102,241,.10)',filter:'blur(80px)',
+              animation:'investluwu-aurora-c 18s ease-in-out infinite'
+            }}/>
+          </div>
+
+          {/* ── Layer 3: Grid digital overlay ── */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            backgroundImage:
+              'linear-gradient(rgba(16,185,129,.04) 1px,transparent 1px),'+
+              'linear-gradient(90deg,rgba(16,185,129,.04) 1px,transparent 1px)',
+            backgroundSize:'28px 28px',
+            maskImage:'radial-gradient(ellipse 80% 60% at 50% 40%,#000 40%,transparent 100%)',
+          }}/>
+
+          {/* ── Layer 4: Scanline ── */}
+          <div className="absolute left-0 right-0 pointer-events-none z-10" style={{
+            height:'1.5px',
+            background:'linear-gradient(90deg,transparent,rgba(16,185,129,.18),transparent)',
+            animation:'investluwu-scanline 6s linear infinite',
+          }}/>
+
+          {/* ── Layer 5: Gradient overlay bawah ── */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/25 to-slate-950/10"/>
+
+          {/* ── Konten hero — di atas semua layer ── */}
+          <div className="relative z-20 flex flex-col justify-end h-full max-w-6xl mx-auto px-4 md:px-8 pb-10 pt-24">
+
+            {/* Live badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full w-fit mb-5
+                            bg-emerald-500/12 border border-emerald-500/25
+                            text-emerald-300 text-[10px] font-medium uppercase tracking-[.07em]"
+                 style={{animation:'investluwu-fade-up .6s ease both'}}>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"
+                    style={{animation:'investluwu-dot-blink 2s ease infinite'}}/>
+              {t('hero.badge') || 'Pemerintah Kabupaten Luwu · Portal Investasi Digital & Spasial'}
             </div>
 
-            {/* ── Layer 3: Grid digital overlay ── */}
-            <div className="absolute inset-0 pointer-events-none" style={{
-              backgroundImage:
-                'linear-gradient(rgba(16,185,129,.05) 1px,transparent 1px),'+
-                'linear-gradient(90deg,rgba(16,185,129,.05) 1px,transparent 1px)',
-              backgroundSize:'28px 28px',
-              maskImage:'radial-gradient(ellipse 80% 60% at 50% 40%,#000 40%,transparent 100%)',
-            }}/>
+            {/* Heading — dua baris dengan kontras weight */}
+            <h1 className="tracking-tight leading-[1.08] mb-4"
+                style={{animation:'investluwu-fade-up .6s .1s ease both'}}>
+              <span className="block text-3xl md:text-5xl lg:text-[3.25rem] font-light text-white/85">
+                {t('hero.line1') || 'Pintu Gerbang'}
+              </span>
+              <span className="block text-4xl md:text-6xl lg:text-[4rem] font-bold text-transparent
+                               bg-gradient-to-r from-emerald-400 via-cyan-400 to-emerald-300
+                               bg-clip-text [-webkit-background-clip:text]">
+                {t('hero.line2') || 'Investasi Digital'}
+              </span>
+            </h1>
 
-            {/* ── Layer 4: Scanline ── */}
-            <div className="absolute left-0 right-0 pointer-events-none z-10" style={{
-              height:'1.5px',
-              background:'linear-gradient(90deg,transparent,rgba(16,185,129,.18),transparent)',
-              animation:'investluwu-scanline 6s linear infinite',
-            }}/>
+            {/* Subtitle */}
+            <p className="text-white/55 text-base md:text-lg max-w-xl mb-5 leading-relaxed"
+               style={{animation:'investluwu-fade-up .6s .2s ease both'}}>
+              {t('hero.subtitle') || 'Portal investasi spasial terintegrasi Kabupaten Luwu — analisis GIS, validasi PKKPR, dan peluang investasi dalam satu ekosistem'}
+            </p>
 
-            {/* ── Layer 5: Gradient overlay bawah ── */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/40 to-slate-950/20"/>
-
-            {/* ── Konten hero — di atas semua layer ── */}
-            <div className="relative z-20 flex flex-col justify-end h-full px-5 sm:px-8 md:px-12 pt-16 sm:pt-20 lg:pt-24 pb-8 md:pb-10">
-
-              {/* Live badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full w-fit mb-4
-                              bg-emerald-500/15 border border-emerald-500/30
-                              text-emerald-300 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[.07em]"
-                   style={{animation:'investluwu-fade-up .6s ease both'}}>
-                <span className="w-2 h-2 rounded-full bg-emerald-400"
-                      style={{animation:'investluwu-dot-blink 2s ease infinite'}}/>
-                {t('hero.badge') || 'PEMKAB LUWU · PORTAL INVESTASI DIGITAL & SPASIAL'}
+            {/* Search bar */}
+            <div className="w-full max-w-xl mb-5"
+                 style={{animation:'investluwu-fade-up .6s .25s ease both'}}>
+              <div className="flex items-center gap-3 px-4 py-3.5 rounded-2xl border
+                              backdrop-blur-md transition-all duration-200
+                              bg-white/8 border-white/15
+                              hover:bg-white/12 hover:border-white/25
+                              focus-within:bg-white/14 focus-within:border-emerald-400/50">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                     className="flex-shrink-0 text-white/45" aria-hidden="true">
+                  <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.3"/>
+                  <path d="M11 11l3 3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+                </svg>
+                <input
+                  type="text"
+                  placeholder={t('hero.searchPlaceholder') || 'Cari potensi investasi, sektor, atau kecamatan...'}
+                  className="flex-1 bg-transparent text-white/90 placeholder:text-white/35 outline-none min-h-[24px]"
+                  style={{fontSize:'16px'}}
+                  value={smartFilterState.searchTerm}
+                  onChange={e => setSmartFilterState(prev => ({ ...prev, searchTerm: e.target.value }))}
+                  onKeyDown={e => e.key === 'Enter' && scrollToSection("potensi-section")}
+                />
+                <kbd className="hidden md:flex items-center gap-1 px-2 py-1 rounded-md
+                                bg-white/10 text-white/35 text-[10px] border border-white/10">
+                  ⌘K
+                </kbd>
               </div>
-
-              {/* Heading — dua baris dengan kontras weight */}
-              <h1 className="tracking-tight leading-[1.08] mb-4"
-                  style={{animation:'investluwu-fade-up .6s .1s ease both'}}>
-                <span className="block text-2xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-light text-white/90">
-                  {t('hero.line1') || 'Pintu Gerbang'}
+              {/* Popular search tags */}
+              <div className="flex items-center gap-2 mt-2.5 flex-wrap">
+                <span className="text-[11px] text-white/35 uppercase tracking-[.07em]">
+                  Populer:
                 </span>
-                <span className="block text-3xl sm:text-5xl md:text-6xl lg:text-[4rem] font-bold text-transparent
-                                 bg-gradient-to-r from-emerald-400 via-cyan-400 to-emerald-300
-                                 bg-clip-text [-webkit-background-clip:text]">
-                  {t('hero.line2') || 'Investasi Digital'}
-                </span>
-              </h1>
-
-              {/* Subtitle */}
-              <p className="text-white/65 text-sm sm:text-base md:text-lg max-w-xl mb-5 leading-relaxed"
-                 style={{animation:'investluwu-fade-up .6s .2s ease both'}}>
-                {t('hero.subtitle') || 'Portal pelayanan publik & peluang investasi terpadu Kabupaten Luwu — analisis GIS, validasi PKKPR, dan IPRO dalam satu ekosistem.'}
-              </p>
-
-              {/* Search bar */}
-              <div className="w-full max-w-xl mb-5"
-                   style={{animation:'investluwu-fade-up .6s .25s ease both'}}>
-                <div className="flex items-center gap-3 px-4 py-3 sm:py-3.5 rounded-2xl border
-                                backdrop-blur-md transition-all duration-200
-                                bg-white/10 border-white/20
-                                hover:bg-white/14 hover:border-white/30
-                                focus-within:bg-white/16 focus-within:border-emerald-400/60">
-                  <svg width="18" height="18" viewBox="0 0 16 16" fill="none"
-                       className="flex-shrink-0 text-white/50" aria-hidden="true">
-                    <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.3"/>
-                    <path d="M11 11l3 3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-                  </svg>
-                  <input
-                    type="text"
-                    placeholder={t('hero.searchPlaceholder') || 'Cari potensi investasi, sektor, atau kecamatan...'}
-                    className="flex-1 bg-transparent text-white/90 placeholder:text-white/40 outline-none min-h-[28px] text-sm sm:text-base"
-                    style={{fontSize:'16px'}}
-                    value={smartFilterState.searchTerm}
-                    onChange={e => setSmartFilterState(prev => ({ ...prev, searchTerm: e.target.value }))}
-                    onKeyDown={e => e.key === 'Enter' && scrollToSection("potensi-section")}
-                  />
-                  <kbd className="hidden md:flex items-center gap-1 px-2 py-1 rounded-md
-                                  bg-white/10 text-white/40 text-[10px] border border-white/10">
-                    ⌘K
-                  </kbd>
-                </div>
-                {/* Popular search tags */}
-                <div className="flex items-center gap-2 mt-2.5 flex-wrap">
-                  <span className="text-[11px] text-white/40 uppercase tracking-[.07em]">
-                    Populer:
-                  </span>
-                  {['Kakao','Rumput Laut','Pariwisata','PKKPR'].map(tag => (
-                    <button key={tag}
-                      type="button"
-                      onClick={() => {
-                        setSmartFilterState(prev => ({ ...prev, searchTerm: tag }));
-                        scrollToSection("potensi-section");
-                      }}
-                      className="px-2.5 py-1 rounded-full text-[11px] font-medium
-                                 bg-white/10 hover:bg-white/18 text-white/70 hover:text-white
-                                 border border-white/15 hover:border-white/30
-                                 transition-all duration-150 min-h-[32px] cursor-pointer">
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* CTA buttons */}
-              <div className="flex gap-3 flex-wrap mb-6"
-                   style={{animation:'investluwu-fade-up .6s .3s ease both'}}>
-                <button
-                  type="button"
-                  onClick={(e: any) => handleGisClick(e, "default")}
-                  className="inline-flex items-center gap-2 px-6 py-3.5 min-h-[48px]
-                             rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white
-                             text-sm font-semibold transition-all duration-200
-                             hover:-translate-y-0.5
-                             shadow-[0_4px_16px_rgba(16,185,129,.4)] cursor-pointer">
-                  <Globe size={16}/>
-                  {t('hero.cta1') || 'Jelajahi Potensi Investasi'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsFastTrackConsultationOpen(true)}
-                  className="inline-flex items-center gap-2 px-6 py-3.5 min-h-[48px]
-                             rounded-xl bg-white/10 hover:bg-white/18 text-white/90
-                             border border-white/25 text-sm font-medium transition-all duration-200
-                             backdrop-blur-md cursor-pointer">
-                  <MessageCircle size={16}/>
-                  {t('hero.cta2') || 'Konsultasi Investasi'}
-                </button>
-              </div>
-
-              {/* Ticker live data */}
-              <div className="w-full overflow-hidden -mx-5 sm:-mx-8 md:-mx-12 px-5 sm:px-8 md:px-12
-                              border-t border-white/10 pt-3">
-                <div className="flex items-center gap-0"
-                     style={{animation:'investluwu-ticker 32s linear infinite'}}
-                     onMouseEnter={e=>(e.currentTarget.style.animationPlayState='paused')}
-                     onMouseLeave={e=>(e.currentTarget.style.animationPlayState='running')}>
-                  {[
-                    {dot:'bg-emerald-400',label:'Total Potensi',value:formatRupiah(totalInvestmentValue)},
-                    {dot:'bg-blue-400',  label:'Proyek Aktif', value:`${activeOpportunities} proyek`},
-                    {dot:'bg-cyan-400',  label:'Kecamatan',    value:`${districts?.length??22} kec.`},
-                    {dot:'bg-purple-400',label:'Desa & Kel.',  value:`${villages?.length??227} desa`},
-                    {dot:'bg-amber-400', label:'PostGIS',       value:'ACTIVE'},
-                    {dot:'bg-emerald-400',label:'AI Spasial',  value:'ONLINE'},
-                    // Duplikasi untuk seamless loop
-                    {dot:'bg-emerald-400',label:'Total Potensi',value:formatRupiah(totalInvestmentValue)},
-                    {dot:'bg-blue-400',  label:'Proyek Aktif', value:`${activeOpportunities} proyek`},
-                    {dot:'bg-cyan-400',  label:'Kecamatan',    value:`${districts?.length??22} kec.`},
-                    {dot:'bg-purple-400',label:'Desa & Kel.',  value:`${villages?.length??227} desa`},
-                    {dot:'bg-amber-400', label:'PostGIS',       value:'ACTIVE'},
-                    {dot:'bg-emerald-400',label:'AI Spasial',  value:'ONLINE'},
-                  ].map((item,i)=>(
-                    <div key={i} className="flex items-center gap-3 px-5 flex-shrink-0">
-                      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${item.dot}`}/>
-                      <span className="text-[11px] text-white/50 whitespace-nowrap">{item.label}</span>
-                      <span className="text-[11px] font-semibold text-white/85 whitespace-nowrap">{item.value}</span>
-                      <span className="w-px h-3 bg-white/10 flex-shrink-0"/>
-                    </div>
-                  ))}
-                </div>
+                {['Kakao','Rumput Laut','Pariwisata','PKKPR'].map(tag => (
+                  <button key={tag}
+                    type="button"
+                    onClick={() => {
+                      setSmartFilterState(prev => ({ ...prev, searchTerm: tag }));
+                      scrollToSection("potensi-section");
+                    }}
+                    className="px-2.5 py-1 rounded-full text-[11px] font-medium
+                               bg-white/8 hover:bg-white/14 text-white/60 hover:text-white
+                               border border-white/12 hover:border-white/25
+                               transition-all duration-150 min-h-[32px] cursor-pointer">
+                    {tag}
+                  </button>
+                ))}
               </div>
             </div>
-          </section>
-        </div>
+
+            {/* CTA buttons */}
+            <div className="flex gap-3 flex-wrap mb-6"
+                 style={{animation:'investluwu-fade-up .6s .3s ease both'}}>
+              <button
+                type="button"
+                onClick={(e: any) => handleGisClick(e, "default")}
+                className="inline-flex items-center gap-2 px-6 py-3.5 min-h-[48px]
+                           rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white
+                           text-sm font-medium transition-all duration-200
+                           hover:-translate-y-0.5
+                           shadow-[0_4px_14px_rgba(16,185,129,.3)] cursor-pointer">
+                <Globe size={16}/>
+                {t('hero.cta1') || 'Jelajahi Potensi Investasi'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsFastTrackConsultationOpen(true)}
+                className="inline-flex items-center gap-2 px-6 py-3.5 min-h-[48px]
+                           rounded-xl bg-white/8 hover:bg-white/14 text-white/80
+                           border border-white/20 text-sm transition-all duration-200
+                           backdrop-blur-md cursor-pointer">
+                <MessageCircle size={16}/>
+                {t('hero.cta2') || 'Konsultasi Investasi'}
+              </button>
+            </div>
+
+            {/* Ticker live data */}
+            <div className="w-full overflow-hidden -mx-4 md:-mx-8 px-4 md:px-8
+                            border-t border-white/8 pt-3">
+              <div className="flex items-center gap-0"
+                   style={{animation:'investluwu-ticker 32s linear infinite'}}
+                   onMouseEnter={e=>(e.currentTarget.style.animationPlayState='paused')}
+                   onMouseLeave={e=>(e.currentTarget.style.animationPlayState='running')}>
+                {[
+                  {dot:'bg-emerald-400',label:'Total Potensi',value:formatRupiah(totalInvestmentValue)},
+                  {dot:'bg-blue-400',  label:'Proyek Aktif', value:`${activeOpportunities} proyek`},
+                  {dot:'bg-cyan-400',  label:'Kecamatan',    value:`${districts?.length??22} kec.`},
+                  {dot:'bg-purple-400',label:'Desa & Kel.',  value:`${villages?.length??227} desa`},
+                  {dot:'bg-amber-400', label:'PostGIS',       value:'ACTIVE'},
+                  {dot:'bg-emerald-400',label:'AI Spasial',  value:'ONLINE'},
+                  // Duplikasi untuk seamless loop
+                  {dot:'bg-emerald-400',label:'Total Potensi',value:formatRupiah(totalInvestmentValue)},
+                  {dot:'bg-blue-400',  label:'Proyek Aktif', value:`${activeOpportunities} proyek`},
+                  {dot:'bg-cyan-400',  label:'Kecamatan',    value:`${districts?.length??22} kec.`},
+                  {dot:'bg-purple-400',label:'Desa & Kel.',  value:`${villages?.length??227} desa`},
+                  {dot:'bg-amber-400', label:'PostGIS',       value:'ACTIVE'},
+                  {dot:'bg-emerald-400',label:'AI Spasial',  value:'ONLINE'},
+                ].map((item,i)=>(
+                  <div key={i} className="flex items-center gap-3 px-5 flex-shrink-0">
+                    <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${item.dot}`}/>
+                    <span className="text-[11px] text-white/45 whitespace-nowrap">{item.label}</span>
+                    <span className="text-[11px] font-semibold text-white/80 whitespace-nowrap">{item.value}</span>
+                    <span className="w-px h-3 bg-white/10 flex-shrink-0"/>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Wave Divider setelah Hero */}
         <div
