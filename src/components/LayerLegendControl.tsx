@@ -188,8 +188,8 @@ export default function LayerLegendControl({
   return createPortal(
     <div className={`m-2 sm:m-3 ${
       !isLayerPanelOpen 
-        ? "mt-[175px] sm:mt-[165px] md:mt-38" 
-        : "mt-[175px] sm:mt-[165px] md:mt-24"
+        ? (isLeftSidebarOpen ? "mt-[124px] sm:mt-[105px] md:mt-24" : "mt-[124px] sm:mt-[105px] md:mt-38") 
+        : "mt-[124px] sm:mt-[105px] md:mt-24"
     } ${
       isLeftSidebarOpen ? "md:ml-[288px] lg:ml-[352px]" : "md:ml-2 lg:ml-3"
     } transition-[margin] duration-300 ease-in-out z-[55] pointer-events-auto`}>
@@ -203,7 +203,7 @@ export default function LayerLegendControl({
             exit={{ opacity: 0, x: -25, scale: 0.95 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
             onClick={() => setIsLayerPanelOpen(true)}
-            className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl shadow-2xl border transition-all duration-300 hover:scale-105 active:scale-95 group ${
+            className={`flex items-center gap-2 sm:gap-2.5 px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-2xl shadow-2xl border transition-all duration-300 hover:scale-105 active:scale-95 group ${
               isDarkMode 
                 ? "bg-surface/95 border-slate-700/90 text-white shadow-black/80 backdrop-blur-xl hover:border-indigo-500/80 hover:bg-slate-800" 
                 : "bg-white/95 border-slate-300 text-slate-900 shadow-xl shadow-slate-900/10 backdrop-blur-xl hover:border-indigo-500 hover:bg-slate-50"
@@ -237,7 +237,7 @@ export default function LayerLegendControl({
             animate={{ opacity: 1, x: 0, scaleX: 1 }}
             exit={{ opacity: 0, x: -35, scaleX: 0.85 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className={`p-4 rounded-2xl shadow-2xl border origin-left transition-all duration-300 w-84 sm:w-96 max-w-[calc(100vw-2.5rem)] md:max-w-[390px] max-h-[calc(100dvh-210px)] md:max-h-[calc(100vh-130px)] flex flex-col ${
+            className={`p-4 rounded-2xl shadow-2xl border origin-left transition-all duration-300 w-84 sm:w-96 max-w-[calc(100vw-2.5rem)] md:max-w-[390px] max-h-[calc(100dvh-185px)] md:max-h-[calc(100vh-130px)] flex flex-col ${
               isDarkMode 
                 ? "bg-surface/95 border-slate-700/90 text-white shadow-black/90 backdrop-blur-xl" 
                 : "bg-white/95 border-slate-300/90 text-slate-900 shadow-2xl shadow-slate-900/15 backdrop-blur-xl"
