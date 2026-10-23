@@ -3116,13 +3116,32 @@ export default function LandingPage({
           </div>
         </section>
 
-        {/* PHASE 2 — BENTO STAT GRID (GABUNGKAN 2 SECTION STAT) */}
-        <section className="py-12 md:py-16 px-4 md:px-8 max-w-6xl mx-auto">
-          {/* Bento grid — 2 kartu hero + 4 kartu sekunder */}
-          <div ref={statGridRef} className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        {/* Wave Divider setelah Hero */}
+        <div
+          className={`relative -mt-px overflow-hidden ${isDark ? 'text-slate-950' : 'text-slate-50'}`}
+          style={{ height: '48px' }}
+        >
+          <svg
+            viewBox="0 0 1440 48"
+            className="absolute bottom-0 w-full h-full"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M0,18 C240,2 480,38 720,18 C960,2 1200,34 1440,18 L1440,48 L0,48Z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
 
-            {/* Kartu HERO 1 — Total Investasi (full row di mobile) */}
-            <div className={`col-span-2 md:col-span-1 relative overflow-hidden
+        {/* PHASE 2 — BENTO STAT GRID (GABUNGKAN 2 SECTION STAT) */}
+        <section className={`w-full py-12 md:py-16 transition-colors duration-300 ${isDark ? 'bg-slate-950/60' : 'bg-slate-50/80'}`}>
+          <div className="max-w-6xl mx-auto px-4 md:px-8">
+            {/* Bento grid — 2 kartu hero + 4 kartu sekunder */}
+            <div ref={statGridRef} className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+
+              {/* Kartu HERO 1 — Total Investasi (full row di mobile) */}
+              <div className={`col-span-2 md:col-span-1 relative overflow-hidden
                              p-5 rounded-2xl border transition-all duration-300
                              hover:-translate-y-1
                              ${isDark
@@ -3215,7 +3234,8 @@ export default function LandingPage({
             ))}
 
           </div>
-        </section>
+        </div>
+      </section>
 
         {/* EKOSISTEM INVESTASI: 6 PILAR KESIAPAN DAERAH (BLUEPRINT KEMENTERIAN INVESTASI) */}
         <InvestmentReadinessPillars
@@ -3230,10 +3250,11 @@ export default function LandingPage({
         />
 
         {/* 2. DAFTAR POTENSI INVESTASI - EXECUTIVE SHOWCASE */}
-        <div
+        <section
           id="potensi-section"
-          className="scroll-mt-28 sm:scroll-mt-32 container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 py-14 md:py-18 lg:py-20 min-h-[44px] border-t border-slate-200/80 dark:border-slate-800/80 relative"
+          className={`scroll-mt-28 sm:scroll-mt-32 w-full py-14 md:py-18 lg:py-20 min-h-[44px] border-t border-slate-200/80 dark:border-slate-800/80 relative transition-colors duration-300 ${isDark ? 'bg-slate-950/60' : 'bg-slate-50/80'}`}
         >
+          <div className="container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 relative">
           {/* Subtle Ambient Radial Glow for High-End Prestige Feel */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 max-w-4xl h-52 bg-gradient-to-b from-emerald-500/10 via-teal-500/5 to-transparent blur-3xl pointer-events-none -z-10" />
 
@@ -3593,6 +3614,7 @@ export default function LandingPage({
             </motion.button>
           </div>
         </div>
+      </section>
 
         {/* PERTUMBUHAN & KOMPOSISI INVESTASI (ANALYTICS CHART) - MOVED UP FOR STRATEGIC HOOK */}
         <div id="analytics-section" className="scroll-mt-20 sm:scroll-mt-24 mt-4 sm:mt-8 min-h-0 h-auto">
@@ -3614,10 +3636,11 @@ export default function LandingPage({
         </div>
 
         {/* 3. LITERASI & KEUNTUNGAN LUTIM */}
-        <div
+        <section
           id="keuntungan-section"
-          className="scroll-mt-20 sm:scroll-mt-24 container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 py-14 md:py-18 lg:py-20"
+          className={`scroll-mt-20 sm:scroll-mt-24 w-full py-14 md:py-18 lg:py-20 transition-colors duration-300 ${isDark ? 'bg-slate-950/60' : 'bg-slate-50/80'}`}
         >
+          <div className="container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 md:mb-16">
             <div className="invest-eyebrow-emerald mb-3.5">
               <Sparkles className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
@@ -3724,6 +3747,7 @@ export default function LandingPage({
             ))}
           </div>
         </div>
+      </section>
 
         {/* 4.5 FASILITAS PENUNJANG INFRASTRUKTUR */}
         <div
