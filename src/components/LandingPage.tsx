@@ -673,6 +673,46 @@ export default function LandingPage({
   const statGridRef = useRef<HTMLDivElement>(null);
   const [statVisible, setStatVisible] = useState(false);
 
+  // Metrics Logic
+  const totalInvestmentValue = (investments || []).reduce(
+    (acc, inv) => acc + (inv.investmentValue || 0),
+    0,
+  );
+  const activeOpportunities = (investments || []).filter((i) => i.isActive).length;
+
+  const pkkprIssuedCount = useMemo(() => {
+    if (!investments || investments.length === 0) return 0;
+    return investments.filter((item: any) => {
+      const hasDocNum = Boolean(
+        item.pkkpr_doc_number || 
+        item.sk_pkkpr_doc_number || 
+        item.pkkprDocNumber || 
+        item.skPkkprDocNumber ||
+        item.override_document_ref ||
+        item.overrideDocumentRef
+      );
+      const isApproved = 
+        item.pkkprStatus === 'Approved' || 
+        item.pkkpr_status === 'Approved' ||
+        item.status === 'Approved' ||
+        item.status === 'Published';
+      return hasDocNum || isApproved;
+    }).length;
+  }, [investments]);
+
+  const totalLabor = useMemo(() => {
+    if (stats?.totalLabor !== undefined && stats?.totalLabor !== null && Number(stats.totalLabor) > 0) {
+      return Number(stats.totalLabor);
+    }
+    return (investments || []).reduce((sum: number, inv: any) => {
+      const rawVal = inv.komitmenTenagaLokal ?? inv.komitmen_tenaga_lokal ?? inv.penyerapan_tenaga_kerja ?? inv.penyerapanTenagaKerja ?? inv.tenagaKerja ?? inv.tenaga_kerja ?? inv.tenagaLokal ?? inv.tenaga_lokal ?? inv.tkl ?? 0;
+      const num = typeof rawVal === "number" ? rawVal : parseFloat(String(rawVal).replace(/[^0-9.]/g, "")) || 0;
+      const rawForeign = inv.komitmenTenagaAsing ?? inv.komitmen_tenaga_asing ?? inv.tenagaAsing ?? inv.tenaga_asing ?? inv.tka ?? 0;
+      const numForeign = typeof rawForeign === "number" ? rawForeign : parseFloat(String(rawForeign).replace(/[^0-9.]/g, "")) || 0;
+      return sum + num + numForeign;
+    }, 0);
+  }, [stats?.totalLabor, investments]);
+
   useEffect(() => {
     const el = statGridRef.current;
     if (!el) return;
@@ -2121,46 +2161,6 @@ export default function LandingPage({
     return formatRupiahSingkat(val);
   };
 
-  // Metrics Logic
-  const totalInvestmentValue = investments.reduce(
-    (acc, inv) => acc + (inv.investmentValue || 0),
-    0,
-  );
-  const activeOpportunities = investments.filter((i) => i.isActive).length;
-  
-  const pkkprIssuedCount = useMemo(() => {
-    if (!investments || investments.length === 0) return 0;
-    return investments.filter((item: any) => {
-      const hasDocNum = Boolean(
-        item.pkkpr_doc_number || 
-        item.sk_pkkpr_doc_number || 
-        item.pkkprDocNumber || 
-        item.skPkkprDocNumber ||
-        item.override_document_ref ||
-        item.overrideDocumentRef
-      );
-      const isApproved = 
-        item.pkkprStatus === 'Approved' || 
-        item.pkkpr_status === 'Approved' ||
-        item.status === 'Approved' ||
-        item.status === 'Published';
-      return hasDocNum || isApproved;
-    }).length;
-  }, [investments]);
-
-  const totalLabor = useMemo(() => {
-    if (stats?.totalLabor !== undefined && stats?.totalLabor !== null && Number(stats.totalLabor) > 0) {
-      return Number(stats.totalLabor);
-    }
-    return (investments || []).reduce((sum: number, inv: any) => {
-      const rawVal = inv.komitmenTenagaLokal ?? inv.komitmen_tenaga_lokal ?? inv.penyerapan_tenaga_kerja ?? inv.penyerapanTenagaKerja ?? inv.tenagaKerja ?? inv.tenaga_kerja ?? inv.tenagaLokal ?? inv.tenaga_lokal ?? inv.tkl ?? 0;
-      const num = typeof rawVal === "number" ? rawVal : parseFloat(String(rawVal).replace(/[^0-9.]/g, "")) || 0;
-      const rawForeign = inv.komitmenTenagaAsing ?? inv.komitmen_tenaga_asing ?? inv.tenagaAsing ?? inv.tenaga_asing ?? inv.tka ?? 0;
-      const numForeign = typeof rawForeign === "number" ? rawForeign : parseFloat(String(rawForeign).replace(/[^0-9.]/g, "")) || 0;
-      return sum + num + numForeign;
-    }, 0);
-  }, [stats?.totalLabor, investments]);
-
   const {
     pmdnPercentage,
     pmaPercentage,
@@ -3072,7 +3072,7 @@ export default function LandingPage({
               </button>
               <button
                 type="button"
-                onClick={() => setIsFastTrackOpen(true)}
+                onClick={() => setIsFastTrackConsultationOpen(true)}
                 className="inline-flex items-center gap-2 px-6 py-3.5 min-h-[48px]
                            rounded-xl bg-white/8 hover:bg-white/14 text-white/80
                            border border-white/20 text-sm transition-all duration-200
