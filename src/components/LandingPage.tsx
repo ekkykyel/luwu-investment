@@ -76,7 +76,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Role, Investment, District, SektorInvestasi } from "../types";
-import { formatRupiahSingkat, formatRupiahKompak } from "../lib/formatters";
+import { formatRupiah, formatRupiahSingkat, formatRupiahKompak } from "../lib/formatters";
 import { OssRoiSimulatorInputs } from "./OssRoiSimulatorInputs";
 import GisTransitionLoader from "./GisTransitionLoader";
 import { supabase, safeFetchLayerData } from "../lib/supabaseClient";
@@ -912,8 +912,8 @@ export default function LandingPage({
   const textMuted = isDark ? "text-slate-400 font-medium" : "text-slate-600 font-medium";
   const textHighlight = isDark ? "text-sky-300 font-bold" : "text-sky-700 font-bold";
   const inputBg = isDark
-    ? "bg-[#143755] border-white/[0.09] !text-white placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all duration-200 font-semibold"
-    : "bg-white border-slate-300 !text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-all duration-200 font-semibold";
+    ? "bg-[#143755] border-white/[0.09] text-slate-100 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all duration-200 font-semibold"
+    : "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-all duration-200 font-semibold";
 
   const handleToggleTheme = () => {
     const nextDark = !isDark;
@@ -2609,318 +2609,203 @@ export default function LandingPage({
       </motion.nav>
 
       <div className="relative z-10 pt-20 sm:pt-24 md:pt-24 lg:pt-24" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 5rem)' }}>
-        {/* 1. HERO SECTION WITH IMMERSIVE GRAND CANVAS BACKGROUND & INTEGRATED OVERLAYS */}
-        <div
+        {/* 1. HERO SECTION TOTAL REBUILD — FULL-BLEED IMMERSIVE HERO */}
+        <section
           id="hero-section"
-          className="scroll-mt-24 sm:scroll-mt-28 w-full max-w-6xl mx-auto p-2 sm:px-4 sm:pb-2 relative z-10"
+          className="relative w-full overflow-hidden"
+          style={{ minHeight: 'clamp(520px, 60vh, 680px)' }}
         >
-          <style>{`
-            @keyframes aurora1 {
-              0%, 100% { transform: translate(0, 0) scale(1); }
-              33% { transform: translate(40px, -30px) scale(1.1); }
-              66% { transform: translate(-20px, 20px) scale(0.95); }
-            }
-            @keyframes aurora2 {
-              0%, 100% { transform: translate(0, 0) scale(1); }
-              33% { transform: translate(-50px, 20px) scale(1.08); }
-              66% { transform: translate(30px, -40px) scale(1.05); }
-            }
-            @keyframes aurora3 {
-              0%, 100% { transform: translate(0, 0) scale(1); }
-              50% { transform: translate(20px, 30px) scale(1.12); }
-            }
-            @keyframes scanline {
-              0% { top: -4px; }
-              100% { top: calc(100% + 4px); }
-            }
-          `}</style>
-          {!isDark && (
-            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-              <div style={{ animation: 'aurora1 12s ease-in-out infinite' }}
-                   className="absolute w-[500px] h-[500px] -top-24 -left-24 rounded-full bg-emerald-400/20 blur-[100px]" />
-              <div style={{ animation: 'aurora2 15s ease-in-out infinite' }}
-                   className="absolute w-[600px] h-[400px] top-12 -right-36 rounded-full bg-teal-400/15 blur-[100px]" />
-              <div style={{ animation: 'aurora3 18s ease-in-out infinite' }}
-                   className="absolute w-[400px] h-[400px] -bottom-24 left-1/3 rounded-full bg-cyan-400/15 blur-[100px]" />
-              <div className="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent pointer-events-none"
-                   style={{ animation: 'scanline 8s linear infinite' }} />
-            </div>
-          )}
-
-          {/* Subtle architectural grid */}
+          {/* ── Layer 1: Ken Burns foto background ── */}
           <div
-            className={`absolute inset-0 z-0 pointer-events-none ${
-              isDark
-                ? "bg-[linear-gradient(to_right,rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_70%_50%_at_50%_50%,#000_55%,transparent_100%)]"
-                : "bg-[linear-gradient(to_right,rgba(16,185,129,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(16,185,129,0.05)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_70%_50%_at_50%_50%,#000_60%,transparent_100%)]"
-            }`}
+            className="absolute inset-0 will-change-transform"
+            style={{
+              animation: 'investluwu-ken-burns 18s ease-in-out infinite',
+              backgroundImage: heroImages?.[0]
+                ? `url(${heroImages[0]})`
+                : 'linear-gradient(135deg,#0c3528 0%,#0f4a35 35%,#1a5c40 65%,#0c2340 100%)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center 40%',
+            }}
           />
 
-          {/* ───────────────────────────────────────────────────────────────────────────── */}
-          {/* GRAND IMMERSIVE SHOWCASE HERO FRAME — PITA NAVY ELEGAN NUSANTARA (#0A2238) */}
-          {/* ───────────────────────────────────────────────────────────────────────────── */}
-          <div className="relative w-full min-h-[560px] sm:min-h-[590px] lg:min-h-[620px] flex flex-col justify-between rounded-2xl sm:rounded-3xl overflow-hidden border border-[#D9B96E]/20 dark:border-white/[0.08] ring-1 ring-inset ring-white/15 dark:ring-white/[0.05] shadow-2xl bg-[#071727] dark:bg-[#071727] group transition-colors duration-300">
-            
-            {/* 1. Background Investment Photo Slideshow with Parallax & Light Sweep */}
-            <motion.div
-              style={{ y: shouldReduceMotion ? 0 : yBg }}
-              className="absolute inset-0 z-0 overflow-hidden transform-gpu pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black_96%,transparent_100%)]"
-            >
-              {heroImages.map((imgUrl, idx) => {
-                const isSlideActive = idx === currentSlide;
-                if (idx === 0) {
-                  return (
-                    <div
-                      key={`${imgUrl}-${idx}`}
-                      className={`absolute inset-0 w-full h-full transition-opacity duration-500 ${isSlideActive ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
-                    >
-                      <ResponsiveHeroPicture
-                        heroKey="investasi"
-                        alt="Potensi Investasi Luwu Slide 1"
-                        priority={true}
-                        customSrc={imgUrl.startsWith('http') ? imgUrl : undefined}
-                      />
-                    </div>
-                  );
-                }
-                if (!isCarouselIdleReady && !isSlideActive) return null;
-                return (
-                  <motion.img
-                    key={`${imgUrl}-${idx}`}
-                    src={imgUrl}
-                    alt={`Potensi Investasi Luwu Slide ${idx + 1}`}
-                    initial={false}
-                    animate={{
-                      opacity: isSlideActive ? 1 : 0,
-                      scale: isSlideActive ? 1.025 : 1.0,
-                    }}
-                    transition={{
-                      opacity: { duration: 0.5, ease: "easeInOut" },
-                      scale: { duration: 6, ease: "easeOut" }
-                    }}
-                    onError={(e) => {
-                      const target = e.currentTarget;
-                      const fallback = DEFAULT_INVESTMENT_HERO_SLIDES[idx % DEFAULT_INVESTMENT_HERO_SLIDES.length];
-                      if (target.src !== fallback) {
-                        target.src = fallback;
-                      }
-                    }}
-                    style={{ willChange: 'opacity, transform' }}
-                    className="absolute inset-0 w-full h-full object-cover object-[center_top] origin-top pointer-events-none filter brightness-[0.98] contrast-[1.02]"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                );
-              })}
-
-              {/* Exotic Light Beam Sweep Effect */}
-              <motion.div
-                animate={
-                  shouldReduceMotion
-                    ? { opacity: 0 }
-                    : { x: ['-100%', '200%'] }
-                }
-                transition={{
-                  duration: 8,
-                  ease: "easeInOut",
-                  repeat: Infinity,
-                  repeatDelay: 5,
-                }}
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12 pointer-events-none transform-gpu"
-              />
-
-              {/* Soft White Luminous Aesthetic Vignette & Gentle Edge Inset Glow */}
-              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_88%,rgba(255,255,255,0.08)_100%)] dark:bg-[radial-gradient(circle_at_center,transparent_88%,rgba(255,255,255,0.06)_100%)] z-10 transition-colors duration-300" />
-              <div className="absolute inset-0 pointer-events-none rounded-xl sm:rounded-3xl shadow-[inset_0_0_10px_1px_rgba(255,255,255,0.10)] dark:shadow-[inset_0_0_10px_1px_rgba(255,255,255,0.07)] z-10 transition-shadow duration-300" />
-
-              {/* Smooth Soft White Scrim Overlays — Gradasi Batas Halus & Alami */}
-              <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-white/[0.06] dark:from-white/[0.04] via-transparent to-transparent pointer-events-none z-10" />
-              <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-white/[0.08] dark:from-white/[0.05] via-transparent to-transparent pointer-events-none z-10" />
-              <div className="absolute inset-0 bg-white/[0.015] pointer-events-none z-10" />
-
-              {/* Cartographic Topography Contour Overlay */}
-              <TopographicContourOverlay opacity={0.12} />
-            </motion.div>
-
-            {/* 2. Hero Content Floating DIRECTLY INSIDE Photo Canvas (Parallax Lifted via yText) */}
-            <motion.div
-              style={{
-                y: shouldReduceMotion ? 0 : yText,
-                opacity: shouldReduceMotion ? 1 : opacityText,
-              }}
-              className="relative z-20 flex-1 flex flex-col items-center justify-between text-center px-2.5 xs:px-4 sm:px-6 md:px-8 pt-7 sm:pt-9 md:pt-10 pb-5 sm:pb-8 md:pb-10 max-w-4xl mx-auto transform-gpu w-full h-full hero-content-padding"
-            >
-              <motion.div
-                variants={shouldReduceMotion ? undefined : heroContainerVariants}
-                initial={shouldReduceMotion ? false : "hidden"}
-                animate={shouldReduceMotion ? false : "visible"}
-                className="w-full flex-1 flex flex-col items-center justify-center text-center space-y-2.5 xs:space-y-3 sm:space-y-4 md:space-y-5 my-auto"
-              >
-                {/* A. Editorial Kicker (Zero-Pill Discipline - Clean Sans-Serif) */}
-                <motion.div
-                  variants={shouldReduceMotion ? undefined : heroFadeInUpItemVariants}
-                  className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-[9.5px] xs:text-[10px] sm:text-xs font-bold tracking-[0.14em] sm:tracking-[0.16em] uppercase text-emerald-300 font-sans select-none drop-shadow-sm text-center px-1"
-                >
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                    <span className="text-[#D9B96E] font-black tracking-wider">PEMERINTAH KABUPATEN LUWU</span>
-                  </div>
-                  <span aria-hidden="true" className="hidden sm:inline text-white/40">·</span>
-                  <span className="text-slate-100 font-bold tracking-wide">DINAS PENANAMAN MODAL & PTSP</span>
-                </motion.div>
-
-                {/* B. Main Title — Luxury Typography & Gold-Emerald Radiant Gradient */}
-                <motion.div
-                  variants={shouldReduceMotion ? undefined : heroFadeInUpItemVariants}
-                  className="space-y-1 sm:space-y-1.5 max-w-3xl w-full"
-                >
-                  <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-white leading-[1.15] font-sans drop-shadow-md">
-                    <span className="block text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 to-slate-300">
-                      {t('invest.hero_title_p1', 'Pintu Gerbang')}
-                    </span>
-                    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-[#E5C77A] drop-shadow-lg">
-                      {t('invest.hero_title_p2', 'Investasi Digital')}
-                    </span>
-                  </h1>
-                  <p className="text-[10px] xs:text-[11px] sm:text-xs md:text-sm text-slate-100 font-medium max-w-md sm:max-w-xl mx-auto text-balance leading-relaxed drop-shadow-sm">
-                    {t("hero.subtitle", "Cepat. Transparan. Terintegrasi Spasial. Akses data peluang investasi Kabupaten Luwu secara real-time dengan peta interaktif terintegrasi RTRW & OSS-RBA.")}
-                  </p>
-                </motion.div>
-
-                {/* C. Primary Menu & Action Bar inside Hero Canvas */}
-                <motion.div
-                  variants={shouldReduceMotion ? undefined : heroFadeInUpItemVariants}
-                  className="w-full max-w-2xl flex flex-col items-center gap-2 pt-0"
-                >
-                  {/* Two Distinct Actions (Optimized Thumb-Zone for Mobile) */}
-                  <div className="w-full max-w-xl grid grid-cols-1 xs:grid-cols-2 sm:flex sm:flex-row items-center justify-center gap-2 sm:gap-2.5 pt-0">
-                    {/* Primary Action Button */}
-                    <MagneticButton
-                      strength={0.2}
-                      id="btn-hero-gis-analytics"
-                      onClick={(e: any) => handleGisClick(e, "default")}
-                      className="group relative flex w-full sm:w-auto items-center justify-center gap-2 px-4.5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs sm:text-sm transition-all duration-300 cursor-pointer active:scale-95 shadow-xl shadow-emerald-950/50 border border-emerald-400/50 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-2 focus:ring-offset-[#0A2238]"
-                    >
-                      <Globe className="w-4 h-4 text-emerald-100 group-hover:rotate-12 transition-transform duration-300" />
-                      <span className="tracking-wide">{t('hero.btnExploreInvest', 'Jelajahi Peluang Investasi')}</span>
-                      <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-                    </MagneticButton>
-
-                    {/* Secondary Action: Cek Kesesuaian Lahan */}
-                    <button
-                      type="button"
-                      onClick={() => setIsRtrwModalOpen(true)}
-                      className="group relative flex w-full sm:w-auto items-center justify-center gap-2 px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-[#0A2238]/85 hover:bg-[#0F2D4A] text-slate-100 hover:text-white font-bold text-xs sm:text-sm transition-all duration-300 cursor-pointer active:scale-95 border border-white/20 hover:border-[#D9B96E]/60 backdrop-blur-md shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-2 focus:ring-offset-[#0A2238]"
-                    >
-                      <ShieldCheck className="w-4 h-4 text-[#D9B96E] group-hover:scale-110 transition-transform duration-300" />
-                      <span className="tracking-wide">{t('hero.btnCheckZoning', 'Cek Kesesuaian Lahan')}</span>
-                    </button>
-                  </div>
-
-                  {/* Strip Kepercayaan 4 Butir Resmi Pemkab Luwu with micro-stagger (Symmetric 2x2 on Mobile) */}
-                  <motion.div
-                    variants={shouldReduceMotion ? undefined : heroTrustBadgeContainerVariants}
-                    className="grid grid-cols-2 xs:flex xs:flex-wrap items-center justify-center gap-1.5 sm:gap-2 pt-0.5 text-slate-200 text-[10px] sm:text-[11px] font-medium w-full max-w-xl"
-                  >
-                    <motion.div
-                      variants={shouldReduceMotion ? undefined : heroTrustBadgeItemVariants}
-                      className="flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/40 border border-white/10 backdrop-blur-md shadow-2xs text-center"
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                      <span className="truncate">Terintegrasi OSS-RBA</span>
-                    </motion.div>
-                    <motion.div
-                      variants={shouldReduceMotion ? undefined : heroTrustBadgeItemVariants}
-                      className="flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/40 border border-white/10 backdrop-blur-md shadow-2xs text-center"
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                      <span className="truncate">Data RTRW Terverifikasi</span>
-                    </motion.div>
-                    <motion.div
-                      variants={shouldReduceMotion ? undefined : heroTrustBadgeItemVariants}
-                      className="flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/40 border border-white/10 backdrop-blur-md shadow-2xs text-center"
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                      <span className="truncate">DPMPTSP Kab. Luwu</span>
-                    </motion.div>
-                    <motion.div
-                      variants={shouldReduceMotion ? undefined : heroTrustBadgeItemVariants}
-                      className="flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/40 border border-white/10 backdrop-blur-md shadow-2xs text-center"
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                      <span className="truncate">Kepastian Hukum Berusaha</span>
-                    </motion.div>
-                  </motion.div>
-                </motion.div>
-
-                {/* D. Bottom Live Telemetry Bar (Zero Dummy Compliant & Mobile Ergonomic) */}
-                <motion.div
-                  variants={shouldReduceMotion ? undefined : heroFadeInUpItemVariants}
-                  className="w-full pt-2.5 sm:pt-3 mt-auto border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2 text-slate-300 text-[10px] sm:text-[11px] font-sans px-1"
-                >
-                  <div className="flex items-center gap-1.5 sm:gap-2 text-slate-300 truncate">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                    <span className="font-bold text-white">Peluang Investasi:</span>
-                    <span className="text-emerald-400 font-bold">
-                      {investments && investments.length > 0
-                        ? `${investments.length} Titik Potensi Terverifikasi`
-                        : 'WebGIS Spasial Terverifikasi'}
-                    </span>
-                    <span aria-hidden="true" className="hidden md:inline text-white/30">·</span>
-                    <span className="hidden md:inline text-slate-300">22 Kecamatan & 227 Desa</span>
-                  </div>
-
-                  <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-                    {heroImages.length > 1 && (
-                      <div className="flex items-center gap-1.5">
-                        {heroImages.map((_, idx) => (
-                          <button
-                            key={idx}
-                            type="button"
-                            onClick={() => setCurrentSlide(idx)}
-                            aria-label={`Lihat Slide Foto ${idx + 1}`}
-                            className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                              currentSlide === idx
-                                ? 'w-5 bg-emerald-400'
-                                : 'w-1.5 bg-white/30 hover:bg-white/60'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="flex items-center gap-1.5 text-emerald-400 text-[10px] sm:text-[11px] font-bold tracking-wide uppercase">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                      <span>Sistem Spasial Terverifikasi</span>
-                    </div>
-                  </div>
-                </motion.div>
-              </motion.div>
-            </motion.div>
+          {/* ── Layer 2: Aurora blobs ── */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute rounded-full will-change-transform" style={{
+              width:'42%',height:'60%',top:'-12%',left:'-6%',
+              background:'rgba(16,185,129,.2)',filter:'blur(80px)',
+              animation:'investluwu-aurora-a 12s ease-in-out infinite'
+            }}/>
+            <div className="absolute rounded-full will-change-transform" style={{
+              width:'48%',height:'52%',top:'8%',right:'-10%',
+              background:'rgba(6,182,212,.13)',filter:'blur(80px)',
+              animation:'investluwu-aurora-b 15s ease-in-out infinite'
+            }}/>
+            <div className="absolute rounded-full will-change-transform" style={{
+              width:'36%',height:'44%',bottom:'-8%',left:'32%',
+              background:'rgba(99,102,241,.10)',filter:'blur(80px)',
+              animation:'investluwu-aurora-c 18s ease-in-out infinite'
+            }}/>
           </div>
 
-          {/* Subtle Divider */}
-            <motion.div 
-              initial={{ opacity: 0, scaleX: 0 }}
-              animate={{ opacity: 1, scaleX: 1 }}
-              transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
-              className="w-full max-w-3xl mx-auto my-4 sm:my-8 md:my-12 relative flex items-center justify-center"
-            >
-              <div
-                className={`absolute inset-0 h-px ${
-                  isDark
-                    ? "bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                    : "bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent"
-                }`}
-              />
-              <div
-                className={`w-3 h-3 rotate-45 border z-10 ${
-                  isDark
-                    ? "border-white/15 bg-[#0F2D4A]"
-                    : "border-emerald-400 bg-slate-50"
-                }`}
-              />
-            </motion.div>
+          {/* ── Layer 3: Grid digital overlay ── */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            backgroundImage:
+              'linear-gradient(rgba(16,185,129,.04) 1px,transparent 1px),'+
+              'linear-gradient(90deg,rgba(16,185,129,.04) 1px,transparent 1px)',
+            backgroundSize:'28px 28px',
+            maskImage:'radial-gradient(ellipse 80% 60% at 50% 40%,#000 40%,transparent 100%)',
+          }}/>
+
+          {/* ── Layer 4: Scanline ── */}
+          <div className="absolute left-0 right-0 pointer-events-none z-10" style={{
+            height:'1.5px',
+            background:'linear-gradient(90deg,transparent,rgba(16,185,129,.18),transparent)',
+            animation:'investluwu-scanline 6s linear infinite',
+          }}/>
+
+          {/* ── Layer 5: Gradient overlay bawah ── */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/25 to-slate-950/10"/>
+
+          {/* ── Konten hero — di atas semua layer ── */}
+          <div className="relative z-20 flex flex-col justify-end h-full max-w-6xl mx-auto px-4 md:px-8 pb-10 pt-24">
+
+            {/* Live badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full w-fit mb-5
+                            bg-emerald-500/12 border border-emerald-500/25
+                            text-emerald-300 text-[10px] font-medium uppercase tracking-[.07em]"
+                 style={{animation:'investluwu-fade-up .6s ease both'}}>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"
+                    style={{animation:'investluwu-dot-blink 2s ease infinite'}}/>
+              {t('hero.badge') || 'Pemerintah Kabupaten Luwu · Portal Investasi Digital & Spasial'}
+            </div>
+
+            {/* Heading — dua baris dengan kontras weight */}
+            <h1 className="tracking-tight leading-[1.08] mb-4"
+                style={{animation:'investluwu-fade-up .6s .1s ease both'}}>
+              <span className="block text-3xl md:text-5xl lg:text-[3.25rem] font-light text-white/85">
+                {t('hero.line1') || 'Pintu Gerbang'}
+              </span>
+              <span className="block text-4xl md:text-6xl lg:text-[4rem] font-bold text-transparent
+                               bg-gradient-to-r from-emerald-400 via-cyan-400 to-emerald-300
+                               bg-clip-text [-webkit-background-clip:text]">
+                {t('hero.line2') || 'Investasi Digital'}
+              </span>
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-white/55 text-base md:text-lg max-w-xl mb-5 leading-relaxed"
+               style={{animation:'investluwu-fade-up .6s .2s ease both'}}>
+              {t('hero.subtitle') || 'Portal investasi spasial terintegrasi Kabupaten Luwu — analisis GIS, validasi PKKPR, dan peluang investasi dalam satu ekosistem'}
+            </p>
+
+            {/* Search bar */}
+            <div className="w-full max-w-xl mb-5"
+                 style={{animation:'investluwu-fade-up .6s .25s ease both'}}>
+              <div className="flex items-center gap-3 px-4 py-3.5 rounded-2xl border
+                               backdrop-blur-md transition-all duration-200
+                               bg-white/8 border-white/15
+                               hover:bg-white/12 hover:border-white/25
+                               focus-within:bg-white/14 focus-within:border-emerald-400/50">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                     className="flex-shrink-0 text-white/45" aria-hidden="true">
+                  <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.3"/>
+                  <path d="M11 11l3 3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+                </svg>
+                <input
+                  type="text"
+                  placeholder={t('hero.searchPlaceholder') || 'Cari potensi investasi, sektor, atau kecamatan...'}
+                  className="flex-1 bg-transparent text-white/90 placeholder:text-white/35 outline-none min-h-[24px]"
+                  style={{fontSize:'16px'}}
+                  value={smartFilterState.searchTerm}
+                  onChange={e => setSmartFilterState(prev => ({ ...prev, searchTerm: e.target.value }))}
+                  onKeyDown={e => e.key === 'Enter' && scrollToSection("potensi-section")}
+                />
+                <kbd className="hidden md:flex items-center gap-1 px-2 py-1 rounded-md
+                                bg-white/10 text-white/35 text-[10px] border border-white/10">
+                  ⌘K
+                </kbd>
+              </div>
+              {/* Popular search tags */}
+              <div className="flex items-center gap-2 mt-2.5 flex-wrap">
+                <span className="text-[11px] text-white/35 uppercase tracking-[.07em]">
+                  Populer:
+                </span>
+                {['Kakao','Rumput Laut','Pariwisata','PKKPR'].map(tag => (
+                  <button key={tag}
+                    type="button"
+                    onClick={() => {
+                      setSmartFilterState(prev => ({ ...prev, searchTerm: tag }));
+                      scrollToSection("potensi-section");
+                    }}
+                    className="px-2.5 py-1 rounded-full text-[11px] font-medium
+                               bg-white/8 hover:bg-white/14 text-white/60 hover:text-white
+                               border border-white/12 hover:border-white/25
+                               transition-all duration-150 min-h-[32px] cursor-pointer">
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* CTA buttons */}
+            <div className="flex gap-3 flex-wrap mb-6"
+                 style={{animation:'investluwu-fade-up .6s .3s ease both'}}>
+              <button
+                type="button"
+                onClick={(e: any) => handleGisClick(e, "default")}
+                className="inline-flex items-center gap-2 px-6 py-3.5 min-h-[48px]
+                           rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white
+                           text-sm font-medium transition-all duration-200
+                           hover:-translate-y-0.5
+                           shadow-[0_4px_14px_rgba(16,185,129,.3)] cursor-pointer">
+                <Globe size={16}/>
+                {t('hero.cta1') || 'Jelajahi Potensi Investasi'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsFastTrackOpen(true)}
+                className="inline-flex items-center gap-2 px-6 py-3.5 min-h-[48px]
+                           rounded-xl bg-white/8 hover:bg-white/14 text-white/80
+                           border border-white/20 text-sm transition-all duration-200
+                           backdrop-blur-md cursor-pointer">
+                <MessageCircle size={16}/>
+                {t('hero.cta2') || 'Konsultasi Investasi'}
+              </button>
+            </div>
+
+            {/* Ticker live data */}
+            <div className="w-full overflow-hidden -mx-4 md:-mx-8 px-4 md:px-8
+                            border-t border-white/8 pt-3">
+              <div className="flex items-center gap-0"
+                   style={{animation:'investluwu-ticker 32s linear infinite'}}
+                   onMouseEnter={e=>(e.currentTarget.style.animationPlayState='paused')}
+                   onMouseLeave={e=>(e.currentTarget.style.animationPlayState='running')}>
+                {[
+                  {dot:'bg-emerald-400',label:'Total Potensi',value:formatRupiah(totalInvestmentValue)},
+                  {dot:'bg-blue-400',  label:'Proyek Aktif', value:`${activeOpportunities} proyek`},
+                  {dot:'bg-cyan-400',  label:'Kecamatan',    value:`${districts?.length??22} kec.`},
+                  {dot:'bg-purple-400',label:'Desa & Kel.',  value:`${villages?.length??227} desa`},
+                  {dot:'bg-amber-400', label:'PostGIS',       value:'ACTIVE'},
+                  {dot:'bg-emerald-400',label:'AI Spasial',  value:'ONLINE'},
+                  // Duplikasi untuk seamless loop
+                  {dot:'bg-emerald-400',label:'Total Potensi',value:formatRupiah(totalInvestmentValue)},
+                  {dot:'bg-blue-400',  label:'Proyek Aktif', value:`${activeOpportunities} proyek`},
+                  {dot:'bg-cyan-400',  label:'Kecamatan',    value:`${districts?.length??22} kec.`},
+                  {dot:'bg-purple-400',label:'Desa & Kel.',  value:`${villages?.length??227} desa`},
+                  {dot:'bg-amber-400', label:'PostGIS',       value:'ACTIVE'},
+                  {dot:'bg-emerald-400',label:'AI Spasial',  value:'ONLINE'},
+                ].map((item,i)=>(
+                  <div key={i} className="flex items-center gap-3 px-5 flex-shrink-0">
+                    <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${item.dot}`}/>
+                    <span className="text-[11px] text-white/45 whitespace-nowrap">{item.label}</span>
+                    <span className="text-[11px] font-semibold text-white/80 whitespace-nowrap">{item.value}</span>
+                    <span className="w-px h-3 bg-white/10 flex-shrink-0"/>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
 
             {/* Premium Bento Stats Grid — Layer 1 (#0F2D4A) Container + Layer 2 (#143755) Cards */}
             <motion.div
@@ -3130,7 +3015,6 @@ export default function LandingPage({
                 ))}
               </div>
             </motion.div>
-        </div>
 
         {/* Wave divider — transisi hero ke konten */}
         <div className={`relative z-10 -mt-1 ${isDark ? 'text-[#0B0F19]' : 'text-slate-50'}`}>
@@ -7124,7 +7008,6 @@ export default function LandingPage({
               irr={simContext.irr}
               npv={simContext.npv}
               discountRate={discountRate}
-              roi={simContext.roi}
               isDarkMode={isDark}
               isUsingOSS={simContext.isUsingOSS}
             />

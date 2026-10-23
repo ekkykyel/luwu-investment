@@ -32,41 +32,41 @@ export default function LuwuInvestmentAiModal({
 
   const welcomeGreetings = {
     id: [
-      { role: "model" as const, text: "Halo! Saya Asisten Investasi Luwu. Saya siap membantu Bapak/Ibu menganalisis kelayakan lokasi, rincian komoditas, regulasi PKKPR, dan potensi tata ruang Kabupaten Luwu. Silakan ajukan pertanyaan Anda mengenai wilayah strategis investasi!" }
+      { role: "model" as const, text: "Tabe' Bapak/Ibu. Saya adalah **Asisten AI Validasi Data Spasial Kabupaten Luwu**. Tugas khusus saya adalah memvalidasi data geospasial pada peta GIS Luwu berbasis database PostGIS Supabase. Anda dapat menanyakan validasi koordinat lokasi, status tumpang tindih kawasan LP2B (Lahan Sawah Dilindungi), kesesuaian Pola Ruang RTRW Perda No. 06/2011, batas kawasan hutan (KPHP Latimojong), jarak tempuh jaringan jalan darat riil (PgRouting) ke simpul logistik, maupun analisis Daerah Aliran Sungai (DAS). Silakan tentukan titik koordinat atau pilih potensi pada peta spasial!" }
     ],
     en: [
-      { role: "model" as const, text: "Hello! I am the Luwu Investment Assistant. I am ready to help you analyze location feasibility, commodity details, PKKPR regulations, and spatial potential of Luwu Regency. Please ask your questions regarding strategic investment areas!" }
+      { role: "model" as const, text: "Greetings! I am the **Luwu Regency Spatial Data Validation AI Assistant**. My dedicated mandate is to validate GIS geospatial data directly from Luwu's Supabase PostGIS spatial database. You can query coordinate boundaries, LP2B (Protected Farmland) spatial overlap, Regional Spatial Plan (RTRW Perda 06/2011) zoning compliance, forest conservancy zones, real road distances (PgRouting) to strategic logistics hubs, and river basin (DAS) hydrology. Please specify coordinates or select a project on the spatial map!" }
     ],
     zh: [
-      { role: "model" as const, text: "您好！我是鲁乌投资助手。我已经准备好帮您分析选址可行性、大宗商品详情、PKKPR法规以及鲁乌县的空间潜力。请随时提出您关于战略投资领域的问题！" }
+      { role: "model" as const, text: "您好！我是**印度尼西亚芦梧县 GIS 空间数据合规验证 AI 助手**。我的专属职责是基于芦梧县 Supabase PostGIS 地理数据库，实时验证空间地理数据。您可以咨询坐标行政边界归属、永久基本农田 (LP2B) 重叠检测、国土空间规划 (RTRW Perda 06/2011) 分区合规性、生态防护林红线、实际公路路网里程 (PgRouting) 到关键物流枢纽的测算，以及地表河流流域 (DAS) 水文分析。请在空间地图上指定坐标或选择投资标的！" }
     ]
   };
 
   const selectedGreetings = {
-    id: (name: string, sector: string) => `Halo! Saya mendeteksi Anda tertarik dengan potensi investasi **${name}** pada sektor **${sector || "Sektor Utama"}**. Saya telah menyesuaikan fokus analisis spasial dan kelayakan ini khusus bagi potensi tersebut. Silakan tanyakan kelayakan lahan, regulasi, akses jalan, rincian komoditas, atau proyeksi tata ruang terkait daerah ini!`,
-    en: (name: string, sector: string) => `Hello! I detect you are interested in the **${name}** investment potential in the **${sector || "Main Sector"}** sector. I have tailored my spatial and feasibility analysis focus specifically to this potential. Please ask about land feasibility, regulations, road access, commodity details, or spatial planning projections related to this area!`,
-    zh: (name: string, sector: string) => `您好！我检测到您对 **${sector || "主导部门"}** 行业的 **${name}** 投资潜力项目感兴趣。我已经专门针对该项目量身定制了空间和可行性分析重点。请随时提问有关该区域的土地可行性、法律法规、道路交通、大宗商品详情或空间规划预测等问题！`
+    id: (name: string, sector: string) => `Tabe' Bapak/Ibu. Terdeteksi titik potensi **${name}** pada sektor **${sector || "Sektor Utama"}**. Saya telah memuat data spasial resmi PostGIS untuk titik ini. Silakan tanyakan validasi koordinat geografis, kesesuaian Pola Ruang RTRW Luwu, uji tumpang tindih kawasan LP2B / Hutan Lindung, jarak jalan darat riil (PgRouting), atau ketersediaan sumber air baku DAS sungai terdekat!`,
+    en: (name: string, sector: string) => `Greetings! Selected spatial investment point **${name}** in the **${sector || "Main Sector"}** sector. I have retrieved official PostGIS spatial records for this coordinate. Feel free to validate geographic coordinates, RTRW spatial zoning conformity, LP2B / protected forest overlap checks, PgRouting road connectivity, or river basin hydrology!`,
+    zh: (name: string, sector: string) => `您好！已锁定投资项目 **${name}**（所属产业：**${sector || "主导产业"}**）。我已调取该坐标的 PostGIS 官方空间属性数据。欢迎咨询地理坐标核验、国土空间总体规划 (RTRW) 分区符合性、永久基本农田 (LP2B)/防护林重叠排查、PgRouting 公路实际通达里程，或邻近地表水文供给评估！`
   };
 
-  // Suggested Prompts
+  // Suggested Prompts strictly for Spatial Data Validation
   const suggestedQuestionsList = {
     id: [
-      "Bagaimana peluang investasi sektor perikanan di Luwu?",
-      "Apa syarat perizinan PKKPR untuk industri kelapa sawit?",
-      "Di kecamatan mana potensi perkebunan cengkeh paling melimpah?",
-      "Bagaimana infrastruktur pelayaran & logistik di sekitar Teluk Bone?",
+      "Validasi apakah koordinat lokasi ini bebas dari tumpang tindih LP2B / Sawah Dilindungi?",
+      "Apakah kawasan ini sesuai dengan peruntukan industri dalam Pola Ruang RTRW Luwu?",
+      "Berapa jarak riil jalan darat (PgRouting) dari lokasi ini ke Pelabuhan Belopa dan Bandara Bua?",
+      "Cek ketersediaan sumber air baku DAS sungai terdekat untuk lokasi investasi ini.",
     ],
     en: [
-      "What are the investment opportunities in the fisheries sector in Luwu?",
-      "What are the PKKPR permit requirements for the palm oil industry?",
-      "Which district has the most abundant clove plantation potential?",
-      "How is the shipping & logistics infrastructure around the Gulf of Bone?",
+      "Validate if these coordinates are clear of LP2B / Protected Farmland overlap?",
+      "Does this location comply with industrial zoning in Luwu's Spatial Plan (RTRW)?",
+      "What is the real road distance (PgRouting) from this site to Belopa Port and Bua Airport?",
+      "Check surface water supply availability from the nearest river basin (DAS).",
     ],
     zh: [
-      "鲁乌县渔业部门的投资机会如何？",
-      "棕榈油行业的 PKKPR 许可证要求是什么？",
-      "哪个行政区的丁香种植潜力最丰富？",
-      "骨湾（Gulf of Bone）周边的航运与物流基础设施如何？",
+      "验证该坐标是否避开永久基本农田 (LP2B) 生态保护红线？",
+      "该选址是否符合芦梧县国土空间规划 (RTRW) 的产业分区标准？",
+      "根据实际路网 (PgRouting)，该地点到贝洛帕港与布阿机场的精确行车距离是多少？",
+      "查询该投资选址临近河流流域 (DAS) 的地表工业水资源供给能力。",
     ]
   };
 
@@ -144,6 +144,8 @@ export default function LuwuInvestmentAiModal({
           message: promptToSend,
           history: formattedHistory,
           language: aiLanguage,
+          assistantMode: "SPATIAL_VALIDATION",
+          isSpatialValidation: true,
           investmentContext: selectedInvestment ? {
             id: selectedInvestment.id,
             name: selectedInvestment.name,
@@ -288,10 +290,15 @@ export default function LuwuInvestmentAiModal({
               <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 border border-white dark:border-slate-900"></span>
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="font-extrabold text-xs sm:text-sm uppercase tracking-wider text-slate-900 dark:text-white truncate leading-tight">
-                AI Spasial & Investasi Luwu
-              </h3>
-              <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-semibold truncate leading-tight flex items-center gap-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <h3 className="font-extrabold text-xs sm:text-sm uppercase tracking-wider text-slate-900 dark:text-white truncate leading-tight">
+                  {aiLanguage === "en" ? "AI Spatial & GIS Validation Assistant" : aiLanguage === "zh" ? "AI 空间数据合规验证助手" : "Asisten AI Validasi Data Spasial & Peta GIS"}
+                </h3>
+                <span className="px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-mono font-bold tracking-wider bg-sky-500/10 text-sky-600 dark:text-sky-300 border border-sky-400/30">
+                  PostGIS • RTRW & LP2B
+                </span>
+              </div>
+              <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-semibold truncate leading-tight flex items-center gap-1 mt-0.5">
                 {selectedInvestment ? (
                   <>
                     <Building2 size={11} className="text-indigo-500 shrink-0" />
@@ -299,8 +306,8 @@ export default function LuwuInvestmentAiModal({
                   </>
                 ) : (
                   <>
-                    <Compass size={11} className="text-indigo-500 shrink-0" />
-                    <span>Mode Analisis Tata Ruang & RTRW</span>
+                    <Compass size={11} className="text-sky-500 shrink-0" />
+                    <span>{aiLanguage === "en" ? "PostGIS Spatial Validation & RTRW/LP2B Compliance" : aiLanguage === "zh" ? "PostGIS 空间规划合规性与生态红线检测" : "Validasi Koordinat, RTRW, LP2B, & Rute PgRouting"}</span>
                   </>
                 )}
               </p>

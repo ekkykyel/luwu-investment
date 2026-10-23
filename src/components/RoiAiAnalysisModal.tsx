@@ -52,25 +52,6 @@ export default function RoiAiAnalysisModal({
   const [sending, setSending] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [loadingStep, setLoadingStep] = useState(0);
-
-  // Synchronize active theme with document.documentElement.classList to prevent light/dark desync
-  const [effectiveDark, setEffectiveDark] = useState<boolean>(() => {
-    if (typeof document !== 'undefined') {
-      return document.documentElement.classList.contains('dark');
-    }
-    return Boolean(isDarkMode);
-  });
-
-  useEffect(() => {
-    if (typeof document === 'undefined') return;
-    const updateTheme = () => {
-      setEffectiveDark(document.documentElement.classList.contains('dark'));
-    };
-    updateTheme();
-    const observer = new MutationObserver(updateTheme);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    return () => observer.disconnect();
-  }, [isDarkMode]);
   
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -267,13 +248,11 @@ Anda WAJIB mengutip PERSIS angka finansial di atas (Payback Period = ${isPayback
 ATURAN EVALUASI LOGIS WAJIB:
 ${isDeficit ? `🚨 KONDISI SAAT INI ADALAH PROYEK DEFISIT / BELUM LAYAK:
 - Status Kelayakan WAJIB: 🔴 PERLU PENYESUAIAN ASUMSI (TIDAK LAYAK / DEFISIT)
-- Skor Kelayakan AI (1 - 100) WAJIB antara 15 - 35/100 (Kategori Evaluasi Kritis / Di Bawah Ambang Kelayakan). DILARANG KERAS memberikan skor 80+ atau status SANGAT LAYAK pada proyek defisit!
-- Pada analisis Payback Period (BEP):
-  * Jika Laba Bersih Operasional tahunan bernilai POSITIF (${formatRupiah(netOperatingIncome)}/tahun) dengan BEP nominal ${paybackPeriod.toFixed(1)} tahun: Jelaskan secara akurat bahwa secara nominal modal kembali dalam ${paybackPeriod.toFixed(1)} tahun, TETAPI secara terdiskon (Discounted Payback pada WACC ${discountRate}% dan inflasi) akumulasi arus kas terdiskon tidak mampu menutup modal awal dalam batas tenor proyek sehingga NPV menjadi negatif (${formatRupiah(npv)}). DILARANG menyatakan "pendapatan tidak cukup menutupi operasional" jika laba bersih sebenarnya positif!
-  * Jika Laba Bersih benar-benar negatif (<= 0): Jelaskan bahwa modal tidak dapat kembali karena pendapatan di bawah beban operasional tahunan.
-- Pada analisis NPV, jelaskan secara eksplisit bahwa nilai NPV bertanda NEGATIF (${formatRupiah(npv)}) dan terdiskon di bawah biaya modal investasi jika diukur pada discount rate WACC ${discountRate}%. DILARANG KERAS menyebut angka bertanda minus ini sebagai positif!
-- Pada analisis IRR, sebutkan bahwa IRR (${irr.toFixed(2)}%) berada di bawah suku bunga acuan WACC ${discountRate}%. DILARANG mengarang angka IRR yang berbeda!
-- Berikan saran koreksi konkret (What-If Inverse Optimization): Hitung rekomendasi kenaikan harga komoditas (Rp/Kg), peningkatan volume panen, atau efisiensi OPEX untuk mencapai titik impas finansial (NPV >= 0).` : isConditional ? `KONDISI SAAT INI ADALAH LAYAK BERSYARAT:
+- Skor Kelayakan AI (1 - 100) WAJIB antara 5 - 25/100 (Kategori Evaluasi Kritis / Di Bawah Ambang Kelayakan). DILARANG KERAS memberikan skor 80+ atau status SANGAT LAYAK pada proyek defisit!
+- Pada analisis Payback Period (BEP), jelaskan secara lugas: Modal investasi awal TIDAK DAPAT KEMBALI dalam tenor proyek karena arus kas tahunan defisit. DILARANG KERAS mengklaim modal kembali pada tahun ke-999!
+- Pada analisis NPV, jelaskan secara eksplisit bahwa nilai NPV bertanda NEGATIF (${formatRupiah(npv)}) dan merugikan nilai investasi jika suku bunga 12%. DILARANG KERAS menyebut angka bertanda minus ini sebagai positif!
+- Pada analisis IRR, sebutkan bahwa IRR (${irr.toFixed(2)}%) tidak mencukupi standar suku bunga acuan WACC ${discountRate}%. DILARANG mengarang angka IRR yang berbeda!
+- Berikan saran koreksi konkret: Naikkan estimasi volume panen/penjualan, sesuaikan harga jual komoditas, atau pangkas OPEX tenaga kerja/bahan penolong.` : isConditional ? `KONDISI SAAT INI ADALAH LAYAK BERSYARAT:
 - Status Kelayakan: 🟡 LAYAK BERSYARAT (CONDITIONALLY FEASIBLE)
 - Skor Kelayakan: 55 - 68/100` : `KONDISI SAAT INI ADALAH SANGAT LAYAK:
 - Status Kelayakan: 🟢 SANGAT LAYAK (HIGHLY FEASIBLE)
@@ -324,8 +303,9 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
         signal: controller.signal,
         body: JSON.stringify({
           message: userPrompt,
-          isFollowUp: false,
           history: [],
+          assistantMode: "ROI_SIMULATOR",
+          isRoiSimulation: true,
           language: aiLanguage,
           locale: aiLanguage,
           investment_amount: capex,
@@ -458,11 +438,12 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
         signal: controller.signal,
         body: JSON.stringify({
           message: userMessageText,
-          isFollowUp: true,
           history: currentHistory.map((m) => ({
             role: m.role,
             text: m.text,
           })),
+          assistantMode: "ROI_SIMULATOR",
+          isRoiSimulation: true,
           language: aiLanguage,
           locale: aiLanguage,
           investment_amount: capex,
@@ -516,19 +497,20 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
         });
         let fallbackChat = "";
         if (aiLanguage === "en") {
-          const paybackDisplayEn = isPaybackUnpaid ? "Unpayable (> Tenor / Deficit)" : `${paybackPeriod.toFixed(1)} Years`;
-          fallbackChat = `Regarding your investment inquiry on "${investmentName}" in the ${sector} sector:\n\n` +
-            `1. Financial Indicator (BEP): ${paybackDisplayEn}.\n` +
-            `2. The Luwu Regency Government through DPMPTSP is prepared to facilitate integrated permitting (PKKPR & land technical verification) to ensure optimal and legally secure investment realization.`;
+          fallbackChat = `### 📊 Techno-Economic Financial Evaluation: "${investmentName}" (${sector})\n\n` +
+            `1. **Payback Period (BEP):** ${heuristic.paybackDisplay}.\n` +
+            `2. **Regional Fiscal Incentive (Perda Luwu):** Eligible for up to 35% reduction in regional levies and land rent if the project commits to hiring at least 60% local Luwu workforce (TKD).\n` +
+            `3. **Investor Concierge:** DPMPTSP Luwu VIP Desk provides dedicated fast-track OSS-RBA assistance at Simpurusiang Public Service Center, Belopa.`;
         } else if (aiLanguage === "zh") {
-          const paybackDisplayZh = isPaybackUnpaid ? "无法回本 (> 投资周期 / 营运赤字)" : `${paybackPeriod.toFixed(1)} 年`;
-          fallbackChat = `关于您对 "${investmentName}"（所属产业：${sector}）的投资咨询：\n\n` +
-            `1. 财务指标评估 (BEP): ${paybackDisplayZh}。\n` +
-            `2. 芦梧县政府综合一站式投资服务部门 (DPMPTSP) 将为企业全程提供空间规划许可 (PKKPR) 与环评确权协同，保障投资项目合规高效落地。`;
+          fallbackChat = `### 📊 技术经济与财务可行性评估: "${investmentName}" (${sector})\n\n` +
+            `1. **投资回收期 (BEP):** ${heuristic.paybackDisplay}。\n` +
+            `2. **芦梧县地方招商引资税费红利:** 若承诺吸纳不低于 60% 本地员工 (TKD)，可依法申请地方规费与土地租金最高 35% 减免。\n` +
+            `3. **政务绿色审批:** 芦梧县一体化政务大厅 (MPP Simpurusiang) 1 层 VIP 专席将全力协同办理 OSS-RBA 快速审批。`;
         } else {
-          fallbackChat = `Tabe' Bapak/Ibu. Terkait simulasi "${investmentName}" pada sektor ${sector}:\n\n` +
-            `1. Indikator Pengembalian Modal (BEP): ${heuristic.paybackDisplay}.\n` +
-            `2. Pemkab Luwu melalui DPMPTSP siap mendampingi kesiapan dokumen perizinan (PKKPR dan Pertek Pertanahan) agar realisasi investasi berjalan aman dan optimal.`;
+          fallbackChat = `### 📊 Evaluasi Finansial Tekno-Ekonomi: "${investmentName}" (${sector})\n\n` +
+            `1. **Indikator Pengembalian Modal (BEP):** ${heuristic.paybackDisplay}.\n` +
+            `2. **Insentif Fiskal Daerah (Perda Luwu):** Proyek berhak mengajukan permohonan fasilitas pengurangan retribusi daerah dan sewa lahan hingga 35% dengan syarat menyerap minimal 60% Tenaga Kerja Asli Daerah (TKD) Luwu.\n` +
+            `3. **Layanan Prioritas DPMPTSP:** Tim Fast-Track OSS-RBA di Meja VIP DPMPTSP Kabupaten Luwu (Belopa) siap mendampingi percepatan perizinan berusaha secara terpadu.`;
         }
         appendAndAnimateModelMessage(fallbackChat, updatedMessages);
       }
@@ -550,14 +532,12 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
       });
       let fallbackChat = "";
       if (aiLanguage === "en") {
-        const paybackDisplayEn = isPaybackUnpaid ? "Unpayable (> Tenor / Deficit)" : `${paybackPeriod.toFixed(1)} Years`;
         fallbackChat = `Regarding your investment inquiry on "${investmentName}" in the ${sector} sector:\n\n` +
-          `1. Financial Indicator (BEP): ${paybackDisplayEn}.\n` +
+          `1. Financial Indicator (BEP): ${heuristic.paybackDisplay}.\n` +
           `2. The Luwu Regency Government through DPMPTSP is prepared to facilitate integrated permitting (PKKPR & land technical verification) to ensure optimal and legally secure investment realization.`;
       } else if (aiLanguage === "zh") {
-        const paybackDisplayZh = isPaybackUnpaid ? "无法回本 (> 投资周期 / 营运赤字)" : `${paybackPeriod.toFixed(1)} 年`;
         fallbackChat = `关于您对 "${investmentName}"（所属产业：${sector}）的投资咨询：\n\n` +
-          `1. 财务指标评估 (BEP): ${paybackDisplayZh}。\n` +
+          `1. 财务指标评估 (BEP): ${heuristic.paybackDisplay}。\n` +
           `2. 芦梧县政府综合一站式投资服务部门 (DPMPTSP) 将为企业全程提供空间规划许可 (PKKPR) 与环评确权协同，保障投资项目合规高效落地。`;
       } else {
         fallbackChat = `Tabe' Bapak/Ibu. Terkait simulasi "${investmentName}" pada sektor ${sector}:\n\n` +
@@ -570,179 +550,68 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
 
   if (!isOpen) return null;
 
-  // Comprehensive markdown formatter — handles headers, tables, lists, blockquotes, HR
+  // Simple, elegant custom markdown formatter to turn text into beautiful JSX
   const formatTextToJsx = (text: string) => {
     const lines = text.split("\n");
-    const elements: React.ReactNode[] = [];
-    let i = 0;
-
-    while (i < lines.length) {
-      const trimmed = lines[i].trim();
-
-      // Horizontal rule (---)
-      if (/^---+$/.test(trimmed)) {
-        elements.push(<hr key={i} className="my-4 border-slate-200 dark:border-slate-700/60" />);
-        i++;
-        continue;
-      }
-
-      // Markdown Table: collect consecutive rows starting with |
-      if (trimmed.startsWith("|")) {
-        const tableRows: string[] = [];
-        while (i < lines.length && lines[i].trim().startsWith("|")) {
-          tableRows.push(lines[i].trim());
-          i++;
-        }
-        // Parse header, separator, body
-        const isSeparator = (row: string) => /^\|[\s\-:|]+\|$/.test(row);
-        const parseCells = (row: string) =>
-          row.split("|").slice(1, -1).map((c) => c.trim());
-
-        const headerRow = tableRows.length > 0 ? parseCells(tableRows[0]) : [];
-        const bodyRows = tableRows
-          .slice(1)
-          .filter((r) => !isSeparator(r))
-          .map(parseCells);
-
-        elements.push(
-          <div key={`table-${i}`} className="overflow-x-auto my-3 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm">
-            <table className="w-full text-xs sm:text-sm border-collapse">
-              {headerRow.length > 0 && (
-                <thead>
-                  <tr className="bg-slate-100 dark:bg-slate-800/80">
-                    {headerRow.map((cell, ci) => (
-                      <th key={ci} className="px-2.5 py-2 text-left font-extrabold text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700 whitespace-nowrap">
-                        {parseBoldText(cell)}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-              )}
-              <tbody>
-                {bodyRows.map((row, ri) => (
-                  <tr key={ri} className={`${ri % 2 === 0 ? "bg-white dark:bg-slate-900/60" : "bg-slate-50 dark:bg-slate-800/40"} hover:bg-slate-100 dark:hover:bg-slate-700/40 transition-colors`}>
-                    {row.map((cell, ci) => (
-                      <td key={ci} className="px-2.5 py-1.5 text-slate-900 dark:text-slate-100 font-medium border-b border-slate-100 dark:border-slate-800/60 whitespace-nowrap">
-                        {parseBoldText(cell)}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        );
-        continue;
-      }
-
-      // Sub-sub-headers (####)
-      if (trimmed.startsWith("####")) {
-        elements.push(
-          <h5 key={i} className="text-xs sm:text-sm font-bold text-slate-800 dark:text-sky-300 mt-4 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider">
-            <Calculator size={14} className="text-sky-600 dark:text-sky-400" />
-            {parseBoldText(trimmed.replace(/^#{4,}\s*/, "").trim())}
-          </h5>
-        );
-        i++;
-        continue;
-      }
-
-      // Headers (### then ## then #)
+    return lines.map((line, idx) => {
+      let trimmed = line.trim();
+      
+      // Headers
       if (trimmed.startsWith("###")) {
-        elements.push(
-          <h4 key={i} className="text-sm font-bold text-slate-950 dark:text-blue-300 mt-5 mb-2 flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-800 pb-1 uppercase tracking-wide">
-            <TrendingUp size={16} className="text-blue-600 dark:text-blue-400" />
+        return (
+          <h4 key={idx} className="text-sm font-semibold text-slate-900 dark:text-blue-300 mt-5 mb-2 flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-800 pb-1 uppercase tracking-wide">
+            <TrendingUp size={16} className="text-blue-500" />
             {trimmed.replace("###", "").trim()}
           </h4>
         );
-        i++;
-        continue;
       }
       if (trimmed.startsWith("##")) {
-        elements.push(
-          <h3 key={i} className="text-base font-extrabold text-indigo-950 dark:text-indigo-400 mt-6 mb-3 flex items-center gap-2 border-b border-indigo-200 dark:border-indigo-900/40 pb-1">
-            <Sparkles size={18} className="text-indigo-600 dark:text-indigo-400 animate-pulse" />
+        return (
+          <h3 key={idx} className="text-base font-bold text-indigo-600 dark:text-indigo-400 mt-6 mb-3 flex items-center gap-2 border-b border-indigo-100 dark:border-indigo-900/40 pb-1">
+            <Sparkles size={18} className="text-indigo-500 animate-pulse" />
             {trimmed.replace("##", "").trim()}
           </h3>
         );
-        i++;
-        continue;
       }
       if (trimmed.startsWith("#")) {
-        elements.push(
-          <h2 key={i} className="text-lg font-black text-slate-950 dark:text-white mt-7 mb-4">
+        return (
+          <h2 key={idx} className="text-lg font-black text-slate-900 dark:text-white mt-7 mb-4">
             {trimmed.replace("#", "").trim()}
           </h2>
         );
-        i++;
-        continue;
       }
 
-      // Blockquotes (> ...)
-      if (trimmed.startsWith(">")) {
-        const quoteContent = trimmed.replace(/^>\s*/, "").trim();
-        elements.push(
-          <blockquote key={i} className="my-3 pl-3.5 border-l-[3px] border-emerald-500 dark:border-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 py-2 pr-3 rounded-r-lg">
-            <p className="text-xs sm:text-sm font-semibold text-emerald-800 dark:text-emerald-200 leading-relaxed italic">
-              {parseBoldText(quoteContent)}
-            </p>
-          </blockquote>
-        );
-        i++;
-        continue;
-      }
-
-      // Numbered lists (1. 2. 3. etc.)
-      if (/^\d+\.\s/.test(trimmed)) {
-        const content = trimmed.replace(/^\d+\.\s*/, "").trim();
-        elements.push(
-          <li key={i} className="ml-4 list-decimal text-sm sm:text-base font-medium text-slate-950 dark:text-slate-100 mb-2.5 leading-relaxed">
-            {parseBoldText(content)}
-          </li>
-        );
-        i++;
-        continue;
-      }
-
-      // Bullet lists (- or *)
+      // Bullets
       if (trimmed.startsWith("-") || trimmed.startsWith("*")) {
         const content = trimmed.substring(1).trim();
-        elements.push(
-          <li key={i} className="ml-4 list-disc text-sm sm:text-base font-medium text-slate-950 dark:text-slate-100 mb-2.5 leading-relaxed">
+        return (
+          <li key={idx} className="ml-4 list-disc text-sm sm:text-base font-medium text-slate-900 dark:text-slate-100 mb-2.5 leading-relaxed">
             {parseBoldText(content)}
           </li>
         );
-        i++;
-        continue;
       }
 
-      // Empty line
+      // Paragraph
       if (trimmed === "") {
-        elements.push(<div key={i} className="h-2.5" />);
-        i++;
-        continue;
+        return <div key={idx} className="h-2.5" />;
       }
 
-      // Default paragraph
-      elements.push(
-        <p key={i} className="text-sm sm:text-base font-medium text-slate-950 dark:text-slate-100 leading-relaxed mb-3.5">
+      return (
+        <p key={idx} className="text-sm sm:text-base font-medium text-slate-900 dark:text-slate-100 leading-relaxed mb-3.5">
           {parseBoldText(trimmed)}
         </p>
       );
-      i++;
-    }
-
-    return elements;
+    });
   };
 
-  // Helper to parse **bold** text in paragraphs with guaranteed high-contrast styling
+  // Helper to parse **bold** text in paragraphs
   const parseBoldText = (text: string) => {
     const parts = text.split(/\*\*([\s\S]*?)\*\*/g);
     return parts.map((part, i) => {
       if (i % 2 === 1) {
-        return <strong key={i} className="font-extrabold text-blue-900 dark:text-cyan-300">{part}</strong>;
+        return <strong key={i} className="font-extrabold text-blue-700 dark:text-cyan-300">{part}</strong>;
       }
-      return <span key={i} className="text-slate-950 dark:text-slate-100 font-medium">{part}</span>;
+      return part;
     });
   };
 
@@ -766,28 +635,24 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         id="roi-ai-modal-container"
         className={`w-[calc(100vw-20px)] sm:w-full h-[92vh] sm:h-auto max-h-[92vh] sm:max-h-[94vh] max-w-5xl rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col transform transition-transform duration-300 ${
-          effectiveDark 
+          isDarkMode 
             ? "bg-slate-900 border border-slate-800 text-slate-100" 
-            : "bg-white text-slate-900 border border-slate-200 shadow-xl"
+            : "bg-white text-slate-800 border border-slate-100"
         }`}
       >
         {/* MODAL HEADER - Compact Android-First & Desktop Sleek */}
         <div className={`p-2.5 sm:px-5 sm:py-2.5 flex items-center justify-between border-b shrink-0 gap-2 ${
-          effectiveDark ? "bg-slate-900/95 border-slate-800" : "bg-slate-50/95 border-slate-200"
+          isDarkMode ? "bg-surface/95 border-slate-800" : "bg-slate-50/95 border-slate-200/80"
         }`}>
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-md text-white shrink-0">
               <Bot size={16} className="animate-pulse" />
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="font-extrabold text-xs sm:text-sm tracking-wide uppercase text-slate-950 dark:white truncate leading-tight">
-                {aiLanguage === "en"
-                  ? "AI Financial Feasibility Analysis"
-                  : aiLanguage === "zh"
-                  ? "AI 投资可行性智能分析"
-                  : t('roiAiModal.title', 'Analisis Kelayakan Finansial AI')}
+              <h3 className="font-extrabold text-xs sm:text-sm tracking-wide uppercase text-slate-900 dark:text-white truncate leading-tight">
+                {t('roiAiModal.title', 'Analisis Kelayakan Finansial AI')}
               </h3>
-              <p className="text-[10px] sm:text-xs text-slate-600 dark:text-slate-300 font-bold truncate leading-tight">
+              <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-semibold truncate leading-tight">
                 {investmentName} {sector ? `• ${sector}` : ''}
               </p>
             </div>
@@ -836,7 +701,7 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
               id="close-roi-ai-modal-top"
               onClick={onClose}
               className={`p-1.5 rounded-lg transition-colors shrink-0 flex items-center justify-center ${
-                effectiveDark ? "hover:bg-slate-800 text-slate-300 hover:text-white" : "hover:bg-slate-200/80 text-slate-700 hover:text-slate-950"
+                isDarkMode ? "hover:bg-slate-800 text-slate-400 hover:text-slate-200" : "hover:bg-slate-200/60 text-slate-500 hover:text-slate-800"
               }`}
               aria-label={t('roiAiModal.closeLabel', 'Tutup form')}
             >
@@ -847,54 +712,52 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
 
         {/* METRICS PREVIEW BAR - Directly below Header with minimal gap */}
         <div className={`px-2.5 sm:px-5 py-1.5 sm:py-2 border-b grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 shrink-0 ${
-          effectiveDark ? "bg-slate-950/60 border-slate-800" : "bg-slate-100/80 border-slate-200"
+          isDarkMode ? "bg-base/60 border-slate-800/80" : "bg-slate-100/70 border-slate-200/80"
         }`}>
-          <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700/80 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm">
-            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-blue-500/10 dark:bg-blue-400/15 flex items-center justify-center shrink-0">
-              <DollarSign size={13} className="text-blue-700 dark:text-blue-400 font-bold" />
+          <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white/70 dark:bg-surface/70 border border-slate-200/60 dark:border-slate-800 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm">
+            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-blue-500/10 dark:bg-blue-400/10 flex items-center justify-center shrink-0">
+              <DollarSign size={13} className="text-blue-600 dark:text-blue-400" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-extrabold text-slate-600 dark:text-slate-400 truncate">{t('roiAiModal.capexLabel', 'CAPEX')}</p>
-              <p className="text-xs sm:text-sm font-extrabold font-sans tracking-tight text-slate-950 dark:text-white truncate leading-none" title={formatRupiah(capex)}>
+              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500 truncate">{t('roiAiModal.capexLabel', 'CAPEX')}</p>
+              <p className="text-xs sm:text-sm font-bold font-sans tracking-tight text-slate-800 dark:text-slate-100 truncate leading-none" title={formatRupiah(capex)}>
                 {formatRupiahSingkat(capex)}
               </p>
             </div>
           </div>
 
-          <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700/80 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm">
-            <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-md ${isNpvPositive ? "bg-emerald-500/15 dark:bg-emerald-400/15" : "bg-rose-500/15 dark:bg-rose-400/15"} flex items-center justify-center shrink-0`}>
-              <TrendingUp size={13} className={isNpvPositive ? "text-emerald-700 dark:text-emerald-400 font-bold" : "text-rose-700 dark:text-rose-400 font-bold"} />
+          <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white/70 dark:bg-surface/70 border border-slate-200/60 dark:border-slate-800 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm">
+            <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-md ${isNpvPositive ? "bg-emerald-500/10 dark:bg-emerald-400/10" : "bg-rose-500/10 dark:bg-rose-400/10"} flex items-center justify-center shrink-0`}>
+              <TrendingUp size={13} className={isNpvPositive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"} />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-extrabold text-slate-600 dark:text-slate-400 truncate">NPV ({discountRate}%)</p>
-              <p className={`text-xs sm:text-sm font-extrabold font-sans tracking-tight truncate leading-none ${isNpvPositive ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400"}`} title={formatRupiah(npv)}>
+              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500 truncate">NPV ({discountRate}%)</p>
+              <p className={`text-xs sm:text-sm font-bold font-sans tracking-tight truncate leading-none ${isNpvPositive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`} title={formatRupiah(npv)}>
                 {isNpvPositive ? "+" : ""}{formatRupiahSingkat(npv)}
               </p>
             </div>
           </div>
 
-          <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700/80 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm">
-            <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-md ${isIrrFeasible ? "bg-emerald-500/15 dark:bg-emerald-400/15" : "bg-amber-500/15 dark:bg-amber-400/15"} flex items-center justify-center shrink-0`}>
-              <Calculator size={13} className={isIrrFeasible ? "text-emerald-700 dark:text-emerald-400 font-bold" : "text-amber-700 dark:text-amber-400 font-bold"} />
+          <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white/70 dark:bg-surface/70 border border-slate-200/60 dark:border-slate-800 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm">
+            <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-md ${isIrrFeasible ? "bg-emerald-500/10 dark:bg-emerald-400/10" : "bg-amber-500/10 dark:bg-amber-400/10"} flex items-center justify-center shrink-0`}>
+              <Calculator size={13} className={isIrrFeasible ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"} />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-extrabold text-slate-600 dark:text-slate-400 truncate">
-                {aiLanguage === "en" ? "Projected IRR" : aiLanguage === "zh" ? "预期 IRR" : t('roiAiModal.irrProjected', 'Proyeksi IRR')}
-              </p>
-              <p className={`text-xs sm:text-sm font-black font-mono truncate leading-none ${isIrrFeasible ? "text-emerald-700 dark:text-emerald-400" : "text-amber-700 dark:text-amber-400"}`}>
+              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500 truncate">{t('roiAiModal.irrProjected', 'Proyeksi IRR')}</p>
+              <p className={`text-xs sm:text-sm font-black font-mono truncate leading-none ${isIrrFeasible ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}`}>
                 {(Number(irr) || 0).toFixed(1)}%
               </p>
             </div>
           </div>
 
-          <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700/80 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm">
-            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-indigo-500/15 dark:bg-indigo-400/15 flex items-center justify-center shrink-0">
-              <RefreshCw size={12} className="text-indigo-700 dark:text-indigo-400 font-bold" />
+          <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white/70 dark:bg-surface/70 border border-slate-200/60 dark:border-slate-800 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm">
+            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-indigo-500/10 dark:bg-indigo-400/10 flex items-center justify-center shrink-0">
+              <RefreshCw size={12} className="text-indigo-600 dark:text-indigo-400" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-extrabold text-slate-600 dark:text-slate-400 truncate">Payback (BEP)</p>
-              <p className="text-xs sm:text-sm font-black font-mono text-slate-950 dark:text-slate-100 truncate leading-none">
-                {(Number(paybackPeriod) || 0).toFixed(1)} {aiLanguage === "en" ? "Yrs" : aiLanguage === "zh" ? "年" : t('roiAiModal.paybackUnit', 'Thn')}
+              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500 truncate">Payback (BEP)</p>
+              <p className="text-xs sm:text-sm font-black font-mono text-slate-800 dark:text-slate-100 truncate leading-none">
+                {(Number(paybackPeriod) || 0).toFixed(1)} {t('roiAiModal.paybackUnit', 'Thn')}
               </p>
             </div>
           </div>
@@ -935,72 +798,28 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
           {messages.length > 0 && (
             <div className={`px-3 py-2 rounded-xl flex items-center justify-between gap-2.5 shrink-0 backdrop-blur-sm border shadow-sm ${
               isNpvPositive && isIrrFeasible 
-                ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800/60 text-emerald-950 dark:text-emerald-200" 
-                : isNpvPositive
-                ? "bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800/60 text-amber-950 dark:text-amber-200"
-                : "bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800/60 text-rose-950 dark:text-rose-200"
+                ? "bg-emerald-500/10 dark:bg-emerald-950/30 border-emerald-500/30 text-emerald-800 dark:text-emerald-300" 
+                : "bg-amber-500/10 dark:bg-amber-950/30 border-amber-500/30 text-amber-800 dark:text-amber-300"
             }`}>
               <div className="flex items-center gap-2 min-w-0">
-                <div className={`p-1 rounded-md shrink-0 ${
-                  isNpvPositive && isIrrFeasible 
-                    ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400" 
-                    : isNpvPositive
-                    ? "bg-amber-500/20 text-amber-700 dark:text-amber-400"
-                    : "bg-rose-500/20 text-rose-700 dark:text-rose-400"
-                }`}>
-                  {isNpvPositive && isIrrFeasible ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertTriangle className="w-3.5 h-3.5" />}
+                <div className={`p-1 rounded-md shrink-0 ${isNpvPositive ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400" : "bg-amber-500/20 text-amber-600 dark:text-amber-400"}`}>
+                  {isNpvPositive ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertTriangle className="w-3.5 h-3.5" />}
                 </div>
                 <div className="min-w-0">
                   <div className="text-xs font-black uppercase tracking-wider truncate">
-                    {aiLanguage === "en"
-                      ? (isNpvPositive && isIrrFeasible 
-                          ? "Status: Financially Feasible & Sound" 
-                          : isNpvPositive
-                          ? "Status: Moderate Zone / Conditionally Feasible"
-                          : "Status: Assumption Adjustment Required (Negative NPV)")
-                      : aiLanguage === "zh"
-                      ? (isNpvPositive && isIrrFeasible 
-                          ? "评估状态：具备财务可行性 (重点支持)" 
-                          : isNpvPositive
-                          ? "评估状态：处于边际区间 / 有条件可行"
-                          : "评估状态：需调整核心假设 (折现净现值为负)")
-                      : (isNpvPositive && isIrrFeasible 
-                          ? "Status: Layak & Feasible Secara Finansial" 
-                          : isNpvPositive
-                          ? "Status: Zona Moderat / Layak Bersyarat"
-                          : "Status: Perlu Penyesuaian Asumsi (NPV Negatif)")}
+                    {isNpvPositive && isIrrFeasible ? "Status: Layak & Feasible Secara Finansial" : "Status: Zona Moderat / Perlu Mitigasi"}
                   </div>
-                  <div className="text-[10px] text-slate-700 dark:text-slate-300 font-semibold truncate">
-                    {aiLanguage === "en"
-                      ? (isNpvPositive && isIrrFeasible 
-                          ? `Positive NPV (IDR ${formatRupiahSingkat(npv).replace('Rp ', '')}) • IRR (${irr.toFixed(1)}%) ≥ WACC (${discountRate}%) • AI Automated Evaluation`
-                          : isNpvPositive
-                          ? `Positive NPV (IDR ${formatRupiahSingkat(npv).replace('Rp ', '')}) • IRR (${irr.toFixed(1)}%) below WACC (${discountRate}%) • AI Automated Evaluation`
-                          : `Negative NPV (IDR ${formatRupiahSingkat(npv).replace('Rp ', '')}) • IRR (${irr.toFixed(1)}%) < WACC (${discountRate}%) • AI Automated Evaluation`)
-                      : aiLanguage === "zh"
-                      ? (isNpvPositive && isIrrFeasible 
-                          ? `正净现值 (${formatRupiahSingkat(npv).replace('Rp ', '')} 印尼盾) • IRR (${irr.toFixed(1)}%) ≥ WACC (${discountRate}%) • AI 自动化智能研判`
-                          : isNpvPositive
-                          ? `正净现值 (${formatRupiahSingkat(npv).replace('Rp ', '')} 印尼盾) • IRR (${irr.toFixed(1)}%) 低于 WACC (${discountRate}%) • AI 自动化智能研判`
-                          : `负净现值 (${formatRupiahSingkat(npv).replace('Rp ', '')} 印尼盾) • IRR (${irr.toFixed(1)}%) < WACC (${discountRate}%) • AI 自动化智能研判`)
-                      : (isNpvPositive && isIrrFeasible 
-                          ? `NPV Positif (${formatRupiahSingkat(npv)}) • IRR (${irr.toFixed(1)}%) ≥ WACC (${discountRate}%) • Evaluasi Otomatis AI`
-                          : isNpvPositive
-                          ? `NPV Positif (${formatRupiahSingkat(npv)}) • IRR (${irr.toFixed(1)}%) di bawah WACC (${discountRate}%) • Evaluasi Otomatis AI`
-                          : `NPV Negatif (${formatRupiahSingkat(npv)}) • IRR (${irr.toFixed(1)}%) < WACC (${discountRate}%) • Evaluasi Otomatis AI`)}
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate">
+                    NPV Positif • IRR &gt; WACC ({discountRate}%) • Evaluasi Otomatis AI
                   </div>
                 </div>
               </div>
-              <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full shrink-0 border ${
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 border ${
                 isNpvPositive && isIrrFeasible
-                  ? "bg-emerald-100 text-emerald-900 dark:bg-emerald-500/20 dark:text-emerald-300 border-emerald-300 dark:border-emerald-500/30"
-                  : isNpvPositive
-                  ? "bg-amber-100 text-amber-900 dark:bg-amber-500/20 dark:text-amber-300 border-amber-300 dark:border-amber-500/30"
-                  : "bg-rose-100 text-rose-900 dark:bg-rose-500/20 dark:text-rose-300 border-rose-300 dark:border-rose-500/30"
+                  ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
+                  : "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/30"
               }`}>
-                {aiLanguage === "zh" 
-                  ? (isNpvPositive && isIrrFeasible ? "评级: A" : isNpvPositive ? "评级: B" : "评级: D")
-                  : (isNpvPositive && isIrrFeasible ? "Score: A" : isNpvPositive ? "Score: B" : "Score: D")}
+                {isNpvPositive && isIrrFeasible ? "Score: A+" : "Score: B"}
               </span>
             </div>
           )}
@@ -1015,24 +834,22 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
                       <Bot size={13} />
                     </div>
                     <div className={`flex-1 min-w-0 px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-2xl rounded-tl-sm border shadow-sm ${
-                      effectiveDark 
-                        ? "bg-slate-900/90 border-slate-700/60 text-slate-100 backdrop-blur-md" 
-                        : "bg-white border-slate-200/90 text-slate-950 shadow-sm"
+                      isDarkMode 
+                        ? "bg-surface/90 border-slate-700/60 text-slate-100 backdrop-blur-md" 
+                        : "bg-white border-slate-200/80 text-slate-900 backdrop-blur-md"
                     }`}>
-                      <div className="flex items-center justify-between gap-2 mb-1 pb-1 border-b border-slate-200 dark:border-slate-800">
+                      <div className="flex items-center justify-between gap-2 mb-1 pb-1 border-b border-slate-100 dark:border-slate-800">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] uppercase font-bold text-indigo-700 dark:text-indigo-400 tracking-wider">
-                            {aiLanguage === "en" ? "AI Financial Assistant" : aiLanguage === "zh" ? "AI 财务智能顾问" : t('roiAiModal.assistantHeader', 'Asisten AI Finansial')}
+                          <span className="text-[10px] uppercase font-bold text-indigo-600 dark:text-indigo-400 tracking-wider">
+                            {t('roiAiModal.assistantHeader', 'Asisten AI Finansial')}
                           </span>
-                          <span className="text-[10px] text-slate-600 dark:text-slate-400 font-semibold">
-                            {aiLanguage === "en" ? "• Luwu Regency" : aiLanguage === "zh" ? "• 芦梧县" : "• Kab. Luwu"}
-                          </span>
+                          <span className="text-[10px] text-slate-400">• Kab. Luwu</span>
                         </div>
-                        <span className="text-[9px] font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-0.5">
-                          <ShieldCheck className="w-3 h-3" /> {aiLanguage === "en" ? "Verified" : aiLanguage === "zh" ? "已认证" : "Terverifikasi"}
+                        <span className="text-[9px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5">
+                          <ShieldCheck className="w-3 h-3" /> Terverifikasi
                         </span>
                       </div>
-                      <div className="prose prose-sm dark:prose-invert max-w-none w-full space-y-1 overflow-y-auto ai-custom-scrollbar pr-1 leading-relaxed text-xs sm:text-sm text-slate-950 dark:text-slate-100">
+                      <div className="prose prose-sm dark:prose-invert max-w-none w-full space-y-1 overflow-y-auto ai-custom-scrollbar pr-1 leading-relaxed text-xs sm:text-sm">
                         {formatTextToJsx(msg.text)}
                       </div>
                     </div>
@@ -1042,12 +859,12 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
                 return (
                   <div key={index} className="flex gap-2 items-start max-w-[95%] sm:max-w-[85%] self-end justify-end ml-auto animate-in fade-in slide-in-from-right-2 duration-300">
                     <div className={`px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl rounded-tr-sm border text-right shadow-sm ${
-                      effectiveDark 
+                      isDarkMode 
                         ? "bg-indigo-950/80 border-indigo-700/60 text-slate-100" 
                         : "bg-indigo-600 text-white border-indigo-500 shadow-indigo-600/20"
                     }`}>
                       <div className="text-[9px] uppercase font-bold text-indigo-200 mb-0.5 tracking-wider">
-                        {aiLanguage === "en" ? "INVESTOR" : aiLanguage === "zh" ? "投资者" : t('roiAiModal.investorHeader', 'Investor')}
+                        {t('roiAiModal.investorHeader', 'Investor')}
                       </div>
                       <p className="text-xs sm:text-sm font-semibold leading-relaxed whitespace-pre-wrap">{msg.text}</p>
                     </div>
@@ -1075,32 +892,20 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
 
         {/* STICKY CHAT INPUT & FOOTER */}
         <div className={`p-2.5 sm:p-3.5 border-t shrink-0 ${
-          effectiveDark ? "bg-slate-900 border-slate-800" : "bg-slate-50 border-slate-200"
+          isDarkMode ? "bg-surface/95 border-slate-800" : "bg-slate-50/95 border-slate-200/80"
         }`}>
           <ResponsiveChatInput
             value={inputText}
             onChange={setInputText}
             onSubmit={handleSendMessage}
             isTyping={loading || sending}
-            placeholder={
-              aiLanguage === "en"
-                ? "Ask a question about financial feasibility or investment potential in Luwu..."
-                : aiLanguage === "zh"
-                ? "咨询财务可行性或芦梧县招商引资相关问题..."
-                : t('roiAiModal.inputPlaceholder', 'Ajukan pertanyaan atau tanyakan potensi di wilayah Luwu...')
-            }
-            isDarkMode={effectiveDark}
+            placeholder={t('roiAiModal.inputPlaceholder', 'Ajukan pertanyaan atau tanyakan potensi di wilayah Luwu...')}
+            isDarkMode={isDarkMode}
             className="p-0 border-0 bg-transparent dark:bg-transparent"
           />
-          <div className="mt-1.5 px-1 flex items-center justify-between text-[10px] text-slate-600 dark:text-slate-400 font-medium">
-            <span className="truncate">
-              {aiLanguage === "en"
-                ? "Analyzed using Gemini Enterprise Spatial AI Luwu"
-                : aiLanguage === "zh"
-                ? "基于芦梧空间智能 Gemini Enterprise AI 测算"
-                : t('roiAiModal.disclaimer', 'Dianalisis menggunakan Gemini Enterprise AI Spasial Luwu')}
-            </span>
-            <span className="hidden sm:inline-block font-mono font-semibold">MPP Simpurusiang</span>
+          <div className="mt-1.5 px-1 flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500">
+            <span className="truncate">{t('roiAiModal.disclaimer', 'Dianalisis menggunakan Gemini Enterprise AI Spasial Luwu')}</span>
+            <span className="hidden sm:inline-block font-mono">MPP Simpurusiang</span>
           </div>
         </div>
       </motion.div>

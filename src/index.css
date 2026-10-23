@@ -134,37 +134,6 @@ body {
     --logo-modal: 72px;
     --logo-list: 56px;
   }
-
-  /* Universal High-Contrast Rules for Form Inputs (WCAG AAA) */
-  input[type="text"],
-  input[type="number"],
-  input[type="password"],
-  input[type="email"],
-  select,
-  textarea {
-    color: #0f172a !important;
-  }
-
-  input[type="text"]::placeholder,
-  input[type="number"]::placeholder,
-  textarea::placeholder {
-    color: #94a3b8 !important;
-  }
-
-  .dark input[type="text"],
-  .dark input[type="number"],
-  .dark input[type="password"],
-  .dark input[type="email"],
-  .dark select,
-  .dark textarea {
-    color: #ffffff !important;
-  }
-
-  .dark input[type="text"]::placeholder,
-  .dark input[type="number"]::placeholder,
-  .dark textarea::placeholder {
-    color: #94a3b8 !important;
-  }
 }
 
 .dark {
@@ -1651,3 +1620,43 @@ section[id] {
 .fp-root::backdrop {
   background: var(--fp-bg) !important;
 }
+
+/* ── InvestLuwu Hero & Bento Animations ── */
+@keyframes investluwu-ken-burns {
+  0%,100%{transform:scale(1) translateX(0)}
+  50%{transform:scale(1.05) translateX(-10px)}
+}
+@keyframes investluwu-aurora-a {
+  0%,100%{transform:translate(0,0) scale(1);opacity:.5}
+  50%{transform:translate(28px,-18px) scale(1.1);opacity:.7}
+}
+@keyframes investluwu-aurora-b {
+  0%,100%{transform:translate(0,0) scale(1);opacity:.4}
+  50%{transform:translate(-22px,14px) scale(1.08);opacity:.65}
+}
+@keyframes investluwu-aurora-c {
+  0%,100%{transform:translate(0,0) scale(1);opacity:.35}
+  50%{transform:translate(14px,22px) scale(1.12);opacity:.55}
+}
+@keyframes investluwu-scanline {
+  0%{top:-2px}100%{top:calc(100% + 2px)}
+}
+@keyframes investluwu-fade-up {
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes investluwu-dot-blink {
+  0%,100%{opacity:1}50%{opacity:.3}
+}
+@keyframes investluwu-ticker {
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+@keyframes investluwu-count-up {
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@media (prefers-reduced-motion: reduce) {
+  [style*="investluwu-"]{animation:none!important}
+}
+

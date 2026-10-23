@@ -3276,7 +3276,6 @@ export function InvestmentDetailModal({
           irr={irr}
           npv={npv}
           discountRate={sukuBunga}
-          roi={roi}
           isDarkMode={effectiveDarkMode}
         />
       )}

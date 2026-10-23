@@ -627,18 +627,18 @@ export default function UploadGeoJsonPanel({ onUploadSuccess, isDarkMode }: Uplo
           {validationResult && (
             <div className={`p-4 rounded-xl border text-xs flex gap-3 ${
               validationResult.isValid 
-                ? isDarkMode ? "bg-slate-900 border-emerald-500/35 text-slate-200" : "bg-emerald-50/70 border-emerald-300 text-slate-800 shadow-sm"
-                : isDarkMode ? "bg-slate-900 border-rose-500/35 text-slate-200" : "bg-rose-50/70 border-rose-300 text-slate-800 shadow-sm"
+                ? "bg-base border-emerald-500/35 text-slate-300" 
+                : "bg-base border-rose-500/35 text-slate-300"
             }`}>
               <div>
                 {validationResult.isValid ? (
-                  <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <CheckCircle className="h-5 w-5 text-emerald-700 dark:text-emerald-400 shrink-0" />
                 ) : (
                   <AlertCircle className="h-5 w-5 text-rose-500 shrink-0" />
                 )}
               </div>
               <div className="flex flex-col gap-1.5 font-sans w-full">
-                <span className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                <span className="font-bold text-white flex items-center gap-1.5">
                   {validationResult.isValid ? t('spatial.validationSuccess') : t('spatial.validationFailed')}
                   {validationResult.topologyIssues.length > 0 && (
                     <span className="text-[9px] bg-amber-500/10 text-amber-500 border border-amber-500/20 px-1 py-0.5 rounded font-mono">
@@ -649,11 +649,11 @@ export default function UploadGeoJsonPanel({ onUploadSuccess, isDarkMode }: Uplo
                 
                 {validationResult.isValid ? (
                   <div className="flex flex-col gap-1.5">
-                    <div className="grid grid-cols-2 gap-2 font-mono text-[9px] text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-950 p-2 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm">
-                      <div>{t('spatial.objectCount')}: <span className="text-slate-900 dark:text-white font-bold">{validationResult.featureCount}</span></div>
-                      <div>{t('spatial.areaSize')}: <span className="text-slate-900 dark:text-white font-bold">{formatNumber(validationResult.approxHectares)} Ha</span></div>
-                      <div>{t('spatial.vertexFormat')}: <span className="text-slate-900 dark:text-white font-bold">{validationResult.vertexCount} Simpul</span></div>
-                      <div className="capitalize truncate">{t('spatial.type')}: <span className="text-slate-900 dark:text-white font-bold">{validationResult.geometryTypes.join(", ")}</span></div>
+                    <div className="grid grid-cols-2 gap-2 font-mono text-[9px] text-slate-600 dark:text-slate-400 bg-surface/90 p-2 rounded-lg border border-slate-800">
+                      <div>{t('spatial.objectCount')}: <span className="text-white font-bold">{validationResult.featureCount}</span></div>
+                      <div>{t('spatial.areaSize')}: <span className="text-white font-bold">{formatNumber(validationResult.approxHectares)} Ha</span></div>
+                      <div>{t('spatial.vertexFormat')}: <span className="text-white font-bold">{validationResult.vertexCount} Simpul</span></div>
+                      <div className="capitalize truncate">{t('spatial.type')}: <span className="text-white font-bold">{validationResult.geometryTypes.join(", ")}</span></div>
                     </div>
                     {validationResult.topologyIssues.length > 0 && (
                       <div className="text-[9.5px] text-amber-700 dark:text-amber-400 leading-normal bg-amber-950/10 border border-amber-500/20 p-2 rounded-lg font-mono">
@@ -684,23 +684,23 @@ export default function UploadGeoJsonPanel({ onUploadSuccess, isDarkMode }: Uplo
 
           {/* Adjust visual Layer features */}
           {validationResult?.isValid && (
-            <div className="flex flex-col gap-3 font-sans text-xs border-t border-slate-200 dark:border-slate-800 pt-3 text-slate-700 dark:text-slate-300">
+            <div className="flex flex-col gap-3 font-sans text-xs border-t border-slate-800 pt-3 text-slate-300">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[9px] text-slate-600 dark:text-slate-400 block font-bold mb-1 uppercase font-mono tracking-wider">{t('spatial.spatialLayerName')}</label>
+                  <label className="text-[9px] text-slate-450 block font-bold mb-1 uppercase font-mono tracking-wider">{t('spatial.spatialLayerName')}</label>
                   <input
                     type="text"
                     value={layerName}
                     onChange={(e) => setLayerName(e.target.value)}
-                    className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-white focus:border-emerald-500 focus:outline-none font-medium transition-all"
+                    className="w-full bg-base border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:border-emerald-500 focus:outline-none focus:bg-slate-900 font-medium transition-all"
                   />
                 </div>
                 <div>
-                  <label className="text-[9px] text-slate-600 dark:text-slate-400 block font-bold mb-1 uppercase font-mono tracking-wider">{t('spatial.adminCluster')}</label>
+                  <label className="text-[9px] text-slate-450 block font-bold mb-1 uppercase font-mono tracking-wider">{t('spatial.adminCluster')}</label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value as any)}
-                    className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 dark:text-white focus:border-emerald-500 focus:outline-none cursor-pointer font-medium transition-all"
+                    className="w-full bg-base border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:border-emerald-500 focus:outline-none focus:bg-slate-900 cursor-pointer font-medium transition-all"
                   >
                     <option value="Kawasan Industri">Kawasan Industri Regional</option>
                     <option value="Pariwisata">Klaster Destinasi Wisata</option>

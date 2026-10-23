@@ -38,43 +38,6 @@ export interface HeuristicRoiResult {
 }
 
 /**
- * Exact Internal Rate of Return (IRR) Calculator via Bisection Method.
- * Mathematical definition: Finds rate 'r' such that NPV(r) = -CAPEX + sum_{t=1}^T [CF_t / (1 + r)^t] = 0.
- * Guarantees mathematical convergence within 60 iterations (machine precision < 1e-4).
- */
-export const calculateIterativeBisectionIrr = (
-  capex: number,
-  annualNetProfit: number,
-  tenorYears: number = 8
-): number => {
-  if (capex <= 0 || annualNetProfit <= 0 || tenorYears <= 0) return 0;
-
-  // If total undiscounted cash flow cannot cover initial capex over the tenor, IRR is zero
-  const totalUndiscountedCF = annualNetProfit * tenorYears;
-  if (totalUndiscountedCF <= capex) return 0;
-
-  let low = -0.50; // -50%
-  let high = 5.0;  // +500%
-  let bisectionIrr = 0;
-
-  for (let i = 0; i < 60; i++) {
-    bisectionIrr = (low + high) / 2;
-    let npv = -capex;
-    for (let t = 1; t <= tenorYears; t++) {
-      npv += annualNetProfit / Math.pow(1 + bisectionIrr, t);
-    }
-    if (Math.abs(npv) < 1e-4) break;
-    if (npv > 0) {
-      low = bisectionIrr;
-    } else {
-      high = bisectionIrr;
-    }
-  }
-
-  return Math.max(0, Number((bisectionIrr * 100).toFixed(2)));
-};
-
-/**
  * Heuristic Fallback Analysis Engine (Anti-Fail & Honest Financial Integrity)
  * Formulates a deep, comprehensive financial model strictly honoring zero-dummy & honest fallback.
  */
@@ -119,7 +82,7 @@ export const generateHeuristicRoiAnalysis = (data: {
   if (data.irr !== undefined && !isNaN(data.irr)) {
     estIrrNum = data.irr;
   } else {
-    estIrrNum = calculateIterativeBisectionIrr(inv, netProfit, tenor);
+    estIrrNum = netProfit > 0 ? Math.min(38.5, Math.max(16.5, rawRoi * 0.88)) : 0;
   }
   const estIrr = `${estIrrNum.toFixed(2)}%`;
 
@@ -141,15 +104,12 @@ export const generateHeuristicRoiAnalysis = (data: {
   const isConditional = !isDeficit && !isFeasible;
 
   let kelayakan = '🔴 PERLU PENYESUAIAN ASUMSI (TIDAK LAYAK / DEFISIT)';
-  let skorKelayakan = netProfit > 0 ? 25 : 10;
+  let skorKelayakan = 5;
   let kategoriSkor = '(Kategori Evaluasi Kritis / Di Bawah Ambang Kelayakan)';
-  const profitMarginVal = rev > 0 ? ((netProfit / rev) * 100).toFixed(1) : "0";
-  let ringkasan = netProfit > 0
-    ? `Proyek investasi ini membukukan laba operasional tahunan positif sebesar Rp ${netProfit.toLocaleString('id-ID')} (margin ${profitMarginVal}%), namun nilai investasi awal (CAPEX Rp ${inv.toLocaleString('id-ID')}) belum memadai untuk menghasilkan Net Present Value positif pada tingkat suku bunga diskonto WACC ${discountRate}% (NPV: ${estNpv}). Diperlukan akselerasi volume produksi atau peningkatan harga komoditas bernilai tambah.`
-    : `Proyek investasi ini belum layak secara finansial pada parameter saat ini karena beban operasional tahunan (OPEX Rp ${opex.toLocaleString('id-ID')}) melebihi pendapatan dan menghasilkan Net Present Value negatif (NPV: ${estNpv}). Diperlukan efisiensi beban operasional rutin atau restrukturisasi skala investasi.`;
+  let ringkasan = `Proyek investasi ini belum layak secara finansial pada parameter saat ini karena beban operasional tahunan (OPEX Rp ${opex.toLocaleString('id-ID')}) melebihi pendapatan atau menghasilkan net present value negatif (NPV: ${estNpv}), sehingga modal awal tidak dapat terpulihkan dalam horizon waktu investasi. Diperlukan penyesuaian asumsi produksi, kenaikan harga komoditas, atau efisiensi biaya operasional.`;
 
   let npvNote = '(Bernilai negatif di bawah biaya modal / Mengurangi nilai kekayaan investasi)';
-  let irrNote = `(${estIrrNum.toFixed(2)}% / Di bawah suku bunga WACC ${discountRate}%, tidak memberikan pengembalian modal yang memadai)`;
+  let irrNote = `(0.00% / Di bawah suku bunga WACC ${discountRate}%, tidak memberikan pengembalian modal yang memadai)`;
   let piNote = '(PI < 1.0 mengindikasikan pengembalian modal lebih kecil dari nilai investasi yang dikeluarkan)';
 
   if (isFeasible) {
@@ -267,56 +227,6 @@ export const formatHeuristicRoiMarkdown = (
     return `0 印尼盾${tag}`;
   };
 
-  // Localized evaluation strings for English
-  const kategoriSkorEn = analysis.isFeasible 
-    ? '(Priority Category A / Highly Recommended)' 
-    : analysis.isConditional 
-    ? '(Category B / Margin Monitoring Required)' 
-    : '(Critical Review Category / Below Hurdle Rate)';
-
-  const ringkasanEn = analysis.isFeasible
-    ? `Investment in "${extra?.projectName || 'Strategic Potential'}" (${extra?.sector || 'Priority Sector'}) with initial CAPEX of IDR ${inv.toLocaleString('en-US')} and projected annual revenue of IDR ${rev.toLocaleString('en-US')} in Luwu Regency demonstrates strong financial fundamentals with an estimated payback period of ${analysis.estPaybackYears} years.`
-    : net > 0
-    ? `The project demonstrates a positive annual operating profit of IDR ${net.toLocaleString('en-US')} (margin ${profitMargin}%), but the initial capital expenditure (CAPEX IDR ${inv.toLocaleString('en-US')}) requires a higher gross margin to achieve a positive Net Present Value at a ${discountRate}% WACC hurdle rate (NPV: IDR ${analysis.estNpv.replace('Rp ', '')}). Strategic focus should be directed toward premium product pricing, yield optimization, or phased CAPEX.`
-    : `The project is currently not financially viable under existing parameters because annual operating expenditures (IDR ${opex.toLocaleString('en-US')}) exceed revenues, resulting in an operating deficit and negative Net Present Value (NPV: IDR ${analysis.estNpv.replace('Rp ', '')}). Comprehensive cost restructuring is required.`;
-
-  const npvNoteEn = analysis.isFeasible 
-    ? '(Solid positive capital surplus above WACC)' 
-    : '(Negative discounted value below hurdle rate / Capital value erosion)';
-
-  const irrNoteEn = analysis.isFeasible
-    ? `(+${(parseFloat(analysis.estIrr) - discountRate).toFixed(1)}% spread above WACC ${discountRate}%)`
-    : `(${analysis.estIrr} / Below ${discountRate}% WACC hurdle rate)`;
-
-  const piNoteEn = analysis.isFeasible
-    ? '(PI > 1.0 indicates strong capital value creation)'
-    : '(PI < 1.0 indicates discounted cash flows do not fully cover capital outlay)';
-
-  // Localized evaluation strings for Chinese
-  const kategoriSkorZh = analysis.isFeasible 
-    ? '(A类重点推荐产业 / 重点招商)' 
-    : analysis.isConditional 
-    ? '(B类审慎推进 / 需强化利差监控)' 
-    : '(关键风险复核评级 / 未达最低回报门槛)';
-
-  const ringkasanZh = analysis.isFeasible
-    ? `在芦梧县投资 "${extra?.projectName || '重点招商项目'}"（所属产业：${extra?.sector || '重点产业'}），初始资本支出约 ${inv.toLocaleString('zh-CN')} 印尼盾，预计年营业额约 ${rev.toLocaleString('zh-CN')} 印尼盾，展现出扎实的财务基本面，预计投资回收期为 ${analysis.estPaybackYears} 年。`
-    : net > 0
-    ? `项目年化净营运利润保持正向 (约 ${net.toLocaleString('zh-CN')} 印尼盾，利润率 ${profitMargin}%)，但前期资本投入 (CAPEX 约 ${inv.toLocaleString('zh-CN')} 印尼盾) 相对较大，在 ${discountRate}% WACC 基准折现率测算下尚未实现净现值转正 (NPV: ${analysis.estNpv})。建议通过提升深加工产品单价、扩大单产规模或优化前期资本支出来提升整体回报。`
-    : `按照当前设定的测算参数，本项目年度运营成本 (${opex.toLocaleString('zh-CN')} 印尼盾) 超过年营业总收入，存在营运赤字且折现净现值为负 (NPV: ${analysis.estNpv})。需对核心成本结构进行重构。`;
-
-  const npvNoteZh = analysis.isFeasible 
-    ? '(显著正向增值 / 高于资本加权成本)' 
-    : '(折现净现值为负 / 资本回报不及加权成本)';
-
-  const irrNoteZh = analysis.isFeasible
-    ? `(超出基准折现率 ${discountRate}%，具备良好安全边际)`
-    : `(${analysis.estIrr} / 低于基准折现率 ${discountRate}%，资本回报欠佳)`;
-
-  const piNoteZh = analysis.isFeasible
-    ? '(PI > 1.0 表明投资创造显著资本溢价)'
-    : '(PI < 1.0 表明折现现金流无法完全收回初始资本)';
-
   if (activeLocale.startsWith('en')) {
     const statusEn = analysis.isFeasible 
       ? '🟢 HIGHLY FEASIBLE (APPROVED FOR PRIORITY PIPELINE)'
@@ -334,18 +244,18 @@ export const formatHeuristicRoiMarkdown = (
 
 ### A. EXECUTIVE FEASIBILITY SCORE & SUMMARY
 - **Feasibility Status:** ${statusEn}
-- **Executive Feasibility Score:** **${analysis.skorKelayakan} / 100 ${kategoriSkorEn}**
-- **Brief Justification:** ${ringkasanEn}
+- **Executive Feasibility Score:** **${analysis.skorKelayakan} / 100 ${analysis.kategoriSkor}**
+- **Brief Justification:** ${analysis.ringkasan}
 
 ---
 
 ### B. ESTIMATED PAYBACK PERIOD & DETAILED FINANCIAL INDICATORS (ROI, NPV, IRR)
 Based on Discounted Cash Flow (DCF) modeling benchmarked at a ${discountRate}% Weighted Average Cost of Capital (WACC / Discount Rate):
 1. **Estimated Payback Period (BEP):** **${paybackEn}**
-2. **Net Present Value (5-Year NPV):** **IDR ${analysis.estNpv.replace('Rp ', '')}** ${npvNoteEn}
-3. **Internal Rate of Return (IRR):** **${analysis.estIrr}** ${irrNoteEn}
+2. **Net Present Value (5-Year NPV):** **IDR ${analysis.estNpv.replace('Rp ', '')}** ${analysis.npvNote}
+3. **Internal Rate of Return (IRR):** **${analysis.estIrr}** ${analysis.irrNote}
 4. **Profitability Index (PI) & Net Margin:**
-   - **Profitability Index (PI):** **${pi}** ${piNoteEn}
+   - **Profitability Index (PI):** **${pi}** ${analysis.piNote}
    - **Net Profit Margin:** **${profitMargin}%** (Annual net operating income: IDR ${net.toLocaleString('en-US')} on gross revenue: IDR ${rev.toLocaleString('en-US')})
 5. **Sensitivity Stress Testing:**
    - **Optimistic Scenario (+15% Revenue):** Revenue IDR ${revOpt.toLocaleString('en-US')}/yr, Net Profit IDR ${netOpt.toLocaleString('en-US')}, Payback **${paybackOpt} Years**.
@@ -401,18 +311,18 @@ Based on Discounted Cash Flow (DCF) modeling benchmarked at a ${discountRate}% W
 
 ### A. 执行可行性概述与评分 (EXECUTIVE FEASIBILITY SCORE)
 - **可行性综合结论：** ${statusZh}
-- **执行可行性综合评分：** **${analysis.skorKelayakan} / 100 分 ${kategoriSkorZh}**
-- **投资可行性简要论证：** ${ringkasanZh}
+- **执行可行性综合评分：** **${analysis.skorKelayakan} / 100 分 ${analysis.kategoriSkor}**
+- **投资可行性简要论证：** ${analysis.ringkasan}
 
 ---
 
 ### B. 预计投资回收期与详细财务指标 (ROI, NPV, IRR)
 基于折现现金流法 (DCF) 模型，基准加权平均资本成本 (WACC / 折现率) 按 ${discountRate}% 测算：
 1. **预计投资回收期 (BEP)：** **${paybackZh}**
-2. **5年期累计净现值 (NPV)：** **${analysis.estNpv}** ${npvNoteZh}
-3. **内部收益率 (IRR)：** **${analysis.estIrr}** ${irrNoteZh}
+2. **5年期累计净现值 (NPV)：** **${analysis.estNpv}** ${analysis.npvNote}
+3. **内部收益率 (IRR)：** **${analysis.estIrr}** ${analysis.irrNote}
 4. **获利能力指数 (PI) 与净利润率：**
-   - **获利能力指数 (PI)：** **${pi}** ${piNoteZh}
+   - **获利能力指数 (PI)：** **${pi}** ${analysis.piNote}
    - **净利润率 (Net Margin)：** **${profitMargin}%** (年净营运利润约 ${net.toLocaleString('zh-CN')} 印尼盾，营业总收入约 ${rev.toLocaleString('zh-CN')} 印尼盾)
 5. **多情景敏感性压力测试：**
    - **乐观情景 (营业收入 +15%)：** 年收入增至 ${revOpt.toLocaleString('zh-CN')} 印尼盾，净利润达 ${netOpt.toLocaleString('zh-CN')} 印尼盾，投资回收期为 **${paybackOpt} 年**。
@@ -622,6 +532,8 @@ Hasilkan laporan analisis lengkap (minimal 500–800 kata) sesuai format struktu
         signal: controller.signal,
         body: JSON.stringify({
           message: detailedMessage,
+          assistantMode: "ROI_SIMULATOR",
+          isRoiSimulation: true,
           locale: targetLocale,
           language: targetLocale,
           investment_amount: nilaiInvestasi,

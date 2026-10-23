@@ -2,6 +2,8 @@ import React from 'react';
 import { DataProvider } from './providers/DataProvider';
 import { GlobalModalProvider } from './providers/GlobalModalProvider';
 import { AppRouter } from './routes/AppRouter';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18n';
 
 /**
  * Main Application Root Entry Point
@@ -11,10 +13,13 @@ import { AppRouter } from './routes/AppRouter';
  */
 export default function App() {
   return (
-    <DataProvider>
-      <GlobalModalProvider>
-        <AppRouter />
-      </GlobalModalProvider>
-    </DataProvider>
+    <I18nextProvider i18n={i18n}>
+      <DataProvider>
+        <GlobalModalProvider>
+          <AppRouter />
+        </GlobalModalProvider>
+      </DataProvider>
+    </I18nextProvider>
   );
 }
+

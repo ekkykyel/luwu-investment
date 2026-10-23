@@ -3259,7 +3259,7 @@ export default function MasyarakatDashboard({
                                 <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                                 <span className="truncate w-full">1. Berkas</span>
                               </div>
-                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-44 p-2 bg-slate-900 text-white rounded-lg shadow-xl border border-slate-800 text-[10px] text-left opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all z-20">
+                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-44 p-2 bg-base text-white rounded-lg shadow-xl border border-slate-800 text-[10px] text-left opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all z-20">
                                 <strong className="text-emerald-400 block">Tahap 1: Berkas &amp; Plot</strong>
                                 Pengajuan dokumen tanah &amp; gambar poligon lahan selesai diverifikasi.
                               </div>
@@ -3273,7 +3273,7 @@ export default function MasyarakatDashboard({
                                 {isStep2Done ? <CheckCircle2 className="w-3 h-3 text-emerald-500" /> : <Clock className="w-3 h-3 text-amber-500 animate-pulse" />}
                                 <span className="truncate w-full">2. LP2B</span>
                               </div>
-                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-48 p-2 bg-slate-900 text-white rounded-lg shadow-xl border border-slate-800 text-[10px] text-left opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all z-20">
+                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-48 p-2 bg-base text-white rounded-lg shadow-xl border border-slate-800 text-[10px] text-left opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all z-20">
                                 <strong className="text-amber-400 block">Tahap 2: Dinas Pertanian</strong>
                                 Verifikasi perlindungan sawah abadi LP2B dan penerbitan BAP Pertanian.
                               </div>
@@ -3287,7 +3287,7 @@ export default function MasyarakatDashboard({
                                 {isStep3Done ? <CheckCircle2 className="w-3 h-3 text-emerald-500" /> : isStep2Done ? <Clock className="w-3 h-3 text-amber-500 animate-pulse" /> : <Lock className="w-3 h-3 text-slate-400" />}
                                 <span className="truncate w-full">3. PUPTR</span>
                               </div>
-                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-48 p-2 bg-slate-900 text-white rounded-lg shadow-xl border border-slate-800 text-[10px] text-left opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all z-20">
+                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-48 p-2 bg-base text-white rounded-lg shadow-xl border border-slate-800 text-[10px] text-left opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all z-20">
                                 <strong className="text-blue-400 block">Tahap 3: Dinas PUPTR</strong>
                                 Kajian teknis tata ruang RTRW, sempadan jalan/sungai &amp; persetujuan Pertek.
                               </div>
@@ -3301,7 +3301,7 @@ export default function MasyarakatDashboard({
                                 {isStep4Done ? <CheckCircle2 className="w-3 h-3 text-emerald-500" /> : isStep3Done ? <Clock className="w-3 h-3 text-blue-500 animate-pulse" /> : <Lock className="w-3 h-3 text-slate-400" />}
                                 <span className="truncate w-full">4. Terbit</span>
                               </div>
-                              <div className="absolute bottom-full right-0 mb-1.5 w-48 p-2 bg-slate-900 text-white rounded-lg shadow-xl border border-slate-800 text-[10px] text-left opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all z-20">
+                              <div className="absolute bottom-full right-0 mb-1.5 w-48 p-2 bg-base text-white rounded-lg shadow-xl border border-slate-800 text-[10px] text-left opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all z-20">
                                 <strong className="text-emerald-400 block">Tahap 4: SK DPMPTSP</strong>
                                 Penerbitan Surat Keputusan PKKPR resmi bertanda tangan elektronik (TTE).
                               </div>

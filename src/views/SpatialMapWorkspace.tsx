@@ -5677,10 +5677,10 @@ export default function SpatialMapWorkspace() {
                 <h3 className="text-sm font-bold mt-1 text-slate-900 dark:text-white">
                   {dbStatusError ? "Gagal Memuat Data dari Cloud" : "Belum Ada Data Investasi Masuk"}
                 </h3>
-                <p className="text-xs text-slate-700 dark:text-slate-300 mt-1.5 font-sans leading-relaxed">
+                <p className="text-xs text-slate-300 mt-1.5 font-sans leading-relaxed">
                   {dbStatusError ? (
                     <>
-                      Koneksi Supabase PostgreSQL mengalami gangguan jaringan (<span className="font-mono text-rose-700 dark:text-rose-300 text-[11px] font-bold">{dbStatusError}</span>). 
+                      Koneksi Supabase PostgreSQL mengalami gangguan jaringan (<span className="font-mono text-rose-300 text-[11px] font-semibold">{dbStatusError}</span>). 
                       Peta dibiarkan bersih tanpa data fiktif demi kredibilitas total informasi pemerintah.
                     </>
                   ) : (
@@ -5695,21 +5695,17 @@ export default function SpatialMapWorkspace() {
                     onClick={() => setIsDiagnosticModalOpen(true)}
                     className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all shadow flex items-center gap-1.5 border select-none cursor-pointer ${
                       dbStatusError 
-                        ? "bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white border-rose-500" 
-                        : "bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white border-emerald-500"
+                        ? "bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-slate-900 dark:text-white border-rose-500/50" 
+                        : "bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-slate-900 dark:text-white border-emerald-500/50"
                     }`}
                     title="Jalankan Diagnostik Koneksi Supabase"
                   >
-                    <Database className="w-3.5 h-3.5 text-white" />
+                    <Database className="w-3.5 h-3.5 text-slate-900 dark:text-white" />
                     Diagnostik Koneksi & Solusi
                   </motion.button>
                   <motion.button whileTap={{ scale: 0.95 }}
                     onClick={() => window.location.reload()}
-                    className={`px-3.5 py-1.5 border rounded-xl text-xs font-bold transition-all shadow-sm select-none cursor-pointer ${
-                      isDarkMode 
-                        ? "bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-200" 
-                        : "bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-800"
-                    }`}
+                    className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 active:bg-white dark:bg-slate-900 border border-slate-700 text-slate-300 rounded-xl text-xs font-bold transition-all shadow-sm select-none cursor-pointer"
                   >
                     Segarkan Halaman
                   </motion.button>
@@ -5861,7 +5857,7 @@ export default function SpatialMapWorkspace() {
                 setIsBufferAiModalOpen(true);
                 setIsAiPanelOpen(false);
               }}
-              className="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition-all shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-slate-900 dark:text-white font-medium text-sm transition-all shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2 cursor-pointer"
             >
               <Sparkles className="h-4 w-4" />
               Buka Konsultan AI Utama
@@ -5883,24 +5879,24 @@ export default function SpatialMapWorkspace() {
         <div className={`flex flex-wrap items-center gap-2 md:gap-3 pointer-events-auto backdrop-blur-md border border-white/40 dark:border-slate-700/50 rounded-2xl p-2 md:p-3 shadow-2xl animate-fade-in ${
           isDarkMode
             ? "bg-white dark:bg-surface/80 text-slate-900 dark:text-white"
-            : "bg-white/90 text-slate-900 shadow-md"
+            : "bg-white/80 text-slate-900"
         }`}>
           <LuwuLogo size="sm" className="h-8 w-8 md:h-10 md:w-10 shrink-0 object-contain" />
           <div className="pr-2">
             <h1 className={`text-sm md:text-base font-display font-bold tracking-tight flex items-center gap-2 ${
-              isDarkMode ? "text-slate-900 dark:text-white" : "text-slate-950 font-bold"
+              isDarkMode ? "text-slate-900 dark:text-white" : "text-slate-900"
             }`}>
               PORTAL INVESTASI{" "}
               <span className="hidden sm:inline text-emerald-700 dark:text-emerald-400">LUWU</span>
-              <span className="bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30 text-[9px] md:text-[10px] font-mono px-2 py-0.5 rounded-lg font-bold uppercase tracking-wider hidden xs:inline-block">
+              <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] md:text-[10px] font-mono px-2 py-0.5 rounded-lg font-bold uppercase tracking-wider hidden xs:inline-block">
                 GIS ENGINE v2.0
               </span>
             </h1>
-            <p className="hidden md:block text-[10px] text-slate-600 dark:text-slate-400 font-sans tracking-wide -mt-0.5">
+            <p className="hidden md:block text-[10px] text-slate-300 font-sans tracking-wide -mt-0.5">
               Smart Spatial Intelligence Platform
             </p>
           </div>
-          <div className="flex items-center gap-1 sm:gap-2 pl-2 border-l border-slate-200 dark:border-white/10">
+          <div className="flex items-center gap-1 sm:gap-2 pl-2 border-l border-white/10">
             <motion.button whileTap={{ scale: 0.95 }}
               type="button"
               onClick={(e) => {
@@ -5914,7 +5910,7 @@ export default function SpatialMapWorkspace() {
                 }
               }}
               className={`p-2 min-h-[44px] rounded-xl transition-all cursor-pointer ${
-                isDarkMode ? "text-slate-300 hover:text-white" : "text-slate-700 hover:text-slate-950 hover:bg-slate-100"
+                isDarkMode ? "text-slate-300 hover:text-slate-900 dark:text-white" : "text-slate-600 hover:text-slate-900"
               }`}
               title="Kembali ke Dashboard"
             >
@@ -5923,14 +5919,14 @@ export default function SpatialMapWorkspace() {
             <motion.button whileTap={{ scale: 0.95 }}
               onClick={() => setIsDarkMode(!isDarkMode)}
               className={`p-2 min-h-[44px] rounded-xl transition-all cursor-pointer ${
-                isDarkMode ? "text-slate-300 hover:text-white" : "text-slate-700 hover:text-slate-950 hover:bg-slate-100"
+                isDarkMode ? "text-slate-300 hover:text-slate-900 dark:text-white" : "text-slate-600 hover:text-slate-900"
               }`}
               title="Toggle Tema"
             >
               {isDarkMode ? (
                 <Sun className="h-4 w-4 text-emerald-700 dark:text-emerald-400" />
               ) : (
-                <Moon className="h-4 w-4 text-emerald-600" />
+                <Moon className="h-4 w-4 text-emerald-500" />
               )}
             </motion.button>
             <motion.button whileTap={{ scale: 0.95 }}
@@ -5941,9 +5937,7 @@ export default function SpatialMapWorkspace() {
               className={`px-2.5 py-1.5 rounded-xl transition-all duration-300 cursor-pointer flex items-center gap-1.5 text-xs font-bold active:scale-95 hover:shadow-[0_0_15px_rgba(16,185,129,0.4)] ${
                 activeWorkspace === "EXECUTIVE_DASHBOARD"
                   ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white border border-emerald-400/40 shadow-md scale-105"
-                  : isDarkMode 
-                    ? "bg-slate-800/80 text-slate-300 hover:text-white border border-slate-700/50" 
-                    : "bg-slate-100 hover:bg-slate-200 text-slate-800 hover:text-slate-950 border border-slate-300 shadow-sm"
+                  : isDarkMode ? "bg-slate-800/80 text-slate-300 hover:text-slate-900 dark:text-white border border-slate-700/50" : "bg-white/5 text-slate-300 border border-white/10 dark:text-slate-200 hover:text-slate-900 border border-slate-200"
               }`}
               title="Toggle antara Tampilan Peta (GIS) dan Dasbor Eksekutif (Bupati/Kadis)"
             >
@@ -5968,10 +5962,8 @@ export default function SpatialMapWorkspace() {
               }}
               className={`px-2.5 py-1.5 rounded-xl transition-all duration-300 cursor-pointer flex items-center gap-1.5 text-xs font-bold active:scale-95 hover:shadow-[0_0_15px_rgba(16,185,129,0.4)] ${
                 isDashboardExpanded && showRightDashboard && isRightSidebarOpen
-                  ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border border-emerald-500/40 shadow-sm"
-                  : isDarkMode 
-                    ? "bg-slate-800/80 text-slate-300 hover:text-white border border-slate-700/50" 
-                    : "bg-slate-100 hover:bg-slate-200 text-slate-800 hover:text-slate-950 border border-slate-300 shadow-sm"
+                  ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/40 shadow-sm"
+                  : isDarkMode ? "bg-slate-800/80 text-slate-300 hover:text-slate-900 dark:text-white border border-slate-700/50" : "bg-white/5 text-slate-300 border border-white/10 dark:text-slate-200 hover:text-slate-900 border border-slate-200"
               }`}
               title={t('map.analyticsHubTooltip', 'Buka / Tutup Hub Analitik Investor')}
             >
@@ -5993,10 +5985,8 @@ export default function SpatialMapWorkspace() {
               }}
               className={`px-2.5 py-1.5 rounded-xl transition-all duration-300 cursor-pointer flex items-center gap-1.5 text-xs font-bold active:scale-95 hover:shadow-[0_0_15px_rgba(99,102,241,0.4)] ${
                 isLayerPanelOpen
-                  ? "bg-indigo-500/20 text-indigo-800 dark:text-indigo-400 border border-indigo-500/40 shadow-sm"
-                  : isDarkMode 
-                    ? "bg-slate-800/80 text-slate-300 hover:text-white border border-slate-700/50" 
-                    : "bg-slate-100 hover:bg-slate-200 text-slate-800 hover:text-slate-950 border border-slate-300 shadow-sm"
+                  ? "bg-indigo-500/20 text-indigo-700 dark:text-indigo-400 border border-indigo-500/40 shadow-sm"
+                  : isDarkMode ? "bg-slate-800/80 text-slate-300 hover:text-slate-900 dark:text-white border border-slate-700/50" : "bg-white/5 text-slate-300 border border-white/10 dark:text-slate-200 hover:text-slate-900 border border-slate-200"
               }`}
               title={t('map.thematicLayersTooltip', 'Buka / Tutup Panel Layer Tematik (GIS)')}
             >
@@ -8410,17 +8400,17 @@ export default function SpatialMapWorkspace() {
                             const isTerminal = ['Izin Terbit / Realisasi', 'Ditolak / Batal'].includes(ticket.status);
 
                             return (
-                              <tr key={ticket.id} className="hover:bg-slate-100/60 dark:hover:bg-slate-800/30 transition-colors">
+                              <tr key={ticket.id} className="hover:bg-slate-800/30 transition-colors">
                                 <td className="py-3.5 px-4">
-                                  <div className="font-bold text-slate-900 dark:text-slate-100">{ticket.company_name || ticket.investor_name}</div>
+                                  <div className="font-bold text-slate-200">{ticket.company_name || ticket.investor_name}</div>
                                   <div className="text-[10px] text-emerald-700 dark:text-emerald-400 font-mono mt-0.5">{ticket.contact_info}</div>
                                 </td>
                                 <td className="py-3.5 px-4">
-                                  <div className="text-slate-800 dark:text-slate-300 font-medium">{ticket.potensi_name || "Umum"}</div>
+                                  <div className="text-slate-300 font-medium">{ticket.potensi_name || "Umum"}</div>
                                   <div className="text-[10px] text-slate-600 dark:text-slate-400 mt-0.5">{ticket.kebutuhan_lahan ? `${ticket.kebutuhan_lahan} Ha` : "-"}</div>
                                 </td>
                                 <td className="py-3.5 px-4">
-                                  <div className="font-bold text-slate-900 dark:text-slate-200 mb-1.5">{ticket.status || "Menunggu Verifikasi"}</div>
+                                  <div className="font-bold text-slate-300 mb-1.5">{ticket.status || "Menunggu Verifikasi"}</div>
                                   {isTerminal ? (
                                     <span className="text-[10px] font-mono text-slate-600 dark:text-slate-400 bg-slate-800/50 px-2 py-0.5 rounded border border-slate-700/50">
                                       - Selesai -
@@ -8886,12 +8876,12 @@ export default function SpatialMapWorkspace() {
                                     <Activity size={10} className="animate-pulse" />
                                     Status Sinkronisasi
                                   </span>
-                                  <span className="text-[11px] font-sans font-medium text-slate-800 dark:text-slate-200 truncate max-w-[180px] sm:max-w-xs block">
+                                  <span className="text-[11px] font-sans font-medium text-slate-300 truncate max-w-[180px] sm:max-w-xs block">
                                     {globalSyncProgress.message}
                                   </span>
                                 </div>
                                 <div className="flex flex-col items-end gap-0.5">
-                                  <span className="text-sm font-black font-mono text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
+                                  <span className="text-sm font-black font-mono text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
                                     {percentage}%
                                   </span>
                                   <span className="text-[9px] font-mono text-slate-600 dark:text-slate-400">
@@ -8901,7 +8891,7 @@ export default function SpatialMapWorkspace() {
                               </div>
 
                               {/* Premium Smooth Progress Bar */}
-                              <div className="h-2 w-full bg-slate-100 dark:bg-slate-900 rounded-full overflow-hidden p-0.5 border border-slate-300 dark:border-slate-800">
+                              <div className="h-2 w-full bg-white dark:bg-slate-900 rounded-full overflow-hidden p-0.5 border border-slate-200 dark:border-slate-800">
                                 <div className="h-full w-full rounded-full overflow-hidden relative">
                                   <motion.div 
                                     className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full relative"
@@ -8935,23 +8925,23 @@ export default function SpatialMapWorkspace() {
                                         isActive 
                                           ? "bg-indigo-950/40 border border-indigo-500/30 shadow-[0_0_8px_rgba(99,102,241,0.15)] text-slate-100" 
                                           : isDone 
-                                            ? "bg-slate-50 dark:bg-surface/10 text-slate-600 dark:text-slate-300 border border-transparent" 
-                                            : "bg-slate-50 dark:bg-surface/30 text-slate-600 dark:text-slate-400 border border-transparent"
+                                            ? "bg-white dark:bg-surface/10 text-slate-600 dark:text-slate-300 border border-transparent" 
+                                            : "bg-white dark:bg-surface/30 text-slate-600 dark:text-slate-400 border border-transparent"
                                       }`}>
                                         <div className="flex items-center justify-between text-[10px]">
-                                          <div className="flex items-center gap-1.5 text-slate-800 dark:text-slate-300">
+                                          <div className="flex items-center gap-1.5 text-slate-300">
                                             {isDone ? (
                                               <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
                                             ) : isActive ? (
                                               <Loader2 size={12} className="text-indigo-700 dark:text-indigo-400 animate-spin shrink-0" />
                                             ) : (
-                                              <div className="w-3.5 h-3.5 rounded-full border border-slate-400 dark:border-slate-700 shrink-0" />
+                                              <div className="w-3.5 h-3.5 rounded-full border border-slate-700 shrink-0" />
                                             )}
-                                            <span className={isDone ? "text-slate-500 dark:text-slate-400 line-through decoration-slate-400" : "font-semibold text-slate-900 dark:text-slate-200"}>
+                                            <span className={isDone ? "text-slate-600 dark:text-slate-400 line-through decoration-slate-600" : "font-semibold text-slate-200"}>
                                               1. Inisialisasi & Validasi Geometri
                                             </span>
                                           </div>
-                                          <span className={`text-[9px] font-mono ${isDone ? "text-emerald-600 dark:text-emerald-500 font-bold" : isActive ? "text-indigo-700 dark:text-indigo-400 animate-pulse font-bold" : "text-slate-500"}`}>
+                                          <span className={`text-[9px] font-mono ${isDone ? "text-emerald-500" : isActive ? "text-indigo-700 dark:text-indigo-400 animate-pulse font-bold" : "text-slate-600"}`}>
                                             {isDone ? "Selesai" : isActive ? "Memproses..." : "Menunggu"}
                                           </span>
                                         </div>
@@ -8969,33 +8959,33 @@ export default function SpatialMapWorkspace() {
                                         isActive 
                                           ? "bg-indigo-950/40 border border-indigo-500/30 shadow-[0_0_8px_rgba(99,102,241,0.15)] text-slate-100" 
                                           : isDone 
-                                            ? "bg-slate-50 dark:bg-surface/10 text-slate-600 dark:text-slate-300 border border-transparent" 
-                                            : "bg-slate-50 dark:bg-surface/30 text-slate-600 dark:text-slate-400 border border-transparent"
+                                            ? "bg-white dark:bg-surface/10 text-slate-600 dark:text-slate-300 border border-transparent" 
+                                            : "bg-white dark:bg-surface/30 text-slate-600 dark:text-slate-400 border border-transparent"
                                       }`}>
                                         <div className="flex items-center justify-between text-[10px]">
-                                          <div className="flex items-center gap-1.5 text-slate-800 dark:text-slate-300">
+                                          <div className="flex items-center gap-1.5 text-slate-300">
                                             {isDone ? (
                                               <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
                                             ) : isActive ? (
                                               <Loader2 size={12} className="text-indigo-700 dark:text-indigo-400 animate-spin shrink-0" />
                                             ) : (
-                                              <div className="w-3.5 h-3.5 rounded-full border border-slate-400 dark:border-slate-700 shrink-0" />
+                                              <div className="w-3.5 h-3.5 rounded-full border border-slate-700 shrink-0" />
                                             )}
-                                            <span className={isDone ? "text-slate-500 dark:text-slate-400 line-through decoration-slate-400" : "font-semibold text-slate-900 dark:text-slate-200"}>
+                                            <span className={isDone ? "text-slate-600 dark:text-slate-400 line-through decoration-slate-600" : "font-semibold text-slate-200"}>
                                               2. Pencocokan Batas Desa & Kecamatan
                                             </span>
                                           </div>
-                                          <span className={`text-[9px] font-mono ${isDone ? "text-emerald-600 dark:text-emerald-500 font-bold" : isActive ? "text-indigo-700 dark:text-indigo-400 animate-pulse font-bold" : "text-slate-500"}`}>
+                                          <span className={`text-[9px] font-mono ${isDone ? "text-emerald-500" : isActive ? "text-indigo-700 dark:text-indigo-400 animate-pulse font-bold" : "text-slate-600"}`}>
                                             {isDone ? "Selesai" : isActive ? "Memproses..." : "Menunggu"}
                                           </span>
                                         </div>
                                         {isActive && (
-                                          <div className="text-[8.5px] text-indigo-900 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10 rounded px-2.5 py-1.5 flex flex-col gap-1 border border-indigo-200 dark:border-indigo-500/20">
+                                          <div className="text-[8.5px] text-indigo-300 bg-indigo-500/10 rounded px-2.5 py-1.5 flex flex-col gap-1 border border-indigo-500/20">
                                             <span className="flex items-center gap-1">
-                                              <Network size={10} className="animate-spin text-indigo-500 dark:text-indigo-400" />
-                                              Layer Aktif: <strong className="text-indigo-950 dark:text-indigo-200">{layer} Boundary</strong>
+                                              <Network size={10} className="animate-spin text-indigo-400" />
+                                              Layer Aktif: <strong className="text-indigo-200">{layer} Boundary</strong>
                                             </span>
-                                            <span className="text-[8px] uppercase tracking-wider font-bold text-indigo-700 dark:text-indigo-400 animate-pulse">PostGIS ST_Contains / ST_Within</span>
+                                            <span className="text-[8px] uppercase tracking-wider font-bold text-indigo-400 animate-pulse">PostGIS ST_Contains / ST_Within</span>
                                           </div>
                                         )}
                                       </div>
@@ -9012,36 +9002,36 @@ export default function SpatialMapWorkspace() {
                                         isActive 
                                           ? "bg-indigo-950/40 border border-indigo-500/30 shadow-[0_0_8px_rgba(99,102,241,0.15)] text-slate-100" 
                                           : isDone 
-                                            ? "bg-slate-50 dark:bg-surface/10 text-slate-600 dark:text-slate-300 border border-transparent" 
-                                            : "bg-slate-50 dark:bg-surface/30 text-slate-600 dark:text-slate-400 border border-transparent"
+                                            ? "bg-white dark:bg-surface/10 text-slate-600 dark:text-slate-300 border border-transparent" 
+                                            : "bg-white dark:bg-surface/30 text-slate-600 dark:text-slate-400 border border-transparent"
                                       }`}>
                                         <div className="flex items-center justify-between text-[10px]">
-                                          <div className="flex items-center gap-1.5 text-slate-800 dark:text-slate-300">
+                                          <div className="flex items-center gap-1.5 text-slate-300">
                                             {isDone ? (
                                               <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
                                             ) : isActive ? (
-                                              <Cpu size={12} className="text-indigo-700 dark:text-indigo-400 animate-spin shrink-0" />
+                                              <Cpu size={12} className="text-indigo-700 dark:text-indigo-400 animate-pulse shrink-0" />
                                             ) : (
-                                              <div className="w-3.5 h-3.5 rounded-full border border-slate-400 dark:border-slate-700 shrink-0" />
+                                              <div className="w-3.5 h-3.5 rounded-full border border-slate-700 shrink-0" />
                                             )}
-                                            <span className={isDone ? "text-slate-500 dark:text-slate-400 line-through decoration-slate-400" : "font-semibold text-slate-900 dark:text-slate-200"}>
+                                            <span className={isDone ? "text-slate-600 dark:text-slate-400 line-through decoration-slate-600" : "font-semibold text-slate-200"}>
                                               3. Analisis Jaringan Jalan & Infrastruktur
                                             </span>
                                           </div>
-                                          <span className={`text-[9px] font-mono ${isDone ? "text-emerald-600 dark:text-emerald-500 font-bold" : isActive ? "text-emerald-700 dark:text-emerald-400 animate-pulse font-bold" : "text-slate-500"}`}>
+                                          <span className={`text-[9px] font-mono ${isDone ? "text-emerald-500" : isActive ? "text-emerald-700 dark:text-emerald-400 animate-pulse font-bold" : "text-slate-600"}`}>
                                             {isDone ? "Selesai" : isActive ? "Memproses..." : "Menunggu"}
                                           </span>
                                         </div>
                                         {isActive && (
-                                          <div className="text-[8.5px] text-emerald-900 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 rounded px-2.5 py-1.5 flex flex-col gap-1 border border-emerald-200 dark:border-emerald-500/20">
+                                          <div className="text-[8.5px] text-emerald-300 bg-emerald-500/10 rounded px-2.5 py-1.5 flex flex-col gap-1 border border-emerald-500/20">
                                             <div className="flex items-center justify-between">
-                                              <span className="flex items-center gap-1 font-sans font-semibold text-emerald-950 dark:text-emerald-200">
-                                                <Network size={10} className="animate-pulse text-emerald-600 dark:text-emerald-400" />
+                                              <span className="flex items-center gap-1 font-sans font-semibold text-emerald-200">
+                                                <Network size={10} className="animate-pulse text-emerald-400" />
                                                 Menghitung Jarak Terpendek Infrastruktur Utama
                                               </span>
-                                              <span className="text-[8px] uppercase tracking-wider font-bold text-emerald-700 dark:text-emerald-400 animate-pulse">pgRouting Active</span>
+                                              <span className="text-[8px] uppercase tracking-wider font-bold text-emerald-400 animate-pulse">pgRouting Active</span>
                                             </div>
-                                            <span className="text-[8px] text-slate-600 dark:text-slate-400 font-mono flex items-center gap-1 bg-white dark:bg-base/40 px-1.5 py-0.5 rounded border border-emerald-500/10">
+                                            <span className="text-[8px] text-slate-400 font-mono flex items-center gap-1 bg-base/40 px-1.5 py-0.5 rounded border border-emerald-500/10">
                                               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping shrink-0" />
                                               {layer}
                                             </span>
@@ -9061,36 +9051,36 @@ export default function SpatialMapWorkspace() {
                                         isActive 
                                           ? "bg-indigo-950/40 border border-indigo-500/30 shadow-[0_0_8px_rgba(99,102,241,0.15)] text-slate-100" 
                                           : isDone 
-                                            ? "bg-slate-50 dark:bg-surface/10 text-slate-600 dark:text-slate-300 border border-transparent" 
-                                            : "bg-slate-50 dark:bg-surface/30 text-slate-600 dark:text-slate-400 border border-transparent"
+                                            ? "bg-white dark:bg-surface/10 text-slate-600 dark:text-slate-300 border border-transparent" 
+                                            : "bg-white dark:bg-surface/30 text-slate-600 dark:text-slate-400 border border-transparent"
                                       }`}>
                                         <div className="flex items-center justify-between text-[10px]">
-                                          <div className="flex items-center gap-1.5 text-slate-800 dark:text-slate-300">
+                                          <div className="flex items-center gap-1.5 text-slate-300">
                                             {isDone ? (
                                               <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
                                             ) : isActive ? (
                                               <Loader2 size={12} className="text-indigo-700 dark:text-indigo-400 animate-spin shrink-0" />
                                             ) : (
-                                              <div className="w-3.5 h-3.5 rounded-full border border-slate-400 dark:border-slate-700 shrink-0" />
+                                              <div className="w-3.5 h-3.5 rounded-full border border-slate-700 shrink-0" />
                                             )}
-                                            <span className={isDone ? "text-slate-500 dark:text-slate-400 line-through decoration-slate-400" : "font-semibold text-slate-900 dark:text-slate-200"}>
+                                            <span className={isDone ? "text-slate-600 dark:text-slate-400 line-through decoration-slate-600" : "font-semibold text-slate-200"}>
                                               4. Tumpang Tindih Sawah/LSD/Mangrove
                                             </span>
                                           </div>
-                                          <span className={`text-[9px] font-mono ${isDone ? "text-emerald-600 dark:text-emerald-500 font-bold" : isActive ? "text-indigo-700 dark:text-indigo-400 animate-pulse font-bold" : "text-slate-500"}`}>
+                                          <span className={`text-[9px] font-mono ${isDone ? "text-emerald-500" : isActive ? "text-indigo-700 dark:text-indigo-400 animate-pulse font-bold" : "text-slate-600"}`}>
                                             {isDone ? "Selesai" : isActive ? "Memproses..." : "Menunggu"}
                                           </span>
                                         </div>
                                         {isActive && (
-                                          <div className="text-[8.5px] text-pink-900 dark:text-pink-300 bg-pink-50 dark:bg-pink-500/10 rounded px-2.5 py-1.5 flex flex-col gap-1 border border-pink-200 dark:border-pink-500/20">
+                                          <div className="text-[8.5px] text-pink-300 bg-pink-500/10 rounded px-2.5 py-1.5 flex flex-col gap-1 border border-pink-500/20">
                                             <div className="flex items-center justify-between">
-                                              <span className="flex items-center gap-1 font-sans font-semibold text-pink-950 dark:text-pink-200">
-                                                <Layers size={10} className="text-pink-600 dark:text-pink-400 animate-pulse" />
+                                              <span className="flex items-center gap-1 font-sans font-semibold text-pink-200">
+                                                <Layers size={10} className="text-pink-400 animate-pulse" />
                                                 Kalkulasi Areal Sawah, Tambak & Mangrove
                                               </span>
-                                              <span className="text-[8px] uppercase tracking-wider font-bold text-pink-700 dark:text-pink-400">ST_Intersection</span>
+                                              <span className="text-[8px] uppercase tracking-wider font-bold text-pink-400">ST_Intersection</span>
                                             </div>
-                                            <span className="text-[8px] text-slate-600 dark:text-slate-400 font-mono flex items-center gap-1 bg-white dark:bg-base/40 px-1.5 py-0.5 rounded border border-pink-500/10">
+                                            <span className="text-[8px] text-slate-400 font-mono flex items-center gap-1 bg-base/40 px-1.5 py-0.5 rounded border border-pink-500/10">
                                               <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-ping shrink-0" />
                                               {layer}
                                             </span>
@@ -9110,23 +9100,23 @@ export default function SpatialMapWorkspace() {
                                         isActive 
                                           ? "bg-indigo-950/40 border border-indigo-500/30 shadow-[0_0_8px_rgba(99,102,241,0.15)] text-slate-100" 
                                           : isDone 
-                                            ? "bg-slate-50 dark:bg-surface/10 text-slate-600 dark:text-slate-300 border border-transparent" 
-                                            : "bg-slate-50 dark:bg-surface/30 text-slate-600 dark:text-slate-400 border border-transparent"
+                                            ? "bg-white dark:bg-surface/10 text-slate-600 dark:text-slate-300 border border-transparent" 
+                                            : "bg-white dark:bg-surface/30 text-slate-600 dark:text-slate-400 border border-transparent"
                                       }`}>
                                         <div className="flex items-center justify-between text-[10px]">
-                                          <div className="flex items-center gap-1.5 text-slate-800 dark:text-slate-300">
+                                          <div className="flex items-center gap-1.5 text-slate-300">
                                             {isDone ? (
                                               <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
                                             ) : isActive ? (
                                               <Loader2 size={12} className="text-indigo-700 dark:text-indigo-400 animate-spin shrink-0" />
                                             ) : (
-                                              <div className="w-3.5 h-3.5 rounded-full border border-slate-400 dark:border-slate-700 shrink-0" />
+                                              <div className="w-3.5 h-3.5 rounded-full border border-slate-700 shrink-0" />
                                             )}
-                                            <span className={isDone ? "text-slate-500 dark:text-slate-400 line-through decoration-slate-400" : "font-semibold text-slate-900 dark:text-slate-200"}>
+                                            <span className={isDone ? "text-slate-600 dark:text-slate-400 line-through decoration-slate-600" : "font-semibold text-slate-200"}>
                                               5. Sinkronisasi Data & Cache PostGIS
                                             </span>
                                           </div>
-                                          <span className={`text-[9px] font-mono ${isDone ? "text-emerald-600 dark:text-emerald-500 font-bold" : isActive ? "text-indigo-700 dark:text-indigo-400 animate-pulse font-bold" : "text-slate-500"}`}>
+                                          <span className={`text-[9px] font-mono ${isDone ? "text-emerald-500" : isActive ? "text-indigo-700 dark:text-indigo-400 animate-pulse font-bold" : "text-slate-600"}`}>
                                             {isDone ? "Selesai" : isActive ? "Memproses..." : "Menunggu"}
                                           </span>
                                         </div>
@@ -9141,7 +9131,7 @@ export default function SpatialMapWorkspace() {
                           <div className="flex flex-col items-center justify-center py-4 gap-3">
                             <Loader2 className="h-6 w-6 animate-spin text-indigo-700 dark:text-indigo-400" />
                             <div className="flex flex-col items-center gap-1">
-                              <span className="text-[11px] font-semibold text-slate-800 dark:text-slate-300 uppercase tracking-wider animate-pulse">
+                              <span className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider animate-pulse">
                                 Memulai Koneksi Server Spasial...
                               </span>
                               <span className="text-[9px] text-slate-600 dark:text-slate-400">
