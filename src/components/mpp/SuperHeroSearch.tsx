@@ -318,9 +318,12 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
       {/* ───────────────────────────────────────────────────────────────────────────── */}
       {/* EDGE-TO-EDGE IMMERSIVE HERO CANVAS WITH PARALLAX SCROLL & EXOTIC SHINE */}
       {/* ───────────────────────────────────────────────────────────────────────────── */}
-      <div className="relative w-full min-h-[520px] sm:min-h-[580px] lg:min-h-[620px] flex flex-col justify-center rounded-2xl sm:rounded-3xl overflow-hidden border border-white/40 dark:border-white/20 ring-0 shadow-xl bg-[#071727] dark:bg-[#071727] group transition-colors duration-300">
+      <div 
+        className="relative w-full flex flex-col justify-center rounded-2xl sm:rounded-3xl overflow-hidden border border-white/40 dark:border-white/20 ring-0 shadow-xl bg-[#071727] dark:bg-[#071727] group transition-colors duration-300"
+        style={{ minHeight: 'clamp(520px, 60vh, 680px)' }}
+      >
         
-        {/* 1. Background Architecture Showcase Photo (Parallax Shifted via bgY) */}
+        {/* 1. Background Architecture Showcase Photo (Parallax Shifted & Ken Burns Animated) */}
         <motion.div
           style={{ y: shouldReduceMotion ? 0 : bgY }}
           className="absolute inset-0 z-0 overflow-hidden transform-gpu pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black_86%,transparent_100%)]"
@@ -332,6 +335,9 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
                 <div
                   key={slide.url || idx}
                   className={`absolute inset-0 w-full h-full transition-opacity duration-500 ${isSlideActive ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                  style={{
+                    animation: 'investluwu-ken-burns 18s ease-in-out infinite'
+                  }}
                 >
                   <ResponsiveHeroPicture
                     heroKey="mpp"
@@ -359,12 +365,47 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
                 }}
                 onError={(e) => handleImageError(e, 'hero')}
                 style={{ willChange: 'opacity, transform' }}
-                className="absolute inset-0 w-full h-full object-cover object-[center_top] origin-top pointer-events-none filter brightness-[0.98] contrast-[1.02]"
+                className="absolute inset-0 w-full h-full object-cover object-[center_40%] origin-center pointer-events-none filter brightness-[0.98] contrast-[1.02]"
                 loading="lazy"
                 decoding="async"
               />
             );
           })}
+
+          {/* Aurora Blobs Overlay (Same Ambient Lighting as InvestLuwu Landing Page) */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute rounded-full will-change-transform" style={{
+              width:'42%',height:'60%',top:'-12%',left:'-6%',
+              background:'rgba(16,185,129,.20)',filter:'blur(80px)',
+              animation:'investluwu-aurora-a 12s ease-in-out infinite'
+            }}/>
+            <div className="absolute rounded-full will-change-transform" style={{
+              width:'48%',height:'52%',top:'8%',right:'-10%',
+              background:'rgba(6,182,212,.13)',filter:'blur(80px)',
+              animation:'investluwu-aurora-b 15s ease-in-out infinite'
+            }}/>
+            <div className="absolute rounded-full will-change-transform" style={{
+              width:'36%',height:'44%',bottom:'-8%',left:'32%',
+              background:'rgba(99,102,241,.10)',filter:'blur(80px)',
+              animation:'investluwu-aurora-c 18s ease-in-out infinite'
+            }}/>
+          </div>
+
+          {/* Digital Grid Overlay */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            backgroundImage:
+              'linear-gradient(rgba(16,185,129,.04) 1px,transparent 1px),'+
+              'linear-gradient(90deg,rgba(16,185,129,.04) 1px,transparent 1px)',
+            backgroundSize:'28px 28px',
+            maskImage:'radial-gradient(ellipse 80% 60% at 50% 40%,#000 40%,transparent 100%)',
+          }}/>
+
+          {/* Scanline Effect */}
+          <div className="absolute left-0 right-0 pointer-events-none z-10" style={{
+            height:'1.5px',
+            background:'linear-gradient(90deg,transparent,rgba(16,185,129,.18),transparent)',
+            animation:'investluwu-scanline 6s linear infinite',
+          }}/>
 
           {/* Exotic Light Beam Sweep Effect (Shimmering Diagonal Ray) */}
           <motion.div
@@ -382,10 +423,9 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12 pointer-events-none transform-gpu"
           />
 
-          {/* Smooth Soft Scrim Overlays — Gradasi Batas Halus & Alami */}
-          <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-[#F8FAFC]/10 dark:from-[#0A2238]/12 via-transparent to-transparent pointer-events-none z-10" />
-          <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#F8FAFC]/22 dark:from-[#0A2238]/25 via-transparent to-transparent pointer-events-none z-10" />
-          <div className="absolute inset-0 bg-slate-900/[0.03] dark:bg-[#0A2238]/[0.06] pointer-events-none z-10" />
+          {/* Bottom & Top Gradient Scrim Overlays — Dark Bottom Contrast */}
+          <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-[#0A2238]/60 via-transparent to-transparent pointer-events-none z-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/25 to-slate-950/10 pointer-events-none z-10" />
 
           {/* Cartographic Topography Contour Overlay */}
           <TopographicContourOverlay opacity={0.12} />
