@@ -21,6 +21,243 @@ function getGeminiApiKeys(): string[] {
   return Array.from(unique);
 }
 
+// ============================================================
+// RAG: Retrieve relevant knowledge chunks from Supabase
+// ============================================================
+async function fetchRagContext(query: string, sector?: string): Promise<string> {
+  try {
+    // Build search keywords from user query (first 200 chars)
+    const searchTerms = (query || "").slice(0, 200).replace(/[^\w\s]/g, " ").trim();
+    if (!searchTerms) return "";
+
+    // Try full-text search on knowledge table
+    const searchQuery = searchTerms.split(/\s+/).slice(0, 5).join(" & ");
+    const url = `${SUPABASE_URL}/rest/v1/knowledge?select=title,content,category&or=(title.ilike.*${encodeURIComponent(sector || "investasi")}*,category.ilike.*${encodeURIComponent(sector || "investasi")}*)&limit=5`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      }
+    });
+
+    if (!response.ok) return "";
+
+    const rows: any[] = await response.json();
+    if (!Array.isArray(rows) || rows.length === 0) return "";
+
+    // Compile RAG context from retrieved knowledge chunks
+    const chunks = rows
+      .filter((r: any) => r.content && r.content.trim().length > 20)
+      .slice(0, 3)
+      .map((r: any) => `[${r.category || "Umum"}] ${r.title || ""}: ${(r.content || "").slice(0, 600)}`)
+      .join("\n\n");
+
+    return chunks ? `\n\n--- REFERENSI KNOWLEDGE BASE (RAG) KABUPATEN LUWU ---\n${chunks}\n--- AKHIR REFERENSI ---` : "";
+  } catch (err) {
+    // RAG is optional enhancement, don't break the flow
+    return "";
+  }
+}
+
+// ============================================================
+// ROI Financial Analysis Fallback (Local Heuristic Engine)
+// Activated ONLY when Gemini API is unavailable AND simulationContext exists
+// ============================================================
+function buildRoiAnalysisFallback(sim: any, lang = "id"): string {
+  const capex = sim.capex || 0;
+  const opex = sim.opex || 0;
+  const revenue = sim.revenue || sim.asumsiPendapatan || 0;
+  const npv = sim.npv || 0;
+  const irr = sim.irr || 0;
+  const roi = sim.roi || 0;
+  const paybackPeriod = sim.paybackPeriod || sim.bep || 0;
+  const discountRate = sim.discountRate || 12;
+  const tenor = sim.tenor || 8;
+  const netProfit = sim.netProfit || (revenue - opex);
+  const projectName = sim.name || "Proyek Investasi";
+  const sector = sim.sector || "Umum";
+  const isDeficit = sim.isDeficit || npv < 0 || netProfit <= 0;
+  const isFeasible = !isDeficit && npv > 0 && irr >= discountRate;
+
+  const formatRp = (n: number): string => {
+    if (Math.abs(n) >= 1e12) return `Rp ${(n / 1e12).toFixed(2)} Triliun`;
+    if (Math.abs(n) >= 1e9) return `Rp ${(n / 1e9).toFixed(1)} Miliar`;
+    if (Math.abs(n) >= 1e6) return `Rp ${(n / 1e6).toFixed(0)} Juta`;
+    return `Rp ${n.toLocaleString("id-ID")}`;
+  };
+
+  const profitMargin = revenue > 0 ? ((netProfit / revenue) * 100).toFixed(1) : "0";
+  const pi = capex > 0 ? ((npv + capex) / capex).toFixed(2) : "N/A";
+  const paybackDisplay = paybackPeriod >= 999 || netProfit <= 0 ? "Tidak Terbayar (> Tenor / Defisit Operasional)" : `${paybackPeriod.toFixed(1)} Tahun`;
+
+  // Sensitivity scenarios
+  const optimisRevenue = revenue * 1.15;
+  const optimisNpv = npv * 1.2;
+  const pesimisOpex = opex * 1.20;
+  const pesimisNetProfit = revenue - pesimisOpex;
+  const pesimisPayback = pesimisNetProfit > 0 ? capex / pesimisNetProfit : 999;
+
+  // 5-Year Cash Flow Projection
+  let cashFlowTable = "";
+  if (lang === "id") {
+    cashFlowTable = `| Tahun | Pendapatan | OPEX | Laba Bersih | Kumulatif |
+|:---:|---:|---:|---:|---:|
+`;
+    let cumulative = -capex;
+    for (let y = 1; y <= 5; y++) {
+      const inflatedOpex = opex * Math.pow(1.045, y - 1); // Inflasi 4.5%
+      const yearNetProfit = revenue - inflatedOpex;
+      cumulative += yearNetProfit;
+      cashFlowTable += `| ${y} | ${formatRp(revenue)} | ${formatRp(inflatedOpex)} | ${formatRp(yearNetProfit)} | ${formatRp(cumulative)} |\n`;
+    }
+  }
+
+  if (isDeficit) {
+    return `### 🔴 LAPORAN ANALISIS KELAYAKAN FINANSIAL AI
+**${projectName}** — Sektor: ${sector}
+
+---
+
+### A. RINGKASAN EKSEKUTIF & SKOR KELAYAKAN
+- **Status Kelayakan:** 🔴 PERLU PENYESUAIAN ASUMSI (TIDAK LAYAK / DEFISIT)
+- **Skor Kelayakan AI:** 15/100 (Kategori Evaluasi Kritis)
+- **Justifikasi:** Berdasarkan parameter simulasi, proyek ini mengalami defisit arus kas operasional. NPV bertanda negatif (${formatRp(npv)}) menunjukkan investasi ini menghancurkan nilai modal jika diukur pada suku bunga diskonto ${discountRate}%. IRR (${irr.toFixed(2)}%) tidak mencukupi standar WACC ${discountRate}%.
+
+---
+
+### B. ANALISIS INDIKATOR FINANSIAL & SIMULATOR ROI
+
+#### 1. Payback Period (BEP)
+**Hasil:** ${paybackDisplay}
+Modal investasi awal sebesar ${formatRp(capex)} **TIDAK DAPAT KEMBALI** dalam tenor proyek ${tenor} tahun karena arus kas tahunan bersih mengalami defisit. Pendapatan tahunan (${formatRp(revenue)}) tidak cukup menutupi biaya operasional (${formatRp(opex)}).
+
+#### 2. Net Present Value (NPV)
+**Hasil:** ${formatRp(npv)} (NEGATIF)
+Dengan discount rate ${discountRate}% (WACC), seluruh arus kas masa depan jika didiskontokan menghasilkan nilai negatif. Artinya: **investasi ini merugikan** dan mengurangi kekayaan investor dibandingkan menaruh dana pada instrumen deposito/obligasi.
+
+#### 3. Internal Rate of Return (IRR)
+**Hasil:** ${irr.toFixed(2)}%
+IRR jauh **di bawah** target WACC ${discountRate}%. Investasi ini tidak kompetitif dan menghasilkan imbal hasil lebih rendah dari suku bunga acuan Bank Indonesia + Risk Premium Luwu.
+
+#### 4. Profitability Index (PI) & Profit Margin
+- **PI:** ${pi} ${parseFloat(pi) < 1 ? "(< 1.0 = Menghancurkan Nilai)" : ""}
+- **Profit Margin:** ${profitMargin}%
+- **ROI Tahunan:** ${roi.toFixed(2)}%
+
+#### 5. Skenario Sensitivitas
+| Skenario | Pendapatan | OPEX | Laba Bersih | Payback |
+|---|---:|---:|---:|:---:|
+| 🟢 Optimis (+15% Revenue) | ${formatRp(optimisRevenue)} | ${formatRp(opex)} | ${formatRp(optimisRevenue - opex)} | ${(optimisRevenue - opex) > 0 ? (capex / (optimisRevenue - opex)).toFixed(1) + " Thn" : "Defisit"} |
+| 🔵 Baseline (Saat Ini) | ${formatRp(revenue)} | ${formatRp(opex)} | ${formatRp(netProfit)} | ${paybackDisplay} |
+| 🔴 Pesimis (+20% OPEX) | ${formatRp(revenue)} | ${formatRp(pesimisOpex)} | ${formatRp(pesimisNetProfit)} | ${pesimisPayback >= 999 ? "Defisit" : pesimisPayback.toFixed(1) + " Thn"} |
+
+#### Proyeksi Arus Kas 5 Tahun (Inflasi 4.5%/Tahun)
+${cashFlowTable}
+
+---
+
+### C. FASILITAS TAX ALLOWANCE & INSENTIF DAERAH
+- Keringanan retribusi daerah & sewa lahan **hingga 35%** bagi investor yang menyerap minimal 60% Tenaga Kerja Asli Luwu (TKD).
+- Proyek di **Kawasan Industri Bua (KIB)** mendapat prioritas fasilitasi infrastruktur dari Pemkab Luwu.
+- Integrasi tata ruang sesuai **Perda RTRW No. 06/2011** dan **RPJPD 2025-2045**.
+
+---
+
+### D. ANALISIS RISIKO STRATEGIS & MITIGASI
+1. **Risiko Finansial:** Arus kas negatif — **Mitigasi:** Naikkan estimasi volume panen/penjualan, sesuaikan harga jual komoditas, atau pangkas OPEX komponen terbesar.
+2. **Risiko Operasional:** Biaya produksi melebihi pendapatan — **Mitigasi:** Efisiensi rantai pasok dan substitusi bahan baku lokal.
+3. **Risiko Perizinan & Regulasi:** Kesesuaian PKKPR/RTRW — **Mitigasi:** Konsultasi spasial di Loket GIS DPMPTSP, MPP Simpurusiang.
+
+---
+
+### E. REKOMENDASI STRATEGIS & ACTION PLAN
+⚠️ **Proyek ini BELUM LAYAK dieksekusi** dengan parameter saat ini. Rekomendasi:
+1. **Tingkatkan Proyeksi Pendapatan:** Optimalkan produktivitas per hektar atau naikkan harga jual komoditas (min. +${((opex - revenue) / revenue * 100).toFixed(0)}%).
+2. **Kurangi OPEX:** Evaluasi komponen biaya operasional terbesar dan tekan hingga 15-25%.
+3. **Ubah Skala Investasi:** Pertimbangkan pilot project skala kecil terlebih dahulu.
+4. **Konsultasi Langsung:** Kunjungi **VIP Executive Desk, Gedung MPP Simpurusiang** Belopa untuk asistensi restructuring skema investasi.`;
+  }
+
+  // FEASIBLE / CONDITIONAL
+  const statusLabel = isFeasible ? "🟢 SANGAT LAYAK (HIGHLY FEASIBLE)" : "🟡 LAYAK BERSYARAT (CONDITIONALLY FEASIBLE)";
+  const score = isFeasible ? Math.min(92, Math.max(75, Math.round(70 + (irr - discountRate) * 2 + (roi > 30 ? 5 : 0)))) : Math.min(68, Math.max(55, 60));
+
+  return `### ${isFeasible ? "🟢" : "🟡"} LAPORAN ANALISIS KELAYAKAN FINANSIAL AI
+**${projectName}** — Sektor: ${sector}
+
+---
+
+### A. RINGKASAN EKSEKUTIF & SKOR KELAYAKAN
+- **Status Kelayakan:** ${statusLabel}
+- **Skor Kelayakan AI:** ${score}/100
+- **Justifikasi:** Proyek menunjukkan fundamental finansial ${isFeasible ? "sangat kuat" : "cukup baik"}. NPV positif sebesar ${formatRp(npv)} membuktikan investasi ini menciptakan nilai tambah. IRR (${irr.toFixed(2)}%) ${isFeasible ? "melampaui" : "mendekati"} target WACC (${discountRate}%), dan ROI tahunan mencapai ${roi.toFixed(2)}%.
+
+---
+
+### B. ANALISIS INDIKATOR FINANSIAL & SIMULATOR ROI
+
+#### 1. Payback Period (BEP)
+**Hasil:** ${paybackDisplay}
+Modal investasi awal sebesar ${formatRp(capex)} diproyeksikan kembali dalam ${paybackPeriod.toFixed(1)} tahun dari total tenor ${tenor} tahun. ${paybackPeriod < tenor / 2 ? "Pengembalian modal sangat cepat — kurang dari separuh masa konsesi." : "Pengembalian modal dalam rentang wajar dari masa konsesi proyek."}
+
+#### 2. Net Present Value (NPV)
+**Hasil:** ${formatRp(npv)} (POSITIF ✅)
+Dengan discount rate ${discountRate}% (WACC = BI Rate 6.0% + Risk Premium Luwu), seluruh arus kas masa depan jika didiskontokan menghasilkan **surplus** sebesar ${formatRp(npv)}. Investasi ini **menciptakan nilai** bagi investor.
+
+#### 3. Internal Rate of Return (IRR)
+**Hasil:** ${irr.toFixed(2)}%
+IRR ${isFeasible ? "**melampaui**" : "mendekati"} target WACC ${discountRate}%. ${irr > discountRate * 2 ? "Tingkat pengembalian sangat kompetitif — lebih dari 2x lipat suku bunga acuan." : "Tingkat pengembalian memenuhi standar kelayakan minimum investasi."}
+
+#### 4. Profitability Index (PI) & Profit Margin
+- **PI:** ${pi} ${parseFloat(pi) > 1 ? "(> 1.0 = Menciptakan Nilai ✅)" : ""}
+- **Profit Margin:** ${profitMargin}%
+- **ROI Tahunan:** ${roi.toFixed(2)}%
+- **Laba Bersih / Tahun:** ${formatRp(netProfit)}
+
+#### 5. Skenario Sensitivitas
+| Skenario | Pendapatan | OPEX | Laba Bersih | Payback |
+|---|---:|---:|---:|:---:|
+| 🟢 Optimis (+15% Revenue) | ${formatRp(optimisRevenue)} | ${formatRp(opex)} | ${formatRp(optimisRevenue - opex)} | ${(optimisRevenue - opex) > 0 ? (capex / (optimisRevenue - opex)).toFixed(1) + " Thn" : "N/A"} |
+| 🔵 Baseline (Saat Ini) | ${formatRp(revenue)} | ${formatRp(opex)} | ${formatRp(netProfit)} | ${paybackDisplay} |
+| 🔴 Pesimis (+20% OPEX) | ${formatRp(revenue)} | ${formatRp(pesimisOpex)} | ${formatRp(pesimisNetProfit)} | ${pesimisPayback >= 999 ? "Defisit" : pesimisPayback.toFixed(1) + " Thn"} |
+
+#### Proyeksi Arus Kas 5 Tahun (Inflasi 4.5%/Tahun)
+${cashFlowTable}
+
+---
+
+### C. FASILITAS TAX ALLOWANCE & INSENTIF DAERAH
+- Keringanan retribusi daerah & sewa lahan **hingga 35%** bagi investor yang menyerap minimal 60% Tenaga Kerja Asli Luwu (TKD).
+- Estimasi Penyerapan TKL: **${Math.max(25, Math.round(capex / 150000000))} pekerja** lokal (berdasarkan rasio investasi).
+- Fasilitas **Kawasan Industri Bua (KIB)** untuk proyek hilirisasi dan pergudangan.
+- Integrasi tata ruang sesuai **Perda RTRW Luwu No. 06/2011** dan **RPJPD 2025-2045**.
+
+---
+
+### D. ANALISIS RISIKO STRATEGIS & MITIGASI
+1. **Risiko Fluktuasi Harga Komoditas:** Harga pasar bisa turun 10-20% — **Mitigasi:** Kontrak jual beli jangka panjang (off-take agreement) dan diversifikasi produk olahan.
+2. **Risiko Operasional:** Cuaca ekstrem dan gangguan produksi — **Mitigasi:** Asuransi pertanian dan cadangan dana darurat 10% dari OPEX.
+3. **Risiko Perizinan & Regulasi:** Perubahan kebijakan tata ruang — **Mitigasi:** Konsultasi perizinan PKKPR di Loket GIS DPMPTSP Kabupaten Luwu.
+4. **Risiko Tenaga Kerja:** Ketersediaan SDM terampil — **Mitigasi:** Kerja sama BLK (Balai Latihan Kerja) Kabupaten Luwu.
+
+---
+
+### E. REKOMENDASI STRATEGIS & ACTION PLAN (MPP SIMPURUSIANG)
+1. **Percepatan Perizinan:** Ajukan NIB OSS-RBA dan validasi spasial PKKPR melalui loket DPMPTSP di **Gedung MPP Simpurusiang**, Belopa.
+2. **Insentif Investasi:** Ajukan surat permohonan keringanan retribusi daerah dan sewa lahan kepada Bupati Luwu melalui DPMPTSP.
+3. **Kemitraan Lokal:** Gandeng BUMDES dan kelompok tani untuk efisiensi rantai pasok bahan baku.
+4. **Monitoring Berkala:** Evaluasi kinerja finansial proyek setiap semester menggunakan indikator NPV, IRR, dan PI yang diperbarui.
+
+> 📌 *Laporan ini dihasilkan oleh Mesin Analisis Kelayakan Finansial AI Luwu Investment Portal — Fallback Heuristic Engine (Offline Mode). Data bersumber dari parameter input Simulator ROI pengguna.*`;
+}
+
+// ============================================================
+// General Fallback (Non-ROI Context)
+// ============================================================
 function buildAuthoritativeLuwuResponse(message: string, lang = "id"): string {
   const q = (message || "").toLowerCase();
 
@@ -139,9 +376,9 @@ export default async function handler(req: any, res: any) {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  const { message, history, language, locale } = req.body || {};
+  const { message, history, language, locale, simulationContext, investmentContext, sector } = req.body || {};
   const cleanMessage = typeof message === "string" ? message.trim() : "";
-  const activeLang = ((locale || language || "id").toLowerCase()).startsWith("en") ? "en" : "id";
+  const activeLang = ((locale || language || "id").toLowerCase()).startsWith("en") ? "en" : ((locale || language || "id").toLowerCase()).startsWith("zh") ? "zh" : "id";
 
   if (!cleanMessage) {
     return res.status(200).json({
@@ -151,13 +388,54 @@ export default async function handler(req: any, res: any) {
     });
   }
 
-  const apiKeys = getGeminiApiKeys();
-  const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-2.0-flash", "gemini-flash-latest"];
+  // Detect if this is a ROI/financial analysis request (has simulationContext)
+  const hasSimulationContext = simulationContext && typeof simulationContext === "object" && (simulationContext.capex || simulationContext.npv !== undefined);
 
-  // System instruction for Luwu investment & spatial planning
-  const systemPrompt = `Anda adalah Asisten Cerdas Penataan Ruang & Investasi Kabupaten Luwu resmi (MPP Simpurusiang & DPMPTSP Kab. Luwu).
+  const apiKeys = getGeminiApiKeys();
+  const modelsToTry = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"];
+
+  // Build enriched system prompt — context-aware for ROI or general
+  let systemPrompt = `Anda adalah Asisten Cerdas Analisis Kelayakan Investasi & Penataan Ruang Kabupaten Luwu resmi (MPP Simpurusiang & DPMPTSP Kab. Luwu).
 Tugas Anda: Memberikan informasi akurat, profesional, ramah khas Tana Luwu ("Tabe', Bapak/Ibu..."), berbasis regulasi Perda RTRW Kab. Luwu No. 06/2011, OSS-RBA, dan regulasi PKKPR.
 Patuhi Doktrin Zero Dummy Policy: Jangan mengarang data atau proyek fiktif. Rujuk layanan resmi satu pintu ke Gedung MPP Simpurusiang di Belopa.`;
+
+  const sim = hasSimulationContext ? simulationContext : null;
+
+  // Enrich system prompt with simulation context for ROI analysis
+  if (hasSimulationContext && sim) {
+    systemPrompt += `
+
+KONTEKS SIMULASI ROI AKTIF — Anda WAJIB menganalisis data finansial berikut secara mendalam:
+- Nama Proyek: ${sim.name || investmentContext?.name || "Proyek Investasi"}
+- Sektor: ${sim.sector || sector || "Umum"}
+- CAPEX (Modal Investasi): Rp ${(sim.capex || 0).toLocaleString("id-ID")}
+- OPEX (Biaya Operasional/Tahun): Rp ${(sim.opex || 0).toLocaleString("id-ID")}
+- Revenue (Pendapatan/Tahun): Rp ${(sim.revenue || sim.asumsiPendapatan || 0).toLocaleString("id-ID")}
+- Laba Bersih Operasional: Rp ${(sim.netProfit || 0).toLocaleString("id-ID")}/tahun
+- ROI: ${(sim.roi || 0).toFixed(2)}%
+- NPV (Discount ${sim.discountRate || 12}%): Rp ${(sim.npv || 0).toLocaleString("id-ID")}
+- IRR: ${(sim.irr || 0).toFixed(2)}%
+- Payback Period (BEP): ${sim.paybackPeriod >= 999 ? "Tidak Terbayar (Defisit)" : (sim.paybackPeriod || 0).toFixed(1) + " Tahun"}
+- Discount Rate / WACC: ${sim.discountRate || 12}%
+- Tenor Proyeksi: ${sim.tenor || 8} Tahun
+- Status Kelayakan: ${sim.status || (sim.isDeficit ? "NOT_FEASIBLE" : "FEASIBLE")}
+
+ATURAN MUTLAK:
+1. Anda WAJIB mengutip PERSIS angka di atas. DILARANG memalsukan atau merekayasa kalkulasi.
+2. Jika NPV < 0 atau status = NOT_FEASIBLE, Anda WAJIB menyimpulkan proyek TIDAK LAYAK dan skor kelayakan harus 5-25/100.
+3. Jika NPV > 0 dan IRR > WACC, Anda boleh menyimpulkan SANGAT LAYAK dengan skor 75-92/100.
+4. Hasilkan analisis terstruktur dengan 5 bagian: A) Ringkasan Eksekutif & Skor, B) Analisis Indikator Finansial (Payback, NPV, IRR, PI, Sensitivitas, Tabel Arus Kas 5 Tahun), C) Tax Allowance & Insentif, D) Risiko & Mitigasi, E) Rekomendasi Action Plan MPP Simpurusiang.`;
+  }
+
+  // Fetch RAG context from Supabase knowledge table
+  let ragContext = "";
+  try {
+    ragContext = await fetchRagContext(cleanMessage, sim?.sector || sector || "");
+  } catch (_) {}
+
+  if (ragContext) {
+    systemPrompt += ragContext;
+  }
 
   // 1. Try Live Gemini API with rotational fallback across keys and models
   for (const apiKey of apiKeys) {
@@ -172,7 +450,7 @@ Patuhi Doktrin Zero Dummy Policy: Jangan mengarang data atau proyek fiktif. Ruju
             if (hText.trim()) {
               contentsPayload.push({
                 role: h.role === "model" ? "model" : "user",
-                parts: [{ text: hText.slice(0, 1000) }]
+                parts: [{ text: hText.slice(0, 1500) }]
               });
             }
           }
@@ -183,7 +461,9 @@ Patuhi Doktrin Zero Dummy Policy: Jangan mengarang data atau proyek fiktif. Ruju
         });
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 7000);
+        // Increased timeout: 25s for comprehensive ROI analysis, 12s for general chat
+        const timeoutMs = hasSimulationContext ? 25000 : 12000;
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
         const apiRes = await fetch(geminiEndpoint, {
           method: "POST",
@@ -193,8 +473,8 @@ Patuhi Doktrin Zero Dummy Policy: Jangan mengarang data atau proyek fiktif. Ruju
             system_instruction: { parts: [{ text: systemPrompt }] },
             contents: contentsPayload,
             generationConfig: {
-              temperature: 0.6,
-              maxOutputTokens: 2048
+              temperature: hasSimulationContext ? 0.4 : 0.6,
+              maxOutputTokens: hasSimulationContext ? 4096 : 2048
             }
           })
         });
@@ -204,7 +484,7 @@ Patuhi Doktrin Zero Dummy Policy: Jangan mengarang data atau proyek fiktif. Ruju
         if (apiRes.ok) {
           const resData = await apiRes.json();
           const candidateText = resData.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (candidateText && candidateText.trim().length > 0) {
+          if (candidateText && candidateText.trim().length > 50) {
             return res.status(200).json({
               text: candidateText,
               reply: candidateText,
@@ -218,8 +498,19 @@ Patuhi Doktrin Zero Dummy Policy: Jangan mengarang data atau proyek fiktif. Ruju
     }
   }
 
-  // 2. Intelligent Authoritative Fallback (Zero Dummy & Honest Standby Engine)
-  // When external Google API key is exhausted or reported, this ensures the user NEVER gets a 500 error!
+  // 2. Intelligent Fallback — Context-Aware
+  // If simulationContext exists, use ROI Financial Analysis Fallback (NOT generic PKKPR!)
+  if (hasSimulationContext) {
+    const roiFallback = buildRoiAnalysisFallback(simulationContext, activeLang);
+    return res.status(200).json({
+      text: roiFallback,
+      reply: roiFallback,
+      sources: [],
+      isStandby: true
+    });
+  }
+
+  // Otherwise, use general authoritative fallback
   const fallbackText = buildAuthoritativeLuwuResponse(cleanMessage, activeLang);
   return res.status(200).json({
     text: fallbackText,

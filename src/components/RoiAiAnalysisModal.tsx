@@ -564,58 +564,169 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
 
   if (!isOpen) return null;
 
-  // Simple, elegant custom markdown formatter to turn text into beautiful, high-contrast JSX
+  // Comprehensive markdown formatter — handles headers, tables, lists, blockquotes, HR
   const formatTextToJsx = (text: string) => {
     const lines = text.split("\n");
-    return lines.map((line, idx) => {
-      let trimmed = line.trim();
-      
-      // Headers
+    const elements: React.ReactNode[] = [];
+    let i = 0;
+
+    while (i < lines.length) {
+      const trimmed = lines[i].trim();
+
+      // Horizontal rule (---)
+      if (/^---+$/.test(trimmed)) {
+        elements.push(<hr key={i} className="my-4 border-slate-200 dark:border-slate-700/60" />);
+        i++;
+        continue;
+      }
+
+      // Markdown Table: collect consecutive rows starting with |
+      if (trimmed.startsWith("|")) {
+        const tableRows: string[] = [];
+        while (i < lines.length && lines[i].trim().startsWith("|")) {
+          tableRows.push(lines[i].trim());
+          i++;
+        }
+        // Parse header, separator, body
+        const isSeparator = (row: string) => /^\|[\s\-:|]+\|$/.test(row);
+        const parseCells = (row: string) =>
+          row.split("|").slice(1, -1).map((c) => c.trim());
+
+        const headerRow = tableRows.length > 0 ? parseCells(tableRows[0]) : [];
+        const bodyRows = tableRows
+          .slice(1)
+          .filter((r) => !isSeparator(r))
+          .map(parseCells);
+
+        elements.push(
+          <div key={`table-${i}`} className="overflow-x-auto my-3 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm">
+            <table className="w-full text-xs sm:text-sm border-collapse">
+              {headerRow.length > 0 && (
+                <thead>
+                  <tr className="bg-slate-100 dark:bg-slate-800/80">
+                    {headerRow.map((cell, ci) => (
+                      <th key={ci} className="px-2.5 py-2 text-left font-extrabold text-slate-800 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700 whitespace-nowrap">
+                        {parseBoldText(cell)}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+              )}
+              <tbody>
+                {bodyRows.map((row, ri) => (
+                  <tr key={ri} className={`${ri % 2 === 0 ? "bg-white dark:bg-slate-900/60" : "bg-slate-50 dark:bg-slate-800/40"} hover:bg-slate-100 dark:hover:bg-slate-700/40 transition-colors`}>
+                    {row.map((cell, ci) => (
+                      <td key={ci} className="px-2.5 py-1.5 text-slate-900 dark:text-slate-100 font-medium border-b border-slate-100 dark:border-slate-800/60 whitespace-nowrap">
+                        {parseBoldText(cell)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+        continue;
+      }
+
+      // Sub-sub-headers (####)
+      if (trimmed.startsWith("####")) {
+        elements.push(
+          <h5 key={i} className="text-xs sm:text-sm font-bold text-slate-800 dark:text-sky-300 mt-4 mb-1.5 flex items-center gap-1.5 uppercase tracking-wider">
+            <Calculator size={14} className="text-sky-600 dark:text-sky-400" />
+            {parseBoldText(trimmed.replace(/^#{4,}\s*/, "").trim())}
+          </h5>
+        );
+        i++;
+        continue;
+      }
+
+      // Headers (### then ## then #)
       if (trimmed.startsWith("###")) {
-        return (
-          <h4 key={idx} className="text-sm font-bold text-slate-950 dark:text-blue-300 mt-5 mb-2 flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-800 pb-1 uppercase tracking-wide">
+        elements.push(
+          <h4 key={i} className="text-sm font-bold text-slate-950 dark:text-blue-300 mt-5 mb-2 flex items-center gap-1.5 border-b border-slate-200 dark:border-slate-800 pb-1 uppercase tracking-wide">
             <TrendingUp size={16} className="text-blue-600 dark:text-blue-400" />
             {trimmed.replace("###", "").trim()}
           </h4>
         );
+        i++;
+        continue;
       }
       if (trimmed.startsWith("##")) {
-        return (
-          <h3 key={idx} className="text-base font-extrabold text-indigo-950 dark:text-indigo-400 mt-6 mb-3 flex items-center gap-2 border-b border-indigo-200 dark:border-indigo-900/40 pb-1">
+        elements.push(
+          <h3 key={i} className="text-base font-extrabold text-indigo-950 dark:text-indigo-400 mt-6 mb-3 flex items-center gap-2 border-b border-indigo-200 dark:border-indigo-900/40 pb-1">
             <Sparkles size={18} className="text-indigo-600 dark:text-indigo-400 animate-pulse" />
             {trimmed.replace("##", "").trim()}
           </h3>
         );
+        i++;
+        continue;
       }
       if (trimmed.startsWith("#")) {
-        return (
-          <h2 key={idx} className="text-lg font-black text-slate-950 dark:text-white mt-7 mb-4">
+        elements.push(
+          <h2 key={i} className="text-lg font-black text-slate-950 dark:text-white mt-7 mb-4">
             {trimmed.replace("#", "").trim()}
           </h2>
         );
+        i++;
+        continue;
       }
 
-      // Bullets
-      if (trimmed.startsWith("-") || trimmed.startsWith("*")) {
-        const content = trimmed.substring(1).trim();
-        return (
-          <li key={idx} className="ml-4 list-disc text-sm sm:text-base font-medium text-slate-950 dark:text-slate-100 mb-2.5 leading-relaxed">
+      // Blockquotes (> ...)
+      if (trimmed.startsWith(">")) {
+        const quoteContent = trimmed.replace(/^>\s*/, "").trim();
+        elements.push(
+          <blockquote key={i} className="my-3 pl-3.5 border-l-[3px] border-emerald-500 dark:border-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 py-2 pr-3 rounded-r-lg">
+            <p className="text-xs sm:text-sm font-semibold text-emerald-800 dark:text-emerald-200 leading-relaxed italic">
+              {parseBoldText(quoteContent)}
+            </p>
+          </blockquote>
+        );
+        i++;
+        continue;
+      }
+
+      // Numbered lists (1. 2. 3. etc.)
+      if (/^\d+\.\s/.test(trimmed)) {
+        const content = trimmed.replace(/^\d+\.\s*/, "").trim();
+        elements.push(
+          <li key={i} className="ml-4 list-decimal text-sm sm:text-base font-medium text-slate-950 dark:text-slate-100 mb-2.5 leading-relaxed">
             {parseBoldText(content)}
           </li>
         );
+        i++;
+        continue;
       }
 
-      // Paragraph
+      // Bullet lists (- or *)
+      if (trimmed.startsWith("-") || trimmed.startsWith("*")) {
+        const content = trimmed.substring(1).trim();
+        elements.push(
+          <li key={i} className="ml-4 list-disc text-sm sm:text-base font-medium text-slate-950 dark:text-slate-100 mb-2.5 leading-relaxed">
+            {parseBoldText(content)}
+          </li>
+        );
+        i++;
+        continue;
+      }
+
+      // Empty line
       if (trimmed === "") {
-        return <div key={idx} className="h-2.5" />;
+        elements.push(<div key={i} className="h-2.5" />);
+        i++;
+        continue;
       }
 
-      return (
-        <p key={idx} className="text-sm sm:text-base font-medium text-slate-950 dark:text-slate-100 leading-relaxed mb-3.5">
+      // Default paragraph
+      elements.push(
+        <p key={i} className="text-sm sm:text-base font-medium text-slate-950 dark:text-slate-100 leading-relaxed mb-3.5">
           {parseBoldText(trimmed)}
         </p>
       );
-    });
+      i++;
+    }
+
+    return elements;
   };
 
   // Helper to parse **bold** text in paragraphs with guaranteed high-contrast styling

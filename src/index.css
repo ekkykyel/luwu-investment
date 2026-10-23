@@ -134,6 +134,37 @@ body {
     --logo-modal: 72px;
     --logo-list: 56px;
   }
+
+  /* Universal High-Contrast Rules for Form Inputs (WCAG AAA) */
+  input[type="text"],
+  input[type="number"],
+  input[type="password"],
+  input[type="email"],
+  select,
+  textarea {
+    color: #0f172a;
+  }
+
+  input[type="text"]::placeholder,
+  input[type="number"]::placeholder,
+  textarea::placeholder {
+    color: #94a3b8;
+  }
+
+  .dark input[type="text"],
+  .dark input[type="number"],
+  .dark input[type="password"],
+  .dark input[type="email"],
+  .dark select,
+  .dark textarea {
+    color: #ffffff;
+  }
+
+  .dark input[type="text"]::placeholder,
+  .dark input[type="number"]::placeholder,
+  .dark textarea::placeholder {
+    color: #94a3b8;
+  }
 }
 
 .dark {
