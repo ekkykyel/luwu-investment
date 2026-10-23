@@ -41,6 +41,7 @@ interface PillarItem {
   id: PillarId;
   number: string;
   badge: string;
+  shortLabel: string;
   title: string;
   subtitle: string;
   icon: React.ElementType;
@@ -77,6 +78,7 @@ export default function InvestmentReadinessPillars({
       id: "spatial",
       number: "01",
       badge: t("readiness.p1Badge", "Tata Ruang Digital"),
+      shortLabel: "Tata Ruang",
       title: t("readiness.p1Title", "Spatial Ready"),
       subtitle: t("readiness.p1Subtitle", "Integrasi RDTR Digital, OSS & Kesesuaian Ruang (KKPR)"),
       icon: Layers,
@@ -118,6 +120,7 @@ export default function InvestmentReadinessPillars({
       id: "infrastructure",
       number: "02",
       badge: t("readiness.p2Badge", "Konektivitas & Utilitas"),
+      shortLabel: "Infrastruktur",
       title: t("readiness.p2Title", "Infrastructure Ready"),
       subtitle: t("readiness.p2Subtitle", "Konektivitas Multimoda, Energi Hijau & Kawasan Industri"),
       icon: Building,
@@ -159,6 +162,7 @@ export default function InvestmentReadinessPillars({
       id: "industry",
       number: "03",
       badge: t("readiness.p3Badge", "Hilirisasi Komoditas"),
+      shortLabel: "Hilirisasi",
       title: t("readiness.p3Title", "Industry Ready"),
       subtitle: t("readiness.p3Subtitle", "Hilirisasi Kakao, Kopi, Nikel & Ekosistem Perintis"),
       icon: TrendingUp,
@@ -200,6 +204,7 @@ export default function InvestmentReadinessPillars({
       id: "financing",
       number: "04",
       badge: t("readiness.p4Badge", "Skema Pembiayaan & Insentif"),
+      shortLabel: "Fiskal",
       title: t("readiness.p4Title", "Financing Ready"),
       subtitle: t("readiness.p4Subtitle", "Peluang KPBU, Blended Finance & Insentif Fiskal Perda"),
       icon: Coins,
@@ -241,6 +246,7 @@ export default function InvestmentReadinessPillars({
       id: "environment",
       number: "05",
       badge: t("readiness.p5Badge", "Standar ESG & Amdal"),
+      shortLabel: "Lingkungan",
       title: t("readiness.p5Title", "Environment Ready"),
       subtitle: t("readiness.p5Subtitle", "Percepatan Izin Lingkungan AMDAL, UKL-UPL & Keberlanjutan"),
       icon: Leaf,
@@ -282,6 +288,7 @@ export default function InvestmentReadinessPillars({
       id: "local_economy",
       number: "06",
       badge: t("readiness.p6Badge", "Kemitraan UMKM & Naker"),
+      shortLabel: "Kemitraan",
       title: t("readiness.p6Title", "Local Economy Ready"),
       subtitle: t("readiness.p6Subtitle", "Kemitraan Wajib UMKM Daerah & Kesiapan SDM Bersertifikat"),
       icon: Users,
@@ -336,127 +343,69 @@ export default function InvestmentReadinessPillars({
       <div className="absolute bottom-0 right-10 w-[400px] h-[250px] bg-teal-500/5 dark:bg-teal-500/10 blur-[120px] pointer-events-none rounded-full" />
 
       <div className="container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <div className="invest-eyebrow-emerald mb-3 sm:mb-3.5">
-            <Sparkles size={14} className="text-emerald-700 dark:text-emerald-400" />
-            <span>{t("readiness.eyebrow", "Blueprint 6 Pilar Kesiapan • Standar Kementerian Investasi / BKPM RI")}</span>
+        {/* Section Header with Elevated Terverifikasi Resmi Badge */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <div className="text-xs font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-[.1em] mb-1">
+              {t("readiness.eyebrow", "Blueprint & Pilar Kesiapan • Standar Kementerian Investasi / BKPM RI")}
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
+              {t("readiness.title", "Investment Readiness")}
+            </h2>
           </div>
-
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-950 dark:text-white mb-2.5 text-balance">
-            {t("readiness.title", "Investment Readiness")}
-          </h2>
-          <div className="emerald-divider-diamond">
-            <span className="emerald-diamond-icon" />
+          {/* Badge pindah ke sini — jauh lebih visible */}
+          <div className="sm:ml-auto flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex-shrink-0 self-start sm:self-auto">
+            <ShieldCheck size={16} className="text-emerald-500" />
+            <div>
+              <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-[.06em]">
+                {t("readiness.officialVerified", "Terverifikasi Resmi")}
+              </div>
+              <div className="text-[9px] text-slate-500 dark:text-slate-400">
+                Data sumber DPMPTSP Luwu
+              </div>
+            </div>
           </div>
-          <p className="text-sm sm:text-base leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
-            {t("readiness.subtitle", "Instrumen validasi komprehensif Kabupaten Luwu menjamin kepastian tata ruang, keandalan infrastruktur multimoda, kepastian regulasi, insentif fiskal, dan mitigasi risiko investasi berkelanjutan.")}
-          </p>
         </div>
 
-        {/* 6 Pillars Interactive Navigation Tabs Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3.5 mb-8">
-          {pillars.map((pillar) => {
-            const Icon = pillar.icon;
-            const isActive = pillar.id === activePillar;
-
-            return (
-              <button
-                key={pillar.id}
-                type="button"
-                onClick={() => setActivePillar(pillar.id)}
-                className={`group relative p-2.5 sm:p-4 rounded-2xl border text-left flex flex-col justify-between transition-all duration-300 cursor-pointer ${
-                  isActive
-                    ? isDark
-                      ? "bg-[#0F2D4A] border-emerald-500/80 shadow-lg shadow-emerald-950/50 ring-1 ring-emerald-500/50"
-                      : "bg-white border-emerald-600 shadow-lg shadow-emerald-200/50 ring-2 ring-emerald-500/30"
-                    : isDark
-                    ? "bg-[#0B2236]/80 border-slate-800 hover:border-slate-700 hover:bg-[#0E2840]"
-                    : "bg-slate-50/80 border-slate-200/90 hover:border-slate-300 hover:bg-white shadow-xs"
-                }`}
-              >
-                {/* Active Indicator Top Glow Line */}
-                {isActive && (
-                  <motion.div
-                    layoutId="activePillarTabIndicator"
-                    className="absolute top-0 inset-x-3 h-1 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
-
-                <div className="flex items-center justify-between gap-2 mb-2.5">
+        {/* Desktop: horizontal tabs | Mobile: scroll horizontal */}
+        <div className="overflow-x-auto pb-1 mb-8 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-none">
+          <div className="flex gap-1.5 min-w-max md:min-w-0 md:flex-wrap">
+            {pillars.map((pilar) => {
+              const Icon = pilar.icon;
+              const isActive = activePillar === pilar.id;
+              return (
+                <button
+                  key={pilar.id}
+                  type="button"
+                  onClick={() => setActivePillar(pilar.id)}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 whitespace-nowrap min-h-[44px] flex-shrink-0 cursor-pointer ${
+                    isActive
+                      ? "bg-emerald-600 text-white shadow-[0_2px_8px_rgba(16,185,129,.3)]"
+                      : isDark
+                        ? "bg-slate-800/60 text-slate-400 hover:bg-slate-700 hover:text-slate-200"
+                        : "bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700"
+                  }`}
+                >
+                  <Icon size={15} />
+                  {/* Label singkat untuk mobile */}
+                  <span className="hidden sm:inline">{pilar.title}</span>
+                  <span className="sm:hidden">{pilar.shortLabel}</span>
+                  {/* Skor kesiapan sebagai badge kecil */}
                   <span
-                    className={`text-[10px] font-mono font-black px-2 py-0.5 rounded-md ${
+                    className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
                       isActive
-                        ? isDark
-                          ? "bg-emerald-500/25 text-emerald-300 border border-emerald-500/40"
-                          : "bg-emerald-100 text-emerald-950 border border-emerald-300 font-extrabold"
+                        ? "bg-white/20 text-white"
                         : isDark
-                        ? "bg-slate-800 text-slate-400"
-                        : "bg-slate-100 text-slate-700 font-bold"
+                          ? "bg-slate-700 text-slate-300"
+                          : "bg-slate-200 text-slate-600"
                     }`}
                   >
-                    {pillar.number}
+                    {pilar.score}
                   </span>
-                  <div
-                    className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all group-hover:scale-105 ${
-                      isActive
-                        ? "bg-gradient-to-br from-emerald-500 to-teal-600 text-slate-950 font-black shadow-md shadow-emerald-500/30"
-                        : isDark
-                        ? "bg-slate-800/80 text-slate-400 group-hover:text-slate-200"
-                        : "bg-slate-100 text-slate-600 group-hover:text-slate-900"
-                    }`}
-                  >
-                    <Icon size={16} />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between gap-1 mb-0.5">
-                    <h3
-                      className={`text-xs sm:text-sm font-black tracking-tight transition-colors line-clamp-1 ${
-                        isActive
-                          ? isDark
-                            ? "text-white"
-                            : "text-slate-950"
-                          : isDark
-                          ? "text-slate-200 group-hover:text-white"
-                          : "text-slate-800 group-hover:text-slate-950 font-bold"
-                      }`}
-                    >
-                      {pillar.title}
-                    </h3>
-                  </div>
-                  <div className="flex items-center justify-between gap-1 mt-1">
-                    <p
-                      className={`text-[10px] line-clamp-1 font-semibold ${
-                        isActive
-                          ? isDark
-                            ? "text-emerald-300"
-                            : "text-emerald-800 font-extrabold"
-                          : isDark
-                          ? "text-slate-400"
-                          : "text-slate-600"
-                      }`}
-                    >
-                      {pillar.badge}
-                    </p>
-                    <span
-                      className={`text-[9px] font-mono font-bold px-1 rounded ${
-                        isActive
-                          ? isDark
-                            ? "bg-emerald-950/80 text-emerald-300"
-                            : "bg-emerald-100 text-emerald-900 font-black"
-                          : "opacity-0"
-                      }`}
-                    >
-                      {pillar.score}
-                    </span>
-                  </div>
-                </div>
-              </button>
-            );
-          })}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Detailed Showcase Panel for the Active Pillar */}
@@ -605,8 +554,8 @@ export default function InvestmentReadinessPillars({
                     <CurrentIcon size={15} className={currentPillar.accentColor} />
                     <span>{t("readiness.quantitativeIndicator", "Indikator Kuantitatif Kesiapan")}</span>
                   </span>
-                  <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-950 dark:text-emerald-300 font-extrabold border border-emerald-300 dark:border-emerald-500/40">
-                    {t("readiness.officialVerified", "TERVERIFIKASI RESMI")}
+                  <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold border border-slate-200 dark:border-slate-700">
+                    Standar BKPM RI
                   </span>
                 </div>
 
