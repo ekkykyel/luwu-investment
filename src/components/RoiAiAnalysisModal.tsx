@@ -267,11 +267,13 @@ Anda WAJIB mengutip PERSIS angka finansial di atas (Payback Period = ${isPayback
 ATURAN EVALUASI LOGIS WAJIB:
 ${isDeficit ? `🚨 KONDISI SAAT INI ADALAH PROYEK DEFISIT / BELUM LAYAK:
 - Status Kelayakan WAJIB: 🔴 PERLU PENYESUAIAN ASUMSI (TIDAK LAYAK / DEFISIT)
-- Skor Kelayakan AI (1 - 100) WAJIB antara 5 - 25/100 (Kategori Evaluasi Kritis / Di Bawah Ambang Kelayakan). DILARANG KERAS memberikan skor 80+ atau status SANGAT LAYAK pada proyek defisit!
-- Pada analisis Payback Period (BEP), jelaskan secara lugas: Modal investasi awal TIDAK DAPAT KEMBALI dalam tenor proyek karena arus kas tahunan defisit. DILARANG KERAS mengklaim modal kembali pada tahun ke-999!
-- Pada analisis NPV, jelaskan secara eksplisit bahwa nilai NPV bertanda NEGATIF (${formatRupiah(npv)}) dan merugikan nilai investasi jika suku bunga 12%. DILARANG KERAS menyebut angka bertanda minus ini sebagai positif!
-- Pada analisis IRR, sebutkan bahwa IRR (${irr.toFixed(2)}%) tidak mencukupi standar suku bunga acuan WACC ${discountRate}%. DILARANG mengarang angka IRR yang berbeda!
-- Berikan saran koreksi konkret: Naikkan estimasi volume panen/penjualan, sesuaikan harga jual komoditas, atau pangkas OPEX tenaga kerja/bahan penolong.` : isConditional ? `KONDISI SAAT INI ADALAH LAYAK BERSYARAT:
+- Skor Kelayakan AI (1 - 100) WAJIB antara 15 - 35/100 (Kategori Evaluasi Kritis / Di Bawah Ambang Kelayakan). DILARANG KERAS memberikan skor 80+ atau status SANGAT LAYAK pada proyek defisit!
+- Pada analisis Payback Period (BEP):
+  * Jika Laba Bersih Operasional tahunan bernilai POSITIF (${formatRupiah(netOperatingIncome)}/tahun) dengan BEP nominal ${paybackPeriod.toFixed(1)} tahun: Jelaskan secara akurat bahwa secara nominal modal kembali dalam ${paybackPeriod.toFixed(1)} tahun, TETAPI secara terdiskon (Discounted Payback pada WACC ${discountRate}% dan inflasi) akumulasi arus kas terdiskon tidak mampu menutup modal awal dalam batas tenor proyek sehingga NPV menjadi negatif (${formatRupiah(npv)}). DILARANG menyatakan "pendapatan tidak cukup menutupi operasional" jika laba bersih sebenarnya positif!
+  * Jika Laba Bersih benar-benar negatif (<= 0): Jelaskan bahwa modal tidak dapat kembali karena pendapatan di bawah beban operasional tahunan.
+- Pada analisis NPV, jelaskan secara eksplisit bahwa nilai NPV bertanda NEGATIF (${formatRupiah(npv)}) dan terdiskon di bawah biaya modal investasi jika diukur pada discount rate WACC ${discountRate}%. DILARANG KERAS menyebut angka bertanda minus ini sebagai positif!
+- Pada analisis IRR, sebutkan bahwa IRR (${irr.toFixed(2)}%) berada di bawah suku bunga acuan WACC ${discountRate}%. DILARANG mengarang angka IRR yang berbeda!
+- Berikan saran koreksi konkret (What-If Inverse Optimization): Hitung rekomendasi kenaikan harga komoditas (Rp/Kg), peningkatan volume panen, atau efisiensi OPEX untuk mencapai titik impas finansial (NPV >= 0).` : isConditional ? `KONDISI SAAT INI ADALAH LAYAK BERSYARAT:
 - Status Kelayakan: 🟡 LAYAK BERSYARAT (CONDITIONALLY FEASIBLE)
 - Skor Kelayakan: 55 - 68/100` : `KONDISI SAAT INI ADALAH SANGAT LAYAK:
 - Status Kelayakan: 🟢 SANGAT LAYAK (HIGHLY FEASIBLE)
@@ -924,27 +926,45 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
             <div className={`px-3 py-2 rounded-xl flex items-center justify-between gap-2.5 shrink-0 backdrop-blur-sm border shadow-sm ${
               isNpvPositive && isIrrFeasible 
                 ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800/60 text-emerald-950 dark:text-emerald-200" 
-                : "bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800/60 text-amber-950 dark:text-amber-200"
+                : isNpvPositive
+                ? "bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800/60 text-amber-950 dark:text-amber-200"
+                : "bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800/60 text-rose-950 dark:text-rose-200"
             }`}>
               <div className="flex items-center gap-2 min-w-0">
-                <div className={`p-1 rounded-md shrink-0 ${isNpvPositive ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-amber-500/20 text-amber-700 dark:text-amber-400"}`}>
-                  {isNpvPositive ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertTriangle className="w-3.5 h-3.5" />}
+                <div className={`p-1 rounded-md shrink-0 ${
+                  isNpvPositive && isIrrFeasible 
+                    ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400" 
+                    : isNpvPositive
+                    ? "bg-amber-500/20 text-amber-700 dark:text-amber-400"
+                    : "bg-rose-500/20 text-rose-700 dark:text-rose-400"
+                }`}>
+                  {isNpvPositive && isIrrFeasible ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertTriangle className="w-3.5 h-3.5" />}
                 </div>
                 <div className="min-w-0">
                   <div className="text-xs font-black uppercase tracking-wider truncate">
-                    {isNpvPositive && isIrrFeasible ? "Status: Layak & Feasible Secara Finansial" : "Status: Zona Moderat / Perlu Mitigasi"}
+                    {isNpvPositive && isIrrFeasible 
+                      ? "Status: Layak & Feasible Secara Finansial" 
+                      : isNpvPositive
+                      ? "Status: Zona Moderat / Layak Bersyarat"
+                      : "Status: Perlu Penyesuaian Asumsi (NPV Negatif)"}
                   </div>
                   <div className="text-[10px] text-slate-700 dark:text-slate-300 font-semibold truncate">
-                    NPV Positif • IRR &gt; WACC ({discountRate}%) • Evaluasi Otomatis AI
+                    {isNpvPositive && isIrrFeasible 
+                      ? `NPV Positif (${formatRupiahSingkat(npv)}) • IRR (${irr.toFixed(1)}%) ≥ WACC (${discountRate}%) • Evaluasi Otomatis AI`
+                      : isNpvPositive
+                      ? `NPV Positif (${formatRupiahSingkat(npv)}) • IRR (${irr.toFixed(1)}%) di bawah WACC (${discountRate}%) • Evaluasi Otomatis AI`
+                      : `NPV Negatif (${formatRupiahSingkat(npv)}) • IRR (${irr.toFixed(1)}%) < WACC (${discountRate}%) • Evaluasi Otomatis AI`}
                   </div>
                 </div>
               </div>
               <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full shrink-0 border ${
                 isNpvPositive && isIrrFeasible
                   ? "bg-emerald-100 text-emerald-900 dark:bg-emerald-500/20 dark:text-emerald-300 border-emerald-300 dark:border-emerald-500/30"
-                  : "bg-amber-100 text-amber-900 dark:bg-amber-500/20 dark:text-amber-300 border-amber-300 dark:border-amber-500/30"
+                  : isNpvPositive
+                  ? "bg-amber-100 text-amber-900 dark:bg-amber-500/20 dark:text-amber-300 border-amber-300 dark:border-amber-500/30"
+                  : "bg-rose-100 text-rose-900 dark:bg-rose-500/20 dark:text-rose-300 border-rose-300 dark:border-rose-500/30"
               }`}>
-                {isNpvPositive && isIrrFeasible ? "Score: A+" : "Score: B"}
+                {isNpvPositive && isIrrFeasible ? "Score: A" : isNpvPositive ? "Score: B" : "Score: D"}
               </span>
             </div>
           )}

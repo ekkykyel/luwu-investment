@@ -141,12 +141,15 @@ export const generateHeuristicRoiAnalysis = (data: {
   const isConditional = !isDeficit && !isFeasible;
 
   let kelayakan = '🔴 PERLU PENYESUAIAN ASUMSI (TIDAK LAYAK / DEFISIT)';
-  let skorKelayakan = 5;
+  let skorKelayakan = netProfit > 0 ? 25 : 10;
   let kategoriSkor = '(Kategori Evaluasi Kritis / Di Bawah Ambang Kelayakan)';
-  let ringkasan = `Proyek investasi ini belum layak secara finansial pada parameter saat ini karena beban operasional tahunan (OPEX Rp ${opex.toLocaleString('id-ID')}) melebihi pendapatan atau menghasilkan net present value negatif (NPV: ${estNpv}), sehingga modal awal tidak dapat terpulihkan dalam horizon waktu investasi. Diperlukan penyesuaian asumsi produksi, kenaikan harga komoditas, atau efisiensi biaya operasional.`;
+  const profitMarginVal = rev > 0 ? ((netProfit / rev) * 100).toFixed(1) : "0";
+  let ringkasan = netProfit > 0
+    ? `Proyek investasi ini membukukan laba operasional tahunan positif sebesar Rp ${netProfit.toLocaleString('id-ID')} (margin ${profitMarginVal}%), namun nilai investasi awal (CAPEX Rp ${inv.toLocaleString('id-ID')}) belum memadai untuk menghasilkan Net Present Value positif pada tingkat suku bunga diskonto WACC ${discountRate}% (NPV: ${estNpv}). Diperlukan akselerasi volume produksi atau peningkatan harga komoditas bernilai tambah.`
+    : `Proyek investasi ini belum layak secara finansial pada parameter saat ini karena beban operasional tahunan (OPEX Rp ${opex.toLocaleString('id-ID')}) melebihi pendapatan dan menghasilkan Net Present Value negatif (NPV: ${estNpv}). Diperlukan efisiensi beban operasional rutin atau restrukturisasi skala investasi.`;
 
   let npvNote = '(Bernilai negatif di bawah biaya modal / Mengurangi nilai kekayaan investasi)';
-  let irrNote = `(0.00% / Di bawah suku bunga WACC ${discountRate}%, tidak memberikan pengembalian modal yang memadai)`;
+  let irrNote = `(${estIrrNum.toFixed(2)}% / Di bawah suku bunga WACC ${discountRate}%, tidak memberikan pengembalian modal yang memadai)`;
   let piNote = '(PI < 1.0 mengindikasikan pengembalian modal lebih kecil dari nilai investasi yang dikeluarkan)';
 
   if (isFeasible) {

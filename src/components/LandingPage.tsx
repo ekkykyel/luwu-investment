@@ -7124,6 +7124,7 @@ export default function LandingPage({
               irr={simContext.irr}
               npv={simContext.npv}
               discountRate={discountRate}
+              roi={simContext.roi}
               isDarkMode={isDark}
               isUsingOSS={simContext.isUsingOSS}
             />

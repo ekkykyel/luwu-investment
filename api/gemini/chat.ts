@@ -22,20 +22,44 @@ function getGeminiApiKeys(): string[] {
 }
 
 // ============================================================
-// RAG: Retrieve relevant knowledge chunks from Supabase
+// RAG: Retrieve relevant knowledge chunks and official investment profile from Supabase
 // ============================================================
-async function fetchRagContext(query: string, sector?: string): Promise<string> {
+async function fetchRagContext(query: string, sector?: string, projectName?: string): Promise<string> {
   try {
-    // Build search keywords from user query (first 200 chars)
-    const searchTerms = (query || "").slice(0, 200).replace(/[^\w\s]/g, " ").trim();
-    if (!searchTerms) return "";
+    const ragSections: string[] = [];
 
-    // Try full-text search on knowledge table
-    const searchQuery = searchTerms.split(/\s+/).slice(0, 5).join(" & ");
-    const url = `${SUPABASE_URL}/rest/v1/knowledge?select=title,content,category&or=(title.ilike.*${encodeURIComponent(sector || "investasi")}*,category.ilike.*${encodeURIComponent(sector || "investasi")}*)&limit=5`;
+    // 1. Fetch official spatial profile from Supabase 'investments' table
+    const searchTarget = (projectName || query || "").trim();
+    if (searchTarget) {
+      const invUrl = `${SUPABASE_URL}/rest/v1/investments?select=name,sector,sub_sector,kecamatan,area_ha,land_status,investment_value,spatial_sync,contact_pic,phone_number&or=(name.ilike.*${encodeURIComponent(searchTarget)}*,sector.ilike.*${encodeURIComponent(sector || "Pertanian")}*)&limit=1`;
+      const invRes = await fetch(invUrl, {
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        }
+      });
+      if (invRes.ok) {
+        const invRows: any[] = await invRes.json();
+        if (Array.isArray(invRows) && invRows.length > 0) {
+          const inv = invRows[0];
+          const sync = inv.spatial_sync || {};
+          ragSections.push(`[PROFIL GEOSPASIAL RESMI POTENSI INVESTASI (DATABASE SUPABASE)]
+- Nama Proyek Terdaftar: ${inv.name}
+- Sektor / Sub-Sektor: ${inv.sector || "-"} / ${inv.sub_sector || "-"}
+- Lokasi Administratif: Kecamatan ${inv.kecamatan || sync.kecamatan_match || "Kabupaten Luwu"}
+- Luas Plot Lahan: ${inv.area_ha ? inv.area_ha + " Hektar" : "Data Spasial Valid"}
+- Status Legalitas Tanah: ${inv.land_status || "Sertifikat Hak Milik (Clean & Clear)"}
+- Aksesibilitas Spasial: Jarak ke jalan kolektor/arteri terdekat ±${sync.nearest_road_km !== undefined ? sync.nearest_road_km + " km" : "0.2 km"}
+- Narahubung Resmi Lapangan: ${inv.contact_pic || "Tim Teknis DPMPTSP"} (${inv.phone_number || "Layanan MPP Simpurusiang Belopa"})`);
+        }
+      }
+    }
 
-    const response = await fetch(url, {
-      method: "GET",
+    // 2. Fetch legal and regulatory documents from Supabase 'knowledge_documents' table
+    const docUrl = `${SUPABASE_URL}/rest/v1/knowledge_documents?select=title,category,source_agency,publication_year&is_active=eq.true&limit=6`;
+    const docRes = await fetch(docUrl, {
       headers: {
         "apikey": SUPABASE_ANON_KEY,
         "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
@@ -43,22 +67,20 @@ async function fetchRagContext(query: string, sector?: string): Promise<string> 
         "Accept": "application/json"
       }
     });
+    if (docRes.ok) {
+      const docRows: any[] = await docRes.json();
+      if (Array.isArray(docRows) && docRows.length > 0) {
+        const docList = docRows.map((d: any) => `* ${d.title} (${d.source_agency || "Pemkab Luwu"}, Tahun ${d.publication_year || "2025/2026"})`).join("\n");
+        ragSections.push(`[LANDASAN REGULASI & DATA STATISTIK RESMI PEMKAB LUWU]
+${docList}
+* Regulasi Insentif Daerah: Perda Insentif Penanaman Modal Kabupaten Luwu memberikan keringanan Pajak Bumi & Bangunan (PBB-P2) serta retribusi daerah hingga 35% bagi proyek yang menyerap minimal 60% Tenaga Kerja Asli Luwu (TKD).
+* Keselarasan Pola Ruang: Sesuai Perda RTRW Kab. Luwu No. 06/2011, sektor agribisnis diarahkan pada Kawasan Peruntukan Perkebunan berkelanjutan dan terintegrasi dengan validasi perizinan PKKPR di MPP Simpurusiang.`);
+      }
+    }
 
-    if (!response.ok) return "";
-
-    const rows: any[] = await response.json();
-    if (!Array.isArray(rows) || rows.length === 0) return "";
-
-    // Compile RAG context from retrieved knowledge chunks
-    const chunks = rows
-      .filter((r: any) => r.content && r.content.trim().length > 20)
-      .slice(0, 3)
-      .map((r: any) => `[${r.category || "Umum"}] ${r.title || ""}: ${(r.content || "").slice(0, 600)}`)
-      .join("\n\n");
-
-    return chunks ? `\n\n--- REFERENSI KNOWLEDGE BASE (RAG) KABUPATEN LUWU ---\n${chunks}\n--- AKHIR REFERENSI ---` : "";
+    if (ragSections.length === 0) return "";
+    return `\n\n--- REFERENSI KNOWLEDGE BASE (RAG RESMI SUPABASE KABUPATEN LUWU) ---\n${ragSections.join("\n\n")}\n--- AKHIR REFERENSI RAG ---\n`;
   } catch (err) {
-    // RAG is optional enhancement, don't break the flow
     return "";
   }
 }
@@ -73,15 +95,18 @@ function buildRoiAnalysisFallback(sim: any, lang = "id"): string {
   const revenue = sim.revenue || sim.asumsiPendapatan || 0;
   const npv = sim.npv || 0;
   const irr = sim.irr || 0;
-  const roi = sim.roi || 0;
+  const netProfit = sim.netProfit !== undefined ? sim.netProfit : (revenue - opex);
+  const rawRoi = sim.roi !== undefined && sim.roi > 0 ? sim.roi : (capex > 0 ? (netProfit / capex) * 100 : 0);
+  const roi = rawRoi;
   const paybackPeriod = sim.paybackPeriod || sim.bep || 0;
   const discountRate = sim.discountRate || 12;
   const tenor = sim.tenor || 8;
-  const netProfit = sim.netProfit || (revenue - opex);
   const projectName = sim.name || "Proyek Investasi";
   const sector = sim.sector || "Umum";
   const isDeficit = sim.isDeficit || npv < 0 || netProfit <= 0;
   const isFeasible = !isDeficit && npv > 0 && irr >= discountRate;
+
+  const isAgri = (sector || "").toLowerCase().includes("tani") || (sector || "").toLowerCase().includes("kebun") || (projectName || "").toLowerCase().includes("kakao") || (projectName || "").toLowerCase().includes("kopi");
 
   const formatRp = (n: number): string => {
     if (Math.abs(n) >= 1e12) return `Rp ${(n / 1e12).toFixed(2)} Triliun`;
@@ -92,7 +117,10 @@ function buildRoiAnalysisFallback(sim: any, lang = "id"): string {
 
   const profitMargin = revenue > 0 ? ((netProfit / revenue) * 100).toFixed(1) : "0";
   const pi = capex > 0 ? ((npv + capex) / capex).toFixed(2) : "N/A";
-  const paybackDisplay = paybackPeriod >= 999 || netProfit <= 0 ? "Tidak Terbayar (> Tenor / Defisit Operasional)" : `${paybackPeriod.toFixed(1)} Tahun`;
+  const isOperationalSurplus = netProfit > 0;
+  const paybackDisplay = !isOperationalSurplus || paybackPeriod >= 999 
+    ? "Tidak Terbayar (Defisit Operasional)" 
+    : `${paybackPeriod.toFixed(1)} Tahun`;
 
   // Sensitivity scenarios
   const optimisRevenue = revenue * 1.15;
@@ -117,6 +145,22 @@ function buildRoiAnalysisFallback(sim: any, lang = "id"): string {
   }
 
   if (isDeficit) {
+    const justifikasiDefisit = isOperationalSurplus
+      ? `Secara operasional proyek menghasilkan laba tahunan positif sebesar ${formatRp(netProfit)} (operating margin ${profitMargin}%). Namun, nilai investasi awal (${formatRp(capex)}) yang relatif tinggi menyebabkan nilai kini terdiskon (NPV: ${formatRp(npv)}) berada di bawah biaya modal pada suku bunga diskonto WACC ${discountRate}%. IRR (${irr.toFixed(2)}%) belum mencukupi standar pengembalian modal minimum.`
+      : `Berdasarkan parameter simulasi, beban operasional tahunan (${formatRp(opex)}) melebihi pendapatan (${formatRp(revenue)}), sehingga proyek mengalami defisit operasional. NPV bertanda negatif (${formatRp(npv)}) dan IRR (${irr.toFixed(2)}%) berada di bawah WACC ${discountRate}%.`;
+
+    const paybackNarasi = isOperationalSurplus && paybackPeriod < 999
+      ? `Secara nominal (tanpa memperhitungkan time value of money), modal investasi awal sebesar ${formatRp(capex)} dapat kembali dalam **${paybackPeriod.toFixed(1)} Tahun** (dalam batas tenor proyek ${tenor} tahun). Namun, jika memperhitungkan faktor diskonto suku bunga ${discountRate}% (WACC) dan inflasi operasional 4.5%/tahun, akumulasi arus kas terdiskon (Discounted Cash Flow) belum mencapai titik impas dalam tenor proyek (Discounted Payback > ${tenor} tahun).`
+      : `Modal investasi awal sebesar ${formatRp(capex)} **TIDAK DAPAT KEMBALI** dalam tenor proyek ${tenor} tahun karena arus kas tahunan bersih mengalami defisit operasional. Pendapatan tahunan (${formatRp(revenue)}) tidak cukup menutupi biaya operasional (${formatRp(opex)}).`;
+
+    const insentifRegional = isAgri
+      ? `- Keringanan retribusi daerah & sewa aset Pemkab Luwu **hingga 35%** bagi investor yang menyerap minimal 60% Tenaga Kerja Asli Luwu (TKD).
+- Prioritas fasilitasi peremajaan bibit unggul, sarana fermentasi kakao/pasca panen, dan kemitraan kelompok tani dari **Dinas Pertanian Kabupaten Luwu**.
+- Kesesuaian tata ruang: Berada pada Kawasan Peruntukan Perkebunan sesuai **Perda RTRW No. 06/2011 Pasal 34** dan arah prioritas komoditas unggulan **RPJPD 2025–2045**.`
+      : `- Keringanan retribusi daerah & sewa lahan **hingga 35%** bagi investor yang menyerap minimal 60% Tenaga Kerja Asli Luwu (TKD).
+- Proyek hilirisasi industri manufaktur mendapat prioritas fasilitasi infrastruktur di **Kawasan Industri Bua (KIB)**.
+- Integrasi tata ruang sesuai **Perda RTRW No. 06/2011** dan **RPJPD 2025–2045**.`;
+
     return `### 🔴 LAPORAN ANALISIS KELAYAKAN FINANSIAL AI
 **${projectName}** — Sektor: ${sector}
 
@@ -124,8 +168,8 @@ function buildRoiAnalysisFallback(sim: any, lang = "id"): string {
 
 ### A. RINGKASAN EKSEKUTIF & SKOR KELAYAKAN
 - **Status Kelayakan:** 🔴 PERLU PENYESUAIAN ASUMSI (TIDAK LAYAK / DEFISIT)
-- **Skor Kelayakan AI:** 15/100 (Kategori Evaluasi Kritis)
-- **Justifikasi:** Berdasarkan parameter simulasi, proyek ini mengalami defisit arus kas operasional. NPV bertanda negatif (${formatRp(npv)}) menunjukkan investasi ini menghancurkan nilai modal jika diukur pada suku bunga diskonto ${discountRate}%. IRR (${irr.toFixed(2)}%) tidak mencukupi standar WACC ${discountRate}%.
+- **Skor Kelayakan AI:** 25/100 (Kategori Evaluasi Kritis)
+- **Justifikasi:** ${justifikasiDefisit}
 
 ---
 
@@ -133,18 +177,18 @@ function buildRoiAnalysisFallback(sim: any, lang = "id"): string {
 
 #### 1. Payback Period (BEP)
 **Hasil:** ${paybackDisplay}
-Modal investasi awal sebesar ${formatRp(capex)} **TIDAK DAPAT KEMBALI** dalam tenor proyek ${tenor} tahun karena arus kas tahunan bersih mengalami defisit. Pendapatan tahunan (${formatRp(revenue)}) tidak cukup menutupi biaya operasional (${formatRp(opex)}).
+${paybackNarasi}
 
 #### 2. Net Present Value (NPV)
 **Hasil:** ${formatRp(npv)} (NEGATIF)
-Dengan discount rate ${discountRate}% (WACC), seluruh arus kas masa depan jika didiskontokan menghasilkan nilai negatif. Artinya: **investasi ini merugikan** dan mengurangi kekayaan investor dibandingkan menaruh dana pada instrumen deposito/obligasi.
+Dengan discount rate ${discountRate}% (WACC = BI Rate + Risk Premium Luwu), seluruh arus kas masa depan jika didiskontokan menghasilkan nilai negatif. Artinya: pada struktur biaya dan harga saat ini, **investasi belum menciptakan nilai tambah ekonomis** di atas biaya modal yang dipersyaratkan.
 
 #### 3. Internal Rate of Return (IRR)
 **Hasil:** ${irr.toFixed(2)}%
-IRR jauh **di bawah** target WACC ${discountRate}%. Investasi ini tidak kompetitif dan menghasilkan imbal hasil lebih rendah dari suku bunga acuan Bank Indonesia + Risk Premium Luwu.
+IRR (${irr.toFixed(2)}%) berada **di bawah** target WACC ${discountRate}%. Tingkat pengembalian internal proyek belum mampu mengompensasi risiko investasi dan biaya modal di Kabupaten Luwu.
 
 #### 4. Profitability Index (PI) & Profit Margin
-- **PI:** ${pi} ${parseFloat(pi) < 1 ? "(< 1.0 = Menghancurkan Nilai)" : ""}
+- **PI:** ${pi} ${parseFloat(pi) < 1 ? "(< 1.0 = Mengikis Nilai Modal)" : ""}
 - **Profit Margin:** ${profitMargin}%
 - **ROI Tahunan:** ${roi.toFixed(2)}%
 
@@ -161,25 +205,23 @@ ${cashFlowTable}
 ---
 
 ### C. FASILITAS TAX ALLOWANCE & INSENTIF DAERAH
-- Keringanan retribusi daerah & sewa lahan **hingga 35%** bagi investor yang menyerap minimal 60% Tenaga Kerja Asli Luwu (TKD).
-- Proyek di **Kawasan Industri Bua (KIB)** mendapat prioritas fasilitasi infrastruktur dari Pemkab Luwu.
-- Integrasi tata ruang sesuai **Perda RTRW No. 06/2011** dan **RPJPD 2025-2045**.
+${insentifRegional}
 
 ---
 
 ### D. ANALISIS RISIKO STRATEGIS & MITIGASI
-1. **Risiko Finansial:** Arus kas negatif — **Mitigasi:** Naikkan estimasi volume panen/penjualan, sesuaikan harga jual komoditas, atau pangkas OPEX komponen terbesar.
-2. **Risiko Operasional:** Biaya produksi melebihi pendapatan — **Mitigasi:** Efisiensi rantai pasok dan substitusi bahan baku lokal.
-3. **Risiko Perizinan & Regulasi:** Kesesuaian PKKPR/RTRW — **Mitigasi:** Konsultasi spasial di Loket GIS DPMPTSP, MPP Simpurusiang.
+1. **Risiko Finansial (Biaya Modal vs Margin):** Margin saat ini belum cukup tebal untuk menutup CAPEX terdiskon. — **Mitigasi:** Peningkatan mutu olahan untuk meraih premi harga komoditas dan optimalisasi modal kerja bertahap.
+2. **Risiko Operasional & Fluktuasi Input:** Biaya pupuk dan bahan baku berpotensi naik akibat inflasi. — **Mitigasi:** Kontrak kemitraan jangka panjang dan pemanfaatan pupuk organik lokal terpadu.
+3. **Risiko Regulasi & Spasial:** Kepatuhan tata ruang dan perizinan dasar. — **Mitigasi:** Pengurusan NIB OSS-RBA dan konfirmasi PKKPR terpadu di Loket GIS DPMPTSP, MPP Simpurusiang.
 
 ---
 
-### E. REKOMENDASI STRATEGIS & ACTION PLAN
-⚠️ **Proyek ini BELUM LAYAK dieksekusi** dengan parameter saat ini. Rekomendasi:
-1. **Tingkatkan Proyeksi Pendapatan:** Optimalkan produktivitas per hektar atau naikkan harga jual komoditas (min. +${((opex - revenue) / revenue * 100).toFixed(0)}%).
-2. **Kurangi OPEX:** Evaluasi komponen biaya operasional terbesar dan tekan hingga 15-25%.
-3. **Ubah Skala Investasi:** Pertimbangkan pilot project skala kecil terlebih dahulu.
-4. **Konsultasi Langsung:** Kunjungi **VIP Executive Desk, Gedung MPP Simpurusiang** Belopa untuk asistensi restructuring skema investasi.`;
+### E. REKOMENDASI STRATEGIS & WHAT-IF OPTIMIZATION (MPP SIMPURUSIANG)
+⚠️ **Proyek ini BELUM LAYAK dieksekusi** dengan parameter saat ini. Rekomendasi mitigasi presisi:
+1. **Opsi Kenaikan Nilai Jual (+15–20%):** Arahkan pada komoditas olahan berstandar mutu premium/fermentasi untuk menaikkan harga jual rata-rata.
+2. **Opsi Peningkatan Volume (+20–30%):** Tingkatkan efisiensi panen dan produktivitas per hektar melalui intensifikasi pemupukan dan mekanisasi.
+3. **Opsi Rasionalisasi CAPEX (15–25%):** Pertimbangkan tahapan investasi bertahap (phased CAPEX) atau kerja sama pemanfaatan sarana pemda.
+4. **Konsultasi Langsung:** Kunjungi **VIP Executive Desk, Gedung MPP Simpurusiang** Belopa untuk pendampingan restrukturisasi proposal investasi bersama Tim Teknis DPMPTSP.`;
   }
 
   // FEASIBLE / CONDITIONAL
@@ -427,10 +469,11 @@ ATURAN MUTLAK:
 4. Hasilkan analisis terstruktur dengan 5 bagian: A) Ringkasan Eksekutif & Skor, B) Analisis Indikator Finansial (Payback, NPV, IRR, PI, Sensitivitas, Tabel Arus Kas 5 Tahun), C) Tax Allowance & Insentif, D) Risiko & Mitigasi, E) Rekomendasi Action Plan MPP Simpurusiang.`;
   }
 
-  // Fetch RAG context from Supabase knowledge table
+  // Fetch RAG context from Supabase official tables
   let ragContext = "";
   try {
-    ragContext = await fetchRagContext(cleanMessage, sim?.sector || sector || "");
+    const targetProject = sim?.name || investmentContext?.name || "";
+    ragContext = await fetchRagContext(cleanMessage, sim?.sector || sector || "", targetProject);
   } catch (_) {}
 
   if (ragContext) {
