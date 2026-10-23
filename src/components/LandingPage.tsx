@@ -444,6 +444,57 @@ export default function LandingPage({
   const [isUserInteractingStats, setIsUserInteractingStats] = useState(false);
   const statsResumeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Bento Stats Grid Visibility and Count-Up System
+  const statGridRef = useRef<HTMLDivElement>(null);
+  const [statVisible, setStatVisible] = useState(false);
+
+  useEffect(() => {
+    const el = statGridRef.current;
+    if (!el) return;
+
+    const fallback = setTimeout(() => setStatVisible(true), 800);
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStatVisible(true);
+          clearTimeout(fallback);
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(el);
+    return () => { observer.unobserve(el); clearTimeout(fallback); };
+  }, []);
+
+  useEffect(() => {
+    if (!statVisible) return;
+
+    function countUp(id: string, target: number, duration = 1300, decimals = 0) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const start = performance.now();
+      const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+      const tick = (now: number) => {
+        const t = Math.min((now - start) / duration, 1);
+        const val = target * easeOut(t);
+        el.textContent = decimals > 0
+          ? val.toFixed(decimals)
+          : Math.round(val).toString();
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }
+
+    setTimeout(() => countUp('stat-peluang', activeOpportunities ?? 2, 1100), 0);
+    setTimeout(() => countUp('stat-pkkpr',  pkkprIssuedCount ?? 1, 1000),           80);
+    setTimeout(() => countUp('stat-infra',  infrastructure?.length ?? 10, 1200),     160);
+    setTimeout(() => countUp('stat-tk',     totalLabor ?? 23, 1300),                 240);
+  }, [statVisible, activeOpportunities, pkkprIssuedCount, infrastructure?.length, totalLabor]);
+
+
   const scrollToStatCard = (index: number) => {
     const container = statsScrollContainerRef.current;
     if (!container) return;
@@ -2807,481 +2858,104 @@ export default function LandingPage({
           </div>
         </section>
 
-            {/* Premium Bento Stats Grid — Layer 1 (#0F2D4A) Container + Layer 2 (#143755) Cards */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="mt-4 sm:mt-10 md:mt-16 lg:mt-20 max-w-6xl mx-auto px-0 sm:px-4 w-full"
-            >
-              <PreLaunchBanner 
-                isDark={isDark} 
-                dataCount={totalInvestmentValue} 
-                context="invest-luwu" 
-                className="mb-3.5 sm:mb-5" 
-              />
-              <div
-                className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3.5 md:gap-4.5 rounded-2xl sm:rounded-3xl p-2 sm:p-4 md:p-5 border transition-colors duration-300 ${
-                  isDark
-                    ? "bg-[#0F2D4A] border-white/[0.07] shadow-none"
-                    : "bg-white/90 backdrop-blur-2xl border-slate-200/90 shadow-xl shadow-slate-300/40"
-                }`}
-              >
-                {[
-                  {
-                    id: 'stat-investment',
-                    label: t("stats.totalInvestment"),
-                    value: totalInvestmentValue > 0 ? formatRupiah(totalInvestmentValue) : t('landing.noRecordedData', 'Belum ada data tersedia'),
-                    rawValue: totalInvestmentValue || 0,
-                    isCurrency: true,
-                    icon: TrendingUp,
-                    accentTop: 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500',
-                    borderHover: 'hover:border-emerald-400/80 dark:hover:border-emerald-500/80',
-                    glowHover: 'from-emerald-500/10 via-emerald-500/5 to-transparent',
-                    iconColor: 'text-emerald-600 dark:text-emerald-400',
-                    iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
-                    iconBorder: 'border border-emerald-200/80 dark:border-emerald-500/30',
-                    sparkId: 'spark-emerald',
-                    sparkColor: '#10b981',
-                    sparkPoints: '0,22 13,18 26,20 39,12 52,14 65,7 80,4',
-                    lastPoint: { x: 80, y: 4 },
-                  },
-                  {
-                    id: 'stat-loi',
-                    label: t("stats.investorLoi"),
-                    value: loiCount || 0,
-                    rawValue: loiCount || 0,
-                    isCurrency: false,
-                    icon: Briefcase,
-                    accentTop: 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500',
-                    borderHover: 'hover:border-emerald-400/80 dark:hover:border-emerald-500/80',
-                    glowHover: 'from-emerald-500/10 via-emerald-500/5 to-transparent',
-                    iconColor: 'text-emerald-600 dark:text-emerald-400',
-                    iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
-                    iconBorder: 'border border-emerald-200/80 dark:border-emerald-500/30',
-                    sparkId: 'spark-teal',
-                    sparkColor: '#10b981',
-                    sparkPoints: '0,26 15,22 30,24 45,16 60,18 70,10 80,6',
-                    lastPoint: { x: 80, y: 6 },
-                  },
-                  {
-                    id: 'stat-opportunities',
-                    label: t("stats.activeOpportunities"),
-                    value: activeOpportunities || 0,
-                    rawValue: activeOpportunities || 0,
-                    isCurrency: false,
-                    icon: Layers,
-                    accentTop: 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500',
-                    borderHover: 'hover:border-emerald-400/80 dark:hover:border-emerald-500/80',
-                    glowHover: 'from-emerald-500/10 via-emerald-500/5 to-transparent',
-                    iconColor: 'text-emerald-600 dark:text-emerald-400',
-                    iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
-                    iconBorder: 'border border-emerald-200/80 dark:border-emerald-500/30',
-                    sparkId: 'spark-info',
-                    sparkColor: '#10b981',
-                    sparkPoints: '0,24 13,20 26,22 39,15 52,17 65,10 80,6',
-                    lastPoint: { x: 80, y: 6 },
-                  },
-                  {
-                    id: 'stat-pkkpr',
-                    label: t("stats.pkkprIssued"),
-                    value: pkkprIssuedCount || 0,
-                    rawValue: pkkprIssuedCount || 0,
-                    isCurrency: false,
-                    icon: ShieldCheck,
-                    accentTop: 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500',
-                    borderHover: 'hover:border-emerald-400/80 dark:hover:border-emerald-500/80',
-                    glowHover: 'from-emerald-500/10 via-emerald-500/5 to-transparent',
-                    iconColor: 'text-emerald-600 dark:text-emerald-400',
-                    iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
-                    iconBorder: 'border border-emerald-200/80 dark:border-emerald-500/30',
-                    sparkId: 'spark-success',
-                    sparkColor: '#10b981',
-                    sparkPoints: '0,25 15,21 30,23 45,14 60,16 75,8 80,4',
-                    lastPoint: { x: 80, y: 4 },
-                  },
-                  {
-                    id: 'stat-infra',
-                    label: t("stats.mappedInfra", "Infrastruktur Pendukung"),
-                    value: infrastructure?.length || 0,
-                    rawValue: infrastructure?.length || 0,
-                    isCurrency: false,
-                    icon: Building2,
-                    accentTop: 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500',
-                    borderHover: 'hover:border-emerald-400/80 dark:hover:border-emerald-500/80',
-                    glowHover: 'from-emerald-500/10 via-emerald-500/5 to-transparent',
-                    iconColor: 'text-emerald-600 dark:text-emerald-400',
-                    iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
-                    iconBorder: 'border border-emerald-200/80 dark:border-emerald-500/30',
-                    sparkId: 'spark-infra',
-                    sparkColor: '#10b981',
-                    sparkPoints: '0,26 20,26 40,20 60,16 80,10',
-                    lastPoint: { x: 80, y: 10 },
-                  },
-                  {
-                    id: 'stat-labor',
-                    label: t("stats.workforceAbsorption", "Serapan Tenaga Kerja"),
-                    value: totalLabor || 0,
-                    rawValue: totalLabor || 0,
-                    isCurrency: false,
-                    icon: Users,
-                    accentTop: 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500',
-                    borderHover: 'hover:border-emerald-400/80 dark:hover:border-emerald-500/80',
-                    glowHover: 'from-emerald-500/10 via-emerald-500/5 to-transparent',
-                    iconColor: 'text-emerald-600 dark:text-emerald-400',
-                    iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
-                    iconBorder: 'border border-emerald-200/80 dark:border-emerald-500/30',
-                    sparkId: 'spark-labor',
-                    sparkColor: '#10b981',
-                    sparkPoints: '0,28 16,24 32,22 48,18 64,12 80,8',
-                    lastPoint: { x: 80, y: 8 },
-                  },
-                ].map((stat) => (
-                  <div
-                    key={stat.id}
-                    id={stat.id}
-                    className={`relative flex flex-col items-center justify-between p-2.5 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl border transition-all duration-300 group overflow-hidden ${
-                      isDark
-                        ? "bg-[#143755] hover:bg-[#1A4366] border-white/[0.06] hover:border-white/[0.14] shadow-none"
-                        : `${stat.borderHover} backdrop-blur-xl bg-white/95 hover:bg-white border-slate-200/80 shadow-[0_4px_20px_rgba(15,23,42,0.06)] hover:shadow-[0_12px_30px_rgba(15,23,42,0.12)]`
-                    } hover:-translate-y-1 active:scale-[0.98] w-full min-h-[172px] sm:min-h-[192px] md:min-h-[208px]`}
-                  >
-                    {/* Top Edge Glowing Line (only in light mode) */}
-                    {!isDark && (
-                      <div className={`absolute top-0 left-0 right-0 h-[3px] ${stat.accentTop}`} />
-                    )}
+        {/* PHASE 2 — BENTO STAT GRID (GABUNGKAN 2 SECTION STAT) */}
+        <section className="py-12 md:py-16 px-4 md:px-8 max-w-6xl mx-auto">
+          {/* Bento grid — 2 kartu hero + 4 kartu sekunder */}
+          <div ref={statGridRef} className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
 
-                    {/* Ambient Glow Aura on Card Hover (only in light mode) */}
-                    {!isDark && (
-                      <div className={`absolute inset-0 bg-gradient-to-b ${stat.glowHover} opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
-                    )}
-
-                    {/* Elevated Icon Capsule with Subtle Status Indicator */}
-                    <div
-                      className={`relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl flex items-center justify-center mb-1.5 sm:mb-2 transition-transform duration-300 ${
-                        isDark
-                          ? "bg-[#0F2D4A] border border-white/[0.08] shadow-none"
-                          : `${stat.iconBg} ${stat.iconBorder} shadow-xs group-hover:scale-105`
-                      }`}
-                    >
-                      <stat.icon size={18} className={`${stat.iconColor} sm:w-5 sm:h-5`} />
-                      <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2 items-center justify-center">
-                        <span className="inline-flex rounded-full h-1.5 w-1.5" style={{ backgroundColor: stat.sparkColor }} />
-                      </span>
-                    </div>
-
-                    {/* Prominent Value Typography with Functional Count-Up Animation */}
-                    <div className="h-9 sm:h-11 flex items-center justify-center w-full px-0.5 mb-0.5">
-                      {isLoading ? (
-                        <div className="animate-pulse bg-slate-700/50 dark:bg-slate-800/60 rounded-xl h-7 w-28" />
-                      ) : (
-                        <HeroStatCounter
-                          value={stat.rawValue}
-                          isCurrency={stat.isCurrency}
-                          duration={650}
-                        />
-                      )}
-                    </div>
-
-                    {/* Crisp Sub-Label (Strictly Fixed Height for Symmetry) */}
-                    <div className="h-7 sm:h-8 flex items-center justify-center text-center w-full px-0.5 mb-1 sm:mb-1.5">
-                      <span
-                        className={`font-['Plus_Jakarta_Sans',sans-serif] text-[10px] sm:text-[11px] md:text-xs uppercase tracking-wider font-bold leading-tight line-clamp-2 ${
-                          isDark ? 'text-slate-300 group-hover:text-white' : 'text-slate-950 font-black group-hover:text-black drop-shadow-[0_0.5px_0_rgba(255,255,255,0.8)]'
-                        } transition-colors`}
-                      >
-                        {stat.label}
-                      </span>
-                    </div>
-
-                    {/* Refined Sparkline Visualizer with Gradient & Live Dot */}
-                    <div className="w-full relative mt-auto pt-1 h-6 sm:h-7 flex items-end">
-                      <svg viewBox="0 0 80 28" className="w-full h-full overflow-visible" preserveAspectRatio="none">
-                        <defs>
-                          <linearGradient id={stat.sparkId} x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor={stat.sparkColor} stopOpacity={isDark ? "0.4" : "0.22"} />
-                            <stop offset="100%" stopColor={stat.sparkColor} stopOpacity="0.0" />
-                          </linearGradient>
-                        </defs>
-                        {/* Area Gradient Fill */}
-                        <polygon points={`${stat.sparkPoints} 80,28 0,28`} fill={`url(#${stat.sparkId})`} stroke="none" />
-                        {/* Crisp Line */}
-                        <polyline points={stat.sparkPoints} fill="none" stroke={stat.sparkColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-                        {/* Live Pulsing Dot */}
-                        <circle cx={stat.lastPoint.x} cy={stat.lastPoint.y} r="2.5" fill={stat.sparkColor} className="animate-pulse" />
-                      </svg>
-                    </div>
-                  </div>
-                ))}
+            {/* Kartu HERO 1 — Total Investasi (full row di mobile) */}
+            <div className={`col-span-2 md:col-span-1 relative overflow-hidden
+                             p-5 rounded-2xl border transition-all duration-300
+                             hover:-translate-y-1
+                             ${isDark
+                               ? 'bg-slate-900/60 border-slate-700/60 hover:border-emerald-500/40'
+                               : 'bg-white border-slate-200 hover:border-emerald-400/50'
+                             }`}>
+              {/* Top accent bar */}
+              <div className="absolute top-0 left-0 right-0 h-[2.5px] rounded-t-2xl
+                              bg-gradient-to-r from-emerald-500 to-cyan-500"/>
+              <div className={`p-2.5 rounded-xl w-fit mb-3
+                               ${isDark?'bg-emerald-500/12':'bg-emerald-50'}`}>
+                <TrendingUp size={20} className="text-emerald-500"/>
               </div>
-            </motion.div>
-
-        {/* Wave divider — transisi hero ke konten */}
-        <div className={`relative z-10 -mt-1 ${isDark ? 'text-[#0B0F19]' : 'text-slate-50'}`}>
-          <svg viewBox="0 0 1440 48" className="w-full block" preserveAspectRatio="none" aria-hidden="true">
-            <path
-              d="M0,48 C240,0 480,32 720,16 C960,0 1200,32 1440,48 L1440,48 L0,48 Z"
-              fill="currentColor"
-            />
-          </svg>
-        </div>
-        
-        {/* EXECUTIVE LIVE DATA COUNTER PANEL */}
-        <section
-          className={`pt-12 pb-8 sm:pt-16 sm:pb-12 md:pt-20 md:pb-14 border-b relative z-20 ${isDark ? "bg-base/40 border-slate-800/80" : "bg-slate-50/60 border-slate-200/80"}`}
-        >
-          <div className="container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8">
-            <div
-              ref={statsScrollContainerRef}
-              onScroll={handleStatsScroll}
-              onTouchStart={() => {
-                setIsUserInteractingStats(true);
-                if (statsResumeTimerRef.current) clearTimeout(statsResumeTimerRef.current);
-              }}
-              onTouchEnd={() => {
-                if (statsResumeTimerRef.current) clearTimeout(statsResumeTimerRef.current);
-                statsResumeTimerRef.current = setTimeout(() => {
-                  setIsUserInteractingStats(false);
-                }, 4000);
-              }}
-              className="flex sm:grid overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pb-4 sm:pb-0 scrollbar-hide pt-2 sm:pt-4 px-2 sm:px-0 scroll-smooth"
-            >
-              {/* Card 1: Cakupan Wilayah Administrasi Spasial */}
-              <TiltCard
-                wrapperClassName="snap-center shrink-0 w-[84vw] max-w-[340px] sm:max-w-none sm:w-auto"
-                scaleOnHover={1.03}
-                maxTilt={10}
-                glareOpacity={0.18}
-                onClick={() => setIsDistrictsModalOpen(true)}
-                role="button"
-                tabIndex={0}
-                className="w-full h-full group relative pt-5 sm:pt-6 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 glass-crystal glass-card-interactive bg-white/75 dark:bg-surface/70 backdrop-blur-2xl shadow-[0_12px_36px_rgba(15,23,42,0.06)] dark:shadow-[0_16px_45px_rgba(0,0,0,0.55)] border border-white/70 dark:border-white/10 hover:border-emerald-500/50 dark:hover:border-emerald-400/50 hover:shadow-[0_22px_45px_rgba(16,185,129,0.18)] cursor-pointer active:scale-[0.98]"
-              >
-                {/* Elevated Circular Icon with Accent Rail */}
-                <div className="relative w-full flex items-center justify-center pt-1 mb-3.5">
-                  {/* Horizontal Accent Rail */}
-                  <div className="absolute inset-x-2 h-[2px] bg-gradient-to-r from-transparent via-emerald-500/40 dark:via-emerald-400/40 to-transparent" />
-
-                  {/* Outer Elevated Podium Ring */}
-                  <div className="relative">
-                    {/* Ambient Glow */}
-                    <div className="absolute inset-0 rounded-full bg-emerald-500/30 blur-md transform group-hover:scale-115 transition-transform duration-300" />
-                    
-                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full ring-4 ring-white dark:ring-slate-900 shadow-xl shadow-black/25 dark:shadow-black/70 bg-gradient-to-br from-[#0F6B4F] via-[#1F9D74] to-emerald-600 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
-                      {/* Inner Delicate Ring Accent */}
-                      <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
-                      <Globe size={28} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card Body */}
-                <div className="w-full flex flex-col items-center">
-                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 min-h-[34px] flex items-center justify-center leading-snug px-1 text-balance">
-                    {t("stats.subDistricts", "Cakupan Kecamatan Luwu")}
-                  </div>
-                  <div className="text-3xl sm:text-4xl font-black tracking-tight my-2 font-mono flex items-baseline justify-center gap-1.5 text-emerald-600 dark:text-emerald-400">
-                    <CountUp end={districts?.length || 22} suffix="" />
-                    <span className="text-sm sm:text-base font-bold text-slate-600 dark:text-slate-400 font-sans">{t("stats.districtsUnit", "Kecamatan")}</span>
-                  </div>
-                </div>
-
-                {/* Micro Status Chip */}
-                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 w-full flex justify-center">
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-500/30 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-                    <SonarRadarPulse color="emerald" size={8} />
-                    <span>227 Desa & Kelurahan ↗</span>
-                  </span>
-                </div>
-              </TiltCard>
-
-              {/* Card 2: Lahan Potensial & Komoditas Strategis */}
-              <TiltCard
-                wrapperClassName="snap-center shrink-0 w-[84vw] max-w-[340px] sm:max-w-none sm:w-auto"
-                scaleOnHover={1.03}
-                maxTilt={10}
-                glareOpacity={0.18}
-                onClick={() => setIsIproCatalogModalOpen(true)}
-                role="button"
-                tabIndex={0}
-                className="w-full h-full group relative pt-5 sm:pt-6 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 glass-crystal glass-card-interactive bg-white/75 dark:bg-surface/70 backdrop-blur-2xl shadow-[0_12px_36px_rgba(15,23,42,0.06)] dark:shadow-[0_16px_45px_rgba(0,0,0,0.55)] border border-white/70 dark:border-white/10 hover:border-emerald-500/50 dark:hover:border-emerald-400/50 hover:shadow-[0_22px_45px_rgba(16,185,129,0.18)] cursor-pointer active:scale-[0.98]"
-              >
-                {/* Elevated Circular Icon with Accent Rail */}
-                <div className="relative w-full flex items-center justify-center pt-1 mb-3.5">
-                  {/* Horizontal Accent Rail */}
-                  <div className="absolute inset-x-2 h-[2px] bg-gradient-to-r from-transparent via-emerald-500/40 dark:via-emerald-400/40 to-transparent" />
-
-                  {/* Outer Elevated Podium Ring */}
-                  <div className="relative">
-                    {/* Ambient Glow */}
-                    <div className="absolute inset-0 rounded-full bg-emerald-500/30 blur-md transform group-hover:scale-115 transition-transform duration-300" />
-                    
-                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full ring-4 ring-white dark:ring-slate-900 shadow-xl shadow-black/25 dark:shadow-black/70 bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
-                      <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
-                      <MapPin size={28} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card Body */}
-                <div className="w-full flex flex-col items-center">
-                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 min-h-[34px] flex items-center justify-center leading-snug px-1 text-balance">
-                    {t("stats.strategicLands")}
-                  </div>
-                  <div className="text-3xl sm:text-4xl font-black tracking-tight my-2 font-mono flex items-baseline justify-center gap-1.5 text-emerald-600 dark:text-emerald-400">
-                    <CountUp end={investments?.length || 0} suffix="" />
-                    <span className="text-sm sm:text-base font-bold text-slate-600 dark:text-slate-400 font-sans">{t("stats.locations")}</span>
-                  </div>
-                </div>
-
-                {/* Micro Status Chip */}
-                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 w-full flex justify-center">
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-                    <SonarRadarPulse color="emerald" size={8} />
-                    <span>Siap Ditawarkan ↗</span>
-                  </span>
-                </div>
-              </TiltCard>
-
-              {/* Card 3: Serapan Tenaga Kerja */}
-              <TiltCard
-                wrapperClassName="snap-center shrink-0 w-[84vw] max-w-[340px] sm:max-w-none sm:w-auto"
-                scaleOnHover={1.03}
-                maxTilt={10}
-                glareOpacity={0.18}
-                onClick={() => setIsWorkforceModalOpen(true)}
-                role="button"
-                tabIndex={0}
-                className="w-full h-full group relative pt-5 sm:pt-6 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 glass-crystal glass-card-interactive bg-white/75 dark:bg-surface/70 backdrop-blur-2xl shadow-[0_12px_36px_rgba(15,23,42,0.06)] dark:shadow-[0_16px_45px_rgba(0,0,0,0.55)] border border-white/70 dark:border-white/10 hover:border-emerald-500/50 dark:hover:border-emerald-400/50 hover:shadow-[0_22px_45px_rgba(16,185,129,0.18)] cursor-pointer active:scale-[0.98]"
-              >
-                {/* Elevated Circular Icon with Accent Rail */}
-                <div className="relative w-full flex items-center justify-center pt-1 mb-3.5">
-                  {/* Horizontal Accent Rail */}
-                  <div className="absolute inset-x-2 h-[2px] bg-gradient-to-r from-transparent via-emerald-500/40 dark:via-emerald-400/40 to-transparent" />
-
-                  {/* Outer Elevated Podium Ring */}
-                  <div className="relative">
-                    {/* Ambient Glow */}
-                    <div className="absolute inset-0 rounded-full bg-emerald-500/30 blur-md transform group-hover:scale-115 transition-transform duration-300" />
-                    
-                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full ring-4 ring-white dark:ring-slate-900 shadow-xl shadow-black/25 dark:shadow-black/70 bg-gradient-to-br from-[#0F6B4F] via-[#1F9D74] to-[#047857] flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
-                      <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
-                      <Users size={28} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card Body */}
-                <div className="w-full flex flex-col items-center">
-                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 min-h-[34px] flex items-center justify-center leading-snug px-1 text-balance">
-                    {t("stats.workforceAbsorption", "Serapan Tenaga Kerja")}
-                  </div>
-                  <div className="text-3xl sm:text-4xl font-black tracking-tight my-2 font-mono flex items-baseline justify-center gap-1.5 text-emerald-700 dark:text-emerald-400">
-                    <CountUp end={totalLabor} suffix="" />
-                    <span className="text-sm sm:text-base font-bold text-slate-600 dark:text-slate-400 font-sans">{t("stats.workers", "Jiwa")}</span>
-                  </div>
-                </div>
-
-                {/* Micro Status Chip */}
-                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 w-full flex justify-center">
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-500/30 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-                    <SonarRadarPulse color="emerald" size={8} />
-                    <span>TKL & TKA Terdata ↗</span>
-                  </span>
-                </div>
-              </TiltCard>
-
-              {/* Card 4: Asisten AI DPMPTSP */}
-              <TiltCard
-                wrapperClassName="snap-center shrink-0 w-[84vw] max-w-[340px] sm:max-w-none sm:w-auto"
-                scaleOnHover={1.03}
-                maxTilt={10}
-                glareOpacity={0.18}
-                onClick={() => setIsLuwuAiModalOpen(true)}
-                role="button"
-                tabIndex={0}
-                className="w-full h-full group relative pt-5 sm:pt-6 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 glass-crystal glass-card-interactive bg-white/75 dark:bg-surface/70 backdrop-blur-2xl shadow-[0_12px_36px_rgba(15,23,42,0.06)] dark:shadow-[0_16px_45px_rgba(0,0,0,0.55)] border border-white/70 dark:border-white/10 hover:border-teal-500/50 dark:hover:border-teal-400/50 hover:shadow-[0_22px_45px_rgba(13,148,136,0.18)] cursor-pointer active:scale-[0.98]"
-              >
-                {/* Elevated Circular Icon with Accent Rail */}
-                <div className="relative w-full flex items-center justify-center pt-1 mb-3.5">
-                  {/* Horizontal Accent Rail */}
-                  <div className="absolute inset-x-2 h-[2px] bg-gradient-to-r from-transparent via-teal-500/40 dark:via-teal-400/40 to-transparent" />
-
-                  {/* Outer Elevated Podium Ring */}
-                  <div className="relative">
-                    {/* Ambient Glow */}
-                    <div className="absolute inset-0 rounded-full bg-teal-500/30 blur-md transform group-hover:scale-115 transition-transform duration-300" />
-                    
-                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full ring-4 ring-white dark:ring-slate-900 shadow-xl shadow-black/25 dark:shadow-black/70 bg-gradient-to-br from-teal-600 via-teal-700 to-emerald-700 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
-                      <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
-                      <Bot size={28} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card Body */}
-                <div className="w-full flex flex-col items-center">
-                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 min-h-[34px] flex items-center justify-center leading-snug px-1 text-balance">
-                    {t("stats.aiAssistant")}
-                  </div>
-                  <div className="text-3xl sm:text-4xl font-black tracking-tight my-2 font-mono flex items-baseline justify-center gap-1.5 whitespace-nowrap text-teal-700 dark:text-teal-300">
-                    <span className="tabular-nums">24/7</span>
-                    <span className="text-sm sm:text-base font-bold text-slate-600 dark:text-slate-400 font-sans">{t("stats.active", "Aktif")}</span>
-                  </div>
-                </div>
-
-                {/* Micro Status Chip */}
-                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 w-full flex justify-center">
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-teal-200/80 dark:border-teal-500/30 group-hover:bg-teal-500 group-hover:text-white transition-colors">
-                    <SonarRadarPulse color="teal" size={8} />
-                    <span>Konsultasi Cerdas 24/7 ↗</span>
-                  </span>
-                </div>
-              </TiltCard>
+              <div className="text-3xl md:text-4xl font-bold tracking-tight
+                              text-slate-900 dark:text-white tabular-nums">
+                <span id="stat-total-investasi">
+                  {statVisible ? formatRupiah(totalInvestmentValue) : '—'}
+                </span>
+              </div>
+              <div className="text-[11px] font-medium uppercase tracking-[.07em]
+                              text-slate-500 dark:text-slate-400 mt-1.5">
+                Total Investasi
+              </div>
+              <a href="#potensi-section"
+                 className="inline-flex items-center gap-1 text-[11px] text-emerald-600
+                            dark:text-emerald-400 mt-2 hover:gap-2 transition-all">
+                Lihat katalog <ArrowRight size={11}/>
+              </a>
             </div>
 
-            {/* Mobile Carousel Pagination & Navigation Controls */}
-            <div className="flex sm:hidden items-center justify-center gap-3 mt-4">
-              <button
-                type="button"
-                onClick={() => {
-                  const prev = (activeStatIndex - 1 + 4) % 4;
-                  scrollToStatCard(prev);
-                }}
-                className="w-8 h-8 rounded-full flex items-center justify-center bg-white dark:bg-surface border border-slate-200 dark:border-slate-800 shadow-xs text-slate-600 dark:text-slate-300 active:scale-95 transition-transform cursor-pointer"
-                aria-label="Slide sebelumnya"
-              >
-                <ChevronLeft size={16} />
-              </button>
-
-              <div className="flex items-center gap-1.5 px-1">
-                {[0, 1, 2, 3].map((idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => scrollToStatCard(idx)}
-                    className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                      activeStatIndex === idx
-                        ? "w-6 bg-blue-500 dark:bg-blue-400 shadow-xs shadow-black/25"
-                        : "w-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400"
-                    }`}
-                    aria-label={`Pindah ke slide ${idx + 1}`}
-                  />
-                ))}
+            {/* Kartu HERO 2 — Komitmen LOI */}
+            <div className={`col-span-2 md:col-span-1 relative overflow-hidden
+                             p-5 rounded-2xl border transition-all duration-300
+                             hover:-translate-y-1
+                             ${isDark
+                               ? 'bg-slate-900/60 border-slate-700/60 hover:border-blue-500/40'
+                               : 'bg-white border-slate-200 hover:border-blue-400/50'
+                             }`}>
+              <div className="absolute top-0 left-0 right-0 h-[2.5px] rounded-t-2xl
+                              bg-blue-500"/>
+              <div className={`p-2.5 rounded-xl w-fit mb-3
+                               ${isDark?'bg-blue-500/12':'bg-blue-50'}`}>
+                <Briefcase size={20} className="text-blue-500"/>
               </div>
-
-              <button
-                type="button"
-                onClick={() => {
-                  const next = (activeStatIndex + 1) % 4;
-                  scrollToStatCard(next);
-                }}
-                className="w-8 h-8 rounded-full flex items-center justify-center bg-white dark:bg-surface border border-slate-200 dark:border-slate-800 shadow-xs text-slate-600 dark:text-slate-300 active:scale-95 transition-transform cursor-pointer"
-                aria-label="Slide berikutnya"
-              >
-                <ChevronRight size={16} />
-              </button>
+              <div className="text-3xl md:text-4xl font-bold tracking-tight
+                              text-slate-900 dark:text-white tabular-nums">
+                <span id="stat-loi">Segera tersedia</span>
+              </div>
+              <div className="text-[11px] font-medium uppercase tracking-[.07em]
+                              text-slate-500 dark:text-slate-400 mt-1.5">
+                Komitmen LOI
+              </div>
             </div>
+
+            {/* 4 kartu sekunder — ukuran lebih kecil */}
+            {[
+              {id:'stat-peluang',  value:activeOpportunities??2,   label:'Peluang Aktif',   icon:Layers,    color:'indigo', link:'#potensi-section'},
+              {id:'stat-pkkpr',   value:pkkprIssuedCount??1,       label:'PKKPR Terbit',    icon:ShieldCheck,color:'purple',link:'#readiness-section'},
+              {id:'stat-infra',   value:infrastructure?.length??10,label:'Infrastruktur',   icon:Building2,  color:'amber', link:'#infrastruktur'},
+              {id:'stat-tk',      value:totalLabor??23,            label:'Serapan TK (rb)', icon:Users,     color:'teal',  link:'#kemitraan-umkm-section'},
+            ].map((stat,i)=>(
+              <div key={i}
+                   className={`relative overflow-hidden p-4 rounded-2xl border
+                                transition-all duration-300 hover:-translate-y-0.5
+                                ${isDark
+                                  ? 'bg-slate-900/40 border-slate-800 hover:border-slate-700'
+                                  : 'bg-slate-50 border-slate-200 hover:border-slate-300'
+                                }`}
+                   style={{animationDelay:`${i*80}ms`}}>
+                <div className="text-2xl font-bold tracking-tight
+                                text-slate-900 dark:text-white tabular-nums mb-1">
+                  <span id={stat.id}
+                        className={statVisible?'animate-[investluwu-count-up_.4s_ease_both]':''}>
+                    0
+                  </span>
+                </div>
+                <div className="text-[10px] font-medium uppercase tracking-[.07em]
+                                text-slate-500 dark:text-slate-400">
+                  {stat.label}
+                </div>
+                {stat.link && (
+                  <a href={stat.link}
+                     className="text-[10px] text-emerald-600 dark:text-emerald-400
+                                mt-1.5 inline-flex items-center gap-0.5
+                                hover:gap-1 transition-all">
+                    Detail <ArrowRight size={9}/>
+                  </a>
+                )}
+              </div>
+            ))}
+
           </div>
         </section>
 
