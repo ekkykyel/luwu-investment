@@ -516,12 +516,14 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
         });
         let fallbackChat = "";
         if (aiLanguage === "en") {
+          const paybackDisplayEn = isPaybackUnpaid ? "Unpayable (> Tenor / Deficit)" : `${paybackPeriod.toFixed(1)} Years`;
           fallbackChat = `Regarding your investment inquiry on "${investmentName}" in the ${sector} sector:\n\n` +
-            `1. Financial Indicator (BEP): ${heuristic.paybackDisplay}.\n` +
+            `1. Financial Indicator (BEP): ${paybackDisplayEn}.\n` +
             `2. The Luwu Regency Government through DPMPTSP is prepared to facilitate integrated permitting (PKKPR & land technical verification) to ensure optimal and legally secure investment realization.`;
         } else if (aiLanguage === "zh") {
+          const paybackDisplayZh = isPaybackUnpaid ? "无法回本 (> 投资周期 / 营运赤字)" : `${paybackPeriod.toFixed(1)} 年`;
           fallbackChat = `关于您对 "${investmentName}"（所属产业：${sector}）的投资咨询：\n\n` +
-            `1. 财务指标评估 (BEP): ${heuristic.paybackDisplay}。\n` +
+            `1. 财务指标评估 (BEP): ${paybackDisplayZh}。\n` +
             `2. 芦梧县政府综合一站式投资服务部门 (DPMPTSP) 将为企业全程提供空间规划许可 (PKKPR) 与环评确权协同，保障投资项目合规高效落地。`;
         } else {
           fallbackChat = `Tabe' Bapak/Ibu. Terkait simulasi "${investmentName}" pada sektor ${sector}:\n\n` +
@@ -548,12 +550,14 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
       });
       let fallbackChat = "";
       if (aiLanguage === "en") {
+        const paybackDisplayEn = isPaybackUnpaid ? "Unpayable (> Tenor / Deficit)" : `${paybackPeriod.toFixed(1)} Years`;
         fallbackChat = `Regarding your investment inquiry on "${investmentName}" in the ${sector} sector:\n\n` +
-          `1. Financial Indicator (BEP): ${heuristic.paybackDisplay}.\n` +
+          `1. Financial Indicator (BEP): ${paybackDisplayEn}.\n` +
           `2. The Luwu Regency Government through DPMPTSP is prepared to facilitate integrated permitting (PKKPR & land technical verification) to ensure optimal and legally secure investment realization.`;
       } else if (aiLanguage === "zh") {
+        const paybackDisplayZh = isPaybackUnpaid ? "无法回本 (> 投资周期 / 营运赤字)" : `${paybackPeriod.toFixed(1)} 年`;
         fallbackChat = `关于您对 "${investmentName}"（所属产业：${sector}）的投资咨询：\n\n` +
-          `1. 财务指标评估 (BEP): ${heuristic.paybackDisplay}。\n` +
+          `1. 财务指标评估 (BEP): ${paybackDisplayZh}。\n` +
           `2. 芦梧县政府综合一站式投资服务部门 (DPMPTSP) 将为企业全程提供空间规划许可 (PKKPR) 与环评确权协同，保障投资项目合规高效落地。`;
       } else {
         fallbackChat = `Tabe' Bapak/Ibu. Terkait simulasi "${investmentName}" pada sektor ${sector}:\n\n` +
@@ -776,8 +780,12 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
               <Bot size={16} className="animate-pulse" />
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="font-extrabold text-xs sm:text-sm tracking-wide uppercase text-slate-950 dark:text-white truncate leading-tight">
-                {t('roiAiModal.title', 'Analisis Kelayakan Finansial AI')}
+              <h3 className="font-extrabold text-xs sm:text-sm tracking-wide uppercase text-slate-950 dark:white truncate leading-tight">
+                {aiLanguage === "en"
+                  ? "AI Financial Feasibility Analysis"
+                  : aiLanguage === "zh"
+                  ? "AI 投资可行性智能分析"
+                  : t('roiAiModal.title', 'Analisis Kelayakan Finansial AI')}
               </h3>
               <p className="text-[10px] sm:text-xs text-slate-600 dark:text-slate-300 font-bold truncate leading-tight">
                 {investmentName} {sector ? `• ${sector}` : ''}
@@ -870,7 +878,9 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
               <Calculator size={13} className={isIrrFeasible ? "text-emerald-700 dark:text-emerald-400 font-bold" : "text-amber-700 dark:text-amber-400 font-bold"} />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-extrabold text-slate-600 dark:text-slate-400 truncate">{t('roiAiModal.irrProjected', 'Proyeksi IRR')}</p>
+              <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-extrabold text-slate-600 dark:text-slate-400 truncate">
+                {aiLanguage === "en" ? "Projected IRR" : aiLanguage === "zh" ? "预期 IRR" : t('roiAiModal.irrProjected', 'Proyeksi IRR')}
+              </p>
               <p className={`text-xs sm:text-sm font-black font-mono truncate leading-none ${isIrrFeasible ? "text-emerald-700 dark:text-emerald-400" : "text-amber-700 dark:text-amber-400"}`}>
                 {(Number(irr) || 0).toFixed(1)}%
               </p>
@@ -884,7 +894,7 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
             <div className="min-w-0 flex-1">
               <p className="text-[8px] sm:text-[9px] uppercase tracking-wider font-extrabold text-slate-600 dark:text-slate-400 truncate">Payback (BEP)</p>
               <p className="text-xs sm:text-sm font-black font-mono text-slate-950 dark:text-slate-100 truncate leading-none">
-                {(Number(paybackPeriod) || 0).toFixed(1)} {t('roiAiModal.paybackUnit', 'Thn')}
+                {(Number(paybackPeriod) || 0).toFixed(1)} {aiLanguage === "en" ? "Yrs" : aiLanguage === "zh" ? "年" : t('roiAiModal.paybackUnit', 'Thn')}
               </p>
             </div>
           </div>
@@ -942,18 +952,42 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
                 </div>
                 <div className="min-w-0">
                   <div className="text-xs font-black uppercase tracking-wider truncate">
-                    {isNpvPositive && isIrrFeasible 
-                      ? "Status: Layak & Feasible Secara Finansial" 
-                      : isNpvPositive
-                      ? "Status: Zona Moderat / Layak Bersyarat"
-                      : "Status: Perlu Penyesuaian Asumsi (NPV Negatif)"}
+                    {aiLanguage === "en"
+                      ? (isNpvPositive && isIrrFeasible 
+                          ? "Status: Financially Feasible & Sound" 
+                          : isNpvPositive
+                          ? "Status: Moderate Zone / Conditionally Feasible"
+                          : "Status: Assumption Adjustment Required (Negative NPV)")
+                      : aiLanguage === "zh"
+                      ? (isNpvPositive && isIrrFeasible 
+                          ? "评估状态：具备财务可行性 (重点支持)" 
+                          : isNpvPositive
+                          ? "评估状态：处于边际区间 / 有条件可行"
+                          : "评估状态：需调整核心假设 (折现净现值为负)")
+                      : (isNpvPositive && isIrrFeasible 
+                          ? "Status: Layak & Feasible Secara Finansial" 
+                          : isNpvPositive
+                          ? "Status: Zona Moderat / Layak Bersyarat"
+                          : "Status: Perlu Penyesuaian Asumsi (NPV Negatif)")}
                   </div>
                   <div className="text-[10px] text-slate-700 dark:text-slate-300 font-semibold truncate">
-                    {isNpvPositive && isIrrFeasible 
-                      ? `NPV Positif (${formatRupiahSingkat(npv)}) • IRR (${irr.toFixed(1)}%) ≥ WACC (${discountRate}%) • Evaluasi Otomatis AI`
-                      : isNpvPositive
-                      ? `NPV Positif (${formatRupiahSingkat(npv)}) • IRR (${irr.toFixed(1)}%) di bawah WACC (${discountRate}%) • Evaluasi Otomatis AI`
-                      : `NPV Negatif (${formatRupiahSingkat(npv)}) • IRR (${irr.toFixed(1)}%) < WACC (${discountRate}%) • Evaluasi Otomatis AI`}
+                    {aiLanguage === "en"
+                      ? (isNpvPositive && isIrrFeasible 
+                          ? `Positive NPV (IDR ${formatRupiahSingkat(npv).replace('Rp ', '')}) • IRR (${irr.toFixed(1)}%) ≥ WACC (${discountRate}%) • AI Automated Evaluation`
+                          : isNpvPositive
+                          ? `Positive NPV (IDR ${formatRupiahSingkat(npv).replace('Rp ', '')}) • IRR (${irr.toFixed(1)}%) below WACC (${discountRate}%) • AI Automated Evaluation`
+                          : `Negative NPV (IDR ${formatRupiahSingkat(npv).replace('Rp ', '')}) • IRR (${irr.toFixed(1)}%) < WACC (${discountRate}%) • AI Automated Evaluation`)
+                      : aiLanguage === "zh"
+                      ? (isNpvPositive && isIrrFeasible 
+                          ? `正净现值 (${formatRupiahSingkat(npv).replace('Rp ', '')} 印尼盾) • IRR (${irr.toFixed(1)}%) ≥ WACC (${discountRate}%) • AI 自动化智能研判`
+                          : isNpvPositive
+                          ? `正净现值 (${formatRupiahSingkat(npv).replace('Rp ', '')} 印尼盾) • IRR (${irr.toFixed(1)}%) 低于 WACC (${discountRate}%) • AI 自动化智能研判`
+                          : `负净现值 (${formatRupiahSingkat(npv).replace('Rp ', '')} 印尼盾) • IRR (${irr.toFixed(1)}%) < WACC (${discountRate}%) • AI 自动化智能研判`)
+                      : (isNpvPositive && isIrrFeasible 
+                          ? `NPV Positif (${formatRupiahSingkat(npv)}) • IRR (${irr.toFixed(1)}%) ≥ WACC (${discountRate}%) • Evaluasi Otomatis AI`
+                          : isNpvPositive
+                          ? `NPV Positif (${formatRupiahSingkat(npv)}) • IRR (${irr.toFixed(1)}%) di bawah WACC (${discountRate}%) • Evaluasi Otomatis AI`
+                          : `NPV Negatif (${formatRupiahSingkat(npv)}) • IRR (${irr.toFixed(1)}%) < WACC (${discountRate}%) • Evaluasi Otomatis AI`)}
                   </div>
                 </div>
               </div>
@@ -964,7 +998,9 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
                   ? "bg-amber-100 text-amber-900 dark:bg-amber-500/20 dark:text-amber-300 border-amber-300 dark:border-amber-500/30"
                   : "bg-rose-100 text-rose-900 dark:bg-rose-500/20 dark:text-rose-300 border-rose-300 dark:border-rose-500/30"
               }`}>
-                {isNpvPositive && isIrrFeasible ? "Score: A" : isNpvPositive ? "Score: B" : "Score: D"}
+                {aiLanguage === "zh" 
+                  ? (isNpvPositive && isIrrFeasible ? "评级: A" : isNpvPositive ? "评级: B" : "评级: D")
+                  : (isNpvPositive && isIrrFeasible ? "Score: A" : isNpvPositive ? "Score: B" : "Score: D")}
               </span>
             </div>
           )}
@@ -986,12 +1022,14 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
                       <div className="flex items-center justify-between gap-2 mb-1 pb-1 border-b border-slate-200 dark:border-slate-800">
                         <div className="flex items-center gap-1.5">
                           <span className="text-[10px] uppercase font-bold text-indigo-700 dark:text-indigo-400 tracking-wider">
-                            {t('roiAiModal.assistantHeader', 'Asisten AI Finansial')}
+                            {aiLanguage === "en" ? "AI Financial Assistant" : aiLanguage === "zh" ? "AI 财务智能顾问" : t('roiAiModal.assistantHeader', 'Asisten AI Finansial')}
                           </span>
-                          <span className="text-[10px] text-slate-600 dark:text-slate-400 font-semibold">• Kab. Luwu</span>
+                          <span className="text-[10px] text-slate-600 dark:text-slate-400 font-semibold">
+                            {aiLanguage === "en" ? "• Luwu Regency" : aiLanguage === "zh" ? "• 芦梧县" : "• Kab. Luwu"}
+                          </span>
                         </div>
                         <span className="text-[9px] font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-0.5">
-                          <ShieldCheck className="w-3 h-3" /> Terverifikasi
+                          <ShieldCheck className="w-3 h-3" /> {aiLanguage === "en" ? "Verified" : aiLanguage === "zh" ? "已认证" : "Terverifikasi"}
                         </span>
                       </div>
                       <div className="prose prose-sm dark:prose-invert max-w-none w-full space-y-1 overflow-y-auto ai-custom-scrollbar pr-1 leading-relaxed text-xs sm:text-sm text-slate-950 dark:text-slate-100">
@@ -1009,7 +1047,7 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
                         : "bg-indigo-600 text-white border-indigo-500 shadow-indigo-600/20"
                     }`}>
                       <div className="text-[9px] uppercase font-bold text-indigo-200 mb-0.5 tracking-wider">
-                        {t('roiAiModal.investorHeader', 'Investor')}
+                        {aiLanguage === "en" ? "INVESTOR" : aiLanguage === "zh" ? "投资者" : t('roiAiModal.investorHeader', 'Investor')}
                       </div>
                       <p className="text-xs sm:text-sm font-semibold leading-relaxed whitespace-pre-wrap">{msg.text}</p>
                     </div>
@@ -1044,12 +1082,24 @@ Sertakan Tabel Proyeksi Arus Kas 5 Tahun (5-Year Cash Flow Projection Table).
             onChange={setInputText}
             onSubmit={handleSendMessage}
             isTyping={loading || sending}
-            placeholder={t('roiAiModal.inputPlaceholder', 'Ajukan pertanyaan atau tanyakan potensi di wilayah Luwu...')}
+            placeholder={
+              aiLanguage === "en"
+                ? "Ask a question about financial feasibility or investment potential in Luwu..."
+                : aiLanguage === "zh"
+                ? "咨询财务可行性或芦梧县招商引资相关问题..."
+                : t('roiAiModal.inputPlaceholder', 'Ajukan pertanyaan atau tanyakan potensi di wilayah Luwu...')
+            }
             isDarkMode={effectiveDark}
             className="p-0 border-0 bg-transparent dark:bg-transparent"
           />
           <div className="mt-1.5 px-1 flex items-center justify-between text-[10px] text-slate-600 dark:text-slate-400 font-medium">
-            <span className="truncate">{t('roiAiModal.disclaimer', 'Dianalisis menggunakan Gemini Enterprise AI Spasial Luwu')}</span>
+            <span className="truncate">
+              {aiLanguage === "en"
+                ? "Analyzed using Gemini Enterprise Spatial AI Luwu"
+                : aiLanguage === "zh"
+                ? "基于芦梧空间智能 Gemini Enterprise AI 测算"
+                : t('roiAiModal.disclaimer', 'Dianalisis menggunakan Gemini Enterprise AI Spasial Luwu')}
+            </span>
             <span className="hidden sm:inline-block font-mono font-semibold">MPP Simpurusiang</span>
           </div>
         </div>

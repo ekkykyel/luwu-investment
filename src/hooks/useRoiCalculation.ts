@@ -267,6 +267,56 @@ export const formatHeuristicRoiMarkdown = (
     return `0 印尼盾${tag}`;
   };
 
+  // Localized evaluation strings for English
+  const kategoriSkorEn = analysis.isFeasible 
+    ? '(Priority Category A / Highly Recommended)' 
+    : analysis.isConditional 
+    ? '(Category B / Margin Monitoring Required)' 
+    : '(Critical Review Category / Below Hurdle Rate)';
+
+  const ringkasanEn = analysis.isFeasible
+    ? `Investment in "${extra?.projectName || 'Strategic Potential'}" (${extra?.sector || 'Priority Sector'}) with initial CAPEX of IDR ${inv.toLocaleString('en-US')} and projected annual revenue of IDR ${rev.toLocaleString('en-US')} in Luwu Regency demonstrates strong financial fundamentals with an estimated payback period of ${analysis.estPaybackYears} years.`
+    : net > 0
+    ? `The project demonstrates a positive annual operating profit of IDR ${net.toLocaleString('en-US')} (margin ${profitMargin}%), but the initial capital expenditure (CAPEX IDR ${inv.toLocaleString('en-US')}) requires a higher gross margin to achieve a positive Net Present Value at a ${discountRate}% WACC hurdle rate (NPV: IDR ${analysis.estNpv.replace('Rp ', '')}). Strategic focus should be directed toward premium product pricing, yield optimization, or phased CAPEX.`
+    : `The project is currently not financially viable under existing parameters because annual operating expenditures (IDR ${opex.toLocaleString('en-US')}) exceed revenues, resulting in an operating deficit and negative Net Present Value (NPV: IDR ${analysis.estNpv.replace('Rp ', '')}). Comprehensive cost restructuring is required.`;
+
+  const npvNoteEn = analysis.isFeasible 
+    ? '(Solid positive capital surplus above WACC)' 
+    : '(Negative discounted value below hurdle rate / Capital value erosion)';
+
+  const irrNoteEn = analysis.isFeasible
+    ? `(+${(parseFloat(analysis.estIrr) - discountRate).toFixed(1)}% spread above WACC ${discountRate}%)`
+    : `(${analysis.estIrr} / Below ${discountRate}% WACC hurdle rate)`;
+
+  const piNoteEn = analysis.isFeasible
+    ? '(PI > 1.0 indicates strong capital value creation)'
+    : '(PI < 1.0 indicates discounted cash flows do not fully cover capital outlay)';
+
+  // Localized evaluation strings for Chinese
+  const kategoriSkorZh = analysis.isFeasible 
+    ? '(A类重点推荐产业 / 重点招商)' 
+    : analysis.isConditional 
+    ? '(B类审慎推进 / 需强化利差监控)' 
+    : '(关键风险复核评级 / 未达最低回报门槛)';
+
+  const ringkasanZh = analysis.isFeasible
+    ? `在芦梧县投资 "${extra?.projectName || '重点招商项目'}"（所属产业：${extra?.sector || '重点产业'}），初始资本支出约 ${inv.toLocaleString('zh-CN')} 印尼盾，预计年营业额约 ${rev.toLocaleString('zh-CN')} 印尼盾，展现出扎实的财务基本面，预计投资回收期为 ${analysis.estPaybackYears} 年。`
+    : net > 0
+    ? `项目年化净营运利润保持正向 (约 ${net.toLocaleString('zh-CN')} 印尼盾，利润率 ${profitMargin}%)，但前期资本投入 (CAPEX 约 ${inv.toLocaleString('zh-CN')} 印尼盾) 相对较大，在 ${discountRate}% WACC 基准折现率测算下尚未实现净现值转正 (NPV: ${analysis.estNpv})。建议通过提升深加工产品单价、扩大单产规模或优化前期资本支出来提升整体回报。`
+    : `按照当前设定的测算参数，本项目年度运营成本 (${opex.toLocaleString('zh-CN')} 印尼盾) 超过年营业总收入，存在营运赤字且折现净现值为负 (NPV: ${analysis.estNpv})。需对核心成本结构进行重构。`;
+
+  const npvNoteZh = analysis.isFeasible 
+    ? '(显著正向增值 / 高于资本加权成本)' 
+    : '(折现净现值为负 / 资本回报不及加权成本)';
+
+  const irrNoteZh = analysis.isFeasible
+    ? `(超出基准折现率 ${discountRate}%，具备良好安全边际)`
+    : `(${analysis.estIrr} / 低于基准折现率 ${discountRate}%，资本回报欠佳)`;
+
+  const piNoteZh = analysis.isFeasible
+    ? '(PI > 1.0 表明投资创造显著资本溢价)'
+    : '(PI < 1.0 表明折现现金流无法完全收回初始资本)';
+
   if (activeLocale.startsWith('en')) {
     const statusEn = analysis.isFeasible 
       ? '🟢 HIGHLY FEASIBLE (APPROVED FOR PRIORITY PIPELINE)'
@@ -284,18 +334,18 @@ export const formatHeuristicRoiMarkdown = (
 
 ### A. EXECUTIVE FEASIBILITY SCORE & SUMMARY
 - **Feasibility Status:** ${statusEn}
-- **Executive Feasibility Score:** **${analysis.skorKelayakan} / 100 ${analysis.kategoriSkor}**
-- **Brief Justification:** ${analysis.ringkasan}
+- **Executive Feasibility Score:** **${analysis.skorKelayakan} / 100 ${kategoriSkorEn}**
+- **Brief Justification:** ${ringkasanEn}
 
 ---
 
 ### B. ESTIMATED PAYBACK PERIOD & DETAILED FINANCIAL INDICATORS (ROI, NPV, IRR)
 Based on Discounted Cash Flow (DCF) modeling benchmarked at a ${discountRate}% Weighted Average Cost of Capital (WACC / Discount Rate):
 1. **Estimated Payback Period (BEP):** **${paybackEn}**
-2. **Net Present Value (5-Year NPV):** **IDR ${analysis.estNpv.replace('Rp ', '')}** ${analysis.npvNote}
-3. **Internal Rate of Return (IRR):** **${analysis.estIrr}** ${analysis.irrNote}
+2. **Net Present Value (5-Year NPV):** **IDR ${analysis.estNpv.replace('Rp ', '')}** ${npvNoteEn}
+3. **Internal Rate of Return (IRR):** **${analysis.estIrr}** ${irrNoteEn}
 4. **Profitability Index (PI) & Net Margin:**
-   - **Profitability Index (PI):** **${pi}** ${analysis.piNote}
+   - **Profitability Index (PI):** **${pi}** ${piNoteEn}
    - **Net Profit Margin:** **${profitMargin}%** (Annual net operating income: IDR ${net.toLocaleString('en-US')} on gross revenue: IDR ${rev.toLocaleString('en-US')})
 5. **Sensitivity Stress Testing:**
    - **Optimistic Scenario (+15% Revenue):** Revenue IDR ${revOpt.toLocaleString('en-US')}/yr, Net Profit IDR ${netOpt.toLocaleString('en-US')}, Payback **${paybackOpt} Years**.
@@ -351,18 +401,18 @@ Based on Discounted Cash Flow (DCF) modeling benchmarked at a ${discountRate}% W
 
 ### A. 执行可行性概述与评分 (EXECUTIVE FEASIBILITY SCORE)
 - **可行性综合结论：** ${statusZh}
-- **执行可行性综合评分：** **${analysis.skorKelayakan} / 100 分 ${analysis.kategoriSkor}**
-- **投资可行性简要论证：** ${analysis.ringkasan}
+- **执行可行性综合评分：** **${analysis.skorKelayakan} / 100 分 ${kategoriSkorZh}**
+- **投资可行性简要论证：** ${ringkasanZh}
 
 ---
 
 ### B. 预计投资回收期与详细财务指标 (ROI, NPV, IRR)
 基于折现现金流法 (DCF) 模型，基准加权平均资本成本 (WACC / 折现率) 按 ${discountRate}% 测算：
 1. **预计投资回收期 (BEP)：** **${paybackZh}**
-2. **5年期累计净现值 (NPV)：** **${analysis.estNpv}** ${analysis.npvNote}
-3. **内部收益率 (IRR)：** **${analysis.estIrr}** ${analysis.irrNote}
+2. **5年期累计净现值 (NPV)：** **${analysis.estNpv}** ${npvNoteZh}
+3. **内部收益率 (IRR)：** **${analysis.estIrr}** ${irrNoteZh}
 4. **获利能力指数 (PI) 与净利润率：**
-   - **获利能力指数 (PI)：** **${pi}** ${analysis.piNote}
+   - **获利能力指数 (PI)：** **${pi}** ${piNoteZh}
    - **净利润率 (Net Margin)：** **${profitMargin}%** (年净营运利润约 ${net.toLocaleString('zh-CN')} 印尼盾，营业总收入约 ${rev.toLocaleString('zh-CN')} 印尼盾)
 5. **多情景敏感性压力测试：**
    - **乐观情景 (营业收入 +15%)：** 年收入增至 ${revOpt.toLocaleString('zh-CN')} 印尼盾，净利润达 ${netOpt.toLocaleString('zh-CN')} 印尼盾，投资回收期为 **${paybackOpt} 年**。
