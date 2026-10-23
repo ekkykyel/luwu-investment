@@ -2974,7 +2974,7 @@ export default function LandingPage({
         {/* 2. DAFTAR POTENSI INVESTASI - EXECUTIVE SHOWCASE */}
         <div
           id="potensi-section"
-          className="scroll-mt-28 sm:scroll-mt-32 container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-12 sm:pb-16 min-h-[44px] border-t border-slate-200/80 dark:border-slate-800/80 relative"
+          className="scroll-mt-28 sm:scroll-mt-32 container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 py-14 md:py-18 lg:py-20 min-h-[44px] border-t border-slate-200/80 dark:border-slate-800/80 relative"
         >
           {/* Subtle Ambient Radial Glow for High-End Prestige Feel */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 max-w-4xl h-52 bg-gradient-to-b from-emerald-500/10 via-teal-500/5 to-transparent blur-3xl pointer-events-none -z-10" />
@@ -2991,7 +2991,7 @@ export default function LandingPage({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-extrabold tracking-tight text-slate-900 dark:text-white mb-2.5 text-balance leading-tight"
+                className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-2.5 text-balance leading-tight"
               >
                 <span>{t("sections.potensi.title")}</span>
               </motion.h2>
@@ -3189,7 +3189,7 @@ export default function LandingPage({
               {[1, 2, 3].map((num) => (
                 <div
                   key={num}
-                  className="rounded-3xl border overflow-hidden flex flex-col h-[480px] animate-pulse bg-slate-200 dark:bg-slate-700 border-transparent"
+                  className="rounded-2xl border overflow-hidden flex flex-col h-[480px] animate-pulse bg-slate-200 dark:bg-slate-700 border-transparent"
                 >
                   <div className="h-56 bg-slate-300 dark:bg-slate-600" />
                   <div className="p-6 flex flex-col flex-grow gap-4">
@@ -3837,7 +3837,7 @@ export default function LandingPage({
             </div>
           ) : (
             <div
-              className={`p-12 rounded-3xl border text-center ${cardBg} ${textMuted}`}
+              className={`p-12 rounded-2xl border text-center ${cardBg} ${textMuted}`}
             >
               <div className="inline-flex p-4 rounded-full bg-slate-800/50 mb-4">
                 <MapPin size={32} className="font-medium text-slate-700 dark:text-slate-300" />
@@ -3886,14 +3886,14 @@ export default function LandingPage({
         {/* 3. LITERASI & KEUNTUNGAN LUTIM */}
         <div
           id="keuntungan-section"
-          className="scroll-mt-20 sm:scroll-mt-24 container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 py-6 sm:py-10 md:py-14 lg:py-18"
+          className="scroll-mt-20 sm:scroll-mt-24 container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 py-14 md:py-18 lg:py-20"
         >
           <div className="text-center mb-8 sm:mb-12 md:mb-16">
             <div className="invest-eyebrow-emerald mb-3.5">
               <Sparkles className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
               <span>Nilai Tambah & Komparasi Wilayah</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-extrabold tracking-tight text-slate-950 dark:text-white mb-2.5 text-balance break-words">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-950 dark:text-white mb-2.5 text-balance break-words">
               {t("sections.keuntungan.title")}
             </h2>
             <div className="emerald-divider-diamond">
@@ -3998,7 +3998,7 @@ export default function LandingPage({
         {/* 4.5 FASILITAS PENUNJANG INFRASTRUKTUR */}
         <div
           id="infrastruktur-section"
-          className="scroll-mt-20 sm:scroll-mt-24 container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 py-6 sm:py-10 md:py-14 lg:py-18 relative min-h-[44px]"
+          className="scroll-mt-20 sm:scroll-mt-24 container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 py-14 md:py-18 lg:py-20 relative min-h-[44px]"
         >
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-[20%] right-[10%] w-[50vw] h-[50vw] rounded-full bg-blue-500/5 blur-[120px] mix-blend-screen" />
@@ -4013,7 +4013,7 @@ export default function LandingPage({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-extrabold tracking-tight text-slate-900 dark:text-white mb-2.5"
+              className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-2.5"
             >
               <span className="text-slate-900 dark:text-white">
                 {t("sections.infrastruktur.title")}
@@ -4236,7 +4236,7 @@ export default function LandingPage({
         </div>
 
         {/* INTERACTIVE ROADMAP & LICENSING GUIDE - REIMAGINED WITH FLOATING MEDALLIONS & EXECUTIVE DOSSIER */}
-        <section id="roadmap-section" className="scroll-mt-20 sm:scroll-mt-24 py-6 sm:py-10 md:py-14 lg:py-18 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0A2238] relative overflow-hidden transition-all duration-500">
+        <section id="roadmap-section" className="scroll-mt-20 sm:scroll-mt-24 py-14 md:py-18 lg:py-20 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0A2238] relative overflow-hidden transition-all duration-500">
           {/* Subtle Ambient Background Gradients */}
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
           <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-[140px] pointer-events-none" />
@@ -4248,7 +4248,7 @@ export default function LandingPage({
                 <Compass size={14} className="text-[#A07A28] dark:text-[#C9A24B] animate-spin-slow" />
                 <span>{t("roadmap.tag", "Alur Legalitas & Regulasi Luwu")}</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-extrabold tracking-tight text-slate-900 dark:text-white mb-2.5 text-balance">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-2.5 text-balance">
                 {t("roadmap.title", "Panduan Regulasi & Roadmap Perizinan")}
               </h2>
               <div className="gold-divider-diamond">
@@ -4665,7 +4665,7 @@ export default function LandingPage({
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
                 <span>{t("mppBanner.tag", "Pelayanan Terpadu Satu Pintu Kabupaten Luwu")}</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-extrabold tracking-tight text-slate-900 dark:text-white mb-2.5 text-balance">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-2.5 text-balance">
                 <span className="text-slate-900 dark:text-white">
                   {t("mppBanner.title", "Mal Pelayanan Publik (MPP) Simpurusiang")}
                 </span>
@@ -4953,7 +4953,7 @@ export default function LandingPage({
                 <Sparkles size={13} className="text-[#A07A28] dark:text-[#C9A24B]" />
                 <span>Simulasi Kelayakan & Finansial</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-extrabold tracking-tight text-slate-900 dark:text-white mb-2.5">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mb-2.5">
                 {t("sections.intel.title")}
               </h2>
               <div className="gold-divider-diamond">
@@ -4971,7 +4971,7 @@ export default function LandingPage({
                 style={{ willChange: "transform, opacity" }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.05 }}
-                className="lg:col-span-12 p-2.5 sm:p-6 md:p-8 rounded-2xl md:rounded-3xl border overflow-hidden h-full flex flex-col bg-white/95 dark:bg-surface/90 backdrop-blur-xl border-slate-200/90 dark:border-white/10 shadow-xl shadow-slate-200/50 dark:shadow-2xl dark:shadow-black/60 transition-all duration-500"
+                className="lg:col-span-12 p-2.5 sm:p-6 md:p-8 rounded-2xl border overflow-hidden h-full flex flex-col bg-white/95 dark:bg-surface/90 backdrop-blur-xl border-slate-200/90 dark:border-white/10 shadow-xl shadow-slate-200/50 dark:shadow-2xl dark:shadow-black/60 transition-all duration-500"
               >
                 <div className="flex flex-col md:flex-row items-start md:items-center gap-3.5 md:gap-5 mb-5 md:mb-8 border-b pb-4 md:pb-6 border-slate-200/80 dark:border-white/10">
                   <div className="flex items-center gap-3 w-full md:w-auto">
@@ -5762,7 +5762,7 @@ export default function LandingPage({
                       className="overflow-hidden"
                     >
                       <div
-                        className="p-0 sm:p-5 md:p-6 rounded-none sm:rounded-3xl border-0 sm:border bg-transparent sm:bg-slate-50/60 dark:sm:bg-surface/50 sm:border-slate-200/90 dark:sm:border-white/10 sm:backdrop-blur-xl"
+                        className="p-0 sm:p-5 md:p-6 rounded-none sm:rounded-2xl border-0 sm:border bg-transparent sm:bg-slate-50/60 dark:sm:bg-surface/50 sm:border-slate-200/90 dark:sm:border-white/10 sm:backdrop-blur-xl"
                       >
                         {(() => {
                           const baseScore = Math.min(100, Math.max(0,
@@ -6232,14 +6232,14 @@ export default function LandingPage({
         />
 
         {/* Akuntabilitas Kinerja DPMPTSP */}
-        <section className={`relative py-16 sm:py-24 border-t transition-colors duration-500 ${isDark ? "bg-[#06130F] border-[rgba(201,162,75,0.25)]" : "bg-[#FAF7F0] border-[rgba(160,122,40,0.22)]"}`}>
+        <section className={`relative py-14 md:py-18 lg:py-20 border-t transition-colors duration-500 ${isDark ? "bg-[#06130F] border-[rgba(201,162,75,0.25)]" : "bg-[#FAF7F0] border-[rgba(160,122,40,0.22)]"}`}>
           <div className="container mx-auto px-3 sm:px-4 lg:px-6 relative z-10 max-w-5xl">
             <div className="text-center mb-10 sm:mb-12">
               <div className="invest-eyebrow mb-3.5">
                 <Activity size={13} className="text-[#A07A28] dark:text-[#C9A24B]" />
                 <span>{t("performance.tag", "Transparansi & Akuntabilitas Kinerja")}</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-extrabold tracking-tight mb-2.5 text-slate-900 dark:text-white">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-2.5 text-slate-900 dark:text-white">
                 {t("performance.title", "Akuntabilitas Kinerja DPMPTSP Kabupaten Luwu")}
               </h2>
               <div className="gold-divider-diamond">
@@ -6250,7 +6250,7 @@ export default function LandingPage({
               </p>
             </div>
             
-            <div className={`rounded-3xl border overflow-hidden backdrop-blur-md shadow-xl ${
+            <div className={`rounded-2xl border overflow-hidden backdrop-blur-md shadow-xl ${
               isDark 
                 ? "bg-[#0B2A20]/90 border-[rgba(201,162,75,0.25)] shadow-black/80" 
                 : "bg-white/95 border-[rgba(160,122,40,0.22)] shadow-slate-200/50"
@@ -6400,14 +6400,14 @@ export default function LandingPage({
         </section>
 
         {/* Ekosistem DPMPTSP (Sovereign Glass Pavilion Style) */}
-        <section className={`relative py-16 sm:py-24 border-t transition-colors duration-500 ${isDark ? "bg-[#08201A] border-[rgba(201,162,75,0.25)]" : "bg-[#F3EEDF]/70 border-[rgba(160,122,40,0.22)]"}`}>
+        <section className={`relative py-14 md:py-18 lg:py-20 border-t transition-colors duration-500 ${isDark ? "bg-[#08201A] border-[rgba(201,162,75,0.25)]" : "bg-[#F3EEDF]/70 border-[rgba(160,122,40,0.22)]"}`}>
           <div className="container mx-auto px-3 sm:px-6 lg:px-8 relative z-10 max-w-6xl">
             <div className="text-center mb-12 sm:mb-16">
               <div className="invest-eyebrow mb-3.5">
                 <Layers size={13} className="text-[#A07A28] dark:text-[#C9A24B]" />
                 <span>{t("ecosystem.eyebrow", "Sinergi Layanan Lintas Sektor")}</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-extrabold tracking-tight mb-2.5 text-slate-900 dark:text-white">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-2.5 text-slate-900 dark:text-white">
                 {t("ecosystem.title", "Ekosistem DPMPTSP Kabupaten Luwu")}
               </h2>
               <div className="gold-divider-diamond">
@@ -6496,7 +6496,7 @@ export default function LandingPage({
               ].map((item, idx) => (
                 <div 
                   key={idx} 
-                  className={`group relative rounded-2xl sm:rounded-3xl border p-4 sm:p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 overflow-hidden backdrop-blur-md shadow-md ${
+                  className={`group relative rounded-2xl border p-4 sm:p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 overflow-hidden backdrop-blur-md shadow-md ${
                     isDark 
                       ? "bg-[#0B2A20]/90 border-[rgba(201,162,75,0.25)] hover:border-[rgba(201,162,75,0.45)] shadow-black/40" 
                       : "bg-white/95 border-[rgba(160,122,40,0.22)] hover:border-[rgba(160,122,40,0.40)] shadow-slate-200/40"

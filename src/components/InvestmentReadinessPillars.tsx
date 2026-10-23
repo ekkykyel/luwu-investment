@@ -343,7 +343,7 @@ export default function InvestmentReadinessPillars({
             <span>{t("readiness.eyebrow", "Blueprint 6 Pilar Kesiapan • Standar Kementerian Investasi / BKPM RI")}</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-extrabold tracking-tight text-slate-950 dark:text-white mb-2.5 text-balance">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-950 dark:text-white mb-2.5 text-balance">
             {t("readiness.title", "Investment Readiness")}
           </h2>
           <div className="emerald-divider-diamond">
@@ -467,7 +467,7 @@ export default function InvestmentReadinessPillars({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
-            className={`p-2.5 sm:p-7 md:p-9 rounded-2xl sm:rounded-3xl border relative overflow-hidden backdrop-blur-2xl shadow-xl transition-all duration-300 ${
+            className={`p-2.5 sm:p-7 md:p-9 rounded-2xl border relative overflow-hidden backdrop-blur-2xl shadow-xl transition-all duration-300 ${
               isDark
                 ? "bg-[#0D253A]/95 border-white/10 shadow-black/60"
                 : "bg-white/95 border-slate-200 shadow-xl shadow-slate-200/50"
