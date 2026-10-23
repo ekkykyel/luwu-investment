@@ -77,7 +77,7 @@ import {
   Ruler,
 } from "lucide-react";
 import { Role, Investment, District, SektorInvestasi } from "../types";
-import { formatRupiah, formatRupiahSingkat, formatRupiahKompak } from "../lib/formatters";
+import { formatRupiah as formatRupiahFull, formatRupiahSingkat, formatRupiahKompak } from "../lib/formatters";
 import { OssRoiSimulatorInputs } from "./OssRoiSimulatorInputs";
 import GisTransitionLoader from "./GisTransitionLoader";
 import { supabase, safeFetchLayerData } from "../lib/supabaseClient";
@@ -616,6 +616,10 @@ function computeRevFromSector({
 // TODO: Ambil dari site_settings (key: "investment_target_value") di Supabase
 // agar nilai dapat dikonfigurasi admin tanpa perlu deploy ulang aplikasi.
 const INVESTMENT_TARGET_VAL = 2_500_000_000_000; // Rp 2.5 Triliun (APBD target)
+
+const formatRupiah = (val: number) => {
+  return formatRupiahSingkat(val);
+};
 
 export default function LandingPage({
   onEnter,
@@ -2156,10 +2160,6 @@ export default function LandingPage({
       });
     }
   }, [messages, isAiTyping]);
-
-  const formatRupiah = (val: number) => {
-    return formatRupiahSingkat(val);
-  };
 
   const {
     pmdnPercentage,
