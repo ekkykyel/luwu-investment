@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="heroBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#061624"/>
+      <stop offset="50%" stop-color="#0A2238"/>
+      <stop offset="100%" stop-color="#081C2E"/>
+    </linearGradient>
+    <linearGradient id="luwuGoldLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#C9A24B" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#E2C475" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#C9A24B" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="38%" r="58%">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#0A2238" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="sulapaGrid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M32 4 L60 32 L32 60 L4 32 Z" fill="none" stroke="#C9A24B" stroke-width="0.6" stroke-opacity="0.07"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#heroBg)"/>
+  <rect width="1600" height="900" fill="url(#glow)"/>
+  <rect width="1600" height="900" fill="url(#sulapaGrid)"/>
+  <!-- Subtle Classical Roof Gable Silhouette Inspired by Gedung MPP Simpurusiang -->
+  <g opacity="0.10" fill="none" stroke="#E2C475" stroke-width="1.5">
+    <polygon points="800,145 340,340 1260,340"/>
+    <polygon points="560,235 240,370 880,370"/>
+    <polygon points="1040,235 720,370 1360,370"/>
+    <line x1="200" y1="710" x2="1400" y2="710" stroke="url(#luwuGoldLine)" stroke-width="2"/>
+  </g>
+</svg>
