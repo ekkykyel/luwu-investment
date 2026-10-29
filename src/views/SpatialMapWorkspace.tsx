@@ -7501,9 +7501,9 @@ export default function SpatialMapWorkspace() {
                   animate={isMobile ? { y: 0, opacity: 1 } : { x: 0, opacity: 1 }}
                   exit={isMobile ? { y: "100%", opacity: 0 } : { x: 50, opacity: 0 }}
                   transition={{ type: "spring", stiffness: 320, damping: 30 }}
-                  className={`fixed inset-x-2.5 sm:inset-x-0 top-3 sm:top-4 bottom-16 md:bottom-auto md:top-4 md:absolute md:inset-auto md:right-4 z-[70] md:z-[50] pointer-events-auto origin-bottom md:origin-right transition-all duration-300 ${
+                  className={`fixed inset-x-2.5 sm:inset-x-3 top-14 sm:top-16 bottom-14 sm:bottom-16 md:bottom-auto md:top-4 md:absolute md:inset-auto md:right-4 z-[70] md:z-[50] pointer-events-auto origin-bottom md:origin-right transition-all duration-300 ${
                     isDashboardExpanded 
-                      ? "w-[calc(100vw-20px)] sm:w-full h-auto md:max-w-none md:w-[440px] lg:w-[490px] xl:w-[540px] md:h-auto md:max-h-[85vh] rounded-2xl md:rounded-3xl overflow-y-auto pb-20 md:pb-0 shadow-[0_-12px_40px_rgba(0,0,0,0.5)] md:shadow-none bg-slate-50 dark:bg-base md:bg-transparent" 
+                      ? "w-[calc(100vw-20px)] sm:w-full h-[calc(100dvh-120px)] md:h-auto md:max-w-none md:w-[440px] lg:w-[490px] xl:w-[540px] md:max-h-[85vh] rounded-2xl md:rounded-3xl shadow-[0_-12px_40px_rgba(0,0,0,0.5)] md:shadow-none bg-slate-50 dark:bg-base md:bg-transparent flex flex-col" 
                       : "w-auto ml-auto md:top-4 top-20 right-2 md:right-4 absolute"
                   }`}
                 >
@@ -7550,7 +7550,7 @@ export default function SpatialMapWorkspace() {
                         style={{
                           backgroundColor: spatialTheme.bg.card(gisPanelOpacity)
                         }}
-                        className={`backdrop-blur-xl border p-2.5 pt-2.5 sm:pt-4 sm:p-5 h-full md:h-auto rounded-2xl md:rounded-3xl shadow-2xl flex flex-col gap-3 sm:gap-4 relative overflow-hidden transition-all duration-300 ease-in-out origin-bottom md:origin-right ${
+                        className={`backdrop-blur-xl border p-2.5 pt-2.5 sm:pt-4 sm:p-5 h-full md:h-auto rounded-2xl md:rounded-3xl shadow-2xl flex flex-col gap-3 sm:gap-4 relative overflow-hidden transition-all duration-300 ease-in-out origin-bottom md:origin-right min-h-0 ${
                           isDarkMode
                             ? "border-slate-700/60 text-slate-100 shadow-black/80"
                             : "border-slate-300/80 text-slate-900 shadow-2xl shadow-slate-900/15"

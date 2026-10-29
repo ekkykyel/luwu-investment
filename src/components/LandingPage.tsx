@@ -7,6 +7,7 @@ import { isMobileOrAndroidDevice, isAndroidDevice } from "../hooks/useDeviceAuto
 import { requestSmartFullscreen } from "../utils/fullscreen";
 
 import {
+  Accessibility,
   ChevronRight,
   ChevronLeft,
   ArrowRight,
@@ -86,6 +87,7 @@ import { TopographicContourOverlay } from "./common/TopographicContourOverlay";
 import { lazyWithRetry } from "../utils/lazyWithRetry";
 import { ResponsiveHeroPicture } from "./common/ResponsiveHeroPicture";
 import { ResponsiveOfficerPicture } from "./common/ResponsiveOfficerPicture";
+import { InclusivityAccessibilityBar } from "./mpp/InclusivityAccessibilityBar";
 
 const RoiAiAnalysisModal = lazyWithRetry(() => import("./RoiAiAnalysisModal"));
 const SpatialBufferAiModal = lazyWithRetry(() => import("./SpatialBufferAiModal"));
@@ -2453,6 +2455,9 @@ export default function LandingPage({
       transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
       className={`landing-page-root min-h-screen transition-colors duration-500 font-sans ${themeBg} overflow-x-hidden selection:bg-[#C9A24B]/30 pb-36 sm:pb-28 lg:pb-16`}
     >
+      {/* Floating Inclusivity & Accessibility Control Bar (High Contrast Yellow-Black, Monochrome, Audio Reader & Voice AI) */}
+      <InclusivityAccessibilityBar isDark={isDark} hideFloatingFab={false} />
+
       <AnimatePresence>
         {showLauncher && (
           <motion.div
@@ -2697,6 +2702,23 @@ export default function LandingPage({
               {/* Language Toggle: Shown on sm+ in header; moved into Mobile Drawer on narrow Android */}
               <LanguageToggle isDarkHeader={isDark} isCircular={true} className="hidden sm:inline-block" />
               
+              {/* Accessibility & High Contrast Control Trigger */}
+              <motion.button whileTap={{ scale: 0.95 }}
+                type="button"
+                onClick={() => {
+                  window.dispatchEvent(new CustomEvent('open-mpp-accessibility-panel'));
+                }}
+                className={`w-10 h-10 min-w-[40px] min-h-[40px] rounded-full flex items-center justify-center border transition-all duration-200 shrink-0 cursor-pointer ${
+                  isDark
+                    ? "bg-white/[0.06] text-emerald-400 hover:text-emerald-300 hover:bg-white/[0.12] border-white/[0.12]"
+                    : "bg-emerald-50/90 text-emerald-700 hover:text-emerald-800 border-emerald-200/90 hover:bg-emerald-100/80"
+                }`}
+                title="Aksesibilitas & Kontras Ramah Disabilitas (WCAG)"
+                aria-label="Kontras & Aksesibilitas"
+              >
+                <Accessibility size={18} />
+              </motion.button>
+
               <motion.button whileTap={{ scale: 0.95 }}
                 type="button"
                 onClick={handleToggleTheme}

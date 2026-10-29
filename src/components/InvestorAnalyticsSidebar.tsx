@@ -1172,7 +1172,7 @@ export default function InvestorAnalyticsSidebar({
     <div className={`flex flex-col font-sans transition-all duration-300 ease-in-out ${
       isMobileFullscreen
         ? `fixed inset-0 z-[999] w-full h-full overflow-y-auto p-2.5 sm:p-4 md:p-6 lg:p-8 shadow-2xl ${isDarkMode ? "bg-base text-slate-100" : "bg-slate-50 text-slate-900"}`
-        : `${isExpanded ? "h-full" : "h-auto"} overflow-hidden ${isDarkMode ? "text-slate-100" : "text-slate-800"}`
+        : `${isExpanded ? "h-full flex flex-col min-h-0" : "h-auto"} overflow-hidden ${isDarkMode ? "text-slate-100" : "text-slate-800"}`
     }`}>
       
       {/* Sticky Banner if Fullscreen */}
@@ -1526,7 +1526,7 @@ export default function InvestorAnalyticsSidebar({
       </div>
 
       {/* Scrollable Body Content */}
-      <div className={`flex-1 overflow-y-auto pr-1 dark-scroll space-y-6 pb-6 transition-all duration-300 ${
+      <div className={`flex-1 min-h-0 overflow-y-auto pr-1 dark-scroll space-y-6 pb-28 md:pb-8 transition-all duration-300 ${
         isExpanded ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none hidden"
       }`}>
 
@@ -3129,7 +3129,7 @@ export default function InvestorAnalyticsSidebar({
                     color: isDarkMode ? "#ffffff" : "#0f172a",
                   }}
                 />
-                <Bar dataKey="Indeks" radius={[0, 4, 4, 0]} barSize={14}>
+                <Bar dataKey="Indeks" radius={[0, 4, 4, 0]} barSize={14} isAnimationActive={false}>
                   {strategicHotspotsData.map((entry, index) => {
                     const colors = ["#10b981", "#06b6d4", "#3b82f6", "#6366f1", "#f59e0b"];
                     return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;

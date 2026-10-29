@@ -2229,7 +2229,7 @@ body.mpp-lite-mode .glass-crystal {
   .layer-legend-control-root,
   .android-mode .layer-legend-control-root,
   .android-fullscreen-mode .layer-legend-control-root {
-    margin-top: 82px !important;
+    margin-top: calc(138px + env(safe-area-inset-top, 0px)) !important;
   }
 }
 

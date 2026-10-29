@@ -2592,7 +2592,7 @@ export function InvestmentDetailModal({
                                   return null;
                                 }}
                               />
-                              <Bar dataKey="distance" fill="#10b981" radius={[0, 4, 4, 0]}>
+                              <Bar dataKey="distance" fill="#10b981" radius={[0, 4, 4, 0]} isAnimationActive={false}>
                                 {proximityIntel.map((entry: any, index: number) => (
                                   <Cell 
                                     key={`cell-${index}`} 
@@ -3166,7 +3166,7 @@ export function InvestmentDetailModal({
                                 return null;
                               }}
                             />
-                            <Bar dataKey="kumulatif" radius={[4, 4, 0, 0]}>
+                            <Bar dataKey="kumulatif" radius={[4, 4, 0, 0]} isAnimationActive={false}>
                               {cashFlowTrajectory.map((entry, index) => (
                                 <Cell
                                   key={`cell-${index}`}

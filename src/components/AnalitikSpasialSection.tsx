@@ -399,10 +399,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                       fillOpacity={1}
                       fill="url(#gradTrendNilai)"
                       dot={false}
-                      isAnimationActive={animateAreaChart}
-                      animationDuration={850}
-                      animationEasing="ease-out"
-                      animationBegin={0}
+                      isAnimationActive={false}
                       activeDot={{
                         r: 6,
                         stroke: "#10b981",
@@ -503,7 +500,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                             dataKey="value"
                             stroke={isDark ? "#0f172a" : "#ffffff"}
                             strokeWidth={2}
-                            isAnimationActive={animatePieChart}
+                            isAnimationActive={false}
                             animationDuration={600}
                             animationEasing="ease-out"
                             animationBegin={0}
@@ -670,6 +667,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                         fill="url(#gradSpasialBar)"
                         radius={[0, 9999, 9999, 0]}
                         barSize={22}
+                        isAnimationActive={false}
                         name={t("charts.certifiedArea", "Luasan (Ha)")}
                       >
                         <LabelList
@@ -1058,6 +1056,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                               dataKey={sector}
                               stackId="a"
                               fill={fillVal}
+                              isAnimationActive={false}
                               radius={
                                 index === safeCommoditySectors.length - 1
                                   ? [6, 6, 0, 0]
@@ -1185,8 +1184,8 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                       <Legend
                         wrapperStyle={{ paddingTop: "12px", fontSize: "11px" }}
                       />
-                      <Bar dataKey="local" name={t("chartsExtra.localLabor", "Tenaga Kerja Lokal (TKL)")} fill="url(#gradLaborLocal)" radius={[6, 6, 0, 0]} barSize={28} />
-                      <Bar dataKey="foreign" name={t("chartsExtra.foreignLabor", "Tenaga Kerja Asing (TKA)")} fill="url(#gradLaborForeign)" radius={[6, 6, 0, 0]} barSize={28} />
+                      <Bar dataKey="local" name={t("chartsExtra.localLabor", "Tenaga Kerja Lokal (TKL)")} fill="url(#gradLaborLocal)" radius={[6, 6, 0, 0]} barSize={28} isAnimationActive={false} />
+                      <Bar dataKey="foreign" name={t("chartsExtra.foreignLabor", "Tenaga Kerja Asing (TKA)")} fill="url(#gradLaborForeign)" radius={[6, 6, 0, 0]} barSize={28} isAnimationActive={false} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>

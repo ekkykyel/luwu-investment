@@ -237,7 +237,7 @@ export default function LayerLegendControl({
             animate={{ opacity: 1, x: 0, scaleX: 1 }}
             exit={{ opacity: 0, x: -35, scaleX: 0.85 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className={`p-4 rounded-2xl shadow-2xl border origin-left transition-all duration-300 w-84 sm:w-96 max-w-[calc(100vw-2.5rem)] md:max-w-[390px] max-h-[calc(100dvh-130px)] flex flex-col ${
+            className={`p-3.5 sm:p-4 rounded-2xl shadow-2xl border origin-left transition-all duration-300 w-84 sm:w-96 max-w-[calc(100vw-2.5rem)] md:max-w-[390px] max-h-[calc(100dvh-205px)] md:max-h-[calc(100dvh-130px)] flex flex-col ${
               isDarkMode 
                 ? "bg-surface/95 border-slate-700/90 text-white shadow-black/90 backdrop-blur-xl" 
                 : "bg-white/95 border-slate-300/90 text-slate-900 shadow-2xl shadow-slate-900/15 backdrop-blur-xl"
