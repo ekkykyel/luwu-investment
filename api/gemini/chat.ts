@@ -639,7 +639,6 @@ ${cashFlowTableId}
 2. **Insentif Investasi:** Ajukan surat permohonan keringanan retribusi daerah dan sewa lahan kepada Bupati Luwu melalui DPMPTSP.
 3. **Kemitraan Lokal:** Gandeng BUMDES dan kelompok tani untuk efisiensi rantai pasok bahan baku.
 4. **Monitoring Berkala:** Evaluasi kinerja finansial proyek setiap semester menggunakan indikator NPV, IRR, dan PI yang diperbarui.
-`
 
 > 📌 *Laporan ini dihasilkan oleh Mesin Analisis Kelayakan Finansial AI Luwu Investment Portal — Fallback Heuristic Engine (Offline Mode). Data bersumber dari parameter input Simulator ROI pengguna.*`;
 }
