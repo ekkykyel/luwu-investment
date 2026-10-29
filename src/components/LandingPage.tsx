@@ -2451,7 +2451,7 @@ export default function LandingPage({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-      className={`min-h-screen transition-colors duration-500 font-sans ${themeBg} overflow-x-hidden selection:bg-[#C9A24B]/30 pb-36 sm:pb-28 lg:pb-16`}
+      className={`landing-page-root min-h-screen transition-colors duration-500 font-sans ${themeBg} overflow-x-hidden selection:bg-[#C9A24B]/30 pb-36 sm:pb-28 lg:pb-16`}
     >
       <AnimatePresence>
         {showLauncher && (

@@ -23,8 +23,8 @@ export const MPP_CARD_SURFACE = {
     'mpp-card bg-white dark:bg-[#132E48] border border-[#E5DFD3] dark:border-white/[0.09]',
   radiusMain: 'rounded-2xl sm:rounded-3xl',
   radiusSub: 'rounded-xl sm:rounded-2xl',
-  paddingLg: 'p-1 sm:p-6 lg:p-8',
-  paddingSm: 'p-1 sm:p-4'
+  paddingLg: 'p-2 sm:p-6 lg:p-8',
+  paddingSm: 'p-1.5 sm:p-4'
 };
 
 export interface MppCardProps extends React.HTMLAttributes<HTMLDivElement> {

@@ -1429,31 +1429,36 @@ html.android-fullscreen-mode .android-full-bleed {
 }
 
 /* =========================================================================
-   ANDROID PORTAL MPP: P-1 (4PX) MICRO COMPACT SPECIFICATION
-   Ubah ukuran pada semua: Foto, Card, Padding, Badge, dan Modal Form 
-   menggunakan p-1 (4px) pada halaman Portal MPP ketika menggunakan Android
+   ANDROID FIRST: DYNAMIC SPACING & FLUID TYPOGRAPHY SPECIFICATION
+   1. Dynamic calc/viewport spacing (clamp 4px..8px) preventing layout shifts
+   2. Fluid typography (clamp 1.15rem..1.75rem for headings, min 14px body, min 12px card body)
+   3. Single-line retention & compact card heights preventing vertical sagging
    ========================================================================= */
 
-/* 1. ROOT CONTAINER PADDING ON ANDROID */
+/* 1. ROOT CONTAINER DYNAMIC PADDING ON ANDROID */
 html.android-mode .portal-mpp-root,
 html.android-fullscreen-mode .portal-mpp-root,
 body.android-mode .portal-mpp-root,
 body.android-fullscreen-mode .portal-mpp-root,
 .portal-mpp-root.is-android,
-.portal-mpp-root.android-active {
-  --mpp-android-p1: 4px;
+.portal-mpp-root.android-active,
+html.android-mode .landing-page-root,
+html.android-fullscreen-mode .landing-page-root {
+  --mpp-android-p1: clamp(4px, 1.2vw, 8px);
 }
 
 html.android-mode .portal-mpp-root main,
 html.android-fullscreen-mode .portal-mpp-root main,
 body.android-mode .portal-mpp-root main,
 body.android-fullscreen-mode .portal-mpp-root main,
-.portal-mpp-root.is-android main {
-  padding-left: 4px !important;
-  padding-right: 4px !important;
+.portal-mpp-root.is-android main,
+html.android-mode .landing-page-root main,
+html.android-fullscreen-mode .landing-page-root main {
+  padding-left: clamp(4px, 1.2vw, 8px) !important;
+  padding-right: clamp(4px, 1.2vw, 8px) !important;
 }
 
-/* 2. CARD (Semua Card di Portal MPP menggunakan p-1 / 4px saat Android) */
+/* 2. DYNAMIC CARD SPACING (Portal MPP & Landing Page: clamp(5px, 1.4vw, 8px)) */
 html.android-mode .portal-mpp-root .mpp-card,
 html.android-fullscreen-mode .portal-mpp-root .mpp-card,
 body.android-mode .portal-mpp-root .mpp-card,
@@ -1476,10 +1481,10 @@ html.android-fullscreen-mode .portal-mpp-root [class*="rounded-3xl"]:not(button)
 html.android-mode .portal-mpp-root [class*="bg-white dark:bg-"][class*="border"]:not(button):not(input),
 html.android-fullscreen-mode .portal-mpp-root [class*="bg-white dark:bg-"][class*="border"]:not(button):not(input),
 .portal-mpp-root.is-android [class*="bg-white dark:bg-"][class*="border"]:not(button):not(input) {
-  padding: 4px !important;
+  padding: clamp(5px, 1.4vw, 8px) !important;
 }
 
-/* 3. FOTO (Semua Foto dan Image Wrapper di Portal MPP menggunakan p-1 / 4px saat Android) */
+/* 3. DYNAMIC FOTO / IMAGE WRAPPER SPACING */
 html.android-mode .portal-mpp-root .hero-photo-card,
 html.android-fullscreen-mode .portal-mpp-root .hero-photo-card,
 .portal-mpp-root.is-android .hero-photo-card,
@@ -1492,37 +1497,37 @@ html.android-fullscreen-mode .portal-mpp-root figure,
 html.android-mode .portal-mpp-root img:not([class*="object-contain"]),
 html.android-fullscreen-mode .portal-mpp-root img:not([class*="object-contain"]),
 .portal-mpp-root.is-android img:not([class*="object-contain"]) {
-  padding: 4px !important;
+  padding: clamp(4px, 1vw, 6px) !important;
 }
 
 html.android-mode .portal-mpp-root [class*="aspect-"],
 html.android-fullscreen-mode .portal-mpp-root [class*="aspect-"],
 .portal-mpp-root.is-android [class*="aspect-"] {
-  padding: 4px !important;
+  padding: clamp(4px, 1vw, 6px) !important;
 }
 
-/* 4. PADDING (Semua Section, Grid, Container di Portal MPP menggunakan p-1 / 4px saat Android) */
+/* 4. DYNAMIC SECTION & GRID PADDING */
 html.android-mode .portal-mpp-root section,
 html.android-fullscreen-mode .portal-mpp-root section,
 .portal-mpp-root.is-android section,
 html.android-mode .portal-mpp-root .section-container,
 html.android-fullscreen-mode .portal-mpp-root .section-container,
 .portal-mpp-root.is-android .section-container {
-  padding-left: 4px !important;
-  padding-right: 4px !important;
-  padding-top: 4px !important;
-  padding-bottom: 4px !important;
+  padding-left: clamp(4px, 1.2vw, 8px) !important;
+  padding-right: clamp(4px, 1.2vw, 8px) !important;
+  padding-top: clamp(6px, 1.6vw, 12px) !important;
+  padding-bottom: clamp(6px, 1.6vw, 12px) !important;
 }
 
 html.android-mode .portal-mpp-root .grid,
 html.android-fullscreen-mode .portal-mpp-root .grid,
 .portal-mpp-root.is-android .grid {
-  gap: 4px !important;
-  padding-left: 4px !important;
-  padding-right: 4px !important;
+  gap: clamp(4px, 1.2vw, 8px) !important;
+  padding-left: clamp(4px, 1.2vw, 8px) !important;
+  padding-right: clamp(4px, 1.2vw, 8px) !important;
 }
 
-/* 5. BADGE (Semua Badge, Status Pill, Chips, dan Tag di Portal MPP menggunakan p-1 / 4px saat Android) */
+/* 5. DYNAMIC BADGE & STATUS PILL SPACING */
 html.android-mode .portal-mpp-root .badge,
 html.android-fullscreen-mode .portal-mpp-root .badge,
 body.android-mode .portal-mpp-root .badge,
@@ -1543,15 +1548,15 @@ html.android-fullscreen-mode .portal-mpp-root [class*="rounded-xl"][class*="bg-s
 html.android-mode .portal-mpp-root button[class*="min-h-"][class*="rounded-xl"],
 html.android-fullscreen-mode .portal-mpp-root button[class*="min-h-"][class*="rounded-xl"],
 .portal-mpp-root.is-android button[class*="min-h-"][class*="rounded-xl"] {
-  padding: 4px 6px !important;
+  padding: clamp(2.5px, 0.8vw, 4px) clamp(6px, 1.5vw, 8px) !important;
 }
 
-/* 6. SEMUA MODAL FORM (Semua Modal Form di Portal MPP menggunakan p-1 / 4px saat Android) */
+/* 6. DYNAMIC MODAL FORM SPACING (Dialogs, Input, Forms) */
 html.android-mode .fixed.inset-0,
 html.android-fullscreen-mode .fixed.inset-0,
 body.android-mode .fixed.inset-0,
 body.android-fullscreen-mode .fixed.inset-0 {
-  padding: 4px !important;
+  padding: clamp(4px, 1.5vw, 10px) !important;
 }
 
 html.android-mode [role="dialog"],
@@ -1562,7 +1567,7 @@ html.android-mode .fixed.inset-0 > div,
 html.android-fullscreen-mode .fixed.inset-0 > div,
 body.android-mode .fixed.inset-0 > div,
 body.android-fullscreen-mode .fixed.inset-0 > div {
-  padding: 4px !important;
+  padding: clamp(6px, 1.8vw, 12px) !important;
 }
 
 html.android-mode [role="dialog"] form,
@@ -1573,7 +1578,7 @@ html.android-mode .fixed.inset-0 form,
 html.android-fullscreen-mode .fixed.inset-0 form,
 body.android-mode .fixed.inset-0 form,
 body.android-fullscreen-mode .fixed.inset-0 form {
-  padding: 4px !important;
+  padding: clamp(4px, 1.2vw, 8px) !important;
 }
 
 html.android-mode [role="dialog"] .modal-header,
@@ -1586,14 +1591,14 @@ html.android-mode .fixed.inset-0 [class*="border-b"],
 html.android-fullscreen-mode .fixed.inset-0 [class*="border-b"],
 html.android-mode .fixed.inset-0 [class*="overflow-y-auto"],
 html.android-fullscreen-mode .fixed.inset-0 [class*="overflow-y-auto"] {
-  padding: 4px !important;
+  padding: clamp(6px, 1.6vw, 12px) !important;
 }
 
 html.android-mode [role="dialog"] [class*="space-y-"] > div,
 html.android-fullscreen-mode [role="dialog"] [class*="space-y-"] > div,
 html.android-mode .fixed.inset-0 [class*="space-y-"] > div,
 html.android-fullscreen-mode .fixed.inset-0 [class*="space-y-"] > div {
-  padding: 4px !important;
+  padding: clamp(3px, 1vw, 6px) !important;
 }
 
 /* =========================================================================
@@ -1884,6 +1889,79 @@ html.android-fullscreen-mode .fixed.inset-0 [class*="space-y-"] > div {
   .fixed.inset-0[class*="z-"] textarea
 ) {
   padding: 6px 8px !important;
+}
+
+/* =========================================================================
+   ANDROID FLUID TYPOGRAPHY SCALING SPECIFICATION
+   1. Fluid Section Headings: clamp(1.15rem, 3.8vw, 1.75rem)
+   2. Fluid Card Titles: clamp(0.875rem, 2.8vw, 1.05rem)
+   3. Primary Narrative Body Text: clamp(0.875rem, 2.8vw, 0.95rem) — min 14px
+   4. Compact Card Descriptions: clamp(0.75rem, 2.4vw, 0.8125rem) — min 12px
+   5. Fluid Badges & Metadata: clamp(10.5px, 2.6vw, 11.5px) — min 10.5px
+   ========================================================================= */
+
+/* 1. Fluid Section Headings (H1 & H2) */
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode) :is(
+  h1,
+  .hero-title,
+  .section-title,
+  [class*="text-2xl"],
+  [class*="text-3xl"],
+  [class*="text-4xl"]
+):not(.font-mono):not(.kpi-value):not([class*="text-["]):not([class*="text-xs"]):not([class*="text-sm"]) {
+  font-size: clamp(1.15rem, 3.8vw, 1.75rem) !important;
+  line-height: 1.25 !important;
+}
+
+/* 2. Fluid Card Titles (H3 & H4) */
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode) :is(
+  .portal-mpp-root,
+  .landing-page-root,
+  .admin-portal-dashboard,
+  #admin-root-container
+) :is(
+  h3,
+  h4,
+  .card-title,
+  [class*="cardTitle"]
+):not(.font-mono):not(.badge):not([class*="text-xs"]) {
+  font-size: clamp(0.875rem, 2.8vw, 1.05rem) !important;
+  line-height: 1.3 !important;
+}
+
+/* 3. Primary Narrative Body Text (Paragraf utama di Modal & Section) — min 14px */
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode) :is(
+  [role="dialog"] p:not(.text-xs):not(.caption):not(.badge):not(.meta):not([class*="text-["]),
+  .modal-body p:not(.text-xs):not(.badge):not(.meta):not([class*="text-["]),
+  .article-body,
+  .section-subtitle
+) {
+  font-size: clamp(0.875rem, 2.8vw, 0.95rem) !important;
+  line-height: 1.5 !important;
+}
+
+/* 4. Compact Card Descriptions — Kunci presisi min 12px (0.75rem) agar TIDAK melorot */
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode) :is(
+  .mpp-card p,
+  .bento-card p,
+  .card p,
+  .gerai-item-card p,
+  .stat-card p
+) {
+  font-size: clamp(0.75rem, 2.4vw, 0.8125rem) !important;
+  line-height: 1.35 !important;
+}
+
+/* 5. Fluid Badges & Metadata — min 10.5px (tidak pernah drop ke 8.5px) */
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode) :is(
+  .badge,
+  .mpp-badge,
+  [class*="rounded-full"][class*="border"],
+  [class*="rounded-full"][class*="px-"]
+):not(button) {
+  font-size: clamp(10.5px, 2.6vw, 11.5px) !important;
+  line-height: 1.15 !important;
+  letter-spacing: 0.02em !important;
 }
 
 /* =========================================================================
