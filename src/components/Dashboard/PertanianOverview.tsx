@@ -106,7 +106,7 @@ export default function PertanianOverview({
   }, [pkkprPertanianList, searchQuery]);
 
   return (
-    <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500">
+    <div className="admin-pertanian-dashboard pertanian-overview-container space-y-6 sm:space-y-8 animate-in fade-in duration-500">
       {/* 1. Header Banner Tupoksi Dinas Pertanian */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-950 via-slate-900 to-emerald-950 text-white p-6 sm:p-8 border border-amber-500/30 shadow-2xl">
         <div className="absolute top-0 right-0 w-96 h-48 bg-amber-500/10 blur-3xl rounded-full -mr-20 -mt-10 pointer-events-none" />

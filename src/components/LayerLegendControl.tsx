@@ -188,11 +188,11 @@ export default function LayerLegendControl({
   return createPortal(
     <div className={`m-2 sm:m-3 ${
       !isLayerPanelOpen 
-        ? "mt-[175px] sm:mt-[165px] md:mt-38" 
-        : "mt-[175px] sm:mt-[165px] md:mt-24"
+        ? "mt-20 sm:mt-22 md:mt-38" 
+        : "mt-20 sm:mt-22 md:mt-24"
     } ${
       isLeftSidebarOpen ? "md:ml-[288px] lg:ml-[352px]" : "md:ml-2 lg:ml-3"
-    } transition-[margin] duration-300 ease-in-out z-[55] pointer-events-auto`}>
+    } transition-[margin] duration-300 ease-in-out z-[55] pointer-events-auto layer-legend-control-root`}>
       <AnimatePresence mode="wait">
         {!isLayerPanelOpen ? (
           /* Collapsed State: Compact horizontal tab/button collapsing to the left */
@@ -237,7 +237,7 @@ export default function LayerLegendControl({
             animate={{ opacity: 1, x: 0, scaleX: 1 }}
             exit={{ opacity: 0, x: -35, scaleX: 0.85 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className={`p-4 rounded-2xl shadow-2xl border origin-left transition-all duration-300 w-84 sm:w-96 max-w-[calc(100vw-2.5rem)] md:max-w-[390px] max-h-[calc(100dvh-210px)] md:max-h-[calc(100vh-130px)] flex flex-col ${
+            className={`p-4 rounded-2xl shadow-2xl border origin-left transition-all duration-300 w-84 sm:w-96 max-w-[calc(100vw-2.5rem)] md:max-w-[390px] max-h-[calc(100dvh-130px)] flex flex-col ${
               isDarkMode 
                 ? "bg-surface/95 border-slate-700/90 text-white shadow-black/90 backdrop-blur-xl" 
                 : "bg-white/95 border-slate-300/90 text-slate-900 shadow-2xl shadow-slate-900/15 backdrop-blur-xl"

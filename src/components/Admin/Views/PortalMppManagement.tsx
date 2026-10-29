@@ -53,6 +53,7 @@ import { MppInfrastructureAdminManager } from "../../mpp/MppInfrastructureAdminM
 import { MppMobileScheduleAdminManager } from "../../mpp/MppMobileScheduleAdminManager";
 import { uploadImageToSupabase, getImageUrl, handleImageError, ImageFallbackType } from "../../../utils/imageFallbacks";
 import { AgencyLogo } from "../../common/AgencyLogo";
+import { useDeviceAutomation } from "../../../hooks/useDeviceAutomation";
 
 interface ImageUploadFieldProps {
   id: string;
@@ -325,6 +326,7 @@ function ImageUploadField({
 }
 
 export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: boolean }) {
+  const { isAndroid } = useDeviceAutomation();
   const [isDark, setIsDark] = useState(() => {
     if (propIsDark !== undefined) return propIsDark;
     const saved = localStorage.getItem("luwu_admin_theme") || localStorage.getItem("mpp_portal_theme");
@@ -1839,7 +1841,10 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
   }, []);
 
   return (
-    <div id="mpp-dashboard-root" className={`space-y-6 animate-in fade-in duration-300 pb-16 transition-colors duration-300 ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>
+    <div 
+      id="mpp-dashboard-root" 
+      className={`portal-mpp-management ${isAndroid ? 'is-android android-active' : ''} space-y-6 animate-in fade-in duration-300 pb-16 transition-colors duration-300 ${isDark ? 'text-slate-100' : 'text-slate-800'}`}
+    >
       {/* Injected Style overrides for Android & Light/Dark Theme compatibility kawan */}
       <style>{`
         /* Android Friendly & Touch targets */
@@ -2180,7 +2185,7 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
         {activeTab === "gerai-operator" && (
           <div className="space-y-6 animate-in fade-in-50 duration-200">
             {/* Gerai & Instansi Section */}
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+            <div className="p-2.5 sm:p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-3 mpp-admin-widget w-full">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h3 className="text-base font-bold text-white flex items-center gap-2 font-sans">
@@ -2197,7 +2202,7 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
                       setReprimandTargetTenantId(null);
                       setIsReprimandModalOpen(true);
                     }}
-                    className="px-3.5 py-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/40 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm shadow-rose-950/40"
+                    className="px-3 py-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/40 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm shadow-rose-950/40"
                     title="Buka Sistem e-Teguran Realtime ke Gerai Pelayanan"
                   >
                     <AlertTriangle className="w-4 h-4 text-rose-400" />
@@ -2210,7 +2215,7 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
                       setTenantForm({ name: "", code: "", logo: "", floor: "Lantai 1", is_active: true, description: "" });
                       setIsTenantModalOpen(true);
                     }}
-                    className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white flex items-center gap-1.5 transition-all cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white flex items-center gap-1.5 transition-all cursor-pointer"
                   >
                     <PlusCircle className="w-4 h-4" />
                     <span>Tambah Gerai</span>
@@ -2228,11 +2233,11 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
                   Belum ada gerai terdaftar di database.
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 sm:gap-3 w-full">
                   {tenants.map(t => (
                     <div
                       key={t.id}
-                      className="p-4 rounded-xl bg-base/60 border border-slate-800 flex items-start gap-3 hover:border-slate-700 transition-all group relative"
+                      className="mpp-gerai-card gerai-item-card p-2 sm:p-3 rounded-xl bg-base/60 border border-slate-800 flex flex-row items-start justify-between gap-2.5 sm:gap-3 hover:border-slate-700 transition-all group relative w-full min-w-0"
                     >
                       <img
                         src={t.logo?.trim() || "/assets/images/default-agency.svg"}
@@ -2242,27 +2247,33 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
                           e.currentTarget.onerror = null;
                           e.currentTarget.src = "/assets/images/default-agency.svg";
                         }}
-                        className="w-12 h-12 rounded-xl object-contain bg-slate-900/60 p-1 shrink-0 border border-slate-800"
+                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-contain bg-slate-900/60 p-1 shrink-0 border border-slate-800"
                       />
-                      <div className="flex-1 min-w-0">
-                        <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-mono text-[10px] uppercase border border-emerald-500/20">
-                          {t.code}
-                        </span>
-                        <h4 className="font-bold text-xs sm:text-sm text-white truncate mt-1.5">{t.name}</h4>
-                        <p className="text-[10px] text-slate-400 mt-0.5">{t.floor} • Status: {t.is_active ? "Aktif" : "Non-aktif"}</p>
+                      <div className="flex-1 min-w-0 pr-1 space-y-0.5">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="mpp-badge px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-mono text-[10px] uppercase border border-emerald-500/20 font-bold shrink-0">
+                            {t.code}
+                          </span>
+                          <span className="text-[10px] text-slate-400 font-medium">
+                            {t.floor} • {t.is_active ? "Aktif" : "Non-aktif"}
+                          </span>
+                        </div>
+                        <h4 className="font-bold text-xs sm:text-sm text-white leading-snug font-sans break-words whitespace-normal tracking-tight mt-1">
+                          {t.name}
+                        </h4>
                         {t.description && (
-                          <p className="text-[10px] text-slate-500 line-clamp-2 mt-1 italic leading-relaxed bg-surface/40 p-1.5 rounded border border-slate-900">
+                          <p className="text-[10px] text-slate-400 line-clamp-2 mt-1 italic leading-relaxed bg-surface/40 p-1 rounded border border-slate-900/80">
                             {t.description}
                           </p>
                         )}
                       </div>
-                      <div className="flex items-center gap-1 bg-surface/90 p-1 rounded-lg border border-slate-800 shrink-0 opacity-80 group-hover:opacity-100 transition-all">
+                      <div className="flex items-center gap-0.5 sm:gap-1 bg-surface/90 p-0.5 sm:p-1 rounded-lg border border-slate-800 shrink-0 opacity-90 group-hover:opacity-100 transition-all self-start">
                         <button
                           onClick={() => {
                             setReprimandTargetTenantId(t.id);
                             setIsReprimandModalOpen(true);
                           }}
-                          className="p-1.5 rounded-md hover:bg-rose-950/60 text-rose-400 hover:text-rose-300 transition-colors cursor-pointer border border-transparent hover:border-rose-800/60"
+                          className="p-1 sm:p-1.5 rounded-md hover:bg-rose-950/60 text-rose-400 hover:text-rose-300 transition-colors cursor-pointer border border-transparent hover:border-rose-800/60"
                           title={`Kirim e-Teguran Realtime ke Gerai ${t.name}`}
                         >
                           <AlertTriangle className="w-3.5 h-3.5" />
@@ -2280,14 +2291,14 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
                             });
                             setIsTenantModalOpen(true);
                           }}
-                          className="p-1.5 rounded-md hover:bg-slate-800 text-indigo-400 hover:text-indigo-300 transition-colors cursor-pointer"
+                          className="p-1 sm:p-1.5 rounded-md hover:bg-slate-800 text-indigo-400 hover:text-indigo-300 transition-colors cursor-pointer"
                           title="Edit Profil Gerai / Instansi"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleDeleteTenant(t.id)}
-                          className="p-1.5 rounded-md hover:bg-slate-800 text-slate-400 hover:text-rose-400 transition-colors cursor-pointer"
+                          className="p-1 sm:p-1.5 rounded-md hover:bg-slate-800 text-slate-400 hover:text-rose-400 transition-colors cursor-pointer"
                           title="Hapus Gerai / Instansi"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -2301,7 +2312,7 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
             </div>
 
             {/* Operator Tenant Section */}
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+            <div className="p-2.5 sm:p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-3 mpp-admin-widget w-full">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h3 className="text-base font-bold text-white flex items-center gap-2 font-sans">
@@ -2318,43 +2329,43 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
                     setOperatorForm({ name: "", tenant_id: "", email: "", role: "staff", pin: "" });
                     setIsOperatorModalOpen(true);
                   }}
-                  className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white flex items-center gap-1.5 transition-all self-start cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white flex items-center gap-1.5 transition-all self-start cursor-pointer"
                 >
                   <PlusCircle className="w-4 h-4" />
                   <span>Tambah Operator</span>
                 </button>
               </div>
 
-              <div className="overflow-x-auto rounded-xl border border-slate-800">
-                <table className="w-full text-left border-collapse">
+              <div className="overflow-x-auto rounded-xl border border-slate-800 w-full custom-scrollbar">
+                <table className="w-full text-left border-collapse min-w-[600px]">
                   <thead>
                     <tr className="bg-base/80 text-slate-400 text-[11px] uppercase tracking-wider border-b border-slate-800">
-                      <th className="p-3">Nama Operator</th>
-                      <th className="p-3">Kemitraan Gerai</th>
-                      <th className="p-3">Email Sistem</th>
-                      <th className="p-3">Akses Level</th>
-                      <th className="p-3">Sandi / PIN Loket</th>
-                      <th className="p-3 text-right">Tindakan</th>
+                      <th className="p-2 sm:p-3">Nama Operator</th>
+                      <th className="p-2 sm:p-3">Kemitraan Gerai</th>
+                      <th className="p-2 sm:p-3">Email Sistem</th>
+                      <th className="p-2 sm:p-3">Akses Level</th>
+                      <th className="p-2 sm:p-3">Sandi / PIN Loket</th>
+                      <th className="p-2 sm:p-3 text-right">Tindakan</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/60 text-xs">
                     {operators.map(op => (
                       <tr key={op.id} className="hover:bg-base/40">
-                        <td className="p-3 font-bold text-white">{op.name}</td>
-                        <td className="p-3">
-                          <span className="px-2 py-0.5 rounded-lg bg-slate-800 text-slate-300 font-medium">
+                        <td className="p-2 sm:p-3 font-bold text-white whitespace-nowrap">{op.name}</td>
+                        <td className="p-2 sm:p-3">
+                          <span className="px-2 py-0.5 rounded-lg bg-slate-800 text-slate-300 font-medium leading-relaxed inline-block max-w-[240px] whitespace-normal break-words">
                             {op.tenant}
                           </span>
                         </td>
-                        <td className="p-3 text-slate-400 font-mono">{op.email}</td>
-                        <td className="p-3">
+                        <td className="p-2 sm:p-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">{op.email}</td>
+                        <td className="p-2 sm:p-3 whitespace-nowrap">
                           <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase ${
                             op.role === 'admin' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-sky-500/10 text-sky-400 border border-sky-500/20'
                           }`}>
                             {op.role}
                           </span>
                         </td>
-                        <td className="p-3">
+                        <td className="p-2 sm:p-3 whitespace-nowrap">
                           {op.pin ? (
                             <span className="inline-flex items-center gap-1.5 font-mono text-[11px] px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                               <Lock className="w-3 h-3" />
@@ -2367,8 +2378,8 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
                             </span>
                           )}
                         </td>
-                        <td className="p-3 text-right">
-                          <div className="flex items-center justify-end gap-1.5">
+                        <td className="p-2 sm:p-3 text-right whitespace-nowrap">
+                          <div className="flex items-center justify-end gap-1 sm:gap-1.5">
                             <button
                               onClick={() => {
                                 setEditingOperatorId(op.id);
@@ -2382,14 +2393,14 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
                                 });
                                 setIsOperatorModalOpen(true);
                               }}
-                              className="p-1.5 rounded-lg bg-indigo-950/40 text-indigo-400 hover:bg-indigo-900/60 transition-all border border-indigo-900/20 cursor-pointer"
+                              className="p-1 sm:p-1.5 rounded-lg bg-indigo-950/40 text-indigo-400 hover:bg-indigo-900/60 transition-all border border-indigo-900/20 cursor-pointer"
                               title="Edit Operator"
                             >
                               <Edit3 className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => handleDeleteOperator(op.id)}
-                              className="p-1.5 rounded-lg bg-rose-950/40 text-rose-400 hover:bg-rose-900/60 transition-all border border-rose-900/20 cursor-pointer"
+                              className="p-1 sm:p-1.5 rounded-lg bg-rose-950/40 text-rose-400 hover:bg-rose-900/60 transition-all border border-rose-900/20 cursor-pointer"
                               title="Nonaktifkan"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -2404,7 +2415,7 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
             </div>
 
             {/* Layanan Gerai Section */}
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+            <div className="p-2.5 sm:p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-3 mpp-admin-widget w-full">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h3 className="text-base font-bold text-white flex items-center gap-2 font-sans">
@@ -2421,7 +2432,7 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
                     setServiceForm({ tenant_id: "", service_name: "", requirements: "", estimated_time_minutes: 15, is_active: true, photo_url: "" });
                     setIsServiceModalOpen(true);
                   }}
-                  className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white flex items-center gap-1.5 transition-all self-start cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white flex items-center gap-1.5 transition-all self-start cursor-pointer"
                 >
                   <PlusCircle className="w-4 h-4" />
                   <span>Tambah Layanan & Foto</span>
@@ -2433,7 +2444,7 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
                   Belum ada sub-layanan terdaftar.
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3 w-full">
                   {services.map(s => {
                     const parentTenantName = tenants.find(t => t.id === s.tenant_id)?.name || "Layanan Umum";
                     const customServices = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem("mpp_portal_custom_services") || "[]") : [];
@@ -2441,38 +2452,38 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
                     return (
                       <div
                         key={s.id}
-                        className="p-4 rounded-xl bg-base/60 border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between"
+                        className="mpp-service-card p-2.5 sm:p-3.5 rounded-xl bg-base/60 border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between w-full"
                       >
                         <div className="space-y-2">
                           <div className="flex items-start justify-between gap-3">
-                            <div className="flex items-start gap-3">
+                            <div className="flex items-start gap-3 min-w-0 flex-1">
                               {servicePhoto && (
                                 <img
                                   src={getImageUrl(servicePhoto, 'facility')}
                                   alt={s.service_name}
-                                  className="w-12 h-12 rounded-lg object-cover border border-slate-700 shrink-0 bg-slate-900"
+                                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover border border-slate-700 shrink-0 bg-slate-900 p-0.5"
                                   onError={(e) => handleImageError(e, 'facility')}
                                 />
                               )}
-                              <div>
-                                <span className="text-[10px] font-bold text-slate-400 block uppercase">
+                              <div className="min-w-0 flex-1">
+                                <span className="text-[10px] font-bold text-slate-400 block uppercase truncate">
                                   {parentTenantName}
                                 </span>
-                                <h4 className="font-bold text-sm text-white mt-0.5">{s.service_name}</h4>
+                                <h4 className="font-bold text-xs sm:text-sm text-white mt-0.5 whitespace-normal break-words leading-snug font-sans">{s.service_name}</h4>
                               </div>
                             </div>
-                            <span className="px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 font-mono text-[10px] border border-sky-500/25 shrink-0">
+                            <span className="px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 font-mono text-[10px] border border-sky-500/25 shrink-0 font-bold">
                               {s.estimated_time_minutes} Menit
                             </span>
                           </div>
                           <div>
                             <span className="text-[10px] font-bold text-slate-400 block uppercase">Persyaratan Berkas</span>
-                            <p className="text-xs text-slate-300 mt-1 line-clamp-2 bg-surface/60 p-2 rounded-lg border border-slate-800/80">
+                            <p className="text-xs text-slate-300 mt-1 line-clamp-2 bg-surface/60 p-1.5 rounded-lg border border-slate-800/80">
                               {s.requirements || "Tidak membutuhkan berkas prasyarat khusus."}
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-900 mt-3">
+                        <div className="flex items-center justify-end gap-2 pt-2.5 border-t border-slate-900 mt-2.5">
                           <button
                             onClick={() => {
                               setEditingServiceId(s.id);
@@ -2488,14 +2499,14 @@ export default function PortalMppManagement({ isDark: propIsDark }: { isDark?: b
                               });
                               setIsServiceModalOpen(true);
                             }}
-                            className="text-xs font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 bg-indigo-950/20 px-2.5 py-1 rounded-lg border border-indigo-900/20 cursor-pointer"
+                            className="text-xs font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 bg-indigo-950/20 px-2 py-1 rounded-lg border border-indigo-900/20 cursor-pointer"
                           >
                             <Edit3 className="w-3.5 h-3.5" />
                             <span>Edit Layanan</span>
                           </button>
                           <button
                             onClick={() => handleDeleteService(s.id)}
-                            className="text-xs font-bold text-rose-400 hover:text-rose-300 flex items-center gap-1 bg-rose-950/20 px-2.5 py-1 rounded-lg border border-rose-900/20 cursor-pointer"
+                            className="text-xs font-bold text-rose-400 hover:text-rose-300 flex items-center gap-1 bg-rose-950/20 px-2 py-1 rounded-lg border border-rose-900/20 cursor-pointer"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                             <span>Hapus Layanan</span>

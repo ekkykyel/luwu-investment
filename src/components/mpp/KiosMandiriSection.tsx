@@ -163,7 +163,7 @@ export const KiosMandiriSection: React.FC<KiosMandiriSectionProps> = ({
       )}
 
       {/* 2. HERO WELCOME & TOUCH INSTRUCTION BANNER */}
-      <main className={className || "w-full max-w-5xl mx-auto px-2 sm:px-4 pt-4 sm:pt-8 md:pt-10 pb-32 sm:pb-40 space-y-6 sm:space-y-8 text-center"}>
+      <main className={className || "w-full max-w-5xl mx-auto px-1 sm:px-4 pt-4 sm:pt-8 md:pt-10 pb-32 sm:pb-40 space-y-6 sm:space-y-8 text-center kiosk-persona-cards-container"}>
         <div className="space-y-3 sm:space-y-4 max-w-2xl mx-auto">
           {/* Prominent Animated Touch Prompt CTA Banner */}
           <div className={`inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-8 py-2.5 sm:py-3.5 rounded-full text-xs sm:text-sm md:text-base font-mono font-black shadow-xl tracking-wider uppercase transition-all duration-300 animate-pulse border-2 cursor-pointer active:scale-95 ${
@@ -204,7 +204,7 @@ export const KiosMandiriSection: React.FC<KiosMandiriSectionProps> = ({
                 handleLaneClick('citizen');
               }
             }}
-            className={`group relative p-5 sm:p-8 rounded-3xl backdrop-blur-xl border-2 transition-all duration-300 flex flex-col justify-between space-y-5 sm:space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left shadow-[0_0_50px_-12px_rgba(16,185,129,0.35)] hover:shadow-[0_0_65px_-8px_rgba(16,185,129,0.5)] ${
+            className={`kiosk-persona-card group relative p-3 sm:p-8 rounded-3xl backdrop-blur-xl border-2 transition-all duration-300 flex flex-col justify-between space-y-4 sm:space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left shadow-[0_0_50px_-12px_rgba(16,185,129,0.35)] hover:shadow-[0_0_65px_-8px_rgba(16,185,129,0.5)] ${
               theme === 'dark'
                 ? 'bg-surface/95 border-emerald-500/40 hover:border-emerald-400 text-white'
                 : 'bg-white border-slate-200/90 hover:border-emerald-500 text-slate-900 shadow-xl'

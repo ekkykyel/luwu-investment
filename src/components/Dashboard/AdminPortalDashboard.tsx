@@ -91,6 +91,7 @@ import FourBidangSyncWorkflowModal from './FourBidangSyncWorkflowModal';
 import EstafetHandoverModal from './EstafetHandoverModal';
 import EstafetProgressBanner from './EstafetProgressBanner';
 import AdminLayout from '../Admin/AdminLayout';
+import { useDeviceAutomation } from '../../hooks/useDeviceAutomation';
 import AdminUserManagement from '../Admin/Views/AdminUserManagement';
 import { GRPArchitectureModal } from '../mpp/GRPArchitectureModal';
 import SmartInvestmentFormEngine from '../SmartInvestmentFormEngine';
@@ -137,6 +138,7 @@ interface AdminPortalDashboardProps {
 }
 
 export default function AdminPortalDashboard({ defaultTab }: AdminPortalDashboardProps = {}) {
+  const { isAndroid } = useDeviceAutomation();
   const {
     investments = [],
     districts = [],
@@ -2192,7 +2194,10 @@ Ulas secara mendalam:
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-base flex flex-col md:flex-row font-sans text-slate-800 dark:text-slate-200">
+    <div 
+      id="admin-portal-dashboard" 
+      className={`admin-portal-dashboard admin-dpmptsp-dashboard ${isAndroid ? 'is-android android-active' : ''} min-h-screen bg-slate-50 dark:bg-base flex flex-col md:flex-row font-sans text-slate-800 dark:text-slate-200`}
+    >
       {/* Compact Contextual Android Top App Bar (56px) */}
       <div className="md:hidden flex items-center justify-between h-14 px-3.5 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-surface/95 backdrop-blur-md sticky top-0 z-30">
         <div className="flex items-center gap-2.5 min-w-0">

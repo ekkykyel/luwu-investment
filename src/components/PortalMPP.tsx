@@ -92,6 +92,7 @@ const MppCommandPalette = lazyWithRetry(() => import('./mpp/MppCommandPalette').
 import type { PkkprRecommendationData } from './mpp/PkkprTechnicalRecommendationModal';
 const PkkprTechnicalRecommendationModal = lazyWithRetry(() => import('./mpp/PkkprTechnicalRecommendationModal').then(m => ({ default: m.PkkprTechnicalRecommendationModal })));
 import { useGlobalFullscreenBackHandler } from '../hooks/useModalFullscreenLifecycle';
+import { useDeviceAutomation } from '../hooks/useDeviceAutomation';
 import { ensureFullscreen } from '../utils/fullscreen';
 import { LUWU_LOGO_BASE64 } from '../lib/logoBase64';
 import { supabase } from '../lib/supabaseClient';
@@ -324,6 +325,7 @@ const INITIAL_UMKM_PRODUCTS: any[] = [
 
 // --- Main Component ---
 export default function PortalMPP() {
+  const { isAndroid } = useDeviceAutomation();
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const isZh = i18n.language?.startsWith("zh");
@@ -2171,7 +2173,7 @@ export default function PortalMPP() {
         }
       `}</style>
       
-      <div className="relative z-10 pb-36 md:pb-24 w-full">
+      <div className={`portal-mpp-root ${isAndroid ? 'is-android android-active' : ''} relative z-10 pb-36 md:pb-24 w-full`}>
         {/* Quota restriction status / Database connection alert banner */}
         {dbQuotaRestricted && (
           <div className="bg-amber-600 dark:bg-amber-700/90 text-white px-4 py-2.5 text-center text-xs font-bold font-sans flex items-center justify-center gap-2 border-b border-amber-500 shadow-sm relative z-50">

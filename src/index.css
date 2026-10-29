@@ -1429,6 +1429,464 @@ html.android-fullscreen-mode .android-full-bleed {
 }
 
 /* =========================================================================
+   ANDROID PORTAL MPP: P-1 (4PX) MICRO COMPACT SPECIFICATION
+   Ubah ukuran pada semua: Foto, Card, Padding, Badge, dan Modal Form 
+   menggunakan p-1 (4px) pada halaman Portal MPP ketika menggunakan Android
+   ========================================================================= */
+
+/* 1. ROOT CONTAINER PADDING ON ANDROID */
+html.android-mode .portal-mpp-root,
+html.android-fullscreen-mode .portal-mpp-root,
+body.android-mode .portal-mpp-root,
+body.android-fullscreen-mode .portal-mpp-root,
+.portal-mpp-root.is-android,
+.portal-mpp-root.android-active {
+  --mpp-android-p1: 4px;
+}
+
+html.android-mode .portal-mpp-root main,
+html.android-fullscreen-mode .portal-mpp-root main,
+body.android-mode .portal-mpp-root main,
+body.android-fullscreen-mode .portal-mpp-root main,
+.portal-mpp-root.is-android main {
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
+
+/* 2. CARD (Semua Card di Portal MPP menggunakan p-1 / 4px saat Android) */
+html.android-mode .portal-mpp-root .mpp-card,
+html.android-fullscreen-mode .portal-mpp-root .mpp-card,
+body.android-mode .portal-mpp-root .mpp-card,
+body.android-fullscreen-mode .portal-mpp-root .mpp-card,
+.portal-mpp-root.is-android .mpp-card,
+html.android-mode .portal-mpp-root .bento-card,
+html.android-fullscreen-mode .portal-mpp-root .bento-card,
+body.android-mode .portal-mpp-root .bento-card,
+body.android-fullscreen-mode .portal-mpp-root .bento-card,
+.portal-mpp-root.is-android .bento-card,
+html.android-mode .portal-mpp-root .card,
+html.android-fullscreen-mode .portal-mpp-root .card,
+.portal-mpp-root.is-android .card,
+html.android-mode .portal-mpp-root [class*="rounded-2xl"]:not(button):not(input):not(select):not(textarea):not(span):not(svg):not(path):not(nav),
+html.android-fullscreen-mode .portal-mpp-root [class*="rounded-2xl"]:not(button):not(input):not(select):not(textarea):not(span):not(svg):not(path):not(nav),
+.portal-mpp-root.is-android [class*="rounded-2xl"]:not(button):not(input):not(select):not(textarea):not(span):not(svg):not(path):not(nav),
+html.android-mode .portal-mpp-root [class*="rounded-3xl"]:not(button):not(input):not(select):not(textarea):not(span):not(svg):not(path):not(nav),
+html.android-fullscreen-mode .portal-mpp-root [class*="rounded-3xl"]:not(button):not(input):not(select):not(textarea):not(span):not(svg):not(path):not(nav),
+.portal-mpp-root.is-android [class*="rounded-3xl"]:not(button):not(input):not(select):not(textarea):not(span):not(svg):not(path):not(nav),
+html.android-mode .portal-mpp-root [class*="bg-white dark:bg-"][class*="border"]:not(button):not(input),
+html.android-fullscreen-mode .portal-mpp-root [class*="bg-white dark:bg-"][class*="border"]:not(button):not(input),
+.portal-mpp-root.is-android [class*="bg-white dark:bg-"][class*="border"]:not(button):not(input) {
+  padding: 4px !important;
+}
+
+/* 3. FOTO (Semua Foto dan Image Wrapper di Portal MPP menggunakan p-1 / 4px saat Android) */
+html.android-mode .portal-mpp-root .hero-photo-card,
+html.android-fullscreen-mode .portal-mpp-root .hero-photo-card,
+.portal-mpp-root.is-android .hero-photo-card,
+html.android-mode .portal-mpp-root picture,
+html.android-fullscreen-mode .portal-mpp-root picture,
+.portal-mpp-root.is-android picture,
+html.android-mode .portal-mpp-root figure,
+html.android-fullscreen-mode .portal-mpp-root figure,
+.portal-mpp-root.is-android figure,
+html.android-mode .portal-mpp-root img:not([class*="object-contain"]),
+html.android-fullscreen-mode .portal-mpp-root img:not([class*="object-contain"]),
+.portal-mpp-root.is-android img:not([class*="object-contain"]) {
+  padding: 4px !important;
+}
+
+html.android-mode .portal-mpp-root [class*="aspect-"],
+html.android-fullscreen-mode .portal-mpp-root [class*="aspect-"],
+.portal-mpp-root.is-android [class*="aspect-"] {
+  padding: 4px !important;
+}
+
+/* 4. PADDING (Semua Section, Grid, Container di Portal MPP menggunakan p-1 / 4px saat Android) */
+html.android-mode .portal-mpp-root section,
+html.android-fullscreen-mode .portal-mpp-root section,
+.portal-mpp-root.is-android section,
+html.android-mode .portal-mpp-root .section-container,
+html.android-fullscreen-mode .portal-mpp-root .section-container,
+.portal-mpp-root.is-android .section-container {
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
+
+html.android-mode .portal-mpp-root .grid,
+html.android-fullscreen-mode .portal-mpp-root .grid,
+.portal-mpp-root.is-android .grid {
+  gap: 4px !important;
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
+
+/* 5. BADGE (Semua Badge, Status Pill, Chips, dan Tag di Portal MPP menggunakan p-1 / 4px saat Android) */
+html.android-mode .portal-mpp-root .badge,
+html.android-fullscreen-mode .portal-mpp-root .badge,
+body.android-mode .portal-mpp-root .badge,
+body.android-fullscreen-mode .portal-mpp-root .badge,
+.portal-mpp-root.is-android .badge,
+html.android-mode .portal-mpp-root .mpp-badge,
+html.android-fullscreen-mode .portal-mpp-root .mpp-badge,
+.portal-mpp-root.is-android .mpp-badge,
+html.android-mode .portal-mpp-root [class*="rounded-full"][class*="backdrop-blur"],
+html.android-fullscreen-mode .portal-mpp-root [class*="rounded-full"][class*="backdrop-blur"],
+.portal-mpp-root.is-android [class*="rounded-full"][class*="backdrop-blur"],
+html.android-mode .portal-mpp-root [class*="rounded-full"][class*="bg-slate-950"],
+html.android-fullscreen-mode .portal-mpp-root [class*="rounded-full"][class*="bg-slate-950"],
+.portal-mpp-root.is-android [class*="rounded-full"][class*="bg-slate-950"],
+html.android-mode .portal-mpp-root [class*="rounded-xl"][class*="bg-slate-950"],
+html.android-fullscreen-mode .portal-mpp-root [class*="rounded-xl"][class*="bg-slate-950"],
+.portal-mpp-root.is-android [class*="rounded-xl"][class*="bg-slate-950"],
+html.android-mode .portal-mpp-root button[class*="min-h-"][class*="rounded-xl"],
+html.android-fullscreen-mode .portal-mpp-root button[class*="min-h-"][class*="rounded-xl"],
+.portal-mpp-root.is-android button[class*="min-h-"][class*="rounded-xl"] {
+  padding: 4px 6px !important;
+}
+
+/* 6. SEMUA MODAL FORM (Semua Modal Form di Portal MPP menggunakan p-1 / 4px saat Android) */
+html.android-mode .fixed.inset-0,
+html.android-fullscreen-mode .fixed.inset-0,
+body.android-mode .fixed.inset-0,
+body.android-fullscreen-mode .fixed.inset-0 {
+  padding: 4px !important;
+}
+
+html.android-mode [role="dialog"],
+html.android-fullscreen-mode [role="dialog"],
+body.android-mode [role="dialog"],
+body.android-fullscreen-mode [role="dialog"],
+html.android-mode .fixed.inset-0 > div,
+html.android-fullscreen-mode .fixed.inset-0 > div,
+body.android-mode .fixed.inset-0 > div,
+body.android-fullscreen-mode .fixed.inset-0 > div {
+  padding: 4px !important;
+}
+
+html.android-mode [role="dialog"] form,
+html.android-fullscreen-mode [role="dialog"] form,
+body.android-mode [role="dialog"] form,
+body.android-fullscreen-mode [role="dialog"] form,
+html.android-mode .fixed.inset-0 form,
+html.android-fullscreen-mode .fixed.inset-0 form,
+body.android-mode .fixed.inset-0 form,
+body.android-fullscreen-mode .fixed.inset-0 form {
+  padding: 4px !important;
+}
+
+html.android-mode [role="dialog"] .modal-header,
+html.android-fullscreen-mode [role="dialog"] .modal-header,
+html.android-mode [role="dialog"] .modal-body,
+html.android-fullscreen-mode [role="dialog"] .modal-body,
+html.android-mode [role="dialog"] .modal-footer,
+html.android-fullscreen-mode [role="dialog"] .modal-footer,
+html.android-mode .fixed.inset-0 [class*="border-b"],
+html.android-fullscreen-mode .fixed.inset-0 [class*="border-b"],
+html.android-mode .fixed.inset-0 [class*="overflow-y-auto"],
+html.android-fullscreen-mode .fixed.inset-0 [class*="overflow-y-auto"] {
+  padding: 4px !important;
+}
+
+html.android-mode [role="dialog"] [class*="space-y-"] > div,
+html.android-fullscreen-mode [role="dialog"] [class*="space-y-"] > div,
+html.android-mode .fixed.inset-0 [class*="space-y-"] > div,
+html.android-fullscreen-mode .fixed.inset-0 [class*="space-y-"] > div {
+  padding: 4px !important;
+}
+
+/* =========================================================================
+   ANDROID DASHBOARD DPMPTSP, DINAS PUPTR & DINAS PERTANIAN:
+   P-1 (4PX) MICRO COMPACT SPECIFICATION
+   Ubah ukuran pada semua: Foto, Card, Padding, Badge, dan Modal Form 
+   menggunakan p-1 (4px) saat Android aktif
+   ========================================================================= */
+
+/* 1. CONTAINER & GENERAL PADDING (Menggunakan p-1 / 4px) */
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode, .is-android, .android-active) :is(
+  .admin-portal-dashboard,
+  .admin-dpmptsp-dashboard,
+  .admin-puptr-dashboard,
+  .puptr-overview-container,
+  .admin-pertanian-dashboard,
+  .pertanian-overview-container,
+  #admin-portal-dashboard,
+  #admin-root-container,
+  .admin-root-container
+) {
+  --admin-android-p1: 4px;
+}
+
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(
+  .admin-portal-dashboard,
+  .admin-dpmptsp-dashboard,
+  .admin-puptr-dashboard,
+  .puptr-overview-container,
+  .admin-pertanian-dashboard,
+  .pertanian-overview-container,
+  #admin-portal-dashboard,
+  #admin-root-container,
+  .admin-root-container
+) :is(
+  main,
+  section,
+  .section-container,
+  .p-3,
+  .p-4,
+  .p-5,
+  .p-6,
+  .p-8,
+  .sm\:p-5,
+  .sm\:p-6,
+  .sm\:p-8
+) {
+  padding: 4px !important;
+}
+
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(
+  .admin-portal-dashboard,
+  .admin-dpmptsp-dashboard,
+  .admin-puptr-dashboard,
+  .puptr-overview-container,
+  .admin-pertanian-dashboard,
+  .pertanian-overview-container,
+  #admin-portal-dashboard,
+  #admin-root-container,
+  .admin-root-container
+) .grid {
+  gap: 4px !important;
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
+
+/* 2. CARD (Semua Card di Dashboard DPMPTSP, PUPTR & Pertanian menggunakan p-1 / 4px) */
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(
+  .admin-portal-dashboard,
+  .admin-dpmptsp-dashboard,
+  .admin-puptr-dashboard,
+  .puptr-overview-container,
+  .admin-pertanian-dashboard,
+  .pertanian-overview-container,
+  #admin-portal-dashboard,
+  #admin-root-container,
+  .admin-root-container
+) :is(
+  [class*="rounded-2xl"]:not(button):not(input):not(select):not(textarea):not(span):not(svg):not(path):not(nav),
+  [class*="rounded-3xl"]:not(button):not(input):not(select):not(textarea):not(span):not(svg):not(path):not(nav),
+  [class*="rounded-xl"]:not(button):not(input):not(select):not(textarea):not(span):not(svg):not(path):not(nav):not(label),
+  .stat-card,
+  .kpi-card,
+  .metric-card,
+  .dashboard-panel,
+  .analytics-widget,
+  [class*="bg-white dark:bg-"][class*="border"]:not(button):not(input):not(select):not(textarea),
+  [class*="bg-white/"][class*="border"]:not(button):not(input):not(select):not(textarea),
+  [class*="bg-slate-"][class*="border"]:not(button):not(input):not(select):not(textarea),
+  [class*="bg-indigo-"][class*="border"]:not(button):not(input):not(select):not(textarea),
+  [class*="bg-amber-"][class*="border"]:not(button):not(input):not(select):not(textarea),
+  [class*="bg-emerald-"][class*="border"]:not(button):not(input):not(select):not(textarea)
+) {
+  padding: 4px !important;
+}
+
+/* 3. FOTO (Semua Foto, Avatar, Profil, Preview Peta Spasial di DPMPTSP, PUPTR & Pertanian) */
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(
+  .admin-portal-dashboard,
+  .admin-dpmptsp-dashboard,
+  .admin-puptr-dashboard,
+  .puptr-overview-container,
+  .admin-pertanian-dashboard,
+  .pertanian-overview-container,
+  #admin-portal-dashboard,
+  #admin-root-container,
+  .admin-root-container
+) :is(
+  img:not([class*="object-contain"]),
+  picture,
+  figure,
+  .avatar,
+  .officer-photo,
+  [class*="aspect-"]
+) {
+  padding: 4px !important;
+}
+
+/* 4. BADGE (Semua Badge, Status Pill, Chip & Tag di DPMPTSP, PUPTR & Pertanian) */
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(
+  .admin-portal-dashboard,
+  .admin-dpmptsp-dashboard,
+  .admin-puptr-dashboard,
+  .puptr-overview-container,
+  .admin-pertanian-dashboard,
+  .pertanian-overview-container,
+  #admin-portal-dashboard,
+  #admin-root-container,
+  .admin-root-container
+) :is(
+  .badge,
+  .mpp-badge,
+  [class*="rounded-full"][class*="border"],
+  [class*="rounded-full"][class*="bg-"],
+  [class*="rounded-full"][class*="px-"],
+  span[class*="font-mono"][class*="rounded-full"],
+  span[class*="tracking-wider"][class*="rounded-full"],
+  span[class*="text-[10px]"][class*="rounded-full"],
+  span[class*="rounded-lg"][class*="border"]
+) {
+  padding: 4px 6px !important;
+}
+
+/* 5. SEMUA MODAL FORM DI DASHBOARD DPMPTSP, DINAS PUPTR & DINAS PERTANIAN */
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(
+  .admin-modal-form,
+  .smart-form-pertanian-modal
+) {
+  padding: 4px !important;
+}
+
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(
+  .admin-modal-form,
+  .smart-form-pertanian-modal
+) :is(
+  > div,
+  .modal-dialog,
+  .modal-container,
+  .modal-content
+) {
+  padding: 4px !important;
+}
+
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(
+  .admin-modal-form,
+  .smart-form-pertanian-modal
+) :is(
+  form,
+  .modal-body,
+  [class*="overflow-y-auto"]
+) {
+  padding: 4px !important;
+}
+
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(
+  .admin-modal-form,
+  .smart-form-pertanian-modal
+) :is(
+  .modal-header,
+  .modal-footer,
+  [class*="border-b"],
+  [class*="border-t"]
+) {
+  padding: 4px !important;
+}
+
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(
+  .admin-modal-form,
+  .smart-form-pertanian-modal
+) :is(
+  .space-y-4 > div,
+  .space-y-5 > div,
+  .space-y-6 > div,
+  .grid > div
+) {
+  padding: 4px !important;
+}
+
+/* =========================================================================
+   KELOLA PORTAL MPP: DAFTAR GERAI & INSTANSI, MENU, WIDGET & MODAL FORM
+   Perlebar daftar gerai + gunakan ukuran p-1 (4px) untuk foto, card, 
+   padding, badge, menu, widget, dan modal form saat Android
+   ========================================================================= */
+
+.portal-mpp-management,
+#mpp-dashboard-root {
+  --mpp-portal-p1: 4px;
+}
+
+/* 1. PERLEBAR DAFTAR GERAI (Widened Full Width Grid & Card) */
+:is(.portal-mpp-management, #mpp-dashboard-root) .mpp-gerai-card,
+:is(.portal-mpp-management, #mpp-dashboard-root) .gerai-item-card {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(.portal-mpp-management, #mpp-dashboard-root) .mpp-gerai-card,
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(.portal-mpp-management, #mpp-dashboard-root) .gerai-item-card {
+  padding: 4px !important;
+}
+
+/* 2. SEMUA MENU & SUB-TAB NAVIGASI DI KELOLA PORTAL MPP */
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(.portal-mpp-management, #mpp-dashboard-root) :is(
+  .custom-scrollbar button,
+  .overflow-x-auto button,
+  nav button
+) {
+  padding: 4px 8px !important;
+  min-height: 38px !important;
+}
+
+/* 3. SEMUA WIDGET, PANEL & KARTU DI KELOLA PORTAL MPP */
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(.portal-mpp-management, #mpp-dashboard-root) :is(
+  .mpp-admin-widget,
+  .widget,
+  .bento-card,
+  .card,
+  [class*="rounded-2xl"]:not(button):not(input):not(select):not(textarea):not(span):not(svg):not(path):not(nav),
+  [class*="rounded-3xl"]:not(button):not(input):not(select):not(textarea):not(span):not(svg):not(path):not(nav),
+  [class*="rounded-xl"]:not(button):not(input):not(select):not(textarea):not(span):not(svg):not(path):not(nav):not(label),
+  [class*="bg-slate-900"][class*="border"],
+  [class*="bg-base"][class*="border"]
+) {
+  padding: 4px !important;
+}
+
+/* 4. SEMUA BADGE & STATUS PILL DI KELOLA PORTAL MPP */
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(.portal-mpp-management, #mpp-dashboard-root) :is(
+  .badge,
+  .mpp-badge,
+  [class*="rounded-full"][class*="border"],
+  [class*="rounded-full"][class*="bg-"],
+  [class*="rounded-full"][class*="px-"]
+) {
+  padding: 4px 6px !important;
+}
+
+/* 5. SEMUA MODAL FORM DI KELOLA PORTAL MPP */
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(
+  .fixed.inset-0.z-\\[150\\],
+  .fixed.inset-0[class*="z-"]
+) {
+  padding: 4px !important;
+}
+
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(
+  .fixed.inset-0.z-\\[150\\] > div,
+  .fixed.inset-0[class*="z-"] > div
+) {
+  padding: 4px !important;
+}
+
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(
+  .fixed.inset-0.z-\\[150\\] form,
+  .fixed.inset-0[class*="z-"] form,
+  .fixed.inset-0.z-\\[150\\] .space-y-4,
+  .fixed.inset-0[class*="z-"] .space-y-4
+) {
+  padding: 4px !important;
+}
+
+:is(html.android-mode, html.android-fullscreen-mode, body.android-mode, body.android-fullscreen-mode) :is(
+  .fixed.inset-0.z-\\[150\\] input,
+  .fixed.inset-0[class*="z-"] input,
+  .fixed.inset-0.z-\\[150\\] select,
+  .fixed.inset-0[class*="z-"] select,
+  .fixed.inset-0.z-\\[150\\] textarea,
+  .fixed.inset-0[class*="z-"] textarea
+) {
+  padding: 6px 8px !important;
+}
+
+/* =========================================================================
    6. ULTRA-POLISHED MICRO-ANIMATIONS: SHIMMER SWEEP & PROGRESS BAR GLOW
    ========================================================================= */
 @keyframes shimmer-sweep {
@@ -1687,5 +2145,87 @@ body.mpp-lite-mode .glass-crystal {
   background-color: rgb(var(--bg-surface)) !important;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08) !important;
 }
+
+/* === Android & Mobile Spatial Map Layer Legend Position Optimization === */
+@media (max-width: 768px) {
+  .layer-legend-control-root,
+  .android-mode .layer-legend-control-root,
+  .android-fullscreen-mode .layer-legend-control-root {
+    margin-top: 82px !important;
+  }
+}
+
+/* === Android & Mobile MPP Hero Photo Card Expansion (p-1 / 4px) === */
+@media (max-width: 1024px) {
+  .hero-photo-card-container,
+  .android-mode .hero-photo-card-container,
+  .android-fullscreen-mode .hero-photo-card-container {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    width: 100% !important;
+  }
+
+  .hero-photo-card-wrapper,
+  .android-mode .hero-photo-card-wrapper {
+    padding: 4px !important;
+    width: 100% !important;
+  }
+
+  .hero-photo-card,
+  .mpp-photo-card,
+  .android-mode .hero-photo-card,
+  .android-fullscreen-mode .hero-photo-card {
+    padding: 4px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+.android-mode .hero-photo-card-container,
+.android-fullscreen-mode .hero-photo-card-container,
+.android-mode .hero-photo-card,
+.android-fullscreen-mode .hero-photo-card {
+  padding: 4px !important;
+  width: 100% !important;
+}
+
+/* === Layanan Mandiri Persona Cards Expansion p-1 (4px) === */
+@media (max-width: 1024px) {
+  .kiosk-persona-cards-container,
+  .android-mode .kiosk-persona-cards-container,
+  .android-fullscreen-mode .kiosk-persona-cards-container {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    width: 100% !important;
+  }
+
+  .kiosk-persona-card,
+  .android-mode .kiosk-persona-card,
+  .android-fullscreen-mode .kiosk-persona-card {
+    padding: 4px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+.android-mode .kiosk-persona-card,
+.android-fullscreen-mode .kiosk-persona-card {
+  padding: 4px !important;
+  width: 100% !important;
+}
+.android-fullscreen-mode .hero-photo-card {
+  padding: 4px !important;
+  width: 100% !important;
+}
+
+
 
 

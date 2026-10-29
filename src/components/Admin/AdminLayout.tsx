@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useDeviceAutomation } from "../../hooks/useDeviceAutomation";
 import {
   LayoutDashboard,
   Building2,
@@ -112,6 +113,7 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 export default function AdminLayout() {
+  const { isAndroid } = useDeviceAutomation();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -243,9 +245,12 @@ export default function AdminLayout() {
   };
 
   return (
-    <div id="admin-root-container" className={`min-h-screen w-full flex flex-col md:flex-row overflow-hidden font-sans select-none transition-colors duration-300 ${
-      isDark ? "bg-base text-slate-100" : "bg-slate-50 text-slate-900"
-    }`}>
+    <div 
+      id="admin-root-container" 
+      className={`admin-root-container admin-dpmptsp-dashboard ${isAndroid ? 'is-android android-active' : ''} min-h-screen w-full flex flex-col md:flex-row overflow-hidden font-sans select-none transition-colors duration-300 ${
+        isDark ? "bg-base text-slate-100" : "bg-slate-50 text-slate-900"
+      }`}
+    >
       {/* ── GLOBAL ANDROID FRIENDLY & DUAL THEME STYLES ── */}
       <style>{`
         /* Android Friendly Font Scaling & Comfort Touch Targets */

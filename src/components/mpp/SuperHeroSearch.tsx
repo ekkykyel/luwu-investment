@@ -311,7 +311,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
     : t('hero.search_placeholder', 'Cari layanan, izin, instansi, atau dokumen...');
 
   return (
-    <div ref={heroRef} className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-2 pb-2 sm:pt-4 sm:pb-4 relative z-10">
+    <div ref={heroRef} className="w-full max-w-7xl mx-auto px-1 sm:px-6 lg:px-8 pt-2 pb-2 sm:pt-4 sm:pb-4 relative z-10 hero-photo-card-container">
       {/* ───────────────────────────────────────────────────────────────────────────── */}
       {/* OPSI A: MODERN SPLIT-EDITORIAL CIVIC HERO (12-COL ASYMMETRIC ARCHITECTURE)    */}
       {/* Left 7 Cols: High-Contrast Editorial Command & Omni-Search                    */}
@@ -480,7 +480,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.55, delay: 0.12 }}
-          className="lg:col-span-5 w-full relative group p-1 sm:p-0"
+          className="lg:col-span-5 w-full relative group p-1 sm:p-0 hero-photo-card-wrapper"
         >
           {/* Subtle Spatial Depth Ambient Glow (Dark Mode) */}
           <div
@@ -488,14 +488,14 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
             className="pointer-events-none absolute -inset-2 rounded-[32px] bg-gradient-to-tr from-emerald-500/20 via-teal-500/15 to-[#E2C475]/25 blur-xl opacity-60 dark:opacity-75 group-hover:opacity-100 transition-opacity duration-700 -z-10"
           />
 
-          <div className="relative w-full aspect-[16/10] sm:aspect-[1280/775] rounded-[20px] sm:rounded-[26px] overflow-hidden border border-[#D8CEBC] dark:border-[#C9A24B]/35 shadow-[0_20px_44px_-16px_rgba(15,35,45,0.18)] dark:shadow-[0_24px_52px_-16px_rgba(0,0,0,0.85)] bg-[#0A2236] p-1 sm:p-0">
+          <div className="hero-photo-card mpp-card relative w-full aspect-[16/10] sm:aspect-[1280/775] rounded-[16px] sm:rounded-[26px] overflow-hidden border border-[#D8CEBC] dark:border-[#C9A24B]/35 shadow-[0_20px_44px_-16px_rgba(15,35,45,0.18)] dark:shadow-[0_24px_52px_-16px_rgba(0,0,0,0.85)] bg-[#0A2236] p-1">
             
             {/* Sulapa Eppa Inner Gold Hairline Frame */}
             <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#E2C475]/85 to-transparent z-30" />
             <div aria-hidden="true" className="hidden sm:block pointer-events-none absolute inset-2.5 rounded-[18px] border border-white/25 dark:border-[#E2C475]/15 z-20" />
 
             {/* Live Operational Status Floating Pill */}
-            <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-30 flex items-center gap-1.5 sm:gap-2 p-1 px-2.5 sm:px-3 sm:py-1.5 rounded-full bg-slate-950/75 dark:bg-slate-950/85 backdrop-blur-md border border-white/20 dark:border-emerald-500/30 text-white shadow-lg pointer-events-none">
+            <div className="mpp-badge operational-badge absolute top-2 sm:top-4 left-2 sm:left-4 z-30 flex items-center gap-1.5 sm:gap-2 p-1 px-2.5 sm:px-3 sm:py-1.5 rounded-full bg-slate-950/75 dark:bg-slate-950/85 backdrop-blur-md border border-white/20 dark:border-emerald-500/30 text-white shadow-lg pointer-events-none">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />

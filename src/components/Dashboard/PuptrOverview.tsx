@@ -93,7 +93,7 @@ export default function PuptrOverview({
   }, [pkkprPuptrList, searchQuery]);
 
   return (
-    <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500">
+    <div className="admin-puptr-dashboard puptr-overview-container space-y-6 sm:space-y-8 animate-in fade-in duration-500">
       {/* 1. Header Banner Tupoksi Dinas PUPTR */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-slate-900 to-blue-950 text-white p-6 sm:p-8 border border-indigo-500/30 shadow-2xl">
         <div className="absolute top-0 right-0 w-96 h-48 bg-indigo-500/10 blur-3xl rounded-full -mr-20 -mt-10 pointer-events-none" />

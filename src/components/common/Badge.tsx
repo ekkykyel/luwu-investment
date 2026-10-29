@@ -109,7 +109,7 @@ export const Badge: React.FC<BadgeProps> = ({
 
   return (
     <span
-      className={`inline-flex items-center font-bold font-sans rounded-full leading-none tracking-wide uppercase transition-colors ${sizeClasses} ${
+      className={`mpp-badge inline-flex items-center font-bold font-sans rounded-full leading-none tracking-wide uppercase transition-colors ${sizeClasses} ${
         toneClasses[activeTone] || toneClasses.emerald
       } ${pulse ? 'animate-pulse' : ''} ${className}`}
       {...props}
