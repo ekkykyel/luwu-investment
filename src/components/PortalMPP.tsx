@@ -341,6 +341,26 @@ export default function PortalMPP() {
     return () => observer.disconnect();
   }, []);
 
+  // Dynamic SEO & Title Management for /mpp
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const prevTitle = document.title;
+    document.title = "Portal MPP Simpurusiang - Mal Pelayanan Publik Kabupaten Luwu";
+    
+    const metaDesc = document.querySelector('meta[name="description"]');
+    const prevDesc = metaDesc ? metaDesc.getAttribute('content') : null;
+    if (metaDesc) {
+      metaDesc.setAttribute('content', 'Portal Pelayanan Publik Terpadu Satu Pintu Kabupaten Luwu. Akses 20 instansi terpadu, antrean online, konsultasi perizinan, dan dokumen kependudukan di Belopa.');
+    }
+
+    return () => {
+      document.title = prevTitle;
+      if (metaDesc && prevDesc) {
+        metaDesc.setAttribute('content', prevDesc);
+      }
+    };
+  }, []);
+
   const [selectedUMKM, setSelectedUMKM] = useState<any>(null);
   const [activeUmkmFilter, setActiveUmkmFilter] = useState<string>("Semua");
   const [umkmProducts, setUmkmProducts] = useState<any[]>(INITIAL_UMKM_PRODUCTS);
@@ -1245,9 +1265,18 @@ export default function PortalMPP() {
 
             const tenantServices = tenantServicesFull.map(s => s.name);
 
-            const finalLayananList = tenantServices.length > 0 
+            // Filter out generic boilerplate services duplicated during database seeding
+            const isGenericBoilerplate = tenantServices.length > 0 && 
+              tenantServices.every(s => ['konsultasi layanan', 'penerbitan dokumen', 'verifikasi berkas', 'pengaduan layanan', 'pelayanan umum'].includes(s.toLowerCase().trim()));
+
+            const finalLayananList = (tenantServices.length > 0 && !isGenericBoilerplate)
               ? tenantServices 
-              : (matchedStatic?.layananList || [t.name]);
+              : (matchedStatic?.layananList || (tenantServices.length > 0 ? tenantServices : [t.name]));
+
+            // Sanitize raw description from database (strip 'test', 'null', or empty)
+            const rawDesc = (t.description || '').trim();
+            const isJunkDesc = !rawDesc || rawDesc.toLowerCase() === 'test' || rawDesc.toLowerCase() === 'null' || rawDesc.length < 10;
+            const validDesc = isJunkDesc ? (matchedStatic?.deskripsi || `Pusat pelayanan terpadu ${t.name} di Gedung MPP Simpurusiang Kab. Luwu`) : rawDesc;
 
             if (matchedStatic) {
               return {
@@ -1255,7 +1284,7 @@ export default function PortalMPP() {
                 nama: t.name,
                 logo: cleanLogo || matchedStatic.logo || '/assets/images/default-agency.svg',
                 loket: t.floor || matchedStatic.loket,
-                deskripsi: t.description || matchedStatic.deskripsi,
+                deskripsi: validDesc,
                 layananList: finalLayananList,
                 servicesData: tenantServicesFull,
               };
@@ -1269,7 +1298,7 @@ export default function PortalMPP() {
               logo: cleanLogo || '/assets/images/default-agency.svg',
               loket: t.floor || 'Loket Pelayanan MPP',
               jamLayanan: 'Senin - Kamis (07:30 - 16:00) | Jumat (07:30 - 16:30 WITA)',
-              deskripsi: t.description || `Pelayanan terpadu ${t.name} di Gedung MPP Simpurusiang Kab. Luwu`,
+              deskripsi: validDesc,
               layananList: finalLayananList,
               servicesData: tenantServicesFull,
               syaratUmum: ['KTP-el / Kartu Keluarga', 'Surat Permohonan / Berkas Terkait']
@@ -2114,6 +2143,13 @@ export default function PortalMPP() {
       id="portal-top"
       className="bg-[#FAF8F3] dark:bg-[#061320] text-slate-900 dark:text-[#E6ECF2] font-sans w-full overflow-x-clip relative min-h-screen transition-colors duration-300"
     >
+      {/* 1. ACCESSIBLE SKIP TO MAIN CONTENT LINK (WCAG AAA) */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2.5 focus:bg-[#0F6B4F] focus:text-white focus:rounded-xl focus:shadow-2xl focus:font-bold focus:ring-2 focus:ring-[#C9A24B] focus:outline-none transition-all"
+      >
+        Lewati ke Konten Utama
+      </a>
       <style>{`
         .font-sans { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
         .font-editorial { font-family: 'Fraunces', 'Playfair Display', Georgia, serif; }
@@ -2207,6 +2243,12 @@ export default function PortalMPP() {
                   isActive: showQuickNav && activeSectionId === 'fasilitas',
                 },
                 {
+                  id: 'profil',
+                  label: "Profil & Maklumat",
+                  route: '/mpp/tentang',
+                  isActive: false,
+                },
+                {
                   id: 'umkm',
                   label: t("mppPortal.nav.umkm", "Katalog UMKM"),
                   isActive: showQuickNav && activeSectionId === 'umkm',
@@ -2219,10 +2261,14 @@ export default function PortalMPP() {
               ].map((navItem) => (
                 <a
                   key={navItem.id}
-                  href={`#${navItem.id}`}
+                  href={(navItem as any).route || `#${navItem.id}`}
                   onClick={(e) => {
                     e.preventDefault();
-                    navigateToMppSection(navItem.id);
+                    if ((navItem as any).route) {
+                      navigate((navItem as any).route);
+                    } else {
+                      navigateToMppSection(navItem.id);
+                    }
                   }}
                   className={`pb-0.5 font-sans text-xs sm:text-sm transition-colors cursor-pointer whitespace-nowrap border-b-2 ${
                     navItem.isActive
@@ -2469,7 +2515,7 @@ export default function PortalMPP() {
       </div>
 
         {/* Main Content Area */}
-        <main className="w-full max-w-[1440px] mx-auto px-0 pt-0.5 sm:pt-3 pb-4 sm:pb-6 md:pb-8 flex flex-col gap-0 overflow-x-clip">
+        <main id="main-content" tabIndex={-1} className="w-full max-w-[1440px] mx-auto px-0 pt-0.5 sm:pt-3 pb-4 sm:pb-6 md:pb-8 flex flex-col gap-0 overflow-x-clip outline-none">
           
           {/* Hero Section (Harmonized Nusantara Alabaster vs Nocturnal Imperial Slate) */}
           <section
@@ -2511,7 +2557,7 @@ export default function PortalMPP() {
                 hidden: { opacity: 0, y: 15 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
               }}
-              className="grid grid-cols-3 gap-2 sm:gap-4 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-2 sm:mt-3 mb-5 sm:mb-7"
+              className="grid grid-cols-3 gap-1.5 sm:gap-4 w-full max-w-7xl mx-auto px-1 sm:px-6 lg:px-8 mt-2 sm:mt-3 mb-4 sm:mb-7"
             >
               {(activePersona === 'investor'
                 ? [
@@ -2583,7 +2629,7 @@ export default function PortalMPP() {
                     key={action.id}
                     type="button"
                     onClick={action.onClick}
-                    className={`w-full min-h-[84px] sm:h-[90px] p-3 sm:px-5 sm:py-4 rounded-2xl border active:scale-[0.98] transition-all duration-200 flex flex-col sm:flex-row items-start sm:items-center justify-between sm:gap-4 group cursor-pointer text-left ${
+                    className={`w-full min-h-[72px] sm:h-[90px] p-1 sm:px-5 sm:py-4 rounded-xl sm:rounded-2xl border active:scale-[0.98] transition-all duration-200 flex flex-col sm:flex-row items-start sm:items-center justify-between sm:gap-4 group cursor-pointer text-left ${
                       isPrimaryCard
                         ? 'bg-white dark:bg-[#0D243B] hover:bg-[#FCFBF7] dark:hover:bg-[#133250] border-[#D6C6A5] dark:border-[#C9A24B]/30 hover:border-[#0F6B4F]/50 dark:hover:border-emerald-400/45 shadow-[0_10px_28px_-10px_rgba(133,90,20,0.14)] dark:shadow-[inset_0_1px_0_rgba(226,196,117,0.10),0_14px_30px_-12px_rgba(0,0,0,0.6)]'
                         : 'bg-white dark:bg-[#0B1F33] hover:bg-[#FCFBF7] dark:hover:bg-[#112C47] border-[#E4DDD0] dark:border-white/[0.09] hover:border-[#0F6B4F]/40 dark:hover:border-emerald-400/35 shadow-[0_8px_24px_-12px_rgba(24,24,27,0.08)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_12px_28px_-12px_rgba(0,0,0,0.55)]'
@@ -5430,13 +5476,26 @@ export default function PortalMPP() {
                     <li>
                       <a 
                         className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200 cursor-pointer" 
-                        href="#maklumat-pelayanan-sla"
+                        href="/mpp/tentang"
                         onClick={(e) => {
                           e.preventDefault();
-                          navigateToMppSection('maklumat-pelayanan-sla');
+                          navigate('/mpp/tentang');
                         }}
                       >
-                        <span className="truncate">Maklumat &amp; SLA</span>
+                        <span className="truncate">Tentang &amp; Visi Misi</span>
+                        <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
+                      </a>
+                    </li>
+                    <li>
+                      <a 
+                        className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200 cursor-pointer" 
+                        href="/mpp/maklumat-pelayanan"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate('/mpp/maklumat-pelayanan');
+                        }}
+                      >
+                        <span className="truncate">Maklumat Pelayanan &amp; SLA</span>
                         <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
                       </a>
                     </li>

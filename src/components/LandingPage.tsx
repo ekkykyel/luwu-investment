@@ -2620,7 +2620,13 @@ export default function LandingPage({
                   },
                 },
                 { name: t("nav.potensi"), id: "potensi-section" },
-                { name: "MPP", id: "mpp-showcase-section" },
+                {
+                  name: "MPP",
+                  action: (e: any) => {
+                    e?.preventDefault?.();
+                    window.location.href = "https://luwu-investment.vercel.app/mpp";
+                  }
+                },
                 {
                   name: t("nav.pengaduan"),
                   action: (e: any) => {
@@ -2787,7 +2793,14 @@ export default function LandingPage({
                     },
                   },
                   { name: t("nav.potensi"), id: "potensi-section" },
-                  { name: "MPP", id: "mpp-showcase-section" },
+                  {
+                    name: "MPP",
+                    action: (e: any) => {
+                      e?.preventDefault?.();
+                      setIsMobileMenuOpen(false);
+                      window.location.href = "https://luwu-investment.vercel.app/mpp";
+                    }
+                  },
                   {
                     name: t("nav.pengaduanMasyarakat"),
                     action: (e: any) => {
@@ -3060,7 +3073,7 @@ export default function LandingPage({
                   style={{ animation: 'investluwu-fade-up .55s .2s ease both' }}
                 >
                   <div
-                    className={`flex items-center gap-2.5 sm:gap-3 pl-3.5 pr-2 sm:pl-4 sm:pr-2.5 py-2 sm:py-2.5 rounded-2xl border transition-all duration-200 ${
+                    className={`flex items-center gap-2 sm:gap-3 p-1 pl-2.5 sm:pl-4 sm:pr-2.5 sm:py-2.5 rounded-2xl border transition-all duration-200 ${
                       isDark
                         ? "bg-[#0F2942]/92 border-white/[0.16] hover:border-white/25 focus-within:bg-[#133250]/95 focus-within:border-emerald-400/60 focus-within:ring-2 focus-within:ring-emerald-400/20 shadow-[0_12px_32px_rgba(0,0,0,0.38)] backdrop-blur-xl"
                         : "bg-white/95 border-slate-200/95 hover:border-slate-300 focus-within:bg-white focus-within:border-emerald-600/60 focus-within:ring-2 focus-within:ring-emerald-500/20 shadow-[0_10px_28px_rgba(15,23,42,0.08)] backdrop-blur-xl"
@@ -3123,7 +3136,7 @@ export default function LandingPage({
                           setSmartFilterState((prev) => ({ ...prev, searchTerm: tag }));
                           scrollToSection("potensi-section");
                         }}
-                        className={`px-2.5 sm:px-3 py-1 rounded-lg text-xs font-semibold shrink-0 whitespace-nowrap border transition-all duration-150 min-h-[32px] cursor-pointer ${
+                        className={`p-1 px-2.5 sm:px-3 sm:py-1 rounded-lg text-xs font-semibold shrink-0 whitespace-nowrap border transition-all duration-150 min-h-[28px] sm:min-h-[32px] cursor-pointer ${
                           isDark
                             ? "bg-[#14304C]/88 hover:bg-[#1A4366] text-slate-200 hover:text-white border-white/[0.14]"
                             : "bg-white/92 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border-slate-200/95 shadow-2xs"
@@ -3137,13 +3150,13 @@ export default function LandingPage({
 
                 {/* Proportional Side-by-Side Executive CTAs on Android & Inline on Desktop */}
                 <div
-                  className="grid grid-cols-[1.28fr_1fr] sm:flex sm:flex-wrap gap-2.5 sm:gap-3 mb-5 sm:mb-6 w-full max-w-xl sm:max-w-none"
+                  className="grid grid-cols-[1.28fr_1fr] sm:flex sm:flex-wrap gap-2 sm:gap-3 mb-5 sm:mb-6 w-full max-w-xl sm:max-w-none"
                   style={{ animation: 'investluwu-fade-up .55s .26s ease both' }}
                 >
                   <button
                     type="button"
                     onClick={(e: any) => handleGisClick(e, "default")}
-                    className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3.5 sm:px-6 py-3 sm:py-3.5 min-h-[48px] rounded-xl text-white text-[13.5px] sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:-translate-y-0.5 cursor-pointer ${
+                    className={`w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 p-1.5 sm:px-6 sm:py-3.5 min-h-[44px] sm:min-h-[48px] rounded-xl text-white text-[13px] sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:-translate-y-0.5 cursor-pointer ${
                       isDark
                         ? "bg-emerald-600 hover:bg-emerald-500 border border-emerald-400/35 shadow-[0_8px_22px_rgba(16,185,129,.28)]"
                         : "bg-[#059669] hover:bg-[#047857] border border-emerald-700/20 shadow-[0_8px_20px_rgba(5,150,105,.22)]"
@@ -3156,7 +3169,7 @@ export default function LandingPage({
                   <button
                     type="button"
                     onClick={() => setIsFastTrackConsultationOpen(true)}
-                    className={`w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-3 sm:py-3.5 min-h-[48px] rounded-xl text-[13.5px] sm:text-sm font-semibold whitespace-nowrap border transition-all duration-200 backdrop-blur-md cursor-pointer ${
+                    className={`w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 p-1.5 sm:px-6 sm:py-3.5 min-h-[44px] sm:min-h-[48px] rounded-xl text-[13px] sm:text-sm font-semibold whitespace-nowrap border transition-all duration-200 backdrop-blur-md cursor-pointer ${
                       isDark
                         ? "bg-[#14304C]/90 hover:bg-[#1A4366] text-slate-100 border-white/20"
                         : "bg-white/95 hover:bg-white text-slate-800 border-slate-300/90 shadow-xs"
@@ -3414,7 +3427,7 @@ export default function LandingPage({
               className="mb-3.5 sm:mb-5"
             />
             <div
-              className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3.5 md:gap-4.5 rounded-2xl sm:rounded-3xl p-2 sm:p-4 md:p-5 border transition-colors duration-300 ${
+              className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 sm:gap-3.5 md:gap-4.5 rounded-2xl sm:rounded-3xl p-1 sm:p-4 md:p-5 border transition-colors duration-300 ${
                 isDark
                   ? "bg-[#0F2D4A] border-white/[0.10] shadow-[0_18px_42px_rgba(0,0,0,0.32)]"
                   : "bg-white/90 backdrop-blur-2xl border-slate-200/90 shadow-xl shadow-slate-300/40"
@@ -3533,7 +3546,7 @@ export default function LandingPage({
                 <div
                   key={stat.id}
                   id={stat.id}
-                  className={`relative flex flex-col items-center justify-between p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl border transition-all duration-300 group overflow-hidden ${
+                  className={`relative flex flex-col items-center justify-between p-1 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl border transition-all duration-300 group overflow-hidden ${
                     isDark
                       ? "bg-[#143755] hover:bg-[#1A4366] border-white/[0.09] hover:border-emerald-400/35 shadow-none"
                       : `${stat.borderHover} backdrop-blur-xl bg-white/95 hover:bg-white border-slate-200/80 shadow-[0_4px_20px_rgba(15,23,42,0.06)] hover:shadow-[0_12px_30px_rgba(15,23,42,0.12)]`
@@ -5037,7 +5050,7 @@ export default function LandingPage({
                       </div>
                       <div className="flex-1 min-w-0 flex flex-col text-left">
                         <span className="text-xs sm:text-xs font-bold text-slate-900 dark:text-white leading-snug">
-                          {t("mppPreview.p1Title", "21 Instansi Terpadu")}
+                          {t("mppPreview.p1Title", "20 Instansi Terpadu")}
                         </span>
                         <span className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5 leading-tight">
                           {t("mppPreview.p1Desc", "DPMPTSP, Pajak, BPN, Imigrasi, Samsat")}
@@ -5200,7 +5213,7 @@ export default function LandingPage({
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="text-xs xs:text-sm sm:text-base font-black text-slate-900 dark:text-white font-mono leading-snug truncate">
-                      {t("mppPreview.stat1Title", "21 Instansi")}
+                      {t("mppPreview.stat1Title", "20 Instansi")}
                     </div>
                     <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
                       {t("mppPreview.stat1Desc", "Pusat, Daerah & BUMN")}

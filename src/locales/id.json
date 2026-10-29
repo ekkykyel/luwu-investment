@@ -2107,7 +2107,7 @@
     "hero": {
       "titlePrefix": "Transformasi Digital Menuju",
       "titleHighlight": "Luwu Unggul",
-      "subtitle": "Pusat pelayanan publik terintegrasi Kabupaten Luwu. Menghubungkan 19 instansi pemerintah, BUMN, dan swasta dalam satu pintu yang cepat, transparan, dan nyaman.",
+      "subtitle": "Pusat pelayanan publik terintegrasi Kabupaten Luwu. Menghubungkan 20 instansi pemerintah, BUMN, dan swasta dalam satu pintu yang cepat, transparan, dan nyaman.",
       "award": "Inovasi Pelayanan Publik Terintegrasi",
       "videoTour": "Video Profil Pelayanan MPP Simpurusiang",
       "officerPortal": "Portal Masuk Petugas Gerai & Operator Tenant"
@@ -2301,7 +2301,7 @@
         "estimation": "Estimasi: 09:30 WITA",
         "takeNumber": "Ambil Nomor",
         "onlineStatus": "ONLINE",
-        "integratedAgencies": "19 Instansi Terpadu",
+        "integratedAgencies": "20 Instansi Terpadu",
         "activeStatus": "AKTIF"
       }
     },
@@ -2955,7 +2955,7 @@
       "semester": "Semester Berjalan",
       "ikmLabel": "Indeks Kepuasan Masyarakat (IKM)",
       "predikat": "Predikat A • Sangat Baik",
-      "measuredFrom": "Diukur dari penilaian langsung masyarakat pemohon layanan di 21 instansi Mal Pelayanan Publik Simpurusiang Kab. Luwu.",
+      "measuredFrom": "Diukur dari penilaian langsung masyarakat pemohon layanan di 20 instansi Mal Pelayanan Publik Simpurusiang Kab. Luwu.",
       "totalRespondents": "Total Responden:",
       "respondentsCount": "12.076 Warga",
       "fillSurveyBtn": "Isi Survei (Khusus Pemegang Tiket)",
@@ -3095,9 +3095,9 @@
     "operationalHeatmap": {
       "statusHeader": "Real-Time Status MPP Simpurusiang",
       "statusTitle": "Pelayanan Publik Luwu Terbuka & Bebas Pungli",
-      "statusDesc": "Pusat Pelayanan Terpadu Satu Pintu Kabupaten Luwu. 21 Instansi Vertikal dan OPD siap melayani perizinan dan dokumen kependudukan Anda secara ramah, cepat, dan transparan.",
+      "statusDesc": "Pusat Pelayanan Terpadu Satu Pintu Kabupaten Luwu. 20 Instansi Vertikal dan OPD siap melayani perizinan dan dokumen kependudukan Anda secara ramah, cepat, dan transparan.",
       "operatingActive": "BEROPERASI AKTIF",
-      "operatingDesc": "21 Loket Buka • 12 Operator Duty",
+      "operatingDesc": "20 Loket Buka • 12 Operator Duty",
       "mapTitle": "Peta Jam Ramai vs Sepi Kunjungan",
       "mapSubtitle": "Pilihlah jam berkunjung di rentang hijau/sepi agar transaksi perizinan dan dokumen Anda selesai lebih nyaman tanpa antre.",
       "quietStatus": "Sepi (Lancar)",
@@ -3221,7 +3221,7 @@
     "quickSarpras": "Sarana & Prasarana MPP",
     "quickPbg": "Syarat Izin Bangunan (PBG & SLF)",
     "quickHukum": "Dasar Hukum & Regulasi MPP",
-    "quickInstansi": "Daftar 19 Instansi Terpadu",
+    "quickInstansi": "Daftar 20 Instansi Terpadu",
     "quick1": "Syarat cetak KTP-el / KK",
     "quick2": "Pengurusan izin usaha OSS-RBA",
     "quick3": "Cara ambil antrean online",
@@ -3512,7 +3512,7 @@
     "chip_popular": "Populer:",
     "location_name": "Gedung MPP Simpurusiang",
     "location_address": "Jl. Jend. Sudirman Belopa",
-    "counters_status": "26 Gerai Pelayanan Aktif • Radar Antrean Terintegrasi"
+    "counters_status": "20 Gerai Pelayanan Aktif • Radar Antrean Terintegrasi"
   },
   "calc": {
     "select_sector": "Pilih Sektor Investasi",
@@ -3833,7 +3833,7 @@
   },
   "mppPreview": {
     "operatingBadge": "Layanan Prima Beroperasi • Senin - Jumat (08.00 - 15.30 WITA)",
-    "p1Title": "21 Instansi Terpadu",
+    "p1Title": "20 Instansi Terpadu",
     "p1Desc": "DPMPTSP, Pajak, BPN, Imigrasi, Samsat",
     "p2Title": "Fast-Track OSS & GIS",
     "p2Desc": "Penerbitan NIB & Validasi Ruang Instan",
@@ -3844,7 +3844,7 @@
     "foPedestalTitle": "Front Office DPMPTSP Kab. Luwu",
     "foPedestalSubtitle": "Hospitality & Layanan Terpadu",
     "foReady": "Siap Melayani",
-    "stat1Title": "21 Instansi",
+    "stat1Title": "20 Instansi",
     "stat1Desc": "Pusat, Daerah & BUMN",
     "stat2Title": "100+ Layanan",
     "stat2Desc": "Administrasi & Izin Usaha",

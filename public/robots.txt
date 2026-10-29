@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /mpp/admin/
+Disallow: /debug
+Disallow: /debug-db
+
+Sitemap: https://luwu-investment.vercel.app/sitemap.xml

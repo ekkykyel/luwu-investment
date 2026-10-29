@@ -134,7 +134,7 @@ export const OnlineQueueOnboardingSection: React.FC<OnlineQueueOnboardingSection
                       Contoh Format Nomor Tiket
                     </div>
                     <div className="text-3xl sm:text-4xl font-black font-mono tabular-nums tracking-tight text-slate-900 dark:text-white mt-0.5">
-                      A-042
+                      MPP-001
                     </div>
                     <div className="text-xs font-medium text-[#0F6B4F] dark:text-emerald-400 mt-1">
                       {t("mppPortal.antrean.mockup.counterName", "Gerai Pelayanan Terpadu · Lantai 1")}
