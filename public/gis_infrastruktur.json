@@ -1,0 +1,245 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:4326"
+          }
+        },
+        "coordinates": [
+          120.23667999835915,
+          -3.131174756995506
+        ]
+      },
+      "properties": {
+        "id": 11,
+        "name": "Kawasan Industri Bua (KIB)",
+        "category": "Kawasan Industri",
+        "description": "Kawasan Industri Bua",
+        "status": "Published",
+        "icon": "Building2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:4326"
+          }
+        },
+        "coordinates": [
+          120.27421935535018,
+          -3.277435823090031
+        ]
+      },
+      "properties": {
+        "id": 12,
+        "name": "DAS Noling",
+        "category": "Sungai / DAS",
+        "description": "Aliran Sungai DAS Noling",
+        "status": "Published",
+        "icon": "Building2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:4326"
+          }
+        },
+        "coordinates": [
+          120.24229192694217,
+          -3.085954945831168
+        ]
+      },
+      "properties": {
+        "id": 4,
+        "name": "Bandara Udara Bua",
+        "category": "Bandara",
+        "description": "Bandara Udara Bua",
+        "status": "Published",
+        "icon": "Building2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:4326"
+          }
+        },
+        "coordinates": [
+          120.4041819405607,
+          -3.408730048385366
+        ]
+      },
+      "properties": {
+        "id": 5,
+        "name": "Pelabuhan Ulo-Ulo Belopa",
+        "category": "Pelabuhan",
+        "description": "Pelabuhan Ulo-Ulo Belopa",
+        "status": "Published",
+        "icon": "Building2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:4326"
+          }
+        },
+        "coordinates": [
+          120.35715718089368,
+          -3.36774645955215
+        ]
+      },
+      "properties": {
+        "id": 7,
+        "name": "RSUD Batara Guru",
+        "category": "Rumah Sakit",
+        "description": "RSUD Batara Guru Belopa",
+        "status": "Published",
+        "icon": "Building2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:4326"
+          }
+        },
+        "coordinates": [
+          120.369176119028,
+          -3.408277272651445
+        ]
+      },
+      "properties": {
+        "id": 8,
+        "name": "Kepolisian Resort Luwu",
+        "category": "Kantor Polisi",
+        "description": "Kepolisian Resort Luwu",
+        "status": "Published",
+        "icon": "Building2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:4326"
+          }
+        },
+        "coordinates": [
+          120.3591185406,
+          -3.376253626418958
+        ]
+      },
+      "properties": {
+        "id": 9,
+        "name": "Pasar Sentral Belopa",
+        "category": "Pusat Perdagangan",
+        "description": "Pasar Sentral Belopa",
+        "status": "Published",
+        "icon": "Building2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:4326"
+          }
+        },
+        "coordinates": [
+          120.3661867097291,
+          -3.394443486327373
+        ]
+      },
+      "properties": {
+        "id": 10,
+        "name": "Kantor Bupati Luwu",
+        "category": "Perkantoran Daerah",
+        "description": "Kantor Bupati Luwu",
+        "status": "Published",
+        "icon": "Building2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:4326"
+          }
+        },
+        "coordinates": [
+          120.35446357939469,
+          -3.338286780714356
+        ]
+      },
+      "properties": {
+        "id": 15,
+        "name": "SMAN 12 Luwu",
+        "category": "Sarana Pendidikan",
+        "description": "SMAN 12 Kabupaten Luwu",
+        "status": "Published",
+        "icon": "Building2"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:4326"
+          }
+        },
+        "coordinates": [
+          120.36857549179763,
+          -3.394277123973495
+        ]
+      },
+      "properties": {
+        "id": 16,
+        "name": "MPP Simpurusiang",
+        "category": "Perkantoran Daerah",
+        "description": "MPP Simpurusiang Kabupaten Luwu",
+        "status": "Published",
+        "icon": "Building2"
+      }
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "generatedAt": "2026-10-29T09:22:25.867Z",
+  "clearanceMargin": 40,
+  "routes": {
+    "utara": {
+      "id": "exit-utara",
+      "name": "PINTU UTARA (Barat)",
+      "points": [
+        {
+          "x": 1922,
+          "y": 832
+        },
+        {
+          "x": 1428,
+          "y": 1212
+        },
+        {
+          "x": 1032,
+          "y": 900
+        },
+        {
+          "x": 972,
+          "y": 900
+        },
+        {
+          "x": 718,
+          "y": 793
+        }
+      ],
+      "length": 1463.0066652027347,
+      "sampleCount": 368,
+      "minClearance": 40,
+      "collisions": 0
+    },
+    "selatan": {
+      "id": "exit-selatan",
+      "name": "PINTU SELATAN (Timur)",
+      "points": [
+        {
+          "x": 1922,
+          "y": 832
+        },
+        {
+          "x": 1992,
+          "y": 972
+        },
+        {
+          "x": 2832,
+          "y": 1368
+        },
+        {
+          "x": 3168,
+          "y": 1152
+        },
+        {
+          "x": 3162,
+          "y": 1143
+        }
+      ],
+      "length": 1495.444575571016,
+      "sampleCount": 376,
+      "minClearance": 40.81349161688885,
+      "collisions": 0
+    },
+    "utama": {
+      "id": "exit-utama",
+      "name": "PINTU UTAMA (Selatan)",
+      "points": [
+        {
+          "x": 1922,
+          "y": 832
+        },
+        {
+          "x": 1992,
+          "y": 972
+        },
+        {
+          "x": 2292,
+          "y": 1188
+        },
+        {
+          "x": 2100,
+          "y": 1812
+        },
+        {
+          "x": 1928,
+          "y": 1996
+        }
+      ],
+      "length": 1430.93844992517,
+      "sampleCount": 360,
+      "minClearance": 40.65763777389212,
+      "collisions": 0
+    }
+  },
+  "fountains": [
+    {
+      "id": "AIR_MANCUR_BARAT",
+      "cx": 1645,
+      "cy": 799,
+      "r": 52,
+      "status": "perlu konfirmasi pemilik"
+    },
+    {
+      "id": "AIR_MANCUR_TIMUR",
+      "cx": 2203,
+      "cy": 799,
+      "r": 52,
+      "status": "perlu konfirmasi pemilik"
+    }
+  ],
+  "verified": false,
+  "verificationNote": "Belum diverifikasi petugas K3/damkar"
+}

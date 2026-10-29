@@ -1,0 +1,185 @@
+{
+  "id": "layer_infrastruktur",
+  "name": "Titik Infrastruktur",
+  "category": "Infrastruktur",
+  "geojson": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            120.23668,
+            -3.13117
+          ]
+        },
+        "properties": {
+          "id": 11,
+          "name": "Kawasan Industri Bua (KIB)",
+          "category": "Kawasan Industri",
+          "description": "Kawasan Industri Bua",
+          "icon": "Building2"
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            120.27422,
+            -3.27744
+          ]
+        },
+        "properties": {
+          "id": 12,
+          "name": "DAS Noling",
+          "category": "Sungai / DAS",
+          "description": "Aliran Sungai DAS Noling",
+          "icon": "Building2"
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            120.24229,
+            -3.08595
+          ]
+        },
+        "properties": {
+          "id": 4,
+          "name": "Bandara Udara Bua",
+          "category": "Bandara",
+          "description": "Bandara Udara Bua",
+          "icon": "Building2"
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            120.40418,
+            -3.40873
+          ]
+        },
+        "properties": {
+          "id": 5,
+          "name": "Pelabuhan Ulo-Ulo Belopa",
+          "category": "Pelabuhan",
+          "description": "Pelabuhan Ulo-Ulo Belopa",
+          "icon": "Building2"
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            120.35716,
+            -3.36775
+          ]
+        },
+        "properties": {
+          "id": 7,
+          "name": "RSUD Batara Guru",
+          "category": "Rumah Sakit",
+          "description": "RSUD Batara Guru Belopa",
+          "icon": "Building2"
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            120.36918,
+            -3.40828
+          ]
+        },
+        "properties": {
+          "id": 8,
+          "name": "Kepolisian Resort Luwu",
+          "category": "Kantor Polisi",
+          "description": "Kepolisian Resort Luwu",
+          "icon": "Building2"
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            120.35912,
+            -3.37625
+          ]
+        },
+        "properties": {
+          "id": 9,
+          "name": "Pasar Sentral Belopa",
+          "category": "Pusat Perdagangan",
+          "description": "Pasar Sentral Belopa",
+          "icon": "Building2"
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            120.36619,
+            -3.39444
+          ]
+        },
+        "properties": {
+          "id": 10,
+          "name": "Kantor Bupati Luwu",
+          "category": "Perkantoran Daerah",
+          "description": "Kantor Bupati Luwu",
+          "icon": "Building2"
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            120.35446,
+            -3.33829
+          ]
+        },
+        "properties": {
+          "id": 15,
+          "name": "SMAN 12 Luwu",
+          "category": "Sarana Pendidikan",
+          "description": "SMAN 12 Kabupaten Luwu",
+          "icon": "Building2"
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            120.36858,
+            -3.39428
+          ]
+        },
+        "properties": {
+          "id": 16,
+          "name": "MPP Simpurusiang",
+          "category": "Perkantoran Daerah",
+          "description": "MPP Simpurusiang Kabupaten Luwu",
+          "icon": "Building2"
+        }
+      }
+    ]
+  },
+  "uploadedAt": "2026-05-28T02:00:00Z",
+  "isActive": true,
+  "opacity": 0.9,
+  "color": "#e11d48",
+  "lineWidth": 3
+}

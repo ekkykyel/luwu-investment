@@ -1,0 +1,2726 @@
+{
+  "kamanre_wara": {
+    "lat": -3.3214943766990297,
+    "lng": 120.38532244796131,
+    "name": "Wara",
+    "kecamatan": "Kamanre"
+  },
+  "wara": {
+    "lat": -3.3214943766990297,
+    "lng": 120.38532244796131,
+    "name": "Wara",
+    "kecamatan": "Kamanre"
+  },
+  "larompong_bukit sutra": {
+    "lat": -3.585452996592844,
+    "lng": 120.25115240289594,
+    "name": "Bukit Sutra",
+    "kecamatan": "Larompong"
+  },
+  "bukit sutra": {
+    "lat": -3.585452996592844,
+    "lng": 120.25115240289594,
+    "name": "Bukit Sutra",
+    "kecamatan": "Larompong"
+  },
+  "bua_tiromanda": {
+    "lat": -3.090368343428572,
+    "lng": 120.21120543085708,
+    "name": "Tiromanda",
+    "kecamatan": "Bua"
+  },
+  "tiromanda": {
+    "lat": -3.090368343428572,
+    "lng": 120.21120543085708,
+    "name": "Tiromanda",
+    "kecamatan": "Bua"
+  },
+  "bajo barat_marinding": {
+    "lat": -3.3693228597014926,
+    "lng": 120.26210683731342,
+    "name": "Marinding",
+    "kecamatan": "Bajo Barat"
+  },
+  "marinding": {
+    "lat": -3.3693228597014926,
+    "lng": 120.26210683731342,
+    "name": "Marinding",
+    "kecamatan": "Bajo Barat"
+  },
+  "bajo_sumabu": {
+    "lat": -3.3040179624999992,
+    "lng": 120.29163878124996,
+    "name": "Sumabu",
+    "kecamatan": "Bajo"
+  },
+  "sumabu": {
+    "lat": -3.3040179624999992,
+    "lng": 120.29163878124996,
+    "name": "Sumabu",
+    "kecamatan": "Bajo"
+  },
+  "walenrang timur_suka damai": {
+    "lat": -2.8667464000000007,
+    "lng": 120.19280261276592,
+    "name": "Suka Damai",
+    "kecamatan": "Walenrang Timur"
+  },
+  "suka damai": {
+    "lat": -2.8667464000000007,
+    "lng": 120.19280261276592,
+    "name": "Suka Damai",
+    "kecamatan": "Walenrang Timur"
+  },
+  "lamasi_setia rejo": {
+    "lat": -2.8166883449275355,
+    "lng": 120.19055931594202,
+    "name": "Setia Rejo",
+    "kecamatan": "Lamasi"
+  },
+  "setia rejo": {
+    "lat": -2.8166883449275355,
+    "lng": 120.19055931594202,
+    "name": "Setia Rejo",
+    "kecamatan": "Lamasi"
+  },
+  "suli barat_kaladi darussalam": {
+    "lat": -3.4955255621118004,
+    "lng": 120.2036584763975,
+    "name": "Kaladi Darussalam",
+    "kecamatan": "Suli Barat"
+  },
+  "kaladi darussalam": {
+    "lat": -3.4955255621118004,
+    "lng": 120.2036584763975,
+    "name": "Kaladi Darussalam",
+    "kecamatan": "Suli Barat"
+  },
+  "basse sangtempe_bolu": {
+    "lat": -3.2213976753623195,
+    "lng": 120.14095172391306,
+    "name": "Bolu",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "bolu": {
+    "lat": -3.2213976753623195,
+    "lng": 120.14095172391306,
+    "name": "Bolu",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "ponrang_buntu kamiri": {
+    "lat": -3.1913718916666687,
+    "lng": 120.30734918859648,
+    "name": "Buntu Kamiri",
+    "kecamatan": "Ponrang"
+  },
+  "buntu kamiri": {
+    "lat": -3.1913718916666687,
+    "lng": 120.30734918859648,
+    "name": "Buntu Kamiri",
+    "kecamatan": "Ponrang"
+  },
+  "larompong selatan_la'loa": {
+    "lat": -3.6272741063157894,
+    "lng": 120.35839650421053,
+    "name": "La'loa",
+    "kecamatan": "Larompong Selatan"
+  },
+  "la'loa": {
+    "lat": -3.6272741063157894,
+    "lng": 120.35839650421053,
+    "name": "La'loa",
+    "kecamatan": "Larompong Selatan"
+  },
+  "larompong selatan_malewong": {
+    "lat": -3.6059522070683654,
+    "lng": 120.32257549154122,
+    "name": "Malewong",
+    "kecamatan": "Larompong Selatan"
+  },
+  "malewong": {
+    "lat": -3.6059522070683654,
+    "lng": 120.32257549154122,
+    "name": "Malewong",
+    "kecamatan": "Larompong Selatan"
+  },
+  "suli_cimpu utara": {
+    "lat": -3.4230483146789,
+    "lng": 120.39292973165135,
+    "name": "Cimpu Utara",
+    "kecamatan": "Suli"
+  },
+  "cimpu utara": {
+    "lat": -3.4230483146789,
+    "lng": 120.39292973165135,
+    "name": "Cimpu Utara",
+    "kecamatan": "Suli"
+  },
+  "suli_murante": {
+    "lat": -3.4714298595588233,
+    "lng": 120.38189527205883,
+    "name": "Murante",
+    "kecamatan": "Suli"
+  },
+  "murante": {
+    "lat": -3.4714298595588233,
+    "lng": 120.38189527205883,
+    "name": "Murante",
+    "kecamatan": "Suli"
+  },
+  "suli_lempopacci": {
+    "lat": -3.4601639434782605,
+    "lng": 120.35696662318841,
+    "name": "Lempopacci",
+    "kecamatan": "Suli"
+  },
+  "lempopacci": {
+    "lat": -3.4601639434782605,
+    "lng": 120.35696662318841,
+    "name": "Lempopacci",
+    "kecamatan": "Suli"
+  },
+  "suli_suli": {
+    "lat": -3.458289483240223,
+    "lng": 120.37571752122903,
+    "name": "Suli",
+    "kecamatan": "Suli"
+  },
+  "suli": {
+    "lat": -3.458289483240223,
+    "lng": 120.37571752122903,
+    "name": "Suli",
+    "kecamatan": "Suli"
+  },
+  "larompong selatan_temboe": {
+    "lat": -3.6216758022813673,
+    "lng": 120.40811216768054,
+    "name": "Temboe",
+    "kecamatan": "Larompong Selatan"
+  },
+  "temboe": {
+    "lat": -3.6216758022813673,
+    "lng": 120.40811216768054,
+    "name": "Temboe",
+    "kecamatan": "Larompong Selatan"
+  },
+  "walenrang barat_lamasi hulu": {
+    "lat": -2.7463302784452317,
+    "lng": 119.92622137809184,
+    "name": "Lamasi Hulu",
+    "kecamatan": "Walenrang Barat"
+  },
+  "lamasi hulu": {
+    "lat": -2.7463302784452317,
+    "lng": 119.92622137809184,
+    "name": "Lamasi Hulu",
+    "kecamatan": "Walenrang Barat"
+  },
+  "latimojong_kadundung": {
+    "lat": -3.3758320927272734,
+    "lng": 120.18257962727272,
+    "name": "Kadundung",
+    "kecamatan": "Latimojong"
+  },
+  "kadundung": {
+    "lat": -3.3758320927272734,
+    "lng": 120.18257962727272,
+    "name": "Kadundung",
+    "kecamatan": "Latimojong"
+  },
+  "lamasi timur_bululondong": {
+    "lat": -2.8409068642276427,
+    "lng": 120.25367305325193,
+    "name": "Bululondong",
+    "kecamatan": "Lamasi Timur"
+  },
+  "bululondong": {
+    "lat": -2.8409068642276427,
+    "lng": 120.25367305325193,
+    "name": "Bululondong",
+    "kecamatan": "Lamasi Timur"
+  },
+  "suli_buntu kunyi": {
+    "lat": -3.4431203434782596,
+    "lng": 120.37920151913045,
+    "name": "Buntu Kunyi",
+    "kecamatan": "Suli"
+  },
+  "buntu kunyi": {
+    "lat": -3.4431203434782596,
+    "lng": 120.37920151913045,
+    "name": "Buntu Kunyi",
+    "kecamatan": "Suli"
+  },
+  "suli_cakkeawo": {
+    "lat": -3.4114861403669714,
+    "lng": 120.34264959174315,
+    "name": "Cakkeawo",
+    "kecamatan": "Suli"
+  },
+  "cakkeawo": {
+    "lat": -3.4114861403669714,
+    "lng": 120.34264959174315,
+    "name": "Cakkeawo",
+    "kecamatan": "Suli"
+  },
+  "lamasi_to'pongo": {
+    "lat": -2.775330836792451,
+    "lng": 120.19009837028295,
+    "name": "To'pongo",
+    "kecamatan": "Lamasi"
+  },
+  "to'pongo": {
+    "lat": -2.775330836792451,
+    "lng": 120.19009837028295,
+    "name": "To'pongo",
+    "kecamatan": "Lamasi"
+  },
+  "walenrang_walenrang": {
+    "lat": -2.875981960330578,
+    "lng": 120.1102633280992,
+    "name": "Walenrang",
+    "kecamatan": "Walenrang"
+  },
+  "walenrang": {
+    "lat": -2.875981960330578,
+    "lng": 120.1102633280992,
+    "name": "Walenrang",
+    "kecamatan": "Walenrang"
+  },
+  "latimojong_to'barru": {
+    "lat": -3.3524600917808223,
+    "lng": 120.1665147821918,
+    "name": "To'barru",
+    "kecamatan": "Latimojong"
+  },
+  "to'barru": {
+    "lat": -3.3524600917808223,
+    "lng": 120.1665147821918,
+    "name": "To'barru",
+    "kecamatan": "Latimojong"
+  },
+  "bua ponrang_buntu batu bp": {
+    "lat": -3.259741509,
+    "lng": 120.285176305,
+    "name": "Buntu Batu BP",
+    "kecamatan": "Bua Ponrang"
+  },
+  "buntu batu bp": {
+    "lat": -3.259741509,
+    "lng": 120.285176305,
+    "name": "Buntu Batu BP",
+    "kecamatan": "Bua Ponrang"
+  },
+  "bua ponrang_padang kamburi": {
+    "lat": -3.2844686514563115,
+    "lng": 120.28187420970877,
+    "name": "Padang Kamburi",
+    "kecamatan": "Bua Ponrang"
+  },
+  "padang kamburi": {
+    "lat": -3.2844686514563115,
+    "lng": 120.28187420970877,
+    "name": "Padang Kamburi",
+    "kecamatan": "Bua Ponrang"
+  },
+  "bajo_jambu": {
+    "lat": -3.3625764123376607,
+    "lng": 120.31818685129869,
+    "name": "Jambu",
+    "kecamatan": "Bajo"
+  },
+  "jambu": {
+    "lat": -3.3625764123376607,
+    "lng": 120.31818685129869,
+    "name": "Jambu",
+    "kecamatan": "Bajo"
+  },
+  "suli_papakaji": {
+    "lat": -3.4659812536363637,
+    "lng": 120.31090433727272,
+    "name": "Papakaji",
+    "kecamatan": "Suli"
+  },
+  "papakaji": {
+    "lat": -3.4659812536363637,
+    "lng": 120.31090433727272,
+    "name": "Papakaji",
+    "kecamatan": "Suli"
+  },
+  "larompong selatan_salusana": {
+    "lat": -3.633758630416667,
+    "lng": 120.37899353291671,
+    "name": "Salusana",
+    "kecamatan": "Larompong Selatan"
+  },
+  "salusana": {
+    "lat": -3.633758630416667,
+    "lng": 120.37899353291671,
+    "name": "Salusana",
+    "kecamatan": "Larompong Selatan"
+  },
+  "larompong selatan_babang": {
+    "lat": -3.5800995790960424,
+    "lng": 120.400880320904,
+    "name": "Babang",
+    "kecamatan": "Larompong Selatan"
+  },
+  "babang": {
+    "lat": -3.5800995790960424,
+    "lng": 120.400880320904,
+    "name": "Babang",
+    "kecamatan": "Larompong Selatan"
+  },
+  "larompong selatan_sampano": {
+    "lat": -3.605188000729927,
+    "lng": 120.38947504744525,
+    "name": "Sampano",
+    "kecamatan": "Larompong Selatan"
+  },
+  "sampano": {
+    "lat": -3.605188000729927,
+    "lng": 120.38947504744525,
+    "name": "Sampano",
+    "kecamatan": "Larompong Selatan"
+  },
+  "larompong_riwang": {
+    "lat": -3.5698305135135135,
+    "lng": 120.37366467567568,
+    "name": "Riwang",
+    "kecamatan": "Larompong"
+  },
+  "riwang": {
+    "lat": -3.5698305135135135,
+    "lng": 120.37366467567568,
+    "name": "Riwang",
+    "kecamatan": "Larompong"
+  },
+  "larompong_bilante": {
+    "lat": -3.561363684848485,
+    "lng": 120.35275870757577,
+    "name": "Bilante",
+    "kecamatan": "Larompong"
+  },
+  "bilante": {
+    "lat": -3.561363684848485,
+    "lng": 120.35275870757577,
+    "name": "Bilante",
+    "kecamatan": "Larompong"
+  },
+  "larompong_rante belu": {
+    "lat": -3.553590114893616,
+    "lng": 120.3916910606383,
+    "name": "Rante Belu",
+    "kecamatan": "Larompong"
+  },
+  "rante belu": {
+    "lat": -3.553590114893616,
+    "lng": 120.3916910606383,
+    "name": "Rante Belu",
+    "kecamatan": "Larompong"
+  },
+  "larompong_buntu matabing": {
+    "lat": -3.5363036248554907,
+    "lng": 120.39651181213873,
+    "name": "Buntu Matabing",
+    "kecamatan": "Larompong"
+  },
+  "buntu matabing": {
+    "lat": -3.5363036248554907,
+    "lng": 120.39651181213873,
+    "name": "Buntu Matabing",
+    "kecamatan": "Larompong"
+  },
+  "larompong_komba": {
+    "lat": -3.5342659776315792,
+    "lng": 120.35321421315793,
+    "name": "Komba",
+    "kecamatan": "Larompong"
+  },
+  "komba": {
+    "lat": -3.5342659776315792,
+    "lng": 120.35321421315793,
+    "name": "Komba",
+    "kecamatan": "Larompong"
+  },
+  "larompong_binturu": {
+    "lat": -3.554002729230769,
+    "lng": 120.30867291692309,
+    "name": "Binturu",
+    "kecamatan": "Larompong"
+  },
+  "binturu": {
+    "lat": -3.554002729230769,
+    "lng": 120.30867291692309,
+    "name": "Binturu",
+    "kecamatan": "Larompong"
+  },
+  "walenrang timur_lamasi pantai": {
+    "lat": -2.935178518083184,
+    "lng": 120.23481086166366,
+    "name": "Lamasi Pantai",
+    "kecamatan": "Walenrang Timur"
+  },
+  "lamasi pantai": {
+    "lat": -2.935178518083184,
+    "lng": 120.23481086166366,
+    "name": "Lamasi Pantai",
+    "kecamatan": "Walenrang Timur"
+  },
+  "walenrang timur_kendekan": {
+    "lat": -2.872091032452829,
+    "lng": 120.22823890075482,
+    "name": "Kendekan",
+    "kecamatan": "Walenrang Timur"
+  },
+  "kendekan": {
+    "lat": -2.872091032452829,
+    "lng": 120.22823890075482,
+    "name": "Kendekan",
+    "kecamatan": "Walenrang Timur"
+  },
+  "ponrang selatan_bassiang timur": {
+    "lat": -3.217012949090907,
+    "lng": 120.37638370799999,
+    "name": "Bassiang Timur",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "bassiang timur": {
+    "lat": -3.217012949090907,
+    "lng": 120.37638370799999,
+    "name": "Bassiang Timur",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "lamasi_wiwitan": {
+    "lat": -2.82249343111111,
+    "lng": 120.15910425111113,
+    "name": "Wiwitan",
+    "kecamatan": "Lamasi"
+  },
+  "wiwitan": {
+    "lat": -2.82249343111111,
+    "lng": 120.15910425111113,
+    "name": "Wiwitan",
+    "kecamatan": "Lamasi"
+  },
+  "lamasi_se'pong": {
+    "lat": -2.8091081534883724,
+    "lng": 120.17217435116277,
+    "name": "Se'pong",
+    "kecamatan": "Lamasi"
+  },
+  "se'pong": {
+    "lat": -2.8091081534883724,
+    "lng": 120.17217435116277,
+    "name": "Se'pong",
+    "kecamatan": "Lamasi"
+  },
+  "larompong_rante alang": {
+    "lat": -3.517580112612613,
+    "lng": 120.29622358648648,
+    "name": "Rante Alang",
+    "kecamatan": "Larompong"
+  },
+  "rante alang": {
+    "lat": -3.517580112612613,
+    "lng": 120.29622358648648,
+    "name": "Rante Alang",
+    "kecamatan": "Larompong"
+  },
+  "walenrang_tombang": {
+    "lat": -2.9226542183514783,
+    "lng": 120.08082303017105,
+    "name": "Tombang",
+    "kecamatan": "Walenrang"
+  },
+  "tombang": {
+    "lat": -2.9226542183514783,
+    "lng": 120.08082303017105,
+    "name": "Tombang",
+    "kecamatan": "Walenrang"
+  },
+  "walenrang_saragi": {
+    "lat": -2.8499751924528307,
+    "lng": 120.15353608679247,
+    "name": "Saragi",
+    "kecamatan": "Walenrang"
+  },
+  "saragi": {
+    "lat": -2.8499751924528307,
+    "lng": 120.15353608679247,
+    "name": "Saragi",
+    "kecamatan": "Walenrang"
+  },
+  "larompong_lumaring": {
+    "lat": -3.513176671,
+    "lng": 120.33643033199996,
+    "name": "Lumaring",
+    "kecamatan": "Larompong"
+  },
+  "lumaring": {
+    "lat": -3.513176671,
+    "lng": 120.33643033199996,
+    "name": "Lumaring",
+    "kecamatan": "Larompong"
+  },
+  "bajo barat_sampeang": {
+    "lat": -3.390400223140497,
+    "lng": 120.28525907685945,
+    "name": "Sampeang",
+    "kecamatan": "Bajo Barat"
+  },
+  "sampeang": {
+    "lat": -3.390400223140497,
+    "lng": 120.28525907685945,
+    "name": "Sampeang",
+    "kecamatan": "Bajo Barat"
+  },
+  "bajo barat_kadong kadong": {
+    "lat": -3.3479753587719303,
+    "lng": 120.27522541578945,
+    "name": "Kadong Kadong",
+    "kecamatan": "Bajo Barat"
+  },
+  "kadong kadong": {
+    "lat": -3.3479753587719303,
+    "lng": 120.27522541578945,
+    "name": "Kadong Kadong",
+    "kecamatan": "Bajo Barat"
+  },
+  "belopa_balubu": {
+    "lat": -3.4003024732558145,
+    "lng": 120.33540884883718,
+    "name": "Balubu",
+    "kecamatan": "Belopa"
+  },
+  "balubu": {
+    "lat": -3.4003024732558145,
+    "lng": 120.33540884883718,
+    "name": "Balubu",
+    "kecamatan": "Belopa"
+  },
+  "ponrang selatan_lampuara": {
+    "lat": -3.259907090114612,
+    "lng": 120.39055598237827,
+    "name": "Lampuara",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "lampuara": {
+    "lat": -3.259907090114612,
+    "lng": 120.39055598237827,
+    "name": "Lampuara",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "larompong_larompong": {
+    "lat": -3.5056604854838698,
+    "lng": 120.37747018978494,
+    "name": "Larompong",
+    "kecamatan": "Larompong"
+  },
+  "larompong": {
+    "lat": -3.5056604854838698,
+    "lng": 120.37747018978494,
+    "name": "Larompong",
+    "kecamatan": "Larompong"
+  },
+  "lamasi timur_seriti": {
+    "lat": -2.829548459770114,
+    "lng": 120.18341820000002,
+    "name": "Seriti",
+    "kecamatan": "Lamasi Timur"
+  },
+  "seriti": {
+    "lat": -2.829548459770114,
+    "lng": 120.18341820000002,
+    "name": "Seriti",
+    "kecamatan": "Lamasi Timur"
+  },
+  "ponrang_tirowali": {
+    "lat": -3.1882316485401456,
+    "lng": 120.27734265894163,
+    "name": "Tirowali",
+    "kecamatan": "Ponrang"
+  },
+  "tirowali": {
+    "lat": -3.1882316485401456,
+    "lng": 120.27734265894163,
+    "name": "Tirowali",
+    "kecamatan": "Ponrang"
+  },
+  "belopa_tampumia radda": {
+    "lat": -3.3890106733333343,
+    "lng": 120.36268283619046,
+    "name": "Tampumia Radda",
+    "kecamatan": "Belopa"
+  },
+  "tampumia radda": {
+    "lat": -3.3890106733333343,
+    "lng": 120.36268283619046,
+    "name": "Tampumia Radda",
+    "kecamatan": "Belopa"
+  },
+  "belopa utara_lamunre": {
+    "lat": -3.377936652054792,
+    "lng": 120.3921515412917,
+    "name": "Lamunre",
+    "kecamatan": "Belopa Utara"
+  },
+  "lamunre": {
+    "lat": -3.377936652054792,
+    "lng": 120.3921515412917,
+    "name": "Lamunre",
+    "kecamatan": "Belopa Utara"
+  },
+  "ponrang selatan_bassiang": {
+    "lat": -3.236005897560976,
+    "lng": 120.34065320731706,
+    "name": "Bassiang",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "bassiang": {
+    "lat": -3.236005897560976,
+    "lng": 120.34065320731706,
+    "name": "Bassiang",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "ponrang selatan_pattedong selatan": {
+    "lat": -3.281391996875,
+    "lng": 120.34478389375002,
+    "name": "Pattedong Selatan",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "pattedong selatan": {
+    "lat": -3.281391996875,
+    "lng": 120.34478389375002,
+    "name": "Pattedong Selatan",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "walenrang utara_bosso timur": {
+    "lat": -2.786855888,
+    "lng": 120.16241201899997,
+    "name": "Bosso Timur",
+    "kecamatan": "Walenrang Utara"
+  },
+  "bosso timur": {
+    "lat": -2.786855888,
+    "lng": 120.16241201899997,
+    "name": "Bosso Timur",
+    "kecamatan": "Walenrang Utara"
+  },
+  "lamasi_salu jambu": {
+    "lat": -2.80463511968504,
+    "lng": 120.21712863070866,
+    "name": "Salu Jambu",
+    "kecamatan": "Lamasi"
+  },
+  "salu jambu": {
+    "lat": -2.80463511968504,
+    "lng": 120.21712863070866,
+    "name": "Salu Jambu",
+    "kecamatan": "Lamasi"
+  },
+  "bajo_samulang": {
+    "lat": -3.3364167740740736,
+    "lng": 120.28957555555559,
+    "name": "Samulang",
+    "kecamatan": "Bajo"
+  },
+  "samulang": {
+    "lat": -3.3364167740740736,
+    "lng": 120.28957555555559,
+    "name": "Samulang",
+    "kecamatan": "Bajo"
+  },
+  "walenrang_bulo": {
+    "lat": -2.8385223147058833,
+    "lng": 120.13279957941178,
+    "name": "Bulo",
+    "kecamatan": "Walenrang"
+  },
+  "bulo": {
+    "lat": -2.8385223147058833,
+    "lng": 120.13279957941178,
+    "name": "Bulo",
+    "kecamatan": "Walenrang"
+  },
+  "walenrang_harapan": {
+    "lat": -2.8357473752136757,
+    "lng": 120.16478880427351,
+    "name": "Harapan",
+    "kecamatan": "Walenrang"
+  },
+  "harapan": {
+    "lat": -2.8357473752136757,
+    "lng": 120.16478880427351,
+    "name": "Harapan",
+    "kecamatan": "Walenrang"
+  },
+  "basse sangtempe_tabi": {
+    "lat": -3.2100752818840563,
+    "lng": 120.01216036231887,
+    "name": "Tabi",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "tabi": {
+    "lat": -3.2100752818840563,
+    "lng": 120.01216036231887,
+    "name": "Tabi",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "bua ponrang_tampumia": {
+    "lat": -3.2519668433734963,
+    "lng": 120.18431705391563,
+    "name": "Tampumia",
+    "kecamatan": "Bua Ponrang"
+  },
+  "tampumia": {
+    "lat": -3.2519668433734963,
+    "lng": 120.18431705391563,
+    "name": "Tampumia",
+    "kecamatan": "Bua Ponrang"
+  },
+  "latimojong_tabang": {
+    "lat": -3.301751886725663,
+    "lng": 120.10563823539827,
+    "name": "Tabang",
+    "kecamatan": "Latimojong"
+  },
+  "tabang": {
+    "lat": -3.301751886725663,
+    "lng": 120.10563823539827,
+    "name": "Tabang",
+    "kecamatan": "Latimojong"
+  },
+  "larompong_riwang selatan": {
+    "lat": -3.5928863760344836,
+    "lng": 120.342381762069,
+    "name": "Riwang Selatan",
+    "kecamatan": "Larompong"
+  },
+  "riwang selatan": {
+    "lat": -3.5928863760344836,
+    "lng": 120.342381762069,
+    "name": "Riwang Selatan",
+    "kecamatan": "Larompong"
+  },
+  "walenrang_barammamase": {
+    "lat": -2.889377667088608,
+    "lng": 120.15306481265829,
+    "name": "Barammamase",
+    "kecamatan": "Walenrang"
+  },
+  "barammamase": {
+    "lat": -2.889377667088608,
+    "lng": 120.15306481265829,
+    "name": "Barammamase",
+    "kecamatan": "Walenrang"
+  },
+  "belopa utara_seppong": {
+    "lat": -3.34508201961057,
+    "lng": 120.37712147691235,
+    "name": "Seppong",
+    "kecamatan": "Belopa Utara"
+  },
+  "seppong": {
+    "lat": -3.34508201961057,
+    "lng": 120.37712147691235,
+    "name": "Seppong",
+    "kecamatan": "Belopa Utara"
+  },
+  "basse sangtempe utara_dampan": {
+    "lat": -3.1140843719576696,
+    "lng": 120.10731743015867,
+    "name": "Dampan",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "dampan": {
+    "lat": -3.1140843719576696,
+    "lng": 120.10731743015867,
+    "name": "Dampan",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "walenrang_lalong": {
+    "lat": -2.86324135625,
+    "lng": 120.14131132291669,
+    "name": "Lalong",
+    "kecamatan": "Walenrang"
+  },
+  "lalong": {
+    "lat": -2.86324135625,
+    "lng": 120.14131132291669,
+    "name": "Lalong",
+    "kecamatan": "Walenrang"
+  },
+  "walenrang barat_ilan batu": {
+    "lat": -2.8726336691470062,
+    "lng": 120.06138361597098,
+    "name": "Ilan Batu",
+    "kecamatan": "Walenrang Barat"
+  },
+  "ilan batu": {
+    "lat": -2.8726336691470062,
+    "lng": 120.06138361597098,
+    "name": "Ilan Batu",
+    "kecamatan": "Walenrang Barat"
+  },
+  "belopa utara_sabe": {
+    "lat": -3.3761507006250016,
+    "lng": 120.36439720625,
+    "name": "Sabe",
+    "kecamatan": "Belopa Utara"
+  },
+  "sabe": {
+    "lat": -3.3761507006250016,
+    "lng": 120.36439720625,
+    "name": "Sabe",
+    "kecamatan": "Belopa Utara"
+  },
+  "walenrang utara_siteba": {
+    "lat": -2.7484227973614797,
+    "lng": 120.06394229656986,
+    "name": "Siteba",
+    "kecamatan": "Walenrang Utara"
+  },
+  "siteba": {
+    "lat": -2.7484227973614797,
+    "lng": 120.06394229656986,
+    "name": "Siteba",
+    "kecamatan": "Walenrang Utara"
+  },
+  "basse sangtempe_kanna": {
+    "lat": -3.224511120224719,
+    "lng": 120.06498189325836,
+    "name": "Kanna",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "kanna": {
+    "lat": -3.224511120224719,
+    "lng": 120.06498189325836,
+    "name": "Kanna",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "larompong selatan_batu lappa": {
+    "lat": -3.651800689976132,
+    "lng": 120.38848441789982,
+    "name": "Batu Lappa",
+    "kecamatan": "Larompong Selatan"
+  },
+  "batu lappa": {
+    "lat": -3.651800689976132,
+    "lng": 120.38848441789982,
+    "name": "Batu Lappa",
+    "kecamatan": "Larompong Selatan"
+  },
+  "basse sangtempe utara_bonglo": {
+    "lat": -3.060415518032786,
+    "lng": 120.09739787540983,
+    "name": "Bonglo",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "bonglo": {
+    "lat": -3.060415518032786,
+    "lng": 120.09739787540983,
+    "name": "Bonglo",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "larompong selatan_bonepute": {
+    "lat": -3.637196555465589,
+    "lng": 120.39993340121465,
+    "name": "Bonepute",
+    "kecamatan": "Larompong Selatan"
+  },
+  "bonepute": {
+    "lat": -3.637196555465589,
+    "lng": 120.39993340121465,
+    "name": "Bonepute",
+    "kecamatan": "Larompong Selatan"
+  },
+  "suli_towondo": {
+    "lat": -3.486370434579439,
+    "lng": 120.38402861355134,
+    "name": "Towondo",
+    "kecamatan": "Suli"
+  },
+  "towondo": {
+    "lat": -3.486370434579439,
+    "lng": 120.38402861355134,
+    "name": "Towondo",
+    "kecamatan": "Suli"
+  },
+  "suli_padang lambe": {
+    "lat": -3.4272912874345547,
+    "lng": 120.3303625958115,
+    "name": "Padang Lambe",
+    "kecamatan": "Suli"
+  },
+  "padang lambe": {
+    "lat": -3.4272912874345547,
+    "lng": 120.3303625958115,
+    "name": "Padang Lambe",
+    "kecamatan": "Suli"
+  },
+  "suli_malela": {
+    "lat": -3.42476286226415,
+    "lng": 120.3633173430189,
+    "name": "Malela",
+    "kecamatan": "Suli"
+  },
+  "malela": {
+    "lat": -3.42476286226415,
+    "lng": 120.3633173430189,
+    "name": "Malela",
+    "kecamatan": "Suli"
+  },
+  "suli_cimpu": {
+    "lat": -3.4308330505084728,
+    "lng": 120.38185019288139,
+    "name": "Cimpu",
+    "kecamatan": "Suli"
+  },
+  "cimpu": {
+    "lat": -3.4308330505084728,
+    "lng": 120.38185019288139,
+    "name": "Cimpu",
+    "kecamatan": "Suli"
+  },
+  "suli barat_kaili": {
+    "lat": -3.4306123416666656,
+    "lng": 120.28127604305548,
+    "name": "Kaili",
+    "kecamatan": "Suli Barat"
+  },
+  "kaili": {
+    "lat": -3.4306123416666656,
+    "lng": 120.28127604305548,
+    "name": "Kaili",
+    "kecamatan": "Suli Barat"
+  },
+  "belopa_senga selatan": {
+    "lat": -3.409818632397195,
+    "lng": 120.39010829729203,
+    "name": "Senga Selatan",
+    "kecamatan": "Belopa"
+  },
+  "senga selatan": {
+    "lat": -3.409818632397195,
+    "lng": 120.39010829729203,
+    "name": "Senga Selatan",
+    "kecamatan": "Belopa"
+  },
+  "belopa_belopa": {
+    "lat": -3.390742620540542,
+    "lng": 120.38942906630633,
+    "name": "Belopa",
+    "kecamatan": "Belopa"
+  },
+  "belopa": {
+    "lat": -3.390742620540542,
+    "lng": 120.38942906630633,
+    "name": "Belopa",
+    "kecamatan": "Belopa"
+  },
+  "suli barat_buntu barana": {
+    "lat": -3.4746804130630626,
+    "lng": 120.3405753463964,
+    "name": "Buntu Barana",
+    "kecamatan": "Suli Barat"
+  },
+  "buntu barana": {
+    "lat": -3.4746804130630626,
+    "lng": 120.3405753463964,
+    "name": "Buntu Barana",
+    "kecamatan": "Suli Barat"
+  },
+  "suli barat_lindajang": {
+    "lat": -3.484274480303031,
+    "lng": 120.30961335,
+    "name": "Lindajang",
+    "kecamatan": "Suli Barat"
+  },
+  "lindajang": {
+    "lat": -3.484274480303031,
+    "lng": 120.30961335,
+    "name": "Lindajang",
+    "kecamatan": "Suli Barat"
+  },
+  "suli barat_salubua sb": {
+    "lat": -3.4662242437956214,
+    "lng": 120.27841778540152,
+    "name": "Salubua SB",
+    "kecamatan": "Suli Barat"
+  },
+  "salubua sb": {
+    "lat": -3.4662242437956214,
+    "lng": 120.27841778540152,
+    "name": "Salubua SB",
+    "kecamatan": "Suli Barat"
+  },
+  "belopa_balo balo": {
+    "lat": -3.3823507601941745,
+    "lng": 120.34752094207114,
+    "name": "Balo Balo",
+    "kecamatan": "Belopa"
+  },
+  "balo balo": {
+    "lat": -3.3823507601941745,
+    "lng": 120.34752094207114,
+    "name": "Balo Balo",
+    "kecamatan": "Belopa"
+  },
+  "belopa_senga": {
+    "lat": -3.4002765805038346,
+    "lng": 120.38595074052567,
+    "name": "Senga",
+    "kecamatan": "Belopa"
+  },
+  "senga": {
+    "lat": -3.4002765805038346,
+    "lng": 120.38595074052567,
+    "name": "Senga",
+    "kecamatan": "Belopa"
+  },
+  "bajo_talang bulawang": {
+    "lat": -3.4031433626582257,
+    "lng": 120.30984492721517,
+    "name": "Talang Bulawang",
+    "kecamatan": "Bajo"
+  },
+  "talang bulawang": {
+    "lat": -3.4031433626582257,
+    "lng": 120.30984492721517,
+    "name": "Talang Bulawang",
+    "kecamatan": "Bajo"
+  },
+  "belopa utara_lauwa": {
+    "lat": -3.358051019999999,
+    "lng": 120.3793213707317,
+    "name": "Lauwa",
+    "kecamatan": "Belopa Utara"
+  },
+  "lauwa": {
+    "lat": -3.358051019999999,
+    "lng": 120.3793213707317,
+    "name": "Lauwa",
+    "kecamatan": "Belopa Utara"
+  },
+  "bajo_rumaju": {
+    "lat": -3.3734718742574255,
+    "lng": 120.30638260099013,
+    "name": "Rumaju",
+    "kecamatan": "Bajo"
+  },
+  "rumaju": {
+    "lat": -3.3734718742574255,
+    "lng": 120.30638260099013,
+    "name": "Rumaju",
+    "kecamatan": "Bajo"
+  },
+  "belopa utara_paconne": {
+    "lat": -3.3598176598173466,
+    "lng": 120.39606303675797,
+    "name": "Paconne",
+    "kecamatan": "Belopa Utara"
+  },
+  "paconne": {
+    "lat": -3.3598176598173466,
+    "lng": 120.39606303675797,
+    "name": "Paconne",
+    "kecamatan": "Belopa Utara"
+  },
+  "belopa utara_pammanu": {
+    "lat": -3.3589684633928565,
+    "lng": 120.36517621428573,
+    "name": "Pammanu",
+    "kecamatan": "Belopa Utara"
+  },
+  "pammanu": {
+    "lat": -3.3589684633928565,
+    "lng": 120.36517621428573,
+    "name": "Pammanu",
+    "kecamatan": "Belopa Utara"
+  },
+  "bajo_buntu babang": {
+    "lat": -3.320711247272727,
+    "lng": 120.29655016727271,
+    "name": "Buntu Babang",
+    "kecamatan": "Bajo"
+  },
+  "buntu babang": {
+    "lat": -3.320711247272727,
+    "lng": 120.29655016727271,
+    "name": "Buntu Babang",
+    "kecamatan": "Bajo"
+  },
+  "bajo_saga": {
+    "lat": -3.3543633454545456,
+    "lng": 120.29554800000004,
+    "name": "Saga",
+    "kecamatan": "Bajo"
+  },
+  "saga": {
+    "lat": -3.3543633454545456,
+    "lng": 120.29554800000004,
+    "name": "Saga",
+    "kecamatan": "Bajo"
+  },
+  "bajo_balla": {
+    "lat": -3.376072904721031,
+    "lng": 120.32450964721033,
+    "name": "Balla",
+    "kecamatan": "Bajo"
+  },
+  "balla": {
+    "lat": -3.376072904721031,
+    "lng": 120.32450964721033,
+    "name": "Balla",
+    "kecamatan": "Bajo"
+  },
+  "kamanre_cilallang": {
+    "lat": -3.319342833599996,
+    "lng": 120.33809843759995,
+    "name": "Cilallang",
+    "kecamatan": "Kamanre"
+  },
+  "cilallang": {
+    "lat": -3.319342833599996,
+    "lng": 120.33809843759995,
+    "name": "Cilallang",
+    "kecamatan": "Kamanre"
+  },
+  "ponrang selatan_tarramatekkeng": {
+    "lat": -3.2959206812499993,
+    "lng": 120.3405770385417,
+    "name": "Tarramatekkeng",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "tarramatekkeng": {
+    "lat": -3.2959206812499993,
+    "lng": 120.3405770385417,
+    "name": "Tarramatekkeng",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "bajo_bajo": {
+    "lat": -3.3706635256410244,
+    "lng": 120.31409683479853,
+    "name": "Bajo",
+    "kecamatan": "Bajo"
+  },
+  "bajo": {
+    "lat": -3.3706635256410244,
+    "lng": 120.31409683479853,
+    "name": "Bajo",
+    "kecamatan": "Bajo"
+  },
+  "kamanre_tabbaja": {
+    "lat": -3.345617606172839,
+    "lng": 120.33120295308638,
+    "name": "Tabbaja",
+    "kecamatan": "Kamanre"
+  },
+  "tabbaja": {
+    "lat": -3.345617606172839,
+    "lng": 120.33120295308638,
+    "name": "Tabbaja",
+    "kecamatan": "Kamanre"
+  },
+  "kamanre_libukang": {
+    "lat": -3.3175841463917517,
+    "lng": 120.31360427113405,
+    "name": "Libukang",
+    "kecamatan": "Kamanre"
+  },
+  "libukang": {
+    "lat": -3.3175841463917517,
+    "lng": 120.31360427113405,
+    "name": "Libukang",
+    "kecamatan": "Kamanre"
+  },
+  "kamanre_salu paremang selatan": {
+    "lat": -3.307541439805824,
+    "lng": 120.38852750388342,
+    "name": "Salu Paremang Selatan",
+    "kecamatan": "Kamanre"
+  },
+  "salu paremang selatan": {
+    "lat": -3.307541439805824,
+    "lng": 120.38852750388342,
+    "name": "Salu Paremang Selatan",
+    "kecamatan": "Kamanre"
+  },
+  "kamanre_kamanre": {
+    "lat": -3.300182895918367,
+    "lng": 120.32371053333338,
+    "name": "Kamanre",
+    "kecamatan": "Kamanre"
+  },
+  "kamanre": {
+    "lat": -3.300182895918367,
+    "lng": 120.32371053333338,
+    "name": "Kamanre",
+    "kecamatan": "Kamanre"
+  },
+  "bajo barat_bonelemo barat": {
+    "lat": -3.34586722487562,
+    "lng": 120.20641610746264,
+    "name": "Bonelemo Barat",
+    "kecamatan": "Bajo Barat"
+  },
+  "bonelemo barat": {
+    "lat": -3.34586722487562,
+    "lng": 120.20641610746264,
+    "name": "Bonelemo Barat",
+    "kecamatan": "Bajo Barat"
+  },
+  "latimojong_buntu sarek": {
+    "lat": -3.4295645788819873,
+    "lng": 120.13371053726706,
+    "name": "Buntu Sarek",
+    "kecamatan": "Latimojong"
+  },
+  "buntu sarek": {
+    "lat": -3.4295645788819873,
+    "lng": 120.13371053726706,
+    "name": "Buntu Sarek",
+    "kecamatan": "Latimojong"
+  },
+  "latimojong_ulusalu": {
+    "lat": -3.413506357142857,
+    "lng": 120.0976184415584,
+    "name": "Ulusalu",
+    "kecamatan": "Latimojong"
+  },
+  "ulusalu": {
+    "lat": -3.413506357142857,
+    "lng": 120.0976184415584,
+    "name": "Ulusalu",
+    "kecamatan": "Latimojong"
+  },
+  "bajo barat_saronda": {
+    "lat": -3.3682311367601265,
+    "lng": 120.22007933769478,
+    "name": "Saronda",
+    "kecamatan": "Bajo Barat"
+  },
+  "saronda": {
+    "lat": -3.3682311367601265,
+    "lng": 120.22007933769478,
+    "name": "Saronda",
+    "kecamatan": "Bajo Barat"
+  },
+  "bajo barat_tumbu barak": {
+    "lat": -3.3901183219047626,
+    "lng": 120.25101200095236,
+    "name": "Tumbu Barak",
+    "kecamatan": "Bajo Barat"
+  },
+  "tumbu barak": {
+    "lat": -3.3901183219047626,
+    "lng": 120.25101200095236,
+    "name": "Tumbu Barak",
+    "kecamatan": "Bajo Barat"
+  },
+  "latimojong_tibussan": {
+    "lat": -3.514031478684209,
+    "lng": 120.12323042157895,
+    "name": "Tibussan",
+    "kecamatan": "Latimojong"
+  },
+  "tibussan": {
+    "lat": -3.514031478684209,
+    "lng": 120.12323042157895,
+    "name": "Tibussan",
+    "kecamatan": "Latimojong"
+  },
+  "suli barat_tallang": {
+    "lat": -3.497670723880596,
+    "lng": 120.35464538805971,
+    "name": "Tallang",
+    "kecamatan": "Suli Barat"
+  },
+  "tallang": {
+    "lat": -3.497670723880596,
+    "lng": 120.35464538805971,
+    "name": "Tallang",
+    "kecamatan": "Suli Barat"
+  },
+  "latimojong_tolajuk": {
+    "lat": -3.3797513894736846,
+    "lng": 120.06761557171046,
+    "name": "Tolajuk",
+    "kecamatan": "Latimojong"
+  },
+  "tolajuk": {
+    "lat": -3.3797513894736846,
+    "lng": 120.06761557171046,
+    "name": "Tolajuk",
+    "kecamatan": "Latimojong"
+  },
+  "latimojong_rante balla": {
+    "lat": -3.335402293269235,
+    "lng": 120.09496793942313,
+    "name": "Rante Balla",
+    "kecamatan": "Latimojong"
+  },
+  "rante balla": {
+    "lat": -3.335402293269235,
+    "lng": 120.09496793942313,
+    "name": "Rante Balla",
+    "kecamatan": "Latimojong"
+  },
+  "bajo barat_bonelemo utara": {
+    "lat": -3.3155456808219186,
+    "lng": 120.24267273287673,
+    "name": "Bonelemo Utara",
+    "kecamatan": "Bajo Barat"
+  },
+  "bonelemo utara": {
+    "lat": -3.3155456808219186,
+    "lng": 120.24267273287673,
+    "name": "Bonelemo Utara",
+    "kecamatan": "Bajo Barat"
+  },
+  "latimojong_pangi la": {
+    "lat": -3.2645375144796382,
+    "lng": 120.12280791402715,
+    "name": "Pangi LA",
+    "kecamatan": "Latimojong"
+  },
+  "pangi la": {
+    "lat": -3.2645375144796382,
+    "lng": 120.12280791402715,
+    "name": "Pangi LA",
+    "kecamatan": "Latimojong"
+  },
+  "basse sangtempe_to'long": {
+    "lat": -3.216674030434782,
+    "lng": 120.0409638152174,
+    "name": "To'long",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "to'long": {
+    "lat": -3.216674030434782,
+    "lng": 120.0409638152174,
+    "name": "To'long",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "basse sangtempe_sinaji": {
+    "lat": -3.250463384713375,
+    "lng": 120.01135841401279,
+    "name": "Sinaji",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "sinaji": {
+    "lat": -3.250463384713375,
+    "lng": 120.01135841401279,
+    "name": "Sinaji",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "basse sangtempe_kanna utara": {
+    "lat": -3.1779684117647076,
+    "lng": 120.0456174737969,
+    "name": "Kanna Utara",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "kanna utara": {
+    "lat": -3.1779684117647076,
+    "lng": 120.0456174737969,
+    "name": "Kanna Utara",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "basse sangtempe_lange": {
+    "lat": -3.263747534131736,
+    "lng": 120.07155470838327,
+    "name": "Lange",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "lange": {
+    "lat": -3.263747534131736,
+    "lng": 120.07155470838327,
+    "name": "Lange",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "basse sangtempe_lissaga": {
+    "lat": -3.2039313165289283,
+    "lng": 120.05975123099167,
+    "name": "Lissaga",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "lissaga": {
+    "lat": -3.2039313165289283,
+    "lng": 120.05975123099167,
+    "name": "Lissaga",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "basse sangtempe utara_uraso": {
+    "lat": -3.0848132163793105,
+    "lng": 120.04589761637936,
+    "name": "Uraso",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "uraso": {
+    "lat": -3.0848132163793105,
+    "lng": 120.04589761637936,
+    "name": "Uraso",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "basse sangtempe utara_teda": {
+    "lat": -3.0935503231884054,
+    "lng": 120.08154247681153,
+    "name": "Teda",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "teda": {
+    "lat": -3.0935503231884054,
+    "lng": 120.08154247681153,
+    "name": "Teda",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "basse sangtempe_mappe tajang": {
+    "lat": -3.1562814950331157,
+    "lng": 120.0835098483443,
+    "name": "Mappe Tajang",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "mappe tajang": {
+    "lat": -3.1562814950331157,
+    "lng": 120.0835098483443,
+    "name": "Mappe Tajang",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "basse sangtempe utara_barana": {
+    "lat": -3.076857061931818,
+    "lng": 120.13012808977268,
+    "name": "Barana",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "barana": {
+    "lat": -3.076857061931818,
+    "lng": 120.13012808977268,
+    "name": "Barana",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "basse sangtempe_andulan": {
+    "lat": -3.2126768011811,
+    "lng": 120.09929731062999,
+    "name": "Andulan",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "andulan": {
+    "lat": -3.2126768011811,
+    "lng": 120.09929731062999,
+    "name": "Andulan",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "basse sangtempe utara_pantilang": {
+    "lat": -3.1033661757009363,
+    "lng": 120.05238428411214,
+    "name": "Pantilang",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "pantilang": {
+    "lat": -3.1033661757009363,
+    "lng": 120.05238428411214,
+    "name": "Pantilang",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "basse sangtempe_ledan": {
+    "lat": -3.196288760240965,
+    "lng": 120.0610210111446,
+    "name": "Ledan",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "ledan": {
+    "lat": -3.196288760240965,
+    "lng": 120.0610210111446,
+    "name": "Ledan",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "basse sangtempe utara_karatuan": {
+    "lat": -3.0543303197368425,
+    "lng": 120.05990954539482,
+    "name": "Karatuan",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "karatuan": {
+    "lat": -3.0543303197368425,
+    "lng": 120.05990954539482,
+    "name": "Karatuan",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "bua_larelare": {
+    "lat": -3.1697304983783785,
+    "lng": 120.25446364054055,
+    "name": "LareLare",
+    "kecamatan": "Bua"
+  },
+  "larelare": {
+    "lat": -3.1697304983783785,
+    "lng": 120.25446364054055,
+    "name": "LareLare",
+    "kecamatan": "Bua"
+  },
+  "bua_lengkong": {
+    "lat": -3.1153444870967757,
+    "lng": 120.22421451370968,
+    "name": "Lengkong",
+    "kecamatan": "Bua"
+  },
+  "lengkong": {
+    "lat": -3.1153444870967757,
+    "lng": 120.22421451370968,
+    "name": "Lengkong",
+    "kecamatan": "Bua"
+  },
+  "bua_puty": {
+    "lat": -3.0961715519230775,
+    "lng": 120.22607798173077,
+    "name": "Puty",
+    "kecamatan": "Bua"
+  },
+  "puty": {
+    "lat": -3.0961715519230775,
+    "lng": 120.22607798173077,
+    "name": "Puty",
+    "kecamatan": "Bua"
+  },
+  "bua_bukit harapan": {
+    "lat": -3.1406048264367814,
+    "lng": 120.19100496015335,
+    "name": "Bukit Harapan",
+    "kecamatan": "Bua"
+  },
+  "bukit harapan": {
+    "lat": -3.1406048264367814,
+    "lng": 120.19100496015335,
+    "name": "Bukit Harapan",
+    "kecamatan": "Bua"
+  },
+  "bua_sakti": {
+    "lat": -3.070503465384617,
+    "lng": 120.23053940076923,
+    "name": "Sakti",
+    "kecamatan": "Bua"
+  },
+  "sakti": {
+    "lat": -3.070503465384617,
+    "lng": 120.23053940076923,
+    "name": "Sakti",
+    "kecamatan": "Bua"
+  },
+  "bua_posi": {
+    "lat": -3.0877173171641767,
+    "lng": 120.16284142499995,
+    "name": "Posi",
+    "kecamatan": "Bua"
+  },
+  "posi": {
+    "lat": -3.0877173171641767,
+    "lng": 120.16284142499995,
+    "name": "Posi",
+    "kecamatan": "Bua"
+  },
+  "bua_padang kalua bu": {
+    "lat": -3.0535089964824103,
+    "lng": 120.21426321105523,
+    "name": "Padang Kalua BU",
+    "kecamatan": "Bua"
+  },
+  "padang kalua bu": {
+    "lat": -3.0535089964824103,
+    "lng": 120.21426321105523,
+    "name": "Padang Kalua BU",
+    "kecamatan": "Bua"
+  },
+  "bua_barowa": {
+    "lat": -3.0540165810631237,
+    "lng": 120.2436952498338,
+    "name": "Barowa",
+    "kecamatan": "Bua"
+  },
+  "barowa": {
+    "lat": -3.0540165810631237,
+    "lng": 120.2436952498338,
+    "name": "Barowa",
+    "kecamatan": "Bua"
+  },
+  "walenrang timur_pangalli": {
+    "lat": -2.848603832653061,
+    "lng": 120.18429245306126,
+    "name": "Pangalli",
+    "kecamatan": "Walenrang Timur"
+  },
+  "pangalli": {
+    "lat": -2.848603832653061,
+    "lng": 120.18429245306126,
+    "name": "Pangalli",
+    "kecamatan": "Walenrang Timur"
+  },
+  "walenrang timur_tanete": {
+    "lat": -2.866858477272726,
+    "lng": 120.17039366060607,
+    "name": "Tanete",
+    "kecamatan": "Walenrang Timur"
+  },
+  "tanete": {
+    "lat": -2.866858477272726,
+    "lng": 120.17039366060607,
+    "name": "Tanete",
+    "kecamatan": "Walenrang Timur"
+  },
+  "walenrang timur_rante damai": {
+    "lat": -2.8575488558823525,
+    "lng": 120.18685315588235,
+    "name": "Rante Damai",
+    "kecamatan": "Walenrang Timur"
+  },
+  "rante damai": {
+    "lat": -2.8575488558823525,
+    "lng": 120.18685315588235,
+    "name": "Rante Damai",
+    "kecamatan": "Walenrang Timur"
+  },
+  "bua_pabbaresseng": {
+    "lat": -3.0613342336000002,
+    "lng": 120.25046412359994,
+    "name": "Pabbaresseng",
+    "kecamatan": "Bua"
+  },
+  "pabbaresseng": {
+    "lat": -3.0613342336000002,
+    "lng": 120.25046412359994,
+    "name": "Pabbaresseng",
+    "kecamatan": "Bua"
+  },
+  "bua_tana rigella": {
+    "lat": -3.076425278609628,
+    "lng": 120.23088701176461,
+    "name": "Tana Rigella",
+    "kecamatan": "Bua"
+  },
+  "tana rigella": {
+    "lat": -3.076425278609628,
+    "lng": 120.23088701176461,
+    "name": "Tana Rigella",
+    "kecamatan": "Bua"
+  },
+  "walenrang timur_sebaseba": {
+    "lat": -2.9042686829090902,
+    "lng": 120.2288705334546,
+    "name": "SebaSeba",
+    "kecamatan": "Walenrang Timur"
+  },
+  "sebaseba": {
+    "lat": -2.9042686829090902,
+    "lng": 120.2288705334546,
+    "name": "SebaSeba",
+    "kecamatan": "Walenrang Timur"
+  },
+  "walenrang timur_taba": {
+    "lat": -2.883706582,
+    "lng": 120.19853865599997,
+    "name": "Taba",
+    "kecamatan": "Walenrang Timur"
+  },
+  "taba": {
+    "lat": -2.883706582,
+    "lng": 120.19853865599997,
+    "name": "Taba",
+    "kecamatan": "Walenrang Timur"
+  },
+  "lamasi timur_pompengan pantai": {
+    "lat": -2.9106798645011587,
+    "lng": 120.26029727587009,
+    "name": "Pompengan pantai",
+    "kecamatan": "Lamasi Timur"
+  },
+  "pompengan pantai": {
+    "lat": -2.9106798645011587,
+    "lng": 120.26029727587009,
+    "name": "Pompengan pantai",
+    "kecamatan": "Lamasi Timur"
+  },
+  "lamasi_wiwitan timur": {
+    "lat": -2.824574872340425,
+    "lng": 120.16894717021275,
+    "name": "Wiwitan Timur",
+    "kecamatan": "Lamasi"
+  },
+  "wiwitan timur": {
+    "lat": -2.824574872340425,
+    "lng": 120.16894717021275,
+    "name": "Wiwitan Timur",
+    "kecamatan": "Lamasi"
+  },
+  "lamasi timur_pompengan tengah": {
+    "lat": -2.8904942357541907,
+    "lng": 120.25460050055872,
+    "name": "Pompengan Tengah",
+    "kecamatan": "Lamasi Timur"
+  },
+  "pompengan tengah": {
+    "lat": -2.8904942357541907,
+    "lng": 120.25460050055872,
+    "name": "Pompengan Tengah",
+    "kecamatan": "Lamasi Timur"
+  },
+  "lamasi timur_pompengan": {
+    "lat": -2.8746851329710146,
+    "lng": 120.25070294420286,
+    "name": "Pompengan",
+    "kecamatan": "Lamasi Timur"
+  },
+  "pompengan": {
+    "lat": -2.8746851329710146,
+    "lng": 120.25070294420286,
+    "name": "Pompengan",
+    "kecamatan": "Lamasi Timur"
+  },
+  "lamasi timur_pelalan": {
+    "lat": -2.8433492633720947,
+    "lng": 120.20437106918608,
+    "name": "Pelalan",
+    "kecamatan": "Lamasi Timur"
+  },
+  "pelalan": {
+    "lat": -2.8433492633720947,
+    "lng": 120.20437106918608,
+    "name": "Pelalan",
+    "kecamatan": "Lamasi Timur"
+  },
+  "lamasi timur_salupao": {
+    "lat": -2.8200829803030314,
+    "lng": 120.23413535530298,
+    "name": "Salupao",
+    "kecamatan": "Lamasi Timur"
+  },
+  "salupao": {
+    "lat": -2.8200829803030314,
+    "lng": 120.23413535530298,
+    "name": "Salupao",
+    "kecamatan": "Lamasi Timur"
+  },
+  "lamasi_padang kalua la": {
+    "lat": -2.827929340145986,
+    "lng": 120.13307450291974,
+    "name": "Padang Kalua LA",
+    "kecamatan": "Lamasi"
+  },
+  "padang kalua la": {
+    "lat": -2.827929340145986,
+    "lng": 120.13307450291974,
+    "name": "Padang Kalua LA",
+    "kecamatan": "Lamasi"
+  },
+  "walenrang utara_sangtandung": {
+    "lat": -2.8352709978571404,
+    "lng": 120.07212570714283,
+    "name": "Sangtandung",
+    "kecamatan": "Walenrang Utara"
+  },
+  "sangtandung": {
+    "lat": -2.8352709978571404,
+    "lng": 120.07212570714283,
+    "name": "Sangtandung",
+    "kecamatan": "Walenrang Utara"
+  },
+  "walenrang utara_bolong": {
+    "lat": -2.831488368156427,
+    "lng": 120.111093650838,
+    "name": "Bolong",
+    "kecamatan": "Walenrang Utara"
+  },
+  "bolong": {
+    "lat": -2.831488368156427,
+    "lng": 120.111093650838,
+    "name": "Bolong",
+    "kecamatan": "Walenrang Utara"
+  },
+  "bua ponrang_padang tuju": {
+    "lat": -3.2899268606666667,
+    "lng": 120.25599031799995,
+    "name": "Padang Tuju",
+    "kecamatan": "Bua Ponrang"
+  },
+  "padang tuju": {
+    "lat": -3.2899268606666667,
+    "lng": 120.25599031799995,
+    "name": "Padang Tuju",
+    "kecamatan": "Bua Ponrang"
+  },
+  "walenrang utara_limbong": {
+    "lat": -2.801125710384616,
+    "lng": 120.11234406384618,
+    "name": "Limbong",
+    "kecamatan": "Walenrang Utara"
+  },
+  "limbong": {
+    "lat": -2.801125710384616,
+    "lng": 120.11234406384618,
+    "name": "Limbong",
+    "kecamatan": "Walenrang Utara"
+  },
+  "walenrang utara_buntu awo": {
+    "lat": -2.7949767120967755,
+    "lng": 120.12193685322579,
+    "name": "Buntu Awo",
+    "kecamatan": "Walenrang Utara"
+  },
+  "buntu awo": {
+    "lat": -2.7949767120967755,
+    "lng": 120.12193685322579,
+    "name": "Buntu Awo",
+    "kecamatan": "Walenrang Utara"
+  },
+  "walenrang utara_marabuana": {
+    "lat": -2.7754258054545455,
+    "lng": 120.13285090181819,
+    "name": "Marabuana",
+    "kecamatan": "Walenrang Utara"
+  },
+  "marabuana": {
+    "lat": -2.7754258054545455,
+    "lng": 120.13285090181819,
+    "name": "Marabuana",
+    "kecamatan": "Walenrang Utara"
+  },
+  "walenrang utara_salulino": {
+    "lat": -2.76819694715909,
+    "lng": 120.17093923693186,
+    "name": "Salulino",
+    "kecamatan": "Walenrang Utara"
+  },
+  "salulino": {
+    "lat": -2.76819694715909,
+    "lng": 120.17093923693186,
+    "name": "Salulino",
+    "kecamatan": "Walenrang Utara"
+  },
+  "walenrang utara_salu tubu": {
+    "lat": -2.7512992811320744,
+    "lng": 120.15793629245277,
+    "name": "Salu Tubu",
+    "kecamatan": "Walenrang Utara"
+  },
+  "salu tubu": {
+    "lat": -2.7512992811320744,
+    "lng": 120.15793629245277,
+    "name": "Salu Tubu",
+    "kecamatan": "Walenrang Utara"
+  },
+  "walenrang_batu sitanduk": {
+    "lat": -2.856849275657895,
+    "lng": 120.10397769868419,
+    "name": "Batu Sitanduk",
+    "kecamatan": "Walenrang"
+  },
+  "batu sitanduk": {
+    "lat": -2.856849275657895,
+    "lng": 120.10397769868419,
+    "name": "Batu Sitanduk",
+    "kecamatan": "Walenrang"
+  },
+  "walenrang barat_ilan batu uru": {
+    "lat": -2.844780784615384,
+    "lng": 120.00433605673076,
+    "name": "Ilan Batu Uru",
+    "kecamatan": "Walenrang Barat"
+  },
+  "ilan batu uru": {
+    "lat": -2.844780784615384,
+    "lng": 120.00433605673076,
+    "name": "Ilan Batu Uru",
+    "kecamatan": "Walenrang Barat"
+  },
+  "walenrang barat_lempe": {
+    "lat": -2.7864997403921574,
+    "lng": 120.01523114549019,
+    "name": "Lempe",
+    "kecamatan": "Walenrang Barat"
+  },
+  "lempe": {
+    "lat": -2.7864997403921574,
+    "lng": 120.01523114549019,
+    "name": "Lempe",
+    "kecamatan": "Walenrang Barat"
+  },
+  "walenrang barat_lempe pasang": {
+    "lat": -2.7493794896000003,
+    "lng": 119.9665638688,
+    "name": "Lempe Pasang",
+    "kecamatan": "Walenrang Barat"
+  },
+  "lempe pasang": {
+    "lat": -2.7493794896000003,
+    "lng": 119.9665638688,
+    "name": "Lempe Pasang",
+    "kecamatan": "Walenrang Barat"
+  },
+  "ponrang selatan_paccerakkang": {
+    "lat": -3.274173687912088,
+    "lng": 120.3190722851649,
+    "name": "Paccerakkang",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "paccerakkang": {
+    "lat": -3.274173687912088,
+    "lng": 120.3190722851649,
+    "name": "Paccerakkang",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "ponrang selatan_to'bia": {
+    "lat": -3.271851119125682,
+    "lng": 120.40668158633882,
+    "name": "To'bia",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "to'bia": {
+    "lat": -3.271851119125682,
+    "lng": 120.40668158633882,
+    "name": "To'bia",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "ponrang selatan_buntu karya": {
+    "lat": -3.2621568892857136,
+    "lng": 120.31100908571428,
+    "name": "Buntu Karya",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "buntu karya": {
+    "lat": -3.2621568892857136,
+    "lng": 120.31100908571428,
+    "name": "Buntu Karya",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "ponrang selatan_to'balo": {
+    "lat": -3.2719657877118618,
+    "lng": 120.36855451716114,
+    "name": "To'balo",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "to'balo": {
+    "lat": -3.2719657877118618,
+    "lng": 120.36855451716114,
+    "name": "To'balo",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "ponrang selatan_bakti": {
+    "lat": -3.2642161179012343,
+    "lng": 120.34930534629633,
+    "name": "Bakti",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "bakti": {
+    "lat": -3.2642161179012343,
+    "lng": 120.34930534629633,
+    "name": "Bakti",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "ponrang selatan_olang": {
+    "lat": -3.261070667521368,
+    "lng": 120.32639093931621,
+    "name": "Olang",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "olang": {
+    "lat": -3.261070667521368,
+    "lng": 120.32639093931621,
+    "name": "Olang",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "bua ponrang_balutan": {
+    "lat": -3.2914889103448277,
+    "lng": 120.19040100306512,
+    "name": "Balutan",
+    "kecamatan": "Bua Ponrang"
+  },
+  "balutan": {
+    "lat": -3.2914889103448277,
+    "lng": 120.19040100306512,
+    "name": "Balutan",
+    "kecamatan": "Bua Ponrang"
+  },
+  "bua ponrang_noling": {
+    "lat": -3.2760763286458343,
+    "lng": 120.26274003541666,
+    "name": "Noling",
+    "kecamatan": "Bua Ponrang"
+  },
+  "noling": {
+    "lat": -3.2760763286458343,
+    "lng": 120.26274003541666,
+    "name": "Noling",
+    "kecamatan": "Bua Ponrang"
+  },
+  "bua ponrang_tanjong": {
+    "lat": -3.2182736837209296,
+    "lng": 120.25113542868212,
+    "name": "Tanjong",
+    "kecamatan": "Bua Ponrang"
+  },
+  "tanjong": {
+    "lat": -3.2182736837209296,
+    "lng": 120.25113542868212,
+    "name": "Tanjong",
+    "kecamatan": "Bua Ponrang"
+  },
+  "bua ponrang_padang ma'bud": {
+    "lat": -3.258382420472441,
+    "lng": 120.23301906614175,
+    "name": "Padang Ma'bud",
+    "kecamatan": "Bua Ponrang"
+  },
+  "padang ma'bud": {
+    "lat": -3.258382420472441,
+    "lng": 120.23301906614175,
+    "name": "Padang Ma'bud",
+    "kecamatan": "Bua Ponrang"
+  },
+  "ponrang_tampa": {
+    "lat": -3.187504736206896,
+    "lng": 120.18855011724136,
+    "name": "Tampa",
+    "kecamatan": "Ponrang"
+  },
+  "tampa": {
+    "lat": -3.187504736206896,
+    "lng": 120.18855011724136,
+    "name": "Tampa",
+    "kecamatan": "Ponrang"
+  },
+  "ponrang_mario": {
+    "lat": -3.1883849205804773,
+    "lng": 120.26632485435354,
+    "name": "Mario",
+    "kecamatan": "Ponrang"
+  },
+  "mario": {
+    "lat": -3.1883849205804773,
+    "lng": 120.26632485435354,
+    "name": "Mario",
+    "kecamatan": "Ponrang"
+  },
+  "ponrang_padang sappa": {
+    "lat": -3.2394120370370367,
+    "lng": 120.28968829074071,
+    "name": "Padang Sappa",
+    "kecamatan": "Ponrang"
+  },
+  "padang sappa": {
+    "lat": -3.2394120370370367,
+    "lng": 120.28968829074071,
+    "name": "Padang Sappa",
+    "kecamatan": "Ponrang"
+  },
+  "ponrang_muladimeng": {
+    "lat": -3.1987233192488262,
+    "lng": 120.3441807215962,
+    "name": "Muladimeng",
+    "kecamatan": "Ponrang"
+  },
+  "muladimeng": {
+    "lat": -3.1987233192488262,
+    "lng": 120.3441807215962,
+    "name": "Muladimeng",
+    "kecamatan": "Ponrang"
+  },
+  "ponrang_tumale": {
+    "lat": -3.22390367948718,
+    "lng": 120.31282148205129,
+    "name": "Tumale",
+    "kecamatan": "Ponrang"
+  },
+  "tumale": {
+    "lat": -3.22390367948718,
+    "lng": 120.31282148205129,
+    "name": "Tumale",
+    "kecamatan": "Ponrang"
+  },
+  "ponrang_buntu kanna": {
+    "lat": -3.238615481249999,
+    "lng": 120.26251585312497,
+    "name": "Buntu Kanna",
+    "kecamatan": "Ponrang"
+  },
+  "buntu kanna": {
+    "lat": -3.238615481249999,
+    "lng": 120.26251585312497,
+    "name": "Buntu Kanna",
+    "kecamatan": "Ponrang"
+  },
+  "ponrang_padang subur": {
+    "lat": -3.251059369565217,
+    "lng": 120.29847091304346,
+    "name": "Padang Subur",
+    "kecamatan": "Ponrang"
+  },
+  "padang subur": {
+    "lat": -3.251059369565217,
+    "lng": 120.29847091304346,
+    "name": "Padang Subur",
+    "kecamatan": "Ponrang"
+  },
+  "walenrang utara_pongko": {
+    "lat": -2.7153801579545456,
+    "lng": 120.13777353892038,
+    "name": "Pongko",
+    "kecamatan": "Walenrang Utara"
+  },
+  "pongko": {
+    "lat": -2.7153801579545456,
+    "lng": 120.13777353892038,
+    "name": "Pongko",
+    "kecamatan": "Walenrang Utara"
+  },
+  "lamasi timur_pompengan utara": {
+    "lat": -2.8617436894308943,
+    "lng": 120.25543721300812,
+    "name": "Pompengan Utara",
+    "kecamatan": "Lamasi Timur"
+  },
+  "pompengan utara": {
+    "lat": -2.8617436894308943,
+    "lng": 120.25543721300812,
+    "name": "Pompengan Utara",
+    "kecamatan": "Lamasi Timur"
+  },
+  "ponrang selatan_pattedong": {
+    "lat": -3.266931589240507,
+    "lng": 120.34164458417726,
+    "name": "Pattedong",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "pattedong": {
+    "lat": -3.266931589240507,
+    "lng": 120.34164458417726,
+    "name": "Pattedong",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "bua_raja": {
+    "lat": -3.0935125451282044,
+    "lng": 120.25681217846157,
+    "name": "Raja",
+    "kecamatan": "Bua"
+  },
+  "raja": {
+    "lat": -3.0935125451282044,
+    "lng": 120.25681217846157,
+    "name": "Raja",
+    "kecamatan": "Bua"
+  },
+  "lamasi_lamasi": {
+    "lat": -2.8203069102564093,
+    "lng": 120.17969371794875,
+    "name": "Lamasi",
+    "kecamatan": "Lamasi"
+  },
+  "lamasi": {
+    "lat": -2.8203069102564093,
+    "lng": 120.17969371794875,
+    "name": "Lamasi",
+    "kecamatan": "Lamasi"
+  },
+  "bua_pammesakang": {
+    "lat": -3.0879104062893084,
+    "lng": 120.25582006729566,
+    "name": "Pammesakang",
+    "kecamatan": "Bua"
+  },
+  "pammesakang": {
+    "lat": -3.0879104062893084,
+    "lng": 120.25582006729566,
+    "name": "Pammesakang",
+    "kecamatan": "Bua"
+  },
+  "bua_karangkarangan": {
+    "lat": -3.125897499497489,
+    "lng": 120.25625239145721,
+    "name": "KarangKarangan",
+    "kecamatan": "Bua"
+  },
+  "karangkarangan": {
+    "lat": -3.125897499497489,
+    "lng": 120.25625239145721,
+    "name": "KarangKarangan",
+    "kecamatan": "Bua"
+  },
+  "bajo barat_tettekang": {
+    "lat": -3.343330129577466,
+    "lng": 120.25396990000002,
+    "name": "Tettekang",
+    "kecamatan": "Bajo Barat"
+  },
+  "tettekang": {
+    "lat": -3.343330129577466,
+    "lng": 120.25396990000002,
+    "name": "Tettekang",
+    "kecamatan": "Bajo Barat"
+  },
+  "larompong selatan_dadeko": {
+    "lat": -3.6083507396226397,
+    "lng": 120.40799913962265,
+    "name": "Dadeko",
+    "kecamatan": "Larompong Selatan"
+  },
+  "dadeko": {
+    "lat": -3.6083507396226397,
+    "lng": 120.40799913962265,
+    "name": "Dadeko",
+    "kecamatan": "Larompong Selatan"
+  },
+  "larompong selatan_gandang batu": {
+    "lat": -3.647371303100776,
+    "lng": 120.35121073410856,
+    "name": "Gandang Batu",
+    "kecamatan": "Larompong Selatan"
+  },
+  "gandang batu": {
+    "lat": -3.647371303100776,
+    "lng": 120.35121073410856,
+    "name": "Gandang Batu",
+    "kecamatan": "Larompong Selatan"
+  },
+  "suli barat_muhajirin": {
+    "lat": -3.4777641661538463,
+    "lng": 120.29722700153845,
+    "name": "Muhajirin",
+    "kecamatan": "Suli Barat"
+  },
+  "muhajirin": {
+    "lat": -3.4777641661538463,
+    "lng": 120.29722700153845,
+    "name": "Muhajirin",
+    "kecamatan": "Suli Barat"
+  },
+  "ponrang_parekaju": {
+    "lat": -3.2050676055900618,
+    "lng": 120.24888962298137,
+    "name": "Parekaju",
+    "kecamatan": "Ponrang"
+  },
+  "parekaju": {
+    "lat": -3.2050676055900618,
+    "lng": 120.24888962298137,
+    "name": "Parekaju",
+    "kecamatan": "Ponrang"
+  },
+  "bajo_pangi ba": {
+    "lat": -3.322831978846153,
+    "lng": 120.2712200307692,
+    "name": "Pangi BA",
+    "kecamatan": "Bajo"
+  },
+  "pangi ba": {
+    "lat": -3.322831978846153,
+    "lng": 120.2712200307692,
+    "name": "Pangi BA",
+    "kecamatan": "Bajo"
+  },
+  "bajo_langkidi": {
+    "lat": -3.3374965333333324,
+    "lng": 120.31351080533332,
+    "name": "Langkidi",
+    "kecamatan": "Bajo"
+  },
+  "langkidi": {
+    "lat": -3.3374965333333324,
+    "lng": 120.31351080533332,
+    "name": "Langkidi",
+    "kecamatan": "Bajo"
+  },
+  "lamasi timur_to'lemo": {
+    "lat": -2.8443447000000006,
+    "lng": 120.22634767051285,
+    "name": "To'lemo",
+    "kecamatan": "Lamasi Timur"
+  },
+  "to'lemo": {
+    "lat": -2.8443447000000006,
+    "lng": 120.22634767051285,
+    "name": "To'lemo",
+    "kecamatan": "Lamasi Timur"
+  },
+  "suli barat_poringan": {
+    "lat": -3.423936109032259,
+    "lng": 120.21776731419358,
+    "name": "Poringan",
+    "kecamatan": "Suli Barat"
+  },
+  "poringan": {
+    "lat": -3.423936109032259,
+    "lng": 120.21776731419358,
+    "name": "Poringan",
+    "kecamatan": "Suli Barat"
+  },
+  "latimojong_bone posi": {
+    "lat": -3.372921497435898,
+    "lng": 120.13397240641022,
+    "name": "Bone Posi",
+    "kecamatan": "Latimojong"
+  },
+  "bone posi": {
+    "lat": -3.372921497435898,
+    "lng": 120.13397240641022,
+    "name": "Bone Posi",
+    "kecamatan": "Latimojong"
+  },
+  "larompong_komba selatan": {
+    "lat": -3.52953798556701,
+    "lng": 120.38121988350517,
+    "name": "Komba Selatan",
+    "kecamatan": "Larompong"
+  },
+  "komba selatan": {
+    "lat": -3.52953798556701,
+    "lng": 120.38121988350517,
+    "name": "Komba Selatan",
+    "kecamatan": "Larompong"
+  },
+  "suli_kasiwiang": {
+    "lat": -3.4152398549999976,
+    "lng": 120.37032220300003,
+    "name": "Kasiwiang",
+    "kecamatan": "Suli"
+  },
+  "kasiwiang": {
+    "lat": -3.4152398549999976,
+    "lng": 120.37032220300003,
+    "name": "Kasiwiang",
+    "kecamatan": "Suli"
+  },
+  "ponrang selatan_je'ne maeja": {
+    "lat": -3.270246104864865,
+    "lng": 120.3832049972973,
+    "name": "Je'ne Maeja",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "je'ne maeja": {
+    "lat": -3.270246104864865,
+    "lng": 120.3832049972973,
+    "name": "Je'ne Maeja",
+    "kecamatan": "Ponrang Selatan"
+  },
+  "bua_toddopuli": {
+    "lat": -3.1595756511627906,
+    "lng": 120.23397908255811,
+    "name": "Toddopuli",
+    "kecamatan": "Bua"
+  },
+  "toddopuli": {
+    "lat": -3.1595756511627906,
+    "lng": 120.23397908255811,
+    "name": "Toddopuli",
+    "kecamatan": "Bua"
+  },
+  "kamanre_bungaeja": {
+    "lat": -3.338920428244275,
+    "lng": 120.35733635343513,
+    "name": "Bungaeja",
+    "kecamatan": "Kamanre"
+  },
+  "bungaeja": {
+    "lat": -3.338920428244275,
+    "lng": 120.35733635343513,
+    "name": "Bungaeja",
+    "kecamatan": "Kamanre"
+  },
+  "walenrang_kaliba mamase": {
+    "lat": -2.8743808047619046,
+    "lng": 120.14827377142858,
+    "name": "Kaliba Mamase",
+    "kecamatan": "Walenrang"
+  },
+  "kaliba mamase": {
+    "lat": -2.8743808047619046,
+    "lng": 120.14827377142858,
+    "name": "Kaliba Mamase",
+    "kecamatan": "Walenrang"
+  },
+  "basse sangtempe utara_maindo": {
+    "lat": -3.1125325333333342,
+    "lng": 120.04506136326529,
+    "name": "Maindo",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "maindo": {
+    "lat": -3.1125325333333342,
+    "lng": 120.04506136326529,
+    "name": "Maindo",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "kamanre_salu paremang": {
+    "lat": -3.309995648051948,
+    "lng": 120.35141442272723,
+    "name": "Salu Paremang",
+    "kecamatan": "Kamanre"
+  },
+  "salu paremang": {
+    "lat": -3.309995648051948,
+    "lng": 120.35141442272723,
+    "name": "Salu Paremang",
+    "kecamatan": "Kamanre"
+  },
+  "basse sangtempe utara_salubua bs": {
+    "lat": -3.0810596883928563,
+    "lng": 120.02971423616067,
+    "name": "Salubua BS",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "salubua bs": {
+    "lat": -3.0810596883928563,
+    "lng": 120.02971423616067,
+    "name": "Salubua BS",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "latimojong_lambanan": {
+    "lat": -3.453688849122807,
+    "lng": 120.10570670350883,
+    "name": "Lambanan",
+    "kecamatan": "Latimojong"
+  },
+  "lambanan": {
+    "lat": -3.453688849122807,
+    "lng": 120.10570670350883,
+    "name": "Lambanan",
+    "kecamatan": "Latimojong"
+  },
+  "larompong_buntu pasik": {
+    "lat": -3.5696552940476183,
+    "lng": 120.32730399047618,
+    "name": "Buntu Pasik",
+    "kecamatan": "Larompong"
+  },
+  "buntu pasik": {
+    "lat": -3.5696552940476183,
+    "lng": 120.32730399047618,
+    "name": "Buntu Pasik",
+    "kecamatan": "Larompong"
+  },
+  "walenrang utara_bosso": {
+    "lat": -2.8158494310344833,
+    "lng": 120.1231482945813,
+    "name": "Bosso",
+    "kecamatan": "Walenrang Utara"
+  },
+  "bosso": {
+    "lat": -2.8158494310344833,
+    "lng": 120.1231482945813,
+    "name": "Bosso",
+    "kecamatan": "Walenrang Utara"
+  },
+  "bua ponrang_malenggang": {
+    "lat": -3.269497990833332,
+    "lng": 120.22299662250002,
+    "name": "Malenggang",
+    "kecamatan": "Bua Ponrang"
+  },
+  "malenggang": {
+    "lat": -3.269497990833332,
+    "lng": 120.22299662250002,
+    "name": "Malenggang",
+    "kecamatan": "Bua Ponrang"
+  },
+  "suli_botta": {
+    "lat": -3.4698424308035682,
+    "lng": 120.34032358482143,
+    "name": "Botta",
+    "kecamatan": "Suli"
+  },
+  "botta": {
+    "lat": -3.4698424308035682,
+    "lng": 120.34032358482143,
+    "name": "Botta",
+    "kecamatan": "Suli"
+  },
+  "lamasi_awo gading": {
+    "lat": -2.789908082291667,
+    "lng": 120.20696915937498,
+    "name": "Awo Gading",
+    "kecamatan": "Lamasi"
+  },
+  "awo gading": {
+    "lat": -2.789908082291667,
+    "lng": 120.20696915937498,
+    "name": "Awo Gading",
+    "kecamatan": "Lamasi"
+  },
+  "lamasi_pong samelung": {
+    "lat": -2.797588823287671,
+    "lng": 120.15956908835615,
+    "name": "Pong Samelung",
+    "kecamatan": "Lamasi"
+  },
+  "pong samelung": {
+    "lat": -2.797588823287671,
+    "lng": 120.15956908835615,
+    "name": "Pong Samelung",
+    "kecamatan": "Lamasi"
+  },
+  "basse sangtempe utara_tasangtongkonan": {
+    "lat": -3.1507305655804485,
+    "lng": 120.05078502505096,
+    "name": "Tasangtongkonan",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "tasangtongkonan": {
+    "lat": -3.1507305655804485,
+    "lng": 120.05078502505096,
+    "name": "Tasangtongkonan",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "basse sangtempe_buntu batu bs": {
+    "lat": -3.1582265164609082,
+    "lng": 120.03072580740736,
+    "name": "Buntu Batu BS",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "buntu batu bs": {
+    "lat": -3.1582265164609082,
+    "lng": 120.03072580740736,
+    "name": "Buntu Batu BS",
+    "kecamatan": "Basse Sangtempe"
+  },
+  "belopa utara_lamunre tengah": {
+    "lat": -3.378020797894737,
+    "lng": 120.37236071578954,
+    "name": "Lamunre Tengah",
+    "kecamatan": "Belopa Utara"
+  },
+  "lamunre tengah": {
+    "lat": -3.378020797894737,
+    "lng": 120.37236071578954,
+    "name": "Lamunre Tengah",
+    "kecamatan": "Belopa Utara"
+  },
+  "bua ponrang_saluinduk": {
+    "lat": -3.2223827363636355,
+    "lng": 120.22956554848483,
+    "name": "Saluinduk",
+    "kecamatan": "Bua Ponrang"
+  },
+  "saluinduk": {
+    "lat": -3.2223827363636355,
+    "lng": 120.22956554848483,
+    "name": "Saluinduk",
+    "kecamatan": "Bua Ponrang"
+  },
+  "walenrang barat_lewandi": {
+    "lat": -2.761711743085106,
+    "lng": 119.92857240106379,
+    "name": "Lewandi",
+    "kecamatan": "Walenrang Barat"
+  },
+  "lewandi": {
+    "lat": -2.761711743085106,
+    "lng": 119.92857240106379,
+    "name": "Lewandi",
+    "kecamatan": "Walenrang Barat"
+  },
+  "latimojong_pajang": {
+    "lat": -3.417476401515151,
+    "lng": 120.14513886363635,
+    "name": "Pajang",
+    "kecamatan": "Latimojong"
+  },
+  "pajang": {
+    "lat": -3.417476401515151,
+    "lng": 120.14513886363635,
+    "name": "Pajang",
+    "kecamatan": "Latimojong"
+  },
+  "belopa_pasamai": {
+    "lat": -3.400306651492537,
+    "lng": 120.34808093358211,
+    "name": "Pasamai",
+    "kecamatan": "Belopa"
+  },
+  "pasamai": {
+    "lat": -3.400306651492537,
+    "lng": 120.34808093358211,
+    "name": "Pasamai",
+    "kecamatan": "Belopa"
+  },
+  "belopa_tanamanai": {
+    "lat": -3.3898848536231885,
+    "lng": 120.37171539710147,
+    "name": "Tanamanai",
+    "kecamatan": "Belopa"
+  },
+  "tanamanai": {
+    "lat": -3.3898848536231885,
+    "lng": 120.37171539710147,
+    "name": "Tanamanai",
+    "kecamatan": "Belopa"
+  },
+  "bajo_sampa": {
+    "lat": -3.362698383225805,
+    "lng": 120.33274535483865,
+    "name": "Sampa",
+    "kecamatan": "Bajo"
+  },
+  "sampa": {
+    "lat": -3.362698383225805,
+    "lng": 120.33274535483865,
+    "name": "Sampa",
+    "kecamatan": "Bajo"
+  },
+  "belopa utara_lebani": {
+    "lat": -3.369076114746544,
+    "lng": 120.3481375105991,
+    "name": "Lebani",
+    "kecamatan": "Belopa Utara"
+  },
+  "lebani": {
+    "lat": -3.369076114746544,
+    "lng": 120.3481375105991,
+    "name": "Lebani",
+    "kecamatan": "Belopa Utara"
+  },
+  "belopa_kurusumanga": {
+    "lat": -3.380989888039867,
+    "lng": 120.33453023056477,
+    "name": "Kurusumanga",
+    "kecamatan": "Belopa"
+  },
+  "kurusumanga": {
+    "lat": -3.380989888039867,
+    "lng": 120.33453023056477,
+    "name": "Kurusumanga",
+    "kecamatan": "Belopa"
+  },
+  "bajo barat_bonelemo": {
+    "lat": -3.3442497784482743,
+    "lng": 120.23805169396553,
+    "name": "Bonelemo",
+    "kecamatan": "Bajo Barat"
+  },
+  "bonelemo": {
+    "lat": -3.3442497784482743,
+    "lng": 120.23805169396553,
+    "name": "Bonelemo",
+    "kecamatan": "Bajo Barat"
+  },
+  "basse sangtempe utara_ta'ba": {
+    "lat": -3.1439075797752785,
+    "lng": 120.0675938247191,
+    "name": "Ta'ba",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "ta'ba": {
+    "lat": -3.1439075797752785,
+    "lng": 120.0675938247191,
+    "name": "Ta'ba",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "basse sangtempe utara_buntu tallang": {
+    "lat": -3.1114762605263158,
+    "lng": 120.06809543421055,
+    "name": "Buntu Tallang",
+    "kecamatan": "Basse Sangtempe Utara"
+  },
+  "buntu tallang": {
+    "lat": -3.1114762605263158,
+    "lng": 120.06809543421055,
+    "name": "Buntu Tallang",
+    "kecamatan": "Basse Sangtempe Utara"
+  }
+}

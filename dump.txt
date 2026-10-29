@@ -1,0 +1,48 @@
+      // Helper function to map a raw district name or existing ID to the unique district ID from distData
+      const findDistrictIdByName = (rawName?: string): string => {
+        if (!rawName) return "";
+        const sRaw = String(rawName).trim();
+        
+        // 1. Jika rawName sudah cocok dengan ID distrik manapun secara langsung
+        const exactIdMatch = distData.find((d: any) => String(d.id).toLowerCase() === sRaw.toLowerCase());
+        if (exactIdMatch) return String(exactIdMatch.id);
+
+        // 2. Jika tidak, gunakan normalisasi nama distrik untuk mencocokkan secara persis kawan!
+        const normSearch = normalizeDistrictName(sRaw);
+        if (!normSearch) return sRaw;
+
+        const matched = distData.find((d: any) => {
+          const normDistName = normalizeDistrictName(d.name || d.rawName);
+          return normDistName === normSearch;
+        });
+
+        return matched ? String(matched.id) : sRaw;
+      };
+
+      // 1. Masukkan data relasional dari tabel investments
+      if (Array.isArray(invDataRaw)) {
+        for (const item of invDataRaw) {
+          if (!item) continue;
+          const idKey = String(item.id || item.nama_potensi || "");
+          const normName = normalizeProjName(item.name || item.nama_potensi);
+          const resolvedPhoto = item.photo_url || item.url_foto_lokasi || item.photoUrl || item.foto || item.gambar || item.foto_lokasi || (Array.isArray(item.galeri_foto) ? item.galeri_foto[0] : "") || "";
+          const resolvedGallery = (Array.isArray(item.galeri_foto) && item.galeri_foto.length > 0)
+            ? item.galeri_foto
+            : ((Array.isArray(item.gallery) && item.gallery.length > 0)
+              ? item.gallery
+              : ((Array.isArray(item.photo_urls) && item.photo_urls.length > 0)
+                ? item.photo_urls
+                : ((Array.isArray(item.photoUrls) && item.photoUrls.length > 0)
+                  ? item.photoUrls
+                  : (resolvedPhoto ? [resolvedPhoto] : []))));
+
+          const rawDistId = item.districtId || item.district_id || item.kecamatan_id || "";
+          const resolvedDistId = findDistrictIdByName(rawDistId);
+
+          const normalizedItem = {
+            ...item,
+            districtId: resolvedDistId,
+            district_id: resolvedDistId,
+            villageId: item.villageId || item.village_id || item.desa_id || "",
+            village_id: item.village_id || item.villageId || item.desa_id || "",
+            areaHa: Number(item.areaHa !== undefined ? item.areaHa : (item.area_ha !== undefined ? item.area_ha : 0)) || 0,

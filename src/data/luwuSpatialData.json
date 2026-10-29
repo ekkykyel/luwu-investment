@@ -1,0 +1,383 @@
+{
+  "Bajo": {
+    "name": "Bajo",
+    "lat": -3.36238,
+    "lng": 120.31233,
+    "villages": [
+      "Sumabu",
+      "Jambu",
+      "Samulang",
+      "Talang Bulawang",
+      "Rumaju",
+      "Buntu Babang",
+      "Saga",
+      "Balla",
+      "Bajo",
+      "Pangi BA",
+      "Langkidi",
+      "Sampa"
+    ]
+  },
+  "Bajo Barat": {
+    "name": "Bajo Barat",
+    "lat": -3.36807,
+    "lng": 120.23937,
+    "villages": [
+      "Marinding",
+      "Sampeang",
+      "Kadong Kadong",
+      "Bonelemo Barat",
+      "Saronda",
+      "Tumbu Barak",
+      "Bonelemo Utara",
+      "Tettekang",
+      "Bonelemo"
+    ]
+  },
+  "Basse Sangtempe": {
+    "name": "Basse Sangtempe",
+    "lat": -3.19089,
+    "lng": 120.06261,
+    "villages": [
+      "Bolu",
+      "Tabi",
+      "Kanna",
+      "To'long",
+      "Sinaji",
+      "Kanna Utara",
+      "Lange",
+      "Lissaga",
+      "Mappe Tajang",
+      "Andulan",
+      "Ledan",
+      "Buntu Batu BS"
+    ]
+  },
+  "Basse Sangtempe Utara": {
+    "name": "Basse Sangtempe Utara",
+    "lat": -3.11809,
+    "lng": 120.07119,
+    "villages": [
+      "Dampan",
+      "Bonglo",
+      "Uraso",
+      "Teda",
+      "Barana",
+      "Pantilang",
+      "Karatuan",
+      "Maindo",
+      "Salubua BS",
+      "Tasangtongkonan",
+      "Ta'ba",
+      "Buntu Tallang"
+    ]
+  },
+  "Belopa": {
+    "name": "Belopa",
+    "lat": -3.39872,
+    "lng": 120.3813,
+    "villages": [
+      "Balubu",
+      "Tampumia Radda",
+      "Senga Selatan",
+      "Belopa",
+      "Balo Balo",
+      "Senga",
+      "Pasamai",
+      "Tanamanai",
+      "Kurusumanga"
+    ]
+  },
+  "Belopa Utara": {
+    "name": "Belopa Utara",
+    "lat": -3.36176,
+    "lng": 120.38499,
+    "villages": [
+      "Lamunre",
+      "Seppong",
+      "Sabe",
+      "Lauwa",
+      "Paconne",
+      "Pammanu",
+      "Lamunre Tengah",
+      "Lebani"
+    ]
+  },
+  "Bua": {
+    "name": "Bua",
+    "lat": -3.10393,
+    "lng": 120.2258,
+    "villages": [
+      "Tiromanda",
+      "LareLare",
+      "Lengkong",
+      "Puty",
+      "Bukit Harapan",
+      "Sakti",
+      "Posi",
+      "Padang Kalua BU",
+      "Barowa",
+      "Pabbaresseng",
+      "Tana Rigella",
+      "Raja",
+      "Pammesakang",
+      "KarangKarangan",
+      "Toddopuli"
+    ]
+  },
+  "Bua Ponrang": {
+    "name": "Bua Ponrang",
+    "lat": -3.26131,
+    "lng": 120.2211,
+    "villages": [
+      "Buntu Batu BP",
+      "Padang Kamburi",
+      "Tampumia",
+      "Padang Tuju",
+      "Balutan",
+      "Noling",
+      "Tanjong",
+      "Padang Ma'bud",
+      "Malenggang",
+      "Saluinduk"
+    ]
+  },
+  "Kamanre": {
+    "name": "Kamanre",
+    "lat": -3.32031,
+    "lng": 120.3653,
+    "villages": [
+      "Wara",
+      "Cilallang",
+      "Tabbaja",
+      "Libukang",
+      "Salu Paremang Selatan",
+      "Kamanre",
+      "Bungaeja",
+      "Salu Paremang"
+    ]
+  },
+  "Lamasi": {
+    "name": "Lamasi",
+    "lat": -2.79778,
+    "lng": 120.18021,
+    "villages": [
+      "Setia Rejo",
+      "To'pongo",
+      "Wiwitan",
+      "Se'pong",
+      "Salu Jambu",
+      "Wiwitan Timur",
+      "Padang Kalua LA",
+      "Lamasi",
+      "Awo Gading",
+      "Pong Samelung"
+    ]
+  },
+  "Lamasi Timur": {
+    "name": "Lamasi Timur",
+    "lat": -2.87152,
+    "lng": 120.24521,
+    "villages": [
+      "Bululondong",
+      "Seriti",
+      "Pompengan pantai",
+      "Pompengan Tengah",
+      "Pompengan",
+      "Pelalan",
+      "Salupao",
+      "Pompengan Utara",
+      "To'lemo"
+    ]
+  },
+  "Larompong": {
+    "name": "Larompong",
+    "lat": -3.57032,
+    "lng": 120.32012,
+    "villages": [
+      "Bukit Sutra",
+      "Riwang",
+      "Bilante",
+      "Rante Belu",
+      "Buntu Matabing",
+      "Komba",
+      "Binturu",
+      "Rante Alang",
+      "Lumaring",
+      "Larompong",
+      "Riwang Selatan",
+      "Komba Selatan",
+      "Buntu Pasik"
+    ]
+  },
+  "Larompong Selatan": {
+    "name": "Larompong Selatan",
+    "lat": -3.61644,
+    "lng": 120.35586,
+    "villages": [
+      "La'loa",
+      "Malewong",
+      "Temboe",
+      "Salusana",
+      "Babang",
+      "Sampano",
+      "Batu Lappa",
+      "Bonepute",
+      "Dadeko",
+      "Gandang Batu"
+    ]
+  },
+  "Latimojong": {
+    "name": "Latimojong",
+    "lat": -3.40761,
+    "lng": 120.11621,
+    "villages": [
+      "Kadundung",
+      "To'barru",
+      "Tabang",
+      "Buntu Sarek",
+      "Ulusalu",
+      "Tibussan",
+      "Tolajuk",
+      "Rante Balla",
+      "Pangi LA",
+      "Bone Posi",
+      "Lambanan",
+      "Pajang"
+    ]
+  },
+  "Ponrang": {
+    "name": "Ponrang",
+    "lat": -3.1949,
+    "lng": 120.27403,
+    "villages": [
+      "Buntu Kamiri",
+      "Tirowali",
+      "Tampa",
+      "Mario",
+      "Padang Sappa",
+      "Muladimeng",
+      "Tumale",
+      "Buntu Kanna",
+      "Padang Subur",
+      "Parekaju"
+    ]
+  },
+  "Ponrang Selatan": {
+    "name": "Ponrang Selatan",
+    "lat": -3.25574,
+    "lng": 120.38071,
+    "villages": [
+      "Bassiang Timur",
+      "Lampuara",
+      "Bassiang",
+      "Pattedong Selatan",
+      "Tarramatekkeng",
+      "Paccerakkang",
+      "To'bia",
+      "Buntu Karya",
+      "To'balo",
+      "Bakti",
+      "Olang",
+      "Pattedong",
+      "Je'ne Maeja"
+    ]
+  },
+  "Suli": {
+    "name": "Suli",
+    "lat": -3.44608,
+    "lng": 120.37072,
+    "villages": [
+      "Cimpu Utara",
+      "Murante",
+      "Lempopacci",
+      "Suli",
+      "Buntu Kunyi",
+      "Cakkeawo",
+      "Papakaji",
+      "Towondo",
+      "Padang Lambe",
+      "Malela",
+      "Cimpu",
+      "Kasiwiang",
+      "Botta"
+    ]
+  },
+  "Suli Barat": {
+    "name": "Suli Barat",
+    "lat": -3.46694,
+    "lng": 120.28148,
+    "villages": [
+      "Kaladi Darussalam",
+      "Kaili",
+      "Buntu Barana",
+      "Lindajang",
+      "Salubua SB",
+      "Tallang",
+      "Muhajirin",
+      "Poringan"
+    ]
+  },
+  "Walenrang": {
+    "name": "Walenrang",
+    "lat": -2.89884,
+    "lng": 120.09883,
+    "villages": [
+      "Walenrang",
+      "Tombang",
+      "Saragi",
+      "Bulo",
+      "Harapan",
+      "Barammamase",
+      "Lalong",
+      "Batu Sitanduk",
+      "Kaliba Mamase"
+    ]
+  },
+  "Walenrang Barat": {
+    "name": "Walenrang Barat",
+    "lat": -2.82397,
+    "lng": 120.01485,
+    "villages": [
+      "Lamasi Hulu",
+      "Ilan Batu",
+      "Ilan Batu Uru",
+      "Lempe",
+      "Lempe Pasang",
+      "Lewandi"
+    ]
+  },
+  "Walenrang Timur": {
+    "name": "Walenrang Timur",
+    "lat": -2.90241,
+    "lng": 120.22725,
+    "villages": [
+      "Suka Damai",
+      "Lamasi Pantai",
+      "Kendekan",
+      "Pangalli",
+      "Tanete",
+      "Rante Damai",
+      "SebaSeba",
+      "Taba"
+    ]
+  },
+  "Walenrang Utara": {
+    "name": "Walenrang Utara",
+    "lat": -2.76045,
+    "lng": 120.11297,
+    "villages": [
+      "Bosso Timur",
+      "Siteba",
+      "Sangtandung",
+      "Bolong",
+      "Limbong",
+      "Buntu Awo",
+      "Marabuana",
+      "Salulino",
+      "Salu Tubu",
+      "Pongko",
+      "Bosso"
+    ]
+  }
+}
