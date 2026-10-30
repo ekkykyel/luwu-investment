@@ -105,7 +105,8 @@ const PageFadeTransition: React.FC<{ children: React.ReactNode; pageKey: string 
       duration: 0.25,
       ease: [0.16, 1, 0.3, 1], // Cubic bezier for snappy, elegant entrance
     }}
-    className="w-full min-h-screen"
+    className="w-full min-h-screen touch-pan-y"
+    style={{ touchAction: 'pan-y' }}
   >
     {children}
   </motion.div>

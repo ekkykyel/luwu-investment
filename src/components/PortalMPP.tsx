@@ -994,41 +994,21 @@ export default function PortalMPP() {
 
   useGlobalFullscreenBackHandler(isAnyModalOpen, closeActiveModal);
 
-  // Auto-fullscreen KHUSUS untuk Android / Smartphone saat tampil di Halaman Portal MPP
-  // Menjadikan pengalaman aplikasi Portal MPP Luwu menyerupai aplikasi Android asli (Immersive Fullscreen)
+  // Pastikan mode Fullscreen dinonaktifkan saat membuka Portal MPP (misalnya saat bernavigasi dari Peta Spasial)
+  // Ini krusial agar browser Android & smartphone tidak mengunci viewport dan seluruh gestur usap layar (touch swipe/scroll)
+  // ke atas dan ke bawah dapat berfungsi secara 100% mulus, responsif, dan alami.
   useEffect(() => {
-    if (!isAndroidDevice()) return;
-
-    try {
-      requestSmartFullscreen();
-    } catch (e) {}
-
-    const handleAndroidInteractionFullscreen = () => {
-      const lastExit = (window as any).__lastExitFullscreenTime || 0;
-      // Jika pengguna baru saja keluar dari fullscreen dalam 4 detik terakhir, jangan paksa kembali
-      if (Date.now() - lastExit < 4000) return;
-
+    if (typeof document !== 'undefined') {
       const isCurrentFs = !!(
         document.fullscreenElement ||
         (document as any).webkitFullscreenElement ||
         (document as any).mozFullScreenElement ||
         (document as any).msFullscreenElement
       );
-
-      if (!isCurrentFs) {
-        requestSmartFullscreen();
+      if (isCurrentFs) {
+        exitSmartFullscreen().catch(() => {});
       }
-    };
-
-    window.addEventListener("click", handleAndroidInteractionFullscreen, { capture: true, passive: true });
-    window.addEventListener("touchstart", handleAndroidInteractionFullscreen, { capture: true, passive: true });
-    window.addEventListener("touchend", handleAndroidInteractionFullscreen, { capture: true, passive: true });
-
-    return () => {
-      window.removeEventListener("click", handleAndroidInteractionFullscreen, { capture: true });
-      window.removeEventListener("touchstart", handleAndroidInteractionFullscreen, { capture: true });
-      window.removeEventListener("touchend", handleAndroidInteractionFullscreen, { capture: true });
-    };
+    }
   }, []);
 
   // --- State Dinamis Supabase untuk SKM, Antrean & Ulasan (Doktrin Zero Dummy) ---
@@ -2152,9 +2132,22 @@ export default function PortalMPP() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
       id="portal-top"
-      className="bg-[#FAF8F3] dark:bg-[#061320] text-slate-900 dark:text-[#E6ECF2] font-sans w-full overflow-x-clip relative min-h-screen transition-colors duration-300"
+      className="bg-[#FAF8F3] dark:bg-[#061320] text-slate-900 dark:text-[#E6ECF2] font-sans w-full overflow-x-hidden relative min-h-screen transition-colors duration-300 touch-pan-y"
+      style={{ touchAction: 'pan-y pinch-zoom' }}
     >
       <style>{`
+        html, body {
+          overflow-x: hidden !important;
+          overflow-y: auto !important;
+          height: auto !important;
+          min-height: 100% !important;
+          touch-action: pan-y pinch-zoom !important;
+          -webkit-overflow-scrolling: touch !important;
+        }
+        #root {
+          height: auto !important;
+          min-height: 100% !important;
+        }
         .font-sans { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
         .font-editorial { font-family: 'Fraunces', 'Playfair Display', Georgia, serif; }
         
