@@ -3174,7 +3174,7 @@ export default function PortalMPP() {
                         }}
                         className="flex-1 min-h-[44px] py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white text-xs sm:text-sm font-semibold font-sans shadow-lg shadow-black/25 transition-all inline-flex items-center justify-center gap-1.5"
                       >
-                        <span>{t("mppPortal.alur.onlinePortalBtn") || "Ambil Antrean Layanan"}</span>
+                        <span>{t("mppPortal.alur.onlinePortalBtn") || "Lihat Syarat & Gerai Layanan"}</span>
                         <ChevronRight className="w-4 h-4" />
                       </button>
                     </div>

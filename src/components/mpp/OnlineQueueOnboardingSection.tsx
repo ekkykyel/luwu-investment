@@ -153,14 +153,10 @@ export const OnlineQueueOnboardingSection: React.FC<OnlineQueueOnboardingSection
                   <span className="font-mono font-semibold text-slate-900 dark:text-white">08.00 – 15.30 WITA</span>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={handleBooking}
-                  className="w-full min-h-[42px] py-2.5 px-4 rounded-xl bg-[#FAF8F3] hover:bg-[#0F6B4F] dark:bg-[#132E48] dark:hover:bg-emerald-600 text-[#0F6B4F] hover:text-white dark:text-emerald-300 dark:hover:text-white border border-[#DFD6C5] dark:border-white/10 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98"
-                >
-                  <Ticket className="w-3.5 h-3.5" />
-                  <span>{t("mppPortal.antrean.mockup.takeNumber", "Daftar Nomor Tiket Sekarang")}</span>
-                </button>
+                <div className="w-full py-2.5 px-3 rounded-xl bg-[#FAF8F3]/90 dark:bg-[#132E48]/90 text-[#0F6B4F] dark:text-emerald-300 border border-[#DFD6C5] dark:border-white/10 font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#0F6B4F] dark:text-emerald-400 shrink-0" />
+                  <span>E-Tiket Terintegrasi Database Real-Time</span>
+                </div>
               </div>
             </div>
           </div>
