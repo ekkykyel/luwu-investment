@@ -4622,6 +4622,7 @@ export default function PortalMPP() {
                         officerKey="officer-left"
                         customSrc={staffImageLeft && !staffImageLeft.includes('unsplash.com') ? staffImageLeft : null}
                         alt="Petugas Front Office & Virtual Helpdesk MPP Simpurusiang"
+                        requireDatabaseSrc={false}
                         className="max-h-64 sm:max-h-72 md:max-h-80 w-auto object-contain object-bottom drop-shadow-[0_12px_24px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>

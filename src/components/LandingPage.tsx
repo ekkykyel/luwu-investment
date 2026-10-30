@@ -2620,7 +2620,13 @@ export default function LandingPage({
                   },
                 },
                 { name: t("nav.potensi"), id: "potensi-section" },
-                { name: "MPP", id: "mpp-showcase-section" },
+                {
+                  name: "MPP",
+                  action: (e: any) => {
+                    e?.preventDefault?.();
+                    window.location.href = "https://investment-luwu.vercel.app/mpp";
+                  },
+                },
                 {
                   name: t("nav.pengaduan"),
                   action: (e: any) => {
@@ -2787,7 +2793,14 @@ export default function LandingPage({
                     },
                   },
                   { name: t("nav.potensi"), id: "potensi-section" },
-                  { name: "MPP", id: "mpp-showcase-section" },
+                  {
+                    name: "MPP",
+                    action: (e: any) => {
+                      e?.preventDefault?.();
+                      setIsMobileMenuOpen(false);
+                      window.location.href = "https://investment-luwu.vercel.app/mpp";
+                    },
+                  },
                   {
                     name: t("nav.pengaduanMasyarakat"),
                     action: (e: any) => {

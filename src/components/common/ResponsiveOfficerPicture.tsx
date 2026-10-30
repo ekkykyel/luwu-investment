@@ -19,7 +19,7 @@ export const ResponsiveOfficerPicture: React.FC<ResponsiveOfficerPictureProps> =
   alt,
   className = '',
   containerClassName = '',
-  requireDatabaseSrc = true,
+  requireDatabaseSrc = false,
 }) => {
   const meta = OFFICER_IMAGES_METADATA[officerKey];
   const [isLoaded, setIsLoaded] = useState(false);
@@ -97,7 +97,11 @@ export const ResponsiveOfficerPicture: React.FC<ResponsiveOfficerPictureProps> =
     }
   };
 
-  const isCustom = Boolean(customSrc && customSrc.startsWith('http') && !customSrc.includes('placeholder'));
+  const isCustom = Boolean(
+    customSrc &&
+    (customSrc.startsWith('http') || customSrc.startsWith('/') || customSrc.startsWith('data:')) &&
+    !customSrc.includes('placeholder')
+  );
   const avifSrcSet = getOfficerSrcset(officerKey, 'avif');
   const webpSrcSet = getOfficerSrcset(officerKey, 'webp');
   const jpgSrcSet = getOfficerSrcset(officerKey, 'jpg');
