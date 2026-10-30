@@ -106,7 +106,7 @@ export default function PertanianOverview({
   }, [pkkprPertanianList, searchQuery]);
 
   return (
-    <div className="admin-pertanian-dashboard pertanian-overview-container space-y-6 sm:space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500">
       {/* 1. Header Banner Tupoksi Dinas Pertanian */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-950 via-slate-900 to-emerald-950 text-white p-6 sm:p-8 border border-amber-500/30 shadow-2xl">
         <div className="absolute top-0 right-0 w-96 h-48 bg-amber-500/10 blur-3xl rounded-full -mr-20 -mt-10 pointer-events-none" />
@@ -148,8 +148,8 @@ export default function PertanianOverview({
         </div>
       </div>
 
-      {/* 2. Top Statistic Cards: Tupoksi Pertanian */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      {/* 2. Top Statistic Cards: Tupoksi Pertanian (Standard P-2: 8px Mobile Gap) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
         {/* Card 1: Total Lahan Sawah & LP2B */}
         <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-surface border border-amber-500/20 shadow-md">
           <div className="flex justify-between items-start mb-3">

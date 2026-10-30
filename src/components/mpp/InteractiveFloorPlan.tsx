@@ -46,6 +46,9 @@ import FloatingFloorPlanLegend, {
   isNodeInSector, 
   SECTOR_ACCENT_COLORS 
 } from './FloatingFloorPlanLegend';
+import { useGlobalFullscreenBackHandler } from '../../hooks/useModalFullscreenLifecycle';
+import { requestSmartFullscreen, exitSmartFullscreen, ensureFullscreen } from '../../utils/fullscreen';
+import { isAndroidDevice } from '../../hooks/useDeviceAutomation';
 
 // ── FIGMA EXPORT ASSETS & OVERLAY GEOMETRY (ASET BER-HASH & OPTIMAL) ──
 import denahWallLightUrl from './assets/floorplan/DENAH_WALL_LIGHT.svg';
@@ -1843,6 +1846,50 @@ function InteractiveFloorPlanComponent({
   const fullscreenBtnRef = useRef<HTMLButtonElement>(null);
   const emergencyBtnRef = useRef<HTMLButtonElement>(null);
 
+  const handleExitFullscreen = useCallback(() => {
+    setSelectedNode(null);
+    setIsFullscreen(false);
+    setTimeout(() => fullscreenBtnRef.current?.focus(), 50);
+  }, []);
+
+  // Sinkronisasi Android Hardware Back Button & gesture swipe dengan Mode Layar Lebar Denah
+  useGlobalFullscreenBackHandler(isFullscreen, handleExitFullscreen);
+
+  // Deteksi orientasi layar untuk panduan rotasi landscape pada smartphone
+  const [isPortraitFullscreen, setIsPortraitFullscreen] = useState(false);
+  const [isOrientationGuideDismissed, setIsOrientationGuideDismissed] = useState(false);
+
+  useEffect(() => {
+    if (!isFullscreen) {
+      setIsOrientationGuideDismissed(false);
+      return;
+    }
+
+    const checkOrientation = () => {
+      if (typeof window === 'undefined') return;
+      const isPortrait = window.innerHeight > window.innerWidth && window.innerWidth < 1024;
+      setIsPortraitFullscreen(isPortrait);
+    };
+
+    checkOrientation();
+    window.addEventListener('resize', checkOrientation);
+    const winScreen = typeof window !== 'undefined' ? (window.screen as any) : null;
+    if (winScreen?.orientation?.addEventListener) {
+      try {
+        winScreen.orientation.addEventListener('change', checkOrientation);
+      } catch (e) {}
+    }
+
+    return () => {
+      window.removeEventListener('resize', checkOrientation);
+      if (winScreen?.orientation?.removeEventListener) {
+        try {
+          winScreen.orientation.removeEventListener('change', checkOrientation);
+        } catch (e) {}
+      }
+    };
+  }, [isFullscreen]);
+
   // Escape key handler: hentikan simulasi darurat dan kembalikan fokus ke tombol trigger
   useEffect(() => {
     if (!isEmergencyMode) return;
@@ -3014,9 +3061,11 @@ function InteractiveFloorPlanComponent({
                 <button
                   type="button"
                   onClick={() => {
-                    setSelectedNode(null);
-                    setIsFullscreen(false);
-                    setTimeout(() => fullscreenBtnRef.current?.focus(), 50);
+                    if (typeof window !== 'undefined' && window.history.state?.modalOpen) {
+                      window.history.back();
+                    } else {
+                      handleExitFullscreen();
+                    }
                   }}
                   className={`min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 rounded-2xl border transition-all cursor-pointer active:scale-95 text-xs font-black ${
                     effectiveIsDark
@@ -3088,6 +3137,29 @@ function InteractiveFloorPlanComponent({
                 isOpenControlled={isLegendOpen}
                 onToggleControlled={setIsLegendOpen}
               />
+            </div>
+          )}
+
+          {/* Mobile Landscape Orientation Recommendation Banner (Fullscreen) */}
+          {isFullscreen && isPortraitFullscreen && !isOrientationGuideDismissed && (
+            <div
+              role="status"
+              className="absolute bottom-16 sm:bottom-20 left-4 right-4 sm:left-auto sm:right-4 z-50 flex items-center justify-between gap-3 px-4 py-2.5 rounded-2xl bg-slate-900/95 text-white backdrop-blur-md border border-emerald-500/60 shadow-2xl text-xs select-none max-w-sm pointer-events-auto animate-in fade-in slide-in-from-bottom-2 duration-200"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <RotateCw className="w-4.5 h-4.5 text-emerald-400 shrink-0" />
+                <p className="text-[11px] leading-snug">
+                  Putar smartphone ke posisi <strong>Landscape (Horizontal)</strong> untuk tampilan denah gedung yang lebih luas & presisi.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsOrientationGuideDismissed(true)}
+                className="p-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0"
+                aria-label="Tutup saran rotasi"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
             </div>
           )}
 
@@ -3864,7 +3936,16 @@ function InteractiveFloorPlanComponent({
               <button
                 ref={fullscreenBtnRef}
                 type="button"
-                onClick={() => setIsFullscreen(true)}
+                onClick={() => {
+                  setIsFullscreen(true);
+                  try {
+                    requestSmartFullscreen();
+                    const winScreen = typeof window !== 'undefined' ? (window.screen as any) : null;
+                    if (winScreen?.orientation?.lock) {
+                      winScreen.orientation.lock('landscape').catch(() => {});
+                    }
+                  } catch (e) {}
+                }}
                 className="h-12 min-h-[48px] px-3.5 sm:px-4 flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md border border-emerald-400/80 transition-all cursor-pointer active:scale-95 group shrink-0"
                 title={isPointerCoarse ? "Lihat Layar Lebar (Landscape)" : "Lihat Layar Lebar (Landscape) • Pintasan: F"}
                 aria-label="Lihat Layar Lebar (Landscape)"

@@ -1558,8 +1558,8 @@ Ulas secara mendalam:
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-base flex flex-col md:flex-row font-sans text-slate-900 dark:text-slate-200">
-      {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-surface z-20">
+      {/* Mobile Header (Standard P-2: 8px Horizontal Margin) */}
+      <div className="md:hidden flex items-center justify-between px-2 py-3 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-surface z-20">
         <div className="flex items-center gap-2">
           <LuwuLogo className="h-8 w-8" />
           <span className="font-bold text-slate-900 dark:text-white tracking-tight">Investor Portal</span>
@@ -1647,8 +1647,8 @@ Ulas secara mendalam:
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto flex flex-col">
+      {/* Main Content (Standard P-2: 8px Mobile Margin) */}
+      <div className="flex-1 p-2 sm:p-6 lg:p-8 overflow-y-auto flex flex-col">
         {/* Top Navbar */}
         <div className="hidden md:flex justify-between items-center pb-6 mb-2 border-b border-slate-200 dark:border-slate-800/60">
           <div className="flex items-center gap-2">

@@ -1411,7 +1411,7 @@ export default function MapLegend({
                               <XAxis dataKey="name" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
                               <YAxis stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
                               <Tooltip cursor={{fill: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)'}} contentStyle={{backgroundColor: isDarkMode ? '#0f172a' : '#ffffff', borderColor: isDarkMode ? '#1e293b' : '#cbd5e1', fontSize: '11px', borderRadius: '6px', color: isDarkMode ? '#f8fafc' : '#1e293b' }} itemStyle={{ color: isDarkMode ? '#34d399' : '#059669', fontWeight: 'bold' }} />
-                              <Bar dataKey="count" name="Jumlah Fitur" fill={isDarkMode ? "#34d399" : "#059669"} radius={[4, 4, 0, 0]} maxBarSize={50} isAnimationActive={false} />
+                              <Bar dataKey="count" name="Jumlah Fitur" fill={isDarkMode ? "#34d399" : "#059669"} radius={[4, 4, 0, 0]} maxBarSize={50} />
                             </BarChart>
                           </ResponsiveContainer>
                         </div>

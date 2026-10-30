@@ -7,7 +7,6 @@ import { isMobileOrAndroidDevice, isAndroidDevice } from "../hooks/useDeviceAuto
 import { requestSmartFullscreen } from "../utils/fullscreen";
 
 import {
-  Accessibility,
   ChevronRight,
   ChevronLeft,
   ArrowRight,
@@ -87,7 +86,6 @@ import { TopographicContourOverlay } from "./common/TopographicContourOverlay";
 import { lazyWithRetry } from "../utils/lazyWithRetry";
 import { ResponsiveHeroPicture } from "./common/ResponsiveHeroPicture";
 import { ResponsiveOfficerPicture } from "./common/ResponsiveOfficerPicture";
-import { InclusivityAccessibilityBar } from "./mpp/InclusivityAccessibilityBar";
 
 const RoiAiAnalysisModal = lazyWithRetry(() => import("./RoiAiAnalysisModal"));
 const SpatialBufferAiModal = lazyWithRetry(() => import("./SpatialBufferAiModal"));
@@ -2453,11 +2451,8 @@ export default function LandingPage({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-      className={`landing-page-root min-h-screen transition-colors duration-500 font-sans ${themeBg} overflow-x-hidden selection:bg-[#C9A24B]/30 pb-36 sm:pb-28 lg:pb-16`}
+      className={`min-h-screen transition-colors duration-500 font-sans ${themeBg} overflow-x-hidden selection:bg-[#C9A24B]/30 pb-36 sm:pb-28 lg:pb-16`}
     >
-      {/* Floating Inclusivity & Accessibility Control Bar (High Contrast Yellow-Black, Monochrome, Audio Reader & Voice AI) */}
-      <InclusivityAccessibilityBar isDark={isDark} hideFloatingFab={false} />
-
       <AnimatePresence>
         {showLauncher && (
           <motion.div
@@ -2625,13 +2620,7 @@ export default function LandingPage({
                   },
                 },
                 { name: t("nav.potensi"), id: "potensi-section" },
-                {
-                  name: "MPP",
-                  action: (e: any) => {
-                    e?.preventDefault?.();
-                    window.location.href = "https://luwu-investment.vercel.app/mpp";
-                  }
-                },
+                { name: "MPP", id: "mpp-showcase-section" },
                 {
                   name: t("nav.pengaduan"),
                   action: (e: any) => {
@@ -2702,23 +2691,6 @@ export default function LandingPage({
               {/* Language Toggle: Shown on sm+ in header; moved into Mobile Drawer on narrow Android */}
               <LanguageToggle isDarkHeader={isDark} isCircular={true} className="hidden sm:inline-block" />
               
-              {/* Accessibility & High Contrast Control Trigger */}
-              <motion.button whileTap={{ scale: 0.95 }}
-                type="button"
-                onClick={() => {
-                  window.dispatchEvent(new CustomEvent('open-mpp-accessibility-panel'));
-                }}
-                className={`w-10 h-10 min-w-[40px] min-h-[40px] rounded-full flex items-center justify-center border transition-all duration-200 shrink-0 cursor-pointer ${
-                  isDark
-                    ? "bg-white/[0.06] text-emerald-400 hover:text-emerald-300 hover:bg-white/[0.12] border-white/[0.12]"
-                    : "bg-emerald-50/90 text-emerald-700 hover:text-emerald-800 border-emerald-200/90 hover:bg-emerald-100/80"
-                }`}
-                title="Aksesibilitas & Kontras Ramah Disabilitas (WCAG)"
-                aria-label="Kontras & Aksesibilitas"
-              >
-                <Accessibility size={18} />
-              </motion.button>
-
               <motion.button whileTap={{ scale: 0.95 }}
                 type="button"
                 onClick={handleToggleTheme}
@@ -2815,14 +2787,7 @@ export default function LandingPage({
                     },
                   },
                   { name: t("nav.potensi"), id: "potensi-section" },
-                  {
-                    name: "MPP",
-                    action: (e: any) => {
-                      e?.preventDefault?.();
-                      setIsMobileMenuOpen(false);
-                      window.location.href = "https://luwu-investment.vercel.app/mpp";
-                    }
-                  },
+                  { name: "MPP", id: "mpp-showcase-section" },
                   {
                     name: t("nav.pengaduanMasyarakat"),
                     action: (e: any) => {
@@ -3030,7 +2995,7 @@ export default function LandingPage({
           />
 
           {/* ── Hero Content Container (Balanced 12-Col Split on Desktop; Focused Editorial Stack on Android) ── */}
-          <div className="relative z-20 flex flex-col justify-between h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-7 sm:pt-14 pb-5 sm:pb-8">
+          <div className="relative z-20 flex flex-col justify-between h-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-10 pt-7 sm:pt-14 pb-5 sm:pb-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
               {/* Left 7 Columns: Editorial Copy, Search & Primary Actions */}
               <div className="lg:col-span-7 flex flex-col">
@@ -3095,7 +3060,7 @@ export default function LandingPage({
                   style={{ animation: 'investluwu-fade-up .55s .2s ease both' }}
                 >
                   <div
-                    className={`flex items-center gap-2 sm:gap-3 p-1 pl-2.5 sm:pl-4 sm:pr-2.5 sm:py-2.5 rounded-2xl border transition-all duration-200 ${
+                    className={`flex items-center gap-2.5 sm:gap-3 pl-3.5 pr-2 sm:pl-4 sm:pr-2.5 py-2 sm:py-2.5 rounded-2xl border transition-all duration-200 ${
                       isDark
                         ? "bg-[#0F2942]/92 border-white/[0.16] hover:border-white/25 focus-within:bg-[#133250]/95 focus-within:border-emerald-400/60 focus-within:ring-2 focus-within:ring-emerald-400/20 shadow-[0_12px_32px_rgba(0,0,0,0.38)] backdrop-blur-xl"
                         : "bg-white/95 border-slate-200/95 hover:border-slate-300 focus-within:bg-white focus-within:border-emerald-600/60 focus-within:ring-2 focus-within:ring-emerald-500/20 shadow-[0_10px_28px_rgba(15,23,42,0.08)] backdrop-blur-xl"
@@ -3158,7 +3123,7 @@ export default function LandingPage({
                           setSmartFilterState((prev) => ({ ...prev, searchTerm: tag }));
                           scrollToSection("potensi-section");
                         }}
-                        className={`p-1 px-2.5 sm:px-3 sm:py-1 rounded-lg text-xs font-semibold shrink-0 whitespace-nowrap border transition-all duration-150 min-h-[28px] sm:min-h-[32px] cursor-pointer ${
+                        className={`px-2.5 sm:px-3 py-1 rounded-lg text-xs font-semibold shrink-0 whitespace-nowrap border transition-all duration-150 min-h-[32px] cursor-pointer ${
                           isDark
                             ? "bg-[#14304C]/88 hover:bg-[#1A4366] text-slate-200 hover:text-white border-white/[0.14]"
                             : "bg-white/92 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border-slate-200/95 shadow-2xs"
@@ -3172,13 +3137,13 @@ export default function LandingPage({
 
                 {/* Proportional Side-by-Side Executive CTAs on Android & Inline on Desktop */}
                 <div
-                  className="grid grid-cols-[1.28fr_1fr] sm:flex sm:flex-wrap gap-2 sm:gap-3 mb-5 sm:mb-6 w-full max-w-xl sm:max-w-none"
+                  className="grid grid-cols-[1.28fr_1fr] sm:flex sm:flex-wrap gap-2.5 sm:gap-3 mb-5 sm:mb-6 w-full max-w-xl sm:max-w-none"
                   style={{ animation: 'investluwu-fade-up .55s .26s ease both' }}
                 >
                   <button
                     type="button"
                     onClick={(e: any) => handleGisClick(e, "default")}
-                    className={`w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 p-1.5 sm:px-6 sm:py-3.5 min-h-[44px] sm:min-h-[48px] rounded-xl text-white text-[13px] sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:-translate-y-0.5 cursor-pointer ${
+                    className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3.5 sm:px-6 py-3 sm:py-3.5 min-h-[48px] rounded-xl text-white text-[13.5px] sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 hover:-translate-y-0.5 cursor-pointer ${
                       isDark
                         ? "bg-emerald-600 hover:bg-emerald-500 border border-emerald-400/35 shadow-[0_8px_22px_rgba(16,185,129,.28)]"
                         : "bg-[#059669] hover:bg-[#047857] border border-emerald-700/20 shadow-[0_8px_20px_rgba(5,150,105,.22)]"
@@ -3191,7 +3156,7 @@ export default function LandingPage({
                   <button
                     type="button"
                     onClick={() => setIsFastTrackConsultationOpen(true)}
-                    className={`w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 p-1.5 sm:px-6 sm:py-3.5 min-h-[44px] sm:min-h-[48px] rounded-xl text-[13px] sm:text-sm font-semibold whitespace-nowrap border transition-all duration-200 backdrop-blur-md cursor-pointer ${
+                    className={`w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-3 sm:py-3.5 min-h-[48px] rounded-xl text-[13.5px] sm:text-sm font-semibold whitespace-nowrap border transition-all duration-200 backdrop-blur-md cursor-pointer ${
                       isDark
                         ? "bg-[#14304C]/90 hover:bg-[#1A4366] text-slate-100 border-white/20"
                         : "bg-white/95 hover:bg-white text-slate-800 border-slate-300/90 shadow-xs"
@@ -3449,7 +3414,7 @@ export default function LandingPage({
               className="mb-3.5 sm:mb-5"
             />
             <div
-              className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 sm:gap-3.5 md:gap-4.5 rounded-2xl sm:rounded-3xl p-1 sm:p-4 md:p-5 border transition-colors duration-300 ${
+              className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3.5 md:gap-4.5 rounded-2xl sm:rounded-3xl p-2 sm:p-4 md:p-5 border transition-colors duration-300 ${
                 isDark
                   ? "bg-[#0F2D4A] border-white/[0.10] shadow-[0_18px_42px_rgba(0,0,0,0.32)]"
                   : "bg-white/90 backdrop-blur-2xl border-slate-200/90 shadow-xl shadow-slate-300/40"
@@ -3568,7 +3533,7 @@ export default function LandingPage({
                 <div
                   key={stat.id}
                   id={stat.id}
-                  className={`relative flex flex-col items-center justify-between p-1 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl border transition-all duration-300 group overflow-hidden ${
+                  className={`relative flex flex-col items-center justify-between p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl border transition-all duration-300 group overflow-hidden ${
                     isDark
                       ? "bg-[#143755] hover:bg-[#1A4366] border-white/[0.09] hover:border-emerald-400/35 shadow-none"
                       : `${stat.borderHover} backdrop-blur-xl bg-white/95 hover:bg-white border-slate-200/80 shadow-[0_4px_20px_rgba(15,23,42,0.06)] hover:shadow-[0_12px_30px_rgba(15,23,42,0.12)]`
@@ -3655,7 +3620,7 @@ export default function LandingPage({
         <section
           className={`pt-10 pb-8 sm:pt-16 sm:pb-12 md:pt-20 md:pb-14 border-b relative z-20 ${isDark ? "bg-[#081C2E] border-white/[0.08]" : "bg-slate-50/80 border-slate-200/80"}`}
         >
-          <div className="container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8">
+          <div className="container max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
             <div
               ref={statsScrollContainerRef}
               onScroll={handleStatsScroll}
@@ -3928,7 +3893,7 @@ export default function LandingPage({
           id="potensi-section"
           className={`scroll-mt-28 sm:scroll-mt-32 w-full py-14 md:py-18 lg:py-20 min-h-[44px] border-t border-slate-200/80 dark:border-white/[0.08] relative transition-colors duration-300 ${isDark ? 'bg-[#071829]/90' : 'bg-slate-50/80'}`}
         >
-          <div className="container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 relative">
+          <div className="container max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 relative">
           {/* Subtle Ambient Radial Glow for High-End Prestige Feel */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 max-w-4xl h-52 bg-gradient-to-b from-emerald-500/10 via-teal-500/5 to-transparent blur-3xl pointer-events-none -z-10" />
 
@@ -4314,7 +4279,7 @@ export default function LandingPage({
           id="keuntungan-section"
           className={`scroll-mt-20 sm:scroll-mt-24 w-full py-14 md:py-18 lg:py-20 transition-colors duration-300 ${isDark ? 'bg-slate-950/60' : 'bg-slate-50/80'}`}
         >
-          <div className="container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8">
+          <div className="container max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 md:mb-16">
             <div className="invest-eyebrow-emerald mb-3.5">
               <Sparkles className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
@@ -4426,7 +4391,7 @@ export default function LandingPage({
         {/* 4.5 FASILITAS PENUNJANG INFRASTRUKTUR */}
         <div
           id="infrastruktur-section"
-          className="scroll-mt-20 sm:scroll-mt-24 container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 py-14 md:py-18 lg:py-20 relative min-h-[44px]"
+          className="scroll-mt-20 sm:scroll-mt-24 container max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-14 md:py-18 lg:py-20 relative min-h-[44px]"
         >
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-[20%] right-[10%] w-[50vw] h-[50vw] rounded-full bg-blue-500/5 blur-[120px] mix-blend-screen" />
@@ -4669,7 +4634,7 @@ export default function LandingPage({
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
           <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-[140px] pointer-events-none" />
 
-          <div className="container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 relative z-10">
+          <div className="container max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 relative z-10">
             {/* Header */}
             <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
               <div className="invest-eyebrow mb-3.5">
@@ -5015,7 +4980,7 @@ export default function LandingPage({
           <div className="absolute top-1/4 left-1/12 w-[500px] h-[500px] bg-emerald-500/10 dark:bg-emerald-400/20 rounded-full blur-[130px] pointer-events-none" />
           <div className="absolute bottom-10 right-1/12 w-[600px] h-[600px] bg-sky-500/10 dark:bg-sky-400/15 rounded-full blur-[140px] pointer-events-none" />
 
-          <div className="container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 relative z-10">
+          <div className="container max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 relative z-10">
             {/* Top Sovereign Header Badge */}
             <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
               <div className="invest-eyebrow-emerald mb-3.5">
@@ -5072,7 +5037,7 @@ export default function LandingPage({
                       </div>
                       <div className="flex-1 min-w-0 flex flex-col text-left">
                         <span className="text-xs sm:text-xs font-bold text-slate-900 dark:text-white leading-snug">
-                          {t("mppPreview.p1Title", "20 Instansi Terpadu")}
+                          {t("mppPreview.p1Title", "21 Instansi Terpadu")}
                         </span>
                         <span className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5 leading-tight">
                           {t("mppPreview.p1Desc", "DPMPTSP, Pajak, BPN, Imigrasi, Samsat")}
@@ -5235,7 +5200,7 @@ export default function LandingPage({
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="text-xs xs:text-sm sm:text-base font-black text-slate-900 dark:text-white font-mono leading-snug truncate">
-                      {t("mppPreview.stat1Title", "20 Instansi")}
+                      {t("mppPreview.stat1Title", "21 Instansi")}
                     </div>
                     <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
                       {t("mppPreview.stat1Desc", "Pusat, Daerah & BUMN")}
@@ -5304,7 +5269,7 @@ export default function LandingPage({
             <div className="absolute top-[10%] left-[20%] w-[40vw] h-[40vw] rounded-full bg-emerald-500/5 blur-[120px] mix-blend-screen" />
             <div className="absolute bottom-[20%] right-[10%] w-[35vw] h-[35vw] rounded-full bg-blue-500/5 blur-[100px] mix-blend-screen" />
           </div>
-          <div className="container max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 relative z-10">
+          <div className="container max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 md:mb-16">
               <div className="invest-eyebrow mb-3.5">
                 <Sparkles size={13} className="text-[#A07A28] dark:text-[#C9A24B]" />

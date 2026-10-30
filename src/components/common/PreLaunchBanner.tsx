@@ -23,7 +23,7 @@ export const PreLaunchBanner: React.FC<PreLaunchBannerProps> = ({
 
   return (
     <div
-      className={`flex items-center gap-2.5 p-1 px-2.5 sm:px-4 sm:py-2.5 rounded-xl border text-xs sm:text-xs font-sans transition-all ${
+      className={`flex items-center gap-2.5 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl border text-xs sm:text-xs font-sans transition-all ${
         isDark
           ? 'bg-amber-950/20 border-amber-500/30 text-amber-300'
           : 'bg-amber-50 border-amber-200 text-amber-800'

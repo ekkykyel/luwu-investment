@@ -24,9 +24,7 @@ export function isMobileOrAndroidDevice(): boolean {
 export function isAndroidDevice(): boolean {
   if (typeof window === "undefined" || typeof navigator === "undefined") return false;
   const ua = (navigator.userAgent || navigator.vendor || (window as any).opera || "").toLowerCase();
-  const hasAndroidUA = /android/i.test(ua);
-  const hasAndroidParam = typeof window.location !== "undefined" && /[?&](android|device=android|mode=android)/i.test(window.location.search);
-  return hasAndroidUA || hasAndroidParam;
+  return /android/i.test(ua);
 }
 
 /**
@@ -52,33 +50,26 @@ export function useDeviceAutomation() {
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
   useEffect(() => {
-    const syncDeviceMode = () => {
-      const isMob = isMobileOrAndroidDevice();
-      const isAndr = isAndroidDevice();
-      setIsMobile(isMob);
-      setIsAndroid(isAndr);
+    const isMob = isMobileOrAndroidDevice();
+    const isAndr = isAndroidDevice();
+    setIsMobile(isMob);
+    setIsAndroid(isAndr);
 
-      // Otomatis suntikkan class 'android-fullscreen-mode' dan 'android-mode' ke root document jika perangkat Android aktif
-      // atau jika berjalan di mobile browser / PWA standalone untuk pengalaman edge-to-edge
-      if (typeof document !== "undefined") {
-        if (isAndr || (isMob && window.innerWidth <= 768)) {
-          document.documentElement.classList.add("android-fullscreen-mode", "android-mode");
-          document.body.classList.add("android-fullscreen-mode", "android-mode");
-        } else {
-          document.documentElement.classList.remove("android-fullscreen-mode", "android-mode");
-          document.body.classList.remove("android-fullscreen-mode", "android-mode");
-        }
+    // Otomatis suntikkan class 'android-fullscreen-mode' ke root document jika perangkat Android aktif
+    // atau jika berjalan di mobile browser / PWA standalone untuk pengalaman edge-to-edge
+    if (typeof document !== "undefined") {
+      if (isAndr || (isMob && window.innerWidth <= 768)) {
+        document.documentElement.classList.add("android-fullscreen-mode");
+        document.body.classList.add("android-fullscreen-mode");
+      } else {
+        document.documentElement.classList.remove("android-fullscreen-mode");
+        document.body.classList.remove("android-fullscreen-mode");
       }
-    };
-
-    syncDeviceMode();
-    window.addEventListener("resize", syncDeviceMode, { passive: true });
-    window.addEventListener("orientationchange", syncDeviceMode, { passive: true });
+    }
 
     // Delegated click listener untuk memastikan setiap tombol navigasi/anchor pada Android
     // menempatkan hasil klik tepat pada posisi paling atas layar penuh
     const handleGlobalAndroidClick = (e: MouseEvent) => {
-      const isMob = isMobileOrAndroidDevice();
       if (!isMob && window.innerWidth > 768) return;
 
       const target = (e.target as HTMLElement)?.closest("a, button, [role='button'], [data-scroll-target]");
@@ -107,9 +98,23 @@ export function useDeviceAutomation() {
 
     window.addEventListener("click", handleGlobalAndroidClick, { passive: false });
 
+    const handleResize = () => {
+      const currentMob = isMobileOrAndroidDevice();
+      const currentAndr = isAndroidDevice();
+      if (typeof document !== "undefined") {
+        if (currentAndr || (currentMob && window.innerWidth <= 768)) {
+          document.documentElement.classList.add("android-fullscreen-mode");
+          document.body.classList.add("android-fullscreen-mode");
+        } else {
+          document.documentElement.classList.remove("android-fullscreen-mode");
+          document.body.classList.remove("android-fullscreen-mode");
+        }
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener("resize", syncDeviceMode);
-      window.removeEventListener("orientationchange", syncDeviceMode);
+      window.removeEventListener("resize", handleResize);
       window.removeEventListener("click", handleGlobalAndroidClick);
     };
   }, []);

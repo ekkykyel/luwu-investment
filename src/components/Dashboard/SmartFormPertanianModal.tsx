@@ -237,7 +237,7 @@ export function SmartFormPertanianModal({
 
   return (
     <AnimatePresence>
-      <div className="admin-modal-form smart-form-pertanian-modal fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-base/85 backdrop-blur-md animate-in fade-in duration-200 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-base/85 backdrop-blur-md animate-in fade-in duration-200 overflow-y-auto">
         <motion.div
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

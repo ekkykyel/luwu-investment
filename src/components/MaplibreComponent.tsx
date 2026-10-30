@@ -1295,59 +1295,36 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
       'layer-rbi-roads'
     ];
 
-    const safeRemovePopup = (p: any) => {
-      if (!p) return;
-      try {
-        if (typeof p.isOpen === 'function' && p.isOpen()) {
-          p.remove();
-        } else if (p._container && p._map) {
-          p.remove();
-        }
-      } catch (err) {
-        // Safe catch for MapLibre GL internal popup unmount race condition
-      }
-    };
-
     let lastHoveredId: string | null = null;
 
     const handleFeatureHover = (e: any) => {
-      try {
-        if (map.getCanvas) map.getCanvas().style.cursor = 'pointer';
-        const features = e.features;
-        if (features && features.length > 0) {
-          const feat = features[0];
-          const layerId = feat.layer?.id || '';
-          const propsData = feat.properties || {};
-          
-          const html = formatThematicLayerTooltip(layerId, propsData);
-          if (html && e.lngLat) {
-            try {
-              popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
-              lastHoveredId = layerId;
-            } catch (err) {
-              // Safe catch for MapLibre internal tile provider missing methods during map updates
-            }
-          } else {
-            safeRemovePopup(popup);
-          }
+      if (map.getCanvas) map.getCanvas().style.cursor = 'pointer';
+      const features = e.features;
+      if (features && features.length > 0) {
+        const feat = features[0];
+        const layerId = feat.layer?.id || '';
+        const propsData = feat.properties || {};
+        
+        const html = formatThematicLayerTooltip(layerId, propsData);
+        if (html) {
+          popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
+          lastHoveredId = layerId;
+        } else {
+          popup.remove();
         }
-      } catch (err) {}
+      }
     };
 
     const handleFeatureMove = (e: any) => {
-      try {
-        if (typeof popup.isOpen === 'function' && popup.isOpen() && e.lngLat) {
-          popup.setLngLat(e.lngLat);
-        }
-      } catch (err) {}
+      if (popup.isOpen()) {
+        popup.setLngLat(e.lngLat);
+      }
     };
 
     const handleFeatureLeave = () => {
-      try {
-        if (map.getCanvas) map.getCanvas().style.cursor = '';
-        lastHoveredId = null;
-        safeRemovePopup(popup);
-      } catch (err) {}
+      if (map.getCanvas) map.getCanvas().style.cursor = '';
+      lastHoveredId = null;
+      popup.remove();
     };
 
     // Attach hover listeners for each existing target layer
@@ -1381,13 +1358,11 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
           const layerId = feat.layer?.id || '';
           const propsData = feat.properties || {};
           const html = formatThematicLayerTooltip(layerId, propsData);
-          if (html && e.lngLat) {
-            try {
-              popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
-            } catch (err) {}
+          if (html) {
+            popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
             // On touch device, auto-dismiss after 4.5 seconds if user doesn't tap elsewhere
             setTimeout(() => {
-              safeRemovePopup(popup);
+              if (popup.isOpen()) popup.remove();
             }, 4500);
           }
         }
@@ -1415,7 +1390,7 @@ const MaplibreComponent = React.memo(forwardRef<MapComponentRef, MapComponentPro
           map.off('click', handleTouchInteraction);
         }
       } catch (e) {}
-      safeRemovePopup(popup);
+      popup.remove();
     };
   }, [isMapLoaded, formatThematicLayerTooltip, props.spatialLayers]);
 

@@ -1481,7 +1481,7 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
         {/* STEP 1: WELCOME & PERSONA SELECTOR (CHEVRON AIRPORT GATES) */}
         {/* ========================================================= */}
         {step === 1 && (
-          <div className={`w-full max-w-5xl mx-auto px-1 sm:px-4 pt-4 sm:pt-8 md:pt-10 pb-32 sm:pb-40 space-y-6 sm:space-y-8 text-center animate-in fade-in zoom-in-95 duration-300 kiosk-persona-cards-container ${
+          <div className={`w-full max-w-5xl mx-auto px-2 sm:px-4 pt-4 sm:pt-8 md:pt-10 pb-32 sm:pb-40 space-y-6 sm:space-y-8 text-center animate-in fade-in zoom-in-95 duration-300 ${
             theme === 'dark' ? 'text-slate-100' : 'text-slate-900'
           }`}>
             {/* HERO WELCOME & TOUCH INSTRUCTION BANNER */}
@@ -1536,7 +1536,7 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                     setStep(2);
                   }
                 }}
-                className={`kiosk-persona-card group relative p-3 sm:p-8 rounded-3xl backdrop-blur-xl border-2 transition-all duration-300 flex flex-col justify-between space-y-4 sm:space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left shadow-[0_0_50px_-12px_rgba(16,185,129,0.35)] hover:shadow-[0_0_65px_-8px_rgba(16,185,129,0.5)] ${
+                className={`group relative p-5 sm:p-8 rounded-3xl backdrop-blur-xl border-2 transition-all duration-300 flex flex-col justify-between space-y-5 sm:space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left shadow-[0_0_50px_-12px_rgba(16,185,129,0.35)] hover:shadow-[0_0_65px_-8px_rgba(16,185,129,0.5)] ${
                   theme === 'dark'
                     ? 'bg-[#0F2942] hover:bg-[#143755] border-emerald-500/40 hover:border-emerald-400 text-white'
                     : 'bg-white border-slate-200/90 hover:border-emerald-500 text-slate-900 shadow-xl'
@@ -1606,7 +1606,7 @@ export const MppAirportKioskModal: React.FC<MppAirportKioskModalProps> = ({
                     setStep(2);
                   }
                 }}
-                className={`kiosk-persona-card group relative p-3 sm:p-8 rounded-3xl backdrop-blur-xl border-2 transition-all duration-300 flex flex-col justify-between space-y-4 sm:space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left shadow-[0_0_50px_-12px_rgba(245,158,11,0.35)] hover:shadow-[0_0_65px_-8px_rgba(245,158,11,0.5)] ${
+                className={`group relative p-5 sm:p-8 rounded-3xl backdrop-blur-xl border-2 transition-all duration-300 flex flex-col justify-between space-y-5 sm:space-y-6 overflow-hidden cursor-pointer active:scale-[0.98] text-left shadow-[0_0_50px_-12px_rgba(245,158,11,0.35)] hover:shadow-[0_0_65px_-8px_rgba(245,158,11,0.5)] ${
                   theme === 'dark'
                     ? 'bg-[#0F2942] hover:bg-[#143755] border-amber-500/40 hover:border-amber-400 text-white'
                     : 'bg-white border-slate-200/90 hover:border-amber-500 text-slate-900 shadow-xl'

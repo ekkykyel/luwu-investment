@@ -12,19 +12,19 @@ export const MPP_TYPOGRAPHY = {
 
 export const MPP_CARD_SURFACE = {
   default:
-    'mpp-card bg-white dark:bg-[#0C2135] border border-[#E5DFD3] dark:border-white/[0.09] rounded-2xl sm:rounded-3xl shadow-[0_6px_22px_-10px_rgba(24,24,27,0.06)] dark:shadow-[0_14px_34px_-14px_rgba(0,0,0,0.45)] transition-all duration-300',
+    'bg-white dark:bg-[#0C2135] border border-[#E5DFD3] dark:border-white/[0.09] rounded-2xl sm:rounded-3xl shadow-[0_6px_22px_-10px_rgba(24,24,27,0.06)] dark:shadow-[0_14px_34px_-14px_rgba(0,0,0,0.45)] transition-all duration-300',
   glass:
-    'mpp-card bg-white/92 dark:bg-[#0C2135]/85 backdrop-blur-xl border border-[#E5DFD3] dark:border-white/[0.10] rounded-2xl sm:rounded-3xl shadow-[0_8px_26px_-10px_rgba(24,24,27,0.08)] dark:shadow-[0_16px_38px_-14px_rgba(0,0,0,0.5)] transition-all duration-300',
+    'bg-white/92 dark:bg-[#0C2135]/85 backdrop-blur-xl border border-[#E5DFD3] dark:border-white/[0.10] rounded-2xl sm:rounded-3xl shadow-[0_8px_26px_-10px_rgba(24,24,27,0.08)] dark:shadow-[0_16px_38px_-14px_rgba(0,0,0,0.5)] transition-all duration-300',
   elevated:
-    'mpp-card bg-white dark:bg-[#112A42] border border-[#DFD8CA] dark:border-white/[0.12] rounded-2xl sm:rounded-3xl shadow-[0_12px_32px_-12px_rgba(24,24,27,0.09)] dark:shadow-[0_18px_42px_-14px_rgba(0,0,0,0.55)] transition-all duration-300',
+    'bg-white dark:bg-[#112A42] border border-[#DFD8CA] dark:border-white/[0.12] rounded-2xl sm:rounded-3xl shadow-[0_12px_32px_-12px_rgba(24,24,27,0.09)] dark:shadow-[0_18px_42px_-14px_rgba(0,0,0,0.55)] transition-all duration-300',
   layer1:
-    'mpp-card bg-[#FCFBF8] dark:bg-[#0D2338] border border-[#E5DFD3] dark:border-white/[0.08] shadow-[0_6px_20px_-10px_rgba(24,24,27,0.05)] dark:shadow-none',
+    'bg-[#FCFBF8] dark:bg-[#0D2338] border border-[#E5DFD3] dark:border-white/[0.08] shadow-[0_6px_20px_-10px_rgba(24,24,27,0.05)] dark:shadow-none',
   layer2:
-    'mpp-card bg-white dark:bg-[#132E48] border border-[#E5DFD3] dark:border-white/[0.09]',
+    'bg-white dark:bg-[#132E48] border border-[#E5DFD3] dark:border-white/[0.09]',
   radiusMain: 'rounded-2xl sm:rounded-3xl',
   radiusSub: 'rounded-xl sm:rounded-2xl',
-  paddingLg: 'p-2 sm:p-6 lg:p-8',
-  paddingSm: 'p-1.5 sm:p-4'
+  paddingLg: 'p-5 sm:p-6 lg:p-8',
+  paddingSm: 'p-3.5 sm:p-4'
 };
 
 export interface MppCardProps extends React.HTMLAttributes<HTMLDivElement> {

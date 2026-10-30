@@ -179,7 +179,7 @@ export default function InfrastructureStatsChart({ infrastructure = [], isDarkMo
                 itemStyle={{ color: chart.tooltipText, fontWeight: "bold", fontSize: "11px" }}
                 labelStyle={{ color: text.muted, fontWeight: "600", fontSize: "11px" }}
               />
-              <Bar dataKey="count" radius={[0, 4, 4, 0]} isAnimationActive={false}>
+              <Bar dataKey="count" radius={[0, 4, 4, 0]}>
                 {aggregatedData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
@@ -198,7 +198,6 @@ export default function InfrastructureStatsChart({ infrastructure = [], isDarkMo
                 paddingAngle={3}
                 dataKey="count"
                 stroke="none"
-                isAnimationActive={false}
               >
                 {aggregatedData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />

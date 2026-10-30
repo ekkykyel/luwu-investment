@@ -2697,7 +2697,7 @@ export default function MasyarakatDashboard({
 
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white dark:bg-surface border-b border-slate-200 dark:border-slate-800 backdrop-blur-md transition-colors">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 flex items-center justify-between gap-2.5">
+        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 flex items-center justify-between gap-2.5">
           {/* Brand Left */}
           <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
             {/* Logo Luwu */}

@@ -568,7 +568,7 @@ export default function MppQueueRegistrationModal({ isOpen, onClose, isDarkMode,
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm">
       <div className={`relative w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col overflow-hidden ${isDarkMode ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'}`}>
         
         {/* Header */}

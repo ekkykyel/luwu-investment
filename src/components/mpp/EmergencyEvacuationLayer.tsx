@@ -129,15 +129,13 @@ export const EmergencyEvacuationLayer: React.FC<EmergencyEvacuationLayerProps> =
           el.setAttribute('opacity', '0.9');
         });
 
-        // Place runner static near exit door (upright, mirrored if heading west)
+        // Place runner static near exit door
         const runnerEl = runnerRefs.current.get(key);
         if (runnerEl) {
           const sample = getPointOnPrecomputedRoute(route, route.totalLength - 80);
-          const isHeadingWest = Math.cos((sample.angleDeg * Math.PI) / 180) < -0.2;
-          const flipScale = isHeadingWest ? 'scale(-1, 1)' : '';
           runnerEl.setAttribute(
             'transform',
-            `translate(${sample.x.toFixed(1)}, ${sample.y.toFixed(1)}) ${flipScale}`.trim()
+            `translate(${sample.x.toFixed(1)}, ${sample.y.toFixed(1)}) rotate(${sample.angleDeg.toFixed(1)})`
           );
           runnerEl.setAttribute('opacity', '1');
         }
@@ -185,7 +183,7 @@ export const EmergencyEvacuationLayer: React.FC<EmergencyEvacuationLayerProps> =
             el.setAttribute('opacity', opacity.toFixed(2));
           });
 
-          // 2. Update Running Person Pictogram along route (upright, mirrored if heading west)
+          // 2. Update Running Person Pictogram along route
           const runnerEl = runnerRefs.current.get(key);
           if (runnerEl) {
             const runnerDist = (elapsedSec * runnerSpeed) % route.totalLength;
@@ -198,12 +196,9 @@ export const EmergencyEvacuationLayer: React.FC<EmergencyEvacuationLayerProps> =
               runnerOpacity = Math.max(0.2, (route.totalLength - runnerDist) / 80);
             }
 
-            const isHeadingWest = Math.cos((runnerSample.angleDeg * Math.PI) / 180) < -0.2;
-            const flipScale = isHeadingWest ? 'scale(-1, 1)' : '';
-
             runnerEl.setAttribute(
               'transform',
-              `translate(${runnerSample.x.toFixed(1)}, ${runnerSample.y.toFixed(1)}) ${flipScale}`.trim()
+              `translate(${runnerSample.x.toFixed(1)}, ${runnerSample.y.toFixed(1)}) rotate(${runnerSample.angleDeg.toFixed(1)})`
             );
             runnerEl.setAttribute('opacity', runnerOpacity.toFixed(2));
           }
@@ -251,18 +246,8 @@ export const EmergencyEvacuationLayer: React.FC<EmergencyEvacuationLayerProps> =
       ref={animGroupRef}
       className="pointer-events-none transition-opacity duration-300"
     >
-      {/* ── DEFINE SYMBOLS & KEYFRAMES (Zero Filters) ── */}
+      {/* ── DEFINE SYMBOLS (Zero Filters) ── */}
       <defs>
-        <style>{`
-          @keyframes flowRoute {
-            from { stroke-dashoffset: 40; }
-            to { stroke-dashoffset: 0; }
-          }
-          .evac-centerline-flow {
-            stroke-dasharray: 12 8;
-            animation: flowRoute 1.2s linear infinite;
-          }
-        `}</style>
         {/* Chevron Glyph: V-pointing forward (along positive X axis) */}
         <path
           id="evac-chevron-glyph"
@@ -320,7 +305,7 @@ export const EmergencyEvacuationLayer: React.FC<EmergencyEvacuationLayerProps> =
         })}
       </g>
 
-      {/* ── 2. ROUTE CENTERLINE GUIDES WITH FLOWING ANIMATION ── */}
+      {/* ── 2. ROUTE CENTERLINE GUIDES ── */}
       <g id="evac-centerlines">
         {(['utara', 'selatan', 'utama'] as const).map((key) => {
           const route: RouteGeometry = PRECOMPUTED_EVAC_ROUTES[key];
@@ -331,8 +316,8 @@ export const EmergencyEvacuationLayer: React.FC<EmergencyEvacuationLayerProps> =
               fill="none"
               stroke={routeColor}
               strokeWidth={3}
-              strokeOpacity={0.65}
-              className="evac-centerline-flow"
+              strokeOpacity={0.45}
+              strokeDasharray="10 10"
               strokeLinecap="round"
               strokeLinejoin="round"
             />

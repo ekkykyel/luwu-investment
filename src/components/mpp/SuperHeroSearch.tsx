@@ -311,7 +311,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
     : t('hero.search_placeholder', 'Cari layanan, izin, instansi, atau dokumen...');
 
   return (
-    <div ref={heroRef} className="w-full max-w-7xl mx-auto px-1 sm:px-6 lg:px-8 pt-2 pb-2 sm:pt-4 sm:pb-4 relative z-10 hero-photo-card-container">
+    <div ref={heroRef} className="w-full max-w-7xl mx-auto px-1 sm:px-6 lg:px-8 pt-2 pb-2 sm:pt-4 sm:pb-4 relative z-10 hero-search-container">
       {/* ───────────────────────────────────────────────────────────────────────────── */}
       {/* OPSI A: MODERN SPLIT-EDITORIAL CIVIC HERO (12-COL ASYMMETRIC ARCHITECTURE)    */}
       {/* Left 7 Cols: High-Contrast Editorial Command & Omni-Search                    */}
@@ -320,7 +320,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 xl:gap-12 items-center">
         
         {/* 1. LEFT COLUMN (7 Cols): EDITORIAL HEADLINE, OMNI-SEARCH & QUICK FILTERS */}
-        <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-3.5 sm:space-y-4">
+        <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-3.5 sm:space-y-4 px-2 sm:px-0">
           
           {/* Sulapa Eppa Institutional Kicker */}
           <motion.div
@@ -466,7 +466,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
                 key={chip.id}
                 type="button"
                 onClick={() => onSelectChip?.(chip.id)}
-                className="min-h-[28px] sm:min-h-[34px] p-1 px-2.5 sm:px-3.5 sm:py-1.5 rounded-xl bg-[#F2EFE7] hover:bg-[#0F6B4F]/10 dark:bg-[#0D2338] dark:hover:bg-emerald-500/15 text-slate-700 hover:text-[#0F6B4F] dark:text-slate-200 dark:hover:text-emerald-300 border border-[#DFD8C8] hover:border-[#0F6B4F]/35 dark:border-white/[0.10] dark:hover:border-emerald-400/40 text-[11px] sm:text-xs font-semibold transition-all active:scale-95 cursor-pointer whitespace-nowrap shrink-0"
+                className="min-h-[34px] px-3 sm:px-3.5 py-1.5 rounded-xl bg-[#F2EFE7] hover:bg-[#0F6B4F]/10 dark:bg-[#0D2338] dark:hover:bg-emerald-500/15 text-slate-700 hover:text-[#0F6B4F] dark:text-slate-200 dark:hover:text-emerald-300 border border-[#DFD8C8] hover:border-[#0F6B4F]/35 dark:border-white/[0.10] dark:hover:border-emerald-400/40 text-[11px] sm:text-xs font-semibold transition-all active:scale-95 cursor-pointer whitespace-nowrap shrink-0"
               >
                 <span className="sm:hidden">{chip.mobileLabel}</span>
                 <span className="hidden sm:inline">{chip.label}</span>
@@ -480,22 +480,22 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.55, delay: 0.12 }}
-          className="lg:col-span-5 w-full relative group p-1 sm:p-0 hero-photo-card-wrapper"
+          className="lg:col-span-5 w-full relative group px-0 mpp-hero-photo-wrapper"
         >
           {/* Subtle Spatial Depth Ambient Glow (Dark Mode) */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -inset-2 rounded-[32px] bg-gradient-to-tr from-emerald-500/20 via-teal-500/15 to-[#E2C475]/25 blur-xl opacity-60 dark:opacity-75 group-hover:opacity-100 transition-opacity duration-700 -z-10"
+            className="pointer-events-none absolute -inset-1 sm:-inset-2 rounded-[22px] sm:rounded-[32px] bg-gradient-to-tr from-emerald-500/20 via-teal-500/15 to-[#E2C475]/25 blur-xl opacity-60 dark:opacity-75 group-hover:opacity-100 transition-opacity duration-700 -z-10"
           />
 
-          <div className="hero-photo-card mpp-card relative w-full aspect-[16/10] sm:aspect-[1280/775] rounded-[16px] sm:rounded-[26px] overflow-hidden border border-[#D8CEBC] dark:border-[#C9A24B]/35 shadow-[0_20px_44px_-16px_rgba(15,35,45,0.18)] dark:shadow-[0_24px_52px_-16px_rgba(0,0,0,0.85)] bg-[#0A2236] p-1">
+          <div className="relative w-full aspect-[16/10] sm:aspect-[1280/775] rounded-[18px] sm:rounded-[26px] overflow-hidden border border-[#D8CEBC] dark:border-[#C9A24B]/35 shadow-[0_20px_44px_-16px_rgba(15,35,45,0.18)] dark:shadow-[0_24px_52px_-16px_rgba(0,0,0,0.85)] bg-[#0A2236]">
             
             {/* Sulapa Eppa Inner Gold Hairline Frame */}
             <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#E2C475]/85 to-transparent z-30" />
             <div aria-hidden="true" className="hidden sm:block pointer-events-none absolute inset-2.5 rounded-[18px] border border-white/25 dark:border-[#E2C475]/15 z-20" />
 
             {/* Live Operational Status Floating Pill */}
-            <div className="mpp-badge operational-badge absolute top-2 sm:top-4 left-2 sm:left-4 z-30 flex items-center gap-1.5 sm:gap-2 p-1 px-2.5 sm:px-3 sm:py-1.5 rounded-full bg-slate-950/75 dark:bg-slate-950/85 backdrop-blur-md border border-white/20 dark:border-emerald-500/30 text-white shadow-lg pointer-events-none">
+            <div className="absolute top-3 sm:top-4 left-3.5 sm:left-4 z-30 flex items-center gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-slate-950/75 dark:bg-slate-950/85 backdrop-blur-md border border-white/20 dark:border-emerald-500/30 text-white shadow-lg pointer-events-none">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />

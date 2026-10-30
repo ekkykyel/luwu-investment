@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useDeviceAutomation } from "../../hooks/useDeviceAutomation";
 import {
   LayoutDashboard,
   Building2,
@@ -113,7 +112,6 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 export default function AdminLayout() {
-  const { isAndroid } = useDeviceAutomation();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -245,12 +243,9 @@ export default function AdminLayout() {
   };
 
   return (
-    <div 
-      id="admin-root-container" 
-      className={`admin-root-container admin-dpmptsp-dashboard ${isAndroid ? 'is-android android-active' : ''} min-h-screen w-full flex flex-col md:flex-row overflow-hidden font-sans select-none transition-colors duration-300 ${
-        isDark ? "bg-base text-slate-100" : "bg-slate-50 text-slate-900"
-      }`}
-    >
+    <div id="admin-root-container" className={`min-h-screen w-full flex flex-col md:flex-row overflow-hidden font-sans select-none transition-colors duration-300 ${
+      isDark ? "bg-base text-slate-100" : "bg-slate-50 text-slate-900"
+    }`}>
       {/* ── GLOBAL ANDROID FRIENDLY & DUAL THEME STYLES ── */}
       <style>{`
         /* Android Friendly Font Scaling & Comfort Touch Targets */
@@ -663,8 +658,8 @@ export default function AdminLayout() {
           </div>
         </header>
 
-        {/* ── MAIN BODY CONTENT AREA ── */}
-        <main className="flex-1 overflow-y-auto p-3.5 sm:p-6 lg:p-8 space-y-6">
+        {/* ── MAIN BODY CONTENT AREA (Standard P-2: 8px on Mobile Android) ── */}
+        <main className="flex-1 overflow-y-auto p-2 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
           
           {/* Sub-view Rendering based on Active Nav */}
           {currentNav.id === "beranda" && <BerandaDashboardView operatorUser={operatorUser} isDark={isDark} />}

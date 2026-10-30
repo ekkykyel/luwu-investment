@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -21,9 +21,28 @@ import {
   PieChart,
   ArrowUpRight,
   Filter,
-  Info
+  Info,
+  Radio,
+  RefreshCw,
+  Search,
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
+
+export interface ActiveCounterItem {
+  tenantId: string;
+  tenantName: string;
+  tenantCode: string;
+  floor?: string;
+  counterName: string;
+  currentTicket: string | null;
+  serviceName: string | null;
+  status: 'serving' | 'calling' | 'waiting' | 'idle';
+  waitingCount: number;
+  servedCount: number;
+  lastCalledAt?: string | null;
+}
 
 interface MppVisitorAnalyticsModalProps {
   isOpen: boolean;
@@ -42,7 +61,11 @@ export const MppVisitorAnalyticsModal: React.FC<MppVisitorAnalyticsModalProps> =
   const isEn = i18n.language?.startsWith('en');
 
   const [activePeriod, setActivePeriod] = useState<'today' | 'month' | 'year'>('month');
-  const [activeTab, setActiveTab] = useState<'peak' | 'agencies' | 'demographics' | 'skm'>('peak');
+  const [activeTab, setActiveTab] = useState<'live_counters' | 'peak' | 'agencies' | 'demographics' | 'skm'>('live_counters');
+
+  const [counterFilter, setCounterFilter] = useState<'all' | 'active_only' | 'waiting_only'>('all');
+  const [counterSearchQuery, setCounterSearchQuery] = useState('');
+  const [isManualRefreshing, setIsManualRefreshing] = useState(false);
 
   const [liveMetrics, setLiveMetrics] = useState({
     totalQueues: 0,
@@ -58,108 +81,239 @@ export const MppVisitorAnalyticsModal: React.FC<MppVisitorAnalyticsModalProps> =
       { hour: '14:30 - 15:30', visitors: 0, status: 'Lancar', color: 'bg-emerald-500' },
     ],
     agenciesRank: [] as Array<{ name: string; count: number; percent: string; slaAvg: string }>,
+    activeCountersSummary: {
+      totalActive: 0,
+      totalServing: 0,
+      totalCalling: 0,
+      totalWaiting: 0,
+      totalCompletedToday: 0,
+      countersList: [] as ActiveCounterItem[],
+      lastSyncTime: '',
+    }
   });
+
+  const loadAnalyticsData = useCallback(async () => {
+    try {
+      const todayStr = new Date().toISOString().split('T')[0];
+
+      const [qRes, skmRes, tenantsRes, todayQueuesRes] = await Promise.all([
+        supabase
+          .from('mpp_queues')
+          .select('id, created_at, session, ticket_code, tenant_id')
+          .order('created_at', { ascending: false })
+          .limit(1000),
+        supabase
+          .from('mpp_skm')
+          .select('q1_persyaratan, q2_prosedur, q3_waktu, q4_biaya, q5_produk, q6_kompetensi, q7_perilaku, q8_sarpras, q9_pengaduan')
+          .order('created_at', { ascending: false })
+          .limit(500),
+        supabase
+          .from('mpp_tenants')
+          .select('id, name, code, floor, is_active, counter_name')
+          .order('name'),
+        supabase
+          .from('mpp_queues')
+          .select('id, ticket_code, status, tenant_id, counter_name, called_at, served_at, created_at, queue_date, service:mpp_services(id, service_name, name)')
+          .or(`queue_date.eq.${todayStr},created_at.gte.${todayStr}T00:00:00Z`)
+          .order('created_at', { ascending: false })
+      ]);
+
+      const queues = qRes.data || [];
+      const skmList = skmRes.data || [];
+      const tenants = tenantsRes.data || [];
+      const todayQueues = todayQueuesRes.data || [];
+
+      const totalQ = queues.length;
+      const onlineBookings = queues.filter(q => q.session || (q.ticket_code && q.ticket_code.startsWith('ONL-'))).length;
+      const onlinePercent = totalQ > 0 ? Math.round((onlineBookings / totalQ) * 100) : 0;
+
+      let ikmAvg = '0.00';
+      if (skmList.length > 0) {
+        const sum = skmList.reduce((acc, c) => {
+          const rowAvg = ((c.q1_persyaratan || 0) + (c.q2_prosedur || 0) + (c.q3_waktu || 0) + (c.q4_biaya || 0) +
+            (c.q5_produk || 0) + (c.q6_kompetensi || 0) + (c.q7_perilaku || 0) + (c.q8_sarpras || 0) + (c.q9_pengaduan || 0)) / 9;
+          return acc + (rowAvg * 25);
+        }, 0);
+        ikmAvg = (sum / skmList.length).toFixed(2);
+      }
+
+      // Peak hours distribution from actual queues
+      const hourCounts = [0, 0, 0, 0, 0, 0];
+      queues.forEach(q => {
+        if (q.created_at) {
+          const h = new Date(q.created_at).getHours();
+          if (h >= 8 && h < 9) hourCounts[0]++;
+          else if (h >= 9 && h < 11) hourCounts[1]++;
+          else if (h >= 11 && h < 12) hourCounts[2]++;
+          else if (h >= 12 && h < 13) hourCounts[3]++;
+          else if (h >= 13 && h < 15) hourCounts[4]++;
+          else if (h >= 15) hourCounts[5]++;
+          else hourCounts[0]++;
+        } else {
+          hourCounts[0]++;
+        }
+      });
+
+      const maxH = Math.max(...hourCounts, 1);
+      const mappedPeak = [
+        { hour: '08:00 - 09:00', visitors: hourCounts[0], status: hourCounts[0] >= maxH * 0.7 && totalQ > 5 ? 'Padat' : 'Lancar', color: 'bg-emerald-500' },
+        { hour: '09:00 - 10:30', visitors: hourCounts[1], status: hourCounts[1] >= maxH * 0.7 && totalQ > 5 ? 'Padat / Peak' : 'Sedang', color: 'bg-teal-500' },
+        { hour: '10:30 - 12:00', visitors: hourCounts[2], status: hourCounts[2] >= maxH * 0.7 && totalQ > 5 ? 'Sangat Padat' : 'Sedang', color: 'bg-teal-600' },
+        { hour: '12:00 - 13:00', visitors: hourCounts[3], status: 'Istirahat Siang', color: 'bg-amber-500' },
+        { hour: '13:00 - 14:30', visitors: hourCounts[4], status: hourCounts[4] >= maxH * 0.7 && totalQ > 5 ? 'Padat' : 'Sedang', color: 'bg-teal-500' },
+        { hour: '14:30 - 15:30', visitors: hourCounts[5], status: 'Lancar', color: 'bg-emerald-500' },
+      ];
+
+      // Group queues by tenant
+      const tenantMap: { [key: string]: number } = {};
+      queues.forEach(q => {
+        if (q.tenant_id) {
+          tenantMap[q.tenant_id] = (tenantMap[q.tenant_id] || 0) + 1;
+        }
+      });
+
+      const agenciesRank = tenants.map(t => {
+        const count = tenantMap[t.id] || 0;
+        const pct = totalQ > 0 ? `${Math.round((count / totalQ) * 100)}%` : '0%';
+        return {
+          name: t.name,
+          count,
+          percent: pct,
+          slaAvg: isZh ? '8-15 分钟' : isEn ? '8-15 Minutes' : '8-15 Menit'
+        };
+      }).sort((a, b) => b.count - a.count).slice(0, 5);
+
+      // Compute active counters statistics from today's queues and tenants
+      const counterItems: ActiveCounterItem[] = tenants.map(t => {
+        const tQueues = todayQueues.filter(q => q.tenant_id === t.id);
+        const servingQ = tQueues.find(q => q.status === 'dilayani');
+        const callingQ = tQueues.find(q => q.status === 'dipanggil');
+        const waitingQ = tQueues.filter(q => q.status === 'menunggu');
+        const completedQ = tQueues.filter(q => q.status === 'selesai_langsung' || q.status === 'masuk_tracking');
+
+        let st: 'serving' | 'calling' | 'waiting' | 'idle' = 'idle';
+        let curTicket: string | null = null;
+        let svcName: string | null = null;
+        let lastCalled: string | null = null;
+
+        if (servingQ) {
+          st = 'serving';
+          curTicket = servingQ.ticket_code;
+          const svc = servingQ.service as any;
+          svcName = svc?.service_name || svc?.name || null;
+          lastCalled = servingQ.served_at || servingQ.called_at || servingQ.created_at;
+        } else if (callingQ) {
+          st = 'calling';
+          curTicket = callingQ.ticket_code;
+          const svc = callingQ.service as any;
+          svcName = svc?.service_name || svc?.name || null;
+          lastCalled = callingQ.called_at || callingQ.created_at;
+        } else if (waitingQ.length > 0) {
+          st = 'waiting';
+          curTicket = waitingQ[0].ticket_code;
+          const svc = waitingQ[0].service as any;
+          svcName = svc?.service_name || svc?.name || null;
+        }
+
+        const cName = t.counter_name || (servingQ?.counter_name || callingQ?.counter_name || `Loket ${t.code || t.name}`);
+
+        return {
+          tenantId: t.id,
+          tenantName: t.name,
+          tenantCode: t.code || t.name,
+          floor: t.floor || 'Lantai 1',
+          counterName: cName,
+          currentTicket: curTicket,
+          serviceName: svcName,
+          status: st,
+          waitingCount: waitingQ.length,
+          servedCount: completedQ.length,
+          lastCalledAt: lastCalled
+        };
+      });
+
+      // Sort counterItems: serving first, then calling, then waiting, then idle
+      const statusPriority = { serving: 0, calling: 1, waiting: 2, idle: 3 };
+      counterItems.sort((a, b) => {
+        const diff = statusPriority[a.status] - statusPriority[b.status];
+        if (diff !== 0) return diff;
+        return a.tenantName.localeCompare(b.tenantName);
+      });
+
+      const totalServing = todayQueues.filter(q => q.status === 'dilayani').length;
+      const totalCalling = todayQueues.filter(q => q.status === 'dipanggil').length;
+      const totalWaiting = todayQueues.filter(q => q.status === 'menunggu').length;
+      const totalCompletedToday = todayQueues.filter(q => q.status === 'selesai_langsung' || q.status === 'masuk_tracking').length;
+      const totalActive = counterItems.filter(c => c.status === 'serving' || c.status === 'calling').length;
+
+      const now = new Date();
+      const timeFormatted = now.toLocaleTimeString(isZh ? 'zh-CN' : isEn ? 'en-US' : 'id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' WITA';
+
+      setLiveMetrics({
+        totalQueues: totalQ,
+        onlineBookingPercent: onlinePercent,
+        ikmScore: ikmAvg,
+        ikmCount: skmList.length,
+        peakHours: mappedPeak,
+        agenciesRank,
+        activeCountersSummary: {
+          totalActive,
+          totalServing,
+          totalCalling,
+          totalWaiting,
+          totalCompletedToday,
+          countersList: counterItems,
+          lastSyncTime: timeFormatted
+        }
+      });
+    } catch (err) {
+      console.warn('Gagal memuat analitik Supabase:', err);
+    }
+  }, [isZh, isEn]);
 
   useEffect(() => {
     if (!isOpen) return;
 
-    const loadAnalyticsData = async () => {
-      try {
-        const [qRes, skmRes, tenantsRes] = await Promise.all([
-          supabase
-            .from('mpp_queues')
-            .select('id, created_at, session, ticket_code, tenant_id')
-            .order('created_at', { ascending: false })
-            .limit(1000),
-          supabase
-            .from('mpp_skm')
-            .select('q1_persyaratan, q2_prosedur, q3_waktu, q4_biaya, q5_produk, q6_kompetensi, q7_perilaku, q8_sarpras, q9_pengaduan')
-            .order('created_at', { ascending: false })
-            .limit(500),
-          supabase
-            .from('mpp_tenants')
-            .select('id, name')
-        ]);
-
-        const queues = qRes.data || [];
-        const skmList = skmRes.data || [];
-        const tenants = tenantsRes.data || [];
-
-        const totalQ = queues.length;
-        const onlineBookings = queues.filter(q => q.session || (q.ticket_code && q.ticket_code.startsWith('ONL-'))).length;
-        const onlinePercent = totalQ > 0 ? Math.round((onlineBookings / totalQ) * 100) : 0;
-
-        let ikmAvg = '0.00';
-        if (skmList.length > 0) {
-          const sum = skmList.reduce((acc, c) => {
-            const rowAvg = ((c.q1_persyaratan || 0) + (c.q2_prosedur || 0) + (c.q3_waktu || 0) + (c.q4_biaya || 0) +
-              (c.q5_produk || 0) + (c.q6_kompetensi || 0) + (c.q7_perilaku || 0) + (c.q8_sarpras || 0) + (c.q9_pengaduan || 0)) / 9;
-            return acc + (rowAvg * 25);
-          }, 0);
-          ikmAvg = (sum / skmList.length).toFixed(2);
-        }
-
-        // Peak hours distribution from actual queues
-        const hourCounts = [0, 0, 0, 0, 0, 0];
-        queues.forEach(q => {
-          if (q.created_at) {
-            const h = new Date(q.created_at).getHours();
-            if (h >= 8 && h < 9) hourCounts[0]++;
-            else if (h >= 9 && h < 11) hourCounts[1]++;
-            else if (h >= 11 && h < 12) hourCounts[2]++;
-            else if (h >= 12 && h < 13) hourCounts[3]++;
-            else if (h >= 13 && h < 15) hourCounts[4]++;
-            else if (h >= 15) hourCounts[5]++;
-            else hourCounts[0]++;
-          } else {
-            hourCounts[0]++;
-          }
-        });
-
-        const maxH = Math.max(...hourCounts, 1);
-        const mappedPeak = [
-          { hour: '08:00 - 09:00', visitors: hourCounts[0], status: hourCounts[0] >= maxH * 0.7 && totalQ > 5 ? 'Padat' : 'Lancar', color: 'bg-emerald-500' },
-          { hour: '09:00 - 10:30', visitors: hourCounts[1], status: hourCounts[1] >= maxH * 0.7 && totalQ > 5 ? 'Padat / Peak' : 'Sedang', color: 'bg-teal-500' },
-          { hour: '10:30 - 12:00', visitors: hourCounts[2], status: hourCounts[2] >= maxH * 0.7 && totalQ > 5 ? 'Sangat Padat' : 'Sedang', color: 'bg-teal-600' },
-          { hour: '12:00 - 13:00', visitors: hourCounts[3], status: 'Istirahat Siang', color: 'bg-amber-500' },
-          { hour: '13:00 - 14:30', visitors: hourCounts[4], status: hourCounts[4] >= maxH * 0.7 && totalQ > 5 ? 'Padat' : 'Sedang', color: 'bg-teal-500' },
-          { hour: '14:30 - 15:30', visitors: hourCounts[5], status: 'Lancar', color: 'bg-emerald-500' },
-        ];
-
-        // Group queues by tenant
-        const tenantMap: { [key: string]: number } = {};
-        queues.forEach(q => {
-          if (q.tenant_id) {
-            tenantMap[q.tenant_id] = (tenantMap[q.tenant_id] || 0) + 1;
-          }
-        });
-
-        const agenciesRank = tenants.map(t => {
-          const count = tenantMap[t.id] || 0;
-          const pct = totalQ > 0 ? `${Math.round((count / totalQ) * 100)}%` : '0%';
-          return {
-            name: t.name,
-            count,
-            percent: pct,
-            slaAvg: isZh ? '8-15 分钟' : isEn ? '8-15 Minutes' : '8-15 Menit'
-          };
-        }).sort((a, b) => b.count - a.count).slice(0, 5);
-
-        setLiveMetrics({
-          totalQueues: totalQ,
-          onlineBookingPercent: onlinePercent,
-          ikmScore: ikmAvg,
-          ikmCount: skmList.length,
-          peakHours: mappedPeak,
-          agenciesRank
-        });
-      } catch (err) {
-        console.warn('Gagal memuat analitik Supabase:', err);
-      }
-    };
-
     loadAnalyticsData();
-  }, [isOpen, isZh, isEn]);
+
+    // Realtime channel for live queues
+    const channel = supabase
+      .channel('mpp_visitor_analytics_realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mpp_queues' }, () => {
+        loadAnalyticsData();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [isOpen, loadAnalyticsData]);
+
+  const handleManualRefresh = async () => {
+    setIsManualRefreshing(true);
+    await loadAnalyticsData();
+    setTimeout(() => setIsManualRefreshing(false), 500);
+  };
+
+  const filteredCounters = useMemo(() => {
+    let list = liveMetrics.activeCountersSummary.countersList;
+    if (counterFilter === 'active_only') {
+      list = list.filter(c => c.status === 'serving' || c.status === 'calling');
+    } else if (counterFilter === 'waiting_only') {
+      list = list.filter(c => c.waitingCount > 0);
+    }
+    if (counterSearchQuery.trim()) {
+      const q = counterSearchQuery.toLowerCase();
+      list = list.filter(c =>
+        c.tenantName.toLowerCase().includes(q) ||
+        c.tenantCode.toLowerCase().includes(q) ||
+        c.counterName.toLowerCase().includes(q) ||
+        (c.currentTicket && c.currentTicket.toLowerCase().includes(q)) ||
+        (c.serviceName && c.serviceName.toLowerCase().includes(q))
+      );
+    }
+    return list;
+  }, [liveMetrics.activeCountersSummary.countersList, counterFilter, counterSearchQuery]);
 
   if (!isOpen) return null;
 
@@ -194,7 +348,7 @@ export const MppVisitorAnalyticsModal: React.FC<MppVisitorAnalyticsModalProps> =
   return (
     <AnimatePresence>
       <div
-        className="fixed inset-0 z-50 flex flex-col items-center justify-center p-3 sm:p-6 bg-surface/60 backdrop-blur-sm overflow-hidden font-sans"
+        className="fixed inset-0 z-50 flex flex-col items-center justify-center p-2 sm:p-6 bg-surface/60 backdrop-blur-sm overflow-hidden font-sans"
         onClick={onClose}
       >
         <motion.div
@@ -282,6 +436,7 @@ export const MppVisitorAnalyticsModal: React.FC<MppVisitorAnalyticsModalProps> =
           <div className="px-5 sm:px-7 py-2.5 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200/80 dark:border-slate-800 shrink-0 overflow-x-auto no-scrollbar">
             <div className="flex items-center gap-2 min-w-max">
               {[
+                { id: 'live_counters', label: isZh ? "实时活跃窗口" : isEn ? "Live Active Counters" : "Loket Aktif Real-Time", icon: Radio },
                 { id: 'peak', label: isZh ? "高峰时段与建议" : isEn ? "Peak Hours & Advice" : "Jam Sibuk & Rekomendasi", icon: Clock },
                 { id: 'agencies', label: isZh ? "热门机构与 SLA" : isEn ? "Top Agencies & SLA" : "Top Instansi & SLA", icon: Building2 },
                 { id: 'demographics', label: isZh ? "人口统计与到访方式" : isEn ? "Demographics & Arrival" : "Demografi & Metode", icon: PieChart },
@@ -301,6 +456,9 @@ export const MppVisitorAnalyticsModal: React.FC<MppVisitorAnalyticsModalProps> =
                   >
                     <Icon className="w-4 h-4 shrink-0" />
                     <span>{tab.label}</span>
+                    {tab.id === 'live_counters' && liveMetrics.activeCountersSummary.totalActive > 0 && (
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
+                    )}
                   </button>
                 );
               })}
@@ -309,13 +467,40 @@ export const MppVisitorAnalyticsModal: React.FC<MppVisitorAnalyticsModalProps> =
 
           {/* Modal Body Scrollable */}
           <div className="p-5 sm:p-7 overflow-y-auto space-y-6 text-slate-900 dark:text-white">
-            {/* Top KPI Cards Overview */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {/* Top KPI Cards Overview (5 Columns Responsive) */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3">
+              {/* Card 1: Live Active Counters */}
+              <div 
+                onClick={() => setActiveTab('live_counters')}
+                className="p-3.5 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/30 text-emerald-950 dark:text-emerald-100 col-span-2 sm:col-span-1 cursor-pointer hover:border-emerald-500 transition-all shadow-sm"
+              >
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 truncate">
+                    {isZh ? "当前活跃窗口" : isEn ? "Active Counters" : "Loket Aktif"}
+                  </span>
+                  <span className="flex items-center gap-1 text-[9px] font-black px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 shrink-0">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping shrink-0" />
+                    LIVE
+                  </span>
+                </div>
+                <span className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 block tabular-nums">
+                  {liveMetrics.activeCountersSummary.totalActive}
+                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400 ml-1">
+                    {isZh ? "个窗口" : isEn ? "Counters" : "Loket"}
+                  </span>
+                </span>
+                <span className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-300 flex items-center gap-1 mt-0.5 truncate">
+                  <Activity className="w-3 h-3 shrink-0" /> 
+                  {liveMetrics.activeCountersSummary.totalServing} {isZh ? "服务中" : isEn ? "Serving" : "Melayani"} · {liveMetrics.activeCountersSummary.totalWaiting} {isZh ? "排队" : isEn ? "Wait" : "Antre"}
+                </span>
+              </div>
+
+              {/* Card 2: Total Registered Queues */}
               <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
-                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-0.5">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-0.5 truncate">
                   {isZh ? "已注册总排队数" : isEn ? "Total Registered Queues" : "Total Antrean Terdaftar"}
                 </span>
-                <span className="text-lg sm:text-xl font-black text-emerald-600 dark:text-emerald-400">
+                <span className="text-lg sm:text-xl font-black text-slate-900 dark:text-white tabular-nums">
                   {liveMetrics.totalQueues.toLocaleString(isZh ? 'zh-CN' : isEn ? 'en-US' : 'id-ID')}
                 </span>
                 <span className="text-[10px] font-semibold text-emerald-600 flex items-center gap-0.5 mt-0.5">
@@ -323,27 +508,29 @@ export const MppVisitorAnalyticsModal: React.FC<MppVisitorAnalyticsModalProps> =
                 </span>
               </div>
 
+              {/* Card 3: Average SLA */}
               <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
-                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-0.5">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-0.5 truncate">
                   {isZh ? "平均服务响应 SLA" : isEn ? "Average SLA" : "Rata-rata SLA"}
                 </span>
                 <span className="text-lg sm:text-xl font-black text-blue-600 dark:text-blue-400">
                   {isZh ? "10-15 分钟" : isEn ? "10-15 Mins" : "10-15 Mnt"}
                 </span>
                 <span className="text-[10px] font-semibold text-blue-600 flex items-center gap-0.5 mt-0.5">
-                  <CheckCircle2 className="w-3 h-3" /> {isZh ? "服务标准" : isEn ? "Service Standard" : "Standar Pelayanan"}
+                  <CheckCircle2 className="w-3 h-3" /> {isZh ? "服务标准" : isEn ? "Service Standard" : "Standar Layanan"}
                 </span>
               </div>
 
+              {/* Card 4: SKM Satisfaction Index */}
               <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
-                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-0.5">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-0.5 truncate">
                   {isZh ? "SKM 满意度指数" : isEn ? "SKM Satisfaction Index" : "Indeks SKM"}
                 </span>
                 <span className="text-lg sm:text-xl font-black text-amber-500 font-['Plus_Jakarta_Sans',sans-serif] tabular-nums">
                   {liveMetrics.ikmCount > 0 ? `${(Number(liveMetrics.ikmScore) / 25).toFixed(2)} / 4.00` : '—'}
                 </span>
-                <span className="text-[10px] font-semibold text-amber-600 flex items-center gap-0.5 mt-0.5">
-                  <Award className="w-3 h-3" /> {
+                <span className="text-[10px] font-semibold text-amber-600 flex items-center gap-0.5 mt-0.5 truncate">
+                  <Award className="w-3 h-3 shrink-0" /> {
                     liveMetrics.ikmCount > 0 
                       ? (Number(liveMetrics.ikmScore) >= 88.31 
                           ? (isZh ? "极好 (A)" : isEn ? "Very Good (A)" : "Sangat Baik (A)") 
@@ -353,18 +540,262 @@ export const MppVisitorAnalyticsModal: React.FC<MppVisitorAnalyticsModalProps> =
                 </span>
               </div>
 
+              {/* Card 5: Online Booking */}
               <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
-                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-0.5">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-0.5 truncate">
                   {isZh ? "在线预约" : isEn ? "Online Booking" : "Online Booking"}
                 </span>
                 <span className="text-lg sm:text-xl font-black text-teal-600 dark:text-teal-400">
                   {liveMetrics.onlineBookingPercent}%
                 </span>
                 <span className="text-[10px] font-semibold text-teal-600 flex items-center gap-0.5 mt-0.5">
-                  <Zap className="w-3 h-3" /> {isZh ? "免大厅排队" : isEn ? "Skip Lobby Queue" : "Bebas Antre Lobi"}
+                  <Zap className="w-3 h-3" /> {isZh ? "免大厅排队" : isEn ? "Skip Lobby Queue" : "Bebas Antre"}
                 </span>
               </div>
             </div>
+
+            {/* TAB 0: Loket Aktif Real-Time (Live Counter Monitoring from Supabase) */}
+            {activeTab === 'live_counters' && (
+              <div className="space-y-4">
+                {/* Live Banner & Realtime Status Bar */}
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-blue-500/10 border border-emerald-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center font-black shadow-md shrink-0">
+                      <Radio className="w-5 h-5 animate-pulse" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">
+                          {isZh ? "实时窗口运行监控" : isEn ? "Live Counter Operational Monitor" : "Monitoring Operasional Loket Real-Time"}
+                        </h3>
+                        <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500 text-slate-950">
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-950 animate-ping" />
+                          LIVE
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5">
+                        {isZh 
+                          ? `直连 Supabase 实时数据库 · 同步时间：${liveMetrics.activeCountersSummary.lastSyncTime || "刚刚"}`
+                          : isEn 
+                          ? `Connected to Supabase Realtime · Synced at: ${liveMetrics.activeCountersSummary.lastSyncTime || "Just now"}`
+                          : `Terhubung langsung ke Supabase Realtime · Pembaruan: ${liveMetrics.activeCountersSummary.lastSyncTime || "Baru saja"}`}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 self-end sm:self-center">
+                    <button
+                      type="button"
+                      onClick={handleManualRefresh}
+                      disabled={isManualRefreshing}
+                      className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold flex items-center gap-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer shadow-sm disabled:opacity-60"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${isManualRefreshing ? 'animate-spin text-emerald-500' : ''}`} />
+                      <span>{isZh ? "刷新" : isEn ? "Refresh" : "Segarkan"}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Metric Highlights Pills */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between">
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                      {isZh ? "正在服务中" : isEn ? "In Service" : "Sedang Melayani"}
+                    </span>
+                    <span className="text-xs font-black px-2 py-0.5 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                      {liveMetrics.activeCountersSummary.totalServing}
+                    </span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between">
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                      {isZh ? "正在呼叫" : isEn ? "Calling" : "Sedang Memanggil"}
+                    </span>
+                    <span className="text-xs font-black px-2 py-0.5 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                      {liveMetrics.activeCountersSummary.totalCalling}
+                    </span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between">
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                      {isZh ? "排队等待中" : isEn ? "Waiting Queue" : "Antrean Menunggu"}
+                    </span>
+                    <span className="text-xs font-black px-2 py-0.5 rounded-lg bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                      {liveMetrics.activeCountersSummary.totalWaiting}
+                    </span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between">
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                      {isZh ? "今日已办结" : isEn ? "Completed Today" : "Selesai Hari Ini"}
+                    </span>
+                    <span className="text-xs font-black px-2 py-0.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                      {liveMetrics.activeCountersSummary.totalCompletedToday}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Filter & Search Bar */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-1">
+                  <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200/60 dark:border-slate-700 overflow-x-auto no-scrollbar">
+                    {[
+                      { id: 'all', label: isZh ? "全部窗口" : isEn ? "All Counters" : "Semua Loket" },
+                      { id: 'active_only', label: isZh ? "仅活跃窗口" : isEn ? "Active Only" : "Hanya Aktif" },
+                      { id: 'waiting_only', label: isZh ? "有排队" : isEn ? "With Queue" : "Ada Antrean" },
+                    ].map((f) => (
+                      <button
+                        key={f.id}
+                        type="button"
+                        onClick={() => setCounterFilter(f.id as any)}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                          counterFilter === f.id
+                            ? 'bg-emerald-500 text-slate-950 shadow-sm'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="relative flex-1 sm:max-w-xs">
+                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="text"
+                      value={counterSearchQuery}
+                      onChange={(e) => setCounterSearchQuery(e.target.value)}
+                      placeholder={isZh ? "搜索机构、窗口或票号..." : isEn ? "Search agency, counter, or ticket..." : "Cari instansi, loket, atau tiket..."}
+                      className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all"
+                    />
+                  </div>
+                </div>
+
+                {/* Counter Cards Grid */}
+                {filteredCounters.length === 0 ? (
+                  <div className="p-8 text-center rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-700/80 space-y-2">
+                    <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 flex items-center justify-center mx-auto">
+                      <Clock className="w-5 h-5" />
+                    </div>
+                    <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                      {counterSearchQuery.trim()
+                        ? (isZh ? "未找到符合条件的窗口数据。" : isEn ? "No counters matched your query." : "Tidak ada loket yang sesuai pencarian.")
+                        : (isZh ? "当前没有活跃的呼叫窗口（全员待命）。" : isEn ? "No active calling counters right now (All on standby)." : "Belum ada loket aktif memanggil antrean saat ini (Seluruh loket berstatus siaga).")}
+                    </p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+                      {isZh
+                        ? "数据严格实时连接 Supabase，当柜员在后台叫号时，此处卡片将立即点亮。"
+                        : isEn
+                        ? "Data is connected directly to Supabase Realtime. When a counter officer calls a number, the card will instantly activate."
+                        : "Data tersinkronisasi langsung dari Supabase Realtime. Saat petugas loket memanggil nomor antrean, kartu akan otomatis menyala."}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {filteredCounters.map((counter) => {
+                      const isServing = counter.status === 'serving';
+                      const isCalling = counter.status === 'calling';
+                      const isWaiting = counter.status === 'waiting';
+
+                      return (
+                        <div
+                          key={counter.tenantId}
+                          className={`p-3.5 rounded-2xl border transition-all ${
+                            isServing
+                              ? 'bg-emerald-500/5 dark:bg-emerald-500/10 border-emerald-500/30 shadow-sm shadow-emerald-500/5'
+                              : isCalling
+                              ? 'bg-amber-500/5 dark:bg-amber-500/10 border-amber-500/30 shadow-sm shadow-amber-500/5'
+                              : isWaiting
+                              ? 'bg-blue-500/5 dark:bg-blue-500/10 border-blue-500/20'
+                              : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200/80 dark:border-slate-700/60 opacity-80'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-1.5 mb-0.5">
+                                <span className="text-[10px] font-extrabold uppercase tracking-wide px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200">
+                                  {counter.counterName}
+                                </span>
+                                <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">
+                                  {counter.floor}
+                                </span>
+                              </div>
+                              <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">
+                                {counter.tenantName}
+                              </h4>
+                            </div>
+
+                            {/* Status Badge */}
+                            <div className="shrink-0">
+                              {isServing ? (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-500 text-slate-950 shadow-sm">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-slate-950 animate-ping" />
+                                  {isZh ? "正在服务" : isEn ? "Serving" : "Melayani"}
+                                </span>
+                              ) : isCalling ? (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 shadow-sm">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-slate-950 animate-bounce" />
+                                  {isZh ? "呼叫中" : isEn ? "Calling" : "Dipanggil"}
+                                </span>
+                              ) : isWaiting ? (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30">
+                                  {isZh ? "有排队" : isEn ? "Queueing" : "Menunggu"}
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400">
+                                  {isZh ? "待命" : isEn ? "Standby" : "Siaga"}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Middle Section: Current Active Ticket */}
+                          <div className="py-2 px-3 rounded-xl bg-white/70 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800/80 mb-2.5 flex items-center justify-between">
+                            <div>
+                              <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">
+                                {isServing || isCalling
+                                  ? (isZh ? "当前呼叫票号" : isEn ? "Active Ticket" : "Nomor Dilayani")
+                                  : (isZh ? "最新票号" : isEn ? "Next Ticket" : "Tiket Antrean")}
+                              </span>
+                              <span className={`text-base sm:text-lg font-black font-mono tracking-tight ${
+                                isServing 
+                                  ? 'text-emerald-600 dark:text-emerald-400' 
+                                  : isCalling 
+                                  ? 'text-amber-500 dark:text-amber-400' 
+                                  : 'text-slate-500 dark:text-slate-400'
+                              }`}>
+                                {counter.currentTicket || '—'}
+                              </span>
+                            </div>
+
+                            <div className="text-right max-w-[55%]">
+                              <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">
+                                {isZh ? "服务项目" : isEn ? "Service" : "Layanan"}
+                              </span>
+                              <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 truncate block">
+                                {counter.serviceName || (isZh ? "通用窗口服务" : isEn ? "General Service" : "Layanan Loket")}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Bottom Footer: Waiting Count & Completed Today */}
+                          <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-medium pt-0.5">
+                            <span className="flex items-center gap-1">
+                              <Users className="w-3 h-3 text-slate-400" />
+                              {isZh ? "等待人数：" : isEn ? "Waiting: " : "Menunggu: "}
+                              <strong className={counter.waitingCount > 0 ? 'text-blue-600 dark:text-blue-400' : ''}>
+                                {counter.waitingCount} {isZh ? "人" : isEn ? "people" : "orang"}
+                              </strong>
+                            </span>
+
+                            <span>
+                              {isZh ? "今日办结：" : isEn ? "Served: " : "Selesai: "}
+                              <strong className="text-emerald-600 dark:text-emerald-400">{counter.servedCount}</strong>
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* TAB 1: Jam Sibuk & Rekomendasi Kedatangan */}
             {activeTab === 'peak' && (
