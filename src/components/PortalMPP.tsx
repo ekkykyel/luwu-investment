@@ -93,7 +93,7 @@ import type { PkkprRecommendationData } from './mpp/PkkprTechnicalRecommendation
 const PkkprTechnicalRecommendationModal = lazyWithRetry(() => import('./mpp/PkkprTechnicalRecommendationModal').then(m => ({ default: m.PkkprTechnicalRecommendationModal })));
 import { useGlobalFullscreenBackHandler } from '../hooks/useModalFullscreenLifecycle';
 import { ensureFullscreen, requestSmartFullscreen, exitSmartFullscreen } from '../utils/fullscreen';
-import { isAndroidDevice } from '../hooks/useDeviceAutomation';
+import { isAndroidDevice, isMobileOrAndroidDevice, useDeviceAutomation } from '../hooks/useDeviceAutomation';
 import { LUWU_LOGO_BASE64 } from '../lib/logoBase64';
 import { supabase } from '../lib/supabaseClient';
 import { submitMppSurvey } from '../services/mppFeedbackService';
@@ -994,21 +994,50 @@ export default function PortalMPP() {
 
   useGlobalFullscreenBackHandler(isAnyModalOpen, closeActiveModal);
 
-  // Pastikan mode Fullscreen dinonaktifkan saat membuka Portal MPP (misalnya saat bernavigasi dari Peta Spasial)
-  // Ini krusial agar browser Android & smartphone tidak mengunci viewport dan seluruh gestur usap layar (touch swipe/scroll)
-  // ke atas dan ke bawah dapat berfungsi secara 100% mulus, responsif, dan alami.
+  const { isAndroid } = useDeviceAutomation();
+
+  // Otomatis terapkan mode Fullscreen & edge-to-edge layout pada perangkat Android di Portal MPP
   useEffect(() => {
-    if (typeof document !== 'undefined') {
-      const isCurrentFs = !!(
-        document.fullscreenElement ||
-        (document as any).webkitFullscreenElement ||
-        (document as any).mozFullScreenElement ||
-        (document as any).msFullscreenElement
-      );
-      if (isCurrentFs) {
-        exitSmartFullscreen().catch(() => {});
+    const syncAndroidMode = () => {
+      if (typeof window === "undefined" || typeof document === "undefined") return;
+      const ua = (navigator.userAgent || navigator.vendor || (window as any).opera || "").toLowerCase();
+      const isAndroidUa = /android/i.test(ua);
+      const isMobileScreen = window.innerWidth <= 768;
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
+
+      if (isAndroidUa || isAndroid || (isMobileScreen && isMobileOrAndroidDevice()) || (isStandalone && isMobileScreen)) {
+        document.documentElement.classList.add("android-fullscreen-mode");
+        document.body.classList.add("android-fullscreen-mode");
       }
-    }
+    };
+
+    syncAndroidMode();
+    window.addEventListener("resize", syncAndroidMode);
+    window.addEventListener("orientationchange", syncAndroidMode);
+
+    return () => {
+      window.removeEventListener("resize", syncAndroidMode);
+      window.removeEventListener("orientationchange", syncAndroidMode);
+    };
+  }, [isAndroid]);
+
+  // Request Fullscreen secara mulus saat gestur interaksi pertama pada Android tanpa mengunci/mengganggu gestur usap & scroll
+  useEffect(() => {
+    if (!isAndroidDevice()) return;
+
+    const handleFirstTouchFS = () => {
+      requestSmartFullscreen().catch(() => {});
+      window.removeEventListener("click", handleFirstTouchFS);
+      window.removeEventListener("touchstart", handleFirstTouchFS);
+    };
+
+    window.addEventListener("click", handleFirstTouchFS, { passive: true });
+    window.addEventListener("touchstart", handleFirstTouchFS, { passive: true });
+
+    return () => {
+      window.removeEventListener("click", handleFirstTouchFS);
+      window.removeEventListener("touchstart", handleFirstTouchFS);
+    };
   }, []);
 
   // --- State Dinamis Supabase untuk SKM, Antrean & Ulasan (Doktrin Zero Dummy) ---
@@ -2132,8 +2161,8 @@ export default function PortalMPP() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
       id="portal-top"
-      className="bg-[#FAF8F3] dark:bg-[#061320] text-slate-900 dark:text-[#E6ECF2] font-sans w-full overflow-x-hidden relative min-h-screen transition-colors duration-300 touch-pan-y"
-      style={{ touchAction: 'pan-y pinch-zoom' }}
+      className="bg-[#FAF8F3] dark:bg-[#061320] text-slate-900 dark:text-[#E6ECF2] font-sans w-full overflow-x-hidden relative min-h-screen transition-colors duration-300"
+      style={{ touchAction: 'pan-x pan-y pinch-zoom' }}
     >
       <style>{`
         html, body {
@@ -2141,7 +2170,7 @@ export default function PortalMPP() {
           overflow-y: auto !important;
           height: auto !important;
           min-height: 100% !important;
-          touch-action: pan-y pinch-zoom !important;
+          touch-action: pan-x pan-y pinch-zoom !important;
           -webkit-overflow-scrolling: touch !important;
         }
         #root {
