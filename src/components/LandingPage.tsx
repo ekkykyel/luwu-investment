@@ -3904,7 +3904,7 @@ export default function LandingPage({
         {/* 2. DAFTAR POTENSI INVESTASI - EXECUTIVE SHOWCASE */}
         <section
           id="potensi-section"
-          className={`scroll-mt-28 sm:scroll-mt-32 w-full py-14 md:py-18 lg:py-20 min-h-[44px] border-t border-slate-200/80 dark:border-white/[0.08] relative transition-colors duration-300 ${isDark ? 'bg-[#071829]/90' : 'bg-slate-50/80'}`}
+          className={`scroll-mt-28 sm:scroll-mt-32 w-full py-10 sm:py-14 md:py-16 min-h-[44px] border-t border-slate-200/80 dark:border-white/[0.08] relative transition-colors duration-300 ${isDark ? 'bg-[#071829]/90' : 'bg-slate-50/80'}`}
         >
           <div className="container max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 relative">
           {/* Subtle Ambient Radial Glow for High-End Prestige Feel */}
@@ -4250,26 +4250,11 @@ export default function LandingPage({
               </p>
             </div>
           )}
-
-          {/* CTA PELAJARI POTENSI */}
-          <div className="mt-12 flex justify-center w-full">
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => {
-                document.getElementById("analytics-section")?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className={`px-8 py-4 min-h-[44px] rounded-2xl font-bold uppercase tracking-wider border backdrop-blur-md transition-all duration-500 ease-out flex items-center justify-center gap-2.5 group bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.35)] hover:shadow-[0_0_25px_rgba(20,184,166,0.5)] hover:-translate-y-0.5 border-emerald-400/40`}
-            >
-              <Activity size={19} className={`transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12 ${isDark ? "text-emerald-100" : "text-emerald-100"}`} />
-              PELAJARI POTENSI
-            </motion.button>
-          </div>
         </div>
       </section>
 
-        {/* PERTUMBUHAN & KOMPOSISI INVESTASI (ANALYTICS CHART) - MOVED UP FOR STRATEGIC HOOK */}
-        <div id="analytics-section" className="scroll-mt-20 sm:scroll-mt-24 mt-4 sm:mt-8 min-h-0 h-auto">
+        {/* PERTUMBUHAN & KOMPOSISI INVESTASI (ANALYTICS CHART) - STRATEGIC HOOK */}
+        <div id="analytics-section" className="scroll-mt-20 sm:scroll-mt-24 min-h-0 h-auto">
           <GisErrorBoundary componentName="Analisis Komposisi Spasial">
             <AnalitikSpasialSection
               isDark={isDark}
@@ -4290,7 +4275,7 @@ export default function LandingPage({
         {/* 3. LITERASI & KEUNTUNGAN LUTIM */}
         <section
           id="keuntungan-section"
-          className={`scroll-mt-20 sm:scroll-mt-24 w-full py-14 md:py-18 lg:py-20 transition-colors duration-300 ${isDark ? 'bg-slate-950/60' : 'bg-slate-50/80'}`}
+          className={`scroll-mt-20 sm:scroll-mt-24 w-full py-10 sm:py-14 md:py-16 transition-colors duration-300 ${isDark ? 'bg-slate-950/60' : 'bg-slate-50/80'}`}
         >
           <div className="container max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 md:mb-16">
@@ -4642,7 +4627,7 @@ export default function LandingPage({
         </div>
 
         {/* INTERACTIVE ROADMAP & LICENSING GUIDE - REIMAGINED WITH FLOATING MEDALLIONS & EXECUTIVE DOSSIER */}
-        <section id="roadmap-section" className="scroll-mt-20 sm:scroll-mt-24 py-14 md:py-18 lg:py-20 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0A2238] relative overflow-hidden transition-all duration-500">
+        <section id="roadmap-section" className="scroll-mt-20 sm:scroll-mt-24 py-10 sm:py-14 md:py-16 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0A2238] relative overflow-hidden transition-all duration-500">
           {/* Subtle Ambient Background Gradients */}
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
           <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-[140px] pointer-events-none" />
@@ -6556,7 +6541,7 @@ export default function LandingPage({
         />
 
         {/* Akuntabilitas Kinerja DPMPTSP */}
-        <section className={`relative py-14 md:py-18 lg:py-20 border-t transition-colors duration-500 ${isDark ? "bg-[#06130F] border-[rgba(201,162,75,0.25)]" : "bg-[#FAF7F0] border-[rgba(160,122,40,0.22)]"}`}>
+        <section className={`relative py-10 sm:py-14 md:py-16 border-t transition-colors duration-500 ${isDark ? "bg-[#06130F] border-[rgba(201,162,75,0.25)]" : "bg-[#FAF7F0] border-[rgba(160,122,40,0.22)]"}`}>
           <div className="container mx-auto px-3 sm:px-4 lg:px-6 relative z-10 max-w-5xl">
             <div className="text-center mb-10 sm:mb-12">
               <div className="invest-eyebrow mb-3.5">
@@ -6724,7 +6709,7 @@ export default function LandingPage({
         </section>
 
         {/* Ekosistem DPMPTSP (Sovereign Glass Pavilion Style) */}
-        <section className={`relative py-14 md:py-18 lg:py-20 border-t transition-colors duration-500 ${isDark ? "bg-[#08201A] border-[rgba(201,162,75,0.25)]" : "bg-[#F3EEDF]/70 border-[rgba(160,122,40,0.22)]"}`}>
+        <section className={`relative py-10 sm:py-14 md:py-16 border-t transition-colors duration-500 ${isDark ? "bg-[#08201A] border-[rgba(201,162,75,0.25)]" : "bg-[#F3EEDF]/70 border-[rgba(160,122,40,0.22)]"}`}>
           <div className="container mx-auto px-3 sm:px-6 lg:px-8 relative z-10 max-w-6xl">
             <div className="text-center mb-12 sm:mb-16">
               <div className="invest-eyebrow mb-3.5">
