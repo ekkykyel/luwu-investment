@@ -2624,7 +2624,7 @@ export default function LandingPage({
                   name: "MPP",
                   action: (e: any) => {
                     e?.preventDefault?.();
-                    window.location.href = "https://investment-luwu.vercel.app/mpp";
+                    window.location.href = "https://luwu-investment.vercel.app/mpp";
                   },
                 },
                 {
@@ -2798,7 +2798,7 @@ export default function LandingPage({
                     action: (e: any) => {
                       e?.preventDefault?.();
                       setIsMobileMenuOpen(false);
-                      window.location.href = "https://investment-luwu.vercel.app/mpp";
+                      window.location.href = "https://luwu-investment.vercel.app/mpp";
                     },
                   },
                   {
