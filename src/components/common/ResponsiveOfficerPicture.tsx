@@ -2,22 +2,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import { OFFICER_IMAGES_METADATA, getOfficerSrcset } from '../../utils/officerImageMetadata';
 
 export interface ResponsiveOfficerPictureProps {
-  officerKey: 'officer-left' | 'officer-right';
+  officerKey?: 'officer-left' | 'officer-right';
   customSrc?: string | null;
   alt: string;
   className?: string;
   containerClassName?: string;
+  requireDatabaseSrc?: boolean;
 }
 
 const SILHOUETTE_FALLBACK_SVG =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 320' fill='none'%3E%3Crect width='240' height='320' rx='24' fill='%230f172a' fill-opacity='0.08'/%3E%3Ccircle cx='120' cy='95' r='42' fill='%2310b981' fill-opacity='0.25' stroke='%23059669' stroke-width='2'/%3E%3Cpath d='M45 280 C45 200, 80 160, 120 160 C160 160, 195 200, 195 280 Z' fill='%2310b981' fill-opacity='0.2' stroke='%23059669' stroke-width='2'/%3E%3C/svg%3E";
 
 export const ResponsiveOfficerPicture: React.FC<ResponsiveOfficerPictureProps> = ({
-  officerKey,
+  officerKey = 'officer-left',
   customSrc,
   alt,
   className = '',
   containerClassName = '',
+  requireDatabaseSrc = true,
 }) => {
   const meta = OFFICER_IMAGES_METADATA[officerKey];
   const [isLoaded, setIsLoaded] = useState(false);
@@ -129,7 +131,7 @@ export const ResponsiveOfficerPicture: React.FC<ResponsiveOfficerPictureProps> =
         />
       )}
 
-      {/* Main Responsive Image / Picture (ALWAYS IN DOM) */}
+      {/* Main Responsive Image / Picture */}
       {!hasError && (
         isCustom ? (
           <img
@@ -145,6 +147,12 @@ export const ResponsiveOfficerPicture: React.FC<ResponsiveOfficerPictureProps> =
             className={`w-full h-full object-cover object-top transition-opacity ${
               prefersReducedMotion ? 'duration-0' : 'duration-300'
             } ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
+          />
+        ) : requireDatabaseSrc ? (
+          <img
+            src={SILHOUETTE_FALLBACK_SVG}
+            alt={alt}
+            className="absolute inset-0 w-full h-full object-contain object-bottom pointer-events-none p-4 opacity-70"
           />
         ) : (
           <picture className="w-full h-full flex items-end justify-center">

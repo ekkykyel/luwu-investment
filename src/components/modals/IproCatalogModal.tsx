@@ -57,6 +57,8 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
   const sectors = useMemo(() => {
     const set = new Set<string>();
     investments.forEach((i) => {
+      const name = String(i.name || '').toLowerCase();
+      if (name.includes('pammanu car wash') || name.includes('dummy')) return;
       if (i.sector) set.add(i.sector);
     });
     return Array.from(set);
@@ -64,6 +66,9 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
 
   const filteredInvestments = useMemo(() => {
     return investments.filter((inv) => {
+      const name = String(inv.name || '').toLowerCase();
+      if (name.includes('pammanu car wash') || name.includes('dummy')) return false;
+
       const matchSearch =
         inv.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         inv.sector?.toLowerCase().includes(searchQuery.toLowerCase()) ||

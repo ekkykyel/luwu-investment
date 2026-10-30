@@ -185,51 +185,17 @@ export default function LayerLegendControl({
     { id: "dark", name: "Dark Command", icon: "🌙", badge: "Malam" },
   ];
 
+  // Jika panel layer tidak aktif dan modal simbol tidak terbuka, jangan render apapun ke viewport
+  if (!isLayerPanelOpen && !isSymbologyModalOpen) {
+    return null;
+  }
+
   return createPortal(
-    <div className={`m-2 sm:m-3 ${
-      !isLayerPanelOpen 
-        ? "mt-[175px] sm:mt-[165px] md:mt-38" 
-        : "mt-[175px] sm:mt-[165px] md:mt-24"
-    } ${
+    <div className={`m-2 sm:m-3 mt-[175px] sm:mt-[165px] md:mt-24 ${
       isLeftSidebarOpen ? "md:ml-[288px] lg:ml-[352px]" : "md:ml-2 lg:ml-3"
     } transition-[margin] duration-300 ease-in-out z-[55] pointer-events-auto`}>
       <AnimatePresence mode="wait">
-        {!isLayerPanelOpen ? (
-          /* Collapsed State: Compact horizontal tab/button collapsing to the left */
-          <motion.button
-            key="collapsed-btn"
-            initial={{ opacity: 0, x: -25, scale: 0.95 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -25, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            onClick={() => setIsLayerPanelOpen(true)}
-            className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl shadow-2xl border transition-all duration-300 hover:scale-105 active:scale-95 group ${
-              isDarkMode 
-                ? "bg-surface/95 border-slate-700/90 text-white shadow-black/80 backdrop-blur-xl hover:border-indigo-500/80 hover:bg-slate-800" 
-                : "bg-white/95 border-slate-300 text-slate-900 shadow-xl shadow-slate-900/10 backdrop-blur-xl hover:border-indigo-500 hover:bg-slate-50"
-            }`}
-          >
-            <div className="relative flex items-center justify-center">
-              <Compass size={17} className={`${isDarkMode ? "text-indigo-400" : "text-indigo-600"} group-hover:rotate-45 transition-transform duration-300`} />
-              {isFilterActive && (
-                <span className="absolute -top-1.5 -right-1.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-300 animate-pulse" />
-              )}
-            </div>
-
-            <div className="flex flex-col items-start text-left">
-              <span className={`font-['Plus_Jakarta_Sans',sans-serif] font-bold text-xs uppercase tracking-wider ${isDarkMode ? "text-slate-100" : "text-slate-900"}`}>
-                {isFilterActive ? `Fokus: ${selectedDistrictObj?.name || "Wilayah"}` : "Layer Tematik & Peta"}
-              </span>
-              <span className="text-[9px] text-slate-500 dark:text-slate-400 font-mono">
-                {activeCount} Layer Aktif {isFilterActive ? "• Clip Aktif ✂️" : ""}
-              </span>
-            </div>
-
-            <ChevronRight size={16} className={`transition-transform duration-300 group-hover:translate-x-1 ${
-              isDarkMode ? "text-slate-400 group-hover:text-white" : "text-slate-600 group-hover:text-slate-950"
-            }`} />
-          </motion.button>
-        ) : (
+        {isLayerPanelOpen && (
           /* Expanded State: Expands out horizontally from the left */
           <motion.div
             key="expanded-panel"

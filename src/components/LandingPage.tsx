@@ -5142,25 +5142,14 @@ export default function LandingPage({
                       </div>
                     </div>
 
-                    {/* Staff Photos Container with Smooth Elevation */}
-                    <div className="flex items-end justify-center gap-1 sm:gap-3 w-full relative z-10 px-2">
-                      {/* Petugas Front Office Kiri */}
-                      <div className="relative flex-1 flex flex-col items-center justify-end group">
+                    {/* Staff Photo Container with Smooth Elevation - Single Official Front Office Officer from Database */}
+                    <div className="flex items-end justify-center w-full relative z-10 px-2">
+                      <div className="relative max-w-[280px] sm:max-w-[320px] w-full flex flex-col items-center justify-end group">
                         <ResponsiveOfficerPicture
                           officerKey="officer-left"
                           customSrc={staffImageLeft}
-                          alt="Petugas Front Office DPMPTSP MPP Simpurusiang (Kiri)"
-                          className="group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_12px_24px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_14px_28px_rgba(0,0,0,0.7)]"
-                        />
-                      </div>
-
-                      {/* Petugas Front Office Kanan */}
-                      <div className="relative flex-1 flex flex-col items-center justify-end group">
-                        <ResponsiveOfficerPicture
-                          officerKey="officer-right"
-                          customSrc={staffImageRight}
-                          alt="Petugas Front Office DPMPTSP MPP Simpurusiang (Kanan)"
-                          className="group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_12px_24px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_14px_28px_rgba(0,0,0,0.7)]"
+                          alt="Petugas Front Office DPMPTSP MPP Simpurusiang"
+                          className="group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_14px_28px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_16px_32px_rgba(0,0,0,0.7)]"
                         />
                       </div>
                     </div>

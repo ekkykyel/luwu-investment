@@ -106,6 +106,7 @@ import jsPDF from "jspdf";
 import Papa from "papaparse";
 import {
   Building2,
+  Handshake,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
@@ -888,6 +889,15 @@ export default function SpatialMapWorkspace() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isManagementPanelOpen, setIsManagementPanelOpen] = useState(false);
   const [isLoiTicketsModalOpen, setIsLoiTicketsModalOpen] = useState(false);
+  const [isLoiSubmitModalOpen, setIsLoiSubmitModalOpen] = useState(false);
+  const [loiTargetData, setLoiTargetData] = useState<any>(null);
+  const [loiFormInvestorName, setLoiFormInvestorName] = useState("");
+  const [loiFormCompanyName, setLoiFormCompanyName] = useState("");
+  const [loiFormContact, setLoiFormContact] = useState("");
+  const [loiFormValue, setLoiFormValue] = useState("");
+  const [loiFormLand, setLoiFormLand] = useState("");
+  const [loiFormNotes, setLoiFormNotes] = useState("");
+  const [isSubmittingLoiForm, setIsSubmittingLoiForm] = useState(false);
   const [editingInvestment, setEditingInvestment] = useState<Investment | null>(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isMapPrintModalOpen, setIsMapPrintModalOpen] = useState(false);
@@ -1318,6 +1328,78 @@ export default function SpatialMapWorkspace() {
       fetchLoiTickets();
     }
   }, [isLoiTicketsModalOpen]);
+
+  const handleLoiFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!loiFormInvestorName.trim()) {
+      Swal.fire({
+        title: "Nama Diperlukan",
+        text: "Mohon isi nama lengkap pemohon atau nama investor.",
+        icon: "warning"
+      });
+      return;
+    }
+    if (!loiFormContact.trim()) {
+      Swal.fire({
+        title: "Kontak Diperlukan",
+        text: "Mohon isi nomor telepon/WhatsApp atau email.",
+        icon: "warning"
+      });
+      return;
+    }
+
+    setIsSubmittingLoiForm(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token || "";
+      const targetName = loiTargetData?.name || "Potensi Investasi Spasial";
+      const districtInfo = loiTargetData?.districtName ? `Kecamatan ${loiTargetData.districtName}` : "Kabupaten Luwu";
+      const res = await fetch("/api/investment-interests", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({
+          investor_id: session?.user?.id || null,
+          investor_name: loiFormInvestorName,
+          company_name: loiFormCompanyName,
+          contact_info: loiFormContact,
+          potensi_name: targetName,
+          nilai_investasi: loiFormValue ? Number(loiFormValue) : null,
+          kebutuhan_lahan: loiFormLand ? Number(loiFormLand) : (loiTargetData?.areaHa || null),
+          pesan_tambahan: `Pengajuan LoI melalui Peta Spasial (${districtInfo}${loiTargetData?.villageName ? `, Desa ${loiTargetData.villageName}` : ''}). ${loiFormNotes ? `Catatan: ${loiFormNotes}` : ''}`
+        })
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || "Gagal mengirim formulir minat investasi.");
+      }
+
+      setIsLoiSubmitModalOpen(false);
+      setLoiFormInvestorName("");
+      setLoiFormCompanyName("");
+      setLoiFormContact("");
+      setLoiFormValue("");
+      setLoiFormLand("");
+      setLoiFormNotes("");
+      Swal.fire({
+        title: "LoI Terkirim!",
+        text: `Minat investasi untuk ${targetName} telah berhasil diajukan ke DPMPTSP Kabupaten Luwu. Tim kami akan segera menindaklanjuti.`,
+        icon: "success",
+        confirmButtonColor: "#059669"
+      });
+    } catch (err: any) {
+      Swal.fire({
+        title: "Gagal Mengirim LoI",
+        text: err.message || "Terjadi kendala jaringan saat pengajuan.",
+        icon: "error"
+      });
+    } finally {
+      setIsSubmittingLoiForm(false);
+    }
+  };
 
   // ─── Camera focus trigger ───
   const [focusCoordinate, setFocusCoordinate] = useState<{
@@ -7617,48 +7699,6 @@ export default function SpatialMapWorkspace() {
                 </motion.aside>
               )}
             </AnimatePresence>
-
-            {/* SPATIAL PLANNING SUITABILITY & PROXIMITY CARD (E2) */}
-            <SpatialSuitabilityCard
-              locationData={selectedSuitabilityLocation}
-              isOpen={isSuitabilityCardOpen}
-              onClose={() => {
-                setIsSuitabilityCardOpen(false);
-                setSelectedSuitabilityLocation(null);
-                setNetworkRouteGeoJSON(null);
-              }}
-              onDrawRoute={(fromCoord, toCoord, poiName) => {
-                const routeResult = calculateShortestPathGeoJSON(
-                  fromCoord,
-                  toCoord,
-                  selectedSuitabilityLocation?.name || "Titik Investasi",
-                  poiName
-                );
-                setNetworkRouteGeoJSON(routeResult.geoJson);
-                if (mapComponentRef.current && mapComponentRef.current.flyToCoordinate) {
-                  mapComponentRef.current.flyToCoordinate(toCoord[0], toCoord[1], 13);
-                }
-              }}
-              onSimulateRoi={(data) => {
-                if (data.districtName) {
-                  const targetDist = districts.find(d => d.name.toLowerCase() === data.districtName?.toLowerCase());
-                  if (targetDist) setSelectedDistrictId(targetDist.id);
-                }
-                setShowRightDashboard(true);
-                setIsRightSidebarOpen(true);
-                setIsSuitabilityCardOpen(false);
-              }}
-              onSubmitLoi={(data) => {
-                setIsLoiTicketsModalOpen(true);
-              }}
-              onBookMpp={(serviceName) => {
-                window.location.hash = "#portal-mpp";
-              }}
-              onDownloadPdfSummary={(data) => {
-                setIsReportModalOpen(true);
-              }}
-              isDarkMode={isDarkMode}
-            />
           </div>
         </div>
 
@@ -8083,6 +8123,258 @@ export default function SpatialMapWorkspace() {
         <ManageOperatorsModal 
           onClose={() => setIsManageOperatorsModalOpen(false)}
         />
+      )}
+
+      {/* ── SPATIAL PLANNING SUITABILITY & PROXIMITY CARD (E2) ── */}
+      <SpatialSuitabilityCard
+        locationData={selectedSuitabilityLocation}
+        isOpen={isSuitabilityCardOpen && activeWorkspace === "INVESTOR"}
+        onClose={() => {
+          setIsSuitabilityCardOpen(false);
+          setSelectedSuitabilityLocation(null);
+          setSelectedVillageId(null);
+          setSelectedInvestmentId(null);
+          setNetworkRouteGeoJSON(null);
+        }}
+        onDrawRoute={(fromCoord, toCoord, poiName) => {
+          const routeResult = calculateShortestPathGeoJSON(
+            fromCoord,
+            toCoord,
+            selectedSuitabilityLocation?.name || "Titik Investasi",
+            poiName
+          );
+          setNetworkRouteGeoJSON(routeResult.geoJson);
+          if (mapComponentRef.current && mapComponentRef.current.flyToCoordinate) {
+            mapComponentRef.current.flyToCoordinate(toCoord[0], toCoord[1], 13);
+          }
+        }}
+        onSimulateRoi={(data) => {
+          if (data.districtName) {
+            const targetDist = districts.find(d => d.name.toLowerCase() === data.districtName?.toLowerCase());
+            if (targetDist) setSelectedDistrictId(targetDist.id);
+          }
+          setShowRightDashboard(true);
+          setIsRightSidebarOpen(true);
+          setIsDashboardExpanded(true);
+          setIsSuitabilityCardOpen(false);
+        }}
+        onSubmitLoi={(data) => {
+          if (isAdminRole(currentRole) || isAdminRole(activeProfile?.role)) {
+            setIsLoiTicketsModalOpen(true);
+          } else {
+            setLoiTargetData(data);
+            setLoiFormInvestorName(activeProfile?.full_name || activeProfile?.name || "");
+            setLoiFormContact(activeProfile?.phone || activeProfile?.email || "");
+            setIsLoiSubmitModalOpen(true);
+          }
+        }}
+        onBookMpp={(serviceName) => {
+          window.location.hash = "#portal-mpp";
+        }}
+        onDownloadPdfSummary={(data) => {
+          setIsReportModalOpen(true);
+        }}
+        isDarkMode={isDarkMode}
+      />
+
+      {/* ── INVESTOR / PUBLIC LOI SUBMISSION MODAL ── */}
+      {isLoiSubmitModalOpen && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-3 sm:p-4">
+          <div
+            className="absolute inset-0 bg-slate-950/70 backdrop-blur-md"
+            onClick={() => setIsLoiSubmitModalOpen(false)}
+          />
+          <div className={`w-full max-w-lg rounded-2xl sm:rounded-3xl shadow-2xl border relative z-10 flex flex-col overflow-hidden animate-fade-in transition-all ${
+            isDarkMode
+              ? "bg-slate-900 border-slate-700 text-white shadow-black/80"
+              : "bg-white border-slate-200 text-slate-900 shadow-xl"
+          }`}>
+            {/* Header */}
+            <div className={`p-4 sm:p-5 border-b flex items-center justify-between ${
+              isDarkMode ? "border-slate-800 bg-slate-800/40" : "border-slate-200 bg-slate-50"
+            }`}>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-500">
+                  <Handshake className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm sm:text-base leading-snug">
+                    Formulir Minat Investasi (LoI)
+                  </h3>
+                  <p className={`text-xs ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
+                    {loiTargetData?.name || "Wilayah Potensi Investasi"}
+                    {loiTargetData?.districtName ? ` • Kec. ${loiTargetData.districtName}` : ""}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsLoiSubmitModalOpen(false)}
+                className={`p-2 rounded-xl transition-colors cursor-pointer ${
+                  isDarkMode
+                    ? "text-slate-400 hover:text-white hover:bg-slate-800"
+                    : "text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+                }`}
+                aria-label="Tutup Form LoI"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Form Body */}
+            <form onSubmit={handleLoiFormSubmit} className="p-4 sm:p-6 space-y-4 text-xs sm:text-sm overflow-y-auto max-h-[75vh]">
+              <div>
+                <label className={`block font-semibold mb-1 text-[11px] uppercase tracking-wider ${
+                  isDarkMode ? "text-slate-300" : "text-slate-700"
+                }`}>
+                  Nama Investor / Pemohon <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Budi Santoso"
+                  value={loiFormInvestorName}
+                  onChange={(e) => setLoiFormInvestorName(e.target.value)}
+                  className={`w-full p-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-emerald-500 transition ${
+                    isDarkMode
+                      ? "bg-slate-800 border-slate-700 text-white placeholder-slate-500"
+                      : "bg-white border-slate-300 text-slate-900 placeholder-slate-400"
+                  }`}
+                />
+              </div>
+
+              <div>
+                <label className={`block font-semibold mb-1 text-[11px] uppercase tracking-wider ${
+                  isDarkMode ? "text-slate-300" : "text-slate-700"
+                }`}>
+                  Nama Perusahaan / Institusi (Opsional)
+                </label>
+                <input
+                  type="text"
+                  placeholder="Contoh: PT Agro Niaga Luwu"
+                  value={loiFormCompanyName}
+                  onChange={(e) => setLoiFormCompanyName(e.target.value)}
+                  className={`w-full p-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-emerald-500 transition ${
+                    isDarkMode
+                      ? "bg-slate-800 border-slate-700 text-white placeholder-slate-500"
+                      : "bg-white border-slate-300 text-slate-900 placeholder-slate-400"
+                  }`}
+                />
+              </div>
+
+              <div>
+                <label className={`block font-semibold mb-1 text-[11px] uppercase tracking-wider ${
+                  isDarkMode ? "text-slate-300" : "text-slate-700"
+                }`}>
+                  Kontak (No. WhatsApp / Email) <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: 08123456789 atau investor@example.com"
+                  value={loiFormContact}
+                  onChange={(e) => setLoiFormContact(e.target.value)}
+                  className={`w-full p-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-emerald-500 transition ${
+                    isDarkMode
+                      ? "bg-slate-800 border-slate-700 text-white placeholder-slate-500"
+                      : "bg-white border-slate-300 text-slate-900 placeholder-slate-400"
+                  }`}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className={`block font-semibold mb-1 text-[11px] uppercase tracking-wider ${
+                    isDarkMode ? "text-slate-300" : "text-slate-700"
+                  }`}>
+                    Rencana Investasi (Rp)
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="Contoh: 500000000"
+                    value={loiFormValue}
+                    onChange={(e) => setLoiFormValue(e.target.value)}
+                    className={`w-full p-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-emerald-500 transition ${
+                      isDarkMode
+                        ? "bg-slate-800 border-slate-700 text-white placeholder-slate-500"
+                        : "bg-white border-slate-300 text-slate-900 placeholder-slate-400"
+                    }`}
+                  />
+                </div>
+                <div>
+                  <label className={`block font-semibold mb-1 text-[11px] uppercase tracking-wider ${
+                    isDarkMode ? "text-slate-300" : "text-slate-700"
+                  }`}>
+                    Kebutuhan Lahan (Ha)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    placeholder="Contoh: 5.5"
+                    value={loiFormLand}
+                    onChange={(e) => setLoiFormLand(e.target.value)}
+                    className={`w-full p-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-emerald-500 transition ${
+                      isDarkMode
+                        ? "bg-slate-800 border-slate-700 text-white placeholder-slate-500"
+                        : "bg-white border-slate-300 text-slate-900 placeholder-slate-400"
+                    }`}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className={`block font-semibold mb-1 text-[11px] uppercase tracking-wider ${
+                  isDarkMode ? "text-slate-300" : "text-slate-700"
+                }`}>
+                  Pesan Tambahan / Rencana Bisnis
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Deskripsikan secara singkat rencana usaha, komoditas, atau kebutuhan perizinan Anda..."
+                  value={loiFormNotes}
+                  onChange={(e) => setLoiFormNotes(e.target.value)}
+                  className={`w-full p-2.5 rounded-xl border focus:outline-none focus:ring-2 focus:ring-emerald-500 transition ${
+                    isDarkMode
+                      ? "bg-slate-800 border-slate-700 text-white placeholder-slate-500"
+                      : "bg-white border-slate-300 text-slate-900 placeholder-slate-400"
+                  }`}
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-2 flex items-center justify-end gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setIsLoiSubmitModalOpen(false)}
+                  className={`px-4 py-2.5 rounded-xl font-semibold transition cursor-pointer select-none ${
+                    isDarkMode
+                      ? "bg-slate-800 hover:bg-slate-700 text-slate-300"
+                      : "bg-slate-100 hover:bg-slate-200 text-slate-700"
+                  }`}
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingLoiForm}
+                  className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white rounded-xl font-bold flex items-center gap-2 transition shadow-lg shadow-emerald-900/40 cursor-pointer disabled:opacity-50 select-none"
+                >
+                  {isSubmittingLoiForm ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Mengirim...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      <span>Kirim LoI Sekarang</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
 
       {/* ── TICKETING MINAT MASUK (LOI) MODAL ── */}

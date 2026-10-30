@@ -41,20 +41,60 @@ export const DistrictsDirectoryModal: React.FC<DistrictsDirectoryModalProps> = (
   // Relate districts with investments count and villages
   const enrichedDistricts = useMemo(() => {
     return districts.map((district) => {
-      const relatedInvestments = investments.filter(
-        (inv) =>
-          inv.districtId === district.id ||
-          (inv as any).kecamatan?.toLowerCase() === district.name.toLowerCase() ||
-          district.name.toLowerCase().includes(String((inv as any).kecamatan || '').toLowerCase())
-      );
+      const distName = (district.name || '').toLowerCase().trim();
+      const distId = String(district.id || '').trim().toLowerCase();
+      const cleanDistName = distName.replace(/^(kecamatan|kec\.)\s*/i, '').trim();
 
-      const relatedVillages = villages.filter(
-        (v) =>
-          v.districtId === district.id ||
-          v.district_id === district.id ||
-          v.districtName?.toLowerCase() === district.name.toLowerCase() ||
-          v.kecamatan?.toLowerCase() === district.name.toLowerCase()
-      );
+      const relatedInvestments = investments.filter((inv) => {
+        if (!inv) return false;
+        const invTitle = String(inv.name || (inv as any).title || '').toLowerCase();
+        // Doktrin Zero Dummy: abaikan data dummy/blacklist Pammanu Car Wash
+        if (invTitle.includes('pammanu car wash') || invTitle.includes('dummy')) {
+          return false;
+        }
+
+        const invDistId = String(
+          inv.districtId ||
+          (inv as any).district_id ||
+          (inv as any).id_kecamatan ||
+          ''
+        ).trim().toLowerCase();
+
+        if (invDistId && distId) {
+          if (invDistId === distId) return true;
+          if (invDistId.replace(/^dist_/, '') === distId.replace(/^dist_/, '')) return true;
+        }
+
+        const invKec = String(
+          (inv as any).kecamatan ||
+          (inv as any).districtName ||
+          ''
+        ).toLowerCase().trim();
+
+        if (invKec && cleanDistName) {
+          const cleanInvKec = invKec.replace(/^(kecamatan|kec\.)\s*/i, '').trim();
+          if (cleanInvKec && (cleanInvKec === cleanDistName || cleanInvKec === distName)) {
+            return true;
+          }
+        }
+
+        return false;
+      });
+
+      const relatedVillages = villages.filter((v) => {
+        if (!v) return false;
+        const vDistId = String(v.districtId || v.district_id || (v as any).id_kecamatan || '').trim().toLowerCase();
+        if (vDistId && distId) {
+          if (vDistId === distId) return true;
+          if (vDistId.replace(/^dist_/, '') === distId.replace(/^dist_/, '')) return true;
+        }
+        const vDistName = String(v.districtName || v.kecamatan || '').toLowerCase().trim();
+        if (vDistName && cleanDistName) {
+          const cleanVDist = vDistName.replace(/^(kecamatan|kec\.)\s*/i, '').trim();
+          if (cleanVDist && (cleanVDist === cleanDistName || cleanVDist === distName)) return true;
+        }
+        return false;
+      });
 
       return {
         ...district,

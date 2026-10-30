@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Car,
   MapPin,
@@ -53,6 +54,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
   expressAgencies,
   onOpenQueueModal
 }) => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'keliling' | 'drivethru' | 'akses_cepat'>('keliling');
 
   // State jadwal riil dari Supabase mpp_mobile_schedules (Doktrin Zero Dummy & Honest Fallback)
@@ -167,11 +169,11 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
   };
 
   const buildOfficialWhatsAppUrl = () => {
-    const refPart = ticketOrNikRef.trim() ? ` (Ref Tiket/Berkas: ${ticketOrNikRef.trim()})` : '';
+    const refPart = ticketOrNikRef.trim() ? ` (Ref: ${ticketOrNikRef.trim()})` : '';
     const messageMap: Record<'drivethru' | 'antrean' | 'syarat', string> = {
-      drivethru: `Halo Petugas Front Office MPP Simpurusiang Luwu, saya ingin mengonfirmasi kesiapan pengambilan berkas di Loket Drive-Thru Belopa${refPart}. Mohon informasinya, terima kasih.`,
-      antrean: `Halo Petugas Front Office MPP Simpurusiang Luwu, saya ingin menanyakan status antrean loket hari ini${refPart}. Terima kasih.`,
-      syarat: `Halo Petugas Front Office MPP Simpurusiang Luwu, saya membutuhkan bantuan pengecekan kelengkapan dokumen persyaratan layanan${refPart}. Terima kasih.`
+      drivethru: `${t('mppPortal.bestPractices.driveThru.msgDriveThru', 'Halo Petugas Front Office MPP Simpurusiang Luwu, saya ingin mengonfirmasi kesiapan pengambilan berkas di Loket Drive-Thru Belopa')}${refPart}.`,
+      antrean: `${t('mppPortal.bestPractices.driveThru.msgAntrean', 'Halo Petugas Front Office MPP Simpurusiang Luwu, saya ingin menanyakan status antrean loket hari ini')}${refPart}.`,
+      syarat: `${t('mppPortal.bestPractices.driveThru.msgSyarat', 'Halo Petugas Front Office MPP Simpurusiang Luwu, saya membutuhkan bantuan pengecekan kelengkapan dokumen persyaratan layanan')}${refPart}.`
     };
     return `https://wa.me/${officialWaDigits}?text=${encodeURIComponent(messageMap[waTopic])}`;
   };
@@ -212,14 +214,14 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
       <div className="max-w-2xl mx-auto text-center mb-6 sm:mb-8 space-y-2">
         <div className="inline-flex items-center justify-center gap-2 text-[11px] sm:text-xs font-bold tracking-[0.14em] uppercase text-[#0F6B4F] dark:text-[#6EE7B7]">
           <span aria-hidden="true" className="w-1.5 h-1.5 rotate-45 bg-[#C9A24B]" />
-          <span>Jangkauan Wilayah · Layanan Cepat · Akses Ringan</span>
+          <span>{t('mppPortal.bestPractices.eyebrow', 'Jangkauan Wilayah · Layanan Cepat · Akses Ringan')}</span>
           <span aria-hidden="true" className="w-1.5 h-1.5 rotate-45 bg-[#C9A24B]" />
         </div>
         <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight text-balance">
-          Layanan Keliling Kecamatan, Drive-Thru & Akses Cepat Warga
+          {t('mppPortal.bestPractices.title', 'Layanan Keliling Kecamatan, Drive-Thru & Akses Cepat Warga')}
         </h2>
         <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-          Kemudahan layanan jemput bola bagi warga di luar Belopa, pengambilan dokumen cepat tanpa turun kendaraan, serta pintasan antrean resmi.
+          {t('mppPortal.bestPractices.subtitle', 'Kemudahan layanan jemput bola bagi warga di luar Belopa, pengambilan dokumen cepat tanpa turun kendaraan, serta pintasan antrean resmi.')}
         </p>
       </div>
 
@@ -246,7 +248,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
             }`}
           >
             <MapPin className="w-4 h-4 shrink-0" />
-            <span>Jadwal Keliling Kecamatan</span>
+            <span>{t('mppPortal.bestPractices.tabKeliling', 'Jadwal Keliling Kecamatan')}</span>
           </button>
 
           <button
@@ -261,7 +263,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
             }`}
           >
             <Car className="w-4 h-4 shrink-0" />
-            <span>Loket Drive-Thru & Kontak FO</span>
+            <span>{t('mppPortal.bestPractices.tabDriveThru', 'Loket Drive-Thru & Kontak FO')}</span>
           </button>
 
           <button
@@ -276,7 +278,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
             }`}
           >
             <Zap className="w-4 h-4 shrink-0" />
-            <span>Pintasan Gerai & Mode Hemat Kuota</span>
+            <span>{t('mppPortal.bestPractices.tabAksesCepat', 'Pintasan Gerai & Mode Hemat Kuota')}</span>
           </button>
         </div>
       </div>
@@ -293,10 +295,10 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#EFEAE0] dark:border-white/[0.08]">
             <div>
               <h3 className="text-base sm:text-lg font-bold">
-                Jadwal Mobil Pelayanan Keliling & Hub Kecamatan
+                {t('mppPortal.bestPractices.keliling.title', 'Jadwal Mobil Pelayanan Keliling & Hub Kecamatan')}
               </h3>
               <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
-                Data jadwal ditarik langsung dari basis data operasional MPP Kabupaten Luwu.
+                {t('mppPortal.bestPractices.keliling.subtitle', 'Data jadwal ditarik langsung dari basis data operasional MPP Kabupaten Luwu.')}
               </p>
             </div>
             <button
@@ -309,20 +311,20 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
               }`}
             >
               <RefreshCw className={`w-3.5 h-3.5 text-[#0F6B4F] dark:text-emerald-400 ${isLoadingSchedules ? 'animate-spin' : ''}`} />
-              <span>Perbarui Jadwal</span>
+              <span>{t('mppPortal.bestPractices.keliling.refreshBtn', 'Perbarui Jadwal')}</span>
             </button>
           </div>
 
           {scheduleError && (
             <div className="p-3.5 rounded-2xl border border-rose-500/30 bg-rose-500/10 text-xs text-rose-700 dark:text-rose-300 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>Gagal terhubung ke database jadwal layanan keliling: {scheduleError}</span>
+              <span>{t('mppPortal.bestPractices.keliling.errorPrefix', 'Gagal terhubung ke database jadwal layanan keliling:')} {scheduleError}</span>
             </div>
           )}
 
           {isLoadingSchedules ? (
             <div className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">
-              Memuat jadwal resmi kunjungan kecamatan dari database...
+              {t('mppPortal.bestPractices.keliling.loading', 'Memuat jadwal resmi kunjungan kecamatan dari database...')}
             </div>
           ) : schedules.length === 0 ? (
             <div
@@ -338,10 +340,10 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                 </div>
                 <div className="space-y-1">
                   <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
-                    Belum Ada Jadwal Layanan Keliling Aktif Periode Ini
+                    {t('mppPortal.bestPractices.keliling.emptyTitle', 'Belum Ada Jadwal Layanan Keliling Aktif Periode Ini')}
                   </h4>
                   <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Admin MPP belum menerbitkan jadwal kunjungan mobil layanan keliling terbaru. Anda tetap dapat mendaftar antrean online di Gedung MPP Simpurusiang Belopa atau menanyakan jadwal berikutnya ke Front Office.
+                    {t('mppPortal.bestPractices.keliling.emptyDesc', 'Admin MPP belum menerbitkan jadwal kunjungan mobil layanan keliling terbaru. Anda tetap dapat mendaftar antrean online di Gedung MPP Simpurusiang Belopa atau menanyakan jadwal berikutnya ke Front Office.')}
                   </p>
                 </div>
               </div>
@@ -352,11 +354,11 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                   className="min-h-[42px] px-4 py-2 rounded-xl bg-[#0F6B4F] hover:bg-[#0B543E] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
                 >
                   <Ticket className="w-4 h-4" />
-                  <span>Ambil Antrean Gedung MPP</span>
+                  <span>{t('mppPortal.bestPractices.keliling.queueBtnMpp', 'Ambil Antrean Gedung MPP')}</span>
                 </button>
                 <a
                   href={`https://wa.me/${officialWaDigits}?text=${encodeURIComponent(
-                    'Halo Petugas Front Office MPP Simpurusiang Luwu, mohon informasi jadwal Mobil Pelayanan Keliling kecamatan terdekat berikutnya. Terima kasih.'
+                    t('mppPortal.bestPractices.driveThru.msgAntrean', 'Halo Petugas Front Office MPP Simpurusiang Luwu, mohon informasi jadwal Mobil Pelayanan Keliling kecamatan terdekat berikutnya. Terima kasih.')
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -367,7 +369,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                   }`}
                 >
                   <MessageCircle className="w-4 h-4 text-[#0F6B4F] dark:text-emerald-400" />
-                  <span>Tanya Jadwal via WA FO</span>
+                  <span>{t('mppPortal.bestPractices.keliling.askWaFo', 'Tanya Jadwal via WA FO')}</span>
                 </a>
               </div>
             </div>
@@ -391,7 +393,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                     >
                       <div className="space-y-1.5">
                         <div className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold">
-                          Kecamatan {item.kecamatan} · {item.hari_operasional}
+                          {t('mppPortal.bestPractices.keliling.districtPrefix', 'Kecamatan')} {item.kecamatan} · {item.hari_operasional}
                         </div>
                         <div className="text-sm font-bold text-slate-900 dark:text-white">
                           {item.lokasi}
@@ -400,7 +402,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                           <Clock className="w-3.5 h-3.5 shrink-0" />
                           <span>{item.jam_operasional}</span>
                           <span>·</span>
-                          <span className="font-mono tabular-nums">Kuota {item.kuota_harian}</span>
+                          <span className="font-mono tabular-nums">{t('mppPortal.bestPractices.keliling.quotaPrefix', 'Kuota')} {item.kuota_harian}</span>
                         </div>
                       </div>
 
@@ -424,7 +426,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                 >
                   <div className="space-y-0.5">
                     <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
-                      Daftar Antrean Kunjungan Kecamatan {selectedSchedule.kecamatan}
+                      {t('mppPortal.bestPractices.keliling.selectedQueueTitle', 'Daftar Antrean Kunjungan Kecamatan')} {selectedSchedule.kecamatan}
                     </div>
                     <div className="text-xs text-slate-600 dark:text-slate-300">
                       {selectedSchedule.lokasi} · {selectedSchedule.hari_operasional} ({selectedSchedule.jam_operasional})
@@ -442,7 +444,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                     className="min-h-[44px] px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
                   >
                     <Ticket className="w-4 h-4" />
-                    <span>Ambil Antrean Lokasi Ini</span>
+                    <span>{t('mppPortal.bestPractices.keliling.takeQueueThisLocation', 'Ambil Antrean Lokasi Ini')}</span>
                   </button>
                 </div>
               )}
@@ -464,40 +466,40 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
           >
             <div className="space-y-3">
               <div className="text-xs font-semibold text-amber-700 dark:text-amber-400">
-                Pengambilan Berkas Siap Serah · Kompleks Perkantoran Belopa
+                {t('mppPortal.bestPractices.driveThru.badge', 'Pengambilan Berkas Siap Serah · Kompleks Perkantoran Belopa')}
               </div>
               <h3 className="text-lg font-bold">
-                Loket Drive-Thru Dokumen Selesai
+                {t('mppPortal.bestPractices.driveThru.title', 'Loket Drive-Thru Dokumen Selesai')}
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                Pemohon yang status berkasnya pada menu <b>Lacak Berkas</b> telah dinyatakan selesai (KTP-el, KIA, atau SK Izin Usaha cetak) dapat mengambil dokumen di jalur timur Gedung MPP Simpurusiang tanpa perlu mengantre ulang di dalam lobi.
+                {t('mppPortal.bestPractices.driveThru.desc', 'Pemohon yang status berkasnya pada menu Lacak Berkas telah dinyatakan selesai (KTP-el, KIA, atau SK Izin Usaha cetak) dapat mengambil dokumen di jalur timur Gedung MPP Simpurusiang tanpa perlu mengantre ulang di dalam lobi.')}
               </p>
 
               <div className="space-y-2 pt-1 text-xs text-slate-700 dark:text-slate-200">
                 <div className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                  <span>Siapkan KTP asli pemohon dan bukti QR tiket atau nomor resi permohonan.</span>
+                  <span>{t('mppPortal.bestPractices.driveThru.p1', 'Siapkan KTP asli pemohon dan bukti QR tiket atau nomor resi permohonan.')}</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                  <span>Jam layanan pengambilan: Senin–Jumat pukul 08.00–15.30 WITA.</span>
+                  <span>{t('mppPortal.bestPractices.driveThru.p2', 'Jam layanan pengambilan: Senin–Jumat pukul 08.00–15.30 WITA.')}</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                  <span>Pastikan status dokumen sudah <b>Siap Diambil</b> melalui pelacak resi atau konfirmasi WA FO di samping.</span>
+                  <span>{t('mppPortal.bestPractices.driveThru.p3', 'Pastikan status dokumen sudah Siap Diambil melalui pelacak resi atau konfirmasi WA FO di samping.')}</span>
                 </div>
               </div>
             </div>
 
             <div className="pt-4 border-t border-slate-200/80 dark:border-white/10 flex items-center justify-between gap-3">
               <span className="text-xs text-slate-500 dark:text-slate-400">
-                Jl. Simpurusiang, Senga, Kec. Belopa
+                {t('mppPortal.bestPractices.driveThru.address', 'Jl. Simpurusiang, Senga, Kec. Belopa')}
               </span>
               <a
                 href="#tracking-berkas"
                 className="min-h-[42px] px-4 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold transition hover:opacity-90 inline-flex items-center gap-1.5 whitespace-nowrap"
               >
-                <span>Cek Status Berkas</span>
+                <span>{t('mppPortal.bestPractices.driveThru.checkStatusBtn', 'Cek Status Berkas')}</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </a>
             </div>
@@ -513,19 +515,19 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
           >
             <div className="space-y-3">
               <div className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
-                Kontak Resmi Terverifikasi · {officialWaDisplay}
+                {t('mppPortal.bestPractices.driveThru.waBadge', 'Kontak Resmi Terverifikasi')} · {officialWaDisplay}
               </div>
               <h3 className="text-lg font-bold">
-                Konfirmasi Cepat via WhatsApp Front Office
+                {t('mppPortal.bestPractices.driveThru.waTitle', 'Konfirmasi Cepat via WhatsApp Front Office')}
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                Terhubung langsung ke percakapan WhatsApp petugas Front Office MPP Simpurusiang (bukan simulasi bot otomatis) untuk memastikan berkas siap diambil atau menanyakan antrean loket.
+                {t('mppPortal.bestPractices.driveThru.waDesc', 'Terhubung langsung ke percakapan WhatsApp petugas Front Office MPP Simpurusiang (bukan simulasi bot otomatis) untuk memastikan berkas siap diambil atau menanyakan antrean loket.')}
               </p>
 
               <div className="space-y-3 pt-1">
                 <div className="space-y-1">
                   <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Keperluan Konfirmasi
+                    {t('mppPortal.bestPractices.driveThru.topicLabel', 'Keperluan Konfirmasi')}
                   </label>
                   <select
                     value={waTopic}
@@ -536,21 +538,21 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                         : 'bg-slate-50 border-slate-300 text-slate-900'
                     }`}
                   >
-                    <option value="drivethru">Konfirmasi Pengambilan Berkas Drive-Thru</option>
-                    <option value="antrean">Cek Status Panggilan Antrean Loket</option>
-                    <option value="syarat">Tanya Kelengkapan Dokumen Persyaratan</option>
+                    <option value="drivethru">{t('mppPortal.bestPractices.driveThru.topicDriveThru', 'Konfirmasi Pengambilan Berkas Drive-Thru')}</option>
+                    <option value="antrean">{t('mppPortal.bestPractices.driveThru.topicAntrean', 'Cek Status Panggilan Antrean Loket')}</option>
+                    <option value="syarat">{t('mppPortal.bestPractices.driveThru.topicSyarat', 'Tanya Kelengkapan Dokumen Persyaratan')}</option>
                   </select>
                 </div>
 
                 <div className="space-y-1">
                   <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Nomor Tiket / Resi Berkas (Opsional)
+                    {t('mppPortal.bestPractices.driveThru.refLabel', 'Nomor Tiket / Resi Berkas (Opsional)')}
                   </label>
                   <input
                     type="text"
                     value={ticketOrNikRef}
                     onChange={(e) => setTicketOrNikRef(e.target.value)}
-                    placeholder="Contoh: A-012 atau nomor resi permohonan"
+                    placeholder={t('mppPortal.bestPractices.driveThru.refPlaceholder', 'Contoh: A-012 atau nomor resi permohonan')}
                     className={`w-full min-h-[44px] px-3 py-2 rounded-xl border text-xs font-mono ${
                       isDark
                         ? 'bg-slate-900 border-slate-700 text-white placeholder-slate-500'
@@ -563,7 +565,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
 
             <div className="pt-4 border-t border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <span className="text-xs text-slate-500 dark:text-slate-400">
-                Jam respons petugas: hari kerja 07.30–16.00 WITA
+                {t('mppPortal.bestPractices.driveThru.hours', 'Jam respons petugas: hari kerja 07.30–16.00 WITA')}
               </span>
               <a
                 href={buildOfficialWhatsAppUrl()}
@@ -572,7 +574,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                 className="min-h-[44px] px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition inline-flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
               >
                 <MessageCircle className="w-4 h-4" />
-                <span>Kirim WhatsApp ke FO</span>
+                <span>{t('mppPortal.bestPractices.driveThru.sendWaBtn', 'Kirim WhatsApp ke FO')}</span>
               </a>
             </div>
           </div>
@@ -592,13 +594,13 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
           >
             <div className="space-y-3">
               <div className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
-                Terhubung Langsung ke Database Antrean Loket
+                {t('mppPortal.bestPractices.fastAccess.connectedBadge', 'Terhubung Langsung ke Database Antrean Loket')}
               </div>
               <h3 className="text-lg font-bold">
-                Pintasan Ambil Antrean Gerai Utama
+                {t('mppPortal.bestPractices.fastAccess.title', 'Pintasan Ambil Antrean Gerai Utama')}
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                Pilih gerai yang paling sering dikunjungi untuk langsung membuka formulir tiket antrean resmi dengan instansi yang sudah terisi otomatis, lengkap dengan struk QR Code cetak.
+                {t('mppPortal.bestPractices.fastAccess.desc', 'Pilih gerai yang paling sering dikunjungi untuk langsung membuka formulir tiket antrean resmi dengan instansi yang sudah terisi otomatis, lengkap dengan struk QR Code cetak.')}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
@@ -629,7 +631,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
 
             <div className="pt-4 border-t border-slate-200/80 dark:border-white/10 flex items-center justify-between gap-3">
               <span className="text-xs text-slate-500 dark:text-slate-400">
-                Tiket tersimpan ke antrean aktif hari ini
+                {t('mppPortal.bestPractices.fastAccess.footerNotice', 'Tiket tersimpan ke antrean aktif hari ini')}
               </span>
               <button
                 type="button"
@@ -637,7 +639,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                 className="min-h-[40px] text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-1 cursor-pointer"
               >
                 <Building2 className="w-3.5 h-3.5" />
-                <span>Pilih Semua Instansi</span>
+                <span>{t('mppPortal.bestPractices.fastAccess.allAgenciesBtn', 'Pilih Semua Instansi')}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -653,13 +655,13 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
           >
             <div className="space-y-3">
               <div className="text-xs font-semibold text-sky-700 dark:text-sky-400">
-                Optimasi Ponsel Android & Jaringan Pedesaan
+                {t('mppPortal.bestPractices.fastAccess.liteBadge', 'Optimasi Ponsel Android & Jaringan Pedesaan')}
               </div>
               <h3 className="text-lg font-bold">
-                Mode Tampilan Ringan (Hemat Kuota & Baterai)
+                {t('mppPortal.bestPractices.fastAccess.liteTitle', 'Mode Tampilan Ringan (Hemat Kuota & Baterai)')}
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                Menonaktifkan efek kabur latar (<i>backdrop blur</i>), bayangan berat, serta transisi animasi sehingga navigasi tetap responsif pada ponsel RAM rendah maupun sinyal 3G di wilayah pegunungan Luwu.
+                {t('mppPortal.bestPractices.fastAccess.liteDesc', 'Menonaktifkan efek kabur latar (backdrop blur), bayangan berat, serta transisi animasi sehingga navigasi tetap responsif pada ponsel RAM rendah maupun sinyal 3G di wilayah pegunungan Luwu.')}
               </p>
 
               <div
@@ -675,12 +677,12 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                   </div>
                   <div className="min-w-0">
                     <div className="text-xs font-bold text-slate-900 dark:text-white">
-                      {isLiteActive ? 'Mode Ringan Sedang Aktif' : 'Mode Visual Standar Aktif'}
+                      {isLiteActive ? t('mppPortal.bestPractices.fastAccess.liteActive', 'Mode Ringan Sedang Aktif') : t('mppPortal.bestPractices.fastAccess.standardActive', 'Mode Visual Standar Aktif')}
                     </div>
                     <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
                       {isLiteActive
-                        ? 'Efek grafis berat dan animasi telah dimatikan'
-                        : 'Seluruh transisi visual interaktif ditampilkan'}
+                        ? t('mppPortal.bestPractices.fastAccess.liteDescActive', 'Efek grafis berat dan animasi telah dimatikan')
+                        : t('mppPortal.bestPractices.fastAccess.standardDescActive', 'Seluruh transisi visual interaktif ditampilkan')}
                     </div>
                   </div>
                 </div>
@@ -694,13 +696,13 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                       : 'bg-emerald-600 hover:bg-emerald-500 text-white'
                   }`}
                 >
-                  {isLiteActive ? 'Kembali ke Standar' : 'Aktifkan Mode Ringan'}
+                  {isLiteActive ? t('mppPortal.bestPractices.fastAccess.btnBackToStandard', 'Kembali ke Standar') : t('mppPortal.bestPractices.fastAccess.btnEnableLite', 'Aktifkan Mode Ringan')}
                 </button>
               </div>
             </div>
 
             <div className="pt-4 border-t border-slate-200/80 dark:border-white/10 text-xs text-slate-500 dark:text-slate-400">
-              Pengaturan tersimpan otomatis pada peramban perangkat Anda dan juga tersedia pada bilah atas halaman.
+              {t('mppPortal.bestPractices.fastAccess.settingsPersistNotice', 'Pengaturan tersimpan otomatis pada peramban perangkat Anda dan juga tersedia pada bilah atas halaman.')}
             </div>
           </div>
         </div>

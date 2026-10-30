@@ -4614,23 +4614,15 @@ export default function PortalMPP() {
               className="max-w-6xl mx-auto mt-8 sm:mt-10 w-full"
             >
               <div className={`grid grid-cols-1 md:grid-cols-12 ${MPP_CARD_SURFACE.default} overflow-hidden`}>
-                {/* Kolom Kiri (5 cols): Kedua Foto Petugas MPP Simpurusiang */}
-                <div className="md:col-span-5 w-full relative min-h-[260px] sm:min-h-[300px] md:min-h-full overflow-hidden bg-gradient-to-b from-[#0F6B4F]/15 via-[#0A2236] to-[#071624] flex items-end justify-center pt-6 px-3">
-                  <div className="flex items-end justify-center gap-1.5 sm:gap-2.5 w-full max-w-sm relative z-10 pb-1">
-                    <div className="relative flex-1 flex flex-col items-center justify-end group">
+                {/* Kolom Kiri (5 cols): Foto Petugas Front Office MPP Simpurusiang Resmi dari Database */}
+                <div className="md:col-span-5 w-full relative min-h-[280px] sm:min-h-[320px] md:min-h-full overflow-hidden bg-gradient-to-b from-[#0F6B4F]/15 via-[#0A2236] to-[#071624] flex items-end justify-center pt-6 px-3">
+                  <div className="flex items-end justify-center w-full max-w-xs relative z-10 pb-1">
+                    <div className="relative w-full flex flex-col items-center justify-end group">
                       <ResponsiveOfficerPicture
                         officerKey="officer-left"
                         customSrc={staffImageLeft && !staffImageLeft.includes('unsplash.com') ? staffImageLeft : null}
-                        alt="Petugas Virtual Helpdesk MPP Simpurusiang (Kiri)"
-                        className="max-h-60 sm:max-h-64 md:max-h-72 w-auto object-contain object-bottom drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                    <div className="relative flex-1 flex flex-col items-center justify-end group">
-                      <ResponsiveOfficerPicture
-                        officerKey="officer-right"
-                        customSrc={staffImageRight && !staffImageRight.includes('unsplash.com') ? staffImageRight : null}
-                        alt="Petugas Virtual Helpdesk MPP Simpurusiang (Kanan)"
-                        className="max-h-60 sm:max-h-64 md:max-h-72 w-auto object-contain object-bottom drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-300"
+                        alt="Petugas Front Office & Virtual Helpdesk MPP Simpurusiang"
+                        className="max-h-64 sm:max-h-72 md:max-h-80 w-auto object-contain object-bottom drop-shadow-[0_12px_24px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
                   </div>
