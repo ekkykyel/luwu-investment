@@ -488,7 +488,7 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
       isInModal 
         ? 'p-0 bg-transparent border-0 shadow-none text-slate-900 dark:text-slate-100' 
         : `rounded-3xl border p-4 sm:p-8 backdrop-blur-md shadow-xl w-full max-w-7xl mx-auto ${
-            isDarkMode ? 'bg-surface/70 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+            isDarkMode ? 'bg-surface/70 border-slate-800 text-white' : 'bg-[#FAF8F3] border-[#E5DFD3] text-slate-900'
           }`
     }`}>
       {/* Header Banner */}

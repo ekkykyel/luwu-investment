@@ -553,10 +553,10 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ type: "spring", stiffness: 320, damping: 28 }}
-          className="relative w-full max-w-4xl bg-white dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] text-slate-900 dark:text-slate-100 border border-slate-200/80 dark:border-white/10"
+          className="relative w-full max-w-4xl bg-[#FAF8F3] dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] text-slate-900 dark:text-slate-100 border border-[#E5DFD3] dark:border-white/10"
         >
           {/* Header Bar dengan Tombol Tutup Presisi */}
-          <div className="relative z-10 px-4 sm:px-7 py-3 sm:py-4 border-b border-slate-100 dark:border-white/10 flex items-center justify-between bg-white/90 dark:bg-surface/90 backdrop-blur-md shrink-0">
+          <div className="relative z-10 px-4 sm:px-7 py-3 sm:py-4 border-b border-[#E5DFD3] dark:border-white/10 flex items-center justify-between bg-[#FAF8F3]/95 dark:bg-surface/90 backdrop-blur-md shrink-0">
             <div className="flex items-center gap-3 min-w-0">
               <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 ${service.iconContainerClass || 'bg-emerald-500/10 dark:bg-emerald-500/20'}`}>
                 <IconComponent className={`w-5 h-5 ${service.iconColor || 'text-emerald-600 dark:text-emerald-400'}`} />

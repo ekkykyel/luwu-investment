@@ -264,10 +264,10 @@ export const FoOfficerLoginModal: React.FC<FoOfficerLoginModalProps> = ({
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
           onClick={(e) => e.stopPropagation()}
-          className={`relative w-full max-w-md bg-white dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border ${
+          className={`relative w-full max-w-md bg-[#FAF8F3] dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border ${
             isDarkMode 
               ? 'border-slate-800 text-white shadow-rose-950/30' 
-              : 'border-slate-200 text-slate-900 shadow-slate-300'
+              : 'border-[#E5DFD3] text-slate-900 shadow-slate-300/40'
           }`}
         >
           {/* Header Banner */}

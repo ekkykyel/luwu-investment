@@ -362,7 +362,7 @@ export default function RtrwZoningCheckerModal({
         className={`relative w-[calc(100vw-20px)] sm:w-full max-w-4xl rounded-2xl sm:rounded-3xl shadow-2xl border overflow-hidden max-h-[92vh] sm:max-h-[85vh] flex flex-col transition-all ${
           isDark
             ? "bg-black border-neutral-800 text-white"
-            : "bg-white border-slate-200 text-slate-900"
+            : "bg-[#FAF8F3] border-[#E5DFD3] text-slate-900"
         }`}
       >
         {/* Header Banner */}

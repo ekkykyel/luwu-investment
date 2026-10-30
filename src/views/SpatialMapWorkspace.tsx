@@ -5715,7 +5715,7 @@ export default function SpatialMapWorkspace() {
   return (
     <DataContext.Provider value={{ investments, setInvestments, districts, setDistricts, villages, setVillages, spatialLayers, setSpatialLayers, rtrwZoning, setRtrwZoning, incentivePolicies, setIncentivePolicies, supplyChainMatrix, setSupplyChainMatrix, executiveMetrics, setExecutiveMetrics, refreshData: fetchAllData, isLoading: isStatsLoading, isSpatialLiveSyncEnabled, setIsSpatialLiveSyncEnabled, liveSyncStatus, loiCount: investorLoiCount }}>
       <div className={`relative h-[100dvh] w-full overflow-hidden ${
-        isDarkMode ? "bg-slate-50 dark:bg-base text-slate-100" : "bg-slate-50 text-slate-800"
+        isDarkMode ? "bg-slate-50 dark:bg-base text-slate-100" : "bg-[#FAF8F3] text-slate-800"
       } font-sans`}>
     
       <Suspense fallback={null}>

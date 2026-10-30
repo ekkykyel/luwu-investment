@@ -567,7 +567,7 @@ export default function ProximityDistanceMatrixModal({
         className={`relative w-full max-w-4xl rounded-3xl shadow-2xl border overflow-hidden max-h-[85vh] flex flex-col ${
           isDark
             ? "bg-black border-neutral-800 text-white"
-            : "bg-white border-slate-200 text-slate-900"
+            : "bg-[#FAF8F3] border-[#E5DFD3] text-slate-900"
         }`}
       >
         {/* Header Banner */}

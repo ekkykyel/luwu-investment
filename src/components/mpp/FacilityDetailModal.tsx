@@ -53,7 +53,7 @@ export function FacilityDetailModal({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
           transition={{ type: "spring", stiffness: 320, damping: 28 }}
-          className="relative w-full max-w-3xl bg-white dark:bg-surface rounded-2xl md:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100 max-h-[92dvh] md:max-h-[85dvh]"
+          className="relative w-full max-w-3xl bg-[#FAF8F3] dark:bg-surface rounded-2xl md:rounded-3xl border border-[#E5DFD3] dark:border-slate-800 shadow-xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100 max-h-[92dvh] md:max-h-[85dvh]"
           onClick={(e) => e.stopPropagation()}
         >
           {/* 1. Header Foto Full-Bleed (Ditinggikan untuk Tampilan Android & Mobile Responsif) */}

@@ -105,12 +105,12 @@ export function FastTrackConsultationModal({
         className={`relative w-[calc(100vw-20px)] sm:w-full max-w-2xl max-h-[92vh] sm:max-h-[85vh] rounded-2xl sm:rounded-3xl shadow-2xl border overflow-hidden flex flex-col ${
           isDark 
             ? 'bg-[#0b1324] border-slate-700/80 text-white' 
-            : 'bg-white border-slate-200 text-slate-900'
+            : 'bg-[#FAF8F3] border-[#E5DFD3] text-slate-900'
         }`}
       >
         {/* Header Modal - Sticky Pin at Top with high contrast close button */}
         <div className={`sticky top-0 z-20 p-2.5 sm:px-5 sm:py-4 border-b flex items-center justify-between shrink-0 ${
-          isDark ? 'bg-[#0e172a] border-slate-800' : 'bg-slate-50 border-slate-200'
+          isDark ? 'bg-[#0e172a] border-slate-800' : 'bg-[#F3EEE3] border-[#E5DFD3]'
         }`}>
           <div className="flex items-center gap-2 sm:gap-3 min-w-0 pr-1">
             <div className="p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/20 shrink-0">

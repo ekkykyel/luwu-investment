@@ -682,7 +682,7 @@ export const MppCommandPalette: React.FC<MppCommandPaletteProps> = ({
             className={`relative w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border backdrop-blur-2xl flex flex-col max-h-[80vh] ${
               isDark
                 ? "bg-surface/95 border-emerald-500/30 text-white shadow-black/25"
-                : "bg-white/95 border-emerald-500/25 text-slate-900 shadow-slate-900/20"
+                : "bg-[#FAF8F3]/98 border-[#E5DFD3] text-slate-900 shadow-slate-900/10"
             }`}
           >
             {/* Header: Search Input & Shortcut Badge */}

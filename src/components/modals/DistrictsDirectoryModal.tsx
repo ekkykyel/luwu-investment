@@ -139,7 +139,7 @@ export const DistrictsDirectoryModal: React.FC<DistrictsDirectoryModalProps> = (
           className={`w-[calc(100vw-20px)] sm:w-full h-[92vh] sm:h-auto max-h-[92vh] sm:max-h-[90vh] max-w-5xl rounded-2xl sm:rounded-3xl border shadow-2xl flex flex-col overflow-hidden ${
             isDark
               ? 'bg-slate-900 border-slate-800 text-white shadow-black/80'
-              : 'bg-white border-slate-200 text-slate-900 shadow-slate-900/20'
+              : 'bg-[#FAF8F3] border-[#E5DFD3] text-slate-900 shadow-slate-900/10'
           }`}
           onClick={(e) => e.stopPropagation()}
         >
@@ -148,7 +148,7 @@ export const DistrictsDirectoryModal: React.FC<DistrictsDirectoryModalProps> = (
             className={`p-3 sm:p-5 border-b flex items-center justify-between gap-3 shrink-0 ${
               isDark
                 ? 'bg-gradient-to-r from-emerald-950/70 via-slate-900 to-slate-900 border-slate-800'
-                : 'bg-gradient-to-r from-emerald-50 via-white to-teal-50/50 border-slate-200'
+                : 'bg-gradient-to-r from-emerald-50/90 via-[#FAF8F3] to-teal-50/50 border-[#E5DFD3]'
             }`}
           >
             <div className="flex items-center gap-3 min-w-0">

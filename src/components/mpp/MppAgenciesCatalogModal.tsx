@@ -182,15 +182,15 @@ export const MppAgenciesCatalogModal: React.FC<MppAgenciesCatalogModalProps> = (
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 25, scale: 0.96 }}
           transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-          className={`relative w-full max-w-4xl bg-white dark:bg-[#0F2942] rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92dvh] md:max-h-[88dvh] border ${
+          className={`relative w-full max-w-4xl bg-[#FAF8F3] dark:bg-[#0F2942] rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92dvh] md:max-h-[88dvh] border ${
             isDark
               ? 'border-slate-800 text-white shadow-black/40'
-              : 'border-slate-200 text-slate-900 shadow-slate-300/60'
+              : 'border-[#E5DFD3] text-slate-900 shadow-slate-300/30'
           }`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header Bar — High-contrast title and clean layout */}
-          <div className="relative py-3.5 sm:py-4 px-4 sm:px-6 border-b border-slate-200/90 dark:border-white/10 shrink-0 bg-white dark:bg-[#0F2942]">
+          <div className="relative py-3.5 sm:py-4 px-4 sm:px-6 border-b border-[#E5DFD3] dark:border-white/10 shrink-0 bg-[#FAF8F3] dark:bg-[#0F2942]">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-inner">

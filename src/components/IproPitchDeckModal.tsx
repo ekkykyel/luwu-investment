@@ -253,7 +253,7 @@ export default function IproPitchDeckModal({
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ type: "spring", damping: 25, stiffness: 350 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-[calc(100vw-20px)] sm:w-full max-w-4xl bg-white text-slate-900 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border border-slate-200 max-h-[92vh] sm:max-h-[88vh] flex flex-col transition-all"
+        className="w-[calc(100vw-20px)] sm:w-full max-w-4xl bg-[#FAF8F3] text-slate-900 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border border-[#E5DFD3] max-h-[92vh] sm:max-h-[88vh] flex flex-col transition-all"
       >
         {/* ── TOP ACTION BAR (Android-First Touch Targets) ── */}
         <div className="print:hidden p-2.5 sm:px-6 py-2.5 sm:py-3.5 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800 shrink-0">
@@ -316,7 +316,7 @@ export default function IproPitchDeckModal({
         {/* ── OFFICIAL PEMKAB LUWU A4 DOSSIER SHEET ── */}
         <div
           ref={printContainerRef}
-          className="p-3.5 sm:p-8 space-y-4 sm:space-y-5 bg-white text-slate-900 print:p-0 print:space-y-4 print:text-black font-sans relative flex-1 overflow-y-auto"
+          className="p-3.5 sm:p-8 space-y-4 sm:space-y-5 bg-[#FAF8F3] text-slate-900 print:bg-white print:p-0 print:space-y-4 print:text-black font-sans relative flex-1 overflow-y-auto"
         >
           {/* KOP SURAT RESMI PEMERINTAH KABUPATEN LUWU */}
           <div className="border-b-[3px] border-double border-slate-900 pb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

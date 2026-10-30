@@ -563,10 +563,10 @@ export const PetugasGeraiLoginModal: React.FC<PetugasGeraiLoginModalProps> = ({
     >
       <div 
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-full max-w-md bg-white dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border transition-all ${
+        className={`relative w-full max-w-md bg-[#FAF8F3] dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border transition-all ${
           isDarkMode 
             ? 'text-white border-slate-800' 
-            : 'text-slate-900 border-slate-200'
+            : 'text-slate-900 border-[#E5DFD3]'
         }`}
       >
         {/* Modal Header */}

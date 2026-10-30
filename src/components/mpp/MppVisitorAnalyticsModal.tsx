@@ -359,7 +359,7 @@ export const MppVisitorAnalyticsModal: React.FC<MppVisitorAnalyticsModalProps> =
           className={`w-full max-w-3xl max-h-[85vh] flex flex-col rounded-3xl border shadow-2xl overflow-hidden ${
             isDark
               ? 'bg-slate-900 border-slate-800 text-white shadow-black/25'
-              : 'bg-white border-slate-200 text-slate-900 shadow-slate-300/50'
+              : 'bg-[#FAF8F3] border-[#E5DFD3] text-slate-900 shadow-slate-300/30'
           }`}
           onClick={(e) => e.stopPropagation()}
         >

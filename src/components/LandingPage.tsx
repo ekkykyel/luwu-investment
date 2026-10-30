@@ -1180,18 +1180,18 @@ export default function LandingPage({
     }
   }, [isDarkMode]);
 
-  // Tema Dinamis (Institusional Warm Navy ~210°)
+  // Tema Dinamis (Institusional Warm Navy ~210° & Elegan Nusantara Alabaster)
   const themeBg = isDark
     ? "bg-[#0A2238] text-slate-100"
-    : "bg-white text-slate-900";
+    : "bg-[#FAF8F3] text-slate-900";
   const cardBg = isDark
     ? "bg-[#0F2D4A] border-white/[0.09] shadow-none"
-    : "bg-white border-slate-200/80 shadow-sm";
+    : "bg-[#FAF8F3] border-[#E5DFD3] shadow-xs";
   const textMuted = isDark ? "text-slate-400 font-medium" : "text-slate-600 font-medium";
   const textHighlight = isDark ? "text-sky-300 font-bold" : "text-sky-700 font-bold";
   const inputBg = isDark
     ? "bg-[#143755] border-white/[0.09] text-slate-100 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all duration-200 font-semibold"
-    : "bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-all duration-200 font-semibold";
+    : "bg-white border-[#DFD8CA] text-slate-900 placeholder:text-slate-400 focus:border-[#0F6B4F] focus:ring-2 focus:ring-[#0F6B4F]/25 transition-all duration-200 font-semibold";
 
   const handleToggleTheme = () => {
     const nextDark = !isDark;

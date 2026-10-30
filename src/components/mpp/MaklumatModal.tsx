@@ -35,7 +35,7 @@ export const MaklumatModal: React.FC<MaklumatModalProps> = ({
           className={`relative w-full max-w-xl rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border ${
             isDark
               ? 'bg-[#0A2238] border-slate-800 text-slate-100'
-              : 'bg-white border-slate-300 text-slate-900'
+              : 'bg-[#FAF8F3] border-[#E5DFD3] text-slate-900'
           }`}
           style={{ color: isDark ? '#f8fafc' : '#0f172a' }}
           onClick={(e) => e.stopPropagation()}
@@ -47,7 +47,7 @@ export const MaklumatModal: React.FC<MaklumatModalProps> = ({
 
           {/* Header Container */}
           <div className={`flex items-center justify-between px-5 py-3.5 border-b shrink-0 backdrop-blur-md ${
-            isDark ? 'bg-[#0A2238]/95 border-slate-800' : 'bg-white/95 border-slate-200'
+            isDark ? 'bg-[#0A2238]/95 border-slate-800' : 'bg-[#FAF8F3]/95 border-[#E5DFD3]'
           }`}>
             <div className="flex flex-col min-w-0">
               <span className={`text-[10px] font-bold font-mono tracking-wider uppercase px-2.5 py-0.5 rounded-full w-fit mb-1 border ${

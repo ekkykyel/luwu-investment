@@ -129,14 +129,14 @@ body:fullscreen {
 
 @layer base {
   :root {
-    /* Base (Light Mode): Slate-50 (#F8FAFC) */
-    --bg-base: 248 250 252;
-    /* Surface (Light Mode): Pure White (#FFFFFF) */
-    --bg-surface: 255 255 255;
-    /* Elevated (Light Mode): Slate-100 (#F1F5F9) */
-    --bg-elevated: 241 245 249;
-    --bg-overlay: #FFFFFF;
-    --border-subtle: rgba(226, 232, 240, 0.9);
+    /* Base (Light Mode): Elegan Nusantara Alabaster (#FAF8F3) */
+    --bg-base: 250 248 243;
+    /* Surface (Light Mode): Warm Alabaster (#FAF8F3) */
+    --bg-surface: 250 248 243;
+    /* Elevated (Light Mode): Soft Warm Cream (#F4EFE4) */
+    --bg-elevated: 244 239 228;
+    --bg-overlay: #FAF8F3;
+    --border-subtle: rgba(229, 223, 211, 0.95);
 
     /* === UNIFIED AGENCY LOGO TOKENS === */
     --logo-card: 112px;

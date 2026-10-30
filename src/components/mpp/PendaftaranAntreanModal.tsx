@@ -431,14 +431,14 @@ export const PendaftaranAntreanModal: React.FC<PendaftaranAntreanModalProps> = (
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 15 }}
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-full max-w-2xl bg-white dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border ${
+        className={`relative w-full max-w-2xl bg-[#FAF8F3] dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border ${
           isDarkMode 
             ? 'border-white/10 text-white' 
-            : 'border-slate-200 text-slate-900'
+            : 'border-[#E5DFD3] text-slate-900'
         }`}
       >
         {/* HEADER MODAL */}
-        <div className="shrink-0 px-5 py-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-transparent">
+        <div className="shrink-0 px-5 py-4 border-b border-[#E5DFD3] dark:border-white/10 flex items-center justify-between bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-transparent">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-2xl bg-emerald-500 text-slate-950 font-bold shadow-md shadow-black/25">
               <Ticket className="w-5 h-5" />

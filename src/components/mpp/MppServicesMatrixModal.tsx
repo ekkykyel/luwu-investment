@@ -471,11 +471,11 @@ export const MppServicesMatrixModal: React.FC<MppServicesMatrixModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, y: 30, scale: 0.95 }}
           transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-          className="relative w-full max-w-4xl bg-white dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100"
+          className="relative w-full max-w-4xl bg-[#FAF8F3] dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border border-[#E5DFD3] dark:border-slate-800 text-slate-900 dark:text-slate-100"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header Bar */}
-          <div className="relative py-4 px-4 sm:px-7 border-b border-slate-200/80 dark:border-slate-800 shrink-0 bg-slate-50/90 dark:bg-surface/95 backdrop-blur-md">
+          <div className="relative py-4 px-4 sm:px-7 border-b border-[#E5DFD3] dark:border-slate-800 shrink-0 bg-[#F3EEE3]/90 dark:bg-surface/95 backdrop-blur-md">
 
             <div className="flex items-center justify-between gap-3 mt-1 sm:mt-2">
               <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">

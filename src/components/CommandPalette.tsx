@@ -72,7 +72,7 @@ export default function CommandPalette({
             className={`relative w-full max-w-2xl overflow-hidden rounded-2xl shadow-2xl border ${
               isDarkMode
                 ? "bg-slate-900 border-slate-700/80 shadow-black/50"
-                : "bg-white border-slate-200 shadow-slate-200/50"
+                : "bg-[#FAF8F3] border-[#E5DFD3] shadow-slate-200/50"
             }`}
           >
             {/* Search Input */}

@@ -234,13 +234,13 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
           className={`relative w-full max-w-5xl max-h-[85vh] border rounded-3xl shadow-2xl flex flex-col overflow-hidden font-sans ${
             isDark 
               ? 'bg-[#0A2238] border-slate-800 text-slate-100' 
-              : 'bg-white border-slate-300 text-slate-900'
+              : 'bg-[#FAF8F3] border-[#E5DFD3] text-slate-900'
           }`}
           style={{ color: isDark ? '#f8fafc' : '#0f172a' }}
         >
           {/* Header Bar */}
           <div className={`flex items-center justify-between px-5 sm:px-8 py-4 border-b shrink-0 backdrop-blur-md ${
-            isDark ? 'bg-[#0A2238]/95 border-slate-800' : 'bg-white/95 border-slate-200'
+            isDark ? 'bg-[#0A2238]/95 border-slate-800' : 'bg-[#FAF8F3]/95 border-[#E5DFD3]'
           }`}>
             <div className="flex items-center gap-3">
               {activeNews && (
