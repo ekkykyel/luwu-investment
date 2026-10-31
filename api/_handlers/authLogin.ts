@@ -2,8 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import jwt from "jsonwebtoken";
 
 const GLOBAL_JWT_SECRET = process.env.JWT_SECRET || process.env.SUPABASE_JWT_SECRET || "+uGO889dVvBQryEybsaAml7WcgVSMG5YgC7qgQcph1BOGAVKpqJrm81H024M7cvMXAyWSBGeppEeaMLUdkNHlQ==";
-const SUPABASE_URL = (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "https://yeezhpdgafbefwipmldl.supabase.co").replace(/\/+$/, "");
-const SUPABASE_ANON_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InllZXpocGRnYWZiZWZ3aXBtbGRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwODQ4NjksImV4cCI6MjEwNTY2MDg2OX0.GrlyUjBklIk6sSFeBrqYqN2gDfTMfRxaQ0SX2glspkk";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./_supabaseConfig.js";
 
 export default async function handler(req: any, res: any) {
   res.setHeader("Content-Type", "application/json");

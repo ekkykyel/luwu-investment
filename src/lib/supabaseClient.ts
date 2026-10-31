@@ -14,8 +14,13 @@ const isInvalidAnonKey = (k?: string | null): boolean => {
 const sanitizeSupabaseUrl = (u?: string | null): string => {
   if (!u || typeof u !== 'string') return DEFAULT_SUPABASE_URL;
   const trimmed = u.trim();
-  if (!trimmed || trimmed.includes("svxugvxchjsjuyfeddor") || trimmed.includes("placeholder") || trimmed.startsWith("postgres://") || trimmed.startsWith("postgresql://") || trimmed.includes("@")) {
+  if (!trimmed || trimmed.includes("svxugvxchjsjuyfeddor") || trimmed.includes("placeholder")) {
     return DEFAULT_SUPABASE_URL;
+  }
+  if (trimmed.startsWith("postgres://") || trimmed.startsWith("postgresql://") || trimmed.includes("@") || trimmed.includes("pooler.supabase.com")) {
+    const match = trimmed.match(/postgres(?:ql)?:\/\/(?:postgres\.([a-z0-9_-]+)|([^:@/]+))(?::[^@]*)?@/i);
+    const projectRef = match?.[1] || (match?.[2] && match[2] !== "postgres" ? match[2] : "yeezhpdgafbefwipmldl");
+    return `https://${projectRef}.supabase.co`;
   }
   return trimmed;
 };

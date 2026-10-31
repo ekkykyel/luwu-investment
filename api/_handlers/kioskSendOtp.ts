@@ -1,3 +1,5 @@
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./_supabaseConfig.js";
+
 export default async function handler(req: any, res: any) {
   // Hanya izinkan HTTP POST
   if (req.method !== 'POST') {
@@ -14,8 +16,8 @@ export default async function handler(req: any, res: any) {
     if (!targetPhone && nik) {
       const rawNik = String(nik).replace(/\D/g, '');
       if (rawNik.length === 16) {
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "https://yeezhpdgafbefwipmldl.supabase.co";
-        const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || "sb_publishable_nycP7MydQUR1hT7lOCRD5w_HCdldhgN";
+        const supabaseUrl = SUPABASE_URL;
+        const supabaseAnonKey = SUPABASE_ANON_KEY;
         
         try {
           const citResp = await fetch(`${supabaseUrl}/rest/v1/mpp_citizens?nik=eq.${rawNik}&select=phone_number,full_name`, {

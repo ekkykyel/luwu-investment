@@ -1,3 +1,5 @@
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./_supabaseConfig.js";
+
 export default async function handler(req: any, res: any) {
   // WAJIB set header JSON & no-store di awal
   res.setHeader('Content-Type', 'application/json');
@@ -13,15 +15,8 @@ export default async function handler(req: any, res: any) {
 
   // Health check harus RINGAN — tidak boleh query database
   // Hanya cek status sistem dan env variables kritis
-  const supabaseUrl = process.env.SUPABASE_URL || 
-                      process.env.VITE_SUPABASE_URL || 
-                      process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-
-  const supabaseKey = process.env.SUPABASE_SERVICE_KEY || 
-                      process.env.SUPABASE_SERVICE_ROLE_KEY || 
-                      process.env.SUPABASE_ANON_KEY || 
-                      process.env.VITE_SUPABASE_ANON_KEY || 
-                      process.env.SUPABASE_PUBLISHABLE_KEY || '';
+  const supabaseUrl = SUPABASE_URL;
+  const supabaseKey = SUPABASE_ANON_KEY;
 
   const checks = {
     status: 'ok',

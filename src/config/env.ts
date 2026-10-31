@@ -16,14 +16,21 @@ export const GLOBAL_JWT_SECRET = (() => {
 })();
 
 export const SUPABASE_URL = (() => {
-  let url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+  let url = (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").trim();
 
-  if (!url || url.includes("svxugvxchjsjuyfeddor") || url.includes("placeholder") || url.startsWith("postgres://") || url.startsWith("postgresql://") || url.includes("@")) {
+  if (!url || url.includes("svxugvxchjsjuyfeddor") || url.includes("placeholder")) {
     isSupabaseConfigured = false;
-    console.warn("[WARN] SUPABASE_URL is not set or refers to revoked project / Postgres connection string. Using active HTTPS REST URL fallback.");
     return "https://yeezhpdgafbefwipmldl.supabase.co";
   }
-  url = url.trim();
+
+  // Handle PostgreSQL DSN passed as SUPABASE_URL
+  if (url.startsWith("postgres://") || url.startsWith("postgresql://") || url.includes("@") || url.includes("pooler.supabase.com")) {
+    const match = url.match(/postgres(?:ql)?:\/\/(?:postgres\.([a-z0-9_-]+)|([^:@/]+))(?::[^@]*)?@/i);
+    const projectRef = match?.[1] || (match?.[2] && match[2] !== "postgres" ? match[2] : "yeezhpdgafbefwipmldl");
+    isSupabaseConfigured = true;
+    return `https://${projectRef}.supabase.co`;
+  }
+
   if (url.endsWith('/')) url = url.slice(0, -1);
   if (url.endsWith('/rest/v1')) url = url.replace('/rest/v1', '');
   if (url.endsWith('/rest/v1/')) url = url.replace('/rest/v1/', '');
