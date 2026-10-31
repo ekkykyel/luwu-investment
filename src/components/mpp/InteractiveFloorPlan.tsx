@@ -2959,7 +2959,9 @@ function InteractiveFloorPlanComponent({
           >
             {/* Active Filter Live Status Toast Banner on Map Canvas */}
             {isAnyFilterActive && !isEmergencyMode && (
-              <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-30 flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl bg-surface/95 dark:bg-surface/95 text-white backdrop-blur-md border border-emerald-500/60 shadow-xl text-xs select-none animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className={`absolute z-30 flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl bg-surface/95 dark:bg-surface/95 text-white backdrop-blur-md border border-emerald-500/60 shadow-xl text-xs select-none animate-in fade-in slide-in-from-top-2 duration-200 ${
+                isFullscreen ? 'bottom-16 left-2.5 sm:left-4' : 'top-3 left-3 sm:top-4 sm:left-4'
+              }`}>
                 <Sparkles className="w-3.5 h-3.5 text-emerald-400 animate-pulse shrink-0" />
                 <div className="flex items-center gap-1.5">
                   <span className="font-bold text-emerald-400">
@@ -2984,77 +2986,93 @@ function InteractiveFloorPlanComponent({
               </div>
             )}
 
-          {/* Emergency Simulation Active Warning Banner (Fullscreen View) */}
-          {isFullscreen && isEmergencyMode && floor === 1 && (
-            <div
-              role="status"
-              aria-live="polite"
-              className="absolute top-16 left-4 right-4 sm:left-auto sm:right-4 z-40 flex items-center justify-between gap-3 px-4 py-2.5 rounded-2xl bg-amber-500/95 dark:bg-amber-900/95 text-slate-950 dark:text-amber-50 backdrop-blur-md border border-amber-400/60 shadow-xl text-xs select-none max-w-xl"
-            >
-              <div className="flex items-center gap-2 min-w-0">
-                <ShieldAlert className="w-4 h-4 text-amber-900 dark:text-amber-300 shrink-0" />
-                <p className="leading-snug text-[11px] sm:text-xs">
-                  <span className="font-extrabold uppercase tracking-wide mr-1 text-amber-950 dark:text-amber-200">
-                    SIMULASI.
-                  </span>
-                  Ini bukan keadaan darurat sebenarnya. Ikuti panah hijau menuju pintu keluar.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsEmergencyMode(false);
-                  emergencyBtnRef.current?.focus();
-                }}
-                className="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold transition-all cursor-pointer shrink-0 active:scale-95"
-              >
-                Hentikan Simulasi
-              </button>
-            </div>
-          )}
-
-          {/* Top Theater Mode Presentation Header Unified Bar */}
+          {/* Top Theater Mode Presentation Header Unified Bar (Zero Map Obstruction) */}
           {isFullscreen && (
-            <div className="absolute top-3 sm:top-4 inset-x-3 sm:inset-x-4 z-50 flex items-center justify-between gap-2 pointer-events-auto select-none">
-              {/* Left: Badge Mode Presentasi with Tooltip */}
-              <div 
-                className={`flex items-center gap-2 min-w-0 px-3 py-2 sm:px-4 sm:py-2 rounded-2xl backdrop-blur-md border select-none ${
-                  effectiveIsDark
-                    ? 'bg-slate-900/95 text-white border-emerald-500/60 shadow-2xl'
-                    : 'bg-white/85 text-slate-800 border-slate-200 shadow-[0_2px_8px_rgba(15,23,42,0.10)]'
-                }`}
-                title="Mode Presentasi Juri (Theater Fullscreen) • Tekan [F] atau [ESC]"
-              >
-                <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                <span className="text-xs font-black font-sans tracking-wide truncate">
-                  Mode Presentasi
-                </span>
-                <span className={`hidden md:inline text-[10px] font-mono px-2 py-0.5 rounded-md border shrink-0 ${
-                  effectiveIsDark
-                    ? 'bg-slate-800 text-emerald-300 border-emerald-500/30'
-                    : 'bg-slate-100 text-slate-600 border-slate-200'
-                }`}>
-                  [F] • [ESC]
-                </span>
-              </div>
+            <div className="absolute top-2.5 sm:top-3.5 inset-x-2.5 sm:inset-x-4 z-50 flex items-center justify-between gap-2 pointer-events-none select-none">
+              {/* Left: Dynamic Mode Presentasi / Compact K3 Simulation Status Pill */}
+              {isEmergencyMode && floor === 1 ? (
+                <div
+                  role="status"
+                  aria-live="polite"
+                  className="pointer-events-auto flex items-center gap-1.5 sm:gap-2 min-w-0 h-9 sm:h-10 px-2.5 sm:px-3.5 rounded-xl sm:rounded-2xl backdrop-blur-md border bg-amber-500/90 dark:bg-amber-950/90 text-slate-950 dark:text-amber-100 border-amber-400/70 shadow-lg select-none"
+                  title="SIMULASI: Ini bukan keadaan darurat sebenarnya. Ikuti panah hijau menuju pintu keluar."
+                >
+                  <ShieldAlert className="w-4 h-4 text-amber-950 dark:text-amber-300 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-extrabold tracking-tight truncate">
+                    SIMULASI
+                    <span className="font-semibold hidden sm:inline"> · Bukan darurat, ikuti panah hijau</span>
+                    <span className="font-semibold sm:hidden"> · Ikuti panah hijau</span>
+                  </span>
+                </div>
+              ) : (
+                <div 
+                  className={`pointer-events-auto flex items-center gap-2 min-w-0 h-9 sm:h-10 px-3 sm:px-3.5 rounded-xl sm:rounded-2xl backdrop-blur-md border select-none ${
+                    effectiveIsDark
+                      ? 'bg-slate-900/90 text-white border-emerald-500/50 shadow-lg'
+                      : 'bg-white/88 text-slate-800 border-slate-200/90 shadow-[0_2px_8px_rgba(15,23,42,0.08)]'
+                  }`}
+                  title="Mode Presentasi Layar Lebar • Tekan [F] atau [ESC]"
+                >
+                  <span className="flex h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
+                  <span className="text-xs font-extrabold font-sans tracking-tight truncate">
+                    Mode Presentasi
+                  </span>
+                  <span className={`hidden lg:[@media(pointer:fine)]:inline text-[10px] font-mono px-1.5 py-0.5 rounded border shrink-0 ${
+                    effectiveIsDark
+                      ? 'bg-slate-800 text-emerald-300 border-emerald-500/30'
+                      : 'bg-slate-100 text-slate-600 border-slate-200'
+                  }`}>
+                    [F] • [ESC]
+                  </span>
+                </div>
+              )}
 
-              {/* Right: Actions Cluster (Theme Toggle & Keluar) with >= 44px touch targets on mobile */}
-              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              {/* Right: Compact Edge Actions Cluster (Emergency Toggle, Theme Toggle & Keluar) */}
+              <div className="pointer-events-auto flex items-center gap-1.5 sm:gap-2 shrink-0">
+                {/* Inline Emergency Simulation Control in Top HUD (No Overlapping Banner) */}
+                {floor === 1 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsEmergencyMode(prev => !prev);
+                    }}
+                    aria-pressed={isEmergencyMode}
+                    className={`h-9 sm:h-10 flex items-center justify-center gap-1.5 px-2.5 sm:px-3.5 rounded-xl sm:rounded-2xl border transition-all cursor-pointer active:scale-95 text-[11px] sm:text-xs font-extrabold shrink-0 ${
+                      isEmergencyMode
+                        ? 'bg-rose-600 hover:bg-rose-700 text-white border-rose-400 shadow-lg ring-2 ring-rose-400/35'
+                        : effectiveIsDark
+                        ? 'bg-slate-900/90 hover:bg-rose-950/90 text-rose-300 hover:text-rose-200 border-rose-500/40 shadow-lg'
+                        : 'bg-white/88 hover:bg-rose-50 text-rose-700 border-rose-200 shadow-[0_2px_8px_rgba(15,23,42,0.08)]'
+                    }`}
+                    title={isEmergencyMode ? 'Hentikan Simulasi Evakuasi Darurat' : 'Aktifkan Simulasi Jalur Evakuasi Darurat'}
+                    aria-label={isEmergencyMode ? 'Hentikan Simulasi Darurat' : 'Simulasi Darurat Jalur Evakuasi'}
+                  >
+                    <ShieldAlert className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${isEmergencyMode ? 'animate-pulse text-amber-200' : ''}`} />
+                    {isEmergencyMode ? (
+                      <>
+                        <span className="hidden sm:inline whitespace-nowrap">Hentikan Simulasi</span>
+                        <span className="sm:hidden whitespace-nowrap">Stop</span>
+                      </>
+                    ) : (
+                      <span className="hidden md:inline whitespace-nowrap">Simulasi Darurat</span>
+                    )}
+                  </button>
+                )}
 
                 {/* Theme Toggle Button in Fullscreen */}
                 <button
                   type="button"
                   onClick={() => setLocalIsDark(!effectiveIsDark)}
-                  className={`min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center gap-1.5 px-3 py-2 rounded-2xl border transition-all cursor-pointer active:scale-95 text-xs font-black ${
+                  className={`h-9 sm:h-10 min-w-[38px] flex items-center justify-center gap-1.5 px-2.5 sm:px-3 rounded-xl sm:rounded-2xl border transition-all cursor-pointer active:scale-95 text-xs font-extrabold ${
                     effectiveIsDark
-                      ? 'bg-slate-900/95 text-amber-300 border-slate-700 hover:bg-slate-800 shadow-2xl'
-                      : 'bg-white/85 text-slate-800 border-slate-200 hover:bg-slate-100 shadow-[0_2px_8px_rgba(15,23,42,0.10)]'
+                      ? 'bg-slate-900/90 text-amber-300 border-slate-700 hover:bg-slate-800 shadow-lg'
+                      : 'bg-white/88 text-slate-800 border-slate-200/90 hover:bg-slate-100 shadow-[0_2px_8px_rgba(15,23,42,0.08)]'
                   }`}
                   title={effectiveIsDark ? 'Beralih ke Tema Terang' : 'Beralih ke Tema Gelap'}
                   aria-label={effectiveIsDark ? 'Beralih ke Tema Terang' : 'Beralih ke Tema Gelap'}
                 >
-                  {effectiveIsDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
-                  <span className="hidden sm:inline">{effectiveIsDark ? 'Terang' : 'Gelap'}</span>
+                  {effectiveIsDark ? <Sun className="w-4 h-4 text-amber-400 shrink-0" /> : <Moon className="w-4 h-4 text-slate-700 shrink-0" />}
+                  <span className="hidden lg:inline">{effectiveIsDark ? 'Terang' : 'Gelap'}</span>
                 </button>
 
                 {/* Exit Fullscreen Button */}
@@ -3067,17 +3085,17 @@ function InteractiveFloorPlanComponent({
                       handleExitFullscreen();
                     }
                   }}
-                  className={`min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 rounded-2xl border transition-all cursor-pointer active:scale-95 text-xs font-black ${
+                  className={`h-9 sm:h-10 min-w-[38px] flex items-center justify-center gap-1.5 px-2.5 sm:px-3.5 rounded-xl sm:rounded-2xl border transition-all cursor-pointer active:scale-95 text-xs font-extrabold ${
                     effectiveIsDark
-                      ? 'bg-slate-900/95 hover:bg-rose-600 text-slate-100 hover:text-white border-slate-700 hover:border-rose-500 shadow-2xl'
-                      : 'bg-white/85 hover:bg-rose-50 text-slate-800 hover:text-rose-700 border-slate-200 hover:border-rose-300 shadow-[0_2px_8px_rgba(15,23,42,0.10)]'
+                      ? 'bg-slate-900/90 hover:bg-rose-600 text-slate-100 hover:text-white border-slate-700 hover:border-rose-500 shadow-lg'
+                      : 'bg-white/88 hover:bg-rose-50 text-slate-800 hover:text-rose-700 border-slate-200/90 hover:border-rose-300 shadow-[0_2px_8px_rgba(15,23,42,0.08)]'
                   }`}
                   title="Tutup Mode Layar Lebar (Esc)"
                   aria-label="Keluar Mode Layar Lebar"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-4 h-4 shrink-0" />
                   <span className="hidden sm:inline">Keluar</span>
-                  <span className={`hidden sm:[@media(pointer:fine)]:inline text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                  <span className={`hidden lg:[@media(pointer:fine)]:inline text-[10px] font-mono px-1.5 py-0.5 rounded ${
                     effectiveIsDark ? 'bg-black/40 text-rose-200' : 'bg-slate-100 text-slate-600'
                   }`}>ESC</span>
                 </button>
@@ -3087,10 +3105,10 @@ function InteractiveFloorPlanComponent({
 
           {/* Small floating Zoom controls on bottom-right of the fullscreen map */}
           {isFullscreen && (
-            <div className={`absolute bottom-4 right-4 z-50 flex items-center gap-1 p-1 rounded-2xl backdrop-blur-md select-none pointer-events-auto border ${
+            <div className={`absolute bottom-2.5 sm:bottom-3.5 right-2.5 sm:right-4 z-50 flex items-center gap-1 p-1 rounded-2xl backdrop-blur-md select-none pointer-events-auto border ${
               effectiveIsDark
-                ? 'bg-slate-900/95 text-white border-slate-700 shadow-2xl'
-                : 'bg-white/85 text-slate-800 border-slate-200 shadow-[0_2px_8px_rgba(15,23,42,0.10)]'
+                ? 'bg-slate-900/90 text-white border-slate-700 shadow-lg'
+                : 'bg-white/88 text-slate-800 border-slate-200/90 shadow-[0_2px_8px_rgba(15,23,42,0.08)]'
             }`}>
               <button
                 type="button"
@@ -3127,7 +3145,7 @@ function InteractiveFloorPlanComponent({
 
           {/* Bottom-left in Fullscreen: Filter & Legenda so user can filter in theater mode */}
           {isFullscreen && (
-            <div className="absolute bottom-4 left-4 z-50 pointer-events-auto select-none">
+            <div className="absolute bottom-2.5 sm:bottom-3.5 left-2.5 sm:left-4 z-50 pointer-events-auto select-none">
               <FloatingFloorPlanLegend
                 activeSector={activeSector}
                 onSelectSector={handleSectorFilterChange}
