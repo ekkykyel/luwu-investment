@@ -489,7 +489,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari nama layanan, instansi, atau dokumen (contoh: NIB, KTP, PBG, Paspor)..."
+              placeholder={t("mppRequirements.searchPlaceholder", "Cari nama layanan, instansi, atau dokumen (contoh: NIB, KTP, PBG, Paspor)...")}
               className="w-full pl-11 sm:pl-12 pr-3.5 sm:pr-4 py-3.5 text-sm rounded-2xl border bg-[#F4F0E6] focus:bg-[#FAF7F0] dark:bg-[#0D2338] border-[#E2DACB] dark:border-white/[0.10] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#0F6B4F]/30 dark:focus:ring-emerald-500/40 transition-all shadow-xs"
             />
           </div>
@@ -497,7 +497,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
           {/* Popular Filter Buttons (Wrapped Cleanly on Desktop, Horizontal Scroll on Mobile) */}
           <div className="flex sm:flex-wrap items-center sm:justify-center gap-2 overflow-x-auto sm:overflow-visible pb-1 scrollbar-none pt-0.5 touch-pan-x">
             <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold shrink-0 hidden sm:inline pr-1">
-              Layanan Populer:
+              {t("mppRequirements.popularLabel", "Layanan Populer:")}
             </span>
             {PILOT_SERVICE_REQUIREMENTS.map((srv) => {
               const isSelected = srv.id === selectedServiceId;
@@ -550,7 +550,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                     onClick={handleCheckAll}
                     className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline px-2 py-1 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors cursor-pointer"
                   >
-                    Centang Semua
+                    {t("mppRequirements.checkAll", "Centang Semua")}
                   </button>
                   <span className="text-[#D5CCB8] dark:text-slate-700">|</span>
                   <button 
@@ -558,7 +558,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                     onClick={handleResetCheck}
                     className="text-xs font-semibold text-slate-500 dark:text-slate-400 hover:underline px-2 py-1 rounded-lg hover:bg-[#ECE5D6] dark:hover:bg-slate-800 transition-colors cursor-pointer"
                   >
-                    Reset
+                    {t("mppRequirements.reset", "Reset")}
                   </button>
                 </div>
               </div>
@@ -567,7 +567,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
               <div className="space-y-2 px-3 py-3 sm:p-4 rounded-2xl bg-[#FAF7F0] dark:bg-[#143755] border border-[#E2DACB] dark:border-white/[0.06]">
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-medium">
                   <span className="text-slate-700 dark:text-slate-300">
-                    Progres Kesiapan: <strong className="text-emerald-600 dark:text-emerald-400 tabular-nums">{stats.completedCount} dari {stats.totalCount} siap</strong>
+                    {t("mppRequirements.progressLabel", "Progres Kesiapan:")} <strong className="text-emerald-600 dark:text-emerald-400 tabular-nums">{t("mppRequirements.readyProgress", "{{completed}} dari {{total}} siap", { completed: stats.completedCount, total: stats.totalCount })}</strong>
                   </span>
                   <span className="font-mono tabular-nums font-bold text-slate-900 dark:text-white">
                     {stats.percent}%
@@ -584,14 +584,14 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
 
                 <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[11px] text-slate-500 dark:text-slate-400 pt-0.5">
                   <span className="whitespace-nowrap font-medium text-slate-600 dark:text-slate-300 tabular-nums">
-                    Wajib: {stats.requiredCompletedCount}/{stats.requiredCount} berkas
+                    {t("mppRequirements.requiredSummary", "Wajib: {{completed}}/{{total}} berkas", { completed: stats.requiredCompletedCount, total: stats.requiredCount })}
                   </span>
                   {stats.isReadyForBooking ? (
                     <span className="text-emerald-600 dark:text-emerald-400 font-semibold inline-flex items-center gap-1">
-                      <Check className="w-3.5 h-3.5 shrink-0" /> Siap dilayani di loket
+                      <Check className="w-3.5 h-3.5 shrink-0" /> {t("mppRequirements.readyForBooking", "Siap dilayani di loket")}
                     </span>
                   ) : (
-                    <span>Lengkapi berkas bertanda titik emerald</span>
+                    <span>{t("mppRequirements.notReadyTip", "Lengkapi berkas bertanda titik emerald")}</span>
                   )}
                 </div>
               </div>
@@ -599,7 +599,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
               {/* Checklist Items */}
               <div className="space-y-2.5">
                 <div className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 pb-0.5 px-0.5">
-                  Daftar Berkas Persyaratan:
+                  {t("mppRequirements.docListHeader", "Daftar Berkas Persyaratan:")}
                 </div>
 
                 {activeService.documents.map((doc) => {
@@ -642,12 +642,12 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                             {doc.required ? (
                               <span className="sm:hidden inline-flex items-center gap-1 ml-2 align-baseline text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold whitespace-nowrap">
                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                                Wajib
+                                {t("mppRequirements.mandatory", "Wajib")}
                               </span>
                             ) : (
                               <span className="sm:hidden inline-flex items-center gap-1 ml-2 align-baseline text-[11px] text-slate-500 dark:text-slate-400 font-medium whitespace-nowrap">
                                 <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600 shrink-0" />
-                                Opsional
+                                {t("mppRequirements.optional", "Opsional")}
                               </span>
                             )}
                           </div>
@@ -656,12 +656,12 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                           {doc.required ? (
                             <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300 font-medium shrink-0 mt-0.5">
                               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                              Wajib
+                              {t("mppRequirements.mandatory", "Wajib")}
                             </span>
                           ) : (
                             <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500 font-medium shrink-0 mt-0.5">
                               <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600 shrink-0" />
-                              Opsional
+                              {t("mppRequirements.optional", "Opsional")}
                             </span>
                           )}
                         </div>
@@ -685,7 +685,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                             className="inline-flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-semibold hover:underline cursor-pointer text-left"
                           >
                             <Download className="w-3.5 h-3.5 shrink-0" />
-                            <span>Unduh Draf / Template ({doc.templateName})</span>
+                            <span>{t("mppRequirements.downloadDraft", "Unduh Draf / Template ({{filename}})", { filename: doc.templateName })}</span>
                           </button>
                         </div>
                       )}
@@ -699,7 +699,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                 <div className="px-3 py-3 sm:p-4 rounded-xl bg-[#FAF7F0] dark:bg-[#143755]/60 border border-[#E2DACB] dark:border-white/[0.06] space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
                   <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                     <BadgeCheck className="w-4 h-4 text-emerald-500 shrink-0" />
-                    Catatan Pelayanan Petugas:
+                    {t("mppRequirements.officerNotes", "Catatan Pelayanan Petugas:")}
                   </div>
                   <ul className="list-disc list-inside space-y-1 pl-0.5 sm:pl-1 text-slate-500 dark:text-slate-400 leading-relaxed">
                     {activeService.tips.map((tip, tIdx) => (
@@ -718,7 +718,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
             <div className="rounded-2xl sm:rounded-3xl px-3 py-4 sm:p-6 border bg-[#F4F0E6] dark:bg-[#0F2D4A] border-[#E2DACB] dark:border-white/[0.09] shadow-sm space-y-4 sm:space-y-5">
               <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#E2DACB] dark:border-white/[0.08]">
                 <h4 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
-                  Ringkasan Layanan
+                  {t("mppRequirements.summaryTitle", "Ringkasan Layanan")}
                 </h4>
                 <span className="text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-400">
                   {activeService.loket}
@@ -729,7 +729,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
               <div className="grid grid-cols-2 gap-2.5 sm:gap-3 text-xs">
                 <div className="p-2.5 sm:p-3 rounded-xl bg-[#FAF7F0] dark:bg-[#143755] border border-[#E2DACB] dark:border-white/[0.06] space-y-1">
                   <div className="text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5 shrink-0" /> Estimasi Waktu
+                    <Clock className="w-3.5 h-3.5 shrink-0" /> {t("mppRequirements.estTime", "Estimasi Waktu")}
                   </div>
                   <div className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm leading-snug">
                     {activeService.processingTime}
@@ -738,7 +738,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
 
                 <div className="p-2.5 sm:p-3 rounded-xl bg-[#FAF7F0] dark:bg-[#143755] border border-[#E2DACB] dark:border-white/[0.06] space-y-1">
                   <div className="text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                    <Building2 className="w-3.5 h-3.5 shrink-0" /> Biaya Resmi
+                    <Building2 className="w-3.5 h-3.5 shrink-0" /> {t("mppRequirements.officialCost", "Biaya Resmi")}
                   </div>
                   <div className="font-bold text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm leading-snug">
                     {activeService.officialCost}
@@ -758,7 +758,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                   }`}
                 >
                   <Ticket className="w-4 h-4 shrink-0" />
-                  <span>Ambil Antrean Sekarang</span>
+                  <span>{t("mppRequirements.takeQueueNow", "Ambil Antrean Sekarang")}</span>
                   <ChevronRight className="w-4 h-4 shrink-0" />
                 </button>
 
@@ -768,12 +768,12 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                   className="w-full min-h-[44px] py-3 px-3.5 rounded-xl font-semibold text-xs border border-emerald-600/40 dark:border-emerald-500/35 bg-emerald-50/70 dark:bg-emerald-950/40 hover:bg-emerald-100/80 dark:hover:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 shadow-xs hover:shadow-emerald-900/25"
                 >
                   <MessageCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                  <span>Kirim Checklist ke WhatsApp (Simpan di Ponsel)</span>
+                  <span>{t("mppRequirements.sendToWa", "Kirim Checklist ke WhatsApp (Simpan di Ponsel)")}</span>
                 </button>
               </div>
 
               <p className="text-[11px] text-slate-500 dark:text-slate-400 text-center leading-relaxed">
-                Checklist otomatis tersimpan rapi di WhatsApp Anda agar berkas tidak tercecer saat tiba di gedung MPP.
+                {t("mppRequirements.deviceNotice", "Checklist otomatis tersimpan rapi di WhatsApp Anda agar berkas tidak tercecer saat tiba di gedung MPP.")}
               </p>
             </div>
 
@@ -785,18 +785,18 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                 <div className="flex items-center gap-2">
                   <FileText className="w-4 h-4 text-[#0F6B4F] dark:text-emerald-400 shrink-0" />
                   <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                    Format Blangko & Panduan Berkas
+                    {t("mppRequirements.formsTitle", "Format Blangko & Panduan Berkas")}
                   </h4>
                 </div>
                 <span className="text-[11px] font-semibold text-[#855A14] dark:text-[#E2C475]">
-                  Resmi Pemkab Luwu
+                  {t("mppRequirements.officialTag", "Resmi Pemkab Luwu")}
                 </span>
               </div>
 
               {/* Daftar Blangko Formulir yang Siap Diunduh */}
               <div className="space-y-2">
                 <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                  Template Formulir Layanan:
+                  {t("mppRequirements.templatesSubheader", "Template Formulir Layanan:")}
                 </div>
                 
                 {availableTemplates.map((tpl, tIdx) => (
@@ -820,7 +820,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                       className="min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0F6B4F] hover:bg-[#0B543E] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white flex items-center gap-1.5 transition-all cursor-pointer shrink-0 shadow-xs active:scale-95"
                     >
                       <Download className="w-3.5 h-3.5 shrink-0" />
-                      <span>Unduh</span>
+                      <span>{t("mppRequirements.downloadBtn", "Unduh")}</span>
                     </button>
                   </div>
                 ))}
@@ -830,25 +830,25 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
               <div className="pt-2 border-t border-[#E2DACB] dark:border-white/[0.06] space-y-2">
                 <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#0F6B4F] dark:text-emerald-400 shrink-0" />
-                  Alur 3 Langkah di Gedung MPP:
+                  {t("mppRequirements.stepsTitle", "Alur 3 Langkah di Gedung MPP:")}
                 </div>
                 <div className="grid grid-cols-1 gap-2 text-xs">
                   <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-[#FAF7F0] dark:bg-[#132E48]/60 border border-[#E2DACB] dark:border-transparent">
                     <span className="w-5 h-5 rounded-full bg-[#0F6B4F]/15 text-[#0F6B4F] dark:text-emerald-300 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">1</span>
                     <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
-                      <strong>Validasi Front Office:</strong> Tunjukkan checklist ini kepada petugas resepsionis di lantai 1 untuk verifikasi kelengkapan awal.
+                      <strong>{t("mppRequirements.step1Title", "Validasi Front Office")}:</strong> {t("mppRequirements.step1Desc", "Tunjukkan checklist ini kepada petugas resepsionis di lantai 1 untuk verifikasi kelengkapan awal.")}
                     </p>
                   </div>
                   <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-[#FAF7F0] dark:bg-[#132E48]/60 border border-[#E2DACB] dark:border-transparent">
                     <span className="w-5 h-5 rounded-full bg-[#0F6B4F]/15 text-[#0F6B4F] dark:text-emerald-300 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">2</span>
                     <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
-                      <strong>Pelayanan di {activeService.loket}:</strong> Petugas {activeService.agency} memproses berkas Anda tanpa calo dan bebas biaya liar.
+                      <strong>{t("mppRequirements.step2Title", "Pelayanan di {{loket}}", { loket: activeService.loket })}:</strong> {t("mppRequirements.step2Desc", "Petugas {{agency}} memproses berkas Anda tanpa calo dan bebas biaya liar.", { agency: activeService.agency })}
                     </p>
                   </div>
                   <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-[#FAF7F0] dark:bg-[#132E48]/60 border border-[#E2DACB] dark:border-transparent">
                     <span className="w-5 h-5 rounded-full bg-[#0F6B4F]/15 text-[#0F6B4F] dark:text-emerald-300 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">3</span>
                     <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
-                      <strong>Penerbitan & SK:</strong> Dokumen fisik diserahkan atau diterbitkan digital dalam estimasi {activeService.processingTime}.
+                      <strong>{t("mppRequirements.step3Title", "Penerbitan & SK")}:</strong> {t("mppRequirements.step3Desc", "Dokumen fisik diserahkan atau diterbitkan digital dalam estimasi {{time}}.", { time: activeService.processingTime })}
                     </p>
                   </div>
                 </div>
@@ -863,10 +863,10 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                     </div>
                     <div className="min-w-0">
                       <h5 className="text-xs font-bold text-slate-900 dark:text-white leading-tight">
-                        Butuh Konsultasi Persyaratan?
+                        {t("mppRequirements.needAssistant", "Butuh Konsultasi Persyaratan?")}
                       </h5>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
-                        Tanyakan via Asisten Suara & Panduan MPP
+                        {t("mppRequirements.askAssistant", "Tanyakan via Asisten Suara & Panduan MPP")}
                       </p>
                     </div>
                   </div>
@@ -877,7 +877,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                     }}
                     className="min-h-[36px] py-2 px-3 rounded-lg border border-[#E2DACB] dark:border-emerald-400/30 bg-[#F4F0E6] dark:bg-[#0D2338] hover:bg-[#0F6B4F] hover:text-white hover:border-[#0F6B4F] dark:hover:bg-emerald-600 text-[#0F6B4F] dark:text-emerald-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 active:scale-98"
                   >
-                    <span>Tanya</span>
+                    <span>{t("mppRequirements.openAssistantBtn", "Tanya")}</span>
                     <ArrowRight className="w-3.5 h-3.5 shrink-0" />
                   </button>
                 </div>
