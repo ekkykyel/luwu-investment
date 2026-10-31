@@ -42,7 +42,7 @@ import {
   AlertCircle,
   Zap,
   Filter
-, Users, Plus, PlusCircle, Globe, Info, CheckCircle, Database, Download, FileDown, Settings, BarChart3, BookOpen, Scale, Lightbulb, FileCheck, BookDown, Printer} from 'lucide-react';
+, Users, Plus, PlusCircle, Globe, Info, CheckCircle, Database, Download, FileDown, Settings, BarChart3, BookOpen, Scale, Lightbulb, FileCheck, BookDown, Printer, Coins} from 'lucide-react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid, ReferenceLine, Legend } from 'recharts';
 import Swal from 'sweetalert2';
 import { supabase } from '../../lib/supabaseClient';
@@ -93,6 +93,7 @@ import EstafetProgressBanner from './EstafetProgressBanner';
 import AdminLayout from '../Admin/AdminLayout';
 import AdminUserManagement from '../Admin/Views/AdminUserManagement';
 import { GRPArchitectureModal } from '../mpp/GRPArchitectureModal';
+import { AdminKpbuManager } from './AdminKpbuManager';
 import SmartInvestmentFormEngine from '../SmartInvestmentFormEngine';
 import TataRuangInvestasi from '../Admin/Views/TataRuangInvestasi';
 import UploadGeoJsonPanel from '../UploadGeoJsonPanel';
@@ -2269,6 +2270,7 @@ Ulas secara mendalam:
                 : activeTab === 'spatial_analytics' ? 'Analitik & Laporan Spasial'
                 : activeTab === 'puptr_spatial_editor' || activeTab === 'spatial_editor' ? 'Editor Spasial Tata Ruang (PUPTR & PostGIS)'
                 : activeTab === 'gis_spatial' ? 'Kelola GIS Spasial'
+                : activeTab === 'manage_kpbu' ? 'Proyek KPBU & Insentif (Bidang Perencanaan & Data)'
                 : activeTab === 'simulation' ? 'Kalkulasi Dampak & ROI'
                 : activeTab === 'verify' ? 'Verifikasi & Perizinan'
                 : 'Ringkasan Utama'
@@ -3108,7 +3110,7 @@ Ulas secara mendalam:
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 flex-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 flex-1">
                   <button
                     type="button"
                     onClick={() => setActiveTab('gis_spatial')}
@@ -3123,6 +3125,20 @@ Ulas secara mendalam:
                     </div>
                   </button>
                   
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('manage_kpbu')}
+                    className="p-4 text-left rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors flex flex-col justify-between group cursor-pointer"
+                  >
+                    <div>
+                      <div className="p-2 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg w-fit mb-3 group-hover:scale-110 transition-transform">
+                        <Coins size={18} />
+                      </div>
+                      <h4 className="text-sm font-extrabold text-slate-900 dark:text-white mb-1">Proyek KPBU & Insentif</h4>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed">Kelola pipeline proyek pembiayaan kreatif dan paket insentif pajak.</p>
+                    </div>
+                  </button>
+
                   <button
                     type="button"
                     onClick={() => setActiveTab('spatial_analytics')}
@@ -4745,6 +4761,8 @@ Ulas secara mendalam:
               )}
             </div>
           </div>
+        ) : activeTab === 'manage_kpbu' ? (
+          <AdminKpbuManager isDark={isDark} />
         ) : ['pengaduan', 'pengawasan', 'fasilitasi', 'laporan', 'field_inspection'].includes(activeTab) ? (
           <DalakWorkspaceView activeTab={activeTab} setActiveTab={setActiveTab} investments={investments} districts={districts} onSelectInvestment={setSelectedInvestmentId} />
         ) : activeTab === 'komoditas' ? (

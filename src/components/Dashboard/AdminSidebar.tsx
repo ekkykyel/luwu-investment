@@ -7,6 +7,7 @@ import {
   TrendingUp,
   Map,
   Layers,
+  Coins,
   CheckCircle2,
   MapPin,
   MessageSquare,
@@ -79,6 +80,7 @@ export const getActiveMenuLabel = (tabId: string, role: string): string => {
     investor_pipeline: 'Alur Estafet 4 Bidang',
     loi_verify: 'Tiket Minat (LoI)',
     manage_potential: 'Potensi Investasi',
+    manage_kpbu: 'Proyek KPBU & Insentif',
     pengaduan: 'Pengaduan Masyarakat',
     pengawasan: 'Pengawasan & Kepatuhan',
     fasilitasi: 'Fasilitasi & Mediasi',
@@ -149,6 +151,7 @@ export const getMenusByRole = (role: string): MenuGroup[] => {
     {
       group: 'Manajemen Spasial & Finansial',
       items: [
+        { id: 'manage_kpbu', name: 'Proyek KPBU & Insentif', icon: Coins },
         { id: 'puptr_spatial_editor', name: 'Editor Spasial Tata Ruang', icon: Layers, badge: 'PostGIS' },
         { id: 'spatial_analytics', name: 'Analitik & Laporan Spasial', icon: TrendingUp },
         { id: 'gis_spatial', name: 'Kelola GIS Spasial', icon: Map },
@@ -186,7 +189,7 @@ export const getMenusByRole = (role: string): MenuGroup[] => {
     admin_pertanian: ['overview', 'verifikasi_pertanian', 'pertanian_lp2b_catalog', 'puptr_spatial_editor', 'pkkpr_sync_monitor', 'gis_spatial', 'spatial_analytics', 'pertanian_archive', 'pertanian_settings'],
     admin_bpn: ['overview', 'verifikasi_bpn', 'puptr_spatial_editor', 'pkkpr_sync_monitor', 'gis_spatial', 'spatial_analytics'],
     admin_oss: ['overview_perizinan', 'oss_pkkpr_issuance', 'verifikasi_bpn', 'investor_pipeline', 'puptr_spatial_editor', 'pkkpr_sync_monitor', 'realisasi_nib', 'spatial_analytics', 'oss_sk_archive', 'oss_settings'],
-    admin_data: ['overview', 'investor_pipeline', 'pkkpr_sync_monitor', 'puptr_spatial_editor', 'spatial_analytics', 'gis_spatial', 'simulation'],
+    admin_data: ['overview', 'investor_pipeline', 'manage_kpbu', 'pkkpr_sync_monitor', 'puptr_spatial_editor', 'spatial_analytics', 'gis_spatial', 'simulation'],
   };
 
   const allowedIds = allowedIdsByRole[matchedRole] || ['overview', 'puptr_spatial_editor', 'gis_spatial', 'spatial_analytics'];

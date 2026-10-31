@@ -8128,20 +8128,93 @@ app.get("/api/site-settings", async (req, res) => {
   }
 });
 
-// KPBU Projects SSOT API Endpoint
+// KPBU Projects SSOT API Endpoints
 app.get("/api/kpbu/projects", async (req, res) => {
   try {
-    const { data, error } = await supabase
-      .from("kpbu_projects")
-      .select("*")
-      .eq("is_active", true)
-      .order("urutan", { ascending: true });
-
+    const isAll = req.query.all === 'true';
+    let query = supabase.from("kpbu_projects").select("*").order("urutan", { ascending: true });
+    if (!isAll) {
+      query = query.eq("is_active", true);
+    }
+    const { data, error } = await query;
     if (error) throw error;
     res.json({ data: data || [] });
   } catch (err: any) {
     console.error("Error at GET /api/kpbu/projects:", err?.message || err);
     res.status(500).json({ data: [], error: "Gagal mengambil data KPBU" });
+  }
+});
+
+app.post("/api/kpbu/projects", async (req, res) => {
+  try {
+    const { nama_proyek, sektor, estimasi_capex, estimasi_capex_label, skema, status_tahap, fasilitas, urutan, is_active } = req.body || {};
+    if (!nama_proyek) {
+      return res.status(400).json({ error: "nama_proyek wajib diisi" });
+    }
+    const { data, error } = await supabase
+      .from("kpbu_projects")
+      .insert([{
+        nama_proyek,
+        sektor: sektor || "Lainnya",
+        estimasi_capex: Number(estimasi_capex) || 0,
+        estimasi_capex_label: estimasi_capex_label || "Rp 0",
+        skema: skema || "KPBU",
+        status_tahap: status_tahap || "Tahap Penyiapan OBC",
+        fasilitas: Array.isArray(fasilitas) ? fasilitas : [],
+        urutan: Number(urutan) || 1,
+        is_active: is_active ?? true,
+        updated_at: new Date().toISOString()
+      }])
+      .select();
+
+    if (error) throw error;
+    res.status(201).json({ data: data?.[0] });
+  } catch (err: any) {
+    console.error("Error at POST /api/kpbu/projects:", err?.message || err);
+    res.status(500).json({ error: err?.message || "Gagal menambahkan proyek KPBU" });
+  }
+});
+
+app.put("/api/kpbu/projects/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData: Record<string, any> = {
+      updated_at: new Date().toISOString()
+    };
+    const allowedFields = ['nama_proyek', 'sektor', 'estimasi_capex', 'estimasi_capex_label', 'skema', 'status_tahap', 'fasilitas', 'urutan', 'is_active'];
+    for (const field of allowedFields) {
+      if (req.body?.[field] !== undefined) {
+        updateData[field] = req.body[field];
+      }
+    }
+
+    const { data, error } = await supabase
+      .from("kpbu_projects")
+      .update(updateData)
+      .eq("id", id)
+      .select();
+
+    if (error) throw error;
+    res.json({ data: data?.[0] });
+  } catch (err: any) {
+    console.error("Error at PUT /api/kpbu/projects:", err?.message || err);
+    res.status(500).json({ error: err?.message || "Gagal memperbarui proyek KPBU" });
+  }
+});
+
+app.delete("/api/kpbu/projects/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { error } = await supabase
+      .from("kpbu_projects")
+      .delete()
+      .eq("id", id);
+
+    if (error) throw error;
+    res.json({ success: true, message: "Proyek berhasil dihapus" });
+  } catch (err: any) {
+    console.error("Error at DELETE /api/kpbu/projects:", err?.message || err);
+    res.status(500).json({ error: err?.message || "Gagal menghapus proyek KPBU" });
   }
 });
 
@@ -8177,6 +8250,33 @@ app.get("/api/kpbu/incentives", async (req, res) => {
     res.status(500).json({ data: [], config: {}, error: "Gagal mengambil data insentif" });
   }
 });
+
+app.put("/api/kpbu/incentives/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nama_insentif, nilai_display, satuan, kategori, regulasi, deskripsi, is_active } = req.body || {};
+    const { data, error } = await supabase
+      .from("investment_incentives")
+      .update({
+        nama_insentif,
+        nilai_display,
+        satuan,
+        kategori,
+        regulasi,
+        deskripsi,
+        is_active
+      })
+      .eq("id", id)
+      .select();
+
+    if (error) throw error;
+    res.json({ data: data?.[0] });
+  } catch (err: any) {
+    console.error("Error at PUT /api/kpbu/incentives:", err?.message || err);
+    res.status(500).json({ error: err?.message || "Gagal memperbarui insentif" });
+  }
+});
+
 
 
 app.post("/api/site-settings", async (req, res) => {
