@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Coins,
   ShieldCheck,
@@ -15,8 +15,52 @@ import {
   Calendar,
   Building,
   MessageSquare,
+  type LucideIcon,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+
+const SECTOR_ICON_MAP: Record<string, { 
+  icon: LucideIcon; 
+  iconColor: string; 
+  iconBg: string;
+  statusColor: string;
+  dotColor: string;
+  accentColor: string;
+}> = {
+  "Air Minum & Utilitas Industri": {
+    icon: Droplets,
+    iconColor: "text-sky-500 dark:text-sky-400",
+    iconBg: "bg-sky-500/10 border-sky-500/20",
+    statusColor: "bg-amber-100 dark:bg-amber-950/80 text-amber-950 dark:text-amber-300 border-amber-300 dark:border-amber-500/30",
+    dotColor: "bg-amber-500",
+    accentColor: "",
+  },
+  "Logistik & Maritim": {
+    icon: Warehouse,
+    iconColor: "text-emerald-600 dark:text-emerald-400",
+    iconBg: "bg-emerald-500/10 border-emerald-500/20",
+    statusColor: "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-950 dark:text-emerald-300 border-emerald-300 dark:border-emerald-500/30",
+    dotColor: "bg-emerald-500",
+    accentColor: "",
+  },
+  "Aviasi & Multimoda": {
+    icon: Plane,
+    iconColor: "text-amber-600 dark:text-amber-400",
+    iconBg: "bg-amber-500/10 border-amber-500/20",
+    statusColor: "bg-teal-100 dark:bg-teal-950/80 text-teal-950 dark:text-teal-300 border-teal-300 dark:border-teal-500/30",
+    dotColor: "bg-teal-500",
+    accentColor: "",
+  },
+};
+
+const INCENTIVE_ICON_MAP: Record<string, {
+  icon: LucideIcon;
+  accentColor: string;
+}> = {
+  "Perda Luwu No. 2/2021": { icon: Building, accentColor: "from-amber-500 to-orange-500" },
+  "Insentif Pajak Daerah":  { icon: Calendar, accentColor: "from-emerald-500 to-teal-500" },
+  "Kementerian Keuangan RI": { icon: BadgePercent, accentColor: "from-sky-500 to-blue-500" },
+};
 
 interface FinancingKpbuSectionProps {
   isDark?: boolean;
@@ -31,88 +75,103 @@ export default function FinancingKpbuSection({
 }: FinancingKpbuSectionProps) {
   const { t } = useTranslation();
 
-  const kpbuProjects = [
-    {
-      title: t("kpbu.p1Title", "SPAM Regional & Distribusi Air Bersih KIB"),
-      sector: t("kpbu.p1Sector", "Air Minum & Utilitas Industri"),
-      icon: Droplets,
-      iconColor: "text-sky-500 dark:text-sky-400",
-      iconBg: "bg-sky-500/10 border-sky-500/20",
-      scheme: t("kpbu.p1Scheme", "KPBU - User Charge / Availability Payment"),
-      estCapex: "Rp 185 Miliar",
-      status: t("kpbu.p1Status", "Tahap Penyiapan OBC"),
-      statusColor: "bg-amber-100 dark:bg-amber-950/80 text-amber-950 dark:text-amber-300 border-amber-300 dark:border-amber-500/30",
-      dotColor: "bg-amber-500",
-      desc: t("kpbu.p1Desc", "Pembangunan jaringan intake dan instalasi pengolahan air bersih Sungai Suso untuk menyuplai Kawasan Industri Bua dan pemukiman sekitar."),
-      support: t("kpbu.p1Support", "Dukungan Kelayakan VGF & PDF Kementerian Keuangan"),
-    },
-    {
-      title: t("kpbu.p2Title", "Pergudangan Modern & Cold Chain Pelabuhan Ulo-Ulo"),
-      sector: t("kpbu.p2Sector", "Logistik & Maritim"),
-      icon: Warehouse,
+  const [rawProjects, setRawProjects] = useState<any[]>([]);
+  const [rawIncentives, setRawIncentives] = useState<any[]>([]);
+  const [kpbuConfig, setKpbuConfig] = useState<Record<string, any>>({});
+  const [, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [projRes, incRes] = await Promise.all([
+          fetch('/api/kpbu/projects').catch(() => null),
+          fetch('/api/kpbu/incentives').catch(() => null),
+        ]);
+
+        if (projRes && projRes.ok) {
+          const json = await projRes.json().catch(() => null);
+          if (isMounted && json && Array.isArray(json.data)) {
+            setRawProjects(json.data);
+          }
+        }
+
+        if (incRes && incRes.ok) {
+          const json = await incRes.json().catch(() => null);
+          if (isMounted && json) {
+            if (Array.isArray(json.data)) {
+              setRawIncentives(json.data);
+            }
+            if (json.config && typeof json.config === 'object') {
+              setKpbuConfig(json.config);
+            }
+          }
+        }
+      } catch (e) {
+        // Honest fallback: remains empty array
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const kpbuProjects = rawProjects.map((p) => {
+    const meta = SECTOR_ICON_MAP[p.sektor] || {
+      icon: Building2,
       iconColor: "text-emerald-600 dark:text-emerald-400",
       iconBg: "bg-emerald-500/10 border-emerald-500/20",
-      scheme: t("kpbu.p2Scheme", "KPBU Bangun-Guna-Serah (BGS / BOT)"),
-      estCapex: "Rp 120 Miliar",
-      status: t("kpbu.p2Status", "IPRO Siap Tawar"),
       statusColor: "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-950 dark:text-emerald-300 border-emerald-300 dark:border-emerald-500/30",
       dotColor: "bg-emerald-500",
-      desc: t("kpbu.p2Desc", "Fasilitas cold storage kapasitas 1.500 ton untuk komoditas perikanan Teluk Bone dan logistik hasil perkebunan kakao/kopi Luwu."),
-      support: t("kpbu.p2Support", "Penjaminan Infrastruktur PT PII & Fasilitasi Lahan HPL"),
-    },
-    {
-      title: t("kpbu.p3Title", "Pusat Logistik Berikat & Terminal Kargo Bandara Bua"),
-      sector: t("kpbu.p3Sector", "Aviasi & Multimoda"),
-      icon: Plane,
-      iconColor: "text-amber-600 dark:text-amber-400",
-      iconBg: "bg-amber-500/10 border-amber-500/20",
-      scheme: t("kpbu.p3Scheme", "Kemitraan Swasta - BUMD Luwu"),
-      estCapex: "Rp 95 Miliar",
-      status: t("kpbu.p3Status", "FS Tersedia"),
-      statusColor: "bg-teal-100 dark:bg-teal-950/80 text-teal-950 dark:text-teal-300 border-teal-300 dark:border-teal-500/30",
-      dotColor: "bg-teal-500",
-      desc: t("kpbu.p3Desc", "Terminal kargo udara dan hub transit distribusi komoditas bernilai tinggi ke wilayah timur dan barat Indonesia."),
-      support: t("kpbu.p3Support", "Keringanan Pajak Daerah PBB-P2 5 Tahun Pertama"),
-    },
-  ];
+      accentColor: "",
+    };
 
-  const fiscalIncentives = [
-    {
-      badge: t("kpbu.f1Badge", "Perda Luwu No. 2/2021"),
-      title: t("kpbu.f1Title", "Pembebasan Retribusi PBG"),
-      metric: "50%",
-      metricUnit: t("kpbu.f1Unit", "Pengurangan"),
-      icon: Building,
+    return {
+      title: p.nama_proyek,
+      sector: p.sektor,
+      icon: meta.icon,
+      iconColor: meta.iconColor,
+      iconBg: meta.iconBg,
+      scheme: p.skema,
+      estCapex: p.estimasi_capex_label,
+      status: p.status_tahap || p.status_ipro || "",
+      statusColor: meta.statusColor,
+      dotColor: meta.dotColor,
+      desc: p.deskripsi || p.nama_proyek,
+      support: Array.isArray(p.fasilitas) && p.fasilitas.length > 0 ? p.fasilitas[0] : "",
+    };
+  });
+
+  const fiscalIncentives = rawIncentives.map((inc) => {
+    const meta = INCENTIVE_ICON_MAP[inc.regulasi] || INCENTIVE_ICON_MAP[inc.kategori] || {
+      icon: Award,
       accentColor: "from-amber-500 to-orange-500",
-      desc: t("kpbu.f1Desc", "Keringanan biaya persetujuan bangunan gedung untuk pabrik pengolahan hilirisasi dan fasilitas industri baru."),
-    },
-    {
-      badge: t("kpbu.f2Badge", "Insentif Pajak Daerah"),
-      title: t("kpbu.f2Title", "Keringanan PBB-P2 Konstruksi"),
-      metric: "5 Th",
-      metricUnit: t("kpbu.f2Unit", "Masa Bebas Pajak"),
-      icon: Calendar,
-      accentColor: "from-emerald-500 to-teal-500",
-      desc: t("kpbu.f2Desc", "Tarif pajak bumi dan bangunan nol persen atau terdiskon selama masa konstruksi fisik fasilitas berlangsung."),
-    },
-    {
-      badge: t("kpbu.f3Badge", "Kementerian Keuangan RI"),
-      title: t("kpbu.f3Title", "Fasilitas Tax Holiday & Allowance"),
-      metric: "100%",
-      metricUnit: t("kpbu.f3Unit", "PPh Badan"),
-      icon: BadgePercent,
-      accentColor: "from-sky-500 to-blue-500",
-      desc: t("kpbu.f3Desc", "Fasilitasi usulan penanaman modal pionir dan hilirisasi strategis ke BKPM RI dan Direktorat Jenderal Pajak."),
-    },
-  ];
+    };
 
-  const institutionalPartners = [
-    { name: "Kementerian Keuangan RI", role: "Fasilitas VGF & PDF" },
-    { name: "PT Penjaminan Infrastruktur Indonesia (PII)", role: "Penjaminan Risiko Proyek" },
-    { name: "PT SMI (Persero)", role: "Pembiayaan Pembangunan" },
-    { name: "LKPP", role: "Standarisasi Pengadaan Badan Usaha" },
-    { name: "Bank Sulselbar", role: "Sindikasi Finansial Daerah" },
-  ];
+    return {
+      badge: inc.regulasi || inc.kategori,
+      title: inc.nama_insentif,
+      metric: inc.nilai_display,
+      metricUnit: inc.satuan,
+      icon: meta.icon,
+      accentColor: meta.accentColor,
+      desc: inc.deskripsi,
+    };
+  });
+
+  const institutionalPartners: Array<{ name: string; role: string }> = Array.isArray(kpbuConfig.institutional_partners)
+    ? kpbuConfig.institutional_partners.map((p: any) => ({
+        name: p.nama || p.name || "",
+        role: p.peran || p.role || "",
+      }))
+    : [];
 
   return (
     <div
