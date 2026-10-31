@@ -2416,10 +2416,7 @@ app.get("/api/health", (req, res) => {
   res.setHeader("Content-Type", "application/json");
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
 
-  const supabaseUrl = process.env.SUPABASE_URL || 
-                      process.env.VITE_SUPABASE_URL || 
-                      process.env.NEXT_PUBLIC_SUPABASE_URL || 
-                      SUPABASE_URL || '';
+  const supabaseUrl = SUPABASE_URL;
 
   const supabaseKey = process.env.SUPABASE_SERVICE_KEY || 
                       process.env.SUPABASE_SERVICE_ROLE_KEY || 

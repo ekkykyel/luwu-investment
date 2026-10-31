@@ -4,6 +4,20 @@ import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
+function getCleanSupabaseUrl(): string {
+  const raw = (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "").trim();
+  if (!raw || raw.includes("svxugvxchjsjuyfeddor") || raw.includes("placeholder")) {
+    return "https://yeezhpdgafbefwipmldl.supabase.co";
+  }
+  if (raw.startsWith("postgres://") || raw.startsWith("postgresql://") || raw.includes("@") || raw.includes("pooler.supabase.com")) {
+    const match = raw.match(/postgres(?:ql)?:\/\/(?:postgres\.([a-z0-9_-]+)|([^:@/]+))(?::[^@]*)?@/i);
+    const projectRef = match?.[1] || (match?.[2] && match[2] !== "postgres" ? match[2] : "yeezhpdgafbefwipmldl");
+    return `https://${projectRef}.supabase.co`;
+  }
+  return raw.replace(/\/+$/, "");
+}
+const cleanSupabaseUrl = getCleanSupabaseUrl();
+
 export default defineConfig(() => {
   return {
     base: '/',
@@ -89,9 +103,10 @@ export default defineConfig(() => {
       })
     ],
     define: {
-      'process.env.NEXT_PUBLIC_SUPABASE_URL': JSON.stringify(process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "https://yeezhpdgafbefwipmldl.supabase.co"),
+      'process.env.NEXT_PUBLIC_SUPABASE_URL': JSON.stringify(cleanSupabaseUrl),
+      'process.env.VITE_SUPABASE_URL': JSON.stringify(cleanSupabaseUrl),
+      'process.env.SUPABASE_URL': JSON.stringify(cleanSupabaseUrl),
       'process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY': JSON.stringify(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || "sb_publishable_nycP7MydQUR1hT7lOCRD5w_HCdldhgN"),
-      'process.env.SUPABASE_URL': JSON.stringify(process.env.SUPABASE_URL || "https://yeezhpdgafbefwipmldl.supabase.co"),
       'process.env.SUPABASE_ANON_KEY': JSON.stringify(process.env.SUPABASE_ANON_KEY || "sb_publishable_nycP7MydQUR1hT7lOCRD5w_HCdldhgN"),
       'process.env.SUPABASE_PUBLISHABLE_KEY': JSON.stringify(process.env.SUPABASE_PUBLISHABLE_KEY || "sb_publishable_nycP7MydQUR1hT7lOCRD5w_HCdldhgN"),
     },
