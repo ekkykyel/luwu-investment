@@ -62,7 +62,7 @@ export const Footer: React.FC<FooterProps> = ({
     <footer className={`relative w-full font-sans transition-colors duration-300 ${
       isDark
         ? 'bg-[#06130F] text-[#B9C4BC] border-t border-[rgba(201,162,75,0.25)]'
-        : 'bg-[#FAF7F0] text-[#4A5A52] border-t border-[rgba(160,122,40,0.22)] shadow-sm'
+        : 'bg-[#F4F0E6] text-[#4A5A52] border-t border-[#E2DACB] shadow-sm'
     } ${className}`}>
       {/* Subtle Gold Top Accent Line */}
       <div className={`h-[1px] w-full ${
@@ -261,7 +261,7 @@ export const Footer: React.FC<FooterProps> = ({
       <div className={`border-t ${
         isDark
           ? 'border-[rgba(201,162,75,0.20)] bg-[#08201A] text-[#B9C4BC]'
-          : 'border-[rgba(160,122,40,0.18)] bg-[#F3EEDF] text-[#4A5A52]'
+          : 'border-[#E2DACB] bg-[#F4F0E6] text-[#4A5A52]'
       }`}>
         <div className="container mx-auto px-6 py-4 max-w-7xl flex flex-col md:flex-row items-center justify-between text-xs gap-3">
           {/* Left Copyright */}

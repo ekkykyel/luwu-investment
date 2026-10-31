@@ -5575,6 +5575,45 @@ export default function PortalMPP() {
                     <li>
                       <a 
                         className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200 cursor-pointer" 
+                        href="/mpp/tentang"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate('/mpp/tentang');
+                        }}
+                      >
+                        <span className="truncate">Profil &amp; Tentang MPP</span>
+                        <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
+                      </a>
+                    </li>
+                    <li>
+                      <a 
+                        className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200 cursor-pointer" 
+                        href="/mpp/struktur-organisasi"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate('/mpp/struktur-organisasi');
+                        }}
+                      >
+                        <span className="truncate">Struktur Organisasi</span>
+                        <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
+                      </a>
+                    </li>
+                    <li>
+                      <a 
+                        className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200 cursor-pointer" 
+                        href="/mpp/maklumat-pelayanan"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate('/mpp/maklumat-pelayanan');
+                        }}
+                      >
+                        <span className="truncate">Maklumat Pelayanan</span>
+                        <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
+                      </a>
+                    </li>
+                    <li>
+                      <a 
+                        className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200 cursor-pointer" 
                         href="#hero"
                         onClick={(e) => {
                           e.preventDefault();
@@ -5608,32 +5647,6 @@ export default function PortalMPP() {
                         }}
                       >
                         <span className="truncate">{t("mppPortal.instansi.title")}</span>
-                        <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
-                      </a>
-                    </li>
-                    <li>
-                      <a 
-                        className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200 cursor-pointer" 
-                        href="#maklumat-pelayanan-sla"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          navigateToMppSection('maklumat-pelayanan-sla');
-                        }}
-                      >
-                        <span className="truncate">Maklumat &amp; SLA</span>
-                        <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
-                      </a>
-                    </li>
-                    <li>
-                      <a 
-                        className="group flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 active:scale-98 transition-all duration-200 cursor-pointer" 
-                        href="#statistik"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          navigateToMppSection('statistik');
-                        }}
-                      >
-                        <span className="truncate">{t("mppPortal.statistik.title")}</span>
                         <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
                       </a>
                     </li>

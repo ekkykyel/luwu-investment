@@ -36,6 +36,7 @@ const AdminLayout = lazyWithRetry(() => import('../components/Admin/AdminLayout'
 // --- MPP & FRONT OFFICE ---
 const PortalMPP = lazyWithRetry(() => import('../components/PortalMPP'));
 const MppFoCommandCenter = lazyWithRetry(() => import('../components/mpp/MppFoCommandCenter'));
+const MppProfileHubView = lazyWithRetry(() => import('../components/mpp/MppProfileHubView').then(m => ({ default: m.MppProfileHubView })));
 
 // --- SYSTEM & DIAGNOSTICS ---
 const DebugDbPage = lazyWithRetry(() => import('../components/DebugDbPage'));
@@ -210,6 +211,10 @@ export const AppRouter: React.FC = () => {
         {/* ================================================================= */}
         <Route path="/mpp" element={<PageFadeTransition pageKey="portal-mpp"><PortalMPP /></PageFadeTransition>} />
         <Route path="/portal-mpp" element={<PageFadeTransition pageKey="portal-mpp-alias"><PortalMPP /></PageFadeTransition>} />
+        <Route path="/mpp/tentang" element={<PageFadeTransition pageKey="mpp-tentang"><MppProfileHubView initialTab="tentang" /></PageFadeTransition>} />
+        <Route path="/mpp/visi-misi" element={<PageFadeTransition pageKey="mpp-visi-misi"><MppProfileHubView initialTab="visi-misi" /></PageFadeTransition>} />
+        <Route path="/mpp/struktur-organisasi" element={<PageFadeTransition pageKey="mpp-struktur"><MppProfileHubView initialTab="struktur-organisasi" /></PageFadeTransition>} />
+        <Route path="/mpp/maklumat-pelayanan" element={<PageFadeTransition pageKey="mpp-maklumat"><MppProfileHubView initialTab="maklumat-pelayanan" /></PageFadeTransition>} />
         <Route path="/fo" element={<MppFoCommandCenter />} />
         <Route path="/fo/dashboard" element={<MppFoCommandCenter />} />
         <Route path="/mpp/fo" element={<MppFoCommandCenter />} />
