@@ -464,7 +464,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
         {/* ========================================================================= */}
         {/* 1. SECTION HEADER (Standar Desain Bersih & Sulapa Eppa Eyebrow)            */}
         {/* ========================================================================= */}
-        <div className="text-center max-w-3xl mx-auto px-4 space-y-2.5">
+        <div className="text-center max-w-3xl mx-auto px-2 sm:px-4 space-y-2.5">
           <span className="text-[11px] sm:text-xs font-bold tracking-[0.14em] uppercase text-[#0F6B4F] dark:text-[#6EE7B7] inline-flex items-center justify-center gap-2">
             <span aria-hidden="true" className="w-1.5 h-1.5 rotate-45 bg-[#C9A24B]" />
             <span>{t("mppRequirements.eyebrow", "Panduan Mandiri Sebelum Datang")}</span>
@@ -481,21 +481,21 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
         {/* ========================================================================= */}
         {/* 2. PENCARIAN & TOMBOL FILTER LAYANAN POPULER (ZERO CLIPPING)               */}
         {/* ========================================================================= */}
-        <div className="w-full max-w-4xl mx-auto space-y-3.5 px-2 sm:px-0">
+        <div className="w-full max-w-4xl mx-auto space-y-3.5 px-0.5 sm:px-0">
           {/* Search Box */}
           <div className="relative w-full">
-            <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-[#0F6B4F] dark:text-emerald-400 pointer-events-none" />
+            <Search className="w-5 h-5 absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 text-[#0F6B4F] dark:text-emerald-400 pointer-events-none" />
             <input 
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cari nama layanan, instansi, atau dokumen (contoh: NIB, KTP, PBG, Paspor)..."
-              className="w-full pl-12 pr-4 py-3.5 text-sm rounded-2xl border bg-white dark:bg-[#0D2338] border-[#DFD8CA] dark:border-white/[0.10] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#0F6B4F]/30 dark:focus:ring-emerald-500/40 transition-all shadow-xs"
+              className="w-full pl-11 sm:pl-12 pr-3.5 sm:pr-4 py-3.5 text-sm rounded-2xl border bg-white dark:bg-[#0D2338] border-[#DFD8CA] dark:border-white/[0.10] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#0F6B4F]/30 dark:focus:ring-emerald-500/40 transition-all shadow-xs"
             />
           </div>
 
           {/* Popular Filter Buttons (Wrapped Cleanly on Desktop, Horizontal Scroll on Mobile) */}
-          <div className="flex sm:flex-wrap items-center sm:justify-center gap-2 overflow-x-auto sm:overflow-visible pb-1 scrollbar-none pt-0.5">
+          <div className="flex sm:flex-wrap items-center sm:justify-center gap-2 overflow-x-auto sm:overflow-visible pb-1 scrollbar-none pt-0.5 touch-pan-x">
             <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold shrink-0 hidden sm:inline pr-1">
               Layanan Populer:
             </span>
@@ -509,7 +509,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                     setSelectedServiceId(srv.id);
                     setSearchQuery('');
                   }}
-                  className={`min-h-[36px] px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer border active:scale-95 ${
+                  className={`min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer border active:scale-95 ${
                     isSelected
                       ? 'bg-[#0F6B4F] dark:bg-emerald-600 text-white border-[#0F6B4F] dark:border-emerald-500 shadow-xs'
                       : 'bg-white dark:bg-[#0D2338] text-slate-700 dark:text-slate-300 border-[#E2DACB] dark:border-white/[0.09] hover:border-[#0F6B4F]/40 hover:text-[#0F6B4F] dark:hover:bg-[#132E48]'
@@ -525,21 +525,21 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
         {/* ========================================================================= */}
         {/* 3. MAIN WORKSPACE: 2-COLUMN LAYOUT DESKTOP, STACKED MOBILE (375px/1280px) */}
         {/* ========================================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-8 items-start">
           
           {/* ── LEFT / MAIN PANEL: CHECKLIST BERKAS (Col 7 / 12) ── */}
           <div className="lg:col-span-7 space-y-5">
-            <div className="rounded-2xl sm:rounded-3xl p-5 sm:p-7 border bg-white dark:bg-[#0F2D4A] border-slate-200/90 dark:border-white/[0.09] shadow-sm space-y-6">
+            <div className="rounded-2xl sm:rounded-3xl px-2.5 py-4 sm:p-6 lg:p-7 border bg-white dark:bg-[#0F2D4A] border-slate-200/90 dark:border-white/[0.09] shadow-sm space-y-4 sm:space-y-6">
               
               {/* Header Layanan Aktif */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-slate-100 dark:border-white/[0.08]">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 pb-3.5 sm:pb-5 border-b border-slate-100 dark:border-white/[0.08] px-0.5 sm:px-0">
+                <div className="space-y-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-slate-500 dark:text-slate-400">
                     <span className="font-semibold text-emerald-600 dark:text-emerald-400">{activeService.category}</span>
                     <span aria-hidden="true">·</span>
                     <span>{activeService.agency}</span>
                   </div>
-                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-tight">
+                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-snug">
                     {activeService.title}
                   </h3>
                 </div>
@@ -548,7 +548,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                   <button 
                     type="button"
                     onClick={handleCheckAll}
-                    className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline px-2 py-1 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors"
+                    className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline px-2 py-1 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors cursor-pointer"
                   >
                     Centang Semua
                   </button>
@@ -556,7 +556,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                   <button 
                     type="button"
                     onClick={handleResetCheck}
-                    className="text-xs font-semibold text-slate-500 dark:text-slate-400 hover:underline px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    className="text-xs font-semibold text-slate-500 dark:text-slate-400 hover:underline px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                   >
                     Reset
                   </button>
@@ -564,12 +564,12 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
               </div>
 
               {/* Progress Bar Kesiapan */}
-              <div className="space-y-2 p-4 rounded-2xl bg-slate-50 dark:bg-[#143755] border border-slate-200/60 dark:border-white/[0.06]">
-                <div className="flex items-center justify-between text-xs font-medium">
+              <div className="space-y-2 px-3 py-3 sm:p-4 rounded-2xl bg-slate-50 dark:bg-[#143755] border border-slate-200/60 dark:border-white/[0.06]">
+                <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-medium">
                   <span className="text-slate-700 dark:text-slate-300">
-                    Progres Kesiapan: <strong className="text-emerald-600 dark:text-emerald-400">{stats.completedCount} dari {stats.totalCount} siap</strong>
+                    Progres Kesiapan: <strong className="text-emerald-600 dark:text-emerald-400 tabular-nums">{stats.completedCount} dari {stats.totalCount} siap</strong>
                   </span>
-                  <span className="font-mono font-bold text-slate-900 dark:text-white">
+                  <span className="font-mono tabular-nums font-bold text-slate-900 dark:text-white">
                     {stats.percent}%
                   </span>
                 </div>
@@ -582,11 +582,13 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                   />
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-0.5">
-                  <span>Wajib: {stats.requiredCompletedCount}/{stats.requiredCount} berkas</span>
+                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[11px] text-slate-500 dark:text-slate-400 pt-0.5">
+                  <span className="whitespace-nowrap font-medium text-slate-600 dark:text-slate-300 tabular-nums">
+                    Wajib: {stats.requiredCompletedCount}/{stats.requiredCount} berkas
+                  </span>
                   {stats.isReadyForBooking ? (
-                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
-                      <Check className="w-3.5 h-3.5" /> Siap dilayani di loket
+                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold inline-flex items-center gap-1">
+                      <Check className="w-3.5 h-3.5 shrink-0" /> Siap dilayani di loket
                     </span>
                   ) : (
                     <span>Lengkapi berkas bertanda titik emerald</span>
@@ -596,78 +598,97 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
 
               {/* Checklist Items */}
               <div className="space-y-2.5">
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 pb-1">
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 pb-0.5 px-0.5">
                   Daftar Berkas Persyaratan:
                 </div>
 
-                {activeService.documents.map((doc, idx) => {
+                {activeService.documents.map((doc) => {
                   const isChecked = !!checkedDocs[doc.id];
                   return (
                     <div
                       key={doc.id}
                       onClick={() => toggleCheck(doc.id)}
-                      className={`p-3.5 sm:p-4 rounded-xl border transition-all cursor-pointer flex items-start gap-3.5 select-none ${
+                      className={`px-3 py-3 sm:p-4 rounded-xl border transition-all cursor-pointer flex flex-col gap-1.5 select-none ${
                         isChecked
                           ? 'bg-emerald-50/70 dark:bg-emerald-950/20 border-emerald-500/30 dark:border-emerald-500/30'
                           : 'bg-white dark:bg-[#0A2238]/60 border-slate-200/80 dark:border-white/[0.07] hover:border-slate-300 dark:hover:border-white/[0.14]'
                       }`}
                     >
-                      {/* Checkbox Icon */}
-                      <button 
-                        type="button"
-                        aria-label={isChecked ? `Uncheck ${doc.name}` : `Check ${doc.name}`}
-                        className="mt-0.5 shrink-0 focus:outline-none"
-                      >
-                        {isChecked ? (
-                          <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 fill-emerald-100 dark:fill-emerald-950" />
-                        ) : (
-                          <Circle className="w-5 h-5 text-slate-300 dark:text-slate-600" />
-                        )}
-                      </button>
+                      {/* Top Header Row: Checkbox + Document Title + Status */}
+                      <div className="flex items-start gap-2.5 sm:gap-3">
+                        <button 
+                          type="button"
+                          aria-label={isChecked ? `Uncheck ${doc.name}` : `Check ${doc.name}`}
+                          className="mt-0.5 shrink-0 focus:outline-none"
+                        >
+                          {isChecked ? (
+                            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 fill-emerald-100 dark:fill-emerald-950" />
+                          ) : (
+                            <Circle className="w-5 h-5 text-slate-300 dark:text-slate-600" />
+                          )}
+                        </button>
 
-                      {/* Content */}
-                      <div className="min-w-0 flex-1 space-y-1">
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <span className={`text-sm font-semibold transition-colors ${
-                            isChecked 
-                              ? 'text-emerald-900 dark:text-emerald-200 line-through opacity-80' 
-                              : 'text-slate-900 dark:text-white'
-                          }`}>
-                            {doc.name}
-                          </span>
+                        <div className="min-w-0 flex-1 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-3">
+                          <div className="min-w-0 flex-1 leading-snug">
+                            <span className={`text-[13.5px] sm:text-sm font-semibold transition-colors ${
+                              isChecked 
+                                ? 'text-emerald-900 dark:text-emerald-200 line-through opacity-80' 
+                                : 'text-slate-900 dark:text-white'
+                            }`}>
+                              {doc.name}
+                            </span>
 
-                          {/* REFINED ZERO-PILL BADGE: Neutral Emerald Dot for Wajib, Gray for Opsional */}
+                            {/* Mobile Inline Status: flows cleanly right after title without forcing a standalone vertical row or narrowing title column */}
+                            {doc.required ? (
+                              <span className="sm:hidden inline-flex items-center gap-1 ml-2 align-baseline text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold whitespace-nowrap">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                                Wajib
+                              </span>
+                            ) : (
+                              <span className="sm:hidden inline-flex items-center gap-1 ml-2 align-baseline text-[11px] text-slate-500 dark:text-slate-400 font-medium whitespace-nowrap">
+                                <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600 shrink-0" />
+                                Opsional
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Desktop Right-Aligned Status */}
                           {doc.required ? (
-                            <span className="inline-flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300 font-medium shrink-0">
+                            <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-300 font-medium shrink-0 mt-0.5">
                               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
                               Wajib
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500 font-medium shrink-0">
+                            <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500 font-medium shrink-0 mt-0.5">
                               <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600 shrink-0" />
                               Opsional
                             </span>
                           )}
                         </div>
-
-                        {doc.desc && (
-                          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                            {doc.desc}
-                          </p>
-                        )}
-
-                        {doc.templateName && (
-                          <div className="pt-1">
-                            <button
-                              type="button"
-                              onClick={() => handleDownloadTemplate(doc.templateName!, activeService.title)}
-                              className="inline-flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-semibold hover:underline cursor-pointer"
-                            >
-                              <Download className="w-3.5 h-3.5 shrink-0" /> Unduh Draf / Template ({doc.templateName})
-                            </button>
-                          </div>
-                        )}
                       </div>
+
+                      {/* Full-Width Description on Mobile (aligned under title on Desktop) */}
+                      {doc.desc && (
+                        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed sm:pl-8">
+                          {doc.desc}
+                        </p>
+                      )}
+
+                      {doc.templateName && (
+                        <div className="pt-0.5 sm:pl-8">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDownloadTemplate(doc.templateName!, activeService.title);
+                            }}
+                            className="inline-flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-semibold hover:underline cursor-pointer text-left"
+                          >
+                            <Download className="w-3.5 h-3.5 shrink-0" />
+                            <span>Unduh Draf / Template ({doc.templateName})</span>
+                          </button>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -675,12 +696,12 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
 
               {/* Tips & Petunjuk Tambahan */}
               {activeService.tips && activeService.tips.length > 0 && (
-                <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#143755]/60 border border-slate-200/60 dark:border-white/[0.06] space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
+                <div className="px-3 py-3 sm:p-4 rounded-xl bg-slate-50 dark:bg-[#143755]/60 border border-slate-200/60 dark:border-white/[0.06] space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
                   <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                     <BadgeCheck className="w-4 h-4 text-emerald-500 shrink-0" />
                     Catatan Pelayanan Petugas:
                   </div>
-                  <ul className="list-disc list-inside space-y-1 pl-1 text-slate-500 dark:text-slate-400">
+                  <ul className="list-disc list-inside space-y-1 pl-0.5 sm:pl-1 text-slate-500 dark:text-slate-400 leading-relaxed">
                     {activeService.tips.map((tip, tIdx) => (
                       <li key={tIdx}>{tip}</li>
                     ))}
@@ -691,11 +712,11 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
           </div>
 
           {/* ── RIGHT PANEL: RINGKASAN LAYANAN, AKSI TIKET & ASISTEN AI (Col 5 / 12) ── */}
-          <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-28">
+          <div className="lg:col-span-5 space-y-5 sm:space-y-6 lg:sticky lg:top-28">
             
             {/* Card Ringkasan Biaya, Waktu, Loket & Tindakan */}
-            <div className="rounded-2xl sm:rounded-3xl p-5 sm:p-6 border bg-white dark:bg-[#0F2D4A] border-slate-200/90 dark:border-white/[0.09] shadow-sm space-y-5">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/[0.08]">
+            <div className="rounded-2xl sm:rounded-3xl px-3 py-4 sm:p-6 border bg-white dark:bg-[#0F2D4A] border-slate-200/90 dark:border-white/[0.09] shadow-sm space-y-4 sm:space-y-5">
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-white/[0.08]">
                 <h4 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
                   Ringkasan Layanan
                 </h4>
@@ -705,32 +726,32 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
               </div>
 
               {/* Data Grid: Biaya, Waktu, Loket */}
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#143755] border border-slate-200/60 dark:border-white/[0.06] space-y-1">
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3 text-xs">
+                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-50 dark:bg-[#143755] border border-slate-200/60 dark:border-white/[0.06] space-y-1">
                   <div className="text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5" /> Estimasi Waktu
+                    <Clock className="w-3.5 h-3.5 shrink-0" /> Estimasi Waktu
                   </div>
-                  <div className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm">
+                  <div className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm leading-snug">
                     {activeService.processingTime}
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#143755] border border-slate-200/60 dark:border-white/[0.06] space-y-1">
+                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-50 dark:bg-[#143755] border border-slate-200/60 dark:border-white/[0.06] space-y-1">
                   <div className="text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                    <Building2 className="w-3.5 h-3.5" /> Biaya Resmi
+                    <Building2 className="w-3.5 h-3.5 shrink-0" /> Biaya Resmi
                   </div>
-                  <div className="font-bold text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm">
+                  <div className="font-bold text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm leading-snug">
                     {activeService.officialCost}
                   </div>
                 </div>
               </div>
 
               {/* ACTION BUTTONS (Ambil Antrean + Kirim WA) */}
-              <div className="space-y-2.5 pt-2">
+              <div className="space-y-2.5 pt-1 sm:pt-2">
                 <button
                   type="button"
                   onClick={handleBookQueue}
-                  className={`w-full py-3.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm active:scale-98 ${
+                  className={`w-full min-h-[46px] py-3.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm active:scale-98 ${
                     stats.isReadyForBooking
                       ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/20'
                       : 'bg-emerald-700/80 hover:bg-emerald-600 text-white'
@@ -744,7 +765,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                 <button
                   type="button"
                   onClick={handleSendToWhatsApp}
-                  className="w-full py-3 px-4 rounded-xl font-semibold text-xs border border-emerald-600/40 dark:border-emerald-500/35 bg-emerald-50/70 dark:bg-emerald-950/40 hover:bg-emerald-100/80 dark:hover:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 shadow-xs hover:shadow-emerald-900/25"
+                  className="w-full min-h-[44px] py-3 px-3.5 rounded-xl font-semibold text-xs border border-emerald-600/40 dark:border-emerald-500/35 bg-emerald-50/70 dark:bg-emerald-950/40 hover:bg-emerald-100/80 dark:hover:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 shadow-xs hover:shadow-emerald-900/25"
                 >
                   <MessageCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span>Kirim Checklist ke WhatsApp (Simpan di Ponsel)</span>
@@ -759,10 +780,10 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
             {/* ========================================================================= */}
             {/* PUSAT UNDUHAN BLANGKO RESMI & PANDUAN PROSEDUR LOKET                     */}
             {/* ========================================================================= */}
-            <div className="rounded-2xl sm:rounded-3xl p-5 sm:p-6 border bg-white dark:bg-[#0F2D4A] border-slate-200/90 dark:border-white/[0.09] shadow-sm space-y-5">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/[0.08]">
+            <div className="rounded-2xl sm:rounded-3xl px-3 py-4 sm:p-6 border bg-white dark:bg-[#0F2D4A] border-slate-200/90 dark:border-white/[0.09] shadow-sm space-y-4 sm:space-y-5">
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-white/[0.08]">
                 <div className="flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-[#0F6B4F] dark:text-emerald-400" />
+                  <FileText className="w-4 h-4 text-[#0F6B4F] dark:text-emerald-400 shrink-0" />
                   <h4 className="text-sm font-bold text-slate-900 dark:text-white">
                     Format Blangko & Panduan Berkas
                   </h4>
@@ -781,10 +802,10 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                 {availableTemplates.map((tpl, tIdx) => (
                   <div 
                     key={tIdx}
-                    className="p-3 rounded-xl bg-[#FAF8F3] dark:bg-[#132E48] border border-[#E5DFD3] dark:border-white/[0.07] flex items-center justify-between gap-3 hover:border-[#0F6B4F]/40 transition-colors"
+                    className="p-2.5 sm:p-3 rounded-xl bg-[#FAF8F3] dark:bg-[#132E48] border border-[#E5DFD3] dark:border-white/[0.07] flex items-center justify-between gap-2.5 sm:gap-3 hover:border-[#0F6B4F]/40 transition-colors"
                   >
                     <div className="min-w-0 flex-1">
-                      <div className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                      <div className="text-xs font-bold text-slate-900 dark:text-white leading-snug line-clamp-2 sm:truncate">
                         {tpl.title}
                       </div>
                       <div className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mt-0.5">
@@ -796,9 +817,9 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                     <button
                       type="button"
                       onClick={() => handleDownloadTemplate(tpl.filename, activeService.title)}
-                      className="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0F6B4F] hover:bg-[#0B543E] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white flex items-center gap-1.5 transition-all cursor-pointer shrink-0 shadow-xs active:scale-95"
+                      className="min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-bold bg-[#0F6B4F] hover:bg-[#0B543E] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white flex items-center gap-1.5 transition-all cursor-pointer shrink-0 shadow-xs active:scale-95"
                     >
-                      <Download className="w-3.5 h-3.5" />
+                      <Download className="w-3.5 h-3.5 shrink-0" />
                       <span>Unduh</span>
                     </button>
                   </div>
@@ -808,7 +829,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
               {/* Tahapan Alur Layanan di Loket Fisik */}
               <div className="pt-2 border-t border-slate-100 dark:border-white/[0.06] space-y-2">
                 <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#0F6B4F] dark:text-emerald-400" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#0F6B4F] dark:text-emerald-400 shrink-0" />
                   Alur 3 Langkah di Gedung MPP:
                 </div>
                 <div className="grid grid-cols-1 gap-2 text-xs">
@@ -835,16 +856,16 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
 
               {/* Quiet Secondary Action: Buka Asisten MPP (Does not compete with primary Ambil Antrean CTA) */}
               <div className="pt-2 border-t border-slate-100 dark:border-white/[0.06]">
-                <div className="p-3.5 rounded-xl bg-[#FAF8F3] dark:bg-[#132E48]/70 border border-[#E5DFD3] dark:border-white/[0.08] flex items-center justify-between gap-3">
+                <div className="p-3 sm:p-3.5 rounded-xl bg-[#FAF8F3] dark:bg-[#132E48]/70 border border-[#E5DFD3] dark:border-white/[0.08] flex items-center justify-between gap-2.5 sm:gap-3">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className="w-8 h-8 rounded-lg bg-[#0F6B4F]/10 dark:bg-emerald-500/15 text-[#0F6B4F] dark:text-emerald-400 flex items-center justify-center shrink-0">
                       <Mic className="w-4 h-4" />
                     </div>
                     <div className="min-w-0">
-                      <h5 className="text-xs font-bold text-slate-900 dark:text-white leading-tight truncate">
+                      <h5 className="text-xs font-bold text-slate-900 dark:text-white leading-tight">
                         Butuh Konsultasi Persyaratan?
                       </h5>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight truncate mt-0.5">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
                         Tanyakan via Asisten Suara & Panduan MPP
                       </p>
                     </div>
@@ -854,10 +875,10 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                     onClick={() => {
                       window.dispatchEvent(new CustomEvent('open-mpp-voice-assistant'));
                     }}
-                    className="py-2 px-3 rounded-lg border border-[#0F6B4F]/30 dark:border-emerald-400/30 bg-white dark:bg-[#0D2338] hover:bg-[#0F6B4F] hover:text-white dark:hover:bg-emerald-600 text-[#0F6B4F] dark:text-emerald-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 active:scale-98"
+                    className="min-h-[36px] py-2 px-3 rounded-lg border border-[#0F6B4F]/30 dark:border-emerald-400/30 bg-white dark:bg-[#0D2338] hover:bg-[#0F6B4F] hover:text-white dark:hover:bg-emerald-600 text-[#0F6B4F] dark:text-emerald-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 active:scale-98"
                   >
                     <span>Tanya</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-3.5 h-3.5 shrink-0" />
                   </button>
                 </div>
               </div>

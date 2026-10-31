@@ -802,15 +802,15 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
       </div>
 
       {/* 4. ACTIVE STEP CHECKLIST CARD */}
-      <div className="p-3.5 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-surface border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-4">
+      <div className="px-2.5 py-3.5 sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-surface border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-4">
         
         {/* Step Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-slate-100 dark:border-slate-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800 px-0.5 sm:px-0">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
               {currentStage.badge}
             </span>
-            <h3 className="text-base sm:text-lg lg:text-xl font-black text-slate-900 dark:text-white font-sans">
+            <h3 className="text-base sm:text-lg lg:text-xl font-black text-slate-900 dark:text-white font-sans leading-snug">
               {currentStageIndex === 0 && activeServiceKey === 'KTP_DUKCAPIL'
                 ? t('stepper.step1_desc', currentStage.title)
                 : currentStageIndex === 1 && activeServiceKey === 'KTP_DUKCAPIL'
@@ -819,13 +819,13 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
                 ? t('stepper.step3_desc', currentStage.title)
                 : currentStage.title}
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
               {currentStage.description}
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-400">
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-xs font-semibold text-slate-400 tabular-nums">
               {currentStage.items.filter(it => it.checked).length} / {currentStage.items.length} Selesai
             </span>
           </div>
@@ -837,45 +837,47 @@ export const InteractiveRequirementStepper: React.FC<InteractiveRequirementStepp
             <div
               key={item.id}
               onClick={() => toggleItem(item.id)}
-              className={`p-3 sm:p-3.5 rounded-xl sm:rounded-2xl border transition-all cursor-pointer flex items-start gap-2.5 sm:gap-3 select-none ${
+              className={`px-3 py-3 sm:p-3.5 rounded-xl sm:rounded-2xl border transition-all cursor-pointer flex flex-col gap-1.5 select-none ${
                 item.checked
                   ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-500/50 shadow-2xs'
                   : 'bg-slate-50/60 dark:bg-slate-800/40 border-slate-200/80 dark:border-slate-800 hover:border-slate-300'
               }`}
             >
-              <button
-                type="button"
-                className="mt-0.5 text-emerald-600 dark:text-emerald-400 shrink-0"
-              >
-                {item.checked ? (
-                  <CheckSquare className="w-5 h-5 text-emerald-600 dark:text-emerald-400 fill-emerald-100 dark:fill-emerald-950" />
-                ) : (
-                  <Square className="w-5 h-5 text-slate-400" />
-                )}
-              </button>
+              <div className="flex items-start gap-2.5 sm:gap-3">
+                <button
+                  type="button"
+                  className="mt-0.5 text-emerald-600 dark:text-emerald-400 shrink-0"
+                >
+                  {item.checked ? (
+                    <CheckSquare className="w-5 h-5 text-emerald-600 dark:text-emerald-400 fill-emerald-100 dark:fill-emerald-950" />
+                  ) : (
+                    <Square className="w-5 h-5 text-slate-400" />
+                  )}
+                </button>
 
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className={`text-xs sm:text-sm font-bold font-sans ${
+                <div className="flex-1 min-w-0 leading-snug">
+                  <span className={`text-[13.5px] sm:text-sm font-bold font-sans ${
                     item.checked ? 'text-emerald-950 dark:text-emerald-200 line-through opacity-80' : 'text-slate-900 dark:text-white'
                   }`}>
                     {getItemLabel(item)}
                   </span>
                   {item.required ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
+                    <span className="inline-flex items-center gap-1 ml-2 align-baseline text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 whitespace-nowrap">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
                       {t('stepper.req_required', 'Wajib')}
                     </span>
                   ) : (
-                    <span className="px-2 py-0.5 rounded-full text-[9px] font-medium bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-white/10">
+                    <span className="inline-flex items-center gap-1 ml-2 align-baseline text-[11px] font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                      <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600 shrink-0" />
                       {t('stepper.req_optional', 'Opsional')}
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed text-justify">
-                  {getItemDesc(item)}
-                </p>
               </div>
+
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed sm:pl-8 text-left">
+                {getItemDesc(item)}
+              </p>
             </div>
           ))}
         </div>

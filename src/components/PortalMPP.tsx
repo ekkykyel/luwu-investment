@@ -2948,7 +2948,7 @@ export default function PortalMPP() {
           {/* ZONA LAYANAN INTI WARGA (PRIORITAS UTAMA: SYARAT, ANTREAN, LACAK RESI) */}
           {/* ===================================================================== */}
           <section id="layanan" className="w-full scroll-mt-36 sm:scroll-mt-40">
-            <div id="syarat-dokumen" className="w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 scroll-mt-36 sm:scroll-mt-40">
+            <div id="syarat-dokumen" className="w-full max-w-7xl mx-auto px-1.5 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 scroll-mt-36 sm:scroll-mt-40">
               <CekPersyaratanLayananPilot 
                 initialServiceId={activeRequirementService}
                 onOpenQueueBooking={(serviceName, agencyName) => {

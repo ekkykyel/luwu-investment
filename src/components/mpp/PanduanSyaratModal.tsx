@@ -22,7 +22,7 @@ export const PanduanSyaratModal: React.FC<PanduanSyaratModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-base/75 backdrop-blur-md overflow-hidden font-sans"
+          className="fixed inset-0 z-50 flex items-center justify-center p-1.5 sm:p-5 bg-base/75 backdrop-blur-md overflow-hidden font-sans"
           onClick={onClose}
         >
           <motion.div
@@ -30,20 +30,20 @@ export const PanduanSyaratModal: React.FC<PanduanSyaratModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="w-full max-w-4xl max-h-[92vh] flex flex-col bg-white dark:bg-surface border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden"
+            className="w-full max-w-4xl max-h-[94vh] flex flex-col bg-white dark:bg-surface border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-5 sm:px-7 py-4 border-b border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-surface/80 shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <div className="flex items-center justify-between px-3.5 sm:px-7 py-3.5 sm:py-4 border-b border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-surface/80 shrink-0">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                   <FileCheck2 className="w-5 h-5" />
                 </div>
-                <div>
-                  <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-tight">
+                <div className="min-w-0">
+                  <h3 className="text-sm sm:text-lg font-black text-slate-900 dark:text-white leading-tight truncate">
                     Checklist & Persyaratan Layanan
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 truncate">
                     Mal Pelayanan Publik Simpurusiang Kab. Luwu
                   </p>
                 </div>
@@ -52,14 +52,14 @@ export const PanduanSyaratModal: React.FC<PanduanSyaratModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Modal Body */}
-            <div className="p-4 sm:p-6 overflow-y-auto flex-1">
+            <div className="px-2.5 py-3.5 sm:p-6 overflow-y-auto flex-1">
               <InteractiveRequirementStepper 
                 initialService={service}
                 onOpenQueueBooking={onOpenQueueBooking}
