@@ -136,9 +136,9 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
               </span>
               <strong className="font-mono text-xs sm:text-sm font-bold tabular-nums text-slate-900 dark:text-slate-50">
                 {totalRespondents > 0 ? (
-                  <><CountUpNumber end={totalRespondents} /> Responden</>
+                  <><CountUpNumber end={totalRespondents} /> {t("mppPortal.skmBento.respondentsUnit", "Responden")}</>
                 ) : (
-                  '0 Responden'
+                  `0 ${t("mppPortal.skmBento.respondentsUnit", "Responden")}`
                 )}
               </strong>
             </div>

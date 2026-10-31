@@ -2600,6 +2600,10 @@
       "desc": "Innovative Public Service Center of Luwu Regency, prioritizing transparency, speed, and public comfort.",
       "tautanPintas": "Quick Links",
       "dukungan": "Support & Help",
+      "sistemTerkait": "Related Systems",
+      "profil": "Profile & About MPP",
+      "strukturOrganisasi": "Organizational Structure",
+      "maklumatPelayanan": "Service Charter",
       "beranda": "Main Home",
       "daftarLayanan": "Service List",
       "instansiTergabung": "Integrated Agencies",
@@ -2608,6 +2612,7 @@
       "tanyaJawab": "Frequently Asked Questions (FAQ)",
       "webgis": "Luwu Investment WebGIS",
       "konsultasiAi": "Asisten Digital Ta' Consultation",
+      "konsultasiAsisten": "Consult MPP Assistant",
       "copyright": "© 2024 MPP Simpurusiang Luwu Regency. Integrated Public Service Standard.",
       "hoursText": "Operating Hours: Monday – Thursday (07:30 – 16:00 WITA) & Friday (07:30 – 16:30 WITA)",
       "agencyText": "Luwu Regency Government · DPMPTSP"
@@ -3747,6 +3752,18 @@
     "completeness_title": "File Completeness",
     "completeness_count": "Files Ready for Service",
     "category_hint": "Select service type to adjust required documents checklist"
+  },
+  "transparencyHub": {
+    "eyebrow": "ACCOUNTABILITY & PUBLIC INFORMATION",
+    "title": "Performance Transparency, News &",
+    "titleHighlight": "Regional Partnership",
+    "subtitle": "Select an information category below to keep the page concise, fast-loading, and focused on your needs.",
+    "tabs": {
+      "skm": "SKM Survey & Reviews",
+      "statistik": "Visitor Analytics",
+      "berita": "News & Announcements",
+      "kemitraan": "Investor Desk & MSMEs"
+    }
   },
   "mppGuideHub": {
     "eyebrow": "PHYSICAL VISIT GUIDE & PROCEDURES",

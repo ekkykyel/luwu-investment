@@ -2600,6 +2600,10 @@
       "desc": "Pusat Pelayanan Publik inovatif Kabupaten Luwu, mengedepankan transparansi, kecepatan, dan kenyamanan masyarakat.",
       "tautanPintas": "Tautan Pintas",
       "dukungan": "Dukungan & Bantuan",
+      "sistemTerkait": "Sistem Terkait",
+      "profil": "Profil & Tentang MPP",
+      "strukturOrganisasi": "Struktur Organisasi",
+      "maklumatPelayanan": "Maklumat Pelayanan",
       "beranda": "Beranda Utama",
       "daftarLayanan": "Daftar Layanan",
       "instansiTergabung": "Instansi Tergabung",
@@ -2608,6 +2612,7 @@
       "tanyaJawab": "Tanya Jawab (FAQ)",
       "webgis": "WebGIS Investasi Luwu",
       "konsultasiAi": "Konsultasi Asisten Digital Ta'",
+      "konsultasiAsisten": "Konsultasi Asisten MPP",
       "copyright": "© 2024 MPP Simpurusiang Kabupaten Luwu. Standar Pelayanan Publik Terintegrasi.",
       "hoursText": "Jam Pelayanan: Senin – Kamis (07:30 – 16:00 WITA) & Jumat (07:30 – 16:30 WITA)",
       "agencyText": "Pemerintah Kabupaten Luwu · DPMPTSP"
@@ -3747,6 +3752,18 @@
     "completeness_title": "Kelengkapan Berkas",
     "completeness_count": "Kelengkapan Berkas Siap",
     "category_hint": "Pilih jenis layanan untuk menyesuaikan dokumen persyaratan"
+  },
+  "transparencyHub": {
+    "eyebrow": "AKUNTABILITAS & INFORMASI PUBLIK",
+    "title": "Transparansi Kinerja, Berita &",
+    "titleHighlight": "Kemitraan Daerah",
+    "subtitle": "Pilih kategori informasi di bawah ini agar halaman tetap ringkas, cepat dimuat, dan fokus pada kebutuhan Anda.",
+    "tabs": {
+      "skm": "Survei SKM & Ulasan",
+      "statistik": "Statistik Kunjungan",
+      "berita": "Berita & Pengumuman",
+      "kemitraan": "Desk Investor & UMKM"
+    }
   },
   "mppGuideHub": {
     "eyebrow": "PANDUAN KUNJUNGAN FISIK & PROSEDUR",

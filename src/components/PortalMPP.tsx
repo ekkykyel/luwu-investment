@@ -3849,16 +3849,16 @@ export default function PortalMPP() {
           <div id="transparansi-publik-hub" className="w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pt-6 sm:pt-10 pb-2 scroll-mt-36 sm:scroll-mt-40">
             <div className="flex flex-col items-center text-center mb-5 sm:mb-6">
               <span className={`${MPP_TYPOGRAPHY.eyebrow} mb-1.5`}>
-                Akuntabilitas &amp; Informasi Publik
+                {t("transparencyHub.eyebrow", "Akuntabilitas & Informasi Publik")}
               </span>
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white font-sans text-balance">
-                Transparansi Kinerja, Berita &amp;{" "}
+                {t("transparencyHub.title", "Transparansi Kinerja, Berita &")}{" "}
                 <span className="font-serif-display italic font-semibold text-[#0F6B4F] dark:text-[#E2C475]">
-                  Kemitraan Daerah
+                  {t("transparencyHub.titleHighlight", "Kemitraan Daerah")}
                 </span>
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300/90 max-w-2xl mt-1.5 leading-relaxed">
-                Pilih kategori informasi di bawah ini agar halaman tetap ringkas, cepat dimuat, dan fokus pada kebutuhan Anda.
+                {t("transparencyHub.subtitle", "Pilih kategori informasi di bawah ini agar halaman tetap ringkas, cepat dimuat, dan fokus pada kebutuhan Anda.")}
               </p>
               <div className="gold-divider-diamond" aria-hidden="true">
                 <span className="gold-diamond-icon" />
@@ -3867,10 +3867,10 @@ export default function PortalMPP() {
 
             <div className="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar gap-1.5 p-1.5 rounded-2xl bg-[#F4F0E6] dark:bg-[#0B2035] border border-[#E2DACB] dark:border-white/[0.08] max-w-4xl mx-auto">
               {[
-                { id: 'skm' as const, label: 'Survei SKM & Ulasan', icon: Star },
-                { id: 'statistik' as const, label: 'Statistik Kunjungan', icon: BarChart3 },
-                { id: 'berita' as const, label: 'Berita & Pengumuman', icon: Newspaper },
-                { id: 'kemitraan' as const, label: 'Desk Investor & UMKM', icon: Briefcase },
+                { id: 'skm' as const, label: t("transparencyHub.tabs.skm", "Survei SKM & Ulasan"), icon: Star },
+                { id: 'statistik' as const, label: t("transparencyHub.tabs.statistik", "Statistik Kunjungan"), icon: BarChart3 },
+                { id: 'berita' as const, label: t("transparencyHub.tabs.berita", "Berita & Pengumuman"), icon: Newspaper },
+                { id: 'kemitraan' as const, label: t("transparencyHub.tabs.kemitraan", "Desk Investor & UMKM"), icon: Briefcase },
               ].map((tab) => {
                 const TabIcon = tab.icon;
                 const isActive = transparencyHubTab === tab.id;
@@ -5581,7 +5581,7 @@ export default function PortalMPP() {
                           navigate('/mpp/tentang');
                         }}
                       >
-                        <span className="truncate">Profil &amp; Tentang MPP</span>
+                        <span className="truncate">{t("mppPortal.footer.profil", "Profil & Tentang MPP")}</span>
                         <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
                       </a>
                     </li>
@@ -5594,7 +5594,7 @@ export default function PortalMPP() {
                           navigate('/mpp/struktur-organisasi');
                         }}
                       >
-                        <span className="truncate">Struktur Organisasi</span>
+                        <span className="truncate">{t("mppPortal.footer.strukturOrganisasi", "Struktur Organisasi")}</span>
                         <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
                       </a>
                     </li>
@@ -5607,7 +5607,7 @@ export default function PortalMPP() {
                           navigate('/mpp/maklumat-pelayanan');
                         }}
                       >
-                        <span className="truncate">Maklumat Pelayanan</span>
+                        <span className="truncate">{t("mppPortal.footer.maklumatPelayanan", "Maklumat Pelayanan")}</span>
                         <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500 shrink-0" />
                       </a>
                     </li>
@@ -5658,7 +5658,7 @@ export default function PortalMPP() {
                   <div className="flex items-center gap-2 mb-3.5 pb-2 border-b border-[#E2DACB] dark:border-white/10 sm:border-0 sm:pb-0">
                     <div className="w-1.5 h-4 rounded-full bg-blue-500 shrink-0" />
                     <h4 className="font-sans text-xs sm:text-sm font-bold tracking-wider text-slate-900 dark:text-white uppercase truncate">
-                      Sistem Terkait
+                      {t("mppPortal.footer.sistemTerkait", "Sistem Terkait")}
                     </h4>
                   </div>
                   <ul className="flex flex-col gap-1 sm:gap-1.5">
@@ -5672,7 +5672,7 @@ export default function PortalMPP() {
                       >
                         <span className="flex items-center gap-2 truncate">
                           <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
-                          <span className="truncate">Website Pemkab Luwu</span>
+                          <span className="truncate">{t("mppPortal.footer.pemkabWeb", "Website Pemkab Luwu")}</span>
                         </span>
                         <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
                       </a>
@@ -5794,7 +5794,7 @@ export default function PortalMPP() {
                       >
                         <span className="flex items-center gap-2">
                           <Headphones className="w-4 h-4 text-[#0F6B4F] dark:text-emerald-400 shrink-0" />
-                          <span>Konsultasi Asisten MPP</span>
+                          <span>{t("mppPortal.footer.konsultasiAsisten", "Konsultasi Asisten MPP")}</span>
                         </span>
                         <ChevronRight className="w-4 h-4 text-[#0F6B4F] dark:text-emerald-400 shrink-0 group-hover:translate-x-0.5 transition-transform" />
                       </button>

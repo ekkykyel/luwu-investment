@@ -2539,17 +2539,22 @@
       "desc": "鲁乌县创新的公共服务中心，优先考虑透明度、速度和公众舒适度。",
       "tautanPintas": "快速链接",
       "dukungan": "支持与帮助",
+      "sistemTerkait": "相关系统",
+      "profil": "简介与关于大厅",
+      "strukturOrganisasi": "组织架构",
+      "maklumatPelayanan": "服务承诺书",
       "beranda": "主页",
       "daftarLayanan": "服务列表",
       "instansiTergabung": "入驻机构",
       "statistikKinerja": "绩效统计",
       "informasiFasilitas": "设施信息",
+      "tanyaJawab": "常见问答 (FAQ)",
       "webgis": "鲁乌投资 WebGIS",
       "konsultasiAi": "Asisten Digital Ta' 咨询",
+      "konsultasiAsisten": "咨询政务大厅数字助手",
       "copyright": "© 2024 MPP Simpurusiang 鲁乌县。公共服务标准。",
       "hoursText": "办公时间：周一至周四 (07:30 – 16:00 WITA) & 周五 (07:30 – 16:30 WITA)",
-      "agencyText": "鲁乌县政府 · 投资与一站式许可局 (DPMPTSP)",
-      "tanyaJawab": "常见问答 (FAQ)"
+      "agencyText": "鲁乌县政府 · 投资与一站式许可局 (DPMPTSP)"
     },
     "facilitiesData": {
       "lounge": {
@@ -3717,6 +3722,18 @@
     "completeness_title": "材料齐备度",
     "completeness_count": "项材料准备就绪",
     "category_hint": "请选择所需办理的政务事项以自适应展示必备材料清单"
+  },
+  "transparencyHub": {
+    "eyebrow": "问责制与公共信息",
+    "title": "绩效透明度、新闻与",
+    "titleHighlight": "区域合作伙伴",
+    "subtitle": "请在下方选择信息类别，以保持页面简洁、加载快速并专注于您的需求。",
+    "tabs": {
+      "skm": "满意度调查与评价",
+      "statistik": "到访数据统计",
+      "berita": "新闻与官方公告",
+      "kemitraan": "投资者专席与微中小企业"
+    }
   },
   "mppGuideHub": {
     "eyebrow": "现场到访指南与办理流程",
