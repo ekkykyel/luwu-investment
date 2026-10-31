@@ -94,7 +94,7 @@ export const Badge: React.FC<BadgeProps> = ({
         ? 'bg-slate-700 text-white'
         : variant === 'overlay'
         ? 'bg-slate-950/70 text-slate-300 border border-slate-700/50 backdrop-blur-md'
-        : 'bg-slate-500/15 text-slate-600 dark:text-slate-400 border border-slate-500/30'
+        : 'bg-[#F4F0E6] dark:bg-slate-500/15 text-slate-800 dark:text-slate-400 border border-[#E2DACB] dark:border-slate-500/30'
   };
 
   const dotColor: Record<string, string> = {

@@ -78,16 +78,16 @@ export const PeakHoursSection: React.FC<PeakHoursSectionProps> = ({
 
       {/* 3. Legenda Status Berbasis SVG Semantic Badges */}
       <div className="flex flex-wrap items-center gap-2 pt-1 pb-1">
-        <div className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700">
+        <div className="px-3 py-1.5 rounded-xl bg-[#FAF7F0] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-slate-700">
           <CrowdStatusBadge status="sepi" label={t('radar.legend_low', 'Sepi (< 30%)')} />
         </div>
-        <div className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700">
+        <div className="px-3 py-1.5 rounded-xl bg-[#FAF7F0] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-slate-700">
           <CrowdStatusBadge status="sedang" label={t('radar.legend_moderate', 'Sedang (30% - 70%)')} />
         </div>
-        <div className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700">
+        <div className="px-3 py-1.5 rounded-xl bg-[#FAF7F0] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-slate-700">
           <CrowdStatusBadge status="ramai" label={t('radar.legend_busy', 'Ramai (> 70%)')} />
         </div>
-        <div className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700">
+        <div className="px-3 py-1.5 rounded-xl bg-[#FAF7F0] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-slate-700">
           <CrowdStatusBadge status="istirahat" label={t('radar.legend_break', 'Istirahat')} />
         </div>
       </div>
@@ -108,18 +108,18 @@ export const PeakHoursSection: React.FC<PeakHoursSectionProps> = ({
                 whileInView={{ opacity: 0.75, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: idx * 0.04 }}
-                className="p-3.5 sm:p-4 rounded-2xl bg-slate-100/80 dark:bg-slate-800/50 border-dashed border-slate-300 dark:border-slate-700 shadow-xs flex flex-col justify-between space-y-2 relative overflow-hidden transition-all select-none text-left"
+                className="p-3.5 sm:p-4 rounded-2xl bg-[#FAF7F0]/80 dark:bg-slate-800/50 border border-dashed border-[#E2DACB] dark:border-slate-700 shadow-xs flex flex-col justify-between space-y-2 relative overflow-hidden transition-all select-none text-left"
               >
                 {/* Header Kartu (Jam & Status Tutup) */}
                 <div className="flex items-center justify-between text-xs sm:text-sm font-bold">
                   <span className="text-slate-700 dark:text-slate-300 font-extrabold">{item.time}</span>
-                  <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                     {t('radar.status_closed_badge', 'TUTUP')}
                   </span>
                 </div>
 
                 {/* Progress bar netral bernilai 0% */}
-                <div className="w-full h-1.5 sm:h-2 rounded-full bg-slate-200/70 dark:bg-slate-700/60 overflow-hidden my-1">
+                <div className="w-full h-1.5 sm:h-2 rounded-full bg-[#E2DACB]/70 dark:bg-slate-700/60 overflow-hidden my-1">
                   <div className="w-0 h-full" />
                 </div>
 
@@ -152,7 +152,7 @@ export const PeakHoursSection: React.FC<PeakHoursSectionProps> = ({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.3, delay: idx * 0.04 }}
-              className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-surface border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col justify-between space-y-2 relative overflow-hidden transition-all hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md text-left"
+              className="p-3.5 sm:p-4 rounded-2xl bg-[#FAF7F0] dark:bg-surface border border-[#E2DACB] dark:border-slate-800 shadow-xs flex flex-col justify-between space-y-2 relative overflow-hidden transition-all hover:border-emerald-500/40 dark:hover:border-slate-700 hover:shadow-sm text-left"
             >
               {/* Header Kartu (Jam & Persentase Kepadatan) */}
               <div className="flex items-center justify-between text-xs sm:text-sm font-bold">
@@ -163,7 +163,7 @@ export const PeakHoursSection: React.FC<PeakHoursSectionProps> = ({
               </div>
 
               {/* Progress Bar Track & Fill Dinamis with GPU scaleX */}
-              <div className="w-full h-1.5 sm:h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden my-1">
+              <div className="w-full h-1.5 sm:h-2 rounded-full bg-[#E2DACB]/60 dark:bg-slate-800 overflow-hidden my-1">
                 <motion.div 
                   initial={shouldReduceMotion ? false : { scaleX: 0 }}
                   whileInView={{ scaleX: 1 }}

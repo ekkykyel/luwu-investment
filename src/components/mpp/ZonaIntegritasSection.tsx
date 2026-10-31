@@ -294,8 +294,8 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                 </div>
 
                 {/* Footer Kartu & Link Rincian Sanksi */}
-                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between flex-wrap gap-3 font-sans">
-                  <span className="text-xs font-mono font-medium text-slate-400 truncate max-w-[180px]">
+                <div className="pt-3 border-t border-[#E2DACB] dark:border-slate-800 flex items-center justify-between flex-wrap gap-3 font-sans">
+                  <span className="text-xs font-mono font-medium text-slate-500 dark:text-slate-400 truncate max-w-[180px]">
                     {currentSlide.law.split('&')[0]}
                   </span>
                   <button
@@ -310,7 +310,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
             </AnimatePresence>
 
             {/* Navigasi Slider Controls dengan mb-4 safe margin */}
-            <div className="flex items-center justify-between pt-3 mb-1 border-t border-slate-100 dark:border-slate-800/60 font-sans">
+            <div className="flex items-center justify-between pt-3 mb-1 border-t border-[#E2DACB] dark:border-slate-800/60 font-sans">
               <div className="flex items-center gap-1.5">
                 {slides.map((_, idx) => (
                   <button
@@ -321,7 +321,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                     className={`h-2 rounded-full transition-all cursor-pointer ${
                       currentIndex === idx 
                         ? 'w-6 bg-red-600 dark:bg-red-500' 
-                        : 'w-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300'
+                        : 'w-2 bg-[#E2DACB] dark:bg-slate-700 hover:bg-[#D5CCB8]'
                     }`}
                   />
                 ))}
@@ -332,7 +332,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                   type="button"
                   onClick={prevSlide}
                   aria-label="Slide sebelumnya"
-                  className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer active:scale-95"
+                  className="p-2 rounded-xl bg-[#FAF7F0] dark:bg-transparent border border-[#E2DACB] dark:border-slate-700 hover:bg-[#ECE5D6] dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer active:scale-95"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -340,7 +340,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                   type="button"
                   onClick={nextSlide}
                   aria-label="Slide berikutnya"
-                  className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer active:scale-95"
+                  className="p-2 rounded-xl bg-[#FAF7F0] dark:bg-transparent border border-[#E2DACB] dark:border-slate-700 hover:bg-[#ECE5D6] dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer active:scale-95"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -366,13 +366,13 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ duration: 0.2 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-lg my-auto max-h-[85vh] sm:max-h-[88vh] rounded-2xl sm:rounded-3xl border border-rose-500/30 bg-white dark:bg-surface text-slate-900 dark:text-white shadow-2xl p-5 sm:p-7 relative font-sans flex flex-col overflow-y-auto"
+              className="w-full max-w-lg my-auto max-h-[85vh] sm:max-h-[88vh] rounded-2xl sm:rounded-3xl border border-[#E2DACB] dark:border-rose-500/30 bg-[#FAF7F0] dark:bg-surface text-slate-900 dark:text-white shadow-2xl p-5 sm:p-7 relative font-sans flex flex-col overflow-y-auto"
             >
               <button
                 type="button"
                 onClick={() => setSelectedPillar(null)}
                 aria-label="Tutup rincian sanksi"
-                className="absolute top-4 right-4 p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-500 hover:text-white transition-colors cursor-pointer"
+                className="absolute top-4 right-4 p-2 rounded-xl bg-[#F4F0E6] border border-[#E2DACB] dark:border-transparent dark:bg-slate-800 hover:bg-rose-500 hover:text-white transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -391,8 +391,8 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                 </div>
               </div>
 
-              <div className="space-y-3 text-xs text-slate-600 dark:text-slate-300">
-                <div className="p-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10">
+              <div className="space-y-3 text-xs text-slate-700 dark:text-slate-300">
+                <div className="p-3.5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-white/10">
                   <strong className="block text-slate-900 dark:text-white mb-1 font-bold">
                     {isEn ? "📜 Legal Basis & Regulations:" : isZh ? "📜 法律依据与规章制度：" : "📜 Landasan Hukum & Regulasi:"}
                   </strong>
@@ -410,7 +410,7 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                   </p>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10">
+                <div className="p-3.5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-white/10">
                   <strong className="block text-slate-900 dark:text-white mb-1 font-bold">
                     {isEn ? "🛡️ Implementation at MPP Simpurusiang:" : isZh ? "🛡️ Simpurusiang 政务服务大厅执行标准：" : "🛡️ Penerapan di MPP Simpurusiang:"}
                   </strong>
@@ -420,8 +420,8 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                 </div>
               </div>
 
-              <div className="mt-5 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
-                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+              <div className="mt-5 pt-3 border-t border-[#E2DACB] dark:border-slate-800 flex items-center justify-between gap-3">
+                <span className="text-[10px] text-slate-600 dark:text-slate-400 font-mono">
                   {isEn ? "Luwu Regency Regional Inspectorate" : isZh ? "鲁乌县地方监察局监督" : "Inspektorat Daerah Kabupaten Luwu"}
                 </span>
                 <button
@@ -450,13 +450,13 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ duration: 0.2 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-lg rounded-3xl border border-rose-500/40 bg-white dark:bg-surface text-slate-900 dark:text-white shadow-2xl p-5 sm:p-7 relative font-sans"
+              className="w-full max-w-lg rounded-3xl border border-[#E2DACB] dark:border-rose-500/40 bg-[#FAF7F0] dark:bg-surface text-slate-900 dark:text-white shadow-2xl p-5 sm:p-7 relative font-sans"
             >
               <button
                 type="button"
                 onClick={() => setIsWbsModalOpen(false)}
                 aria-label="Tutup form WBS"
-                className="absolute top-4 right-4 p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-500 hover:text-white transition-colors cursor-pointer"
+                className="absolute top-4 right-4 p-2 rounded-xl bg-[#F4F0E6] border border-[#E2DACB] dark:border-transparent dark:bg-slate-800 hover:bg-rose-500 hover:text-white transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -524,11 +524,11 @@ export const ZonaIntegritasSection: React.FC<ZonaIntegritasSectionProps> = ({
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+              <div className="pt-3 border-t border-[#E2DACB] dark:border-slate-800 flex justify-end">
                 <button
                   type="button"
                   onClick={() => setIsWbsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs cursor-pointer hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors"
+                  className="px-4 py-2 rounded-xl bg-[#F4F0E6] border border-[#E2DACB] dark:border-transparent dark:bg-slate-800 text-slate-800 dark:text-slate-300 font-bold text-xs cursor-pointer hover:bg-[#ECE5D6] dark:hover:bg-slate-700 transition-colors"
                 >
                   {isEn ? "Close" : isZh ? "关闭" : "Tutup"}
                 </button>

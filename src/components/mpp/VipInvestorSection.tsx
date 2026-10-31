@@ -113,7 +113,7 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
           </h3>
 
           {/* Highlight Features */}
-          <ul className={`space-y-3 ${MPP_TYPOGRAPHY.cardBody} border-y border-slate-200/80 dark:border-white/[0.07] py-4 my-2 font-sans`}>
+          <ul className={`space-y-3 ${MPP_TYPOGRAPHY.cardBody} border-y border-[#E2DACB] dark:border-white/[0.07] py-4 my-2 font-sans`}>
             <li className="flex items-start gap-2.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
               <span>
@@ -152,7 +152,7 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
             href="https://wa.me/6281234567890?text=Halo%20Tim%20Fasilitasi%20Investasi%20MPP%20Luwu,%20saya%20ingin%20konsultasi%20penanaman%20modal"
             target="_blank"
             rel="noreferrer"
-            className="w-full py-3.5 px-5 bg-slate-100 dark:bg-[#143755] hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-white/[0.07] font-bold text-xs sm:text-sm rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] font-sans"
+            className="w-full py-3.5 px-5 bg-[#FAF7F0] dark:bg-[#143755] hover:bg-[#ECE5D6] dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-[#E2DACB] dark:border-white/[0.07] font-bold text-xs sm:text-sm rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] font-sans"
           >
             <MessageCircle className="w-4.5 h-4.5 text-emerald-600 dark:text-emerald-400" />
             <span>{t('vipInvestor.contactWhatsapp', 'Hubungi Fasilitasi WhatsApp')}</span>
@@ -195,10 +195,10 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-lg bg-white dark:bg-surface border border-slate-200 dark:border-slate-800 rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh]"
+              className="relative w-full max-w-lg bg-[#FAF7F0] dark:bg-surface border border-[#E2DACB] dark:border-slate-800 rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh]"
             >
               {/* Sticky Header with Close Button */}
-              <div className="shrink-0 flex items-start justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-surface/95 backdrop-blur-md">
+              <div className="shrink-0 flex items-start justify-between px-5 py-4 border-b border-[#E2DACB] dark:border-slate-800 bg-[#F4F0E6] dark:bg-surface/95 backdrop-blur-md">
                 <div className="space-y-1 pr-4">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-mono">
                     EKSEKUTIF DESK FASILITASI INVESTASI
@@ -206,14 +206,14 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
                   <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white font-sans leading-tight">
                     Formulir Konsultasi Fasilitasi Investasi
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
                     Jadwalkan konsultasi prioritas tatap muka dengan Tim Teknis & Kepala Dinas DPMPTSP Kab. Luwu.
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsBookingModalOpen(false)}
-                  className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-all cursor-pointer shrink-0"
+                  className="p-2 rounded-xl bg-[#FAF7F0] hover:bg-[#ECE5D6] border border-[#E2DACB] dark:border-transparent dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all cursor-pointer shrink-0"
                   aria-label="Tutup formulir"
                 >
                   <X className="w-5 h-5" />
@@ -244,7 +244,7 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
                         value={bookingData.name}
                         onChange={(e) => setBookingData(p => ({ ...p, name: e.target.value }))}
                         placeholder={isEn ? "e.g., John Doe" : isZh ? "例如：张伟 / 投资代表" : "Contoh: Budi Santoso"}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:shadow-[0_0_12px_rgba(16,185,129,0.25)] transition-all duration-200"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F4F0E6] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:shadow-[0_0_12px_rgba(16,185,129,0.25)] transition-all duration-200"
                       />
                     </div>
 
@@ -259,7 +259,7 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
                           value={bookingData.company}
                           onChange={(e) => setBookingData(p => ({ ...p, company: e.target.value }))}
                           placeholder={isEn ? "e.g. Luwu Agro Global Ltd" : isZh ? "如：鲁乌农产品实业有限公司" : "PT Luwu Cocoa Industry"}
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:shadow-[0_0_12px_rgba(16,185,129,0.25)] transition-all duration-200"
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-[#F4F0E6] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:shadow-[0_0_12px_rgba(16,185,129,0.25)] transition-all duration-200"
                         />
                       </div>
                       <div>
@@ -272,7 +272,7 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
                           value={bookingData.phone}
                           onChange={(e) => setBookingData(p => ({ ...p, phone: e.target.value }))}
                           placeholder="+62 812-3456-7890"
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:shadow-[0_0_12px_rgba(16,185,129,0.25)] transition-all duration-200"
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-[#F4F0E6] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:shadow-[0_0_12px_rgba(16,185,129,0.25)] transition-all duration-200"
                         />
                       </div>
                     </div>
@@ -284,7 +284,7 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
                       <select
                         value={bookingData.sector}
                         onChange={(e) => setBookingData(p => ({ ...p, sector: e.target.value }))}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F4F0E6] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                       >
                         <option value="Pertanian & Perkebunan Kakao/Kopi">Pertanian & Perkebunan Kakao/Kopi</option>
                         <option value="Energi Terbarukan (PLTA/PLTMH)">Energi Terbarukan (PLTA/PLTMH)</option>
@@ -305,7 +305,7 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
                           required
                           value={bookingData.preferredDate}
                           onChange={(e) => setBookingData(p => ({ ...p, preferredDate: e.target.value }))}
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-[#F4F0E6] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         />
                       </div>
                       <div>
@@ -315,7 +315,7 @@ export const VipInvestorSection: React.FC<VipInvestorSectionProps> = ({
                         <select
                           value={bookingData.preferredTime}
                           onChange={(e) => setBookingData(p => ({ ...p, preferredTime: e.target.value }))}
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-[#F4F0E6] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         >
                           <option>09:00 WITA</option>
                           <option>10:00 WITA</option>

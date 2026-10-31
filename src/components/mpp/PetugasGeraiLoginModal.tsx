@@ -563,10 +563,10 @@ export const PetugasGeraiLoginModal: React.FC<PetugasGeraiLoginModalProps> = ({
     >
       <div 
         onClick={(e) => e.stopPropagation()}
-        className={`relative w-full max-w-md bg-[#FAF8F3] dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border transition-all ${
+        className={`relative w-full max-w-md bg-[#FAF7F0] dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border transition-all ${
           isDarkMode 
             ? 'text-white border-slate-800' 
-            : 'text-slate-900 border-[#E5DFD3]'
+            : 'text-slate-900 border-[#E2DACB]'
         }`}
       >
         {/* Modal Header */}
@@ -636,7 +636,7 @@ export const PetugasGeraiLoginModal: React.FC<PetugasGeraiLoginModalProps> = ({
                   className={`w-full min-h-[48px] pl-3.5 pr-10 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold border outline-none appearance-none transition-all ${
                     isDarkMode 
                       ? 'bg-slate-800/80 border-slate-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20' 
-                      : 'bg-slate-50 border-slate-300 text-slate-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
+                      : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
                   }`}
                 >
                   {tenants.map(t => (

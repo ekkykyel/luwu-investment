@@ -93,7 +93,7 @@ export const AgencyLogo: React.FC<AgencyLogoProps> = ({
 
   return (
     <div
-      className={`relative aspect-square shrink-0 flex items-center justify-center p-[10%] bg-[#FFFFFF] dark:bg-[#FFFFFF] text-slate-800 border border-slate-200/90 dark:border-white/20 shadow-xs overflow-hidden select-none transition-transform duration-200 ${roundedClasses} ${sizeClasses} ${className}`}
+      className={`relative aspect-square shrink-0 flex items-center justify-center p-[10%] bg-[#FFFFFF] dark:bg-[#FFFFFF] text-slate-800 border border-[#E2DACB] dark:border-white/20 shadow-xs overflow-hidden select-none transition-transform duration-200 ${roundedClasses} ${sizeClasses} ${className}`}
       style={{
         backgroundColor: '#FFFFFF',
         color: '#0F172A',

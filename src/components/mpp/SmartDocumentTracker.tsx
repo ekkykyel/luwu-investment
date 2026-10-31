@@ -210,7 +210,7 @@ export function SmartDocumentTracker({ isDark = false }: { isDark?: boolean }) {
       <div className={`p-5 sm:p-7 rounded-2xl sm:rounded-3xl border mb-6 transition-all ${
         isDark 
           ? 'bg-[#0C2135] border-white/[0.09] shadow-lg shadow-black/40' 
-          : 'bg-white border-[#E5DFD3] shadow-[0_8px_26px_-12px_rgba(24,24,27,0.08)]'
+          : 'bg-[#F4F0E6] border-[#E2DACB] shadow-[0_6px_22px_-12px_rgba(16,38,30,0.06)]'
       }`}>
         <div className="max-w-3xl mx-auto text-center space-y-2 mb-5">
           <div className="flex justify-center">
@@ -243,7 +243,7 @@ export function SmartDocumentTracker({ isDark = false }: { isDark?: boolean }) {
               className={`w-full pl-11 pr-4 py-3 min-h-[48px] rounded-xl border text-xs sm:text-sm font-medium outline-none transition-all font-sans ${
                 isDark 
                   ? 'bg-[#132E48] border-white/[0.10] focus:border-emerald-400 text-white placeholder:text-slate-400' 
-                  : 'bg-[#FAF8F3] border-[#DFD8CA] focus:border-[#0F6B4F] text-slate-900 placeholder:text-slate-400'
+                  : 'bg-[#FAF7F0] border-[#E2DACB] focus:border-[#0F6B4F] text-slate-900 placeholder:text-slate-400'
               }`}
             />
           </div>
@@ -265,12 +265,12 @@ export function SmartDocumentTracker({ isDark = false }: { isDark?: boolean }) {
               setSearchQuery('REG-2026-0892');
               fetchTracking('REG-2026-0892');
             }}
-            className="px-2.5 py-1 rounded-lg border font-mono font-bold text-[11px] bg-[#FAF8F3] dark:bg-[#132E48] text-[#0F6B4F] dark:text-emerald-300 border-[#DFD8CA] dark:border-emerald-500/30 hover:border-[#0F6B4F] transition-colors cursor-pointer inline-flex items-center gap-1"
+            className="px-2.5 py-1 rounded-lg border font-mono font-bold text-[11px] bg-[#FAF7F0] dark:bg-[#132E48] text-[#0F6B4F] dark:text-emerald-300 border-[#E2DACB] dark:border-emerald-500/30 hover:border-[#0F6B4F] transition-colors cursor-pointer inline-flex items-center gap-1"
           >
             <FileText className="w-3 h-3" />
             <span>REG-2026-0892</span>
           </button>
-          <span className="text-slate-400 text-[11px]">· {isEn ? 'Or enter queue ticket number' : isZh ? '或输入排队小票编号' : 'Atau masukkan kode tiket antrean loket'}</span>
+          <span className="text-slate-500 text-[11px]">· {isEn ? 'Or enter queue ticket number' : isZh ? '或输入排队小票编号' : 'Atau masukkan kode tiket antrean loket'}</span>
         </div>
       </div>
 
@@ -279,11 +279,11 @@ export function SmartDocumentTracker({ isDark = false }: { isDark?: boolean }) {
         {hasSearched && !searchResult && !isLoading && (
           <motion.div
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-            className={`p-8 rounded-3xl border text-center ${isDark ? 'bg-surface/90 border-slate-800' : 'bg-white border-slate-200'}`}
+            className={`p-8 rounded-3xl border text-center ${isDark ? 'bg-surface/90 border-slate-800' : 'bg-[#F4F0E6] border-[#E2DACB]'}`}
           >
             <AlertCircle className="w-12 h-12 text-slate-400 mx-auto mb-3" />
             <h4 className="text-lg font-bold text-slate-900 dark:text-white">{isEn ? 'Tracking Record Not Found' : isZh ? '未查询到相关单据信息' : 'Data Tidak Ditemukan'}</h4>
-            <p className="text-sm text-slate-500 mt-1">{isEn ? 'Please verify that your E-Tracking or Queue code is entered correctly.' : isZh ? '请仔细核对您输入的查询代码或排队小票编号。' : 'Pastikan kode E-Lacak yang Anda masukkan sudah benar.'}</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{isEn ? 'Please verify that your E-Tracking or Queue code is entered correctly.' : isZh ? '请仔细核对您输入的查询代码或排队小票编号。' : 'Pastikan kode E-Lacak yang Anda masukkan sudah benar.'}</p>
           </motion.div>
         )}
 
@@ -294,11 +294,11 @@ export function SmartDocumentTracker({ isDark = false }: { isDark?: boolean }) {
             className={`p-6 sm:p-8 rounded-3xl border ${
               isDark 
                 ? 'bg-surface/90 border-emerald-500/20 shadow-xl' 
-                : 'bg-white border-slate-200 shadow-xl shadow-slate-200/50'
+                : 'bg-[#F4F0E6] border-[#E2DACB] shadow-md'
             }`}
           >
             {/* Header Info */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#E2DACB] dark:border-slate-800">
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
@@ -353,19 +353,19 @@ export function SmartDocumentTracker({ isDark = false }: { isDark?: boolean }) {
                           ? 'bg-emerald-600 text-white shadow-lg shadow-black/25'
                           : isDark
                             ? 'bg-slate-800 text-slate-500 border border-slate-700'
-                            : 'bg-slate-100 text-slate-400 border border-slate-200'
+                            : 'bg-[#FAF7F0] text-slate-500 border border-[#E2DACB]'
                       }`}>
                         {isPassed ? <CheckCircle2 className="w-5 h-5" /> : step.num}
                       </div>
 
                       <h5 className={`text-xs font-bold ${
                         isCurrent 
-                          ? 'text-emerald-600 dark:text-emerald-400' 
-                          : isPassed ? 'text-slate-900 dark:text-white' : 'text-slate-400'
+                          ? 'text-emerald-700 dark:text-emerald-400' 
+                          : isPassed ? 'text-slate-900 dark:text-white' : 'text-slate-500'
                       }`}>
                         {step.title}
                       </h5>
-                      <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">
+                      <p className="text-[10px] text-slate-600 dark:text-slate-400 mt-0.5 line-clamp-2">
                         {step.desc}
                       </p>
                     </div>
@@ -376,9 +376,9 @@ export function SmartDocumentTracker({ isDark = false }: { isDark?: boolean }) {
 
             {/* Bottom Card Notes & Actions */}
             <div className={`p-4 rounded-2xl border flex flex-col sm:flex-row items-center justify-between gap-4 ${
-              isDark ? 'bg-base/60 border-slate-800' : 'bg-slate-50 border-slate-200/80'
+              isDark ? 'bg-base/60 border-slate-800' : 'bg-[#FAF7F0] border-[#E2DACB]'
             }`}>
-              <div className="text-xs text-slate-600 dark:text-slate-300">
+              <div className="text-xs text-slate-700 dark:text-slate-300">
                 <strong className="text-slate-900 dark:text-white block mb-0.5">{isEn ? 'Official Officer Notes:' : isZh ? '办理人员工作备注:' : 'Catatan Petugas Verifikator:'}</strong>
                 {searchResult.notes}
               </div>
@@ -400,7 +400,7 @@ export function SmartDocumentTracker({ isDark = false }: { isDark?: boolean }) {
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#F4F0E6] dark:bg-transparent border border-[#E2DACB] dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold hover:bg-[#ECE5D6] dark:hover:bg-slate-800 transition-all cursor-pointer"
                 >
                   <Printer className="w-3.5 h-3.5" />
                   <span>{isEn ? 'Print Status' : isZh ? '打印办理凭证' : 'Cetak Status'}</span>

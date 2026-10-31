@@ -400,8 +400,8 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
               onSubmit={handleSubmit}
               className={`relative flex items-center w-full rounded-2xl sm:rounded-full border transition-all duration-200 ${
                 isFocused
-                  ? 'bg-white dark:bg-[#0D253E] border-[#0F6B4F] dark:border-emerald-400 ring-2 ring-[#0F6B4F]/20 dark:ring-emerald-400/30 shadow-[0_14px_34px_-10px_rgba(15,107,79,0.20)] dark:shadow-[0_18px_42px_rgba(0,0,0,0.65)]'
-                  : 'bg-white dark:bg-[#0B2035] border-[#DCD4C4] dark:border-white/[0.14] hover:border-[#0F6B4F]/50 dark:hover:border-emerald-400/40 shadow-[0_12px_30px_-12px_rgba(24,24,27,0.10)] dark:shadow-[0_14px_36px_rgba(0,0,0,0.55)]'
+                  ? 'bg-[#FAF7F0] dark:bg-[#0D253E] border-[#0F6B4F] dark:border-emerald-400 ring-2 ring-[#0F6B4F]/20 dark:ring-emerald-400/30 shadow-[0_14px_34px_-10px_rgba(15,107,79,0.20)] dark:shadow-[0_18px_42px_rgba(0,0,0,0.65)]'
+                  : 'bg-[#F4F0E6] dark:bg-[#0B2035] border-[#E2DACB] dark:border-white/[0.14] hover:border-[#0F6B4F]/50 dark:hover:border-emerald-400/40 shadow-[0_12px_30px_-12px_rgba(24,24,27,0.10)] dark:shadow-[0_14px_36px_rgba(0,0,0,0.55)]'
               }`}
             >
               <div className="pl-4 sm:pl-5 text-[#0F6B4F] dark:text-emerald-400 shrink-0">
@@ -423,7 +423,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
                   <button
                     type="button"
                     onClick={onOpenVoiceAssistant}
-                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-full flex items-center justify-center text-slate-500 dark:text-slate-300 hover:text-[#0F6B4F] dark:hover:text-emerald-300 hover:bg-[#F3EFE6] dark:hover:bg-white/10 transition-colors cursor-pointer"
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-full flex items-center justify-center text-slate-500 dark:text-slate-300 hover:text-[#0F6B4F] dark:hover:text-emerald-300 hover:bg-[#ECE5D6] dark:hover:bg-white/10 transition-colors cursor-pointer"
                     title="Bicara dengan Asisten Suara"
                     aria-label="Bicara dengan Asisten Suara"
                   >
@@ -433,7 +433,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
                 <button
                   type="button"
                   onClick={onOpenCommandPalette}
-                  className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#F5F2EA] dark:bg-white/[0.08] text-slate-600 dark:text-slate-300 text-[11px] font-mono border border-[#E2DACB] dark:border-white/10 hover:bg-[#EAE4D7] dark:hover:bg-white/15 transition-colors cursor-pointer"
+                  className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#FAF7F0] dark:bg-white/[0.08] text-slate-600 dark:text-slate-300 text-[11px] font-mono border border-[#E2DACB] dark:border-white/10 hover:bg-[#ECE5D6] dark:hover:bg-white/15 transition-colors cursor-pointer"
                   title="Pintasan Pencarian Cepat (Ctrl+K)"
                 >
                   <Command className="w-3 h-3" />
@@ -466,7 +466,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
                 key={chip.id}
                 type="button"
                 onClick={() => onSelectChip?.(chip.id)}
-                className="min-h-[34px] px-3 sm:px-3.5 py-1.5 rounded-xl bg-[#F2EFE7] hover:bg-[#0F6B4F]/10 dark:bg-[#0D2338] dark:hover:bg-emerald-500/15 text-slate-700 hover:text-[#0F6B4F] dark:text-slate-200 dark:hover:text-emerald-300 border border-[#DFD8C8] hover:border-[#0F6B4F]/35 dark:border-white/[0.10] dark:hover:border-emerald-400/40 text-[11px] sm:text-xs font-semibold transition-all active:scale-95 cursor-pointer whitespace-nowrap shrink-0"
+                className="min-h-[34px] px-3 sm:px-3.5 py-1.5 rounded-xl bg-[#F4F0E6] hover:bg-[#0F6B4F]/10 dark:bg-[#0D2338] dark:hover:bg-emerald-500/15 text-slate-700 hover:text-[#0F6B4F] dark:text-slate-200 dark:hover:text-emerald-300 border border-[#E2DACB] hover:border-[#0F6B4F]/35 dark:border-white/[0.10] dark:hover:border-emerald-400/40 text-[11px] sm:text-xs font-semibold transition-all active:scale-95 cursor-pointer whitespace-nowrap shrink-0"
               >
                 <span className="sm:hidden">{chip.mobileLabel}</span>
                 <span className="hidden sm:inline">{chip.label}</span>
@@ -488,7 +488,7 @@ export const SuperHeroSearch: React.FC<SuperHeroSearchProps> = ({
             className="pointer-events-none absolute -inset-1 sm:-inset-2 rounded-[22px] sm:rounded-[32px] bg-gradient-to-tr from-emerald-500/20 via-teal-500/15 to-[#E2C475]/25 blur-xl opacity-60 dark:opacity-75 group-hover:opacity-100 transition-opacity duration-700 -z-10"
           />
 
-          <div className="relative w-full aspect-[16/10] sm:aspect-[1280/775] rounded-[18px] sm:rounded-[26px] overflow-hidden border border-[#D8CEBC] dark:border-[#C9A24B]/35 shadow-[0_20px_44px_-16px_rgba(15,35,45,0.18)] dark:shadow-[0_24px_52px_-16px_rgba(0,0,0,0.85)] bg-[#0A2236]">
+          <div className="relative w-full aspect-[16/10] sm:aspect-[1280/775] rounded-[18px] sm:rounded-[26px] overflow-hidden border border-[#E2DACB] dark:border-[#C9A24B]/35 shadow-[0_20px_44px_-16px_rgba(15,35,45,0.18)] dark:shadow-[0_24px_52px_-16px_rgba(0,0,0,0.85)] bg-[#0A2236]">
             
             {/* Sulapa Eppa Inner Gold Hairline Frame */}
             <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#E2C475]/85 to-transparent z-30" />

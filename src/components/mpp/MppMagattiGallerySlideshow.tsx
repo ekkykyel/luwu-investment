@@ -339,7 +339,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#C9A24B]/70 to-transparent z-30" />
 
         {/* Background Photo or Theme-Adaptive Architectural Spec Canvas */}
-        <div className={`absolute inset-0 overflow-hidden ${isDark ? 'bg-[#081A2C]' : 'bg-[#F7F3EA]'}`}>
+        <div className={`absolute inset-0 overflow-hidden ${isDark ? 'bg-[#081A2C]' : 'bg-[#F4F0E6]'}`}>
           <AnimatePresence initial={false} custom={direction} mode="wait">
             <motion.div
               key={currentPhoto.id}
@@ -355,7 +355,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
                   className={`w-full h-full flex flex-col items-center justify-start pt-12 sm:pt-16 md:pt-20 px-6 text-center relative ${
                     isDark
                       ? 'bg-gradient-to-br from-[#071726] via-[#0B2238] to-[#061320]'
-                      : 'bg-gradient-to-br from-[#FAF7F0] via-[#F3ECE0] to-[#EAE1D0]'
+                      : 'bg-gradient-to-br from-[#FAF7F0] via-[#F4F0E6] to-[#EAE1D0]'
                   }`}
                 >
                   {/* Subtle Sulapa Eppa Geometric Lattice */}
@@ -375,7 +375,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
                       className={`absolute inset-1 rotate-45 rounded-2xl border transition-colors ${
                         isDark
                           ? 'bg-[#102B46]/80 border-[#C9A24B]/45 shadow-[0_0_30px_rgba(201,162,75,0.12)]'
-                          : 'bg-white/85 border-[#C9A24B]/50 shadow-[0_10px_28px_-8px_rgba(133,90,20,0.18)]'
+                          : 'bg-[#F4F0E6]/95 border-[#C9A24B]/50 shadow-[0_10px_28px_-8px_rgba(133,90,20,0.18)]'
                       }`}
                     />
                     <div
@@ -579,7 +579,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
           <div className={`backdrop-blur-2xl border rounded-xl sm:rounded-2xl p-3.5 sm:p-5 space-y-1.5 sm:space-y-2 transition-all ${
             isDark
               ? 'bg-[#081B2E]/90 border-white/[0.12] text-white shadow-[0_14px_40px_rgba(0,0,0,0.6)]'
-              : 'bg-white/95 border-[#E2DACB] text-slate-900 shadow-[0_12px_32px_-8px_rgba(15,23,42,0.14)]'
+              : 'bg-[#F4F0E6]/95 border-[#E2DACB] text-slate-900 shadow-[0_12px_32px_-8px_rgba(15,23,42,0.14)]'
           }`}>
             
             {/* Top Row: Location Tag & Pagination Indicators */}
@@ -608,7 +608,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
                         className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                           idx === currentIndex
                             ? 'w-6 sm:w-8 bg-emerald-600 dark:bg-emerald-400'
-                            : isDark ? 'w-1.5 sm:w-2 bg-white/25 hover:bg-white/50' : 'w-1.5 sm:w-2 bg-slate-300 hover:bg-slate-400'
+                            : isDark ? 'w-1.5 sm:w-2 bg-white/25 hover:bg-white/50' : 'w-1.5 sm:w-2 bg-[#D5CCB8] hover:bg-slate-500'
                         }`}
                         aria-label={`Go to photo ${idx + 1}`}
                       />
@@ -642,7 +642,7 @@ export const MppMagattiGallerySlideshow: React.FC<MppMagattiGallerySlideshowProp
 
             {/* Auto-Play Progress Bar */}
             {settings.autoPlay && !isPaused && (
-              <div className={`w-full h-0.5 rounded-full overflow-hidden mt-2 ${isDark ? 'bg-white/10' : 'bg-slate-200'}`}>
+              <div className={`w-full h-0.5 rounded-full overflow-hidden mt-2 ${isDark ? 'bg-white/10' : 'bg-[#E2DACB]'}`}>
                 <div 
                   className="bg-emerald-600 dark:bg-emerald-400 h-full transition-all duration-75 ease-linear"
                   style={{ width: `${progress}%` }}

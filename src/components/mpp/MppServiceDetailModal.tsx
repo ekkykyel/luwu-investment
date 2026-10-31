@@ -553,10 +553,10 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ type: "spring", stiffness: 320, damping: 28 }}
-          className="relative w-full max-w-4xl bg-[#FAF8F3] dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] text-slate-900 dark:text-slate-100 border border-[#E5DFD3] dark:border-white/10"
+          className="relative w-full max-w-4xl bg-[#FAF7F0] dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] text-slate-900 dark:text-slate-100 border border-[#E2DACB] dark:border-white/10"
         >
           {/* Header Bar dengan Tombol Tutup Presisi */}
-          <div className="relative z-10 px-4 sm:px-7 py-3 sm:py-4 border-b border-[#E5DFD3] dark:border-white/10 flex items-center justify-between bg-[#FAF8F3]/95 dark:bg-surface/90 backdrop-blur-md shrink-0">
+          <div className="relative z-10 px-4 sm:px-7 py-3 sm:py-4 border-b border-[#E2DACB] dark:border-white/10 flex items-center justify-between bg-[#F4F0E6]/95 dark:bg-surface/90 backdrop-blur-md shrink-0">
             <div className="flex items-center gap-3 min-w-0">
               <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 ${service.iconContainerClass || 'bg-emerald-500/10 dark:bg-emerald-500/20'}`}>
                 <IconComponent className={`w-5 h-5 ${service.iconColor || 'text-emerald-600 dark:text-emerald-400'}`} />
@@ -707,7 +707,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
 
             {/* Quick Metrics Bar: SLA, Biaya, Regulasi */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-              <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-white/10 flex items-center gap-3">
+              <div className="p-3.5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-white/10 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0">
                   <Clock className="w-5 h-5" />
                 </div>
@@ -721,7 +721,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-white/10 flex items-center gap-3">
+              <div className="p-3.5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-white/10 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
@@ -735,7 +735,7 @@ export const MppServiceDetailModal: React.FC<MppServiceDetailModalProps> = ({
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-white/10 flex items-center gap-3">
+              <div className="p-3.5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-white/10 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
                   <Building2 className="w-5 h-5" />
                 </div>

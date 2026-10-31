@@ -161,7 +161,7 @@ export const OperationalHeatmap: React.FC<OperationalHeatmapProps> = ({ isDark: 
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
+              <div className="pt-2 border-t border-[#E2DACB] dark:border-slate-700">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">
                   {t("mppPortal.operationalHeatmap.docsLabel", "Syarat Wajib Berkas:")}
                 </span>

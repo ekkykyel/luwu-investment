@@ -67,11 +67,11 @@ export const GRPArchitectureModal: React.FC<GRPArchitectureModalProps> = ({
           className={`relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl border p-5 sm:p-8 font-sans shadow-2xl ${
             isDarkMode 
               ? 'bg-slate-900/95 border-slate-700/80 text-white' 
-              : 'bg-white border-slate-200 text-slate-900 shadow-slate-200'
+              : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900 shadow-amber-900/10'
           }`}
         >
           {/* Header */}
-          <div className="flex items-start justify-between gap-4 border-b border-slate-700/60 pb-4 mb-6">
+          <div className="flex items-start justify-between gap-4 border-b border-slate-700/60 dark:border-slate-700/60 pb-4 mb-6">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold font-mono uppercase bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 mb-2">
                 <Network className="w-3.5 h-3.5" /> Arsitektur Sistem GRP Spasial
@@ -100,7 +100,7 @@ export const GRPArchitectureModal: React.FC<GRPArchitectureModalProps> = ({
                 className={`p-4 rounded-2xl border transition-all ${
                   isDarkMode 
                     ? 'bg-slate-800/60 border-slate-700/60 hover:border-slate-600' 
-                    : 'bg-slate-50 border-slate-200 hover:border-slate-300'
+                    : 'bg-[#F4F0E6] border-[#E2DACB] hover:border-[#d4caba]'
                 }`}
               >
                 <div className="flex items-center gap-3 mb-2.5">

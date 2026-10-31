@@ -95,10 +95,10 @@ export const FaqAccordion: React.FC<FaqAccordionProps> = ({ isDark = true }) => 
                 isOpen
                   ? isDark
                     ? 'bg-surface/95 border-emerald-500/50 shadow-lg shadow-black/40 ring-1 ring-emerald-500/30'
-                    : 'bg-white border-emerald-500/50 shadow-md ring-1 ring-emerald-500/20'
+                    : 'bg-[#F4F0E6] border-emerald-500/50 shadow-sm ring-1 ring-emerald-500/20'
                   : isDark
                     ? 'bg-surface/80 border-slate-800 hover:border-slate-700 text-slate-100'
-                    : 'bg-white/80 border-slate-200/80 hover:border-slate-300 text-slate-900'
+                    : 'bg-[#F4F0E6] border-[#E2DACB] hover:border-emerald-500/40 text-slate-900'
               }`}
             >
               <button
@@ -112,7 +112,7 @@ export const FaqAccordion: React.FC<FaqAccordionProps> = ({ isDark = true }) => 
                       ? 'bg-emerald-500 text-white shadow-sm'
                       : isDark
                         ? 'bg-slate-800 text-emerald-400 border border-slate-700'
-                        : 'bg-slate-100 text-slate-600'
+                        : 'bg-[#FAF7F0] border border-[#E2DACB] text-slate-700'
                   }`}>
                     ?
                   </span>
@@ -125,8 +125,8 @@ export const FaqAccordion: React.FC<FaqAccordionProps> = ({ isDark = true }) => 
 
                 <div className={`p-1.5 rounded-xl transition-transform duration-300 shrink-0 ${
                   isOpen 
-                    ? isDark ? 'rotate-180 bg-emerald-950/80 text-emerald-400 border border-emerald-800' : 'rotate-180 bg-emerald-50 text-emerald-600' 
-                    : isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'
+                    ? isDark ? 'rotate-180 bg-emerald-950/80 text-emerald-400 border border-emerald-800' : 'rotate-180 bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                    : isDark ? 'bg-slate-800 text-slate-400' : 'bg-[#FAF7F0] border border-[#E2DACB] text-slate-600'
                 }`}>
                   <ChevronDown className="w-4 h-4" />
                 </div>
@@ -140,13 +140,13 @@ export const FaqAccordion: React.FC<FaqAccordionProps> = ({ isDark = true }) => 
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.25, ease: 'easeInOut' }}
                   >
-                    <div className={`px-5 pb-5 pt-1 text-xs leading-relaxed font-medium border-t mt-1 text-justify ${
-                      isDark ? 'text-slate-300 border-slate-800' : 'text-slate-600 border-slate-100'
+                    <div className={`px-5 pb-5 pt-2 text-xs leading-relaxed font-medium border-t mt-1 text-justify ${
+                      isDark ? 'text-slate-300 border-slate-800' : 'text-slate-700 border-[#E2DACB]'
                     }`}>
                       <div className={`p-3.5 sm:p-4 rounded-2xl text-justify border ${
                         isDark 
                           ? 'bg-slate-900/80 border-slate-800 text-slate-200' 
-                          : 'bg-slate-50 border-slate-100 text-slate-700'
+                          : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-700'
                       }`}>
                         {item.answer}
                       </div>

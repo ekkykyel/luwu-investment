@@ -208,11 +208,11 @@ export function PkkprTechnicalRecommendationModal({ isOpen, onClose, isDark: pro
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.96 }}
         className={`w-[calc(100%-1.5rem)] mx-3 my-auto max-h-[85vh] sm:h-auto sm:max-h-[94vh] sm:max-w-5xl rounded-3xl shadow-2xl flex flex-col border overflow-hidden ${
-          isDark ? 'bg-slate-900 text-white border-slate-800' : 'bg-[#FAF8F3] text-slate-900 border-[#E5DFD3]'
+          isDark ? 'bg-slate-900 text-white border-slate-800' : 'bg-[#FAF7F0] text-slate-900 border-[#E2DACB]'
         }`}
       >
         {/* Modal Top Header Bar */}
-        <div className="px-5 py-4 border-b border-inherit flex items-center justify-between shrink-0 bg-[#F3EEE3]/80 dark:bg-base/60 backdrop-blur-sm">
+        <div className="px-5 py-4 border-b border-inherit flex items-center justify-between shrink-0 bg-[#F4F0E6]/90 dark:bg-base/60 backdrop-blur-sm">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white shadow-md shadow-black/25 shrink-0">
               <FileText className="w-5 h-5" />
@@ -252,7 +252,7 @@ export function PkkprTechnicalRecommendationModal({ isOpen, onClose, isDark: pro
         </div>
 
         {/* Tab Navigation */}
-        <div className="px-5 pt-2 border-b border-inherit flex items-center justify-between gap-2 overflow-x-auto shrink-0 bg-slate-100/60 dark:bg-surface/60">
+        <div className="px-5 pt-2 border-b border-inherit flex items-center justify-between gap-2 overflow-x-auto shrink-0 bg-[#F4F0E6] dark:bg-surface/60">
           <div className="flex gap-1.5 sm:gap-2">
             <button
               onClick={() => setActiveTab('dokumen')}

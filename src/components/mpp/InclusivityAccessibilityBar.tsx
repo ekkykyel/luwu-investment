@@ -1042,27 +1042,27 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               className={`fixed sm:absolute right-3 sm:right-0 top-16 sm:top-0 mt-2 sm:mt-0 w-[calc(100vw-1.5rem)] sm:w-96 max-w-sm rounded-3xl p-4 sm:p-5 shadow-2xl border backdrop-blur-2xl ${
                 isDark
                   ? 'bg-surface/95 border-emerald-500/40 text-white shadow-black/90'
-                  : 'bg-white/95 border-emerald-500/30 text-slate-900 shadow-2xl shadow-slate-900/20'
+                  : 'bg-[#F4F0E6]/96 border-[#E2DACB] text-slate-900 shadow-2xl shadow-slate-900/15'
               } max-h-[calc(100vh-140px)] overflow-y-auto custom-scrollbar`}
             >
               {/* Panel Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-emerald-500/20 mb-3.5">
+              <div className="flex items-center justify-between pb-3 border-b border-[#E2DACB] dark:border-emerald-500/20 mb-3.5">
                 <div className="flex items-center gap-2">
-                  <div className={`p-2 rounded-xl ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-50 text-emerald-700'}`}>
+                  <div className={`p-2 rounded-xl ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-50 text-emerald-700 border border-emerald-200/70'}`}>
                     <Accessibility className="w-5 h-5" />
                   </div>
                   <div>
                     <h3 className="text-xs sm:text-sm font-extrabold tracking-tight">
                       {voiceLanguage === 'zh' ? '无障碍助残服务' : voiceLanguage === 'en' ? 'Accessibility & Inclusivity' : 'Layanan Ramah Inklusif'}
                     </h3>
-                    <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                    <p className="text-[10px] text-slate-600 dark:text-slate-400">
                       {voiceLanguage === 'zh' ? '绿色通道与助残辅助' : voiceLanguage === 'en' ? 'Disability hub & accessibility tools' : 'Pusat Bantuan & Alat Bantu MPP'}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setIsAccessibilityOpen(false)}
-                  className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                  className="p-1.5 rounded-full text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-[#ECE5D6] dark:hover:bg-slate-800 transition-colors cursor-pointer"
                   title="Tutup Panel Aksesibilitas"
                   aria-label="Tutup Panel Aksesibilitas"
                 >
@@ -1092,7 +1092,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       5 Fasilitas
                     </span>
                   </div>
-                  <p className="text-[10.5px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                  <p className="text-[10.5px] text-slate-600 dark:text-slate-400 leading-relaxed">
                     Ramp Kursi Roda, Jalur Braille, Loket Prioritas D, Juru Bahasa Isyarat JBI & Fast Track.
                   </p>
                   <div className="mt-2 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
@@ -1103,7 +1103,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               </div>
 
               {/* Feature 2: Audio Reader (Text-to-Speech) */}
-              <div className="mb-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
+              <div className="mb-3 p-3 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/60">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[11px] font-bold flex items-center gap-1.5">
                     <Volume2 className="w-3.5 h-3.5 text-amber-500" />
@@ -1122,7 +1122,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       ? 'bg-amber-500 text-slate-950 shadow-md animate-pulse'
                       : isDark
                       ? 'bg-slate-700 hover:bg-slate-600 text-white'
-                      : 'bg-white hover:bg-white/5 text-slate-300 border border-white/10 border border-slate-300/80 shadow-xs'
+                      : 'bg-[#F4F0E6] hover:bg-[#ECE5D6] text-slate-800 border border-[#E2DACB] shadow-xs'
                   }`}
                 >
                   {isSpeaking ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-amber-500" />}
@@ -1131,13 +1131,13 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               </div>
 
               {/* Feature 3: Mode Kontras Ramah Netra (WCAG AAA) */}
-              <div className="mb-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
+              <div className="mb-3 p-3 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/60">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[11px] font-bold flex items-center gap-1.5">
                     <Eye className="w-3.5 h-3.5 text-emerald-500" />
                     <span>Mode Kontras Ramah Netra</span>
                   </span>
-                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-bold">
+                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#F4F0E6] dark:bg-slate-700 border border-[#E2DACB] dark:border-transparent font-bold text-slate-700 dark:text-slate-200">
                     WCAG 2.1
                   </span>
                 </div>
@@ -1147,7 +1147,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                     className={`py-1.5 px-2 rounded-xl text-[10.5px] font-bold flex flex-col items-center gap-1 transition-all cursor-pointer border ${
                       contrastMode === 'standard'
                         ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
-                        : 'bg-white dark:bg-slate-700/70 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'
+                        : 'bg-[#F4F0E6] dark:bg-slate-700/70 text-slate-800 dark:text-slate-300 border-[#E2DACB] dark:border-slate-600 hover:bg-[#ECE5D6] dark:hover:bg-slate-700'
                     }`}
                   >
                     <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
@@ -1169,7 +1169,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                     className={`py-1.5 px-2 rounded-xl text-[10.5px] font-bold flex flex-col items-center gap-1 transition-all cursor-pointer border ${
                       contrastMode === 'monochrome'
                         ? 'bg-slate-900 text-white border-slate-700 shadow-md ring-2 ring-slate-400'
-                        : 'bg-white dark:bg-slate-700/70 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'
+                        : 'bg-[#F4F0E6] dark:bg-slate-700/70 text-slate-800 dark:text-slate-300 border-[#E2DACB] dark:border-slate-600 hover:bg-[#ECE5D6] dark:hover:bg-slate-700'
                     }`}
                   >
                     <div className="w-3 h-3 rounded-full bg-slate-400 border border-slate-900"></div>
@@ -1179,13 +1179,13 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               </div>
 
               {/* Feature 4: Ukuran Huruf / Font Size */}
-              <div className="mb-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60">
+              <div className="mb-3 p-3 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/60">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[11px] font-bold flex items-center gap-1.5">
                     <Type className="w-3.5 h-3.5 text-emerald-500" />
                     <span>Ukuran Teks / Font</span>
                   </span>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono font-bold">
+                  <span className="text-[10px] text-slate-600 dark:text-slate-400 font-mono font-bold">
                     {fontSize === 'small' ? '90%' : fontSize === 'normal' ? '100%' : fontSize === 'large' ? '120%' : '140%'}
                   </span>
                 </div>
@@ -1202,7 +1202,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       className={`py-1.5 rounded-xl text-center font-bold transition-all cursor-pointer border ${
                         fontSize === f.id
                           ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
-                          : 'bg-white dark:bg-slate-700/70 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'
+                          : 'bg-[#F4F0E6] dark:bg-slate-700/70 text-slate-800 dark:text-slate-300 border-[#E2DACB] dark:border-slate-600 hover:bg-[#ECE5D6] dark:hover:bg-slate-700'
                       }`}
                     >
                       <div className="text-xs font-black">{f.label}</div>
@@ -1213,7 +1213,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               </div>
 
               {/* Feature 5: Asisten Suara AI MPP & Bahasa */}
-              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 flex items-center justify-between gap-2">
+              <div className="p-3 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/60 flex items-center justify-between gap-2">
                 <button
                   onClick={() => {
                     setIsAccessibilityOpen(false);
@@ -1232,7 +1232,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold transition-colors cursor-pointer ${
                         voiceLanguage === lang
                           ? 'bg-emerald-500 text-white'
-                          : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                          : 'bg-[#F4F0E6] dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-[#E2DACB] dark:border-transparent'
                       }`}
                     >
                       {lang.toUpperCase()}
@@ -1514,11 +1514,11 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               initial={{ opacity: 0, scale: 0.92, y: 25 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 25 }}
-              className="w-full max-w-3xl bg-white dark:bg-surface border border-emerald-500/40 rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-slate-900 dark:text-white my-auto max-h-[92vh] flex flex-col"
+              className="w-full max-w-3xl bg-[#FAF7F0] dark:bg-surface border border-[#E2DACB] dark:border-emerald-500/40 rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-slate-900 dark:text-white my-auto max-h-[92vh] flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Header */}
-              <div className="flex items-start justify-between pb-4 border-b border-slate-100 dark:border-white/10 shrink-0">
+              <div className="flex items-start justify-between pb-4 border-b border-[#E2DACB] dark:border-white/10 shrink-0">
                 <div className="flex items-center gap-3">
                   <div className={`p-3 rounded-2xl border ${
                     isSpeaking 
@@ -1555,7 +1555,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
 
                 <button
                   onClick={handleCloseVoiceResponse}
-                  className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  className="p-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-full hover:bg-[#ECE5D6] dark:hover:bg-slate-800 transition-colors"
                   title="Tutup Modal"
                 >
                   <X className="w-5 h-5" />
@@ -1563,17 +1563,17 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               </div>
 
               {/* Spoken Query Transcript Badge & High-Clarity Audio Controller */}
-              <div className="my-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs shrink-0">
+              <div className="my-3 p-3 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs shrink-0">
                 <div className="flex items-center gap-2 truncate flex-1">
                   <Mic className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span className="text-slate-600 dark:text-slate-300">
+                  <span className="text-slate-700 dark:text-slate-300">
                     Pertanyaan: <strong className="text-slate-900 dark:text-white font-semibold">"{voiceResponse.query}"</strong>
                   </span>
                 </div>
                 
                 {/* Audio Playback Controls & Speed Selector */}
                 <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
-                  <div className="flex items-center bg-slate-200 dark:bg-slate-700 rounded-lg p-0.5 text-[10px] font-bold">
+                  <div className="flex items-center bg-[#FAF7F0] dark:bg-slate-700 border border-[#E2DACB] dark:border-transparent rounded-lg p-0.5 text-[10px] font-bold">
                     <span className="px-1 text-slate-500 dark:text-slate-400 flex items-center gap-0.5">
                       <Gauge className="w-3 h-3" />
                     </span>
@@ -1583,7 +1583,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                         speakMessage(voiceResponse.speechText, voiceLanguage, 0.85);
                         notify('Kecepatan Suara: 0.85x (Lambat & Jernih)');
                       }}
-                      className={`px-1.5 py-0.5 rounded cursor-pointer ${speechRate === 0.85 ? 'bg-emerald-500 text-slate-950' : 'text-slate-600 dark:text-slate-300'}`}
+                      className={`px-1.5 py-0.5 rounded cursor-pointer ${speechRate === 0.85 ? 'bg-emerald-500 text-slate-950' : 'text-slate-700 dark:text-slate-300'}`}
                       title="Kecepatan Lambat & Sangat Jelas"
                     >
                       0.85x
@@ -1594,7 +1594,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                         speakMessage(voiceResponse.speechText, voiceLanguage, undefined);
                         notify('Kecepatan Suara: 1.0x (Standar Terkalibrasi Jernih)');
                       }}
-                      className={`px-1.5 py-0.5 rounded cursor-pointer ${!speechRate || speechRate !== 0.85 ? 'bg-emerald-500 text-slate-950' : 'text-slate-600 dark:text-slate-300'}`}
+                      className={`px-1.5 py-0.5 rounded cursor-pointer ${!speechRate || speechRate !== 0.85 ? 'bg-emerald-500 text-slate-950' : 'text-slate-700 dark:text-slate-300'}`}
                       title="Kecepatan Standar Natural Terkalibrasi"
                     >
                       1.0x
@@ -1664,8 +1664,8 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
 
                 {/* 3. Ringkasan Biaya, Waktu & Lokasi Loket */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1">
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1 font-medium">
+                  <div className="p-3.5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700 space-y-1">
+                    <div className="text-[11px] text-slate-600 dark:text-slate-400 flex items-center gap-1 font-medium">
                       <DollarSign className="w-3.5 h-3.5 text-amber-500" />
                       <span>{voiceLanguage === 'en' ? 'Fees / Retribution:' : voiceLanguage === 'zh' ? '法定规费：' : 'Biaya / Retribusi:'}</span>
                     </div>
@@ -1674,8 +1674,8 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                     </div>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1">
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1 font-medium">
+                  <div className="p-3.5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700 space-y-1">
+                    <div className="text-[11px] text-slate-600 dark:text-slate-400 flex items-center gap-1 font-medium">
                       <Clock className="w-3.5 h-3.5 text-blue-500" />
                       <span>{voiceLanguage === 'en' ? 'Estimated SLA:' : voiceLanguage === 'zh' ? '办理时限 (SLA)：' : 'Estimasi Waktu (SLA):'}</span>
                     </div>
@@ -1684,8 +1684,8 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                     </div>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-1">
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1 font-medium">
+                  <div className="p-3.5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700 space-y-1">
+                    <div className="text-[11px] text-slate-600 dark:text-slate-400 flex items-center gap-1 font-medium">
                       <Building2 className="w-3.5 h-3.5 text-emerald-500" />
                       <span>{voiceLanguage === 'en' ? 'Counter Location:' : voiceLanguage === 'zh' ? '办理窗口位置：' : 'Lokasi Loket:'}</span>
                     </div>
@@ -1696,8 +1696,8 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                 </div>
 
                 {/* 4. Rekomendasi Pertanyaan Lainnya (Quick Clickable Chips with Desktop Scroll Controls) */}
-                <div className="p-3 rounded-2xl bg-slate-100 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 space-y-2">
-                  <div className="text-[11px] font-bold text-slate-700 dark:text-slate-300 flex items-center justify-between">
+                <div className="p-3 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/40 border border-[#E2DACB] dark:border-slate-700/60 space-y-2">
+                  <div className="text-[11px] font-bold text-slate-800 dark:text-slate-300 flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                       <span>{voiceLanguage === 'en' ? 'Ask Other Quick Questions:' : voiceLanguage === 'zh' ? '点击咨询其他热门政务问题：' : 'Ingin Mengetahui Hal Lain? Klik Pertanyaan Cepat:'}</span>
@@ -1708,7 +1708,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       <button
                         type="button"
                         onClick={scrollRecommendLeft}
-                        className="p-1 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-emerald-500 hover:text-white dark:hover:text-slate-950 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer shadow-xs active:scale-90"
+                        className="p-1 rounded-lg bg-[#FAF7F0] dark:bg-slate-700 border border-[#E2DACB] dark:border-transparent hover:bg-emerald-500 hover:text-white dark:hover:text-slate-950 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer shadow-xs active:scale-90"
                         title="Geser Kiri"
                       >
                         <ChevronLeft className="w-3.5 h-3.5" />
@@ -1716,7 +1716,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       <button
                         type="button"
                         onClick={scrollRecommendRight}
-                        className="p-1 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-emerald-500 hover:text-white dark:hover:text-slate-950 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer shadow-xs active:scale-90"
+                        className="p-1 rounded-lg bg-[#FAF7F0] dark:bg-slate-700 border border-[#E2DACB] dark:border-transparent hover:bg-emerald-500 hover:text-white dark:hover:text-slate-950 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer shadow-xs active:scale-90"
                         title="Geser Kanan"
                       >
                         <ChevronRight className="w-3.5 h-3.5" />
@@ -1735,7 +1735,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                         <button
                           key={idx}
                           onClick={() => handleDirectAskInResponse(qText)}
-                          className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 text-slate-700 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700 transition-all cursor-pointer shadow-xs whitespace-nowrap shrink-0 active:scale-95 flex items-center gap-1.5"
+                          className="px-3 py-1.5 rounded-xl bg-[#FAF7F0] dark:bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-[#E2DACB] dark:border-slate-700 transition-all cursor-pointer shadow-xs whitespace-nowrap shrink-0 active:scale-95 flex items-center gap-1.5"
                         >
                           <MessageSquareText className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                           <span>{qText}</span>
@@ -1748,10 +1748,10 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               </div>
 
               {/* Modal Footer Actions */}
-              <div className="pt-4 mt-3 border-t border-slate-100 dark:border-white/10 flex flex-wrap items-center justify-between gap-2.5 shrink-0">
+              <div className="pt-4 mt-3 border-t border-[#E2DACB] dark:border-white/10 flex flex-wrap items-center justify-between gap-2.5 shrink-0">
                 <button
                   onClick={handleCopyVoiceDetails}
-                  className="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+                  className="px-3.5 py-2 rounded-xl bg-[#F4F0E6] dark:bg-slate-800 hover:bg-[#ECE5D6] dark:hover:bg-slate-700 border border-[#E2DACB] dark:border-transparent text-slate-800 dark:text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
                 >
                   <Copy className="w-3.5 h-3.5" />
                   <span>{voiceLanguage === 'en' ? 'Copy Requirements' : voiceLanguage === 'zh' ? '复制申请要求' : 'Salin Persyaratan'}</span>
@@ -1801,11 +1801,11 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ duration: 0.2 }}
-              className="w-[calc(100%-1.5rem)] mx-3 my-auto max-h-[85vh] sm:h-auto sm:max-h-[92vh] sm:max-w-4xl bg-white dark:bg-surface border sm:border border-slate-200/90 dark:border-emerald-500/30 rounded-3xl p-4 sm:p-6 md:p-7 shadow-2xl overflow-hidden flex flex-col text-slate-900 dark:text-white font-sans"
+              className="w-[calc(100%-1.5rem)] mx-3 my-auto max-h-[85vh] sm:h-auto sm:max-h-[92vh] sm:max-w-4xl bg-[#FAF7F0] dark:bg-surface border sm:border border-[#E2DACB] dark:border-emerald-500/30 rounded-3xl p-4 sm:p-6 md:p-7 shadow-2xl overflow-hidden flex flex-col text-slate-900 dark:text-white font-sans"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Header with Standard Badges */}
-              <div className="flex items-start justify-between pb-4 border-b border-slate-200/80 dark:border-slate-800 gap-3 shrink-0">
+              <div className="flex items-start justify-between pb-4 border-b border-[#E2DACB] dark:border-slate-800 gap-3 shrink-0">
                 <div className="flex items-center gap-3 sm:gap-4">
                   <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow-xs">
                     <Accessibility className="w-6 h-6 sm:w-7 sm:h-7" />
@@ -1826,7 +1826,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                 </div>
                 <button
                   onClick={() => setIsAssistanceModalOpen(false)}
-                  className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shrink-0 cursor-pointer"
+                  className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl bg-[#F4F0E6] dark:bg-slate-800 border border-[#E2DACB] dark:border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-[#ECE5D6] dark:hover:bg-slate-700 transition-colors shrink-0 cursor-pointer"
                   aria-label="Tutup Dialog"
                 >
                   <X className="w-5 h-5" />
@@ -1834,17 +1834,17 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               </div>
 
               {/* Regulatory Reference Badges */}
-              <div className="flex items-center gap-1.5 sm:gap-2 py-2.5 overflow-x-auto no-scrollbar shrink-0 border-b border-slate-100 dark:border-slate-800/80">
-                <span className="text-[10.5px] font-bold text-slate-500 dark:text-slate-400 shrink-0 flex items-center gap-1">
+              <div className="flex items-center gap-1.5 sm:gap-2 py-2.5 overflow-x-auto no-scrollbar shrink-0 border-b border-[#E2DACB] dark:border-slate-800/80">
+                <span className="text-[10.5px] font-bold text-slate-600 dark:text-slate-400 shrink-0 flex items-center gap-1">
                   <Award className="w-3.5 h-3.5 text-amber-500" /> Regulasi:
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#F4F0E6] dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-[#E2DACB] dark:border-slate-700 shrink-0">
                   UU No. 8/2016 (Disabilitas)
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#F4F0E6] dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-[#E2DACB] dark:border-slate-700 shrink-0">
                   PermenPAN-RB No. 10/2023 (Inklusi)
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shrink-0">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#F4F0E6] dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-[#E2DACB] dark:border-slate-700 shrink-0">
                   Permen PUPR No. 14/2017 (Akses Bangunan)
                 </span>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 shrink-0">
@@ -1853,7 +1853,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               </div>
 
               {/* 5 Segmented Navigation Tabs */}
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 my-3 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shrink-0">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 my-3 p-1 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/90 border border-[#E2DACB] dark:border-slate-700/80 shrink-0">
                 {[
                   { id: 'fasilitas', label: 'Fisik & Sensorik', icon: ShieldCheck, badge: '8 Sarana' },
                   { id: 'kelompok_rentan', label: 'Laktasi & Anak', icon: Baby, badge: 'Prioritas' },
@@ -1870,7 +1870,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       className={`min-h-[44px] px-2 py-1.5 rounded-xl text-xs font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 transition-all cursor-pointer ${
                         isActive
                           ? 'bg-emerald-500 text-slate-950 shadow-md shadow-black/25'
-                          : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-700/60'
+                          : 'text-slate-700 dark:text-slate-300 hover:bg-[#ECE5D6] dark:hover:bg-slate-700/60'
                       }`}
                     >
                       <Icon className="w-4 h-4 shrink-0" />
@@ -1889,7 +1889,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       
                       {/* Card 1: Ramp Landai */}
-                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 shadow-2xs hover:border-emerald-500/40 transition-colors">
+                      <div className="p-3.5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/90 shadow-2xs hover:border-emerald-500/40 transition-colors">
                         <div className="flex items-center justify-between mb-1.5">
                           <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
                             <MapPin className="w-4 h-4 text-emerald-500 shrink-0" />
@@ -1905,7 +1905,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       </div>
 
                       {/* Card 2: Guiding Block */}
-                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 shadow-2xs hover:border-amber-500/40 transition-colors">
+                      <div className="p-3.5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/90 shadow-2xs hover:border-amber-500/40 transition-colors">
                         <div className="flex items-center justify-between mb-1.5">
                           <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
                             <Compass className="w-4 h-4 text-amber-500 shrink-0" />
@@ -1921,7 +1921,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       </div>
 
                       {/* Card 3: Loket Rendah Aksesibel */}
-                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 shadow-2xs hover:border-blue-500/40 transition-colors">
+                      <div className="p-3.5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/90 shadow-2xs hover:border-blue-500/40 transition-colors">
                         <div className="flex items-center justify-between mb-1.5">
                           <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
                             <Accessibility className="w-4 h-4 text-blue-500 shrink-0" />
@@ -1937,7 +1937,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       </div>
 
                       {/* Card 4: Toilet Khusus Difabel + Alarm */}
-                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 shadow-2xs hover:border-rose-500/40 transition-colors">
+                      <div className="p-3.5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/90 shadow-2xs hover:border-rose-500/40 transition-colors">
                         <div className="flex items-center justify-between mb-1.5">
                           <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
                             <ShieldCheck className="w-4 h-4 text-rose-500 shrink-0" />
@@ -1953,7 +1953,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       </div>
 
                       {/* Card 5: Parkir Khusus Difabel */}
-                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 shadow-2xs hover:border-blue-500/40 transition-colors">
+                      <div className="p-3.5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/90 shadow-2xs hover:border-blue-500/40 transition-colors">
                         <div className="flex items-center justify-between mb-1.5">
                           <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
                             <Car className="w-4 h-4 text-blue-600 dark:text-sky-400 shrink-0" />
@@ -1969,7 +1969,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       </div>
 
                       {/* Card 6: Kursi Roda & Alat Bantu Jalan */}
-                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 shadow-2xs hover:border-teal-500/40 transition-colors">
+                      <div className="p-3.5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/90 shadow-2xs hover:border-teal-500/40 transition-colors">
                         <div className="flex items-center justify-between mb-1.5">
                           <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
                             <HeartHandshake className="w-4 h-4 text-teal-500 shrink-0" />
@@ -1985,7 +1985,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       </div>
 
                       {/* Card 7: Papan Braille & Audio */}
-                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 shadow-2xs hover:border-sky-500/40 transition-colors">
+                      <div className="p-3.5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/90 shadow-2xs hover:border-sky-500/40 transition-colors">
                         <div className="flex items-center justify-between mb-1.5">
                           <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
                             <Eye className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
@@ -2001,7 +2001,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       </div>
 
                       {/* Card 8: Hearing Loop System */}
-                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 shadow-2xs hover:border-cyan-500/40 transition-colors">
+                      <div className="p-3.5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/90 shadow-2xs hover:border-cyan-500/40 transition-colors">
                         <div className="flex items-center justify-between mb-1.5">
                           <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
                             <Ear className="w-4 h-4 text-cyan-500 shrink-0" />
@@ -2035,7 +2035,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                       
                       {/* Ruang Laktasi (ASI) */}
-                      <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 space-y-2">
+                      <div className="p-4 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/90 space-y-2">
                         <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
                           <div className="p-2 rounded-xl bg-pink-500/15 text-pink-500 border border-pink-500/30">
                             <Baby className="w-5 h-5" />
@@ -2055,7 +2055,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       </div>
 
                       {/* Pojok Bermain Anak (Kids Corner) */}
-                      <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 space-y-2">
+                      <div className="p-4 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/90 space-y-2">
                         <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
                           <div className="p-2 rounded-xl bg-amber-500/15 text-amber-500 border border-amber-500/30">
                             <Sparkles className="w-5 h-5" />
@@ -2075,7 +2075,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       </div>
 
                       {/* Layanan Prioritas Lansia & Ibu Hamil */}
-                      <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 space-y-2">
+                      <div className="p-4 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/90 space-y-2">
                         <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
                           <div className="p-2 rounded-xl bg-emerald-500/15 text-emerald-500 border border-emerald-500/30">
                             <Users className="w-5 h-5" />
@@ -2091,7 +2091,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                       </div>
 
                       {/* Kursi Tunggu Prioritas & Fasilitas Air Minum */}
-                      <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 space-y-2">
+                      <div className="p-4 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/90 space-y-2">
                         <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
                           <div className="p-2 rounded-xl bg-blue-500/15 text-blue-500 border border-blue-500/30">
                             <Heart className="w-5 h-5" />
@@ -2113,7 +2113,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                 {/* TAB 3: Juru Bahasa Isyarat (BISINDO) & Hotline Komunikasi */}
                 {assistanceTab === 'jbi' && (
                   <div className="space-y-4 text-xs sm:text-sm">
-                    <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 space-y-3.5">
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/90 space-y-3.5">
                       <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-xl bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 flex items-center justify-center shrink-0">
                           <Ear className="w-6 h-6" />
@@ -2162,7 +2162,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
 
                       {/* Display Teks Dua Arah */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                        <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700">
                           <div className="font-bold text-xs text-slate-900 dark:text-white mb-1 flex items-center gap-1.5">
                             <MessageSquareText className="w-4 h-4 text-amber-500" />
                             Tablet Teks Interaktif
@@ -2172,7 +2172,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                           </p>
                         </div>
 
-                        <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700">
                           <div className="font-bold text-xs text-slate-900 dark:text-white mb-1 flex items-center gap-1.5">
                             <FileText className="w-4 h-4 text-blue-500" />
                             Formulir Panduan Visual
@@ -2222,7 +2222,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                             placeholder="Contoh: Andi Muhammad / Pendamping..."
                             value={requestForm.nama}
                             onChange={(e) => setRequestForm({ ...requestForm, nama: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-[#E2DACB] dark:border-slate-700 bg-[#F4F0E6] dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm"
                           />
                         </div>
 
@@ -2237,7 +2237,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                               placeholder="Contoh: 081234567890"
                               value={requestForm.phone}
                               onChange={(e) => setRequestForm({ ...requestForm, phone: e.target.value })}
-                              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm"
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-[#E2DACB] dark:border-slate-700 bg-[#F4F0E6] dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm"
                             />
                           </div>
 
@@ -2248,7 +2248,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                             <select
                               value={requestForm.jenisKebutuhan}
                               onChange={(e) => setRequestForm({ ...requestForm, jenisKebutuhan: e.target.value })}
-                              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm cursor-pointer"
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-[#E2DACB] dark:border-slate-700 bg-[#F4F0E6] dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm cursor-pointer"
                             >
                               <option value="Kursi Roda & Petugas Pendamping">♿ Kursi Roda & Petugas Pendamping</option>
                               <option value="Juru Bahasa Isyarat (Tunarungu)">🧏 Juru Bahasa Isyarat (BISINDO)</option>
@@ -2268,7 +2268,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                               type="date"
                               value={requestForm.tanggal}
                               onChange={(e) => setRequestForm({ ...requestForm, tanggal: e.target.value })}
-                              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm"
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-[#E2DACB] dark:border-slate-700 bg-[#F4F0E6] dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm"
                             />
                           </div>
 
@@ -2280,7 +2280,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                               type="time"
                               value={requestForm.jamKedatangan}
                               onChange={(e) => setRequestForm({ ...requestForm, jamKedatangan: e.target.value })}
-                              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm"
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-[#E2DACB] dark:border-slate-700 bg-[#F4F0E6] dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm"
                             />
                           </div>
                         </div>
@@ -2294,7 +2294,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                             placeholder="Contoh: Mengurus KTP di loket Disdukcapil atau izin usaha NIB di DPMPTSP..."
                             value={requestForm.catatan}
                             onChange={(e) => setRequestForm({ ...requestForm, catatan: e.target.value })}
-                            className="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm"
+                            className="w-full px-3.5 py-2 rounded-xl border border-[#E2DACB] dark:border-slate-700 bg-[#F4F0E6] dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-xs sm:text-sm"
                           />
                         </div>
 
@@ -2313,10 +2313,10 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                 {/* TAB 5: Standar SOP & Maklumat Pelayanan Inklusi */}
                 {assistanceTab === 'standar' && (
                   <div className="space-y-4 text-xs sm:text-sm">
-                    <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/90 space-y-4">
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/90 space-y-4">
                       
                       {/* Maklumat Pelayanan */}
-                      <div className="border-b border-slate-200 dark:border-slate-700 pb-3.5">
+                      <div className="border-b border-[#E2DACB] dark:border-slate-700 pb-3.5">
                         <div className="flex items-center gap-2 font-black text-slate-900 dark:text-white text-sm mb-1.5">
                           <Award className="w-4 h-4 text-amber-500 shrink-0" />
                           Maklumat Pelayanan Publik Ramah Kelompok Rentan & Inklusi
@@ -2328,7 +2328,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
 
                       {/* 4 Pilar Standar Inklusi */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700">
                           <div className="font-bold text-xs text-emerald-600 dark:text-emerald-400 mb-1 flex items-center gap-1.5">
                             <CheckCircle2 className="w-3.5 h-3.5" />
                             1. Kesetaraan Hak Layanan
@@ -2338,7 +2338,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                           </p>
                         </div>
 
-                        <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700">
                           <div className="font-bold text-xs text-emerald-600 dark:text-emerald-400 mb-1 flex items-center gap-1.5">
                             <CheckCircle2 className="w-3.5 h-3.5" />
                             2. Nol Retribusi (100% Gratis)
@@ -2348,7 +2348,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                           </p>
                         </div>
 
-                        <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700">
                           <div className="font-bold text-xs text-emerald-600 dark:text-emerald-400 mb-1 flex items-center gap-1.5">
                             <CheckCircle2 className="w-3.5 h-3.5" />
                             3. Jalur Bebas Hambatan
@@ -2358,7 +2358,7 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
                           </p>
                         </div>
 
-                        <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700">
                           <div className="font-bold text-xs text-emerald-600 dark:text-emerald-400 mb-1 flex items-center gap-1.5">
                             <CheckCircle2 className="w-3.5 h-3.5" />
                             4. Duta Layanan Responsif
@@ -2385,14 +2385,14 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
               </div>
 
               {/* Modal Footer */}
-              <div className="pt-3.5 mt-2 border-t border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 shrink-0 text-xs text-slate-500 dark:text-slate-400">
+              <div className="pt-3.5 mt-2 border-t border-[#E2DACB] dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 shrink-0 text-xs text-slate-600 dark:text-slate-400">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-500" />
                   <span className="font-medium">MPP Simpurusiang Kab. Luwu • Ramah HAM & Bebas Diskriminasi</span>
                 </div>
                 <button
                   onClick={() => setIsAssistanceModalOpen(false)}
-                  className="px-4 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold transition-colors cursor-pointer"
+                  className="px-4 py-1.5 rounded-xl bg-[#F4F0E6] hover:bg-[#ECE5D6] border border-[#E2DACB] dark:border-transparent dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold transition-colors cursor-pointer"
                 >
                   Tutup
                 </button>

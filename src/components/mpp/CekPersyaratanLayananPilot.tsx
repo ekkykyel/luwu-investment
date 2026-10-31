@@ -490,7 +490,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cari nama layanan, instansi, atau dokumen (contoh: NIB, KTP, PBG, Paspor)..."
-              className="w-full pl-11 sm:pl-12 pr-3.5 sm:pr-4 py-3.5 text-sm rounded-2xl border bg-white dark:bg-[#0D2338] border-[#DFD8CA] dark:border-white/[0.10] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#0F6B4F]/30 dark:focus:ring-emerald-500/40 transition-all shadow-xs"
+              className="w-full pl-11 sm:pl-12 pr-3.5 sm:pr-4 py-3.5 text-sm rounded-2xl border bg-[#F4F0E6] focus:bg-[#FAF7F0] dark:bg-[#0D2338] border-[#E2DACB] dark:border-white/[0.10] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#0F6B4F]/30 dark:focus:ring-emerald-500/40 transition-all shadow-xs"
             />
           </div>
 
@@ -512,7 +512,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                   className={`min-h-[38px] px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer border active:scale-95 ${
                     isSelected
                       ? 'bg-[#0F6B4F] dark:bg-emerald-600 text-white border-[#0F6B4F] dark:border-emerald-500 shadow-xs'
-                      : 'bg-white dark:bg-[#0D2338] text-slate-700 dark:text-slate-300 border-[#E2DACB] dark:border-white/[0.09] hover:border-[#0F6B4F]/40 hover:text-[#0F6B4F] dark:hover:bg-[#132E48]'
+                      : 'bg-[#F4F0E6] dark:bg-[#0D2338] text-slate-700 dark:text-slate-300 border-[#E2DACB] dark:border-white/[0.09] hover:bg-[#ECE5D6] hover:border-[#0F6B4F]/40 hover:text-[#0F6B4F] dark:hover:bg-[#132E48]'
                   }`}
                 >
                   {srv.title.split('(')[0].trim()}
@@ -529,10 +529,10 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
           
           {/* ── LEFT / MAIN PANEL: CHECKLIST BERKAS (Col 7 / 12) ── */}
           <div className="lg:col-span-7 space-y-5">
-            <div className="rounded-2xl sm:rounded-3xl px-2.5 py-4 sm:p-6 lg:p-7 border bg-white dark:bg-[#0F2D4A] border-slate-200/90 dark:border-white/[0.09] shadow-sm space-y-4 sm:space-y-6">
+            <div className="rounded-2xl sm:rounded-3xl px-2.5 py-4 sm:p-6 lg:p-7 border bg-[#F4F0E6] dark:bg-[#0F2D4A] border-[#E2DACB] dark:border-white/[0.09] shadow-sm space-y-4 sm:space-y-6">
               
               {/* Header Layanan Aktif */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 pb-3.5 sm:pb-5 border-b border-slate-100 dark:border-white/[0.08] px-0.5 sm:px-0">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 pb-3.5 sm:pb-5 border-b border-[#E2DACB] dark:border-white/[0.08] px-0.5 sm:px-0">
                 <div className="space-y-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-slate-500 dark:text-slate-400">
                     <span className="font-semibold text-emerald-600 dark:text-emerald-400">{activeService.category}</span>
@@ -552,11 +552,11 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                   >
                     Centang Semua
                   </button>
-                  <span className="text-slate-300 dark:text-slate-700">|</span>
+                  <span className="text-[#D5CCB8] dark:text-slate-700">|</span>
                   <button 
                     type="button"
                     onClick={handleResetCheck}
-                    className="text-xs font-semibold text-slate-500 dark:text-slate-400 hover:underline px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                    className="text-xs font-semibold text-slate-500 dark:text-slate-400 hover:underline px-2 py-1 rounded-lg hover:bg-[#ECE5D6] dark:hover:bg-slate-800 transition-colors cursor-pointer"
                   >
                     Reset
                   </button>
@@ -564,7 +564,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
               </div>
 
               {/* Progress Bar Kesiapan */}
-              <div className="space-y-2 px-3 py-3 sm:p-4 rounded-2xl bg-slate-50 dark:bg-[#143755] border border-slate-200/60 dark:border-white/[0.06]">
+              <div className="space-y-2 px-3 py-3 sm:p-4 rounded-2xl bg-[#FAF7F0] dark:bg-[#143755] border border-[#E2DACB] dark:border-white/[0.06]">
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-medium">
                   <span className="text-slate-700 dark:text-slate-300">
                     Progres Kesiapan: <strong className="text-emerald-600 dark:text-emerald-400 tabular-nums">{stats.completedCount} dari {stats.totalCount} siap</strong>
@@ -575,7 +575,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                 </div>
                 
                 {/* Bar */}
-                <div className="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+                <div className="w-full h-2.5 rounded-full bg-[#E2DACB] dark:bg-slate-800 overflow-hidden">
                   <div 
                     className="h-full bg-emerald-500 rounded-full transition-all duration-300"
                     style={{ width: `${stats.percent}%` }}
@@ -611,7 +611,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                       className={`px-3 py-3 sm:p-4 rounded-xl border transition-all cursor-pointer flex flex-col gap-1.5 select-none ${
                         isChecked
                           ? 'bg-emerald-50/70 dark:bg-emerald-950/20 border-emerald-500/30 dark:border-emerald-500/30'
-                          : 'bg-white dark:bg-[#0A2238]/60 border-slate-200/80 dark:border-white/[0.07] hover:border-slate-300 dark:hover:border-white/[0.14]'
+                          : 'bg-[#FAF7F0] dark:bg-[#0A2238]/60 border-[#E2DACB] dark:border-white/[0.07] hover:border-[#0F6B4F]/35 dark:hover:border-white/[0.14]'
                       }`}
                     >
                       {/* Top Header Row: Checkbox + Document Title + Status */}
@@ -696,7 +696,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
 
               {/* Tips & Petunjuk Tambahan */}
               {activeService.tips && activeService.tips.length > 0 && (
-                <div className="px-3 py-3 sm:p-4 rounded-xl bg-slate-50 dark:bg-[#143755]/60 border border-slate-200/60 dark:border-white/[0.06] space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
+                <div className="px-3 py-3 sm:p-4 rounded-xl bg-[#FAF7F0] dark:bg-[#143755]/60 border border-[#E2DACB] dark:border-white/[0.06] space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
                   <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                     <BadgeCheck className="w-4 h-4 text-emerald-500 shrink-0" />
                     Catatan Pelayanan Petugas:
@@ -715,8 +715,8 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
           <div className="lg:col-span-5 space-y-5 sm:space-y-6 lg:sticky lg:top-28">
             
             {/* Card Ringkasan Biaya, Waktu, Loket & Tindakan */}
-            <div className="rounded-2xl sm:rounded-3xl px-3 py-4 sm:p-6 border bg-white dark:bg-[#0F2D4A] border-slate-200/90 dark:border-white/[0.09] shadow-sm space-y-4 sm:space-y-5">
-              <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-white/[0.08]">
+            <div className="rounded-2xl sm:rounded-3xl px-3 py-4 sm:p-6 border bg-[#F4F0E6] dark:bg-[#0F2D4A] border-[#E2DACB] dark:border-white/[0.09] shadow-sm space-y-4 sm:space-y-5">
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#E2DACB] dark:border-white/[0.08]">
                 <h4 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
                   Ringkasan Layanan
                 </h4>
@@ -727,7 +727,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
 
               {/* Data Grid: Biaya, Waktu, Loket */}
               <div className="grid grid-cols-2 gap-2.5 sm:gap-3 text-xs">
-                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-50 dark:bg-[#143755] border border-slate-200/60 dark:border-white/[0.06] space-y-1">
+                <div className="p-2.5 sm:p-3 rounded-xl bg-[#FAF7F0] dark:bg-[#143755] border border-[#E2DACB] dark:border-white/[0.06] space-y-1">
                   <div className="text-slate-500 dark:text-slate-400 flex items-center gap-1">
                     <Clock className="w-3.5 h-3.5 shrink-0" /> Estimasi Waktu
                   </div>
@@ -736,7 +736,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                   </div>
                 </div>
 
-                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-50 dark:bg-[#143755] border border-slate-200/60 dark:border-white/[0.06] space-y-1">
+                <div className="p-2.5 sm:p-3 rounded-xl bg-[#FAF7F0] dark:bg-[#143755] border border-[#E2DACB] dark:border-white/[0.06] space-y-1">
                   <div className="text-slate-500 dark:text-slate-400 flex items-center gap-1">
                     <Building2 className="w-3.5 h-3.5 shrink-0" /> Biaya Resmi
                   </div>
@@ -780,8 +780,8 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
             {/* ========================================================================= */}
             {/* PUSAT UNDUHAN BLANGKO RESMI & PANDUAN PROSEDUR LOKET                     */}
             {/* ========================================================================= */}
-            <div className="rounded-2xl sm:rounded-3xl px-3 py-4 sm:p-6 border bg-white dark:bg-[#0F2D4A] border-slate-200/90 dark:border-white/[0.09] shadow-sm space-y-4 sm:space-y-5">
-              <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-white/[0.08]">
+            <div className="rounded-2xl sm:rounded-3xl px-3 py-4 sm:p-6 border bg-[#F4F0E6] dark:bg-[#0F2D4A] border-[#E2DACB] dark:border-white/[0.09] shadow-sm space-y-4 sm:space-y-5">
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#E2DACB] dark:border-white/[0.08]">
                 <div className="flex items-center gap-2">
                   <FileText className="w-4 h-4 text-[#0F6B4F] dark:text-emerald-400 shrink-0" />
                   <h4 className="text-sm font-bold text-slate-900 dark:text-white">
@@ -802,7 +802,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                 {availableTemplates.map((tpl, tIdx) => (
                   <div 
                     key={tIdx}
-                    className="p-2.5 sm:p-3 rounded-xl bg-[#FAF8F3] dark:bg-[#132E48] border border-[#E5DFD3] dark:border-white/[0.07] flex items-center justify-between gap-2.5 sm:gap-3 hover:border-[#0F6B4F]/40 transition-colors"
+                    className="p-2.5 sm:p-3 rounded-xl bg-[#FAF7F0] dark:bg-[#132E48] border border-[#E2DACB] dark:border-white/[0.07] flex items-center justify-between gap-2.5 sm:gap-3 hover:border-[#0F6B4F]/40 transition-colors"
                   >
                     <div className="min-w-0 flex-1">
                       <div className="text-xs font-bold text-slate-900 dark:text-white leading-snug line-clamp-2 sm:truncate">
@@ -827,25 +827,25 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
               </div>
 
               {/* Tahapan Alur Layanan di Loket Fisik */}
-              <div className="pt-2 border-t border-slate-100 dark:border-white/[0.06] space-y-2">
+              <div className="pt-2 border-t border-[#E2DACB] dark:border-white/[0.06] space-y-2">
                 <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#0F6B4F] dark:text-emerald-400 shrink-0" />
                   Alur 3 Langkah di Gedung MPP:
                 </div>
                 <div className="grid grid-cols-1 gap-2 text-xs">
-                  <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-[#FAF8F3] dark:bg-[#132E48]/60">
+                  <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-[#FAF7F0] dark:bg-[#132E48]/60 border border-[#E2DACB] dark:border-transparent">
                     <span className="w-5 h-5 rounded-full bg-[#0F6B4F]/15 text-[#0F6B4F] dark:text-emerald-300 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">1</span>
                     <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
                       <strong>Validasi Front Office:</strong> Tunjukkan checklist ini kepada petugas resepsionis di lantai 1 untuk verifikasi kelengkapan awal.
                     </p>
                   </div>
-                  <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-[#FAF8F3] dark:bg-[#132E48]/60">
+                  <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-[#FAF7F0] dark:bg-[#132E48]/60 border border-[#E2DACB] dark:border-transparent">
                     <span className="w-5 h-5 rounded-full bg-[#0F6B4F]/15 text-[#0F6B4F] dark:text-emerald-300 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">2</span>
                     <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
                       <strong>Pelayanan di {activeService.loket}:</strong> Petugas {activeService.agency} memproses berkas Anda tanpa calo dan bebas biaya liar.
                     </p>
                   </div>
-                  <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-[#FAF8F3] dark:bg-[#132E48]/60">
+                  <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-[#FAF7F0] dark:bg-[#132E48]/60 border border-[#E2DACB] dark:border-transparent">
                     <span className="w-5 h-5 rounded-full bg-[#0F6B4F]/15 text-[#0F6B4F] dark:text-emerald-300 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">3</span>
                     <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
                       <strong>Penerbitan & SK:</strong> Dokumen fisik diserahkan atau diterbitkan digital dalam estimasi {activeService.processingTime}.
@@ -855,8 +855,8 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
               </div>
 
               {/* Quiet Secondary Action: Buka Asisten MPP (Does not compete with primary Ambil Antrean CTA) */}
-              <div className="pt-2 border-t border-slate-100 dark:border-white/[0.06]">
-                <div className="p-3 sm:p-3.5 rounded-xl bg-[#FAF8F3] dark:bg-[#132E48]/70 border border-[#E5DFD3] dark:border-white/[0.08] flex items-center justify-between gap-2.5 sm:gap-3">
+              <div className="pt-2 border-t border-[#E2DACB] dark:border-white/[0.06]">
+                <div className="p-3 sm:p-3.5 rounded-xl bg-[#FAF7F0] dark:bg-[#132E48]/70 border border-[#E2DACB] dark:border-white/[0.08] flex items-center justify-between gap-2.5 sm:gap-3">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className="w-8 h-8 rounded-lg bg-[#0F6B4F]/10 dark:bg-emerald-500/15 text-[#0F6B4F] dark:text-emerald-400 flex items-center justify-center shrink-0">
                       <Mic className="w-4 h-4" />
@@ -875,7 +875,7 @@ Diterbitkan secara digital oleh Portal MPP Simpurusiang Kab. Luwu.
                     onClick={() => {
                       window.dispatchEvent(new CustomEvent('open-mpp-voice-assistant'));
                     }}
-                    className="min-h-[36px] py-2 px-3 rounded-lg border border-[#0F6B4F]/30 dark:border-emerald-400/30 bg-white dark:bg-[#0D2338] hover:bg-[#0F6B4F] hover:text-white dark:hover:bg-emerald-600 text-[#0F6B4F] dark:text-emerald-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 active:scale-98"
+                    className="min-h-[36px] py-2 px-3 rounded-lg border border-[#E2DACB] dark:border-emerald-400/30 bg-[#F4F0E6] dark:bg-[#0D2338] hover:bg-[#0F6B4F] hover:text-white hover:border-[#0F6B4F] dark:hover:bg-emerald-600 text-[#0F6B4F] dark:text-emerald-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 active:scale-98"
                   >
                     <span>Tanya</span>
                     <ArrowRight className="w-3.5 h-3.5 shrink-0" />

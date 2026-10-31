@@ -234,22 +234,22 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
           className={`relative w-full max-w-5xl max-h-[85vh] border rounded-3xl shadow-2xl flex flex-col overflow-hidden font-sans ${
             isDark 
               ? 'bg-[#0A2238] border-slate-800 text-slate-100' 
-              : 'bg-[#FAF8F3] border-[#E5DFD3] text-slate-900'
+              : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900'
           }`}
           style={{ color: isDark ? '#f8fafc' : '#0f172a' }}
         >
           {/* Header Bar */}
           <div className={`flex items-center justify-between px-5 sm:px-8 py-4 border-b shrink-0 backdrop-blur-md ${
-            isDark ? 'bg-[#0A2238]/95 border-slate-800' : 'bg-[#FAF8F3]/95 border-[#E5DFD3]'
+            isDark ? 'bg-[#0A2238]/95 border-slate-800' : 'bg-[#F4F0E6]/95 border-[#E2DACB]'
           }`}>
             <div className="flex items-center gap-3">
               {activeNews && (
                 <button
                   onClick={() => setActiveNews(null)}
-                  className={`p-2 rounded-xl transition-all mr-1 flex items-center justify-center shadow-sm font-bold cursor-pointer ${
+                  className={`p-2 rounded-xl transition-all mr-1 flex items-center justify-center shadow-sm font-bold cursor-pointer border ${
                     isDark 
-                      ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' 
-                      : 'bg-slate-100 text-slate-800 hover:bg-slate-200'
+                      ? 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700' 
+                      : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-800 hover:bg-[#EAE3D2]'
                   }`}
                   title="Kembali ke Katalog"
                 >
@@ -297,7 +297,7 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
                 onClick={() => loadNewsData(false)}
                 disabled={isLoading}
                 title="Segarkan Data dari Supabase"
-                className="p-2.5 rounded-2xl bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 transition-all flex items-center gap-1.5 text-xs font-semibold"
+                className="p-2.5 rounded-2xl bg-[#FAF7F0] hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 border border-[#E2DACB] dark:border-slate-700 transition-all flex items-center gap-1.5 text-xs font-semibold"
               >
                 <RefreshCw size={15} className={isLoading ? 'animate-spin text-emerald-600' : ''} />
                 <span className="hidden md:inline">{isLoading ? 'Memuat...' : 'Segarkan'}</span>
@@ -305,7 +305,7 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
 
               <button
                 onClick={onClose}
-                className="p-2.5 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-rose-500 hover:text-white dark:hover:bg-rose-500 dark:hover:text-white transition-all shadow-sm"
+                className="p-2.5 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-[#E2DACB] dark:border-slate-700 hover:bg-rose-500 hover:text-white dark:hover:bg-rose-500 dark:hover:text-white transition-all shadow-sm"
                 aria-label="Tutup Modal"
               >
                 <X size={18} />
@@ -369,7 +369,7 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
 
                 {/* Meta Bar */}
                 <div className={`flex flex-wrap items-center justify-between gap-4 py-3 border-y text-xs sm:text-sm ${
-                  isDark ? 'border-slate-800 text-slate-300' : 'border-slate-200 text-slate-700'
+                  isDark ? 'border-slate-800 text-slate-300' : 'border-[#E2DACB] text-slate-700'
                 }`}>
                   <div className="flex flex-wrap items-center gap-4">
                     <span className="flex items-center gap-1.5 font-semibold" style={{ color: isDark ? '#e2e8f0' : '#1e293b' }}>
@@ -394,7 +394,7 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
                           ? 'bg-rose-500/15 border-rose-500/40 text-rose-700 dark:text-rose-400' 
                           : isDark 
                             ? 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700' 
-                            : 'bg-slate-100 border-slate-300 text-slate-800 hover:bg-slate-200'
+                            : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-800 hover:bg-[#EAE3D2]'
                       }`}
                     >
                       <ThumbsUp size={14} className={likedNews[activeNews.id] ? 'fill-current text-rose-600' : ''} />
@@ -417,7 +417,7 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
 
                 {/* Hero Image Header */}
                 <div className={`relative w-full h-64 sm:h-80 md:h-96 rounded-3xl overflow-hidden shadow-lg border ${
-                  isDark ? 'border-slate-800 bg-surface' : 'border-slate-300 bg-slate-100'
+                  isDark ? 'border-slate-800 bg-surface' : 'border-[#E2DACB] bg-[#F4F0E6]'
                 }`}>
                   <img 
                     src={activeNews.image} 
@@ -452,7 +452,7 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
                 </div>
 
                 {/* Footer Artikel & Berita Terkait */}
-                <div className="pt-8 border-t border-slate-200 dark:border-slate-800 space-y-4">
+                <div className="pt-8 border-t border-[#E2DACB] dark:border-slate-800 space-y-4">
                   <h4 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <Sparkles size={16} className="text-emerald-600 dark:text-emerald-400" />
                     <span>Berita & Informasi Lainnya</span>
@@ -466,12 +466,12 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
                         <div
                           key={rel.id}
                           onClick={() => setActiveNews(rel)}
-                          className="p-3.5 rounded-2xl border border-slate-300 dark:border-slate-800 bg-slate-50 hover:bg-slate-100 dark:bg-surface/50 hover:border-emerald-500/50 transition-all cursor-pointer flex gap-3 group"
+                          className="p-3.5 rounded-2xl border border-[#E2DACB] dark:border-slate-800 bg-[#F4F0E6] hover:bg-[#EAE3D2] dark:bg-surface/50 hover:border-emerald-500/50 transition-all cursor-pointer flex gap-3 group"
                         >
                           <img 
                             src={rel.image} 
                             alt={rel.judul} 
-                            className="w-16 h-16 rounded-xl object-cover shrink-0 group-hover:scale-105 transition-transform border border-slate-200 dark:border-slate-800"
+                            className="w-16 h-16 rounded-xl object-cover shrink-0 group-hover:scale-105 transition-transform border border-[#E2DACB] dark:border-slate-800"
                             onError={(e) => {
                               e.currentTarget.onerror = null;
                               e.currentTarget.src = '/assets/images/default-news.svg';
@@ -513,12 +513,12 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder={isEn ? "Search news, topics, or authors..." : isZh ? "搜索新闻、主题或作者..." : "Cari judul berita, topik, atau penulis..."}
-                      className="w-full pl-11 pr-10 py-3 rounded-2xl bg-slate-50 dark:bg-surface border border-slate-300 dark:border-slate-700 text-sm text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all shadow-sm font-medium"
+                      className="w-full pl-11 pr-10 py-3 rounded-2xl bg-[#F4F0E6] dark:bg-surface border border-[#E2DACB] dark:border-slate-700 text-sm text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all shadow-sm font-medium"
                     />
                     {searchQuery && (
                       <button
                         onClick={() => setSearchQuery('')}
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                        className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-[#EAE3D2] dark:hover:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
                       >
                         <X size={14} />
                       </button>
@@ -534,7 +534,7 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
                         className={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all shadow-sm flex items-center gap-1.5 ${
                           selectedCategory === cat
                             ? 'bg-emerald-600 text-white font-extrabold ring-2 ring-emerald-500/40'
-                            : 'bg-slate-100 hover:bg-slate-200 dark:bg-surface/80 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-800 hover:border-emerald-500/60 hover:text-emerald-700 dark:hover:text-emerald-400'
+                            : 'bg-[#F4F0E6] hover:bg-[#EAE3D2] dark:bg-surface/80 text-slate-700 dark:text-slate-300 border border-[#E2DACB] dark:border-slate-800 hover:border-emerald-500/60 hover:text-emerald-700 dark:hover:text-emerald-400'
                         }`}
                       >
                         {cat === 'Semua' && <Filter size={13} />}
@@ -548,18 +548,18 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
                 {isLoading && newsList.length === 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {[1, 2, 3, 4, 5, 6].map((sk) => (
-                      <div key={sk} className="bg-slate-100 dark:bg-surface rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 animate-pulse flex flex-col h-72">
-                        <div className="h-44 bg-slate-200 dark:bg-slate-800 w-full" />
+                      <div key={sk} className="bg-[#F4F0E6] dark:bg-surface rounded-3xl overflow-hidden border border-[#E2DACB] dark:border-slate-800 animate-pulse flex flex-col h-72">
+                        <div className="h-44 bg-[#EAE3D2] dark:bg-slate-800 w-full" />
                         <div className="p-5 space-y-3 flex-1">
-                          <div className="h-3 bg-slate-300 dark:bg-slate-700 rounded w-1/3" />
-                          <div className="h-4 bg-slate-300 dark:bg-slate-700 rounded w-4/5" />
-                          <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded w-full" />
+                          <div className="h-3 bg-[#E2DACB] dark:bg-slate-700 rounded w-1/3" />
+                          <div className="h-4 bg-[#E2DACB] dark:bg-slate-700 rounded w-4/5" />
+                          <div className="h-3 bg-[#EAE3D2] dark:bg-slate-800 rounded w-full" />
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : filteredNews.length === 0 ? (
-                  <div className="py-16 text-center space-y-3 bg-slate-50 dark:bg-surface/40 rounded-3xl border border-dashed border-slate-300 dark:border-slate-800">
+                  <div className="py-16 text-center space-y-3 bg-[#F4F0E6] dark:bg-surface/40 rounded-3xl border border-dashed border-[#E2DACB] dark:border-slate-800">
                     <div className="w-14 h-14 rounded-full bg-amber-500/15 text-amber-600 mx-auto flex items-center justify-center">
                       <Newspaper size={28} />
                     </div>
@@ -586,10 +586,10 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
                         key={item.id}
                         whileHover={{ y: -6 }}
                         onClick={() => setActiveNews(item)}
-                        className="group bg-white dark:bg-surface/60 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/60 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-black/25 transition-all duration-300 cursor-pointer flex flex-col h-full relative"
+                        className="group bg-[#F4F0E6] dark:bg-surface/60 border border-[#E2DACB] dark:border-slate-800 hover:border-emerald-500/60 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-black/25 transition-all duration-300 cursor-pointer flex flex-col h-full relative"
                       >
                         {/* Image Header */}
-                        <div className="relative h-44 w-full bg-slate-100 dark:bg-slate-800 overflow-hidden shrink-0">
+                        <div className="relative h-44 w-full bg-[#EAE3D2] dark:bg-slate-800 overflow-hidden shrink-0">
                           <img
                             src={item.image}
                             alt={item.judul}
@@ -635,7 +635,7 @@ export const MppNewsCatalogModal: React.FC<MppNewsCatalogModalProps> = ({
                             </p>
                           </div>
 
-                          <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                          <div className="pt-3 border-t border-[#E2DACB] dark:border-slate-800 flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400">
                             <span className="inline-flex items-center gap-1">
                               <span>Baca Selengkapnya</span>
                               <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />

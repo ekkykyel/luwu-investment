@@ -187,7 +187,7 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-3 border-t border-[#E5DFD3] dark:border-white/[0.07] text-xs text-[#0F6B4F] dark:text-emerald-400 font-bold">
+          <div className="flex items-center justify-between pt-3 border-t border-[#E2DACB] dark:border-white/[0.07] text-xs text-[#0F6B4F] dark:text-emerald-400 font-bold">
             <div className="flex items-center gap-1.5 min-w-0">
               <CheckCircle2 className="w-4 h-4 shrink-0" />
               <span className="truncate">{t('counters.sla_guarantee', '98.4% Tuntas Sesuai Standar Layanan')}</span>
@@ -214,7 +214,7 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
                 value={searchTicket}
                 onChange={(e) => setSearchTicket(e.target.value)}
                 placeholder={t('counters.track_placeholder', 'CONTOH: A-042')}
-                className="w-full min-h-[42px] px-3.5 py-2 text-xs font-mono uppercase bg-[#FAF8F3] dark:bg-[#132E48] border border-[#DFD8CA] dark:border-white/[0.10] rounded-xl text-slate-900 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-[#0F6B4F]/30"
+                className="w-full min-h-[42px] px-3.5 py-2 text-xs font-mono uppercase bg-[#FAF7F0] dark:bg-[#132E48] border border-[#E2DACB] dark:border-white/[0.10] rounded-xl text-slate-900 dark:text-slate-50 focus:outline-none focus:ring-2 focus:ring-[#0F6B4F]/30"
               />
               <button
                 type="submit"
@@ -252,12 +252,12 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
               className={`min-h-[38px] px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer active:scale-95 border ${
                 isSelected
                   ? 'bg-[#0F6B4F] dark:bg-emerald-600 text-white border-[#0F6B4F] dark:border-emerald-500'
-                  : 'bg-white dark:bg-[#0D2338] border-[#E2DACB] dark:border-white/[0.08] text-slate-700 dark:text-slate-300 hover:border-[#0F6B4F]/40'
+                  : 'bg-[#F4F0E6] dark:bg-[#0D2338] border-[#E2DACB] dark:border-white/[0.08] text-slate-700 dark:text-slate-300 hover:bg-[#ECE5D6] hover:border-[#0F6B4F]/40'
               }`}
             >
               <span>{t(cat.key, cat.defaultLabel)}</span>
               <span className={`font-mono text-[11px] tabular-nums ${
-                isSelected ? 'text-emerald-100' : 'text-slate-400 dark:text-slate-400'
+                isSelected ? 'text-emerald-100' : 'text-slate-500 dark:text-slate-400'
               }`}>
                 {count}
               </span>
@@ -283,7 +283,7 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
               className={`${MPP_CARD_SURFACE.paddingSm} ${MPP_CARD_SURFACE.default} hover:border-[#0F6B4F]/50 dark:hover:border-emerald-400/50 hover:shadow-[0_10px_26px_-6px_rgba(16,185,129,0.18)] dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.6)] transition-all duration-300 flex flex-col justify-between space-y-3 group`}
             >
               {/* Clean Unboxed Top Metadata (Zero-Pill Discipline) */}
-              <div className="flex items-center justify-between gap-2 pb-2 border-b border-[#EFEAE0] dark:border-white/[0.06] text-[11px] font-semibold">
+              <div className="flex items-center justify-between gap-2 pb-2 border-b border-[#E2DACB] dark:border-white/[0.06] text-[11px] font-semibold">
                 <span className="font-mono font-bold text-[#855A14] dark:text-[#E2C475] uppercase tracking-wider">
                   {t('counters.card_loket', 'Loket')} {counter.loketNo}
                 </span>
@@ -318,7 +318,7 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
               </div>
 
               {/* Serving Number Box */}
-              <div className="p-3 rounded-xl bg-[#FAF8F3] dark:bg-[#132E48] border border-[#EAE3D5] dark:border-white/[0.06] flex items-center justify-between">
+              <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-[#132E48] border border-[#E2DACB] dark:border-white/[0.06] flex items-center justify-between">
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
                     {t('counters.card_now_calling', 'Dipanggil')}
@@ -342,7 +342,7 @@ export const BentoLiveQueueRadar: React.FC<BentoLiveQueueRadarProps> = ({
               <button
                 type="button"
                 onClick={() => onRegisterQueue && onRegisterQueue(counter.agencyName)}
-                className="w-full min-h-[38px] py-2 px-3 rounded-xl bg-[#F2EFE7] hover:bg-[#0F6B4F] dark:bg-[#132E48] dark:hover:bg-emerald-600 text-slate-800 hover:text-white dark:text-slate-200 dark:hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
+                className="w-full min-h-[38px] py-2 px-3 rounded-xl bg-[#FAF7F0] hover:bg-[#0F6B4F] dark:bg-[#132E48] dark:hover:bg-emerald-600 border border-[#E2DACB] dark:border-transparent text-slate-800 hover:text-white dark:text-slate-200 dark:hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
               >
                 <span>{t('counters.card_get_ticket', 'Ambil Tiket').replace('↗', '').trim()}</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />

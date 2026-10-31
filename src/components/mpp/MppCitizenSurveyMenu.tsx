@@ -488,11 +488,11 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
       isInModal 
         ? 'p-0 bg-transparent border-0 shadow-none text-slate-900 dark:text-slate-100' 
         : `rounded-3xl border p-4 sm:p-8 backdrop-blur-md shadow-xl w-full max-w-7xl mx-auto ${
-            isDarkMode ? 'bg-surface/70 border-slate-800 text-white' : 'bg-[#FAF8F3] border-[#E5DFD3] text-slate-900'
+            isDarkMode ? 'bg-surface/70 border-slate-800 text-white' : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-900'
           }`
     }`}>
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200 dark:border-slate-800 w-full">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#E2DACB] dark:border-slate-800 w-full">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2 flex-wrap">
             <span className="px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-sans inline-flex items-center gap-1.5">
@@ -565,7 +565,7 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
             </p>
           </div>
         ) : (
-          <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-surface/90 border border-slate-200 dark:border-white/10 space-y-4">
+          <div className="p-4 sm:p-5 rounded-2xl bg-[#F4F0E6] dark:bg-surface/90 border border-[#E2DACB] dark:border-white/10 space-y-4">
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center gap-2">
                 <KeyRound className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
@@ -602,7 +602,7 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
                       if (isVerifiedTicket) setIsVerifiedTicket(false);
                     }}
                     placeholder={isZh ? '请输入16位 NIK 或票号 (例如: 7317012345670001 / T-084)...' : isEn ? 'Enter 16-digit NIK or Ticket No. (e.g. 7317012345670001 / T-084)...' : 'Masukkan 16 digit NIK atau Nomor Tiket (Contoh: 7317012345670001 / T-084)...'}
-                    className="w-full min-h-[44px] px-3.5 pl-9 rounded-xl border border-slate-300 dark:border-white/10 bg-white dark:bg-elevated text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                    className="w-full min-h-[44px] px-3.5 pl-9 rounded-xl border border-[#E2DACB] dark:border-white/10 bg-[#FAF7F0] dark:bg-elevated text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500"
                   />
                   <Ticket className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
                 </div>
@@ -621,7 +621,7 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
                       value={otp}
                       onChange={(e) => setOtp(e.target.value)}
                       placeholder={isZh ? '6位验证码...' : isEn ? '6-digit OTP...' : '6 digit OTP...'}
-                      className="w-full min-h-[44px] px-3.5 pl-9 rounded-xl border border-slate-300 dark:border-white/10 bg-white dark:bg-elevated text-slate-900 dark:text-white text-xs sm:text-sm font-mono font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                      className="w-full min-h-[44px] px-3.5 pl-9 rounded-xl border border-[#E2DACB] dark:border-white/10 bg-[#FAF7F0] dark:bg-elevated text-slate-900 dark:text-white text-xs sm:text-sm font-mono font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500"
                     />
                     <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
                   </div>
@@ -648,7 +648,7 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
                     <button
                       type="button"
                       onClick={handleSendOtp}
-                      className="min-h-[44px] px-3 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs shrink-0 flex items-center gap-1 transition-all cursor-pointer border border-slate-300 dark:border-white/10"
+                      className="min-h-[44px] px-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs shrink-0 flex items-center gap-1 transition-all cursor-pointer border border-[#E2DACB] dark:border-white/10"
                     >
                       <RefreshCw className="w-3.5 h-3.5" />
                     </button>
@@ -693,7 +693,7 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
               value={isAnonymous ? (isZh ? '鲁乌居民 (匿名)' : isEn ? 'Luwu Resident (Anonymous)' : 'Warga Luwu (Anonim)') : nama}
               onChange={(e) => setNama(e.target.value)}
               placeholder={isZh ? '请输入您的全名...' : isEn ? 'Enter your full name...' : 'Masukkan nama lengkap Anda...'}
-              className="w-full min-h-[46px] px-3 sm:px-4 rounded-xl border border-slate-300 dark:border-white/10 bg-white dark:bg-elevated text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none disabled:opacity-60 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+              className="w-full min-h-[46px] px-3 sm:px-4 rounded-xl border border-[#E2DACB] dark:border-white/10 bg-[#FAF7F0] dark:bg-elevated text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none disabled:opacity-60 placeholder:text-slate-400 dark:placeholder:text-slate-500"
             />
           </div>
 
@@ -708,10 +708,10 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
                 setInstansi(e.target.value);
                 setLayanan(''); // reset dynamic service selection
               }}
-              className="w-full min-h-[46px] px-3 sm:px-4 rounded-xl border border-slate-300 dark:border-white/10 bg-white dark:bg-elevated text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
+              className="w-full min-h-[46px] px-3 sm:px-4 rounded-xl border border-[#E2DACB] dark:border-white/10 bg-[#FAF7F0] dark:bg-elevated text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
             >
               {MPP_AGENCIES_DEFAULT.map((inst, idx) => (
-                <option key={idx} value={inst} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
+                <option key={idx} value={inst} className="bg-[#FAF7F0] dark:bg-slate-900 text-slate-900 dark:text-white">
                   {inst}
                 </option>
               ))}
@@ -730,9 +730,9 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
             <select
               value={layanan}
               onChange={(e) => setLayanan(e.target.value)}
-              className="w-full min-h-[46px] px-3 sm:px-4 rounded-xl border border-slate-300 dark:border-white/10 bg-white dark:bg-elevated text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
+              className="w-full min-h-[46px] px-3 sm:px-4 rounded-xl border border-[#E2DACB] dark:border-white/10 bg-[#FAF7F0] dark:bg-elevated text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
             >
-              <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
+              <option value="" className="bg-[#FAF7F0] dark:bg-slate-900 text-slate-900 dark:text-white">
                 {isZh 
                   ? `-- 选择 ${instansi.split(' ')[0]} 的具体服务事项 (可选) --` 
                   : isEn 
@@ -740,11 +740,11 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
                   : `-- Pilih Jenis Layanan dari ${instansi.split(' ')[0]} (Opsional) --`}
               </option>
               {availableServices.map((item, idx) => (
-                <option key={idx} value={item} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
+                <option key={idx} value={item} className="bg-[#FAF7F0] dark:bg-slate-900 text-slate-900 dark:text-white">
                   {item}
                 </option>
               ))}
-              <option value={isZh ? '其他服务事项 / 综合咨询' : isEn ? 'Other Service / General Inquiry' : 'Layanan Lainnya / Pertanyaan Umum'} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
+              <option value={isZh ? '其他服务事项 / 综合咨询' : isEn ? 'Other Service / General Inquiry' : 'Layanan Lainnya / Pertanyaan Umum'} className="bg-[#FAF7F0] dark:bg-slate-900 text-slate-900 dark:text-white">
                 {isZh ? '其他服务事项 / 综合咨询' : isEn ? 'Other Service / General Inquiry' : 'Layanan Lainnya / Pertanyaan Umum'}
               </option>
             </select>
@@ -752,13 +752,13 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
         </div>
 
         {/* SECTION 4: 9 Indikator SKM PermenPAN-RB */}
-        <div className="space-y-4 pt-4 border-t border-slate-200 dark:border-white/10">
+        <div className="space-y-4 pt-4 border-t border-[#E2DACB] dark:border-white/10">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <h3 className="text-sm sm:text-base font-extrabold font-sans flex items-center gap-2 text-slate-900 dark:text-white">
               <Award className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               {isZh ? '9项公共服务标准评估' : isEn ? 'Evaluation of 9 Public Service Standards' : 'Penilaian 9 Unsur Standar Pelayanan Publik'}
             </h3>
-            <span className="text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-slate-800 px-2.5 py-1 rounded-md border border-emerald-200 dark:border-white/10">
+            <span className="text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-400 bg-[#F4F0E6] dark:bg-slate-800 px-2.5 py-1 rounded-md border border-[#E2DACB] dark:border-white/10">
               {isZh ? '1 - 4 级评分' : isEn ? 'Scale 1 - 4' : 'Skala 1 - 4'}
             </span>
           </div>
@@ -770,10 +770,10 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
               return (
                 <div
                   key={q.id}
-                  className="p-3.5 sm:p-5 md:p-6 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-surface/90 transition-all w-full shadow-sm dark:shadow-lg dark:shadow-black/20 flex flex-col"
+                  className="p-3.5 sm:p-5 md:p-6 rounded-2xl border border-[#E2DACB] dark:border-white/10 bg-[#F4F0E6] dark:bg-surface/90 transition-all w-full shadow-sm dark:shadow-lg dark:shadow-black/20 flex flex-col"
                 >
                   {/* Baris 1: Header Judul Unsur & Badge Nilai (Multi-line safe & Symmetrical) */}
-                  <div className="flex items-center justify-between gap-3 mb-2.5 pb-2.5 border-b border-slate-200 dark:border-white/10">
+                  <div className="flex items-center justify-between gap-3 mb-2.5 pb-2.5 border-b border-[#E2DACB] dark:border-white/10">
                     <div className="flex items-center gap-2.5 min-w-0 flex-1">
                       <div className={`p-1.5 sm:p-2 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 shrink-0`}>
                         <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -783,7 +783,7 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
                       </h4>
                     </div>
 
-                    <span className="text-xs sm:text-sm font-bold text-emerald-800 dark:text-emerald-300 font-mono px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-500/30 shrink-0">
+                    <span className="text-xs sm:text-sm font-bold text-emerald-800 dark:text-emerald-300 font-mono px-2.5 sm:px-3 py-1 rounded-lg bg-[#FAF7F0] dark:bg-emerald-500/20 border border-[#E2DACB] dark:border-emerald-500/30 shrink-0">
                       {currentVal} / 4
                     </span>
                   </div>
@@ -805,7 +805,7 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
                           className={`relative flex items-center justify-between px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl border text-left transition-all w-full cursor-pointer min-h-[48px] sm:min-h-[52px] ${
                             isSelected
                               ? 'border-emerald-500 bg-emerald-600 text-white shadow-md font-bold ring-2 ring-emerald-500/20'
-                              : 'border-slate-200 dark:border-white/10 bg-white dark:bg-elevated text-slate-800 dark:text-slate-300 hover:border-emerald-500 hover:bg-slate-100 dark:hover:bg-slate-800'
+                              : 'border-[#E2DACB] dark:border-white/10 bg-[#FAF7F0] dark:bg-elevated text-slate-800 dark:text-slate-300 hover:border-emerald-500 hover:bg-[#EAE3D2] dark:hover:bg-slate-800'
                           }`}
                         >
                           <span className={`text-xs sm:text-sm font-bold leading-snug pr-2 flex-1 break-words ${isSelected ? 'text-white' : 'text-slate-800 dark:text-slate-200'}`}>
@@ -814,7 +814,7 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
                           <span className={`w-6 h-6 rounded-lg text-xs font-extrabold flex items-center justify-center shrink-0 ${
                             isSelected
                               ? 'bg-white/20 text-white'
-                              : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400'
+                              : 'bg-[#F4F0E6] dark:bg-slate-800 text-slate-700 dark:text-slate-400 border border-[#E2DACB] dark:border-transparent'
                           }`}>
                             {opt.value}
                           </span>
@@ -839,7 +839,7 @@ export const MppCitizenSurveyMenu: React.FC<MppCitizenSurveyMenuProps> = ({
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
             placeholder={isZh ? '请写下您对窗口舒适度、工作人员态度或排队效率的体验、建议或表扬...' : isEn ? 'Write your experience, feedback, or appreciation regarding counter comfort, staff attitude, or queue speed...' : 'Tuliskan pengalaman, masukan atau apresiasi Anda terhadap kenyamanan loket, sikap petugas, atau kecepatan antrean...'}
-            className="w-full p-4 rounded-2xl border border-slate-300 dark:border-white/10 bg-white dark:bg-elevated text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none resize-none placeholder:text-slate-400 dark:placeholder:text-slate-500"
+            className="w-full p-4 rounded-2xl border border-[#E2DACB] dark:border-white/10 bg-[#FAF7F0] dark:bg-elevated text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none resize-none placeholder:text-slate-400 dark:placeholder:text-slate-500"
           />
           <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium">
             {isZh ? '* 您提交的反馈将自动转交至 MPP 监督团队，并可能展示于公众 Portal。' : isEn ? '* Your feedback will automatically be forwarded to the MPP supervisory team and displayed on the public portal.' : '* Masukan yang Anda tuliskan akan otomatis diteruskan ke tim pengawas MPP dan dapat ditampilkan di portal masyarakat.'}

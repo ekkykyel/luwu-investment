@@ -2281,7 +2281,7 @@ export default function PortalMPP() {
       id="portal-top"
       data-android-scroll-root="true"
       onScroll={(e) => setIsScrolled(e.currentTarget.scrollTop > 20)}
-      className="mpp-native-scroll-container bg-[#FAF8F3] dark:bg-[#061320] text-slate-900 dark:text-[#E6ECF2] font-sans w-full relative transition-colors duration-300"
+      className="mpp-native-scroll-container bg-[#FAF7F0] dark:bg-[#061320] text-slate-900 dark:text-[#E6ECF2] font-sans w-full relative transition-colors duration-300"
     >
       <style>{`
         .font-sans { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
@@ -2317,7 +2317,7 @@ export default function PortalMPP() {
         <InclusivityAccessibilityBar isDark={isDark} hideFloatingFab={true} />
 
         {/* UNIFIED STICKY NAVBAR (ELEGAN NUSANTARA ALABASTER & IMPERIAL SLATE) */}
-        <div className="sticky top-0 z-40 w-full border-b transition-colors bg-[#FAF8F3]/95 dark:bg-[#071728]/95 backdrop-blur-xl border-[#E5DFD3] dark:border-white/[0.08] shadow-[0_2px_16px_-6px_rgba(24,24,27,0.06)] dark:shadow-none">
+        <div className="sticky top-0 z-40 w-full border-b transition-colors bg-[#F4F0E6]/95 dark:bg-[#071728]/95 backdrop-blur-xl border-[#E2DACB] dark:border-white/[0.08] shadow-[0_2px_16px_-6px_rgba(24,24,27,0.06)] dark:shadow-none">
           {/* Royal Luwu Gold-Emerald Crown Hairline */}
           <div aria-hidden="true" className="w-full h-[2px] bg-gradient-to-r from-[#0F6B4F] via-[#C9A24B] to-[#0F6B4F] opacity-85" />
           {/* Header - Android First & Ultra Responsive */}
@@ -2329,7 +2329,7 @@ export default function PortalMPP() {
               className="flex items-center gap-2.5 sm:gap-3.5 min-w-0 group cursor-pointer select-none"
               onClick={() => scrollToPortalTop('smooth')}
             >
-              <div className="w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 rounded-full sm:rounded-2xl flex items-center justify-center shrink-0 border transition-all duration-300 bg-white dark:bg-white/[0.05] border-[#DFD6C5] dark:border-[#C9A24B]/25 shadow-2xs group-hover:scale-105">
+              <div className="w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 rounded-full sm:rounded-2xl flex items-center justify-center shrink-0 border transition-all duration-300 bg-[#FAF7F0] dark:bg-white/[0.05] border-[#E2DACB] dark:border-[#C9A24B]/25 shadow-2xs group-hover:scale-105">
                 <img 
                   src={LUWU_LOGO_BASE64}
                   alt="Lambang Resmi Kabupaten Luwu" 
@@ -2411,7 +2411,7 @@ export default function PortalMPP() {
                 onClick={() => setIsCommandPaletteOpen(true)}
                 aria-label="Cari layanan, izin, atau instansi (Ctrl+K)"
                 title="Cari Cepat Layanan & Instansi (Ctrl+K)"
-                className={`${isAndroid ? 'hidden sm:flex' : 'flex'} w-9 h-9 xs:w-10 xs:h-10 min-w-[36px] min-h-[36px] xs:min-w-[40px] xs:min-h-[40px] rounded-full bg-slate-100/90 dark:bg-white/[0.06] hover:bg-slate-200/80 dark:hover:bg-white/[0.12] border border-slate-200/90 dark:border-white/[0.12] text-slate-700 dark:text-slate-200 hover:text-[#0F6B4F] dark:hover:text-emerald-400 items-center justify-center transition-all active:scale-95 cursor-pointer shrink-0`}
+                className={`${isAndroid ? 'hidden sm:flex' : 'flex'} w-9 h-9 xs:w-10 xs:h-10 min-w-[36px] min-h-[36px] xs:min-w-[40px] xs:min-h-[40px] rounded-full bg-[#FAF7F0] dark:bg-white/[0.06] hover:bg-[#ECE5D6] dark:hover:bg-white/[0.12] border border-[#E2DACB] dark:border-white/[0.12] text-slate-700 dark:text-slate-200 hover:text-[#0F6B4F] dark:hover:text-emerald-400 items-center justify-center transition-all active:scale-95 cursor-pointer shrink-0`}
               >
                 <Search className="w-[16px] h-[16px] sm:w-[17px] sm:h-[17px]" />
               </button>
@@ -2432,7 +2432,7 @@ export default function PortalMPP() {
                   className={`flex w-9 h-9 xs:w-10 xs:h-10 min-w-[36px] min-h-[36px] xs:min-w-[40px] xs:min-h-[40px] rounded-full border items-center justify-center transition-all active:scale-95 cursor-pointer shrink-0 ${
                     isLiteMode
                       ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
-                      : 'bg-slate-100/90 dark:bg-white/[0.06] hover:bg-slate-200/80 dark:hover:bg-white/[0.12] border-slate-200/90 dark:border-white/[0.12] text-slate-700 dark:text-slate-200'
+                      : 'bg-[#FAF7F0] dark:bg-white/[0.06] hover:bg-[#ECE5D6] dark:hover:bg-white/[0.12] border-[#E2DACB] dark:border-white/[0.12] text-slate-700 dark:text-slate-200'
                   }`}
                 >
                   {isLiteMode ? (
@@ -2457,7 +2457,7 @@ export default function PortalMPP() {
                   className={`flex w-9 h-9 xs:w-10 xs:h-10 min-w-[36px] min-h-[36px] xs:min-w-[40px] xs:min-h-[40px] rounded-full border items-center justify-center transition-all active:scale-95 cursor-pointer shrink-0 ${
                     isMppDocFullscreen
                       ? 'bg-[#0F6B4F] text-white border-[#0F6B4F] shadow-xs'
-                      : 'bg-slate-100/90 dark:bg-white/[0.06] hover:bg-slate-200/80 dark:hover:bg-white/[0.12] border-slate-200/90 dark:border-white/[0.12] text-slate-700 dark:text-slate-200'
+                      : 'bg-[#FAF7F0] dark:bg-white/[0.06] hover:bg-[#ECE5D6] dark:hover:bg-white/[0.12] border-[#E2DACB] dark:border-white/[0.12] text-slate-700 dark:text-slate-200'
                   }`}
                 >
                   {isMppDocFullscreen ? (
@@ -2476,7 +2476,7 @@ export default function PortalMPP() {
                     dismissAccessibilityCoachMark();
                     window.dispatchEvent(new CustomEvent('toggle-mpp-accessibility'));
                   }}
-                  className="flex w-9 h-9 xs:w-10 xs:h-10 min-w-[36px] min-h-[36px] xs:min-w-[40px] xs:min-h-[40px] rounded-full bg-slate-100/90 dark:bg-white/[0.06] hover:bg-slate-200/80 dark:hover:bg-white/[0.12] border border-slate-200/90 dark:border-white/[0.12] text-emerald-700 dark:text-emerald-400 items-center justify-center transition-all active:scale-95 cursor-pointer shrink-0"
+                  className="flex w-9 h-9 xs:w-10 xs:h-10 min-w-[36px] min-h-[36px] xs:min-w-[40px] xs:min-h-[40px] rounded-full bg-[#FAF7F0] dark:bg-white/[0.06] hover:bg-[#ECE5D6] dark:hover:bg-white/[0.12] border border-[#E2DACB] dark:border-white/[0.12] text-emerald-700 dark:text-emerald-400 items-center justify-center transition-all active:scale-95 cursor-pointer shrink-0"
                   aria-label="Layanan Ramah Inklusif & Disabilitas"
                 >
                   <Accessibility className="w-[17px] h-[17px] sm:w-[18px] sm:h-[18px] text-emerald-700 dark:text-emerald-400" />
@@ -2595,10 +2595,10 @@ export default function PortalMPP() {
 
         {/* --- FASE 1: MOBILE/TABLET QUICK-NAV (HIDDEN ON DESKTOP TO PREVENT DOUBLE STICKY HEADER) --- */}
         {showQuickNav && (
-          <div className="lg:hidden w-full border-t border-[#E5DFD3] dark:border-white/[0.07] bg-[#FAF8F3]/95 dark:bg-[#071728]/95 backdrop-blur-xl transition-all">
+          <div className="lg:hidden w-full border-t border-[#E2DACB] dark:border-white/[0.07] bg-[#F4F0E6]/95 dark:bg-[#071728]/95 backdrop-blur-xl transition-all">
             <div className="relative max-w-[1440px] mx-auto">
-              <div className="pointer-events-none absolute top-0 right-0 bottom-0 w-8 sm:w-14 bg-gradient-to-l from-[#FAF8F3] dark:from-[#071728] to-transparent z-10" />
-              <div className="pointer-events-none absolute top-0 left-0 bottom-0 w-6 sm:w-10 bg-gradient-to-r from-[#FAF8F3] dark:from-[#071728] to-transparent z-10" />
+              <div className="pointer-events-none absolute top-0 right-0 bottom-0 w-8 sm:w-14 bg-gradient-to-l from-[#F4F0E6] dark:from-[#071728] to-transparent z-10" />
+              <div className="pointer-events-none absolute top-0 left-0 bottom-0 w-6 sm:w-10 bg-gradient-to-r from-[#F4F0E6] dark:from-[#071728] to-transparent z-10" />
 
               <div className="flex items-center overflow-x-auto snap-x snap-mandatory no-scrollbar py-1.5 px-4 gap-1.5 touch-pan-x touch-pan-y">
                 <button
@@ -2665,7 +2665,7 @@ export default function PortalMPP() {
           {/* Hero Section (Harmonized Nusantara Alabaster vs Nocturnal Imperial Slate) */}
           <section
             id="hero"
-            className="relative w-full px-0 pt-0 sm:pt-2 pb-8 sm:pb-11 flex flex-col items-center text-center scroll-mt-36 sm:scroll-mt-40 before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-20 before:transition-colors before:bg-[#FAF8F3] dark:before:bg-[#061320]"
+            className="relative w-full px-0 pt-0 sm:pt-2 pb-8 sm:pb-11 flex flex-col items-center text-center scroll-mt-36 sm:scroll-mt-40 before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-20 before:transition-colors before:bg-[#FAF7F0] dark:before:bg-[#061320]"
           >
             {/* Ambient Celestial Glow (Desktop Dark Mode Depth) */}
             <div
@@ -2776,15 +2776,15 @@ export default function PortalMPP() {
                     onClick={action.onClick}
                     className={`w-full min-h-[84px] sm:h-[90px] p-3 sm:px-5 sm:py-4 rounded-2xl border active:scale-[0.98] transition-all duration-200 flex flex-col sm:flex-row items-start sm:items-center justify-between sm:gap-4 group cursor-pointer text-left ${
                       isPrimaryCard
-                        ? 'bg-white dark:bg-[#0D243B] hover:bg-[#FCFBF7] dark:hover:bg-[#133250] border-[#D6C6A5] dark:border-[#C9A24B]/30 hover:border-[#0F6B4F]/50 dark:hover:border-emerald-400/45 shadow-[0_10px_28px_-10px_rgba(133,90,20,0.14)] dark:shadow-[inset_0_1px_0_rgba(226,196,117,0.10),0_14px_30px_-12px_rgba(0,0,0,0.6)]'
-                        : 'bg-white dark:bg-[#0B1F33] hover:bg-[#FCFBF7] dark:hover:bg-[#112C47] border-[#E4DDD0] dark:border-white/[0.09] hover:border-[#0F6B4F]/40 dark:hover:border-emerald-400/35 shadow-[0_8px_24px_-12px_rgba(24,24,27,0.08)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_12px_28px_-12px_rgba(0,0,0,0.55)]'
+                        ? 'bg-[#F4F0E6] dark:bg-[#0D243B] hover:bg-[#ECE5D6] dark:hover:bg-[#133250] border-[#D6C6A5] dark:border-[#C9A24B]/30 hover:border-[#0F6B4F]/50 dark:hover:border-emerald-400/45 shadow-[0_10px_28px_-10px_rgba(133,90,20,0.14)] dark:shadow-[inset_0_1px_0_rgba(226,196,117,0.10),0_14px_30px_-12px_rgba(0,0,0,0.6)]'
+                        : 'bg-[#F4F0E6] dark:bg-[#0B1F33] hover:bg-[#ECE5D6] dark:hover:bg-[#112C47] border-[#E2DACB] dark:border-white/[0.09] hover:border-[#0F6B4F]/40 dark:hover:border-emerald-400/35 shadow-[0_8px_24px_-12px_rgba(24,24,27,0.08)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_12px_28px_-12px_rgba(0,0,0,0.55)]'
                     }`}
                   >
                     <div className="w-full sm:w-auto flex items-center justify-between sm:justify-start mb-2 sm:mb-0">
                       <div className={`w-9 h-9 sm:w-11 sm:h-11 rounded-xl border flex items-center justify-center transition-colors shrink-0 ${
                         isPrimaryCard
                           ? 'bg-[#0F6B4F] dark:bg-emerald-500 text-white dark:text-slate-950 border-[#0F6B4F] dark:border-emerald-400'
-                          : 'bg-[#F5F2EA] dark:bg-[#13314E] text-[#0F6B4F] dark:text-emerald-400 border-[#E2DACB] dark:border-white/[0.08] group-hover:bg-[#0F6B4F] dark:group-hover:bg-emerald-500 group-hover:text-white dark:group-hover:text-slate-950'
+                          : 'bg-[#FAF7F0] dark:bg-[#13314E] text-[#0F6B4F] dark:text-emerald-400 border-[#E2DACB] dark:border-white/[0.08] group-hover:bg-[#0F6B4F] dark:group-hover:bg-emerald-500 group-hover:text-white dark:group-hover:text-slate-950'
                       }`}>
                         <ActionIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
@@ -2806,7 +2806,7 @@ export default function PortalMPP() {
                       </span>
                     </div>
 
-                    <div className="hidden sm:flex w-8 h-8 rounded-full bg-[#F5F2EA] dark:bg-white/[0.05] group-hover:bg-[#0F6B4F]/15 dark:group-hover:bg-emerald-400/15 items-center justify-center text-slate-500 dark:text-slate-400 group-hover:text-[#0F6B4F] dark:group-hover:text-emerald-300 group-hover:translate-x-0.5 transition-all shrink-0">
+                    <div className="hidden sm:flex w-8 h-8 rounded-full bg-[#FAF7F0] dark:bg-white/[0.05] border border-[#E2DACB] dark:border-transparent group-hover:bg-[#0F6B4F]/15 dark:group-hover:bg-emerald-400/15 items-center justify-center text-slate-500 dark:text-slate-400 group-hover:text-[#0F6B4F] dark:group-hover:text-emerald-300 group-hover:translate-x-0.5 transition-all shrink-0">
                       <ChevronRight className="w-4 h-4" />
                     </div>
                   </button>
@@ -2815,7 +2815,7 @@ export default function PortalMPP() {
             </motion.div>
 
             {/* Unboxed Institutional Operational Strip (Zero-Pill Civic Trust Telemetry) */}
-            <div className="w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 mb-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] sm:text-xs font-medium text-slate-600 dark:text-slate-300/90 border-y border-[#E6DFD2] dark:border-white/[0.07] py-2.5">
+            <div className="w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 mb-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] sm:text-xs font-medium text-slate-600 dark:text-slate-300/90 border-y border-[#E2DACB] dark:border-white/[0.07] py-2.5">
               <span className="inline-flex items-center gap-1.5 font-semibold text-slate-800 dark:text-slate-100">
                 <Clock className="w-3.5 h-3.5 text-[#0F6B4F] dark:text-emerald-400 shrink-0" />
                 <span>{witaOperationalSummary.scheduleText}</span>
@@ -2846,7 +2846,7 @@ export default function PortalMPP() {
                 }}
                 className="w-full flex flex-col items-center gap-2.5 px-3"
               >
-                <div className="rounded-2xl p-1.5 flex items-center justify-center gap-1.5 border bg-[#EFECE3] dark:bg-[#0A1D30] border-[#DFD8C8] dark:border-white/[0.14] shadow-xs dark:shadow-[inset_0_2px_8px_rgba(0,0,0,0.5)] max-w-full overflow-x-auto no-scrollbar">
+                <div className="rounded-2xl p-1.5 flex items-center justify-center gap-1.5 border bg-[#F4F0E6] dark:bg-[#0A1D30] border-[#E2DACB] dark:border-white/[0.14] shadow-xs dark:shadow-[inset_0_2px_8px_rgba(0,0,0,0.5)] max-w-full overflow-x-auto no-scrollbar">
                   {[
                     { id: "warga", label: t("mppPortal.persona.warga", "Masyarakat"), icon: User },
                     { id: "investor", label: t("mppPortal.persona.investor", "Investor & Bisnis"), icon: Briefcase },
@@ -2861,8 +2861,8 @@ export default function PortalMPP() {
                         onClick={() => setActivePersona(p.id as 'warga' | 'investor' | 'semua')}
                         className={`relative min-h-[40px] sm:min-h-[42px] px-4 sm:px-5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap shrink-0 ${
                           isActive
-                            ? 'bg-white dark:bg-gradient-to-r dark:from-emerald-600 dark:to-teal-600 text-slate-900 dark:text-white border border-[#DFD8C8] dark:border-emerald-400/40 font-bold shadow-xs dark:shadow-[0_4px_16px_rgba(16,185,129,0.3)]'
-                            : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.05]'
+                            ? 'bg-[#FAF7F0] dark:bg-gradient-to-r dark:from-emerald-600 dark:to-teal-600 text-slate-900 dark:text-white border border-[#E2DACB] dark:border-emerald-400/40 font-bold shadow-xs dark:shadow-[0_4px_16px_rgba(16,185,129,0.3)]'
+                            : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-[#ECE5D6] dark:hover:bg-white/[0.05]'
                         }`}
                       >
                         <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#0F6B4F] dark:text-white' : 'text-slate-500 dark:text-slate-400'}`} />
@@ -3057,7 +3057,7 @@ export default function PortalMPP() {
               </div>
             </div>
 
-            <div className="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar gap-1.5 p-1.5 rounded-2xl bg-[#EFECE3] dark:bg-[#0B2035] border border-[#DFD8C8] dark:border-white/[0.08] max-w-4xl mx-auto">
+            <div className="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar gap-1.5 p-1.5 rounded-2xl bg-[#F4F0E6] dark:bg-[#0B2035] border border-[#E2DACB] dark:border-white/[0.08] max-w-4xl mx-auto">
               {[
                 { id: 'denah' as const, label: 'Denah Gedung', icon: Layers },
                 { id: 'alur' as const, label: 'Alur, Jam Ramai & SLA', icon: FileCheck },
@@ -3077,7 +3077,7 @@ export default function PortalMPP() {
                     className={`min-h-[42px] px-4 py-2 rounded-xl text-xs sm:text-sm font-bold font-sans flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer shrink-0 ${
                       isActive
                         ? 'bg-[#0F6B4F] dark:bg-emerald-600 text-white shadow-xs'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-white/80 dark:hover:bg-white/[0.06] hover:text-slate-900 dark:hover:text-white'
+                        : 'text-slate-700 dark:text-slate-300 hover:bg-[#FAF7F0] dark:hover:bg-white/[0.06] hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
                     <TabIcon className="w-4 h-4 shrink-0" />
@@ -3181,11 +3181,11 @@ export default function PortalMPP() {
                   animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
                   exit={{ opacity: 0, scale: 0.94, y: 20, filter: "blur(4px)" }}
                   transition={{ duration: 0.25, ease: "easeOut" }}
-                  className="w-full max-w-xl bg-white dark:bg-surface border border-slate-200 dark:border-white/10 rounded-3xl p-5 sm:p-8 shadow-2xl overflow-y-auto max-h-[85vh] flex flex-col"
+                  className="w-full max-w-xl bg-[#F4F0E6] dark:bg-surface border border-[#E2DACB] dark:border-white/10 rounded-3xl p-5 sm:p-8 shadow-2xl overflow-y-auto max-h-[85vh] flex flex-col"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Header Modal Alur */}
-                  <div className="flex items-start justify-between pb-4 border-b border-slate-100 dark:border-white/10">
+                  <div className="flex items-start justify-between pb-4 border-b border-[#E2DACB] dark:border-white/10">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center border border-emerald-500/20 shrink-0">
                         {activeAlurModal === 'pbg' ? (
@@ -3212,7 +3212,7 @@ export default function PortalMPP() {
                     <button
                       type="button"
                       onClick={() => setActiveAlurModal(null)}
-                      className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                      className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-[#ECE5D6] dark:hover:bg-slate-700 transition-colors"
                       aria-label="Close"
                     >
                       <X className="w-5 h-5" />
@@ -3241,7 +3241,7 @@ export default function PortalMPP() {
                           : activeAlurModal === 'mpp' 
                           ? (t("mppPortal.alur.mpp.steps", { returnObjects: true }) as string[]) 
                           : (t("mppPortal.alur.pkkpr.steps", { returnObjects: true }) as string[])) || []).map((stepText, idx) => (
-                          <div key={idx} className="flex items-start gap-3 p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-white/5">
+                          <div key={idx} className="flex items-start gap-3 p-2.5 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-white/5">
                             <span className="w-6 h-6 rounded-full bg-emerald-500 text-white text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5 font-sans">
                               {idx + 1}
                             </span>
@@ -3277,7 +3277,7 @@ export default function PortalMPP() {
                             : activeAlurModal === 'mpp' 
                             ? (t("mppPortal.alur.mpp.docs", { returnObjects: true }) as string[]) 
                             : (t("mppPortal.alur.pkkpr.docs", { returnObjects: true }) as string[])) || []).map((doc, dIdx) => (
-                            <span key={dIdx} className="text-[10px] bg-white dark:bg-slate-800 px-4 py-0.5 rounded-md border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300">
+                            <span key={dIdx} className="text-[10px] bg-[#FAF7F0] dark:bg-slate-800 px-4 py-0.5 rounded-md border border-[#E2DACB] dark:border-white/10 text-slate-700 dark:text-slate-300">
                               {doc}
                             </span>
                           ))}
@@ -3290,7 +3290,7 @@ export default function PortalMPP() {
                       <button
                         type="button"
                         onClick={() => setActiveAlurModal(null)}
-                        className="flex-1 min-h-[44px] py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold font-sans hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                        className="flex-1 min-h-[44px] py-2.5 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-transparent text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold font-sans hover:bg-[#ECE5D6] dark:hover:bg-slate-700 transition-colors"
                       >
                         {t("common.close") || "Tutup"}
                       </button>
@@ -3319,7 +3319,7 @@ export default function PortalMPP() {
               {(isFloorPlanInView || forceLoadFloorPlan || guideHubTab === 'denah' || Boolean(selectedFloorItem)) ? (
                 <React.Suspense
                   fallback={
-                    <div className="w-full h-[480px] sm:h-[620px] rounded-3xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 flex flex-col items-center justify-center p-6 text-center">
+                    <div className="w-full h-[480px] sm:h-[620px] rounded-3xl bg-[#F4F0E6] dark:bg-slate-900/80 border border-[#E2DACB] dark:border-slate-800 flex flex-col items-center justify-center p-6 text-center">
                       <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 mb-3 animate-pulse">
                         <Building2 className="w-6 h-6" />
                       </div>
@@ -3342,8 +3342,8 @@ export default function PortalMPP() {
                   />
                 </React.Suspense>
               ) : (
-                <div className="w-full h-[480px] sm:h-[620px] rounded-3xl bg-slate-100/50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800/60 flex flex-col items-center justify-center p-6 text-center">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-200/60 dark:bg-slate-800/60 flex items-center justify-center text-slate-400 mb-3">
+                <div className="w-full h-[480px] sm:h-[620px] rounded-3xl bg-[#F4F0E6] dark:bg-slate-900/50 border border-[#E2DACB] dark:border-slate-800/60 flex flex-col items-center justify-center p-6 text-center">
+                  <div className="w-12 h-12 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-transparent flex items-center justify-center text-slate-400 mb-3">
                     <Building2 className="w-6 h-6" />
                   </div>
                   <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Denah Interaktif MPP Luwu</p>
@@ -3382,7 +3382,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-7xl mx-auto flex flex-col gap-6 lg:gap-8 scroll-mt-36 sm:scroll-mt-40 py-10 sm:py-16 md:py-24 px-2 sm:px-6 lg:px-8 relative before:bg-slate-50 dark:before:bg-[#0A2238] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-7xl mx-auto flex flex-col gap-6 lg:gap-8 scroll-mt-36 sm:scroll-mt-40 py-10 sm:py-16 md:py-24 px-2 sm:px-6 lg:px-8 relative before:bg-[#FAF7F0] dark:before:bg-[#0A2238] before:border-y before:border-[#E2DACB]/60 dark:before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Terpusat — Standardized Zero-Pill Eyebrow + Typography */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-8 sm:mb-12 break-words space-y-2">
@@ -3431,8 +3431,8 @@ export default function PortalMPP() {
             {/* Versi Mobile (Di bawah md): Ikon fasilitas horizontal scroll dengan Peek Effect (85vw/w-[280px]) & Fade Gradient Masking */}
             <div className="md:hidden relative w-full overflow-hidden py-1">
               {/* Fade Gradient Masking - Left & Right */}
-              <div className="pointer-events-none absolute top-0 left-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-slate-50 dark:from-[#0A2238] to-transparent z-20" />
-              <div className="pointer-events-none absolute top-0 right-0 bottom-0 w-12 sm:w-20 bg-gradient-to-l from-slate-50 dark:from-[#0A2238] to-transparent z-20" />
+              <div className="pointer-events-none absolute top-0 left-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-[#FAF7F0] dark:from-[#0A2238] to-transparent z-20" />
+              <div className="pointer-events-none absolute top-0 right-0 bottom-0 w-12 sm:w-20 bg-gradient-to-l from-[#FAF7F0] dark:from-[#0A2238] to-transparent z-20" />
 
               <motion.div 
                 variants={containerVariants}
@@ -3458,11 +3458,11 @@ export default function PortalMPP() {
                       className={`w-auto min-w-[150px] max-w-[220px] shrink-0 snap-center min-h-[48px] px-3.5 py-2.5 rounded-2xl flex items-center gap-2.5 transition-all duration-300 backdrop-blur-xl cursor-pointer active:scale-95 ${
                         isActive
                           ? 'bg-emerald-500/15 border-2 border-emerald-500 text-emerald-700 dark:text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.25)]'
-                          : 'bg-white/80 dark:bg-slate-800/40 border border-slate-100 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:text-white hover:border-emerald-500/40'
+                          : 'bg-[#F4F0E6] dark:bg-slate-800/40 border border-[#E2DACB] dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:text-white hover:border-emerald-500/40'
                       }`}
                     >
                       <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
-                        isActive ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30' : 'bg-surface/5 dark:bg-white/5 text-slate-500 dark:text-slate-400'
+                        isActive ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30' : 'bg-[#FAF7F0] dark:bg-white/5 border border-[#E2DACB] dark:border-transparent text-slate-500 dark:text-slate-400'
                       }`}>
                         <Icon className="w-4 h-4" />
                       </div>
@@ -3502,14 +3502,14 @@ export default function PortalMPP() {
                           setActiveFacilityId(fac.id);
                           setIsFacilityModalOpen(true);
                         }}
-                        className={`aspect-square p-4 rounded-3xl flex flex-col items-center justify-center text-center transition-all duration-300 backdrop-blur-2xl group cursor-pointer shadow-lg shadow-black/25 dark:shadow-black/25 relative overflow-hidden ${
+                        className={`aspect-square p-4 rounded-3xl flex flex-col items-center justify-center text-center transition-all duration-300 backdrop-blur-2xl group cursor-pointer shadow-[0_8px_22px_-10px_rgba(24,24,27,0.08)] dark:shadow-lg dark:shadow-black/25 relative overflow-hidden ${
                           isActive
                             ? 'bg-emerald-500/15 border-2 border-emerald-500 text-emerald-700 dark:text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.3)]'
-                            : 'bg-white/85 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-emerald-500/50 hover:shadow-xl hover:shadow-black/25'
+                            : 'bg-[#F4F0E6] dark:bg-slate-800/50 border border-[#E2DACB] dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-[#ECE5D6] dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white hover:border-emerald-500/50'
                         }`}
                       >
                         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-2.5 transition-transform duration-300 group-hover:scale-110 shadow-inner ${
-                          isActive ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30' : 'bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 group-hover:text-emerald-700 dark:group-hover:text-emerald-400'
+                          isActive ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30' : 'bg-[#FAF7F0] dark:bg-white/5 border border-[#E2DACB] dark:border-transparent text-slate-500 dark:text-slate-400 group-hover:text-emerald-700 dark:group-hover:text-emerald-400'
                         }`}>
                           <Icon className="w-5 h-5 stroke-[2.2]" />
                         </div>
@@ -3598,7 +3598,7 @@ export default function PortalMPP() {
                     </div>
 
                     {/* Kelengkapan & Sarana Pendukung */}
-                    <div className="pt-3 border-t border-slate-200/80 dark:border-white/[0.07]">
+                    <div className="pt-3 border-t border-[#E2DACB] dark:border-white/[0.07]">
                       <h4 className="text-xs uppercase tracking-widest text-slate-700 dark:text-slate-300 font-bold mb-2.5 flex items-center gap-1.5 font-sans">
                         <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                         {t("mppPortal.fasilitas.specsTitle")}
@@ -3630,7 +3630,7 @@ export default function PortalMPP() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 15 }}
                   transition={{ type: "spring", stiffness: 320, damping: 28 }}
-                  className="w-full max-w-3xl mx-auto my-auto max-h-[92dvh] sm:max-h-[88vh] bg-white dark:bg-surface rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100"
+                  className="w-full max-w-3xl mx-auto my-auto max-h-[92dvh] sm:max-h-[88vh] bg-[#F4F0E6] dark:bg-surface rounded-2xl sm:rounded-3xl border border-[#E2DACB] dark:border-slate-800 shadow-2xl flex flex-col overflow-hidden text-slate-900 dark:text-slate-100"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Foto Full-Bleed Header (Ditinggikan untuk Tampilan Android & Mobile Responsif) */}
@@ -3706,14 +3706,14 @@ export default function PortalMPP() {
                     </div>
 
                     {/* Kelengkapan Standar & Sarana */}
-                    <div className="pt-3.5 border-t border-slate-200 dark:border-slate-800">
+                    <div className="pt-3.5 border-t border-[#E2DACB] dark:border-slate-800">
                       <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200 mb-3 flex items-center gap-2">
                         <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                         {t("mppPortal.fasilitas.specsTitle")}
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         {(activeFacility?.features || [])?.map((feat, idx) => (
-                          <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-900 dark:text-slate-100 bg-slate-100/90 dark:bg-slate-800/80 p-3 rounded-2xl border border-slate-200 dark:border-slate-700/80 font-semibold shadow-2xs">
+                          <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-900 dark:text-slate-100 bg-[#FAF7F0] dark:bg-slate-800/80 p-3 rounded-2xl border border-[#E2DACB] dark:border-slate-700/80 font-semibold shadow-2xs">
                             <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                             <span className="font-semibold leading-snug">{feat}</span>
                           </div>
@@ -3723,7 +3723,7 @@ export default function PortalMPP() {
                   </div>
 
                   {/* Footer Action Button */}
-                  <div className="p-3.5 sm:p-4 bg-slate-100/90 dark:bg-surface/90 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 flex items-center justify-end gap-3 shrink-0">
+                  <div className="p-3.5 sm:p-4 bg-[#FAF7F0] dark:bg-surface/90 backdrop-blur-md border-t border-[#E2DACB] dark:border-slate-800 flex items-center justify-end gap-3 shrink-0">
                     <button
                       type="button"
                       onClick={(e) => {
@@ -3811,7 +3811,7 @@ export default function PortalMPP() {
           >
             <SpotlightCard 
               spotlightColor={isDark ? "rgba(201, 162, 75, 0.14)" : "rgba(15, 107, 79, 0.08)"}
-              className="w-full bg-white dark:bg-[#0B2035] shadow-[0_14px_34px_-14px_rgba(24,24,27,0.08)] dark:shadow-[0_18px_42px_-16px_rgba(0,0,0,0.55)] border border-[#E2DACB] dark:border-[#C9A24B]/22 rounded-3xl p-4 sm:p-6 md:p-8 relative overflow-hidden transition-all duration-300"
+              className="w-full bg-[#F4F0E6] dark:bg-[#0B2035] shadow-[0_14px_34px_-14px_rgba(24,24,27,0.08)] dark:shadow-[0_18px_42px_-16px_rgba(0,0,0,0.55)] border border-[#E2DACB] dark:border-[#C9A24B]/22 rounded-3xl p-4 sm:p-6 md:p-8 relative overflow-hidden transition-all duration-300"
             >
               <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#C9A24B]/70 to-transparent" />
               <div className="grid grid-cols-3 gap-1.5 sm:gap-6 lg:gap-8 relative z-10 text-center items-center">
@@ -3824,7 +3824,7 @@ export default function PortalMPP() {
                   </span>
                 </div>
 
-                <div className="flex flex-col items-center justify-center gap-1 sm:gap-2 border-x border-[#E5DFD3] dark:border-white/10 py-1.5 px-1">
+                <div className="flex flex-col items-center justify-center gap-1 sm:gap-2 border-x border-[#E2DACB] dark:border-white/10 py-1.5 px-1">
                   <span className="text-2xl xs:text-3xl sm:text-4xl font-extrabold font-mono tabular-nums text-[#855A14] dark:text-[#E2C475] tracking-tight">
                     <StatCounter target={liveAgencies.length} />
                   </span>
@@ -3865,7 +3865,7 @@ export default function PortalMPP() {
               </div>
             </div>
 
-            <div className="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar gap-1.5 p-1.5 rounded-2xl bg-[#EFECE3] dark:bg-[#0B2035] border border-[#DFD8C8] dark:border-white/[0.08] max-w-4xl mx-auto">
+            <div className="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar gap-1.5 p-1.5 rounded-2xl bg-[#F4F0E6] dark:bg-[#0B2035] border border-[#E2DACB] dark:border-white/[0.08] max-w-4xl mx-auto">
               {[
                 { id: 'skm' as const, label: 'Survei SKM & Ulasan', icon: Star },
                 { id: 'statistik' as const, label: 'Statistik Kunjungan', icon: BarChart3 },
@@ -3882,7 +3882,7 @@ export default function PortalMPP() {
                     className={`min-h-[42px] px-4 py-2 rounded-xl text-xs sm:text-sm font-bold font-sans flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer shrink-0 ${
                       isActive
                         ? 'bg-[#0F6B4F] dark:bg-emerald-600 text-white shadow-xs'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-white/80 dark:hover:bg-white/[0.06] hover:text-slate-900 dark:hover:text-white'
+                        : 'text-slate-700 dark:text-slate-300 hover:bg-[#FAF7F0] dark:hover:bg-white/[0.06] hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
                     <TabIcon className="w-4 h-4 shrink-0" />
@@ -3935,7 +3935,7 @@ export default function PortalMPP() {
                   className={`px-4 py-2.5 min-h-[44px] rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200 backdrop-blur-xl border font-sans cursor-pointer whitespace-nowrap snap-center active:scale-95 shrink-0 ${
                     activeUmkmFilter === cat
                       ? "bg-emerald-600 text-white border-emerald-400/40 shadow-lg shadow-black/25 ring-2 ring-emerald-500/20"
-                      : "bg-white/80 dark:bg-surface/60 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-700/80"
+                      : "bg-[#F4F0E6] dark:bg-surface/60 text-slate-700 dark:text-slate-300 hover:bg-[#ECE5D6] dark:hover:bg-slate-800 border-[#E2DACB] dark:border-slate-700/80"
                   }`}
                 >
                   {cat === "Semua" ? (isZh ? "全部" : isEn ? "All" : "Semua") : cat === "Kuliner" ? (isZh ? "烹饪美食" : isEn ? "Culinary" : "Kuliner") : (isZh ? "手工艺品" : isEn ? "Crafts" : "Kriya/Kerajinan")}
@@ -3946,7 +3946,7 @@ export default function PortalMPP() {
             {/* Strip 4 Produk Unggulan UMKM — Clean Responsive 4-Column Grid */}
             <div className="w-full">
               {filteredUmkmProducts.length === 0 ? (
-                <div className="w-full py-12 text-center text-xs text-slate-500 font-sans italic bg-slate-50/50 dark:bg-surface/40 rounded-2xl border border-slate-200 dark:border-slate-800">
+                <div className="w-full py-12 text-center text-xs text-slate-500 font-sans italic bg-[#F4F0E6] dark:bg-surface/40 rounded-2xl border border-[#E2DACB] dark:border-slate-800">
                   {t("portal.noUmkmData", "Belum ada data produk UMKM binaan yang terdaftar di portal. Data akan ditampilkan secara otomatis ketika terhubung dengan database UMKM.")}
                 </div>
               ) : (
@@ -4001,14 +4001,14 @@ export default function PortalMPP() {
                         </p>
 
                         {/* Tombol Aksi Bawah */}
-                        <div className="mt-auto grid grid-cols-2 gap-2 pt-3 border-t border-slate-100 dark:border-white/5">
+                        <div className="mt-auto grid grid-cols-2 gap-2 pt-3 border-t border-[#E2DACB] dark:border-white/5">
                           <button
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedUMKM(product);
                             }}
-                            className="flex items-center justify-center gap-1 py-2 px-2.5 min-h-[40px] rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 hover:text-emerald-600 transition-all cursor-pointer border border-slate-200/60 dark:border-slate-700/60"
+                            className="flex items-center justify-center gap-1 py-2 px-2.5 min-h-[40px] rounded-xl text-xs font-semibold bg-[#FAF7F0] dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-[#ECE5D6] dark:hover:bg-emerald-950/50 hover:text-emerald-600 transition-all cursor-pointer border border-[#E2DACB] dark:border-slate-700/60"
                           >
                             <Search className="w-3.5 h-3.5" />
                             <span>Detail</span>
@@ -4037,7 +4037,7 @@ export default function PortalMPP() {
                     setActiveUmkmFilter("Semua");
                     if (filteredUmkmProducts.length > 0) setSelectedUMKM(filteredUmkmProducts[0]);
                   }}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-600 text-xs font-bold transition-all shadow-sm border border-slate-200/80 dark:border-white/10"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-600 text-xs font-bold transition-all shadow-sm border border-[#E2DACB] dark:border-white/10"
                 >
                   <Store className="w-4 h-4 text-emerald-500" />
                   <span>Lihat Semua Produk di Galeri UMKM Luwu</span>
@@ -4061,7 +4061,7 @@ export default function PortalMPP() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 30, scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                  className="relative w-full max-w-md bg-white dark:bg-surface rounded-2xl md:rounded-3xl flex flex-col overflow-hidden shadow-xl transition-all border border-slate-200/80 dark:border-slate-800 max-h-[90dvh] md:max-h-[85dvh]"
+                  className="relative w-full max-w-md bg-[#F4F0E6] dark:bg-surface rounded-2xl md:rounded-3xl flex flex-col overflow-hidden shadow-xl transition-all border border-[#E2DACB] dark:border-slate-800 max-h-[90dvh] md:max-h-[85dvh]"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Hero Image Full-Bleed & Overlay Controls */}
@@ -4112,7 +4112,7 @@ export default function PortalMPP() {
                     {/* Kartu Informasi Detail (Mini Cards) */}
                     <div className="grid grid-cols-1 gap-2.5 pt-2">
                       {/* Pemilik / Produsen */}
-                      <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 flex items-start gap-3">
+                      <div className="p-3 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/60 flex items-start gap-3">
                         <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
                           <User className="w-4 h-4" />
                         </div>
@@ -4123,7 +4123,7 @@ export default function PortalMPP() {
                       </div>
 
                       {/* Lokasi Usaha */}
-                      <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 flex items-start gap-3">
+                      <div className="p-3 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/60 flex items-start gap-3">
                         <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
                           <MapPin className="w-4 h-4" />
                         </div>
@@ -4136,7 +4136,7 @@ export default function PortalMPP() {
                       </div>
 
                       {/* Komposisi / Bahan Utama */}
-                      <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 flex items-start gap-3">
+                      <div className="p-3 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/60 flex items-start gap-3">
                         <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
                           <Package className="w-4 h-4" />
                         </div>
@@ -4151,11 +4151,11 @@ export default function PortalMPP() {
                   </div>
 
                   {/* Sticky Action Footer */}
-                  <div className="sticky bottom-0 left-0 right-0 p-4 bg-white/95 dark:bg-surface/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 flex items-center gap-3 shrink-0 z-20">
+                  <div className="sticky bottom-0 left-0 right-0 p-4 bg-[#FAF7F0]/95 dark:bg-surface/95 backdrop-blur-md border-t border-[#E2DACB] dark:border-slate-800 flex items-center gap-3 shrink-0 z-20">
                     <button
                       type="button"
                       onClick={() => handleShareUMKM(selectedUMKM)}
-                      className="w-1/3 py-3 border border-slate-300 dark:border-slate-700 font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-xs sm:text-sm text-slate-800 dark:text-slate-200 cursor-pointer active:scale-95"
+                      className="w-1/3 py-3 border border-[#E2DACB] dark:border-slate-700 bg-[#F4F0E6] dark:bg-transparent font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-[#ECE5D6] dark:hover:bg-slate-800 transition-all text-xs sm:text-sm text-slate-800 dark:text-slate-200 cursor-pointer active:scale-95"
                     >
                       <Share2 className="w-4 h-4" />
                       <span>{t("mppPortal.umkm.share", "Bagikan")}</span>
@@ -4183,7 +4183,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-36 sm:scroll-mt-40 py-10 sm:py-14 px-2 sm:px-6 lg:px-8 relative before:bg-slate-100 dark:before:bg-[#0F2D4A] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-36 sm:scroll-mt-40 py-10 sm:py-14 px-2 sm:px-6 lg:px-8 relative before:bg-[#FAF7F0] dark:before:bg-[#0F2D4A] before:border-y before:border-[#E2DACB]/60 dark:before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Terpusat — Standardized Zero-Pill Eyebrow + Typography */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 break-words">
@@ -4199,7 +4199,7 @@ export default function PortalMPP() {
             </div>
 
             {queueMetrics.totalVisitors === 0 ? (
-              <div className="w-full max-w-xl mx-auto my-8 p-8 rounded-3xl text-center bg-slate-100/70 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10">
+              <div className="w-full max-w-xl mx-auto my-8 p-8 rounded-3xl text-center bg-[#F4F0E6] dark:bg-white/[0.03] border border-[#E2DACB] dark:border-white/10">
                 <BarChart3 className="w-10 h-10 text-emerald-500/70 mx-auto mb-3" />
                 <h4 className="text-base font-bold text-slate-800 dark:text-slate-100 font-sans">
                   Data tampil setelah peluncuran
@@ -4225,7 +4225,7 @@ export default function PortalMPP() {
                     className={`w-full min-h-[115px] sm:min-h-[160px] ${MPP_CARD_SURFACE.layer1} ${MPP_CARD_SURFACE.radiusMain} relative pt-7 sm:pt-10 pb-4 sm:pb-5 px-4 text-center hover:border-emerald-500/40 dark:hover:border-white/[0.14] transition-all duration-300 group flex flex-col justify-between items-center`}
                   >
                     {/* Ikon Melayang — Layer 2 (#143755) */}
-                    <div className="absolute -top-4 sm:-top-6 left-1/2 -translate-x-1/2 bg-emerald-50 dark:bg-[#143755] text-emerald-600 dark:text-emerald-400 shadow-sm border-2 sm:border-4 border-white dark:border-[#0A2238] rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 z-10">
+                    <div className="absolute -top-4 sm:-top-6 left-1/2 -translate-x-1/2 bg-[#FAF7F0] dark:bg-[#143755] text-emerald-600 dark:text-emerald-400 shadow-sm border-2 sm:border-4 border-[#E2DACB] dark:border-[#0A2238] rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 z-10">
                       <IconComp className="w-4 h-4 sm:w-6 sm:h-6 stroke-[2.2]" />
                     </div>
 
@@ -4262,7 +4262,7 @@ export default function PortalMPP() {
                   </div>
 
                   {/* Filter Tab (min 44px touch target on mobile) */}
-                  <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900/80 p-1 rounded-xl border border-slate-200/80 dark:border-white/10 self-start sm:self-auto shadow-inner">
+                  <div className="flex items-center gap-1 bg-[#FAF7F0] dark:bg-slate-900/80 p-1 rounded-xl border border-[#E2DACB] dark:border-white/10 self-start sm:self-auto shadow-inner">
                     {(['harian', 'mingguan', 'bulanan'] as const).map((tab) => {
                       const label = tab === 'harian' ? t("mppPortal.statistik.harian") : tab === 'mingguan' ? t("mppPortal.statistik.mingguan") : t("mppPortal.statistik.bulanan");
                       const isActive = activeStatTab === tab;
@@ -4316,7 +4316,7 @@ export default function PortalMPP() {
                               className={`w-full rounded-t-lg transition-colors cursor-pointer shadow-sm relative ${
                                 count > 0
                                   ? 'bg-emerald-500 hover:bg-emerald-400'
-                                  : 'bg-slate-300 dark:bg-slate-700/80 hover:bg-slate-400 dark:hover:bg-slate-600'
+                                  : 'bg-[#E2DACB] dark:bg-slate-700/80 hover:bg-[#D5CCB8] dark:hover:bg-slate-600'
                               }`}
                               style={{ height: `${barPercent}%`, minHeight: '8px', transformOrigin: 'bottom' }}
                             >
@@ -4332,7 +4332,7 @@ export default function PortalMPP() {
                   </div>
 
                   {/* Label Sumbu Bawah */}
-                  <div className="flex justify-between items-center mt-3 pt-2 border-t border-slate-200/80 dark:border-white/10 text-[10px] sm:text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 tracking-wider">
+                  <div className="flex justify-between items-center mt-3 pt-2 border-t border-[#E2DACB] dark:border-white/10 text-[10px] sm:text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 tracking-wider">
                     {activeStatTab === 'harian' ? (
                       <>
                         <span>08:00</span>
@@ -4412,7 +4412,7 @@ export default function PortalMPP() {
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.35 }}
                 className={`relative overflow-hidden w-full py-10 sm:py-14 px-2 sm:px-6 lg:px-8 transition-colors duration-300 border-y ${
-                  isDark ? 'bg-[#081A2C] border-white/[0.07] text-white' : 'bg-[#F4F0E6] border-[#E5DFD3] text-slate-900'
+                  isDark ? 'bg-[#081A2C] border-white/[0.07] text-white' : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-900'
                 }`}
               >
                 <div className="relative z-10 max-w-2xl mx-auto px-4 text-center mb-6 sm:mb-8 flex flex-col items-center space-y-2">
@@ -4437,7 +4437,7 @@ export default function PortalMPP() {
                     </div>
                   ) : communityReviews.length === 0 ? (
                     <div className={`w-full max-w-xl mx-auto py-8 sm:py-10 px-4 sm:px-6 rounded-2xl sm:rounded-3xl border text-center flex flex-col items-center transition-all ${
-                      isDark ? 'bg-[#0C2135] border-white/10 text-white' : 'bg-white border-[#E5DFD3] text-slate-900 shadow-xs'
+                      isDark ? 'bg-[#0C2135] border-white/10 text-white' : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900 shadow-xs'
                     }`}>
                       <div className="w-11 h-11 rounded-full bg-[#0F6B4F]/10 text-[#0F6B4F] dark:text-emerald-400 flex items-center justify-center mb-2.5">
                         <MessageSquare className="w-5 h-5" />
@@ -4473,7 +4473,7 @@ export default function PortalMPP() {
                           <p className="text-base sm:text-lg font-serif-display italic text-slate-800 dark:text-slate-100 leading-relaxed max-w-xl my-2">
                             “{item.teks}”
                           </p>
-                          <div className="mt-4 pt-4 border-t border-[#E5DFD3] dark:border-white/[0.08] flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-xs">
+                          <div className="mt-4 pt-4 border-t border-[#E2DACB] dark:border-white/[0.08] flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-xs">
                             <span className="font-bold text-slate-900 dark:text-white uppercase tracking-wide">
                               {item.nama}
                             </span>
@@ -4527,7 +4527,7 @@ export default function PortalMPP() {
                           <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed italic my-2.5 line-clamp-3">
                             “{item.teks}”
                           </p>
-                          <div className="pt-3 mt-auto border-t border-[#EFEAE0] dark:border-white/[0.06] w-full">
+                          <div className="pt-3 mt-auto border-t border-[#E2DACB] dark:border-white/[0.06] w-full">
                             <span className="text-xs font-bold text-slate-900 dark:text-white uppercase font-sans tracking-wide block">
                               {item.nama}
                             </span>
@@ -4552,7 +4552,7 @@ export default function PortalMPP() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.35 }}
-              className="w-full max-w-7xl mx-auto py-8 sm:py-14 px-2 sm:px-6 lg:px-8 relative before:bg-slate-100 dark:before:bg-[#0F2D4A] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+              className="w-full max-w-7xl mx-auto py-8 sm:py-14 px-2 sm:px-6 lg:px-8 relative before:bg-[#FAF7F0] dark:before:bg-[#0F2D4A] before:border-y before:border-[#E2DACB]/60 dark:before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
             >
               <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-8 gap-3">
                 <div className="space-y-2">
@@ -4598,7 +4598,7 @@ export default function PortalMPP() {
                         className={`${MPP_CARD_SURFACE.layer1} ${MPP_CARD_SURFACE.radiusMain} overflow-hidden group cursor-pointer hover:border-emerald-500/40 dark:hover:border-white/[0.14] transition-all duration-300 flex flex-col justify-between active:scale-[0.99] relative`}
                       >
                         <div>
-                          <div className="h-44 sm:h-48 bg-slate-200 dark:bg-slate-800 relative overflow-hidden">
+                          <div className="h-44 sm:h-48 bg-[#ECE5D6] dark:bg-slate-800 relative overflow-hidden">
                             <img 
                               src={getImageUrl(item.image, 'news')} 
                               alt={item.judul}
@@ -4658,7 +4658,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ type: "spring", stiffness: 75, damping: 20, mass: 0.9 }}
-            className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-36 sm:scroll-mt-40 py-10 sm:py-16 md:py-24 px-2 sm:px-6 lg:px-8 relative before:bg-slate-100 dark:before:bg-[#0F2D4A] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
+            className="w-full max-w-6xl mx-auto flex flex-col scroll-mt-36 sm:scroll-mt-40 py-10 sm:py-16 md:py-24 px-2 sm:px-6 lg:px-8 relative before:bg-[#FAF7F0] dark:before:bg-[#0F2D4A] before:border-y before:border-[#E2DACB]/60 dark:before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10"
           >
             {/* Header Seksi Terpusat — Standardized Zero-Pill Eyebrow + Typography */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 space-y-2">
@@ -4679,7 +4679,7 @@ export default function PortalMPP() {
               <div className={`${MPP_CARD_SURFACE.default} p-5 sm:p-6 flex flex-col justify-between h-full hover:border-[#0F6B4F]/50 transition-all duration-300 group relative overflow-hidden`}>
                 <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#C9A24B]/70 to-transparent" />
                 <div>
-                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 bg-[#FAF8F3] dark:bg-[#132E48] text-[#855A14] dark:text-[#E2C475] border border-[#E5DFD3] dark:border-white/[0.08]">
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 bg-[#FAF7F0] dark:bg-[#132E48] text-[#855A14] dark:text-[#E2C475] border border-[#E2DACB] dark:border-white/[0.08]">
                     <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
                   <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white font-sans mb-1.5 group-hover:text-[#0F6B4F] dark:group-hover:text-emerald-400 transition-colors text-left">
@@ -4693,7 +4693,7 @@ export default function PortalMPP() {
                   href="https://www.lapor.go.id" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="min-h-[44px] text-xs sm:text-sm font-bold text-[#0F6B4F] dark:text-emerald-400 mt-auto pt-3 flex items-center justify-between border-t border-[#EFEAE0] dark:border-white/[0.08] hover:opacity-90 transition-colors group/link font-sans"
+                  className="min-h-[44px] text-xs sm:text-sm font-bold text-[#0F6B4F] dark:text-emerald-400 mt-auto pt-3 flex items-center justify-between border-t border-[#E2DACB] dark:border-white/[0.08] hover:opacity-90 transition-colors group/link font-sans"
                 >
                   <span>{t("mppPortal.pengaduan.moreDetails")}</span>
                   <ArrowRight size={15} className="transition-transform group-hover/link:translate-x-1" />
@@ -4704,7 +4704,7 @@ export default function PortalMPP() {
               <div className={`${MPP_CARD_SURFACE.default} p-5 sm:p-6 flex flex-col justify-between h-full hover:border-[#0F6B4F]/50 transition-all duration-300 group relative overflow-hidden`}>
                 <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#0F6B4F]/70 to-transparent" />
                 <div>
-                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 bg-[#FAF8F3] dark:bg-[#132E48] text-[#0F6B4F] dark:text-emerald-400 border border-[#E5DFD3] dark:border-white/[0.08]">
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 bg-[#FAF7F0] dark:bg-[#132E48] text-[#0F6B4F] dark:text-emerald-400 border border-[#E2DACB] dark:border-white/[0.08]">
                     <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
                   <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white font-sans mb-1.5 group-hover:text-[#0F6B4F] dark:group-hover:text-emerald-400 transition-colors text-left">
@@ -4720,7 +4720,7 @@ export default function PortalMPP() {
                     e.preventDefault();
                     navigateToMppSection('survey');
                   }}
-                  className="min-h-[44px] text-xs sm:text-sm font-bold text-[#0F6B4F] dark:text-emerald-400 mt-auto pt-3 flex items-center justify-between border-t border-[#EFEAE0] dark:border-white/[0.08] hover:opacity-90 transition-colors cursor-pointer group/link font-sans"
+                  className="min-h-[44px] text-xs sm:text-sm font-bold text-[#0F6B4F] dark:text-emerald-400 mt-auto pt-3 flex items-center justify-between border-t border-[#E2DACB] dark:border-white/[0.08] hover:opacity-90 transition-colors cursor-pointer group/link font-sans"
                 >
                   <span>{t("mppPortal.pengaduan.moreDetails")}</span>
                   <ArrowRight size={15} className="transition-transform group-hover/link:translate-x-1" />
@@ -4731,7 +4731,7 @@ export default function PortalMPP() {
               <div className={`${MPP_CARD_SURFACE.default} p-5 sm:p-6 flex flex-col justify-between h-full hover:border-[#0F6B4F]/50 transition-all duration-300 group relative overflow-hidden`}>
                 <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#C9A24B]/70 to-transparent" />
                 <div>
-                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 bg-[#FAF8F3] dark:bg-[#132E48] text-[#0F6B4F] dark:text-emerald-400 border border-[#E5DFD3] dark:border-white/[0.08]">
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 bg-[#FAF7F0] dark:bg-[#132E48] text-[#0F6B4F] dark:text-emerald-400 border border-[#E2DACB] dark:border-white/[0.08]">
                     <Headphones className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
                   <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white font-sans mb-1.5 group-hover:text-[#0F6B4F] dark:group-hover:text-emerald-400 transition-colors text-left">
@@ -4747,7 +4747,7 @@ export default function PortalMPP() {
                     e.preventDefault();
                     document.getElementById('virtual-helpdesk-banner')?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="w-full min-h-[44px] text-xs sm:text-sm font-bold text-[#0F6B4F] dark:text-emerald-400 mt-auto pt-3 flex items-center justify-between border-t border-[#EFEAE0] dark:border-white/[0.08] hover:opacity-90 transition-colors cursor-pointer group/link font-sans"
+                  className="w-full min-h-[44px] text-xs sm:text-sm font-bold text-[#0F6B4F] dark:text-emerald-400 mt-auto pt-3 flex items-center justify-between border-t border-[#E2DACB] dark:border-white/[0.08] hover:opacity-90 transition-colors cursor-pointer group/link font-sans"
                 >
                   <span>{t("mppPortal.pengaduan.moreDetails", "Konsultasi Virtual Helpdesk")}</span>
                   <ArrowRight size={15} className="transition-transform group-hover/link:translate-x-1" />
@@ -4806,7 +4806,7 @@ export default function PortalMPP() {
                   </p>
 
                   <div className={`space-y-0.5 mb-5 p-3 rounded-xl border ${
-                    isDark ? 'bg-[#132E48] border-white/[0.08] text-slate-200' : 'bg-[#FAF8F3] border-[#E5DFD3] text-slate-800'
+                    isDark ? 'bg-[#132E48] border-white/[0.08] text-slate-200' : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-800'
                   }`}>
                     <span className={`text-xs font-bold block font-sans text-left ${
                       isDark ? 'text-[#E2C475]' : 'text-slate-900'
@@ -4840,7 +4840,7 @@ export default function PortalMPP() {
                       className={`min-h-[46px] text-xs sm:text-sm font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors font-sans active:scale-98 border ${
                         isDark 
                           ? 'bg-[#132E48] hover:bg-[#193B5C] text-slate-200 border-white/[0.10]' 
-                          : 'bg-[#FAF8F3] hover:bg-[#EFECE3] text-slate-800 border-[#DFD8CA]'
+                          : 'bg-[#FAF7F0] hover:bg-[#ECE5D6] text-slate-800 border-[#E2DACB]'
                       }`}
                     >
                       <MessageCircle className="w-4 h-4 text-[#0F6B4F] dark:text-emerald-400 shrink-0" />
@@ -4859,7 +4859,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="w-full max-w-6xl mx-auto scroll-mt-36 sm:scroll-mt-40 py-10 sm:py-16 md:py-24 px-2 sm:px-6 lg:px-8 relative before:bg-slate-50 dark:before:bg-[#0A2238] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10 font-sans"
+            className="w-full max-w-6xl mx-auto scroll-mt-36 sm:scroll-mt-40 py-10 sm:py-16 md:py-24 px-2 sm:px-6 lg:px-8 relative before:bg-[#FAF7F0] dark:before:bg-[#0A2238] before:border-y before:border-[#E2DACB]/60 dark:before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10 font-sans"
           >
             {/* Header Seksi Terpusat — Standardized Zero-Pill Eyebrow + Typography */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 break-words">
@@ -4877,7 +4877,7 @@ export default function PortalMPP() {
             {/* Wadah Utama (Bagi 2 Kolom di Desktop) — Standardized Main Card (rounded-2xl, p-5 sm:p-6, Layer 1 #0F2D4A) */}
             <div className={`w-full grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 ${MPP_CARD_SURFACE.layer1} ${MPP_CARD_SURFACE.radiusMain} ${MPP_CARD_SURFACE.paddingLg}`}>
               {/* Kolom Kiri (Google Maps Embed) */}
-              <div className={`w-full overflow-hidden ${MPP_CARD_SURFACE.radiusMain} relative border border-slate-200/80 dark:border-white/[0.07] min-h-[220px]`}>
+              <div className={`w-full overflow-hidden ${MPP_CARD_SURFACE.radiusMain} relative border border-[#E2DACB] dark:border-white/[0.07] min-h-[220px]`}>
                 <iframe 
                   title={t("mppPortal.kontak.mapTitle")}
                   src="https://maps.google.com/maps?q=DPMPTSP%20Kabupaten%20Luwu%20Belopa&t=&z=16&ie=UTF8&iwloc=&output=embed"
@@ -4986,7 +4986,7 @@ export default function PortalMPP() {
                 <button
                   type="button"
                   onClick={() => setShowSocialMediaFeed(prev => !prev)}
-                  className="min-h-[44px] px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-white/[0.06] hover:bg-emerald-500/15 border border-slate-200/80 dark:border-white/[0.10] text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-bold font-sans flex items-center gap-2 transition-all cursor-pointer active:scale-95"
+                  className="min-h-[44px] px-5 py-2.5 rounded-xl bg-[#F4F0E6] dark:bg-white/[0.06] hover:bg-[#ECE5D6] dark:hover:bg-emerald-500/15 border border-[#E2DACB] dark:border-white/[0.10] text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-bold font-sans flex items-center gap-2 transition-all cursor-pointer active:scale-95"
                 >
                   <Instagram className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   <span>
@@ -5010,7 +5010,7 @@ export default function PortalMPP() {
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="w-full max-w-6xl mx-auto py-10 sm:py-16 md:py-24 px-2 sm:px-6 lg:px-8 relative before:bg-slate-100 dark:before:bg-[#0F2D4A] before:border-y before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10 font-sans"
+            className="w-full max-w-6xl mx-auto py-10 sm:py-16 md:py-24 px-2 sm:px-6 lg:px-8 relative before:bg-[#FAF7F0] dark:before:bg-[#0F2D4A] before:border-y before:border-[#E2DACB]/60 dark:before:border-transparent before:absolute before:inset-0 before:w-[200vw] before:left-1/2 before:-translate-x-1/2 before:-z-10 font-sans"
           >
             {/* Header Seksi Terpusat — Standardized Zero-Pill Eyebrow + Typography */}
             <div className="w-full max-w-2xl mx-auto text-center px-4 flex flex-col items-center mb-6 sm:mb-10 break-words">
@@ -5053,7 +5053,7 @@ export default function PortalMPP() {
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.25, delay: 0, ease: "easeOut" }}
                 className={`backdrop-blur-xl rounded-3xl overflow-hidden border min-h-[480px] sm:min-h-[520px] flex flex-col justify-between group hover:shadow-xl hover:border-emerald-500/50 active:scale-[0.98] transition-all duration-300 relative ${
-                  isDark ? 'bg-surface/95 border-slate-800 shadow-lg shadow-black/40 text-white' : 'bg-white border-slate-200/80 shadow-md text-slate-900'
+                  isDark ? 'bg-surface/95 border-slate-800 shadow-lg shadow-black/40 text-white' : 'bg-[#F4F0E6] border-[#E2DACB] shadow-sm text-slate-900'
                 }`}
               >
                 {/* Top Accent Glowing Rail */}
@@ -5061,7 +5061,7 @@ export default function PortalMPP() {
 
                 {/* Header Profil */}
                 <div className={`px-4 sm:px-5 py-3 border-b flex items-center gap-2.5 shrink-0 ${
-                  isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-slate-50/70 border-gray-100'
+                  isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-[#FAF7F0] border-[#E2DACB]'
                 }`}>
                   <div className="w-9 h-9 rounded-full p-[2px] bg-emerald-600 dark:bg-emerald-500 shrink-0 shadow-sm">
                     <img 
@@ -5117,7 +5117,7 @@ export default function PortalMPP() {
 
                 {/* Info Interaksi & Cuplikan Narasi */}
                 <div className={`p-3.5 sm:p-4 flex flex-col flex-1 justify-between ${
-                  isDark ? 'bg-surface/95 text-slate-100' : 'bg-white text-slate-800'
+                  isDark ? 'bg-surface/95 text-slate-100' : 'bg-[#F4F0E6] text-slate-800'
                 }`}>
                   <div>
                     <div className="flex items-center gap-3.5 mb-1.5">
@@ -5138,8 +5138,8 @@ export default function PortalMPP() {
                     href={socialMediaData.instagram.profileUrl} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className={`min-h-[44px] mt-2 pt-2 border-t text-xs font-bold text-emerald-500 dark:text-emerald-400 flex items-center justify-between hover:text-emerald-400 transition-colors active:scale-98 ${
-                      isDark ? 'border-slate-800' : 'border-gray-100'
+                    className={`min-h-[44px] mt-2 pt-2 border-t text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center justify-between hover:text-emerald-500 transition-colors active:scale-98 ${
+                      isDark ? 'border-slate-800' : 'border-[#E2DACB]'
                     }`}
                   >
                     <span>{t("mppPortal.sosialMedia.igBtn")}</span>
@@ -5157,7 +5157,7 @@ export default function PortalMPP() {
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.25, delay: 0.05, ease: "easeOut" }}
                 className={`backdrop-blur-xl rounded-3xl overflow-hidden border min-h-[480px] sm:min-h-[520px] flex flex-col justify-between group hover:shadow-xl hover:border-emerald-500/50 active:scale-[0.98] transition-all duration-300 relative ${
-                  isDark ? 'bg-surface/95 border-slate-800 shadow-lg shadow-black/40 text-white' : 'bg-white border-slate-200/80 shadow-md text-slate-900'
+                  isDark ? 'bg-surface/95 border-slate-800 shadow-lg shadow-black/40 text-white' : 'bg-[#F4F0E6] border-[#E2DACB] shadow-sm text-slate-900'
                 }`}
               >
                 {/* Top Accent Glowing Rail */}
@@ -5165,7 +5165,7 @@ export default function PortalMPP() {
 
                 {/* Header Profil */}
                 <div className={`px-4 sm:px-5 py-3 border-b flex items-center gap-2.5 shrink-0 ${
-                  isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-slate-50/70 border-gray-100'
+                  isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-[#FAF7F0] border-[#E2DACB]'
                 }`}>
                   <div className="w-9 h-9 rounded-full bg-red-600/10 text-red-600 flex items-center justify-center shrink-0 border border-red-600/20 shadow-sm">
                     <Youtube className="w-4 h-4" />
@@ -5221,7 +5221,7 @@ export default function PortalMPP() {
 
                 {/* Info Judul Video & Statistik */}
                 <div className={`p-3.5 sm:p-4 flex flex-col flex-1 justify-between ${
-                  isDark ? 'bg-surface/95 text-slate-100' : 'bg-white text-slate-800'
+                  isDark ? 'bg-surface/95 text-slate-100' : 'bg-[#F4F0E6] text-slate-800'
                 }`}>
                   <div>
                     <h4 className="font-bold text-xs sm:text-sm font-sans line-clamp-1 leading-snug group-hover:text-emerald-500 transition-colors">
@@ -5237,8 +5237,8 @@ export default function PortalMPP() {
                     href={socialMediaData.youtube.videoUrl || socialMediaData.youtube.channelUrl} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className={`min-h-[44px] mt-2 pt-2 border-t text-xs font-bold text-emerald-500 dark:text-emerald-400 flex items-center justify-between hover:text-emerald-400 transition-colors active:scale-98 ${
-                      isDark ? 'border-slate-800' : 'border-gray-100'
+                    className={`min-h-[44px] mt-2 pt-2 border-t text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center justify-between hover:text-emerald-500 transition-colors active:scale-98 ${
+                      isDark ? 'border-slate-800' : 'border-[#E2DACB]'
                     }`}
                   >
                     <span>{t("mppPortal.sosialMedia.ytBtn")}</span>
@@ -5256,7 +5256,7 @@ export default function PortalMPP() {
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.25, delay: 0.1, ease: "easeOut" }}
                 className={`backdrop-blur-xl rounded-3xl overflow-hidden border min-h-[480px] sm:min-h-[520px] flex flex-col justify-between group hover:shadow-xl hover:border-emerald-500/50 active:scale-[0.98] transition-all duration-300 relative ${
-                  isDark ? 'bg-surface/95 border-slate-800 shadow-lg shadow-black/40 text-white' : 'bg-white border-slate-200/80 shadow-md text-slate-900'
+                  isDark ? 'bg-surface/95 border-slate-800 shadow-lg shadow-black/40 text-white' : 'bg-[#F4F0E6] border-[#E2DACB] shadow-sm text-slate-900'
                 }`}
               >
                 {/* Top Accent Glowing Rail */}
@@ -5264,7 +5264,7 @@ export default function PortalMPP() {
 
                 {/* Header Profil */}
                 <div className={`px-4 sm:px-5 py-3 border-b flex items-center gap-2.5 shrink-0 ${
-                  isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-slate-50/70 border-gray-100'
+                  isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-[#FAF7F0] border-[#E2DACB]'
                 }`}>
                   <div className="w-9 h-9 rounded-full bg-[#1877F2]/10 text-[#1877F2] flex items-center justify-center shrink-0 border border-[#1877F2]/20 shadow-sm">
                     <Facebook className="w-4 h-4" />
@@ -5309,7 +5309,7 @@ export default function PortalMPP() {
 
                 {/* Info Interaksi & Cuplikan Narasi */}
                 <div className={`p-3.5 sm:p-4 flex flex-col flex-1 justify-between ${
-                  isDark ? 'bg-surface/95 text-slate-100' : 'bg-white text-slate-800'
+                  isDark ? 'bg-surface/95 text-slate-100' : 'bg-[#F4F0E6] text-slate-800'
                 }`}>
                   <div>
                     <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-mono font-medium mb-1.5">
@@ -5325,8 +5325,8 @@ export default function PortalMPP() {
                     href={socialMediaData.facebook.pageUrl} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className={`min-h-[44px] mt-2 pt-2 border-t text-xs font-bold text-emerald-500 dark:text-emerald-400 flex items-center justify-between hover:text-emerald-400 transition-colors active:scale-98 ${
-                      isDark ? 'border-slate-800' : 'border-gray-100'
+                    className={`min-h-[44px] mt-2 pt-2 border-t text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center justify-between hover:text-emerald-500 transition-colors active:scale-98 ${
+                      isDark ? 'border-slate-800' : 'border-[#E2DACB]'
                     }`}
                   >
                     <span>{t("mppPortal.sosialMedia.fbBtn")}</span>
@@ -5344,7 +5344,7 @@ export default function PortalMPP() {
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.25, delay: 0.15, ease: "easeOut" }}
                 className={`backdrop-blur-xl rounded-3xl overflow-hidden border min-h-[480px] sm:min-h-[520px] flex flex-col justify-between group hover:shadow-xl hover:border-emerald-500/50 active:scale-[0.98] transition-all duration-300 relative ${
-                  isDark ? 'bg-surface/95 border-slate-800 shadow-lg shadow-black/40 text-white' : 'bg-white border-slate-200/80 shadow-md text-slate-900'
+                  isDark ? 'bg-surface/95 border-slate-800 shadow-lg shadow-black/40 text-white' : 'bg-[#F4F0E6] border-[#E2DACB] shadow-sm text-slate-900'
                 }`}
               >
                 {/* Top Accent Glowing Rail */}
@@ -5352,7 +5352,7 @@ export default function PortalMPP() {
 
                 {/* Header Profil */}
                 <div className={`px-4 sm:px-5 py-3 border-b flex items-center gap-2.5 shrink-0 ${
-                  isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-slate-50/70 border-gray-100'
+                  isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-[#FAF7F0] border-[#E2DACB]'
                 }`}>
                   <div className="w-9 h-9 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center shrink-0 shadow-sm border border-slate-700/20">
                     <Music2 className="w-4 h-4" />
@@ -5409,7 +5409,7 @@ export default function PortalMPP() {
 
                 {/* Info Interaksi */}
                 <div className={`p-3.5 sm:p-4 flex flex-col flex-1 justify-between ${
-                  isDark ? 'bg-surface/95 text-slate-100' : 'bg-white text-slate-800'
+                  isDark ? 'bg-surface/95 text-slate-100' : 'bg-[#F4F0E6] text-slate-800'
                 }`}>
                   <div className={`flex items-center justify-between text-[10px] sm:text-[11px] font-mono ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                     <span>{socialMediaData.tiktok.stats || t("mppPortal.sosialMedia.ttLikes")}</span>
@@ -5422,8 +5422,8 @@ export default function PortalMPP() {
                     href={socialMediaData.tiktok.profileUrl} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className={`min-h-[44px] mt-2 pt-2 border-t text-xs font-bold text-emerald-500 dark:text-emerald-400 flex items-center justify-between hover:text-emerald-400 transition-colors active:scale-98 ${
-                      isDark ? 'border-slate-800' : 'border-gray-100'
+                    className={`min-h-[44px] mt-2 pt-2 border-t text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center justify-between hover:text-emerald-500 transition-colors active:scale-98 ${
+                      isDark ? 'border-slate-800' : 'border-[#E2DACB]'
                     }`}
                   >
                     <span>{t("mppPortal.sosialMedia.ttBtn")}</span>
@@ -5470,7 +5470,7 @@ export default function PortalMPP() {
               </div>
 
               <div className="relative z-10 md:w-1/2 w-full">
-                <div className="relative w-full aspect-[16/10] overflow-hidden rounded-2xl border border-[#D8CEBC] dark:border-white/15 shadow-md group bg-[#0A2236]">
+                <div className="relative w-full aspect-[16/10] overflow-hidden rounded-2xl border border-[#E2DACB] dark:border-white/15 shadow-md group bg-[#0A2236]">
                   <img 
                     src="/assets/images/hero-investasi-luwu-1280.webp" 
                     alt="Peta Spasial & Lanskap Investasi Kabupaten Luwu"
@@ -5521,7 +5521,7 @@ export default function PortalMPP() {
               <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
                 <div>
                   <div className="flex items-center gap-3 mb-3.5">
-                    <div className="p-2 rounded-2xl bg-white dark:bg-[#0C2135] border border-[#E2DACB] dark:border-white/10 shadow-2xs shrink-0">
+                    <div className="p-2 rounded-2xl bg-[#FAF7F0] dark:bg-[#0C2135] border border-[#E2DACB] dark:border-white/10 shadow-2xs shrink-0">
                       <img 
                         alt="Lambang Kabupaten Luwu" 
                         className="w-8 h-8 sm:w-9 sm:h-9 object-contain" 
@@ -5564,8 +5564,8 @@ export default function PortalMPP() {
               {/* Navigation Columns: 3-Column Grid on Tablet/Desktop (7 cols on lg) */}
               <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 pt-2 sm:pt-0">
                 {/* Kolom 1: Tautan Pintas */}
-                <div className="bg-slate-50/70 dark:bg-white/[0.02] sm:bg-transparent sm:dark:bg-transparent rounded-2xl p-4 sm:p-0 border border-slate-200/60 dark:border-white/5 sm:border-0">
-                  <div className="flex items-center gap-2 mb-3.5 pb-2 border-b border-slate-200/60 dark:border-white/10 sm:border-0 sm:pb-0">
+                <div className="bg-[#FAF7F0] dark:bg-white/[0.02] sm:bg-transparent sm:dark:bg-transparent rounded-2xl p-4 sm:p-0 border border-[#E2DACB] dark:border-white/5 sm:border-0">
+                  <div className="flex items-center gap-2 mb-3.5 pb-2 border-b border-[#E2DACB] dark:border-white/10 sm:border-0 sm:pb-0">
                     <div className="w-1.5 h-4 rounded-full bg-emerald-500 shrink-0" />
                     <h4 className="font-sans text-xs sm:text-sm font-bold tracking-wider text-slate-900 dark:text-white uppercase truncate">
                       {t("mppPortal.footer.tautanPintas")}
@@ -5654,8 +5654,8 @@ export default function PortalMPP() {
                 </div>
 
                 {/* Kolom 2: Sistem Terkait */}
-                <div className="bg-slate-50/70 dark:bg-white/[0.02] sm:bg-transparent sm:dark:bg-transparent rounded-2xl p-4 sm:p-0 border border-slate-200/60 dark:border-white/5 sm:border-0">
-                  <div className="flex items-center gap-2 mb-3.5 pb-2 border-b border-slate-200/60 dark:border-white/10 sm:border-0 sm:pb-0">
+                <div className="bg-[#FAF7F0] dark:bg-white/[0.02] sm:bg-transparent sm:dark:bg-transparent rounded-2xl p-4 sm:p-0 border border-[#E2DACB] dark:border-white/5 sm:border-0">
+                  <div className="flex items-center gap-2 mb-3.5 pb-2 border-b border-[#E2DACB] dark:border-white/10 sm:border-0 sm:pb-0">
                     <div className="w-1.5 h-4 rounded-full bg-blue-500 shrink-0" />
                     <h4 className="font-sans text-xs sm:text-sm font-bold tracking-wider text-slate-900 dark:text-white uppercase truncate">
                       Sistem Terkait
@@ -5741,8 +5741,8 @@ export default function PortalMPP() {
                 </div>
 
                 {/* Kolom 3: Dukungan & Bantuan */}
-                <div className="bg-slate-50/70 dark:bg-white/[0.02] sm:bg-transparent sm:dark:bg-transparent rounded-2xl p-4 sm:p-0 border border-slate-200/60 dark:border-white/5 sm:border-0">
-                  <div className="flex items-center gap-2 mb-3.5 pb-2 border-b border-slate-200/60 dark:border-white/10 sm:border-0 sm:pb-0">
+                <div className="bg-[#FAF7F0] dark:bg-white/[0.02] sm:bg-transparent sm:dark:bg-transparent rounded-2xl p-4 sm:p-0 border border-[#E2DACB] dark:border-white/5 sm:border-0">
+                  <div className="flex items-center gap-2 mb-3.5 pb-2 border-b border-[#E2DACB] dark:border-white/10 sm:border-0 sm:pb-0">
                     <div className="w-1.5 h-4 rounded-full bg-teal-500 shrink-0" />
                     <h4 className="font-sans text-xs sm:text-sm font-bold tracking-wider text-slate-900 dark:text-white uppercase truncate">
                       {t("mppPortal.footer.dukungan")}
@@ -5790,7 +5790,7 @@ export default function PortalMPP() {
                       <button 
                         type="button"
                         onClick={() => setIsAiModalOpen(true)} 
-                        className="group w-full flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm font-semibold text-[#0F6B4F] dark:text-emerald-300 bg-white dark:bg-[#0C2135] border border-[#DFD8CA] dark:border-white/10 hover:border-[#0F6B4F]/50 transition-all duration-200 cursor-pointer"
+                        className="group w-full flex items-center justify-between px-3 py-2.5 rounded-xl min-h-[44px] text-xs sm:text-sm font-semibold text-[#0F6B4F] dark:text-emerald-300 bg-[#FAF7F0] hover:bg-[#ECE5D6] dark:bg-[#0C2135] border border-[#E2DACB] dark:border-white/10 hover:border-[#0F6B4F]/50 transition-all duration-200 cursor-pointer"
                       >
                         <span className="flex items-center gap-2">
                           <Headphones className="w-4 h-4 text-[#0F6B4F] dark:text-emerald-400 shrink-0" />
@@ -5805,14 +5805,14 @@ export default function PortalMPP() {
             </div>
 
             {/* Bottom Symmetrical Copyright Bar */}
-            <div className="mt-8 pt-6 border-t border-slate-200/80 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            <div className="mt-8 pt-6 border-t border-[#E2DACB] dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
               <div className="flex items-center gap-2 text-center md:text-left">
                 <span>© {new Date().getFullYear()} MPP Simpurusiang Kabupaten Luwu.</span>
-                <span className="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
+                <span className="hidden sm:inline text-slate-400 dark:text-slate-700">•</span>
                 <span className="hidden sm:inline">{t("mppPortal.footer.integratedServiceDot", "Pelayanan Publik Terintegrasi.")}</span>
               </div>
-              <div className="flex items-center gap-2 text-center md:text-right font-medium text-slate-600 dark:text-slate-300">
-                <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+              <div className="flex items-center gap-2 text-center md:text-right font-medium text-slate-700 dark:text-slate-300">
+                <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-500 shrink-0" />
                 <span>{t("mppPortal.footer.agencyText")}</span>
               </div>
             </div>
@@ -5820,7 +5820,7 @@ export default function PortalMPP() {
         </footer>
 
         {/* Android Native-Style Bottom Navigation Bar (Single Active Focus & Zero Truncation) */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#081A2C]/95 backdrop-blur-xl border-t border-slate-200/85 dark:border-white/[0.08] px-1 pt-1.5 grid grid-cols-5 items-center shadow-[0_-4px_20px_rgba(15,23,42,0.05)] dark:shadow-[0_-8px_28px_rgba(0,0,0,0.6)] pb-[calc(env(safe-area-inset-bottom,0px)+8px)]">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#F4F0E6]/95 dark:bg-[#081A2C]/95 backdrop-blur-xl border-t border-[#E2DACB] dark:border-white/[0.08] px-1 pt-1.5 grid grid-cols-5 items-center shadow-[0_-4px_20px_rgba(16,38,30,0.06)] dark:shadow-[0_-8px_28px_rgba(0,0,0,0.6)] pb-[calc(env(safe-area-inset-bottom,0px)+8px)]">
           <button 
             type="button"
             onClick={() => navigateToMppSection('hero')}
@@ -5881,7 +5881,7 @@ export default function PortalMPP() {
             title="Asisten MPP - Tanya Suara Layanan & Persyaratan"
             aria-label="Asisten MPP Tanya Suara"
           >
-            <span className="h-7 w-10 rounded-full bg-slate-100 dark:bg-white/[0.07] group-hover:bg-emerald-500/15 dark:group-hover:bg-emerald-400/20 border border-slate-200/90 dark:border-white/[0.12] flex items-center justify-center text-slate-700 dark:text-slate-200 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
+            <span className="h-7 w-10 rounded-full bg-[#FAF7F0] dark:bg-white/[0.07] group-hover:bg-emerald-500/15 dark:group-hover:bg-emerald-400/20 border border-[#E2DACB] dark:border-white/[0.12] flex items-center justify-center text-slate-700 dark:text-slate-200 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
               <Mic className="w-4 h-4" />
             </span>
             <span className="mobile-dock-label font-medium text-slate-600 dark:text-slate-400 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 font-sans whitespace-nowrap">
@@ -5951,17 +5951,17 @@ export default function PortalMPP() {
               animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, scale: 0.94, y: 20, filter: "blur(4px)" }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="w-full max-w-lg my-auto max-h-[85vh] sm:max-h-[88vh] bg-white dark:bg-surface border border-slate-200 dark:border-white/10 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl overflow-y-auto flex flex-col"
+              className="w-full max-w-lg my-auto max-h-[85vh] sm:max-h-[88vh] bg-[#F4F0E6] dark:bg-surface border border-[#E2DACB] dark:border-white/10 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl overflow-y-auto flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header Modal */}
-              <div className="flex items-start justify-between pb-4 border-b border-slate-100 dark:border-white/10">
+              <div className="flex items-start justify-between pb-4 border-b border-[#E2DACB] dark:border-white/10">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="px-4.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-sans">
+                    <span className="px-4.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-sans">
                       Helpdesk MPP
                     </span>
-                    <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                    <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1">
                       <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                       Online Fast Response
                     </span>
@@ -5969,14 +5969,14 @@ export default function PortalMPP() {
                   <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white font-sans mt-1.5">
                     {t("mppPortal.helpdeskModal.title")}
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
                     {t("mppPortal.helpdeskModal.subtitle")}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsHelpdeskModalOpen(false)}
-                  className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                  className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-[#ECE5D6] dark:hover:bg-slate-700 transition-colors"
                   aria-label={t("common.close", "Tutup")}
                 >
                   <X className="w-5 h-5" />
@@ -6003,7 +6003,7 @@ export default function PortalMPP() {
                     <button
                       type="button"
                       onClick={() => setIsHelpdeskModalOpen(false)}
-                      className="w-full sm:flex-1 min-h-[44px] px-6 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold font-sans hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+                      className="w-full sm:flex-1 min-h-[44px] px-6 py-2.5 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-white/10 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-semibold font-sans hover:bg-[#ECE5D6] dark:hover:bg-slate-700 transition-all"
                     >
                       {t("common.close") || "Selesai"}
                     </button>
@@ -6037,7 +6037,7 @@ export default function PortalMPP() {
                       value={helpdeskForm.nama}
                       onChange={(e) => setHelpdeskForm(prev => ({ ...prev, nama: e.target.value }))}
                       placeholder={t("mppPortal.helpdeskModal.namePlaceholder")}
-                      className="w-full min-h-[44px] px-3.5 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                      className="w-full min-h-[44px] px-3.5 py-2.5 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                     />
                   </div>
 
@@ -6052,7 +6052,7 @@ export default function PortalMPP() {
                       value={helpdeskForm.telepon}
                       onChange={(e) => setHelpdeskForm(prev => ({ ...prev, telepon: e.target.value }))}
                       placeholder={t("mppPortal.helpdeskModal.phonePlaceholder")}
-                      className="w-full min-h-[44px] px-3.5 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                      className="w-full min-h-[44px] px-3.5 py-2.5 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                     />
                   </div>
 
@@ -6064,7 +6064,7 @@ export default function PortalMPP() {
                     <select
                       value={helpdeskForm.kategori}
                       onChange={(e) => setHelpdeskForm(prev => ({ ...prev, kategori: e.target.value }))}
-                      className="w-full min-h-[44px] px-3.5 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                      className="w-full min-h-[44px] px-3.5 py-2.5 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                     >
                       <option value="Perizinan DPMPTSP">{t("mppPortal.helpdesk.topics.dpmptsp")}</option>
                       <option value="PBG & Tata Ruang">{t("mppPortal.helpdesk.topics.pbg")}</option>
@@ -6086,7 +6086,7 @@ export default function PortalMPP() {
                       value={helpdeskForm.pesan}
                       onChange={(e) => setHelpdeskForm(prev => ({ ...prev, pesan: e.target.value }))}
                       placeholder={t("mppPortal.helpdeskModal.msgPlaceholder")}
-                      className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none resize-none"
+                      className="w-full p-3.5 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none resize-none"
                     />
                   </div>
 
@@ -6095,7 +6095,7 @@ export default function PortalMPP() {
                     <button
                       type="button"
                       onClick={() => setIsHelpdeskModalOpen(false)}
-                      className="flex-1 min-h-[44px] py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs sm:text-sm font-semibold font-sans hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                      className="flex-1 min-h-[44px] py-2.5 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-white/10 text-slate-700 dark:text-slate-400 text-xs sm:text-sm font-semibold font-sans hover:bg-[#ECE5D6] dark:hover:bg-slate-700 transition-colors"
                     >
                       {t("common.close") || "Batal"}
                     </button>
@@ -6126,7 +6126,7 @@ export default function PortalMPP() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.94, y: 20 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="relative w-full max-w-2xl bg-white dark:bg-surface border border-slate-200 dark:border-white/10 rounded-2xl md:rounded-3xl p-4 sm:p-6 shadow-xl overflow-y-auto text-slate-900 dark:text-white font-sans flex flex-col max-h-[90dvh] md:max-h-[85dvh]"
+              className="relative w-full max-w-2xl bg-[#F4F0E6] dark:bg-surface border border-[#E2DACB] dark:border-white/10 rounded-2xl md:rounded-3xl p-4 sm:p-6 shadow-xl overflow-y-auto text-slate-900 dark:text-white font-sans flex flex-col max-h-[90dvh] md:max-h-[85dvh]"
               onClick={(e) => e.stopPropagation()}
             >
               {(() => {
@@ -6148,7 +6148,7 @@ export default function PortalMPP() {
                 return (
                   <>
                     {/* Header Modal Detail Instansi: Grid [Logo 72px | 1fr | Tombol Tutup 44px] */}
-                    <div className="grid grid-cols-[72px_1fr_44px] gap-x-3.5 sm:gap-x-4 gap-y-1.5 pb-4 border-b border-slate-100 dark:border-white/10 items-start">
+                    <div className="grid grid-cols-[72px_1fr_44px] gap-x-3.5 sm:gap-x-4 gap-y-1.5 pb-4 border-b border-[#E2DACB] dark:border-white/10 items-start">
                       {/* Kolom 1: Logo 72px mencakup 2 baris */}
                       <div className="col-start-1 row-start-1 row-span-2">
                         <AgencyLogo 
@@ -6167,8 +6167,8 @@ export default function PortalMPP() {
                         >
                           {shortCategory}
                         </span>
-                        <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1 whitespace-nowrap">
-                          <MapPin className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                        <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1 whitespace-nowrap">
+                          <MapPin className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-500 shrink-0" />
                           {activeAgency.loket || "Lantai 1"}
                         </span>
                       </div>
@@ -6178,7 +6178,7 @@ export default function PortalMPP() {
                         <button
                           type="button"
                           onClick={() => setSelectedAgencyDetail(null)}
-                          className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shrink-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-white/10 text-slate-600 hover:text-slate-900 dark:hover:text-white hover:bg-[#ECE5D6] dark:hover:bg-slate-700 transition-colors shrink-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500"
                           aria-label={t("common.close", "Tutup")}
                         >
                           <X className="w-5 h-5" />
@@ -6195,7 +6195,7 @@ export default function PortalMPP() {
 
                     {/* Deskripsi & Jam Pelayanan */}
                     <div className="mt-4 space-y-3.5">
-                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-white/5">
+                      <div className="p-3.5 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-white/5">
                         <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">
                           {t("agencyModal.about", "Tentang Instansi")}
                         </span>
@@ -6204,7 +6204,7 @@ export default function PortalMPP() {
                         </p>
                         
                         {/* Format Jam Layanan Standar E1 */}
-                        <div className="mt-3 pt-3 border-t border-slate-200/60 dark:border-white/5 flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300">
+                        <div className="mt-3 pt-3 border-t border-[#E2DACB] dark:border-white/5 flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300">
                           <Clock3 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                           <div>
                             <span className="font-bold text-emerald-700 dark:text-emerald-400">Jam Layanan: </span>
@@ -6216,14 +6216,14 @@ export default function PortalMPP() {
                       {/* Daftar Layanan Terintegrasi (Jarak Antar-Butir gap-2 / 8px Seragam) */}
                       <div>
                         <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-                          <FileCheck className="w-4 h-4 text-emerald-500" />
+                          <FileCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-500" />
                           <span>{t("agencyModal.serviceList", "Daftar Layanan")}</span>
                         </h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           {(activeAgency.layananList || [activeAgency.layanan]).map((layanan, lIdx) => (
                             <div 
                               key={lIdx}
-                              className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/60 dark:border-white/5 flex items-start gap-2"
+                              className="p-2.5 rounded-xl bg-[#FAF7F0] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-white/5 flex items-start gap-2"
                             >
                               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
                               <span className="text-xs font-medium text-slate-800 dark:text-slate-200 leading-tight">
@@ -6236,15 +6236,15 @@ export default function PortalMPP() {
 
                       {/* Ketentuan & Persyaratan Umum */}
                       {activeAgency.syaratUmum && activeAgency.syaratUmum.length > 0 && (
-                        <div className="p-3.5 rounded-2xl bg-blue-50/80 dark:bg-sky-950/30 border border-blue-200 dark:border-sky-800/50">
-                          <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700 dark:text-sky-400 block mb-1.5 flex items-center gap-1.5">
+                        <div className="p-3.5 rounded-2xl bg-[#FAF7F0] dark:bg-sky-950/30 border border-[#E2DACB] dark:border-sky-800/50">
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800 dark:text-sky-400 block mb-1.5 flex items-center gap-1.5">
                             <AlertCircle className="w-3.5 h-3.5" />
                             <span>{t("agencyModal.requirements", "Persyaratan Umum")}</span>
                           </span>
-                          <ul className="space-y-1 text-xs text-slate-600 dark:text-slate-300">
+                          <ul className="space-y-1 text-xs text-slate-700 dark:text-slate-300">
                             {activeAgency.syaratUmum.map((syarat, sIdx) => (
                               <li key={sIdx} className="flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-sky-400 shrink-0"></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-sky-400 shrink-0"></span>
                                 <span>{syarat}</span>
                               </li>
                             ))}
@@ -6288,9 +6288,9 @@ export default function PortalMPP() {
                       setSelectedAgencyDetail(null);
                       setIsHelpdeskModalOpen(true);
                     }}
-                    className="w-full sm:flex-1 min-h-[48px] py-3 px-5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold font-sans transition-all flex items-center justify-center gap-2"
+                    className="w-full sm:flex-1 min-h-[48px] py-3 px-5 rounded-2xl bg-[#FAF7F0] hover:bg-[#ECE5D6] dark:bg-slate-800 dark:hover:bg-slate-700 border border-[#E2DACB] dark:border-white/10 text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-semibold font-sans transition-all flex items-center justify-center gap-2"
                   >
-                    <Headphones className="w-4 h-4 text-emerald-500" />
+                    <Headphones className="w-4 h-4 text-emerald-600 dark:text-emerald-500" />
                     <span>{t("agencyModal.helpdeskBtn")}</span>
                   </button>
                 </div>
@@ -6310,26 +6310,26 @@ export default function PortalMPP() {
               animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, scale: 0.94, y: 20, filter: "blur(4px)" }}
               transition={{ duration: 0.25, ease: "easeOut" }}
-              className="w-full max-w-lg max-h-[85vh] bg-white dark:bg-surface border border-slate-200 dark:border-white/10 rounded-3xl p-5 sm:p-8 shadow-2xl overflow-y-auto flex flex-col"
+              className="w-full max-w-lg max-h-[85vh] bg-[#F4F0E6] dark:bg-surface border border-[#E2DACB] dark:border-white/10 rounded-3xl p-5 sm:p-8 shadow-2xl overflow-y-auto flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header Modal */}
-              <div className="pb-4 border-b border-slate-100 dark:border-white/10">
+              <div className="pb-4 border-b border-[#E2DACB] dark:border-white/10">
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="px-4.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-sans">
+                      <span className="px-4.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-sans">
                         {t("bookingModal.badge", "Antrean Digital MPP")}
                       </span>
-                      <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                      <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1">
                         <Ticket className="w-3.5 h-3.5" />
                         {t("bookingModal.quotaAvailable", "Kuota Tersedia")}
                       </span>
                     </div>
-                    <h3 className="text-base sm:text-lg font-medium text-slate-900 dark:text-white font-sans mt-1.5">
+                    <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white font-sans mt-1.5">
                       {isQueueSubmitted && generatedTicket ? t("bookingModal.ticketDigitalTitle", "Tiket Digital & Evaluasi Layanan") : t("bookingModal.title")}
                     </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
                       {isQueueSubmitted && generatedTicket 
                         ? t("bookingModal.ticketDigitalSubtitle", "E-Pass resmi antrean MPP Luwu & portal Survei Kepuasan Masyarakat") 
                         : t("bookingModal.subtitle")}
@@ -6338,7 +6338,7 @@ export default function PortalMPP() {
                   <button
                     type="button"
                     onClick={() => setIsQueueBookingOpen(false)}
-                    className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                    className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-[#ECE5D6] dark:hover:bg-slate-700 transition-colors cursor-pointer"
                     aria-label={t("common.close", "Tutup")}
                   >
                     <X className="w-5 h-5" />
@@ -6347,7 +6347,7 @@ export default function PortalMPP() {
 
                 {/* Tab Switcher jika tiket sudah ada */}
                 {activeTicket && (
-                  <div className="flex items-center gap-1.5 mt-3 p-1 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/5">
+                  <div className="flex items-center gap-1.5 mt-3 p-1 rounded-xl bg-[#FAF7F0] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-white/5">
                     <button
                       type="button"
                       onClick={() => {
@@ -6422,8 +6422,8 @@ export default function PortalMPP() {
 
                     {/* Dashed divider */}
                     <div className="border-t border-dashed border-white/30 my-4 relative">
-                      <div className="absolute -left-9 -top-3 w-6 h-6 bg-white dark:bg-surface rounded-full" />
-                      <div className="absolute -right-9 -top-3 w-6 h-6 bg-white dark:bg-surface rounded-full" />
+                      <div className="absolute -left-9 -top-3 w-6 h-6 bg-[#F4F0E6] dark:bg-surface rounded-full" />
+                      <div className="absolute -right-9 -top-3 w-6 h-6 bg-[#F4F0E6] dark:bg-surface rounded-full" />
                     </div>
 
                     {/* Metadata Tiket */}
@@ -6557,27 +6557,27 @@ export default function PortalMPP() {
                       </button>
                     </div>
                   ) : (
-                    <div className="w-full mt-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 text-left">
+                    <div className="w-full mt-3 p-4 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-white/10 text-left">
                       <div className="flex items-center gap-2 text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm font-sans">
                         <Lock className="w-4 h-4 text-amber-500 shrink-0" />
                         <span>{t("bookingModal.skmLockedTitle", "Survei Kepuasan Masyarakat (SKM)")}</span>
-                        <span className="ml-auto px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                        <span className="ml-auto px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
                           {t("bookingModal.locked", "Terkunci")}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-1.5 leading-relaxed">
                         {t("bookingModal.skmLockedDesc", "Sesuai regulasi Permen PAN-RB No. 14 Tahun 2017, formulir survei evaluasi mutu pelayanan hanya akan aktif setelah Anda selesai mendapatkan pelayanan dari petugas di loket.")}
                       </p>
                       <button
                         type="button"
                         disabled
-                        className="w-full mt-3 min-h-[44px] py-2.5 px-4 rounded-xl bg-slate-200 dark:bg-slate-700/50 text-slate-400 dark:text-slate-500 text-xs sm:text-sm font-semibold font-sans cursor-not-allowed flex items-center justify-center gap-2"
+                        className="w-full mt-3 min-h-[44px] py-2.5 px-4 rounded-xl bg-[#ECE5D6] dark:bg-slate-700/50 text-slate-500 dark:text-slate-500 border border-[#E2DACB] dark:border-transparent text-xs sm:text-sm font-semibold font-sans cursor-not-allowed flex items-center justify-center gap-2"
                       >
                         <Lock className="w-4 h-4" />
                         <span>{t("bookingModal.surveyWaitingBtn", "Survei Terkunci (Menunggu Layanan Selesai)")}</span>
                       </button>
-                      <div className="mt-3 pt-2.5 border-t border-slate-200/60 dark:border-white/10 flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                        <Radio className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                      <div className="mt-3 pt-2.5 border-t border-[#E2DACB] dark:border-white/10 flex items-start gap-2 text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                        <Radio className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-500 shrink-0 mt-0.5" />
                         <span>
                           Status panggilan loket dan pembukaan survei SKM tersinkronisasi otomatis secara real-time saat petugas gerai melayani nomor tiket Anda.
                         </span>
@@ -6600,7 +6600,7 @@ export default function PortalMPP() {
                         setIsTicketCopied(true);
                         setTimeout(() => setIsTicketCopied(false), 2000);
                       }}
-                      className="min-h-[42px] px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold font-sans transition-all flex items-center justify-center gap-2 cursor-pointer"
+                      className="min-h-[42px] px-3.5 py-2 rounded-xl bg-[#FAF7F0] hover:bg-[#ECE5D6] dark:bg-slate-800 dark:hover:bg-slate-700 border border-[#E2DACB] dark:border-white/10 text-slate-800 dark:text-slate-200 text-xs font-semibold font-sans transition-all flex items-center justify-center gap-2 cursor-pointer"
                     >
                       {isTicketCopied ? (
                         <>
@@ -6625,7 +6625,7 @@ export default function PortalMPP() {
                     <button
                       type="button"
                       onClick={() => setIsQueueSubmitted(false)}
-                      className="min-h-[42px] px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold font-sans transition-all flex items-center justify-center gap-2 cursor-pointer"
+                      className="min-h-[42px] px-3.5 py-2 rounded-xl bg-[#FAF7F0] hover:bg-[#ECE5D6] dark:bg-slate-800 dark:hover:bg-slate-700 border border-[#E2DACB] dark:border-white/10 text-slate-800 dark:text-slate-200 text-xs font-semibold font-sans transition-all flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <Plus className="w-4 h-4" />
                       <span>{t("bookingModal.tabNewQueue", "Ambil Antrean Baru")}</span>
@@ -6685,14 +6685,14 @@ export default function PortalMPP() {
                       }}
                       onBlur={() => setQueueFormTouched(prev => ({ ...prev, nama: true }))}
                       placeholder={t("bookingModal.fullNamePlaceholder")}
-                      className={`w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none transition-all ${
-                        isCitizenRegistered ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 cursor-not-allowed border-dashed' : ''
+                      className={`w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none transition-all ${
+                        isCitizenRegistered ? 'bg-[#ECE5D6] dark:bg-slate-800/80 text-slate-500 cursor-not-allowed border-dashed' : ''
                       } ${
                         queueFormTouched.nama && queueFormErrors.nama
                           ? 'border-rose-400 dark:border-rose-600 focus:ring-2 focus:ring-rose-500'
                           : isNameFormatValid(queueForm.nama)
                           ? 'border-emerald-400 dark:border-emerald-600 focus:ring-2 focus:ring-emerald-500'
-                          : 'border-slate-200 dark:border-white/10 focus:ring-2 focus:ring-emerald-500'
+                          : 'border-[#E2DACB] dark:border-white/10 focus:ring-2 focus:ring-emerald-500'
                       }`}
                     />
                     {queueFormTouched.nama && queueFormErrors.nama && (
@@ -6777,12 +6777,12 @@ export default function PortalMPP() {
                         }}
                         onBlur={() => setQueueFormTouched(prev => ({ ...prev, nik: true }))}
                         placeholder={t("mppPortal.placeholders.nik")}
-                        className={`w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs sm:text-sm font-mono text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none transition-all ${
+                        className={`w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border text-xs sm:text-sm font-mono text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none transition-all ${
                           queueFormTouched.nik && queueFormErrors.nik
                             ? 'border-rose-400 dark:border-rose-600 focus:ring-2 focus:ring-rose-500'
                             : isNikFormatValid(queueForm.nik)
                             ? 'border-emerald-400 dark:border-emerald-600 focus:ring-2 focus:ring-emerald-500'
-                            : 'border-slate-200 dark:border-white/10 focus:ring-2 focus:ring-emerald-500'
+                            : 'border-[#E2DACB] dark:border-white/10 focus:ring-2 focus:ring-emerald-500'
                         }`}
                       />
                       {queueFormTouched.nik && queueFormErrors.nik ? (
@@ -6830,14 +6830,14 @@ export default function PortalMPP() {
                         }}
                         onBlur={() => setQueueFormTouched(prev => ({ ...prev, phone: true }))}
                         placeholder={t("mppPortal.placeholders.phone")}
-                        className={`w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border text-xs sm:text-sm font-mono text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none transition-all ${
-                          isCitizenRegistered ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 cursor-not-allowed border-dashed' : ''
+                        className={`w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border text-xs sm:text-sm font-mono text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none transition-all ${
+                          isCitizenRegistered ? 'bg-[#ECE5D6] dark:bg-slate-800/80 text-slate-500 cursor-not-allowed border-dashed' : ''
                         } ${
                           queueFormTouched.phone && queueFormErrors.phone
                             ? 'border-rose-400 dark:border-rose-600 focus:ring-2 focus:ring-rose-500'
                             : isPhoneFormatValid(queueForm.phone)
                             ? 'border-emerald-400 dark:border-emerald-600 focus:ring-2 focus:ring-emerald-500'
-                            : 'border-slate-200 dark:border-white/10 focus:ring-2 focus:ring-emerald-500'
+                            : 'border-[#E2DACB] dark:border-white/10 focus:ring-2 focus:ring-emerald-500'
                         }`}
                       />
                       {queueFormTouched.phone && queueFormErrors.phone ? (
@@ -6845,7 +6845,7 @@ export default function PortalMPP() {
                           <AlertCircle className="w-3 h-3 shrink-0" /> {queueFormErrors.phone}
                         </p>
                       ) : (
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
+                        <p className="text-[10px] text-slate-500 dark:text-slate-500 mt-1">
                           {t("bookingModal.phonePlaceholderDesc", "Contoh: 081234567890 (Aktif untuk notifikasi panggilan)")}
                         </p>
                       )}
@@ -6858,7 +6858,7 @@ export default function PortalMPP() {
                       <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 font-sans">
                         BUAT KATA SANDI (UNTUK LOGIN BERIKUTNYA)
                       </label>
-                      <span className="text-[10px] text-slate-400 font-medium">Opsional / Rekomendasi</span>
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Opsional / Rekomendasi</span>
                     </div>
                     <div className="relative">
                       <input
@@ -6866,17 +6866,17 @@ export default function PortalMPP() {
                         value={queueForm.password}
                         onChange={(e) => setQueueForm(prev => ({ ...prev, password: e.target.value }))}
                         placeholder="Minimal 6 karakter (Opsional / Rekomendasi)"
-                        className="w-full min-h-[44px] px-3.5 py-2 pr-10 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all"
+                        className="w-full min-h-[44px] px-3.5 py-2 pr-10 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all"
                       />
                       <button
                         type="button"
                         onClick={() => setShowQueuePassword(!showQueuePassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors cursor-pointer"
                       >
                         {showQueuePassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
-                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
+                    <p className="text-[10px] text-slate-500 dark:text-slate-500 mt-1">
                       Kata sandi ini digunakan jika Anda ingin masuk tanpa kode OTP WA di kunjungan berikutnya.
                     </p>
                   </div>
@@ -6890,7 +6890,7 @@ export default function PortalMPP() {
                       <select
                         value={queueForm.gender}
                         onChange={(e) => setQueueForm(prev => ({ ...prev, gender: e.target.value as 'Laki-laki' | 'Perempuan' }))}
-                        className="w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
+                        className="w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
                       >
                         <option value="Laki-laki">{t("bookingModal.genderMale", "Laki-laki")}</option>
                         <option value="Perempuan">{t("bookingModal.genderFemale", "Perempuan")}</option>
@@ -6903,7 +6903,7 @@ export default function PortalMPP() {
                       <select
                         value={queueForm.occupation}
                         onChange={(e) => setQueueForm(prev => ({ ...prev, occupation: e.target.value }))}
-                        className="w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
+                        className="w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
                       >
                         <option value="PNS / TNI / POLRI">{t("bookingModal.occupations.pns", "PNS / TNI / POLRI")}</option>
                         <option value="Pegawai BUMN / Swasta">{t("bookingModal.occupations.bumnSwasta", "Pegawai BUMN / Swasta")}</option>
@@ -6934,7 +6934,7 @@ export default function PortalMPP() {
                           service: match?.layananList?.[0] || match?.layanan || t("bookingModal.integratedServiceFallback", "Pelayanan Terpadu")
                         }));
                       }}
-                      className="w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
+                      className="w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
                     >
                       {liveAgencies.map((item, idx) => {
                         const loc = getLocalizedAgency(item, i18n.language);
@@ -6960,7 +6960,7 @@ export default function PortalMPP() {
                         <select
                           value={queueForm.service}
                           onChange={(e) => setQueueForm(prev => ({ ...prev, service: e.target.value }))}
-                          className="w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
+                          className="w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
                         >
                           {services.map((svc, sIdx) => (
                             <option key={sIdx} value={svc}>
@@ -6997,7 +6997,7 @@ export default function PortalMPP() {
                           }
                         }}
                         onBlur={() => setQueueFormTouched(prev => ({ ...prev, date: true }))}
-                        className="w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
+                        className="w-full min-h-[44px] px-3.5 py-2 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none cursor-pointer"
                       />
                     </div>
                     <div>
@@ -7011,7 +7011,7 @@ export default function PortalMPP() {
                           className={`min-h-[44px] py-2 px-3 rounded-xl text-xs font-semibold font-sans transition-all border cursor-pointer ${
                             queueForm.session === 'pagi'
                               ? 'bg-emerald-500 text-white border-emerald-500 shadow-sm'
-                              : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:bg-slate-100'
+                              : 'bg-[#FAF7F0] dark:bg-slate-800 text-slate-700 dark:text-slate-400 border-[#E2DACB] dark:border-white/10 hover:bg-[#ECE5D6]'
                           }`}
                         >
                           {t("bookingModal.sessionMorningShort", "Pagi (08:00)")}
@@ -7022,7 +7022,7 @@ export default function PortalMPP() {
                           className={`min-h-[44px] py-2 px-3 rounded-xl text-xs font-semibold font-sans transition-all border cursor-pointer ${
                             queueForm.session === 'siang'
                               ? 'bg-emerald-500 text-white border-emerald-500 shadow-sm'
-                              : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:bg-slate-100'
+                              : 'bg-[#FAF7F0] dark:bg-slate-800 text-slate-700 dark:text-slate-400 border-[#E2DACB] dark:border-white/10 hover:bg-[#ECE5D6]'
                           }`}
                         >
                           {t("bookingModal.sessionAfternoonShort", "Siang (13:00)")}
@@ -7050,12 +7050,12 @@ export default function PortalMPP() {
                   )}
 
                   {/* Tombol Konfirmasi (Sticky Bottom on Mobile, Flowing on Desktop) */}
-                  <div className="sticky bottom-0 z-10 bg-white/95 dark:bg-surface/95 backdrop-blur-md p-4 border-t border-slate-200/60 dark:border-slate-800/80 -mx-4 sm:-mx-8 -mb-4 sm:-mb-8 mt-5 rounded-b-3xl md:static md:bg-transparent md:border-none md:p-0 md:m-0 md:rounded-none flex items-center gap-3">
+                  <div className="sticky bottom-0 z-10 bg-[#F4F0E6]/95 dark:bg-surface/95 backdrop-blur-md p-4 border-t border-[#E2DACB] dark:border-slate-800/80 -mx-4 sm:-mx-8 -mb-4 sm:-mb-8 mt-5 rounded-b-3xl md:static md:bg-transparent md:border-none md:p-0 md:m-0 md:rounded-none flex items-center gap-3">
                     <button
                       type="button"
                       disabled={isBookingSubmitting}
                       onClick={() => setIsQueueBookingOpen(false)}
-                      className="flex-1 min-h-[44px] py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs sm:text-sm font-semibold font-sans hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
+                      className="flex-1 min-h-[44px] py-2.5 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-white/10 text-slate-700 dark:text-slate-400 text-xs sm:text-sm font-semibold font-sans hover:bg-[#ECE5D6] dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
                     >
                       {t("common.close") || "Batal"}
                     </button>
@@ -7323,10 +7323,10 @@ export default function PortalMPP() {
                 exit={{ opacity: 0, scale: 0.96, y: 20 }}
                 transition={{ duration: 0.22, ease: "easeOut" }}
                 onClick={(e) => e.stopPropagation()}
-                className="relative w-full max-w-[97vw] 2xl:max-w-7xl bg-white dark:bg-surface rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[94dvh] md:max-h-[90dvh] text-slate-900 dark:text-slate-100 border border-slate-200/80 dark:border-slate-800"
+                className="relative w-full max-w-[97vw] 2xl:max-w-7xl bg-[#FAF7F0] dark:bg-surface rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[94dvh] md:max-h-[90dvh] text-slate-900 dark:text-slate-100 border border-[#E2DACB] dark:border-slate-800"
               >
                 {/* Header Modal */}
-                <div className="shrink-0 flex items-start justify-between px-4 sm:px-8 py-3.5 sm:py-4 border-b border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-surface/95 backdrop-blur-md">
+                <div className="shrink-0 flex items-start justify-between px-4 sm:px-8 py-3.5 sm:py-4 border-b border-[#E2DACB] dark:border-slate-800 bg-[#F4F0E6]/95 dark:bg-surface/95 backdrop-blur-md">
                   <div>
                     <span className="px-2.5 py-0.5 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-[11px] font-bold rounded-full font-mono">
                       SKM PermenPAN-RB 14/2017
@@ -7338,7 +7338,7 @@ export default function PortalMPP() {
                   <button
                     type="button"
                     onClick={() => setIsSurveyModalOpen(false)}
-                    className="w-10 h-10 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer shrink-0 ml-2"
+                    className="w-10 h-10 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-[#ECE5D6] dark:hover:bg-slate-700 transition-colors cursor-pointer shrink-0 ml-2"
                     aria-label="Tutup survei SKM"
                   >
                     <X className="w-5 h-5" />
@@ -7346,7 +7346,7 @@ export default function PortalMPP() {
                 </div>
 
                 {/* Formulir SKM Komprehensif MppCitizenSurveyMenu */}
-                <div className="flex-1 overflow-y-auto p-3.5 sm:p-6 md:p-8 w-full scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
+                <div className="flex-1 overflow-y-auto p-3.5 sm:p-6 md:p-8 w-full scrollbar-thin scrollbar-thumb-[#D5CBB8] dark:scrollbar-thumb-slate-700">
                   <MppCitizenSurveyMenu 
                     isInModal={true}
                     isDarkMode={isDark}

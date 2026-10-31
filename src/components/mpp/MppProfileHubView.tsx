@@ -56,21 +56,21 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F3] dark:bg-[#071624] text-slate-800 dark:text-slate-100 font-sans transition-colors duration-300">
+    <div className="min-h-screen bg-[#FAF7F0] dark:bg-[#071624] text-slate-800 dark:text-slate-100 font-sans transition-colors duration-300">
       {/* Top Header Navbar */}
-      <header className="sticky top-0 z-40 bg-[#FAF8F3]/90 dark:bg-[#071624]/90 backdrop-blur-md border-b border-[#E5DFD3] dark:border-white/10">
+      <header className="sticky top-0 z-40 bg-[#F4F0E6]/95 dark:bg-[#071624]/90 backdrop-blur-md border-b border-[#E2DACB] dark:border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => navigate('/mpp')}
-              className="p-2 -ml-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-[#EAE4D7] dark:hover:bg-white/10 transition-colors flex items-center gap-1.5 text-xs font-bold"
+              className="p-2 -ml-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-[#ECE5D6] dark:hover:bg-white/10 transition-colors flex items-center gap-1.5 text-xs font-bold"
               aria-label="Kembali ke Beranda MPP"
             >
               <ArrowLeft className="w-4 h-4 text-[#0F6B4F] dark:text-emerald-400" />
               <span>Beranda MPP</span>
             </button>
-            <div className="h-5 w-px bg-slate-300 dark:bg-white/15 mx-1 hidden sm:block" />
+            <div className="h-5 w-px bg-[#E2DACB] dark:bg-white/15 mx-1 hidden sm:block" />
             <div className="flex items-center gap-2">
               <img 
                 src={LUWU_LOGO_BASE64} 
@@ -93,9 +93,9 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
       </header>
 
       {/* Hero Banner Header */}
-      <div className="bg-gradient-to-b from-[#0F6B4F]/10 via-[#FAF8F3] to-[#FAF8F3] dark:from-[#0A2438] dark:via-[#071624] dark:to-[#071624] py-8 sm:py-12 border-b border-[#E5DFD3] dark:border-white/5">
+      <div className="bg-gradient-to-b from-[#0F6B4F]/10 via-[#FAF7F0] to-[#FAF7F0] dark:from-[#0A2438] dark:via-[#071624] dark:to-[#071624] py-8 sm:py-12 border-b border-[#E2DACB] dark:border-white/5">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0F6B4F]/10 dark:bg-emerald-500/10 text-[#0F6B4F] dark:text-emerald-400 border border-[#0F6B4F]/20 text-xs font-bold tracking-wide">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F4F0E6] dark:bg-emerald-500/10 text-[#0F6B4F] dark:text-emerald-400 border border-[#E2DACB] dark:border-[#0F6B4F]/20 text-xs font-bold tracking-wide">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>PORTAL RESMI PEMERINTAH KABUPATEN LUWU</span>
           </div>
@@ -114,7 +114,7 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'tentang'
                   ? 'bg-[#0F6B4F] text-white shadow-md'
-                  : 'bg-white dark:bg-[#0D2338] text-slate-700 dark:text-slate-300 border border-[#E5DFD3] dark:border-white/10 hover:border-[#0F6B4F]/40'
+                  : 'bg-[#F4F0E6] dark:bg-[#0D2338] text-slate-700 dark:text-slate-300 border border-[#E2DACB] dark:border-white/10 hover:bg-[#ECE5D6] hover:border-[#0F6B4F]/40'
               }`}
             >
               <Building2 className="w-4 h-4" />
@@ -126,7 +126,7 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'visi-misi'
                   ? 'bg-[#0F6B4F] text-white shadow-md'
-                  : 'bg-white dark:bg-[#0D2338] text-slate-700 dark:text-slate-300 border border-[#E5DFD3] dark:border-white/10 hover:border-[#0F6B4F]/40'
+                  : 'bg-[#F4F0E6] dark:bg-[#0D2338] text-slate-700 dark:text-slate-300 border border-[#E2DACB] dark:border-white/10 hover:bg-[#ECE5D6] hover:border-[#0F6B4F]/40'
               }`}
             >
               <Award className="w-4 h-4" />
@@ -138,7 +138,7 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'struktur-organisasi'
                   ? 'bg-[#0F6B4F] text-white shadow-md'
-                  : 'bg-white dark:bg-[#0D2338] text-slate-700 dark:text-slate-300 border border-[#E5DFD3] dark:border-white/10 hover:border-[#0F6B4F]/40'
+                  : 'bg-[#F4F0E6] dark:bg-[#0D2338] text-slate-700 dark:text-slate-300 border border-[#E2DACB] dark:border-white/10 hover:bg-[#ECE5D6] hover:border-[#0F6B4F]/40'
               }`}
             >
               <Users className="w-4 h-4" />
@@ -150,7 +150,7 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'maklumat-pelayanan'
                   ? 'bg-[#0F6B4F] text-white shadow-md'
-                  : 'bg-white dark:bg-[#0D2338] text-slate-700 dark:text-slate-300 border border-[#E5DFD3] dark:border-white/10 hover:border-[#0F6B4F]/40'
+                  : 'bg-[#F4F0E6] dark:bg-[#0D2338] text-slate-700 dark:text-slate-300 border border-[#E2DACB] dark:border-white/10 hover:bg-[#ECE5D6] hover:border-[#0F6B4F]/40'
               }`}
             >
               <FileCheck2 className="w-4 h-4" />
@@ -191,7 +191,7 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
                 Mal Pelayanan Publik (MPP) Simpurusiang Kabupaten Luwu didirikan sebagai wujud nyata reformasi birokrasi dan peningkatan kualitas pelayanan publik terpadu di Bumi Sawerigading. Menyatukan seluruh instansi vertikal (Kementerian/Lembaga), Badan Usaha Milik Negara (BUMN), Perbankan, serta Perangkat Daerah Kabupaten Luwu dalam satu gedung modern di ibukota Belopa.
               </p>
 
-              <div className="bg-[#F4EFE6] dark:bg-[#0D2338] p-4 rounded-xl border border-[#DFD7C7] dark:border-white/10 space-y-2">
+              <div className="bg-[#FAF7F0] dark:bg-[#0D2338] p-4 rounded-xl border border-[#E2DACB] dark:border-white/10 space-y-2">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[#0F6B4F] dark:text-emerald-400 flex items-center gap-1.5">
                   <Scale className="w-4 h-4" />
                   <span>Landasan Hukum Penyelenggaraan</span>
@@ -272,7 +272,7 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
                 Misi Penyelenggaraan MPP Simpurusiang
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-[#FAF8F3] dark:bg-[#0D2338] border border-[#E5DFD3] dark:border-white/10 space-y-2">
+                <div className="p-4 rounded-xl bg-[#FAF7F0] dark:bg-[#0D2338] border border-[#E2DACB] dark:border-white/10 space-y-2">
                   <div className="w-8 h-8 rounded-lg bg-[#0F6B4F] text-white flex items-center justify-center font-bold text-sm">
                     1
                   </div>
@@ -284,7 +284,7 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#FAF8F3] dark:bg-[#0D2338] border border-[#E5DFD3] dark:border-white/10 space-y-2">
+                <div className="p-4 rounded-xl bg-[#FAF7F0] dark:bg-[#0D2338] border border-[#E2DACB] dark:border-white/10 space-y-2">
                   <div className="w-8 h-8 rounded-lg bg-[#0F6B4F] text-white flex items-center justify-center font-bold text-sm">
                     2
                   </div>
@@ -296,7 +296,7 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#FAF8F3] dark:bg-[#0D2338] border border-[#E5DFD3] dark:border-white/10 space-y-2">
+                <div className="p-4 rounded-xl bg-[#FAF7F0] dark:bg-[#0D2338] border border-[#E2DACB] dark:border-white/10 space-y-2">
                   <div className="w-8 h-8 rounded-lg bg-[#0F6B4F] text-white flex items-center justify-center font-bold text-sm">
                     3
                   </div>
@@ -308,7 +308,7 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#FAF8F3] dark:bg-[#0D2338] border border-[#E5DFD3] dark:border-white/10 space-y-2">
+                <div className="p-4 rounded-xl bg-[#FAF7F0] dark:bg-[#0D2338] border border-[#E2DACB] dark:border-white/10 space-y-2">
                   <div className="w-8 h-8 rounded-lg bg-[#0F6B4F] text-white flex items-center justify-center font-bold text-sm">
                     4
                   </div>
@@ -359,10 +359,10 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
                   </div>
                 </div>
 
-                <div className="w-px h-6 bg-slate-300 dark:bg-white/20 mx-auto" />
+                <div className="w-px h-6 bg-[#E2DACB] dark:bg-white/20 mx-auto" />
 
                 {/* Level 2: Pengarah */}
-                <div className="p-4 rounded-xl bg-white dark:bg-[#0D2338] border-2 border-[#0F6B4F]/40 text-center">
+                <div className="p-4 rounded-xl bg-[#FAF7F0] dark:bg-[#0D2338] border-2 border-[#0F6B4F]/40 text-center">
                   <div className="text-[10px] uppercase font-bold tracking-widest text-[#0F6B4F] dark:text-emerald-400">
                     Pengarah Teknis
                   </div>
@@ -371,10 +371,10 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
                   </div>
                 </div>
 
-                <div className="w-px h-6 bg-slate-300 dark:bg-white/20 mx-auto" />
+                <div className="w-px h-6 bg-[#E2DACB] dark:bg-white/20 mx-auto" />
 
                 {/* Level 3: Penyelenggara / Pengelola */}
-                <div className="p-4 rounded-xl bg-white dark:bg-[#0D2338] border border-[#E5DFD3] dark:border-white/10 text-center">
+                <div className="p-4 rounded-xl bg-[#FAF7F0] dark:bg-[#0D2338] border border-[#E2DACB] dark:border-white/10 text-center">
                   <div className="text-[10px] uppercase font-bold tracking-widest text-slate-500 dark:text-slate-400">
                     Penyelenggara / Kepala Pengelola
                   </div>
@@ -386,11 +386,11 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
                   </div>
                 </div>
 
-                <div className="w-px h-6 bg-slate-300 dark:bg-white/20 mx-auto" />
+                <div className="w-px h-6 bg-[#E2DACB] dark:bg-white/20 mx-auto" />
 
                 {/* Level 4: Koordinator Bidang */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="p-3.5 rounded-xl bg-[#FAF8F3] dark:bg-[#132E48] border border-[#E5DFD3] dark:border-white/10 text-center text-xs">
+                  <div className="p-3.5 rounded-xl bg-[#FAF7F0] dark:bg-[#132E48] border border-[#E2DACB] dark:border-white/10 text-center text-xs">
                     <span className="font-bold text-[#0F6B4F] dark:text-emerald-400 block mb-0.5">
                       Koordinator Pelayanan &amp; Pengaduan
                     </span>
@@ -398,7 +398,7 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
                       Tim Front Office &amp; Helpdesk Pelayanan Terpadu
                     </span>
                   </div>
-                  <div className="p-3.5 rounded-xl bg-[#FAF8F3] dark:bg-[#132E48] border border-[#E5DFD3] dark:border-white/10 text-center text-xs">
+                  <div className="p-3.5 rounded-xl bg-[#FAF7F0] dark:bg-[#132E48] border border-[#E2DACB] dark:border-white/10 text-center text-xs">
                     <span className="font-bold text-[#0F6B4F] dark:text-emerald-400 block mb-0.5">
                       Koordinator Sarana &amp; IT
                     </span>
@@ -408,10 +408,10 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
                   </div>
                 </div>
 
-                <div className="w-px h-6 bg-slate-300 dark:bg-white/20 mx-auto" />
+                <div className="w-px h-6 bg-[#E2DACB] dark:bg-white/20 mx-auto" />
 
                 {/* Level 5: 20 Gerai Instansi */}
-                <div className="p-4 rounded-xl bg-[#F4EFE6] dark:bg-[#0A1D2E] border border-[#DFD7C7] dark:border-white/10 text-center">
+                <div className="p-4 rounded-xl bg-[#FAF7F0] dark:bg-[#0A1D2E] border border-[#E2DACB] dark:border-white/10 text-center">
                   <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
                     20 Gerai Instansi Terpadu (Vertikal, Perbankan, BUMN &amp; OPD Luwu)
                   </span>
@@ -435,7 +435,7 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
             className="space-y-8"
           >
             {/* Maklumat Card */}
-            <div className={`${MPP_CARD_SURFACE.default} p-6 sm:p-10 rounded-2xl border-2 border-[#C9A24B] text-center space-y-6 relative overflow-hidden bg-gradient-to-b from-white to-[#FAF8F3] dark:from-[#0D2338] dark:to-[#071624]`}>
+            <div className={`${MPP_CARD_SURFACE.default} p-6 sm:p-10 rounded-2xl border-2 border-[#C9A24B] text-center space-y-6 relative overflow-hidden bg-gradient-to-b from-[#FAF7F0] to-[#F4F0E6] dark:from-[#0D2338] dark:to-[#071624]`}>
               <div className="flex flex-col items-center space-y-2">
                 <img 
                   src={LUWU_LOGO_BASE64} 
@@ -456,7 +456,7 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
                 “Dengan ini, kami seluruh pimpinan dan staf pengelola Mal Pelayanan Publik Simpurusiang Kabupaten Luwu menyatakan sanggup menyelenggarakan pelayanan sesuai standar pelayanan yang telah ditetapkan, dan apabila tidak menepati janji ini, kami siap menerima sanksi sesuai dengan peraturan perundang-undangan yang berlaku.”
               </blockquote>
 
-              <div className="pt-4 border-t border-[#E5DFD3] dark:border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-600 dark:text-slate-400 gap-2">
+              <div className="pt-4 border-t border-[#E2DACB] dark:border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-600 dark:text-slate-400 gap-2">
                 <span>Ditetapkan di: Belopa, Kabupaten Luwu</span>
                 <span className="font-bold text-[#0F6B4F] dark:text-emerald-400">Kepala DPMPTSP Kabupaten Luwu</span>
               </div>
@@ -499,7 +499,7 @@ export const MppProfileHubView: React.FC<MppProfileHubViewProps> = ({ initialTab
       </main>
 
       {/* Footer */}
-      <footer className="mt-12 py-8 bg-[#F4EFE6] dark:bg-[#06121E] border-t border-[#E5DFD3] dark:border-white/10 text-center text-xs text-slate-500 dark:text-slate-400">
+      <footer className="mt-12 py-8 bg-[#F4F0E6] dark:bg-[#06121E] border-t border-[#E2DACB] dark:border-white/10 text-center text-xs text-slate-500 dark:text-slate-400">
         <div className="max-w-5xl mx-auto px-4 space-y-2">
           <p>© {new Date().getFullYear()} Mal Pelayanan Publik Simpurusiang · Pemerintah Kabupaten Luwu</p>
           <div className="flex items-center justify-center gap-4 text-xs font-medium">

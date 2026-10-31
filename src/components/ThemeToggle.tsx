@@ -43,7 +43,7 @@ export default function ThemeToggle({
 
   const buttonClasses = isDarkHeader
     ? 'text-amber-400 hover:text-amber-300 bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12]'
-    : 'text-slate-700 dark:text-amber-400 hover:text-slate-900 dark:hover:text-amber-300 bg-slate-100/90 dark:bg-white/[0.06] hover:bg-slate-200/80 dark:hover:bg-white/[0.12] border border-slate-200/90 dark:border-white/[0.12]';
+    : 'text-slate-700 dark:text-amber-400 hover:text-slate-900 dark:hover:text-amber-300 bg-[#FAF7F0] dark:bg-white/[0.06] hover:bg-[#ECE5D6] dark:hover:bg-white/[0.12] border border-[#E2DACB] dark:border-white/[0.12]';
 
   return (
     <button

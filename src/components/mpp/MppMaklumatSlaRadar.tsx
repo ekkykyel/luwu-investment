@@ -253,7 +253,7 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
         {/* Top Card: Official Government Pledge Card (Maklumat Pelayanan Publik) — Standardized Card Utama (p-5 sm:p-6, rounded-2xl, Layer 1) */}
         <div className={`${MPP_CARD_SURFACE.paddingLg} ${MPP_CARD_SURFACE.radiusMain} ${MPP_CARD_SURFACE.layer1} relative overflow-hidden w-full`}>
           <div className="relative z-10 w-full h-full flex flex-col justify-between">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 pb-4 sm:pb-5 border-b border-slate-200/80 dark:border-white/[0.07]">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 pb-4 sm:pb-5 border-b border-[#E2DACB] dark:border-white/[0.07]">
               <div className="flex items-center gap-3">
                 <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl ${MPP_CARD_SURFACE.layer2} flex items-center justify-center shrink-0`}>
                   <Scale className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600 dark:text-emerald-400" />
@@ -353,7 +353,7 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-800">
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-[#E2DACB] dark:border-slate-800">
                       <span>{isEn ? 'Signed by: Head of DPMPTSP Luwu Regency' : isZh ? '签署人：印尼鲁乌县投资与一站式服务局局长' : 'Tertanda: Kepala Dinas PMPTSP Kabupaten Luwu'}</span>
                       <span>{isEn ? 'Updated according to Regent of Luwu Service Standards Decree' : isZh ? '依据鲁乌县长公共服务标准令定期更新' : 'Diperbarui secara berkala sesuai SK Bupati Luwu Standar Pelayanan'}</span>
                     </div>
@@ -404,7 +404,7 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
                 className={`px-3.5 py-2 min-h-[38px] rounded-xl text-xs font-bold transition-all whitespace-nowrap snap-start cursor-pointer active:scale-95 ${
                   activeCategory === cat.id
                     ? 'bg-emerald-600 text-white shadow-md'
-                    : 'bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700/60'
+                    : 'bg-[#F4F0E6] dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-[#ECE5D6] dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white border border-[#E2DACB] dark:border-slate-700/60'
                 }`}
               >
                 {cat.label}
@@ -504,7 +504,7 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
                     </div>
 
                     {/* Progress Bar with GPU ScaleX */}
-                    <div className="w-full bg-slate-200 dark:bg-[#0A2238] h-2 rounded-full overflow-hidden">
+                    <div className="w-full bg-[#E2DACB] dark:bg-[#0A2238] h-2 rounded-full overflow-hidden">
                       <motion.div 
                         initial={shouldReduceMotion ? false : { scaleX: 0 }}
                         whileInView={{ scaleX: 1 }}
@@ -522,7 +522,7 @@ export function MppMaklumatSlaRadar({ isDark = false }: { isDark?: boolean }) {
                 </div>
 
                 {/* Footer Area Cleanup */}
-                <div className="border-t border-slate-200/80 dark:border-white/[0.07] mt-4 pt-4 flex justify-between items-center text-xs">
+                <div className="border-t border-[#E2DACB] dark:border-white/[0.07] mt-4 pt-4 flex justify-between items-center text-xs">
                   <span className={`${MPP_TYPOGRAPHY.meta} text-slate-700 dark:text-slate-300 font-semibold truncate max-w-[62%]`}>
                     {item.cost}
                   </span>

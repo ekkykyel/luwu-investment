@@ -736,12 +736,12 @@ export default function TenantDashboard({ isDarkMode, onClose }: Props) {
       >
         <div 
           onClick={(e) => e.stopPropagation()}
-          className={`relative w-full max-w-lg bg-white dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border ${
-            isDarkMode ? 'text-white border-slate-800' : 'text-slate-900 border-slate-200'
+          className={`relative w-full max-w-lg bg-[#FAF7F0] dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border ${
+            isDarkMode ? 'text-white border-slate-800' : 'text-slate-900 border-[#E2DACB]'
           }`}
         >
           {/* Header */}
-          <div className="flex justify-between items-start p-5 sm:p-6 pb-4 border-b border-inherit shrink-0 bg-white/95 dark:bg-surface/95 backdrop-blur-md">
+          <div className="flex justify-between items-start p-5 sm:p-6 pb-4 border-b border-inherit shrink-0 bg-[#FAF7F0]/95 dark:bg-surface/95 backdrop-blur-md">
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-500 to-blue-600 flex items-center justify-center text-white shadow-md shadow-black/25 shrink-0">
                 <Smartphone className="w-6 h-6" />

@@ -261,34 +261,34 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose,
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
             transition={{ type: "spring", stiffness: 340, damping: 28 }}
-            className="relative z-10 w-full sm:max-w-xl md:max-w-2xl bg-[#00162B] text-slate-100 border border-[#00FF99]/30 rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] sm:shadow-[0_0_50px_rgba(0,255,153,0.2)] flex flex-col h-[90vh] sm:h-[650px] sm:max-h-[85vh] overflow-hidden"
+            className="relative z-10 w-full sm:max-w-xl md:max-w-2xl bg-[#FAF7F0] dark:bg-[#00162B] text-slate-900 dark:text-slate-100 border border-[#E2DACB] dark:border-[#00FF99]/30 rounded-3xl shadow-2xl dark:shadow-[0_10px_40px_rgba(0,0,0,0.8)] sm:dark:shadow-[0_0_50px_rgba(0,255,153,0.2)] flex flex-col h-[90vh] sm:h-[650px] sm:max-h-[85vh] overflow-hidden"
           >
             {/* Visual Drag / Indicator bar for mobile affordance */}
-            <div className="sm:hidden pt-2.5 pb-0.5 flex justify-center bg-[#00162B] shrink-0">
-              <div className="w-10 h-1 rounded-full bg-white/20 mx-auto" />
+            <div className="sm:hidden pt-2.5 pb-0.5 flex justify-center bg-[#F4F0E6] dark:bg-[#00162B] shrink-0">
+              <div className="w-10 h-1 rounded-full bg-[#E2DACB] dark:bg-white/20 mx-auto" />
             </div>
 
             {/* Header: Clean, uncrowded layout on mobile screens */}
-            <div className="sticky top-0 z-20 flex items-center justify-between px-3.5 sm:px-6 py-2.5 sm:py-4 bg-[#00162B]/95 backdrop-blur-md border-b border-white/10 shrink-0">
+            <div className="sticky top-0 z-20 flex items-center justify-between px-3.5 sm:px-6 py-2.5 sm:py-4 bg-[#F4F0E6]/95 dark:bg-[#00162B]/95 backdrop-blur-md border-b border-[#E2DACB] dark:border-white/10 shrink-0">
               <div className="flex items-center gap-2.5 sm:gap-3">
                 <div className="relative">
                   <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-gradient-to-tr from-[#00FF99] via-emerald-400 to-teal-500 flex items-center justify-center text-[#000B14] shadow-[0_0_15px_rgba(0,255,153,0.4)]">
                     <Bot className="w-4 h-4 sm:w-6 sm:h-6" />
                   </div>
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-400 ring-2 ring-[#00162B] animate-pulse" />
+                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-500 dark:bg-emerald-400 ring-2 ring-[#F4F0E6] dark:ring-[#00162B] animate-pulse" />
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5 sm:gap-2">
-                    <h3 className="text-sm sm:text-lg font-bold text-white tracking-tight font-sans">
+                    <h3 className="text-sm sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight font-sans">
                       Asisten Digital Ta'
                     </h3>
                     {/* Hide or shrink MPP badge on mobile to prevent header crowding */}
-                    <span className="hidden xs:inline-block sm:inline-block px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-emerald-500/20 text-[#00FF99] border border-[#00FF99]/30 rounded-full">
+                    <span className="hidden xs:inline-block sm:inline-block px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-800 dark:text-[#00FF99] border border-emerald-500/30 dark:border-[#00FF99]/30 rounded-full">
                       MPP SIMPURUSIANG
                     </span>
                   </div>
-                  <p className="text-[11px] sm:text-xs text-slate-400 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#00FF99]" />
+                  <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-[#00FF99]" />
                     {t("mppVision.ready247", "• Siap melayani 24/7")}
                   </p>
                 </div>
@@ -300,53 +300,53 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose,
                 id="close-mpp-ai-modal"
                 onClick={onClose}
                 aria-label={t("mppVision.closeAssistant", "Tutup Asisten Digital Ta'")}
-                className="w-10 h-10 sm:w-11 sm:h-11 min-w-[40px] sm:min-w-[44px] min-h-[40px] sm:min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 active:scale-95 flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer border border-white/10"
+                className="w-10 h-10 sm:w-11 sm:h-11 min-w-[40px] sm:min-w-[44px] min-h-[40px] sm:min-h-[44px] rounded-full bg-[#FAF7F0] dark:bg-white/10 hover:bg-[#EAE3D2] dark:hover:bg-white/20 active:scale-95 flex items-center justify-center text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer border border-[#E2DACB] dark:border-white/10"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Auto-Collapsing Welcome Greeting (Kata Sambutan) */}
-            <div className="px-3 sm:px-6 py-2 sm:py-3 border-b border-white/10 bg-[#00162B]/70 shrink-0 transition-all duration-500 ease-in-out">
+            <div className="px-3 sm:px-6 py-2 sm:py-3 border-b border-[#E2DACB] dark:border-white/10 bg-[#F4F0E6]/70 dark:bg-[#00162B]/70 shrink-0 transition-all duration-500 ease-in-out">
               {isWelcomeCollapsed ? (
                 <button
                   type="button"
                   onClick={() => setIsWelcomeCollapsed(false)}
-                  className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/50 border border-emerald-500/30 text-emerald-300 text-xs transition-all duration-300 cursor-pointer group"
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#FAF7F0] dark:bg-emerald-950/40 hover:bg-[#EAE3D2] dark:hover:bg-emerald-900/50 border border-[#E2DACB] dark:border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs transition-all duration-300 cursor-pointer group"
                 >
                   <span className="flex items-center gap-2 truncate font-medium">
                     <span className="text-sm">💡</span>
                     <span className="truncate">Sambutan Asisten Digital</span>
                   </span>
-                  <span className="text-[11px] text-[#00FF99] font-semibold flex items-center gap-0.5 group-hover:underline shrink-0 ml-2">
+                  <span className="text-[11px] text-emerald-700 dark:text-[#00FF99] font-semibold flex items-center gap-0.5 group-hover:underline shrink-0 ml-2">
                     Buka kembali <ChevronDown className="w-3.5 h-3.5" />
                   </span>
                 </button>
               ) : (
                 <div className="flex items-start gap-2.5 transition-all duration-500 ease-in-out">
-                  <div className="w-7 h-7 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 mt-1">
-                    <Sparkles className="w-3.5 h-3.5 text-[#00FF99]" />
+                  <div className="w-7 h-7 rounded-full bg-emerald-500/15 dark:bg-emerald-500/20 border border-emerald-500/30 dark:border-emerald-500/40 flex items-center justify-center shrink-0 mt-1">
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-700 dark:text-[#00FF99]" />
                   </div>
-                  <div className="flex-1 rounded-2xl rounded-tl-xs p-3.5 sm:p-4 bg-emerald-900/20 text-emerald-50 border border-emerald-800/30 shadow-sm">
+                  <div className="flex-1 rounded-2xl rounded-tl-xs p-3.5 sm:p-4 bg-[#FAF7F0] dark:bg-emerald-900/20 text-slate-800 dark:text-emerald-50 border border-[#E2DACB] dark:border-emerald-800/30 shadow-sm">
                     <p className="text-xs sm:text-sm leading-relaxed text-pretty">
                       {typedWelcome}
                       {typedWelcome.length < welcomeText.length && (
                         <motion.span
                           animate={{ opacity: [1, 0] }}
                           transition={{ repeat: Infinity, duration: 0.6 }}
-                          className="inline-block w-1.5 h-3.5 bg-[#00FF99] ml-1 align-middle"
+                          className="inline-block w-1.5 h-3.5 bg-emerald-600 dark:bg-[#00FF99] ml-1 align-middle"
                         />
                       )}
                     </p>
-                    <div className="flex items-center justify-between mt-2 pt-1 border-t border-emerald-500/10">
+                    <div className="flex items-center justify-between mt-2 pt-1 border-t border-[#E2DACB] dark:border-emerald-500/10">
                       <button
                         type="button"
                         onClick={() => setIsWelcomeCollapsed(true)}
-                        className="text-[11px] text-emerald-400 hover:text-emerald-300 font-medium flex items-center gap-0.5 cursor-pointer"
+                        className="text-[11px] text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-medium flex items-center gap-0.5 cursor-pointer"
                       >
                         Tutup <ChevronUp className="w-3 h-3" />
                       </button>
-                      <span className="text-[10px] text-slate-400 font-mono">
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
                         {t("mppVision.centerName", "MPP Simpurusiang Luwu")}
                       </span>
                     </div>
@@ -356,13 +356,13 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose,
             </div>
 
             {/* Quick Prompt Chips (Tanya Cepat AI): Scrollable with Desktop Navigation Controls */}
-            <div className="px-3 sm:px-6 pt-2 pb-2 border-b border-white/5 bg-[#00162B]/40 shrink-0">
+            <div className="px-3 sm:px-6 pt-2 pb-2 border-b border-[#E2DACB] dark:border-white/5 bg-[#F4F0E6]/60 dark:bg-[#00162B]/40 shrink-0">
               <div className="flex items-center justify-between mb-1.5">
-                <p className="text-[10px] sm:text-[11px] font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-[#00FF99]" />
+                <p className="text-[10px] sm:text-[11px] font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-700 dark:text-[#00FF99]" />
                   {t("mppVision.popularQuestions", "Pertanyaan Populer:")}
                 </p>
-                <span className="text-[9px] sm:text-[10px] text-emerald-400 font-mono font-bold bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-500/40">
+                <span className="text-[9px] sm:text-[10px] text-emerald-800 dark:text-emerald-400 font-mono font-bold bg-[#FAF7F0] dark:bg-emerald-950/80 px-2 py-0.5 rounded-full border border-[#E2DACB] dark:border-emerald-500/40">
                   {quickPrompts.length} Opsi Layanan
                 </span>
               </div>
@@ -372,7 +372,7 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose,
                 <button
                   type="button"
                   onClick={() => promptsScrollRef.current?.scrollBy({ left: -220, behavior: 'smooth' })}
-                  className="hidden sm:flex items-center justify-center w-7 h-7 rounded-full bg-emerald-950/90 hover:bg-[#00FF99] text-emerald-300 hover:text-[#000B14] border border-[#00FF99]/40 transition-all cursor-pointer shrink-0 shadow-md active:scale-90"
+                  className="hidden sm:flex items-center justify-center w-7 h-7 rounded-full bg-[#FAF7F0] dark:bg-emerald-950/90 hover:bg-emerald-600 dark:hover:bg-[#00FF99] text-emerald-800 dark:text-emerald-300 hover:text-white dark:hover:text-[#000B14] border border-[#E2DACB] dark:border-[#00FF99]/40 transition-all cursor-pointer shrink-0 shadow-md active:scale-90"
                   title="Geser Pertanyaan ke Kiri"
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -387,9 +387,9 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose,
                       key={idx}
                       type="button"
                       onClick={() => handleSendMessage(prompt)}
-                      className="whitespace-nowrap shrink-0 text-xs text-left bg-emerald-950/60 hover:bg-emerald-800/90 text-emerald-200 hover:text-white hover:border-[#00FF99] active:scale-95 border border-[#00FF99]/35 rounded-xl px-3 py-1.5 transition-all cursor-pointer leading-snug shadow-xs flex items-center gap-1.5 font-medium"
+                      className="whitespace-nowrap shrink-0 text-xs text-left bg-[#FAF7F0] dark:bg-emerald-950/60 hover:bg-[#EAE3D2] dark:hover:bg-emerald-800/90 text-slate-800 dark:text-emerald-200 hover:text-emerald-900 dark:hover:text-white hover:border-emerald-600 dark:hover:border-[#00FF99] active:scale-95 border border-[#E2DACB] dark:border-[#00FF99]/35 rounded-xl px-3 py-1.5 transition-all cursor-pointer leading-snug shadow-xs flex items-center gap-1.5 font-medium"
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#00FF99] shrink-0 animate-pulse" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-[#00FF99] shrink-0 animate-pulse" />
                       <span>{prompt}</span>
                     </button>
                   ))}
@@ -398,7 +398,7 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose,
                 <button
                   type="button"
                   onClick={() => promptsScrollRef.current?.scrollBy({ left: 220, behavior: 'smooth' })}
-                  className="hidden sm:flex items-center justify-center w-7 h-7 rounded-full bg-emerald-950/90 hover:bg-[#00FF99] text-emerald-300 hover:text-[#000B14] border border-[#00FF99]/40 transition-all cursor-pointer shrink-0 shadow-md active:scale-90"
+                  className="hidden sm:flex items-center justify-center w-7 h-7 rounded-full bg-[#FAF7F0] dark:bg-emerald-950/90 hover:bg-emerald-600 dark:hover:bg-[#00FF99] text-emerald-800 dark:text-emerald-300 hover:text-white dark:hover:text-[#000B14] border border-[#E2DACB] dark:border-[#00FF99]/40 transition-all cursor-pointer shrink-0 shadow-md active:scale-90"
                   title="Geser Pertanyaan ke Kanan"
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -422,15 +422,15 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose,
                     }`}
                   >
                     {isAi && (
-                      <div className="w-7 h-7 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 mt-1">
-                        <Bot className="w-3.5 h-3.5 text-[#00FF99]" />
+                      <div className="w-7 h-7 rounded-full bg-emerald-500/15 dark:bg-emerald-500/20 border border-emerald-500/30 dark:border-emerald-500/40 flex items-center justify-center shrink-0 mt-1">
+                        <Bot className="w-3.5 h-3.5 text-emerald-700 dark:text-[#00FF99]" />
                       </div>
                     )}
                     <div
                       className={`max-w-[90%] sm:max-w-[85%] text-xs sm:text-sm leading-relaxed text-pretty transition-all duration-500 ease-in-out ${
                         msg.sender === "user"
                           ? "rounded-2xl p-3 sm:p-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-tr-xs shadow-md"
-                          : "rounded-2xl rounded-tl-xs p-3.5 sm:p-4 bg-emerald-50 dark:bg-emerald-900/20 text-slate-800 dark:text-emerald-50 border border-emerald-100 dark:border-emerald-800/30 shadow-sm"
+                          : "rounded-2xl rounded-tl-xs p-3.5 sm:p-4 bg-[#F4F0E6] dark:bg-emerald-900/20 text-slate-800 dark:text-emerald-50 border border-[#E2DACB] dark:border-emerald-800/30 shadow-sm"
                       }`}
                     >
                       {/* Collapsible Content */}
@@ -447,7 +447,7 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose,
                         <button
                           type="button"
                           onClick={() => toggleMessageCollapse(msg.id)}
-                          className="mt-2 text-[11px] font-semibold text-[#00FF99] hover:underline flex items-center gap-1 cursor-pointer transition-colors"
+                          className="mt-2 text-[11px] font-semibold text-emerald-700 dark:text-[#00FF99] hover:underline flex items-center gap-1 cursor-pointer transition-colors"
                         >
                           {isCollapsed ? (
                             <>
@@ -465,7 +465,7 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose,
 
                       <span
                         className={`block text-[10px] mt-1.5 text-right ${
-                          msg.sender === "user" ? "text-emerald-200" : "text-slate-400"
+                          msg.sender === "user" ? "text-emerald-200" : "text-slate-500 dark:text-slate-400"
                         }`}
                       >
                         {msg.time}
@@ -478,37 +478,37 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose,
               {/* Typing Indicator */}
               {isTyping && (
                 <div className="flex items-start gap-2.5">
-                  <div className="w-7 h-7 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 mt-1">
-                    <Bot className="w-3.5 h-3.5 text-[#00FF99]" />
+                  <div className="w-7 h-7 rounded-full bg-emerald-500/15 dark:bg-emerald-500/20 border border-emerald-500/30 dark:border-emerald-500/40 flex items-center justify-center shrink-0 mt-1">
+                    <Bot className="w-3.5 h-3.5 text-emerald-700 dark:text-[#00FF99]" />
                   </div>
-                  <div className="bg-white/5 border border-white/10 rounded-2xl rounded-tl-xs p-3 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-[#00FF99] animate-bounce" />
-                    <span className="w-2 h-2 rounded-full bg-[#00FF99] animate-bounce [animation-delay:0.2s]" />
-                    <span className="w-2 h-2 rounded-full bg-[#00FF99] animate-bounce [animation-delay:0.4s]" />
+                  <div className="bg-[#F4F0E6] dark:bg-white/5 border border-[#E2DACB] dark:border-white/10 rounded-2xl rounded-tl-xs p-3 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-600 dark:bg-[#00FF99] animate-bounce" />
+                    <span className="w-2 h-2 rounded-full bg-emerald-600 dark:bg-[#00FF99] animate-bounce [animation-delay:0.2s]" />
+                    <span className="w-2 h-2 rounded-full bg-emerald-600 dark:bg-[#00FF99] animate-bounce [animation-delay:0.4s]" />
                   </div>
                 </div>
               )}
 
               {/* 3 Core Pillars: Hidden on mobile screens to preserve vertical space, prominent on desktop */}
-              <div className="hidden sm:block pt-3 border-t border-white/10 space-y-2">
-                <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              <div className="hidden sm:block pt-3 border-t border-[#E2DACB] dark:border-white/10 space-y-2">
+                <h4 className="text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                   {t("mppVision.threePillars", "3 Pilar Utama Pelayanan Publik")}
                 </h4>
                 <div className="grid grid-cols-3 gap-2">
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-2.5 flex flex-col items-center text-center">
-                    <Zap className="text-amber-400 w-4 h-4 mb-1" />
-                    <span className="text-[11px] font-semibold text-white">{t("mppPortal.ai.fast")}</span>
-                    <span className="text-[9px] text-slate-400">{t("mppPortal.ai.noQueue")}</span>
+                  <div className="bg-[#F4F0E6] dark:bg-white/5 border border-[#E2DACB] dark:border-white/10 rounded-xl p-2.5 flex flex-col items-center text-center">
+                    <Zap className="text-amber-600 dark:text-amber-400 w-4 h-4 mb-1" />
+                    <span className="text-[11px] font-semibold text-slate-900 dark:text-white">{t("mppPortal.ai.fast")}</span>
+                    <span className="text-[9px] text-slate-600 dark:text-slate-400">{t("mppPortal.ai.noQueue")}</span>
                   </div>
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-2.5 flex flex-col items-center text-center">
-                    <ShieldCheck className="text-[#00FF99] w-4 h-4 mb-1" />
-                    <span className="text-[11px] font-semibold text-white">{t("mppPortal.ai.transparent")}</span>
-                    <span className="text-[9px] text-slate-400">{t("mppPortal.ai.realtime")}</span>
+                  <div className="bg-[#F4F0E6] dark:bg-white/5 border border-[#E2DACB] dark:border-white/10 rounded-xl p-2.5 flex flex-col items-center text-center">
+                    <ShieldCheck className="text-emerald-600 dark:text-[#00FF99] w-4 h-4 mb-1" />
+                    <span className="text-[11px] font-semibold text-slate-900 dark:text-white">{t("mppPortal.ai.transparent")}</span>
+                    <span className="text-[9px] text-slate-600 dark:text-slate-400">{t("mppPortal.ai.realtime")}</span>
                   </div>
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-2.5 flex flex-col items-center text-center">
-                    <CheckCircle className="text-blue-400 w-4 h-4 mb-1" />
-                    <span className="text-[11px] font-semibold text-white">{t("mppPortal.ai.integrated")}</span>
-                    <span className="text-[9px] text-slate-400">{t("mppPortal.ai.oneRoof")}</span>
+                  <div className="bg-[#F4F0E6] dark:bg-white/5 border border-[#E2DACB] dark:border-white/10 rounded-xl p-2.5 flex flex-col items-center text-center">
+                    <CheckCircle className="text-blue-600 dark:text-blue-400 w-4 h-4 mb-1" />
+                    <span className="text-[11px] font-semibold text-slate-900 dark:text-white">{t("mppPortal.ai.integrated")}</span>
+                    <span className="text-[9px] text-slate-600 dark:text-slate-400">{t("mppPortal.ai.oneRoof")}</span>
                   </div>
                 </div>
               </div>
@@ -517,7 +517,7 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose,
             </div>
 
             {/* Sticky Bottom Input Bar: Safe area for Android virtual keyboards */}
-            <div className="sticky bottom-0 z-20 px-3 sm:px-6 py-2.5 sm:py-3.5 bg-[#00162B]/98 backdrop-blur-xl border-t border-white/10 shrink-0 pb-[calc(env(safe-area-inset-bottom,0px)+8px)]">
+            <div className="sticky bottom-0 z-20 px-3 sm:px-6 py-2.5 sm:py-3.5 bg-[#F4F0E6]/98 dark:bg-[#00162B]/98 backdrop-blur-xl border-t border-[#E2DACB] dark:border-white/10 shrink-0 pb-[calc(env(safe-area-inset-bottom,0px)+8px)]">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -531,12 +531,12 @@ export const MppVisionModal: React.FC<MppVisionModalProps> = ({ isOpen, onClose,
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     placeholder={t("mppPortal.ai.placeholder")}
-                    className="w-full bg-surface/90 border border-white/15 text-white text-xs sm:text-sm rounded-xl py-2.5 sm:py-3 pl-3.5 pr-10 focus:outline-none focus:border-[#00FF99] focus:ring-1 focus:ring-[#00FF99]/50 transition-all placeholder:text-slate-500"
+                    className="w-full bg-[#FAF7F0] dark:bg-surface/90 border border-[#E2DACB] dark:border-white/15 text-slate-900 dark:text-white text-xs sm:text-sm rounded-xl py-2.5 sm:py-3 pl-3.5 pr-10 focus:outline-none focus:border-emerald-600 dark:focus:border-[#00FF99] focus:ring-1 focus:ring-emerald-600/50 dark:focus:ring-[#00FF99]/50 transition-all placeholder:text-slate-500"
                   />
                   <button
                     type="button"
                     title={t("mppPortal.ai.voiceInput")}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1 rounded-md transition-colors"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white p-1 rounded-md transition-colors"
                   >
                     <Mic className="w-4 h-4" />
                   </button>

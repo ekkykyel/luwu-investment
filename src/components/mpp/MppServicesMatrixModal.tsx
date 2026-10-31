@@ -471,11 +471,11 @@ export const MppServicesMatrixModal: React.FC<MppServicesMatrixModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, y: 30, scale: 0.95 }}
           transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-          className="relative w-full max-w-4xl bg-[#FAF8F3] dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border border-[#E5DFD3] dark:border-slate-800 text-slate-900 dark:text-slate-100"
+          className="relative w-full max-w-4xl bg-[#FAF7F0] dark:bg-surface rounded-2xl md:rounded-3xl shadow-xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border border-[#E2DACB] dark:border-slate-800 text-slate-900 dark:text-slate-100"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header Bar */}
-          <div className="relative py-4 px-4 sm:px-7 border-b border-[#E5DFD3] dark:border-slate-800 shrink-0 bg-[#F3EEE3]/90 dark:bg-surface/95 backdrop-blur-md">
+          <div className="relative py-4 px-4 sm:px-7 border-b border-[#E2DACB] dark:border-slate-800 shrink-0 bg-[#F4F0E6]/90 dark:bg-surface/95 backdrop-blur-md">
 
             <div className="flex items-center justify-between gap-3 mt-1 sm:mt-2">
               <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
@@ -515,7 +515,7 @@ export const MppServicesMatrixModal: React.FC<MppServicesMatrixModalProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t("mppPortal.matrixModal.searchPlaceholder", "Cari jenis layanan (contoh: KTP, NIB, PBB, SIM, BPJS, Paspor)...")}
-                className="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-inner"
+                className="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-inner"
               />
               {searchQuery && (
                 <button
@@ -530,7 +530,7 @@ export const MppServicesMatrixModal: React.FC<MppServicesMatrixModalProps> = ({
           </div>
 
           {/* Category Tabs Carousel (Horizontal Scroll with Touch Snap) */}
-          <div className="px-5 sm:px-7 py-2.5 bg-slate-100/70 dark:bg-slate-800/50 border-b border-slate-200/80 dark:border-slate-800 shrink-0 overflow-x-auto no-scrollbar">
+          <div className="px-5 sm:px-7 py-2.5 bg-[#F4F0E6] dark:bg-slate-800/50 border-b border-[#E2DACB] dark:border-slate-800 shrink-0 overflow-x-auto no-scrollbar">
             <div className="flex items-center gap-2 min-w-max">
               {categories.map((cat) => {
                 const Icon = cat.icon;
@@ -582,7 +582,7 @@ export const MppServicesMatrixModal: React.FC<MppServicesMatrixModalProps> = ({
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 hover:border-emerald-500/50 hover:shadow-lg transition-all flex flex-col justify-between group"
+                    className="p-4 sm:p-5 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/80 hover:border-emerald-500/50 hover:shadow-lg transition-all flex flex-col justify-between group"
                   >
                     <div>
                       {/* Top Header Card */}
@@ -610,7 +610,7 @@ export const MppServicesMatrixModal: React.FC<MppServicesMatrixModalProps> = ({
                       </p>
 
                       {/* Key Requirements Checklist */}
-                      <div className="p-3 rounded-xl bg-white dark:bg-surface/60 border border-slate-200/60 dark:border-slate-700/60 space-y-1.5 mb-3">
+                      <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-surface/60 border border-[#E2DACB] dark:border-slate-700/60 space-y-1.5 mb-3">
                         <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1">
                           {t("mppPortal.matrixModal.shortReqs", "PERSYARATAN RINGKAS:")}
                         </span>
@@ -655,7 +655,7 @@ export const MppServicesMatrixModal: React.FC<MppServicesMatrixModalProps> = ({
           </div>
 
           {/* Modal Bottom Footer */}
-          <div className="p-4 px-5 sm:px-7 bg-slate-50 dark:bg-slate-800/90 border-t border-slate-200/80 dark:border-slate-800 shrink-0 flex items-center justify-between gap-3">
+          <div className="p-4 px-5 sm:px-7 bg-[#F4F0E6] dark:bg-slate-800/90 border-t border-[#E2DACB] dark:border-slate-800 shrink-0 flex items-center justify-between gap-3">
             <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
               <Zap className="w-3.5 h-3.5 text-emerald-500" /> {t("mppPortal.matrixModal.footerTag", "Semua Layanan Bebas Pungli & Transparan")}
             </span>

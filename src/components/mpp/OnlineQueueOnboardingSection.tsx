@@ -60,7 +60,7 @@ export const OnlineQueueOnboardingSection: React.FC<OnlineQueueOnboardingSection
 
             {/* Key Advantages: 2 Feature Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
-              <div className={`${MPP_CARD_SURFACE.paddingSm} ${MPP_CARD_SURFACE.radiusSub} bg-[#FAF8F3] dark:bg-[#132E48] border border-[#E5DFD3] dark:border-white/[0.08] flex items-start gap-3.5`}>
+              <div className={`${MPP_CARD_SURFACE.paddingSm} ${MPP_CARD_SURFACE.radiusSub} bg-[#FAF7F0] dark:bg-[#132E48] border border-[#E2DACB] dark:border-white/[0.08] flex items-start gap-3.5`}>
                 <div className="p-2.5 rounded-xl bg-[#0F6B4F]/10 text-[#0F6B4F] dark:text-emerald-400 shrink-0">
                   <Clock className="w-4 h-4" />
                 </div>
@@ -74,7 +74,7 @@ export const OnlineQueueOnboardingSection: React.FC<OnlineQueueOnboardingSection
                 </div>
               </div>
 
-              <div className={`${MPP_CARD_SURFACE.paddingSm} ${MPP_CARD_SURFACE.radiusSub} bg-[#FAF8F3] dark:bg-[#132E48] border border-[#E5DFD3] dark:border-white/[0.08] flex items-start gap-3.5`}>
+              <div className={`${MPP_CARD_SURFACE.paddingSm} ${MPP_CARD_SURFACE.radiusSub} bg-[#FAF7F0] dark:bg-[#132E48] border border-[#E2DACB] dark:border-white/[0.08] flex items-start gap-3.5`}>
                 <div className="p-2.5 rounded-xl bg-[#C9A24B]/15 text-[#855A14] dark:text-[#E2C475] shrink-0">
                   <ShieldCheck className="w-4 h-4" />
                 </div>
@@ -105,7 +105,7 @@ export const OnlineQueueOnboardingSection: React.FC<OnlineQueueOnboardingSection
 
           {/* RIGHT COLUMN: Modern Architectural E-Ticket Pass (Clean & Elevated in Light & Dark Mode) */}
           <div className="lg:col-span-5 flex justify-center">
-            <div className="relative w-full max-w-sm rounded-2xl overflow-hidden border border-[#DFD6C5] dark:border-[#C9A24B]/30 bg-white dark:bg-[#091C2E] shadow-[0_18px_42px_-16px_rgba(15,40,30,0.16)] dark:shadow-[0_22px_48px_-14px_rgba(0,0,0,0.65)]">
+            <div className="relative w-full max-w-sm rounded-2xl overflow-hidden border border-[#E2DACB] dark:border-[#C9A24B]/30 bg-[#FAF7F0] dark:bg-[#091C2E] shadow-[0_18px_42px_-16px_rgba(15,40,30,0.16)] dark:shadow-[0_22px_48px_-14px_rgba(0,0,0,0.65)]">
               
               {/* Top Royal Zamrud Ticket Header */}
               <div className="px-5 py-4 bg-gradient-to-r from-[#0C5A41] to-[#0F6B4F] dark:from-[#0C2D48] dark:to-[#123E5E] text-white flex items-center justify-between border-b border-white/15">
@@ -142,18 +142,18 @@ export const OnlineQueueOnboardingSection: React.FC<OnlineQueueOnboardingSection
                   </div>
 
                   {/* Clean QR Verification Box */}
-                  <div className="p-2.5 rounded-xl bg-[#FAF8F3] dark:bg-white border border-[#E5DFD3] shrink-0 flex flex-col items-center">
+                  <div className="p-2.5 rounded-xl bg-[#F4F0E6] dark:bg-white border border-[#E2DACB] shrink-0 flex flex-col items-center">
                     <QrCode className="w-14 h-14 text-slate-900" />
                   </div>
                 </div>
 
                 {/* Perforated Boarding-Pass Hairline */}
-                <div className="border-t border-dashed border-[#D8D0C0] dark:border-white/15 pt-3.5 flex items-center justify-between text-xs text-slate-600 dark:text-slate-300">
+                <div className="border-t border-dashed border-[#E2DACB] dark:border-white/15 pt-3.5 flex items-center justify-between text-xs text-slate-600 dark:text-slate-300">
                   <span>Zona Waktu Layanan</span>
                   <span className="font-mono font-semibold text-slate-900 dark:text-white">08.00 – 15.30 WITA</span>
                 </div>
 
-                <div className="w-full py-2.5 px-3 rounded-xl bg-[#FAF8F3]/90 dark:bg-[#132E48]/90 text-[#0F6B4F] dark:text-emerald-300 border border-[#DFD6C5] dark:border-white/10 font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs">
+                <div className="w-full py-2.5 px-3 rounded-xl bg-[#F4F0E6] dark:bg-[#132E48]/90 text-[#0F6B4F] dark:text-emerald-300 border border-[#E2DACB] dark:border-white/10 font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs">
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#0F6B4F] dark:text-emerald-400 shrink-0" />
                   <span>E-Tiket Terintegrasi Database Real-Time</span>
                 </div>

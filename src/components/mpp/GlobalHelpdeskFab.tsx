@@ -52,9 +52,9 @@ export const GlobalHelpdeskFab: React.FC<GlobalHelpdeskFabProps> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.9 }}
             transition={{ duration: 0.2 }}
-            className="p-3 bg-white dark:bg-surface border border-slate-200/90 dark:border-slate-800 rounded-3xl shadow-2xl flex flex-col gap-2 min-w-[220px]"
+            className="p-3 bg-[#F4F0E6] dark:bg-surface border border-[#E2DACB] dark:border-slate-800 rounded-3xl shadow-2xl flex flex-col gap-2 min-w-[220px]"
           >
-            <div className="px-3 py-1.5 border-b border-slate-100 dark:border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="px-3 py-1.5 border-b border-[#E2DACB] dark:border-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
               {isEn ? 'Help Center & Fast Contacts' : isZh ? '帮助中心与快捷联系' : 'Pusat Bantuan & Kontak Cepat'}
             </div>
 
@@ -66,14 +66,14 @@ export const GlobalHelpdeskFab: React.FC<GlobalHelpdeskFabProps> = ({
                   setIsOpen(false);
                   onOpenQueueBooking();
                 }}
-                className="flex items-center gap-3 px-3 py-2 rounded-2xl hover:bg-emerald-50 dark:hover:bg-emerald-950/60 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all text-left group cursor-pointer"
+                className="flex items-center gap-3 px-3 py-2 rounded-2xl hover:bg-[#FAF7F0] dark:hover:bg-emerald-950/60 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all text-left group cursor-pointer"
               >
                 <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors">
                   <Ticket className="w-4 h-4" />
                 </div>
                 <div>
                   <div className="font-extrabold text-slate-900 dark:text-white">{isEn ? 'Get Queue Ticket' : isZh ? '取号排队' : 'Ambil Antrean'}</div>
-                  <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Digital ticket without waiting' : isZh ? '免排队电子排队票' : 'Tiket layanan tanpa antre'}</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">{isEn ? 'Digital ticket without waiting' : isZh ? '免排队电子排队票' : 'Tiket layanan tanpa antre'}</div>
                 </div>
               </button>
             )}
@@ -86,14 +86,14 @@ export const GlobalHelpdeskFab: React.FC<GlobalHelpdeskFabProps> = ({
                   setIsOpen(false);
                   onOpenAiAssistant();
                 }}
-                className="flex items-center gap-3 px-3 py-2 rounded-2xl hover:bg-teal-50 dark:hover:bg-teal-950/60 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all text-left group cursor-pointer"
+                className="flex items-center gap-3 px-3 py-2 rounded-2xl hover:bg-[#FAF7F0] dark:hover:bg-teal-950/60 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all text-left group cursor-pointer"
               >
                 <div className="w-8 h-8 rounded-xl bg-teal-500/15 text-teal-600 dark:text-teal-400 flex items-center justify-center group-hover:bg-teal-500 group-hover:text-white transition-colors">
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
                   <div className="font-extrabold text-slate-900 dark:text-white">{t('assistant.quick_ask', isEn ? 'AI Permit Consultation' : isZh ? 'AI 许可咨询' : 'AI Konsultasi Izin')}</div>
-                  <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Instant requirement check' : isZh ? '即时查询审批条件' : 'Cek syarat & berkas instan'}</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">{isEn ? 'Instant requirement check' : isZh ? '即时查询审批条件' : 'Cek syarat & berkas instan'}</div>
                 </div>
               </button>
             )}
@@ -106,14 +106,14 @@ export const GlobalHelpdeskFab: React.FC<GlobalHelpdeskFabProps> = ({
                   setIsOpen(false);
                   onOpenVoiceAssistant();
                 }}
-                className="flex items-center gap-3 px-3 py-2 rounded-2xl hover:bg-cyan-50 dark:hover:bg-cyan-950/60 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all text-left group cursor-pointer"
+                className="flex items-center gap-3 px-3 py-2 rounded-2xl hover:bg-[#FAF7F0] dark:hover:bg-cyan-950/60 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all text-left group cursor-pointer"
               >
                 <div className="w-8 h-8 rounded-xl bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 flex items-center justify-center group-hover:bg-cyan-500 group-hover:text-white transition-colors">
                   <Mic className="w-4 h-4" />
                 </div>
                 <div>
                   <div className="font-extrabold text-slate-900 dark:text-white">{isEn ? 'AI Voice Assistant' : isZh ? 'AI 语音助手' : 'Asisten Suara AI'}</div>
-                  <div className="text-[10px] text-slate-400 font-normal">{isEn ? 'Voice Q&A' : isZh ? '语音问答交互' : 'Tanya jawab suara'}</div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">{isEn ? 'Voice Q&A' : isZh ? '语音问答交互' : 'Tanya jawab suara'}</div>
                 </div>
               </button>
             )}
@@ -122,14 +122,14 @@ export const GlobalHelpdeskFab: React.FC<GlobalHelpdeskFabProps> = ({
             <a
               href="#pengaduan"
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-3 px-3 py-2 rounded-2xl hover:bg-red-50 dark:hover:bg-red-950/60 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all text-left group cursor-pointer"
+              className="flex items-center gap-3 px-3 py-2 rounded-2xl hover:bg-[#FAF7F0] dark:hover:bg-red-950/60 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all text-left group cursor-pointer"
             >
               <div className="w-8 h-8 rounded-xl bg-red-500/15 text-red-600 dark:text-red-400 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors">
                 <ShieldAlert className="w-4 h-4" />
               </div>
               <div>
                 <div className="font-extrabold text-slate-900 dark:text-white">Pengaduan WBS</div>
-                <div className="text-[10px] text-slate-400 font-normal">SP4N-LAPOR! & Pungli</div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">SP4N-LAPOR! & Pungli</div>
               </div>
             </a>
 
@@ -139,14 +139,14 @@ export const GlobalHelpdeskFab: React.FC<GlobalHelpdeskFabProps> = ({
               target="_blank"
               rel="noreferrer"
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-3 px-3 py-2 rounded-2xl hover:bg-emerald-50 dark:hover:bg-emerald-950/60 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all text-left group cursor-pointer"
+              className="flex items-center gap-3 px-3 py-2 rounded-2xl hover:bg-[#FAF7F0] dark:hover:bg-emerald-950/60 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all text-left group cursor-pointer"
             >
               <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors">
                 <Phone className="w-4 h-4" />
               </div>
               <div>
                 <div className="font-extrabold text-slate-900 dark:text-white">WhatsApp Helpdesk</div>
-                <div className="text-[10px] text-slate-400 font-normal">0811-4211-119</div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">0811-4211-119</div>
               </div>
             </a>
           </motion.div>
@@ -162,7 +162,7 @@ export const GlobalHelpdeskFab: React.FC<GlobalHelpdeskFabProps> = ({
             exit={{ opacity: 0, scale: 0.8 }}
             type="button"
             onClick={scrollToTop}
-            className="w-11 h-11 rounded-xl bg-white dark:bg-[#0C2135] border border-[#E5DFD3] dark:border-white/12 text-slate-700 dark:text-slate-200 hover:text-[#0F6B4F] dark:hover:text-[#E2C475] hover:border-[#C9A24B]/50 shadow-md flex items-center justify-center cursor-pointer transition-all active:scale-95"
+            className="w-11 h-11 rounded-xl bg-[#F4F0E6] dark:bg-[#0C2135] border border-[#E2DACB] dark:border-white/12 text-slate-700 dark:text-slate-200 hover:text-[#0F6B4F] dark:hover:text-[#E2C475] hover:border-[#C9A24B]/50 shadow-md flex items-center justify-center cursor-pointer transition-all active:scale-95"
             title="Kembali ke atas"
             aria-label="Kembali ke atas"
           >

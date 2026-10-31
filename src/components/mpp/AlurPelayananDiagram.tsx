@@ -69,12 +69,12 @@ export const AlurPelayananDiagram: React.FC<AlurPelayananDiagramProps> = ({
       className={`rounded-2xl sm:rounded-3xl border p-2.5 sm:p-6 transition-all duration-300 ${
         isDark
           ? 'bg-slate-900/60 border-slate-800 text-white'
-          : 'bg-white border-slate-200/90 text-slate-900 shadow-xl shadow-slate-200/60'
+          : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-900 shadow-sm'
       }`}
     >
       {/* Header with Clear Section / Page Indicator */}
       <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6 border-b pb-4 ${
-        isDark ? 'border-slate-700/50' : 'border-slate-200'
+        isDark ? 'border-slate-700/50' : 'border-[#E2DACB]'
       }`}>
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold font-mono uppercase bg-sky-500/15 text-sky-700 dark:text-sky-400 border border-sky-500/30 mb-1.5">
@@ -101,13 +101,13 @@ export const AlurPelayananDiagram: React.FC<AlurPelayananDiagramProps> = ({
             className={`relative p-2.5 sm:p-4 rounded-2xl border flex flex-col justify-between transition-all ${
               isDark
                 ? 'bg-slate-800/40 border-slate-700/60 hover:border-sky-500/40'
-                : 'bg-slate-50/90 border-slate-200/90 hover:border-sky-500/50 shadow-sm'
+                : 'bg-[#FAF7F0] border-[#E2DACB] hover:border-sky-500/50 shadow-xs'
             }`}
           >
             <div>
               <div className="flex items-center justify-between gap-2 mb-2.5">
                 <span className={`font-mono text-[11px] font-bold px-2 py-0.5 rounded-md ${
-                  isDark ? 'text-slate-300 bg-slate-700/60' : 'text-slate-800 bg-slate-200'
+                  isDark ? 'text-slate-300 bg-slate-700/60' : 'text-slate-800 bg-[#F4F0E6] border border-[#E2DACB]'
                 }`}>
                   {step.num}
                 </span>

@@ -2636,11 +2636,11 @@ function InteractiveFloorPlanComponent({
       className={`fp-root outline-none ${isFullscreen 
         ? "fixed inset-0 z-[9999] p-0 flex flex-col justify-center items-center overflow-hidden select-none"
         : `w-full max-w-full rounded-3xl border transition-all duration-300 overflow-hidden shadow-sm flex flex-col ${
-            effectiveIsDark ? 'bg-surface/95 border-slate-800 text-slate-100' : 'bg-white border-slate-100 text-slate-900'
+            effectiveIsDark ? 'bg-surface/95 border-slate-800 text-slate-100' : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-900'
           } ${className}`
       }`}
       style={{
-        backgroundColor: 'var(--fp-bg)'
+        backgroundColor: effectiveIsDark ? 'var(--fp-bg)' : '#F4F0E6'
       }}>
 
       {/* ───────────────────────────────────────────────────────────────── */}
@@ -2648,7 +2648,7 @@ function InteractiveFloorPlanComponent({
       {/* ───────────────────────────────────────────────────────────────── */}
       {!isFullscreen && (
         <div className={`p-4 sm:p-5 border-b flex flex-col lg:flex-row lg:items-center justify-between gap-4 ${
-          isDark ? 'border-slate-800/80 bg-surface/50' : 'border-slate-100 bg-slate-50/50'
+          isDark ? 'border-slate-800/80 bg-surface/50' : 'border-[#E2DACB] bg-[#F4F0E6]'
         }`}>
         
         {/* Left: Section Title & Live Badge */}
@@ -2678,7 +2678,7 @@ function InteractiveFloorPlanComponent({
               className={`w-full pl-9 pr-8 py-2 text-xs rounded-2xl border outline-none transition-all ${
                 isDark
                   ? 'bg-slate-800 border-slate-700 text-white placeholder-slate-500 focus:border-emerald-500'
-                  : 'bg-white border-slate-200 text-slate-900 placeholder-slate-400 focus:border-emerald-600 shadow-2xs'
+                  : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900 placeholder-slate-500 focus:border-emerald-600 shadow-2xs'
               }`}
             />
             {searchQuery && (
@@ -2693,13 +2693,13 @@ function InteractiveFloorPlanComponent({
           </div>
 
           {/* View Toggle (Mobile only: Daftar as default vs Peta Denah) */}
-          <div className="lg:hidden flex items-center p-1 rounded-2xl border bg-slate-100 dark:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/80">
+          <div className="lg:hidden flex items-center p-1 rounded-2xl border bg-[#FAF7F0] dark:bg-slate-800/80 border-[#E2DACB] dark:border-slate-700/80">
             <button
               type="button"
               onClick={() => setViewMode('list')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 viewMode === 'list'
-                  ? 'bg-white dark:bg-surface text-emerald-600 dark:text-emerald-400 shadow-2xs'
+                  ? 'bg-[#F4F0E6] dark:bg-surface text-emerald-700 dark:text-emerald-400 border border-[#E2DACB] dark:border-transparent shadow-2xs'
                   : 'text-slate-600 dark:text-slate-400'
               }`}
             >
@@ -2710,7 +2710,7 @@ function InteractiveFloorPlanComponent({
               onClick={() => setViewMode('map')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 viewMode === 'map'
-                  ? 'bg-white dark:bg-surface text-emerald-600 dark:text-emerald-400 shadow-2xs'
+                  ? 'bg-[#F4F0E6] dark:bg-surface text-emerald-700 dark:text-emerald-400 border border-[#E2DACB] dark:border-transparent shadow-2xs'
                   : 'text-slate-600 dark:text-slate-400'
               }`}
             >
@@ -2719,12 +2719,12 @@ function InteractiveFloorPlanComponent({
           </div>
 
           {/* Zoom In / Out / Reset Controls */}
-          <div className="hidden sm:flex items-center gap-1 p-1 rounded-2xl border bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-2xs">
+          <div className="hidden sm:flex items-center gap-1 p-1 rounded-2xl border bg-[#FAF7F0] dark:bg-slate-800 border-[#E2DACB] dark:border-slate-700 shadow-2xs">
             <button
               type="button"
               onClick={handleZoomIn}
               title="Perbesar Denah"
-              className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
+              className="p-1.5 rounded-xl hover:bg-[#ECE5D6] dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
             >
               <ZoomIn className="w-4 h-4" />
             </button>
@@ -2732,7 +2732,7 @@ function InteractiveFloorPlanComponent({
               type="button"
               onClick={handleZoomOut}
               title="Perkecil Denah"
-              className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
+              className="p-1.5 rounded-xl hover:bg-[#ECE5D6] dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
             >
               <ZoomOut className="w-4 h-4" />
             </button>
@@ -2740,7 +2740,7 @@ function InteractiveFloorPlanComponent({
               type="button"
               onClick={handleResetAll}
               title="Reset Tampilan & Filter"
-              className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
+              className="p-1.5 rounded-xl hover:bg-[#ECE5D6] dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
             >
               <RotateCcw className="w-4 h-4" />
             </button>
@@ -2748,7 +2748,7 @@ function InteractiveFloorPlanComponent({
               type="button"
               onClick={handleCenterMap}
               title="Pusatkan Peta (Kembalikan ke posisi awal)"
-              className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
+              className="p-1.5 rounded-xl hover:bg-[#ECE5D6] dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
             >
               <Compass className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             </button>
@@ -2761,11 +2761,11 @@ function InteractiveFloorPlanComponent({
       {/* 2. FILTER CHIPS (TOP BAR CATEGORIES)                              */}
       {/* ───────────────────────────────────────────────────────────────── */}
       {!isFullscreen && (
-        <div className="relative border-b overflow-hidden">
+        <div className="relative border-b border-[#E2DACB] dark:border-slate-800/80 overflow-hidden">
           <div 
             ref={chipsContainerRef}
             className={`px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3 overflow-x-auto no-scrollbar scroll-smooth ${
-              isDark ? 'border-slate-800/80 bg-base/60' : 'border-slate-100 bg-slate-50/70'
+              isDark ? 'bg-base/60' : 'bg-[#FAF7F0]'
             }`}
           >
             <div className="flex items-center gap-2 shrink-0">
@@ -2788,13 +2788,13 @@ function InteractiveFloorPlanComponent({
                     className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
                       isSelected
                         ? 'bg-emerald-600 text-white shadow-md shadow-black/25'
-                        : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 hover:border-slate-300'
+                        : 'bg-[#F4F0E6] dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-[#E2DACB] dark:border-slate-700 hover:bg-[#ECE5D6] dark:hover:bg-slate-700'
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
                     <span>{chip.label}</span>
                     <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold ${
-                      isSelected ? 'bg-emerald-700/80 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
+                      isSelected ? 'bg-emerald-700/80 text-white' : 'bg-[#FAF7F0] dark:bg-slate-700 text-slate-600 dark:text-slate-400 border border-[#E2DACB]/80 dark:border-transparent'
                     }`}>
                       {chipCount}
                     </span>
@@ -2805,7 +2805,7 @@ function InteractiveFloorPlanComponent({
 
             {/* Quick Legend status */}
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-              <div className="hidden sm:flex items-center gap-3 text-[11px] font-bold text-slate-600 dark:text-slate-200 px-3 py-1 rounded-full bg-white/80 dark:bg-slate-800/90 border border-slate-200 dark:border-white/10 shadow-2xs">
+              <div className="hidden sm:flex items-center gap-3 text-[11px] font-bold text-slate-700 dark:text-slate-200 px-3 py-1 rounded-full bg-[#F4F0E6] dark:bg-slate-800/90 border border-[#E2DACB] dark:border-white/10 shadow-2xs">
                 <span className="flex items-center gap-1.5">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -2819,13 +2819,13 @@ function InteractiveFloorPlanComponent({
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-slate-400" />
-                  <span className="text-slate-500 dark:text-slate-400">Tutup</span>
+                  <span className="text-slate-600 dark:text-slate-400">Tutup</span>
                 </span>
               </div>
             </div>
           </div>
           {/* Subtle Right Fade Gradient */}
-          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-slate-100/90 dark:from-slate-900/90 to-transparent sm:hidden" />
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#FAF7F0]/95 dark:from-slate-900/90 to-transparent sm:hidden" />
         </div>
       )}
 
@@ -2871,12 +2871,12 @@ function InteractiveFloorPlanComponent({
                       ? 'border-emerald-500 ring-2 ring-emerald-500/30 bg-emerald-50/60 dark:bg-emerald-950/30 shadow-md'
                       : isDark
                       ? 'bg-slate-800/60 border-slate-700/80 hover:border-emerald-500/40 hover:bg-slate-800/90'
-                      : 'bg-white border-slate-200/90 hover:border-emerald-500/40 hover:bg-slate-50 shadow-2xs'
+                      : 'bg-[#FAF7F0] border-[#E2DACB] hover:border-emerald-500/40 hover:bg-[#ECE5D6] shadow-2xs'
                   }`}
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-1.5">
-                      <span className="text-[12px] font-bold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400 font-sans">
+                      <span className="text-[12px] font-bold uppercase tracking-[0.08em] text-slate-600 dark:text-slate-400 font-sans">
                         {translateZoneToId(node.zone)}
                       </span>
                       <StatusPill status={node.status === 'open' ? 'buka' : node.status === 'busy' ? 'ramai' : 'tutup'} />
@@ -2885,13 +2885,13 @@ function InteractiveFloorPlanComponent({
                       {node.name}
                     </h4>
                     {node.subName && (
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1 leading-relaxed">
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 line-clamp-1 leading-relaxed">
                         {node.subName}
                       </p>
                     )}
                   </div>
 
-                  <div className="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between">
+                  <div className="mt-2.5 pt-2 border-t border-[#E2DACB] dark:border-slate-700/60 flex items-center justify-between">
                     <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
                       {node.services.length} Layanan
                     </span>
@@ -2955,7 +2955,7 @@ function InteractiveFloorPlanComponent({
               ? "relative w-full h-full max-w-full max-h-full overflow-hidden flex items-center justify-center p-0 m-0 touch-pan-x touch-pan-y"
               : "relative w-full max-w-full overflow-hidden flex flex-col items-center justify-center p-1 sm:p-2 lg:p-3 touch-pan-x touch-pan-y"
             }
-            style={isFullscreen ? { height: '100dvh', width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--fp-bg)' } : undefined}
+            style={isFullscreen ? { height: '100dvh', width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: effectiveIsDark ? 'var(--fp-bg)' : '#FAF7F0' } : undefined}
           >
             {/* Active Filter Live Status Toast Banner on Map Canvas */}
             {isAnyFilterActive && !isEmergencyMode && (
@@ -3009,7 +3009,7 @@ function InteractiveFloorPlanComponent({
                   className={`pointer-events-auto flex items-center gap-2 min-w-0 h-9 sm:h-10 px-3 sm:px-3.5 rounded-xl sm:rounded-2xl backdrop-blur-md border select-none ${
                     effectiveIsDark
                       ? 'bg-slate-900/90 text-white border-emerald-500/50 shadow-lg'
-                      : 'bg-white/88 text-slate-800 border-slate-200/90 shadow-[0_2px_8px_rgba(15,23,42,0.08)]'
+                      : 'bg-[#F4F0E6]/92 text-slate-800 border-[#E2DACB] shadow-[0_2px_8px_rgba(15,23,42,0.08)]'
                   }`}
                   title="Mode Presentasi Layar Lebar • Tekan [F] atau [ESC]"
                 >
@@ -3020,7 +3020,7 @@ function InteractiveFloorPlanComponent({
                   <span className={`hidden lg:[@media(pointer:fine)]:inline text-[10px] font-mono px-1.5 py-0.5 rounded border shrink-0 ${
                     effectiveIsDark
                       ? 'bg-slate-800 text-emerald-300 border-emerald-500/30'
-                      : 'bg-slate-100 text-slate-600 border-slate-200'
+                      : 'bg-[#FAF7F0] text-slate-700 border-[#E2DACB]'
                   }`}>
                     [F] • [ESC]
                   </span>
@@ -3042,7 +3042,7 @@ function InteractiveFloorPlanComponent({
                         ? 'bg-rose-600 hover:bg-rose-700 text-white border-rose-400 shadow-lg ring-2 ring-rose-400/35'
                         : effectiveIsDark
                         ? 'bg-slate-900/90 hover:bg-rose-950/90 text-rose-300 hover:text-rose-200 border-rose-500/40 shadow-lg'
-                        : 'bg-white/88 hover:bg-rose-50 text-rose-700 border-rose-200 shadow-[0_2px_8px_rgba(15,23,42,0.08)]'
+                        : 'bg-[#F4F0E6]/92 hover:bg-rose-50 text-rose-700 border-rose-200 shadow-[0_2px_8px_rgba(15,23,42,0.08)]'
                     }`}
                     title={isEmergencyMode ? 'Hentikan Simulasi Evakuasi Darurat' : 'Aktifkan Simulasi Jalur Evakuasi Darurat'}
                     aria-label={isEmergencyMode ? 'Hentikan Simulasi Darurat' : 'Simulasi Darurat Jalur Evakuasi'}
@@ -3066,7 +3066,7 @@ function InteractiveFloorPlanComponent({
                   className={`h-9 sm:h-10 min-w-[38px] flex items-center justify-center gap-1.5 px-2.5 sm:px-3 rounded-xl sm:rounded-2xl border transition-all cursor-pointer active:scale-95 text-xs font-extrabold ${
                     effectiveIsDark
                       ? 'bg-slate-900/90 text-amber-300 border-slate-700 hover:bg-slate-800 shadow-lg'
-                      : 'bg-white/88 text-slate-800 border-slate-200/90 hover:bg-slate-100 shadow-[0_2px_8px_rgba(15,23,42,0.08)]'
+                      : 'bg-[#F4F0E6]/92 text-slate-800 border-[#E2DACB] hover:bg-[#ECE5D6] shadow-[0_2px_8px_rgba(15,23,42,0.08)]'
                   }`}
                   title={effectiveIsDark ? 'Beralih ke Tema Terang' : 'Beralih ke Tema Gelap'}
                   aria-label={effectiveIsDark ? 'Beralih ke Tema Terang' : 'Beralih ke Tema Gelap'}
@@ -3088,7 +3088,7 @@ function InteractiveFloorPlanComponent({
                   className={`h-9 sm:h-10 min-w-[38px] flex items-center justify-center gap-1.5 px-2.5 sm:px-3.5 rounded-xl sm:rounded-2xl border transition-all cursor-pointer active:scale-95 text-xs font-extrabold ${
                     effectiveIsDark
                       ? 'bg-slate-900/90 hover:bg-rose-600 text-slate-100 hover:text-white border-slate-700 hover:border-rose-500 shadow-lg'
-                      : 'bg-white/88 hover:bg-rose-50 text-slate-800 hover:text-rose-700 border-slate-200/90 hover:border-rose-300 shadow-[0_2px_8px_rgba(15,23,42,0.08)]'
+                      : 'bg-[#F4F0E6]/92 hover:bg-rose-50 text-slate-800 hover:text-rose-700 border-[#E2DACB] hover:border-rose-300 shadow-[0_2px_8px_rgba(15,23,42,0.08)]'
                   }`}
                   title="Tutup Mode Layar Lebar (Esc)"
                   aria-label="Keluar Mode Layar Lebar"
@@ -3096,7 +3096,7 @@ function InteractiveFloorPlanComponent({
                   <X className="w-4 h-4 shrink-0" />
                   <span className="hidden sm:inline">Keluar</span>
                   <span className={`hidden lg:[@media(pointer:fine)]:inline text-[10px] font-mono px-1.5 py-0.5 rounded ${
-                    effectiveIsDark ? 'bg-black/40 text-rose-200' : 'bg-slate-100 text-slate-600'
+                    effectiveIsDark ? 'bg-black/40 text-rose-200' : 'bg-[#FAF7F0] text-slate-700 border border-[#E2DACB]'
                   }`}>ESC</span>
                 </button>
               </div>
@@ -3108,13 +3108,13 @@ function InteractiveFloorPlanComponent({
             <div className={`absolute bottom-2.5 sm:bottom-3.5 right-2.5 sm:right-4 z-50 flex items-center gap-1 p-1 rounded-2xl backdrop-blur-md select-none pointer-events-auto border ${
               effectiveIsDark
                 ? 'bg-slate-900/90 text-white border-slate-700 shadow-lg'
-                : 'bg-white/88 text-slate-800 border-slate-200/90 shadow-[0_2px_8px_rgba(15,23,42,0.08)]'
+                : 'bg-[#F4F0E6]/92 text-slate-800 border-[#E2DACB] shadow-[0_2px_8px_rgba(15,23,42,0.08)]'
             }`}>
               <button
                 type="button"
                 onClick={() => setFullscreenScale(prev => Math.min(5, prev + 0.3))}
                 className={`w-9 h-9 flex items-center justify-center rounded-xl transition-colors cursor-pointer active:scale-90 ${
-                  effectiveIsDark ? 'hover:bg-slate-800 text-slate-200' : 'hover:bg-slate-100 text-slate-700'
+                  effectiveIsDark ? 'hover:bg-slate-800 text-slate-200' : 'hover:bg-[#ECE5D6] text-slate-700'
                 }`}
                 title="Perbesar"
               >
@@ -3124,7 +3124,7 @@ function InteractiveFloorPlanComponent({
                 type="button"
                 onClick={() => setFullscreenScale(prev => Math.max(0.8, prev - 0.3))}
                 className={`w-9 h-9 flex items-center justify-center rounded-xl transition-colors cursor-pointer active:scale-90 ${
-                  effectiveIsDark ? 'hover:bg-slate-800 text-slate-200' : 'hover:bg-slate-100 text-slate-700'
+                  effectiveIsDark ? 'hover:bg-slate-800 text-slate-200' : 'hover:bg-[#ECE5D6] text-slate-700'
                 }`}
                 title="Perkecil"
               >
@@ -3134,7 +3134,7 @@ function InteractiveFloorPlanComponent({
                 type="button"
                 onClick={handleResetAll}
                 className={`w-9 h-9 flex items-center justify-center rounded-xl transition-colors cursor-pointer active:scale-90 ${
-                  effectiveIsDark ? 'hover:bg-slate-800 text-slate-200' : 'hover:bg-slate-100 text-slate-700'
+                  effectiveIsDark ? 'hover:bg-slate-800 text-slate-200' : 'hover:bg-[#ECE5D6] text-slate-700'
                 }`}
                 title="Reset Tampilan & Filter"
               >
@@ -3149,7 +3149,7 @@ function InteractiveFloorPlanComponent({
               <FloatingFloorPlanLegend
                 activeSector={activeSector}
                 onSelectSector={handleSectorFilterChange}
-                isDark={isDark}
+                isDark={effectiveIsDark}
                 position="toolbar"
                 totalMatchingCount={matchingSectorCount}
                 isOpenControlled={isLegendOpen}
@@ -4026,24 +4026,24 @@ function InteractiveFloorPlanComponent({
                 exit={{ opacity: 0, y: 20, scale: 0.96 }}
                 transition={{ duration: 0.22 }}
                 className={`w-full max-w-3xl mx-auto p-4 sm:p-6 rounded-2xl border shadow-2xl overflow-hidden relative flex flex-col justify-between max-h-[90vh] overflow-y-auto ${
-                  isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
+                  isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900'
                 }`}
               >
                 {/* Card Header with Distinct Type Badges */}
-                <div className="flex items-start justify-between gap-3 border-b pb-3.5 border-slate-100 dark:border-slate-800">
+                <div className="flex items-start justify-between gap-3 border-b pb-3.5 border-[#E2DACB] dark:border-slate-800">
                   <div className="space-y-1.5">
                     <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                       {/* Element Type Badge */}
                       <span className={`text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
                         isFacility
-                          ? 'bg-teal-500/10 text-teal-400 border-teal-500/30'
-                          : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                          ? 'bg-teal-500/10 text-teal-700 dark:text-teal-400 border-teal-500/30'
+                          : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30'
                       }`}>
                         {isFacility ? 'Fasilitas Publik' : 'Gerai Pelayanan'}
                       </span>
 
                       {/* Zone Badge */}
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#F4F0E6] dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-[#E2DACB] dark:border-transparent">
                         {selectedNode.zone}
                       </span>
 
@@ -4067,7 +4067,7 @@ function InteractiveFloorPlanComponent({
                     <h3 className="text-lg sm:text-xl font-black tracking-tight leading-tight">
                       {displayName}
                     </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                       {displayDesc}
                     </p>
                   </div>
@@ -4075,7 +4075,7 @@ function InteractiveFloorPlanComponent({
                   <button
                     type="button"
                     onClick={() => setSelectedNode(null)}
-                    className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 transition-colors shrink-0"
+                    className="p-1.5 rounded-xl bg-[#F4F0E6] hover:bg-[#ECE5D6] border border-[#E2DACB] dark:border-transparent dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-colors shrink-0"
                     aria-label="Tutup detail"
                   >
                     <X className="w-4 h-4" />
@@ -4092,17 +4092,17 @@ function InteractiveFloorPlanComponent({
                       <h4 className="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100">
                         Informasi layanan sedang diperbarui
                       </h4>
-                      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-md mx-auto">
                         Data operasional dan katalog layanan untuk gerai/fasilitas ini sedang dalam tahap sinkronisasi dengan instansi terkait.
                       </p>
                     </div>
                   ) : (
                     <>
                   {/* Status Bar */}
-                  <div className="flex flex-wrap items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 text-xs gap-2">
+                  <div className="flex flex-wrap items-center justify-between p-3 rounded-2xl bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-800 text-xs gap-2">
                     <div className="flex items-center gap-2">
                       <Clock className={`w-4 h-4 ${isFacility ? 'text-teal-500' : 'text-emerald-500'}`} />
-                      <span className="font-semibold text-slate-700 dark:text-slate-300">
+                      <span className="font-semibold text-slate-800 dark:text-slate-300">
                         {selectedNode.operatingHours || (isFacility ? '07:30 - 16:00 WITA' : '08:00 - 15:30 WITA')}
                       </span>
                     </div>
@@ -4114,8 +4114,8 @@ function InteractiveFloorPlanComponent({
                       </span>
                     ) : (
                       <div className="flex items-center gap-2">
-                        <span className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:inline">
-                          Estimasi: <strong className="text-slate-700 dark:text-slate-200">± 5-10 Menit</strong>
+                        <span className="text-[11px] text-slate-600 dark:text-slate-400 hidden sm:inline">
+                          Estimasi: <strong className="text-slate-800 dark:text-slate-200">± 5-10 Menit</strong>
                         </span>
                         <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${
                           selectedNode.status === 'open'
@@ -4132,15 +4132,15 @@ function InteractiveFloorPlanComponent({
                   {/* Section A: IF FACILITY -> Show Amenities & Equipment */}
                   {isFacility ? (
                     <div>
-                      <h5 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5 flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-teal-400" />
+                      <h5 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5 flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-teal-500 dark:text-teal-400" />
                         <span>Kelengkapan & Sarana Fasilitas</span>
                       </h5>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {displayAmenities.map((amenity, idx) => (
                           <div
                             key={idx}
-                            className="flex items-start gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-200"
+                            className="flex items-start gap-2 p-2.5 rounded-xl bg-[#F4F0E6] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-slate-700 text-xs font-medium text-slate-800 dark:text-slate-200"
                           >
                             <CheckCircle2 className="w-4 h-4 text-teal-500 dark:text-teal-400 shrink-0 mt-0.5" />
                             <span className="leading-snug">{amenity}</span>
@@ -4151,8 +4151,8 @@ function InteractiveFloorPlanComponent({
                   ) : (
                     /* Section B: IF TENANT -> Show List of Official Services */
                     <div>
-                      <h5 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
-                        <Building2 className="w-3.5 h-3.5 text-emerald-400" />
+                      <h5 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 flex items-center gap-1.5">
+                        <Building2 className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
                         <span>Daftar Layanan Dokumen & Perizinan</span>
                       </h5>
                       <div className="space-y-1.5">
@@ -4174,7 +4174,7 @@ function InteractiveFloorPlanComponent({
                         : 'bg-emerald-50/50 dark:bg-emerald-950/30 border-emerald-200/60 dark:border-emerald-800/60'
                     }`}>
                       <Navigation className={`w-4 h-4 shrink-0 mt-0.5 ${isFacility ? 'text-teal-600 dark:text-teal-400' : 'text-emerald-600 dark:text-emerald-400'}`} />
-                      <div className="text-slate-600 dark:text-slate-300">
+                      <div className="text-slate-700 dark:text-slate-300">
                         <strong className={isFacility ? 'text-teal-700 dark:text-teal-300' : 'text-emerald-700 dark:text-emerald-300'}>
                           Panduan Arah: 
                         </strong>{' '}
@@ -4187,11 +4187,11 @@ function InteractiveFloorPlanComponent({
                 </div>
 
                 {/* Card Footer: Conditional Action Buttons */}
-                <div className="pt-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2.5">
+                <div className="pt-3.5 border-t border-[#E2DACB] dark:border-slate-800 flex items-center justify-end gap-2.5">
                   <button
                     type="button"
                     onClick={() => setIsWayfindingActive(prev => !prev)}
-                    className="px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold transition-all flex items-center gap-1.5"
+                    className="px-4 py-2.5 rounded-2xl bg-[#F4F0E6] dark:bg-transparent border border-[#E2DACB] dark:border-slate-700 hover:bg-[#ECE5D6] dark:hover:bg-slate-800 text-xs font-bold transition-all flex items-center gap-1.5"
                   >
                     <Navigation className={`w-3.5 h-3.5 ${isFacility ? 'text-teal-500' : 'text-emerald-500'}`} />
                     <span>{isWayfindingActive ? 'Sembunyikan Jalur' : 'Petunjuk Arah'}</span>

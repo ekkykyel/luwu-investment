@@ -240,7 +240,7 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
           type="button"
           onClick={() => handleManualAction(handlePrev)}
           aria-label="Halaman Instansi Sebelumnya"
-          className="hidden md:flex absolute -left-4 lg:-left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-xl bg-white dark:bg-[#0F2D4A] border border-slate-200/90 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/40 items-center justify-center transition-all shadow-md active:scale-95 cursor-pointer"
+          className="hidden md:flex absolute -left-4 lg:-left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-xl bg-[#F4F0E6] hover:bg-[#ECE5D6] dark:bg-[#0F2D4A] border border-[#E2DACB] dark:border-white/10 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/40 items-center justify-center transition-all shadow-md active:scale-95 cursor-pointer"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
@@ -250,7 +250,7 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
           type="button"
           onClick={() => handleManualAction(handleNext)}
           aria-label="Halaman Instansi Berikutnya"
-          className="hidden md:flex absolute -right-4 lg:-right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-xl bg-white dark:bg-[#0F2D4A] border border-slate-200/90 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/40 items-center justify-center transition-all shadow-md active:scale-95 cursor-pointer"
+          className="hidden md:flex absolute -right-4 lg:-right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-xl bg-[#F4F0E6] hover:bg-[#ECE5D6] dark:bg-[#0F2D4A] border border-[#E2DACB] dark:border-white/10 text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/40 items-center justify-center transition-all shadow-md active:scale-95 cursor-pointer"
         >
           <ChevronRight className="w-5 h-5" />
         </button>
@@ -275,7 +275,7 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
                   className={`relative p-4 sm:p-5 ${MPP_CARD_SURFACE.radiusMain} ${MPP_CARD_SURFACE.layer1} hover:border-emerald-500/40 dark:hover:border-white/[0.14] transition-all duration-200 flex flex-col justify-between items-center text-center overflow-hidden group min-h-[280px] sm:min-h-[295px]`}
                 >
                   {/* Top Metadata Line: Clean unboxed Gerai number & Active Counter status */}
-                  <div className="w-full flex items-center justify-between gap-2 pb-2.5 mb-2 border-b border-[#EFEAE0] dark:border-white/[0.06] text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                  <div className="w-full flex items-center justify-between gap-2 pb-2.5 mb-2 border-b border-[#E2DACB] dark:border-white/[0.06] text-[11px] font-semibold text-slate-500 dark:text-slate-400">
                     <span className="tracking-wide uppercase text-[#8A6218] dark:text-[#E2C475] font-bold">
                       {tenant.loket}
                     </span>
@@ -330,7 +330,7 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
               type="button"
               onClick={() => handleManualAction(handlePrev)}
               aria-label="Sebelumnya"
-              className="w-10 h-10 rounded-xl bg-white dark:bg-[#0F2D4A] border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:text-emerald-600 flex items-center justify-center shadow-xs active:scale-95 cursor-pointer"
+              className="w-10 h-10 rounded-xl bg-[#F4F0E6] hover:bg-[#ECE5D6] dark:bg-[#0F2D4A] border border-[#E2DACB] dark:border-white/10 text-slate-700 dark:text-slate-200 hover:text-emerald-600 flex items-center justify-center shadow-xs active:scale-95 cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -338,7 +338,7 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
               type="button"
               onClick={() => handleManualAction(handleNext)}
               aria-label="Selanjutnya"
-              className="w-10 h-10 rounded-xl bg-white dark:bg-[#0F2D4A] border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:text-emerald-600 flex items-center justify-center shadow-xs active:scale-95 cursor-pointer"
+              className="w-10 h-10 rounded-xl bg-[#F4F0E6] hover:bg-[#ECE5D6] dark:bg-[#0F2D4A] border border-[#E2DACB] dark:border-white/10 text-slate-700 dark:text-slate-200 hover:text-emerald-600 flex items-center justify-center shadow-xs active:scale-95 cursor-pointer"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -346,7 +346,7 @@ export const InstansiTergabungSection: React.FC<InstansiTergabungSectionProps> =
 
           {/* Progress Bar & Numerical Counter */}
           <div className="w-full flex items-center gap-3 order-1 sm:order-2">
-            <div className="flex-1 bg-slate-200/90 dark:bg-slate-700/80 h-1.5 rounded-full overflow-hidden shadow-inner">
+            <div className="flex-1 bg-[#E2DACB] dark:bg-slate-700/80 h-1.5 rounded-full overflow-hidden shadow-inner">
               <div 
                 className="bg-emerald-600 dark:bg-emerald-400 h-full rounded-full transition-all duration-300 ease-out"
                 style={{ width: `${progressPercent}%` }}

@@ -35,19 +35,19 @@ export const MaklumatModal: React.FC<MaklumatModalProps> = ({
           className={`relative w-full max-w-xl rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border ${
             isDark
               ? 'bg-[#0A2238] border-slate-800 text-slate-100'
-              : 'bg-[#FAF8F3] border-[#E5DFD3] text-slate-900'
+              : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900'
           }`}
           style={{ color: isDark ? '#f8fafc' : '#0f172a' }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Mobile Drag Handle Indicator */}
           <div className={`w-12 h-1.5 rounded-full mx-auto my-2.5 sm:hidden shrink-0 ${
-            isDark ? 'bg-slate-700' : 'bg-slate-300'
+            isDark ? 'bg-slate-700' : 'bg-[#D5CCB8]'
           }`} />
 
           {/* Header Container */}
           <div className={`flex items-center justify-between px-5 py-3.5 border-b shrink-0 backdrop-blur-md ${
-            isDark ? 'bg-[#0A2238]/95 border-slate-800' : 'bg-[#FAF8F3]/95 border-[#E5DFD3]'
+            isDark ? 'bg-[#0A2238]/95 border-slate-800' : 'bg-[#F4F0E6] border-[#E2DACB]'
           }`}>
             <div className="flex flex-col min-w-0">
               <span className={`text-[10px] font-bold font-mono tracking-wider uppercase px-2.5 py-0.5 rounded-full w-fit mb-1 border ${
@@ -68,7 +68,7 @@ export const MaklumatModal: React.FC<MaklumatModalProps> = ({
               type="button"
               onClick={onClose}
               className={`p-2 rounded-full transition-all cursor-pointer min-w-[36px] min-h-[36px] flex items-center justify-center ${
-                isDark ? 'hover:bg-slate-800 text-slate-300' : 'hover:bg-slate-100 text-slate-700'
+                isDark ? 'hover:bg-slate-800 text-slate-300' : 'bg-[#FAF7F0] hover:bg-[#ECE5D6] border border-[#E2DACB] text-slate-700'
               }`}
               aria-label="Tutup maklumat pelayanan"
             >
@@ -124,7 +124,7 @@ export const MaklumatModal: React.FC<MaklumatModalProps> = ({
             {/* 3 Pilar Komitmen Layanan */}
             <div className="grid grid-cols-1 gap-2.5 pt-1">
               <div className={`p-3.5 rounded-2xl border flex items-start gap-3 ${
-                isDark ? 'bg-slate-800/50 border-slate-700/60' : 'bg-slate-50 border-slate-200'
+                isDark ? 'bg-slate-800/50 border-slate-700/60' : 'bg-[#F4F0E6] border-[#E2DACB]'
               }`}>
                 <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 font-bold">
                   <Award className="w-4 h-4" />
@@ -140,7 +140,7 @@ export const MaklumatModal: React.FC<MaklumatModalProps> = ({
               </div>
 
               <div className={`p-3.5 rounded-2xl border flex items-start gap-3 ${
-                isDark ? 'bg-slate-800/50 border-slate-700/60' : 'bg-slate-50 border-slate-200'
+                isDark ? 'bg-slate-800/50 border-slate-700/60' : 'bg-[#F4F0E6] border-[#E2DACB]'
               }`}>
                 <div className="w-8 h-8 rounded-xl bg-teal-500/15 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 mt-0.5 font-bold">
                   <Clock className="w-4 h-4" />
@@ -156,7 +156,7 @@ export const MaklumatModal: React.FC<MaklumatModalProps> = ({
               </div>
 
               <div className={`p-3.5 rounded-2xl border flex items-start gap-3 ${
-                isDark ? 'bg-slate-800/50 border-slate-700/60' : 'bg-slate-50 border-slate-200'
+                isDark ? 'bg-slate-800/50 border-slate-700/60' : 'bg-[#F4F0E6] border-[#E2DACB]'
               }`}>
                 <div className="w-8 h-8 rounded-xl bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 mt-0.5 font-bold">
                   <Scale className="w-4 h-4" />
@@ -174,8 +174,8 @@ export const MaklumatModal: React.FC<MaklumatModalProps> = ({
           </div>
 
           {/* Sticky Action Footer */}
-          <div className={`p-4 border-t shrink-0 sm:static sm:bg-transparent sm:border-0 sm:p-0 sm:mt-4 z-20 ${
-            isDark ? 'bg-[#0A2238]/95 border-slate-800' : 'bg-white/95 border-slate-200'
+          <div className={`p-4 border-t shrink-0 sm:static sm:bg-transparent sm:border-0 sm:p-0 sm:mt-4 sm:px-5 sm:pb-5 z-20 ${
+            isDark ? 'bg-[#0A2238]/95 border-slate-800' : 'bg-[#F4F0E6] border-[#E2DACB]'
           }`}>
             <button
               type="button"

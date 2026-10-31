@@ -130,7 +130,7 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
           </div>
 
           <div className="relative z-10 pt-5 space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-1 text-xs pt-3 border-t border-[#E5DFD3] dark:border-white/[0.08] text-slate-600 dark:text-slate-400">
+            <div className="flex flex-wrap items-center justify-between gap-1 text-xs pt-3 border-t border-[#E2DACB] dark:border-white/[0.08] text-slate-600 dark:text-slate-400">
               <span className="flex items-center gap-1.5 font-medium">
                 <Users className="w-3.5 h-3.5 text-[#0F6B4F] dark:text-emerald-400 shrink-0" /> {t("mppPortal.skmBento.totalRespondents", "Total Responden Terverifikasi:")}
               </span>
@@ -188,7 +188,7 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
               className={`${MPP_CARD_SURFACE.default} ${MPP_CARD_SURFACE.paddingSm} flex flex-col justify-between space-y-3 hover:border-[#0F6B4F]/40 transition-all`}
             >
               <div className="flex items-center justify-between">
-                <div className="w-9 h-9 rounded-xl bg-[#FAF8F3] dark:bg-[#132E48] border border-[#E5DFD3] dark:border-white/[0.08] flex items-center justify-center text-[#0F6B4F] dark:text-emerald-400 shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-[#FAF7F0] dark:bg-[#132E48] border border-[#E2DACB] dark:border-white/[0.08] flex items-center justify-center text-[#0F6B4F] dark:text-emerald-400 shrink-0">
                   {hl.icon}
                 </div>
                 <span className="text-sm font-bold text-[#0F6B4F] dark:text-emerald-300 font-mono tabular-nums">
@@ -201,7 +201,7 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
                   {hl.desc}
                 </p>
               </div>
-              <div className="w-full bg-[#EFECE3] dark:bg-[#132E48] h-2 rounded-full overflow-hidden">
+              <div className="w-full bg-[#E2DACB] dark:bg-[#132E48] h-2 rounded-full overflow-hidden">
                 <motion.div 
                   initial={shouldReduceMotion ? false : { scaleX: 0 }}
                   whileInView={{ scaleX: 1 }}
@@ -226,7 +226,7 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
           transition={{ duration: 0.45, delay: 0.15 }}
           className={`md:col-span-12 ${MPP_CARD_SURFACE.default} ${MPP_CARD_SURFACE.paddingLg} space-y-5 relative overflow-hidden`}
         >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#E5DFD3] dark:border-white/[0.08]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#E2DACB] dark:border-white/[0.08]">
             <div>
               <div className={`inline-flex items-center gap-1.5 ${MPP_TYPOGRAPHY.eyebrow}`}>
                 <BarChart3 className="w-3.5 h-3.5 shrink-0" />
@@ -247,7 +247,7 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
             {skmIndicators.map((item, idx) => (
               <div
                 key={item.key}
-                className="p-3.5 sm:p-4 rounded-xl bg-[#FAF8F3] dark:bg-[#132E48] border border-[#E5DFD3] dark:border-white/[0.07] space-y-2.5 hover:border-[#0F6B4F]/40 transition-colors"
+                className="p-3.5 sm:p-4 rounded-xl bg-[#FAF7F0] dark:bg-[#132E48] border border-[#E2DACB] dark:border-white/[0.07] space-y-2.5 hover:border-[#0F6B4F]/40 transition-colors"
               >
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2.5 min-w-0">
@@ -264,7 +264,7 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
                 </div>
 
                 <div className="space-y-1">
-                  <div className="w-full bg-[#E5DFD3] dark:bg-slate-800 h-2 rounded-full overflow-hidden relative">
+                  <div className="w-full bg-[#E2DACB] dark:bg-slate-800 h-2 rounded-full overflow-hidden relative">
                     <div className="absolute inset-y-0 left-[88.31%] w-0.5 bg-[#C9A24B] pointer-events-none z-10" />
                     <motion.div
                       initial={shouldReduceMotion ? false : { scaleX: 0 }}
@@ -278,7 +278,7 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
                       className="bg-gradient-to-r from-[#0F6B4F] to-[#249672] dark:from-emerald-500 dark:to-teal-300 h-full rounded-full origin-left"
                     />
                   </div>
-                  <div className="flex justify-between items-center text-[10px] font-mono text-slate-400 dark:text-slate-500">
+                  <div className="flex justify-between items-center text-[10px] font-mono text-slate-500">
                     <span>0</span>
                     <span>88.3</span>
                     <span>100</span>
@@ -289,7 +289,7 @@ export const SkmBentoGrid: React.FC<SkmBentoGridProps> = ({
           </div>
 
           {/* Classification Reference Footer */}
-          <div className="pt-4 border-t border-[#E5DFD3] dark:border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-600 dark:text-slate-300">
+          <div className="pt-4 border-t border-[#E2DACB] dark:border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-600 dark:text-slate-300">
             <span className="font-semibold">
               Klasifikasi Mutu KepmenPAN-RB 14/2017:
             </span>

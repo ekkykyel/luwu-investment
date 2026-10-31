@@ -233,7 +233,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
           className={`inline-flex items-center gap-1.5 p-1.5 rounded-2xl border overflow-x-auto max-w-full no-scrollbar ${
             isDark
               ? 'bg-[#0B2035] border-white/[0.08]'
-              : 'bg-[#EFECE3] border-[#DFD8C8]'
+              : 'bg-[#F4F0E6] border-[#E2DACB]'
           }`}
         >
           <button
@@ -244,7 +244,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
             className={`min-h-[42px] px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${
               activeTab === 'keliling'
                 ? 'bg-[#0F6B4F] dark:bg-emerald-600 text-white shadow-xs'
-                : 'text-slate-700 dark:text-slate-300 hover:bg-white/80 dark:hover:bg-white/[0.06] hover:text-slate-900 dark:hover:text-white'
+                : 'text-slate-700 dark:text-slate-300 hover:bg-[#FAF7F0] dark:hover:bg-white/[0.06] hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <MapPin className="w-4 h-4 shrink-0" />
@@ -259,7 +259,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
             className={`min-h-[42px] px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${
               activeTab === 'drivethru'
                 ? 'bg-[#0F6B4F] dark:bg-emerald-600 text-white shadow-xs'
-                : 'text-slate-700 dark:text-slate-300 hover:bg-white/80 dark:hover:bg-white/[0.06] hover:text-slate-900 dark:hover:text-white'
+                : 'text-slate-700 dark:text-slate-300 hover:bg-[#FAF7F0] dark:hover:bg-white/[0.06] hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <Car className="w-4 h-4 shrink-0" />
@@ -274,7 +274,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
             className={`min-h-[42px] px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${
               activeTab === 'akses_cepat'
                 ? 'bg-[#0F6B4F] dark:bg-emerald-600 text-white shadow-xs'
-                : 'text-slate-700 dark:text-slate-300 hover:bg-white/80 dark:hover:bg-white/[0.06] hover:text-slate-900 dark:hover:text-white'
+                : 'text-slate-700 dark:text-slate-300 hover:bg-[#FAF7F0] dark:hover:bg-white/[0.06] hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <Zap className="w-4 h-4 shrink-0" />
@@ -289,10 +289,10 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
           className={`p-5 sm:p-6 rounded-2xl sm:rounded-3xl border space-y-5 ${
             isDark
               ? 'bg-[#0C2135] border-white/[0.09] text-slate-100'
-              : 'bg-white border-[#E5DFD3] text-slate-900 shadow-[0_6px_22px_-10px_rgba(24,24,27,0.06)]'
+              : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-900 shadow-[0_6px_22px_-10px_rgba(24,24,27,0.06)]'
           }`}
         >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#EFEAE0] dark:border-white/[0.08]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#E2DACB] dark:border-white/[0.08]">
             <div>
               <h3 className="text-base sm:text-lg font-bold">
                 {t('mppPortal.bestPractices.keliling.title', 'Jadwal Mobil Pelayanan Keliling & Hub Kecamatan')}
@@ -307,7 +307,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
               className={`self-start sm:self-auto min-h-[40px] px-3.5 py-1.5 rounded-xl text-xs font-semibold border transition flex items-center gap-1.5 cursor-pointer ${
                 isDark
                   ? 'bg-[#132E48] border-white/10 text-slate-200 hover:bg-[#193B5C]'
-                  : 'bg-[#FAF8F3] border-[#DFD8CA] text-slate-700 hover:bg-[#F2EFE7]'
+                  : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-700 hover:bg-[#ECE5D6]'
               }`}
             >
               <RefreshCw className={`w-3.5 h-3.5 text-[#0F6B4F] dark:text-emerald-400 ${isLoadingSchedules ? 'animate-spin' : ''}`} />
@@ -331,7 +331,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
               className={`p-5 sm:p-6 rounded-2xl border flex flex-col lg:flex-row items-center justify-between gap-5 text-center lg:text-left ${
                 isDark
                   ? 'bg-[#132E48]/60 border-white/[0.08]'
-                  : 'bg-[#FAF8F3] border-[#E5DFD3]'
+                  : 'bg-[#FAF7F0] border-[#E2DACB]'
               }`}
             >
               <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4 max-w-2xl">
@@ -365,7 +365,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                   className={`min-h-[42px] px-4 py-2 rounded-xl text-xs font-semibold border transition flex items-center gap-1.5 ${
                     isDark
                       ? 'bg-[#0C2135] border-white/10 text-slate-200 hover:bg-[#153452]'
-                      : 'bg-white border-[#DFD8CA] text-slate-700 hover:bg-[#F2EFE7]'
+                      : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-700 hover:bg-[#ECE5D6]'
                   }`}
                 >
                   <MessageCircle className="w-4 h-4 text-[#0F6B4F] dark:text-emerald-400" />
@@ -388,7 +388,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                           ? 'border-emerald-500 bg-emerald-500/5 dark:bg-emerald-500/10'
                           : isDark
                             ? 'bg-slate-900/50 border-white/10 hover:border-white/20'
-                            : 'bg-slate-50/70 border-slate-200 hover:border-slate-300'
+                            : 'bg-[#FAF7F0] border-[#E2DACB] hover:border-emerald-500/40'
                       }`}
                     >
                       <div className="space-y-1.5">
@@ -407,7 +407,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                       </div>
 
                       {Array.isArray(item.layanan_tersedia) && item.layanan_tersedia.length > 0 && (
-                        <div className="pt-2 border-t border-slate-200/70 dark:border-white/10 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                        <div className="pt-2 border-t border-[#E2DACB] dark:border-white/10 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
                           {item.layanan_tersedia.join(' · ')}
                         </div>
                       )}
@@ -461,7 +461,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
             className={`p-5 sm:p-6 rounded-3xl border flex flex-col justify-between space-y-5 ${
               isDark
                 ? 'bg-[#0F2942] border-white/10 text-slate-100'
-                : 'bg-white border-slate-200/90 text-slate-900 shadow-xs'
+                : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-900 shadow-xs'
             }`}
           >
             <div className="space-y-3">
@@ -491,7 +491,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-200/80 dark:border-white/10 flex items-center justify-between gap-3">
+            <div className="pt-4 border-t border-[#E2DACB] dark:border-white/10 flex items-center justify-between gap-3">
               <span className="text-xs text-slate-500 dark:text-slate-400">
                 {t('mppPortal.bestPractices.driveThru.address', 'Jl. Simpurusiang, Senga, Kec. Belopa')}
               </span>
@@ -510,7 +510,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
             className={`p-5 sm:p-6 rounded-3xl border flex flex-col justify-between space-y-5 ${
               isDark
                 ? 'bg-[#0F2942] border-white/10 text-slate-100'
-                : 'bg-white border-slate-200/90 text-slate-900 shadow-xs'
+                : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-900 shadow-xs'
             }`}
           >
             <div className="space-y-3">
@@ -535,7 +535,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                     className={`w-full min-h-[44px] px-3 py-2 rounded-xl border text-xs font-medium ${
                       isDark
                         ? 'bg-slate-900 border-slate-700 text-white'
-                        : 'bg-slate-50 border-slate-300 text-slate-900'
+                        : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900'
                     }`}
                   >
                     <option value="drivethru">{t('mppPortal.bestPractices.driveThru.topicDriveThru', 'Konfirmasi Pengambilan Berkas Drive-Thru')}</option>
@@ -556,14 +556,14 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                     className={`w-full min-h-[44px] px-3 py-2 rounded-xl border text-xs font-mono ${
                       isDark
                         ? 'bg-slate-900 border-slate-700 text-white placeholder-slate-500'
-                        : 'bg-slate-50 border-slate-300 text-slate-900 placeholder-slate-400'
+                        : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900 placeholder-slate-400'
                     }`}
                   />
                 </div>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="pt-4 border-t border-[#E2DACB] dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <span className="text-xs text-slate-500 dark:text-slate-400">
                 {t('mppPortal.bestPractices.driveThru.hours', 'Jam respons petugas: hari kerja 07.30–16.00 WITA')}
               </span>
@@ -589,7 +589,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
             className={`p-5 sm:p-6 rounded-3xl border flex flex-col justify-between space-y-5 ${
               isDark
                 ? 'bg-[#0F2942] border-white/10 text-slate-100'
-                : 'bg-white border-slate-200/90 text-slate-900 shadow-xs'
+                : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-900 shadow-xs'
             }`}
           >
             <div className="space-y-3">
@@ -612,7 +612,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                     className={`min-h-[56px] p-3 rounded-2xl border text-left transition flex items-center justify-between gap-2 cursor-pointer ${
                       isDark
                         ? 'bg-slate-900/70 border-white/10 hover:border-emerald-500/50'
-                        : 'bg-slate-50 border-slate-200 hover:border-emerald-500'
+                        : 'bg-[#FAF7F0] border-[#E2DACB] hover:border-emerald-500'
                     }`}
                   >
                     <div className="min-w-0">
@@ -629,7 +629,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-200/80 dark:border-white/10 flex items-center justify-between gap-3">
+            <div className="pt-4 border-t border-[#E2DACB] dark:border-white/10 flex items-center justify-between gap-3">
               <span className="text-xs text-slate-500 dark:text-slate-400">
                 {t('mppPortal.bestPractices.fastAccess.footerNotice', 'Tiket tersimpan ke antrean aktif hari ini')}
               </span>
@@ -650,7 +650,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
             className={`p-5 sm:p-6 rounded-3xl border flex flex-col justify-between space-y-5 ${
               isDark
                 ? 'bg-[#0F2942] border-white/10 text-slate-100'
-                : 'bg-white border-slate-200/90 text-slate-900 shadow-xs'
+                : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-900 shadow-xs'
             }`}
           >
             <div className="space-y-3">
@@ -668,7 +668,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                 className={`p-4 rounded-2xl border flex items-center justify-between gap-3 ${
                   isDark
                     ? 'bg-slate-900/70 border-white/10'
-                    : 'bg-slate-50 border-slate-200'
+                    : 'bg-[#FAF7F0] border-[#E2DACB]'
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
@@ -692,7 +692,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
                   onClick={handleToggleLite}
                   className={`min-h-[44px] px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap shrink-0 cursor-pointer ${
                     isLiteActive
-                      ? 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white'
+                      ? 'bg-[#FAF7F0] border border-[#E2DACB] dark:border-transparent dark:bg-slate-700 text-slate-900 dark:text-white'
                       : 'bg-emerald-600 hover:bg-emerald-500 text-white'
                   }`}
                 >
@@ -701,7 +701,7 @@ export const MppBestPracticesAdoption: React.FC<MppBestPracticesAdoptionProps> =
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-200/80 dark:border-white/10 text-xs text-slate-500 dark:text-slate-400">
+            <div className="pt-4 border-t border-[#E2DACB] dark:border-white/10 text-xs text-slate-500 dark:text-slate-400">
               {t('mppPortal.bestPractices.fastAccess.settingsPersistNotice', 'Pengaturan tersimpan otomatis pada peramban perangkat Anda dan juga tersedia pada bilah atas halaman.')}
             </div>
           </div>

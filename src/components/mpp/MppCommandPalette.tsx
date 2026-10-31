@@ -682,11 +682,11 @@ export const MppCommandPalette: React.FC<MppCommandPaletteProps> = ({
             className={`relative w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border backdrop-blur-2xl flex flex-col max-h-[80vh] ${
               isDark
                 ? "bg-surface/95 border-emerald-500/30 text-white shadow-black/25"
-                : "bg-[#FAF8F3]/98 border-[#E5DFD3] text-slate-900 shadow-slate-900/10"
+                : "bg-[#FAF7F0]/98 border-[#E2DACB] text-slate-900 shadow-slate-900/10"
             }`}
           >
             {/* Header: Search Input & Shortcut Badge */}
-            <div className="p-3.5 sm:p-4 border-b border-slate-200/80 dark:border-white/10 flex items-center gap-3">
+            <div className="p-3.5 sm:p-4 border-b border-[#E2DACB] dark:border-white/10 flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/20">
                 <Search className="w-5 h-5" />
               </div>
@@ -726,7 +726,7 @@ export const MppCommandPalette: React.FC<MppCommandPaletteProps> = ({
 
             {/* Quick Filter Tag Suggestions */}
             {!query && (
-              <div className="px-3.5 sm:px-4 py-2 bg-slate-50/80 dark:bg-base/40 border-b border-slate-200/50 dark:border-white/5 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+              <div className="px-3.5 sm:px-4 py-2 bg-[#F4F0E6]/80 dark:bg-base/40 border-b border-[#E2DACB] dark:border-white/5 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
                 <span className="text-[10.5px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider shrink-0 mr-1">
                   Saran:
                 </span>
@@ -831,7 +831,7 @@ export const MppCommandPalette: React.FC<MppCommandPaletteProps> = ({
             </div>
 
             {/* Footer: Keyboard Help & Status */}
-            <div className="p-3 bg-slate-50/90 dark:bg-base/80 border-t border-slate-200/80 dark:border-white/10 flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400 font-sans">
+            <div className="p-3 bg-[#F4F0E6] dark:bg-base/80 border-t border-[#E2DACB] dark:border-white/10 flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400 font-sans">
               <div className="flex items-center gap-3">
                 <span className="flex items-center gap-1">
                   <kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-[9.5px]">↑</kbd>

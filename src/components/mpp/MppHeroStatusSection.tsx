@@ -85,7 +85,7 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
       </div>
 
       {/* 3. UNIFIED OPERATIONAL & STATUS CARD (Gantikan 3 kotak terpisah) */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-surface border border-slate-200/90 dark:border-white/10 shadow-xl shadow-slate-200/50 dark:shadow-black/25 space-y-4 mt-4 backdrop-blur-md">
+      <div className="p-4 sm:p-5 rounded-2xl bg-[#F4F0E6] dark:bg-surface border border-[#E2DACB] dark:border-white/10 shadow-sm dark:shadow-black/25 space-y-4 mt-4 backdrop-blur-md">
         {/* Top Row: Operational Status Banner (Beroperasi Aktif) */}
         <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-500/30">
           <div className="flex items-center gap-2.5">
@@ -102,7 +102,7 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
             </div>
           </div>
 
-          <span className="px-2.5 py-1 bg-white dark:bg-surface text-emerald-700 dark:text-emerald-400 text-[11px] font-bold rounded-lg border border-emerald-200 dark:border-emerald-500/30 shadow-xs shrink-0">
+          <span className="px-2.5 py-1 bg-[#FAF7F0] dark:bg-surface text-emerald-700 dark:text-emerald-400 text-[11px] font-bold rounded-lg border border-emerald-300 dark:border-emerald-500/30 shadow-xs shrink-0">
             {currentLang === 'en' ? 'Open Today' : currentLang === 'zh' ? '今日开放' : 'Buka Hari Ini'}
           </span>
         </div>
@@ -110,13 +110,13 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
         {/* Middle & Bottom Details (Jam & Lokasi Grid) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-slate-600 dark:text-slate-300">
           {/* Item Jam Operasional */}
-          <div className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-white/10">
+          <div className="flex items-start gap-2.5 p-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-900/60 border border-[#E2DACB] dark:border-white/10">
             <Clock className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
             <div>
               <p className="font-semibold text-slate-800 dark:text-white">
                 {currentLang === 'en' ? 'Service Hours' : currentLang === 'zh' ? '服务时间' : 'Jam Layanan'}
               </p>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug font-medium">
+              <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5 leading-snug font-medium">
                 Senin - Kamis: 07:30 - 16:00 WITA<br />
                 Jumat: 07:30 - 16:30 WITA
               </p>
@@ -124,13 +124,13 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
           </div>
 
           {/* Item Lokasi Gedung */}
-          <div className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-white/10">
+          <div className="flex items-start gap-2.5 p-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-900/60 border border-[#E2DACB] dark:border-white/10">
             <MapPin className="w-4 h-4 text-rose-500 dark:text-rose-400 shrink-0 mt-0.5" />
             <div>
               <p className="font-semibold text-slate-800 dark:text-white">
                 {currentLang === 'en' ? 'Building Location' : currentLang === 'zh' ? '大楼位置' : 'Lokasi Gedung'}
               </p>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug font-medium">
+              <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5 leading-snug font-medium">
                 Gedung MPP Simpurusiang<br />
                 Jl. Jendral Sudirman No. 1, Belopa
               </p>
@@ -156,9 +156,9 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
           <button
             type="button"
             onClick={handleNavigateLocation}
-            className="w-full py-2.5 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold border border-slate-200 dark:border-white/10 flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-98 shadow-xs"
+            className="w-full py-2.5 px-3 bg-[#FAF7F0] hover:bg-[#ECE5D6] dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold border border-[#E2DACB] dark:border-white/10 flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-98 shadow-xs"
           >
-            <Navigation className="w-4 h-4 text-emerald-400 shrink-0" />
+            <Navigation className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
             <span className="truncate">
               {currentLang === 'en' ? 'Directions' : currentLang === 'zh' ? '获取路线' : 'Petunjuk Arah'}
             </span>
@@ -178,18 +178,18 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-md bg-surface rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border border-white/10"
+              className="relative w-full max-w-md bg-[#FAF7F0] dark:bg-surface rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85dvh] border border-[#E2DACB] dark:border-white/10"
             >
-              <div className="p-5 sm:p-6 pb-4 flex items-center justify-between border-b border-white/10 shrink-0 bg-surface/95 backdrop-blur-md">
+              <div className="p-5 sm:p-6 pb-4 flex items-center justify-between border-b border-[#E2DACB] dark:border-white/10 shrink-0 bg-[#F4F0E6] dark:bg-surface/95 backdrop-blur-md">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-xl bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                  <div className="p-2 rounded-xl bg-rose-500/15 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-white">
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                       {currentLang === 'en' ? 'Simpurusiang MPP Location' : currentLang === 'zh' ? 'Simpurusiang 政务大厅位置' : 'Lokasi MPP Simpurusiang'}
                     </h3>
-                    <p className="text-[11px] text-slate-400">
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400">
                       {currentLang === 'en' ? 'Luwu Regency, South Sulawesi' : currentLang === 'zh' ? '南苏拉威西省鲁乌县' : 'Kabupaten Luwu, Sulawesi Selatan'}
                     </p>
                   </div>
@@ -197,27 +197,27 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowLocationDialog(false)}
-                  className="p-2 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white cursor-pointer transition-colors"
+                  className="p-2 rounded-xl bg-[#FAF7F0] hover:bg-[#ECE5D6] border border-[#E2DACB] dark:border-transparent dark:bg-transparent dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs text-slate-300">
-                <p className="font-semibold text-white">
+              <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs text-slate-700 dark:text-slate-300">
+                <p className="font-semibold text-slate-900 dark:text-white">
                   📍 {currentLang === 'en' ? 'Official Address:' : currentLang === 'zh' ? '📍 官方地址:' : '📍 Alamat Resmi:'}
                 </p>
-                <div className="p-3 bg-slate-900/60 rounded-xl border border-white/10">
-                  <p className="font-medium text-white">
+                <div className="p-3 bg-[#F4F0E6] dark:bg-slate-900/60 rounded-xl border border-[#E2DACB] dark:border-white/10">
+                  <p className="font-medium text-slate-900 dark:text-white">
                     {currentLang === 'en' ? 'Simpurusiang Public Service Mall (MPP) Building' : currentLang === 'zh' ? 'Simpurusiang 公共服务大厅 (MPP)' : 'Gedung Mal Pelayanan Publik (MPP) Simpurusiang'}
                   </p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
                     Jl. Jendral Sudirman No. 1, Senga, Kec. Belopa, Kabupaten Luwu, Sulawesi Selatan 91994
                   </p>
                 </div>
 
-                <div className="flex items-start gap-2 text-[11px] text-slate-400 pt-1">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <div className="flex items-start gap-2 text-[11px] text-slate-600 dark:text-slate-400 pt-1">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                   <span>
                     {currentLang === 'en' 
                       ? 'Spacious motorcycle & car parking, wheelchair ramp access, and air-conditioned waiting lounge available.' 
@@ -237,7 +237,7 @@ export const MppHeroStatusSection: React.FC<MppHeroStatusSectionProps> = ({
                         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
                       }
                     }}
-                    className="w-full py-2.5 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold transition-all text-center cursor-pointer border border-white/10"
+                    className="w-full py-2.5 px-3 bg-[#F4F0E6] hover:bg-[#ECE5D6] dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold transition-all text-center cursor-pointer border border-[#E2DACB] dark:border-white/10"
                   >
                     {currentLang === 'en' ? 'Floor Plan' : currentLang === 'zh' ? '大楼平面图' : 'Denah Gedung'}
                   </button>
