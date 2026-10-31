@@ -8128,6 +8128,57 @@ app.get("/api/site-settings", async (req, res) => {
   }
 });
 
+// KPBU Projects SSOT API Endpoint
+app.get("/api/kpbu/projects", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("kpbu_projects")
+      .select("*")
+      .eq("is_active", true)
+      .order("urutan", { ascending: true });
+
+    if (error) throw error;
+    res.json({ data: data || [] });
+  } catch (err: any) {
+    console.error("Error at GET /api/kpbu/projects:", err?.message || err);
+    res.status(500).json({ data: [], error: "Gagal mengambil data KPBU" });
+  }
+});
+
+// KPBU Incentives & Config SSOT API Endpoint
+app.get("/api/kpbu/incentives", async (req, res) => {
+  try {
+    const [incentivesRes, configRes] = await Promise.all([
+      supabase
+        .from("investment_incentives")
+        .select("*")
+        .eq("is_active", true)
+        .order("urutan", { ascending: true }),
+      supabase
+        .from("kpbu_config")
+        .select("key, value, value_json"),
+    ]);
+
+    if (incentivesRes.error) throw incentivesRes.error;
+
+    const config: Record<string, any> = {};
+    if (configRes.data) {
+      for (const row of configRes.data) {
+        config[row.key] = row.value_json ?? row.value;
+      }
+    }
+
+    res.json({
+      data: incentivesRes.data || [],
+      config,
+    });
+  } catch (err: any) {
+    console.error("Error at GET /api/kpbu/incentives:", err?.message || err);
+    res.status(500).json({ data: [], config: {}, error: "Gagal mengambil data insentif" });
+  }
+});
+
+
 app.post("/api/site-settings", async (req, res) => {
   try {
     const { setting_key, setting_value } = req.body || {};
