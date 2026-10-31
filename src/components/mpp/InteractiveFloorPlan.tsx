@@ -2395,10 +2395,10 @@ function InteractiveFloorPlanComponent({
 
   // Filter chips list
   const filterChips: { id: FloorCategory; label: string; icon: any }[] = [
-    { id: 'all', label: 'Semua', icon: Layers },
-    { id: 'counter', label: 'Loket Pelayanan', icon: Building2 },
-    { id: 'facility', label: 'Fasilitas Publik', icon: Armchair },
-    { id: 'disability', label: 'Ramah Disabilitas', icon: Accessibility }
+    { id: 'all', label: t('floorplan.filterAll', 'Semua'), icon: Layers },
+    { id: 'counter', label: t('floorplan.filterCounters', 'Loket Pelayanan'), icon: Building2 },
+    { id: 'facility', label: t('floorplan.filterFacilities', 'Fasilitas Publik'), icon: Armchair },
+    { id: 'disability', label: t('floorplan.filterDisability', 'Ramah Disabilitas'), icon: Accessibility }
   ];
 
   // Active filter flag
@@ -2674,7 +2674,7 @@ function InteractiveFloorPlanComponent({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari gerai/fasilitas..."
+              placeholder={t('floorplan.searchPlaceholder', 'Cari gerai/fasilitas...')}
               className={`w-full pl-9 pr-8 py-2 text-xs rounded-2xl border outline-none transition-all ${
                 isDark
                   ? 'bg-slate-800 border-slate-700 text-white placeholder-slate-500 focus:border-emerald-500'
@@ -2703,7 +2703,7 @@ function InteractiveFloorPlanComponent({
                   : 'text-slate-600 dark:text-slate-400'
               }`}
             >
-              Daftar ({filteredNodes.length})
+              {t('floorplan.viewList', 'Daftar')} ({filteredNodes.length})
             </button>
             <button
               type="button"
@@ -2714,7 +2714,7 @@ function InteractiveFloorPlanComponent({
                   : 'text-slate-600 dark:text-slate-400'
               }`}
             >
-              Denah
+              {t('floorplan.viewMap', 'Denah')}
             </button>
           </div>
 
@@ -2723,7 +2723,7 @@ function InteractiveFloorPlanComponent({
             <button
               type="button"
               onClick={handleZoomIn}
-              title="Perbesar Denah"
+              title={t('floorplan.zoomIn', 'Perbesar Denah')}
               className="p-1.5 rounded-xl hover:bg-[#ECE5D6] dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
             >
               <ZoomIn className="w-4 h-4" />
@@ -2731,7 +2731,7 @@ function InteractiveFloorPlanComponent({
             <button
               type="button"
               onClick={handleZoomOut}
-              title="Perkecil Denah"
+              title={t('floorplan.zoomOut', 'Perkecil Denah')}
               className="p-1.5 rounded-xl hover:bg-[#ECE5D6] dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
             >
               <ZoomOut className="w-4 h-4" />
@@ -2739,7 +2739,7 @@ function InteractiveFloorPlanComponent({
             <button
               type="button"
               onClick={handleResetAll}
-              title="Reset Tampilan & Filter"
+              title={t('floorplan.resetView', 'Reset Tampilan & Filter')}
               className="p-1.5 rounded-xl hover:bg-[#ECE5D6] dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
             >
               <RotateCcw className="w-4 h-4" />
@@ -2747,7 +2747,7 @@ function InteractiveFloorPlanComponent({
             <button
               type="button"
               onClick={handleCenterMap}
-              title="Pusatkan Peta (Kembalikan ke posisi awal)"
+              title={t('floorplan.centerMapTip', 'Pusatkan Peta (Kembalikan ke posisi awal)')}
               className="p-1.5 rounded-xl hover:bg-[#ECE5D6] dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
             >
               <Compass className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
@@ -2811,15 +2811,15 @@ function InteractiveFloorPlanComponent({
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
                   </span>
-                  <span className="text-emerald-700 dark:text-emerald-300">Buka</span>
+                  <span className="text-emerald-700 dark:text-emerald-300">{t('floorplan.statusOpen', 'Buka')}</span>
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-amber-400" />
-                  <span className="text-amber-700 dark:text-amber-300">Ramai</span>
+                  <span className="text-amber-700 dark:text-amber-300">{t('floorplan.statusBusy', 'Ramai')}</span>
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-slate-400" />
-                  <span className="text-slate-600 dark:text-slate-400">Tutup</span>
+                  <span className="text-slate-600 dark:text-slate-400">{t('floorplan.statusClosed', 'Tutup')}</span>
                 </span>
               </div>
             </div>
@@ -2847,10 +2847,10 @@ function InteractiveFloorPlanComponent({
         }>
           <div className="flex items-center justify-between px-2 pt-1 pb-1">
             <span className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400 font-sans">
-              Daftar Loket ({filteredNodes.length})
+              {t('floorplan.directoryHeader', 'Daftar Loket ({{count}})', { count: filteredNodes.length })}
             </span>
             <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
-              Klik untuk sorot rute
+              {t('floorplan.clickToHighlight', 'Klik untuk sorot rute')}
             </span>
           </div>
 
@@ -2893,10 +2893,10 @@ function InteractiveFloorPlanComponent({
 
                   <div className="mt-2.5 pt-2 border-t border-[#E2DACB] dark:border-slate-700/60 flex items-center justify-between">
                     <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                      {node.services.length} Layanan
+                      {t('floorplan.servicesCount', '{{count}} Layanan', { count: node.services.length })}
                     </span>
                     <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                      <span>Rute Loket</span>
+                      <span>{t('floorplan.counterRoute', 'Rute Loket')}</span>
                       <ChevronRight className="w-3.5 h-3.5" />
                     </span>
                   </div>
@@ -3189,11 +3189,11 @@ function InteractiveFloorPlanComponent({
                 type="button"
                 onClick={handleCenterMap}
                 className="h-9 px-3 flex items-center gap-1.5 rounded-2xl backdrop-blur-md bg-slate-900/90 text-white border border-slate-700/80 shadow-2xl hover:border-emerald-500/80 hover:bg-slate-800 transition-all cursor-pointer active:scale-95 text-xs font-bold select-none"
-                title="Pusatkan Peta (Kembalikan ke posisi awal)"
-                aria-label="Pusatkan Peta"
+                title={t('floorplan.centerMapTip', 'Pusatkan Peta (Kembalikan ke posisi awal)')}
+                aria-label={t('floorplan.centerMap', 'Pusatkan Peta')}
               >
                 <Compass className="w-4 h-4 text-emerald-400" />
-                <span className="hidden sm:inline">Pusatkan Peta</span>
+                <span className="hidden sm:inline">{t('floorplan.centerMap', 'Pusatkan Peta')}</span>
               </button>
 
               {/* Floating Emergency Button (Guarded by ENABLE_EMERGENCY_MODE) */}
@@ -3208,12 +3208,12 @@ function InteractiveFloorPlanComponent({
                       ? 'bg-rose-700 hover:bg-rose-800 text-white border-rose-300 ring-2 ring-rose-400/50'
                       : 'bg-surface/95 dark:bg-slate-800/95 backdrop-blur-md border border-rose-500/50 text-rose-400 hover:bg-rose-600 hover:text-white'
                   }`}
-                  title={isEmergencyMode ? "Hentikan Simulasi Darurat" : "Simulasi Rute Evakuasi K3 Darurat (Lantai 1)"}
-                  aria-label={isEmergencyMode ? "Hentikan Simulasi Darurat" : "Simulasi Darurat Jalur Evakuasi"}
+                  title={isEmergencyMode ? t('evacuation.stopButton', 'Hentikan Simulasi') : t('evacuation.button', 'Simulasi Darurat')}
+                  aria-label={isEmergencyMode ? t('evacuation.stopButton', 'Hentikan Simulasi') : t('evacuation.button', 'Simulasi Darurat')}
                 >
                   <ShieldAlert className={`w-4 h-4 shrink-0 ${isEmergencyMode ? 'animate-pulse text-amber-200' : 'text-rose-400'}`} />
-                  <span className="hidden sm:inline">{isEmergencyMode ? 'Hentikan Simulasi' : 'Simulasi Darurat'}</span>
-                  <span className="sm:hidden">{isEmergencyMode ? 'Stop' : 'Darurat'}</span>
+                  <span className="hidden sm:inline">{isEmergencyMode ? t('evacuation.stopButton', 'Hentikan Simulasi') : t('evacuation.button', 'Simulasi Darurat')}</span>
+                  <span className="sm:hidden">{isEmergencyMode ? t('evacuation.stopButton', 'Stop') : t('evacuation.mobileButton', 'Darurat')}</span>
                 </button>
               )}
             </div>
@@ -4039,19 +4039,19 @@ function InteractiveFloorPlanComponent({
                           ? 'bg-teal-500/10 text-teal-700 dark:text-teal-400 border-teal-500/30'
                           : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30'
                       }`}>
-                        {isFacility ? 'Fasilitas Publik' : 'Gerai Pelayanan'}
+                        {isFacility ? t('floorplan.filterFacilities', 'Fasilitas Publik') : t('floorplan.counterService', 'Gerai Pelayanan')}
                       </span>
 
                       {/* Zone Badge */}
                       <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#F4F0E6] dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-[#E2DACB] dark:border-transparent">
-                        {selectedNode.zone}
+                        {translateZoneToId(selectedNode.zone)}
                       </span>
 
                       {/* Accessibility Badge */}
                       {isAccessible && (
                         <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-50 dark:bg-cyan-950/80 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800">
                           <Accessibility className="w-3 h-3 text-cyan-500" />
-                          <span>Ramah Disabilitas</span>
+                          <span>{t('floorplan.filterDisability', 'Ramah Disabilitas')}</span>
                         </span>
                       )}
 
@@ -4090,10 +4090,10 @@ function InteractiveFloorPlanComponent({
                         <AlertTriangle className="w-6 h-6" />
                       </div>
                       <h4 className="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100">
-                        Informasi layanan sedang diperbarui
+                        {t('floorplan.infoUpdating', 'Informasi layanan sedang diperbarui')}
                       </h4>
                       <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-md mx-auto">
-                        Data operasional dan katalog layanan untuk gerai/fasilitas ini sedang dalam tahap sinkronisasi dengan instansi terkait.
+                        {t('floorplan.infoUpdatingDesc', 'Data operasional dan katalog layanan untuk gerai/fasilitas ini sedang dalam tahap sinkronisasi dengan instansi terkait.')}
                       </p>
                     </div>
                   ) : (
@@ -4110,12 +4110,12 @@ function InteractiveFloorPlanComponent({
                     {isFacility ? (
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
                         <span className="w-2 h-2 rounded-full bg-teal-500" />
-                        <span>Tersedia / Siap Digunakan</span>
+                        <span>{t('floorplan.availableReady', 'Tersedia / Siap Digunakan')}</span>
                       </span>
                     ) : (
                       <div className="flex items-center gap-2">
                         <span className="text-[11px] text-slate-600 dark:text-slate-400 hidden sm:inline">
-                          Estimasi: <strong className="text-slate-800 dark:text-slate-200">± 5-10 Menit</strong>
+                          {t('floorplan.estimateTime', 'Estimasi: ± 5-10 Menit')}
                         </span>
                         <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${
                           selectedNode.status === 'open'
@@ -4123,7 +4123,7 @@ function InteractiveFloorPlanComponent({
                             : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
                         }`}>
                           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                          <span>{selectedNode.status === 'open' ? 'Normal / Buka' : 'Ramai'}</span>
+                          <span>{selectedNode.status === 'open' ? t('floorplan.statusNormalOpen', 'Normal / Buka') : t('floorplan.statusBusy', 'Ramai')}</span>
                         </span>
                       </div>
                     )}
@@ -4134,7 +4134,7 @@ function InteractiveFloorPlanComponent({
                     <div>
                       <h5 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5 flex items-center gap-1.5">
                         <Sparkles className="w-3.5 h-3.5 text-teal-500 dark:text-teal-400" />
-                        <span>Kelengkapan & Sarana Fasilitas</span>
+                        <span>{t('floorplan.facilityAmenities', 'Kelengkapan & Sarana Fasilitas')}</span>
                       </h5>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {displayAmenities.map((amenity, idx) => (
@@ -4153,7 +4153,7 @@ function InteractiveFloorPlanComponent({
                     <div>
                       <h5 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 flex items-center gap-1.5">
                         <Building2 className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
-                        <span>Daftar Layanan Dokumen & Perizinan</span>
+                        <span>{t('floorplan.servicesList', 'Daftar Layanan Dokumen & Perizinan')}</span>
                       </h5>
                       <div className="space-y-1.5">
                         {selectedNode.services.map((srv, idx) => (
@@ -4176,8 +4176,8 @@ function InteractiveFloorPlanComponent({
                       <Navigation className={`w-4 h-4 shrink-0 mt-0.5 ${isFacility ? 'text-teal-600 dark:text-teal-400' : 'text-emerald-600 dark:text-emerald-400'}`} />
                       <div className="text-slate-700 dark:text-slate-300">
                         <strong className={isFacility ? 'text-teal-700 dark:text-teal-300' : 'text-emerald-700 dark:text-emerald-300'}>
-                          Panduan Arah: 
-                        </strong>{' '}
+                          {t('floorplan.wayfindingLabel', 'Panduan Arah:')}{' '}
+                        </strong>
                         {selectedNode.wayfindingTips}
                       </div>
                     </div>
@@ -4194,7 +4194,7 @@ function InteractiveFloorPlanComponent({
                     className="px-4 py-2.5 rounded-2xl bg-[#F4F0E6] dark:bg-transparent border border-[#E2DACB] dark:border-slate-700 hover:bg-[#ECE5D6] dark:hover:bg-slate-800 text-xs font-bold transition-all flex items-center gap-1.5"
                   >
                     <Navigation className={`w-3.5 h-3.5 ${isFacility ? 'text-teal-500' : 'text-emerald-500'}`} />
-                    <span>{isWayfindingActive ? 'Sembunyikan Jalur' : 'Petunjuk Arah'}</span>
+                    <span>{isWayfindingActive ? t('floorplan.hideRoute', 'Sembunyikan Jalur') : t('floorplan.getDirections', 'Petunjuk Arah')}</span>
                   </button>
 
                   {isFacility ? (
@@ -4205,7 +4205,7 @@ function InteractiveFloorPlanComponent({
                       className="px-5 py-2.5 rounded-2xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold shadow-md shadow-black/25 transition-all flex items-center gap-1.5"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>Tutup Informasi</span>
+                      <span>{t('floorplan.closeInfo', 'Tutup Informasi')}</span>
                     </button>
                   ) : (
                     /* IF TENANT: Prominent "Ambil Antrean" Button */

@@ -3041,16 +3041,16 @@ export default function PortalMPP() {
           <div id="panduan-gedung-hub" className="w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-2 scroll-mt-36 sm:scroll-mt-40">
             <div className="flex flex-col items-center text-center mb-5 sm:mb-6">
               <span className={`${MPP_TYPOGRAPHY.eyebrow} mb-1.5`}>
-                Panduan Kunjungan Fisik &amp; Prosedur
+                {t("mppGuideHub.eyebrow", "Panduan Kunjungan Fisik & Prosedur")}
               </span>
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white font-sans text-balance">
-                Denah Gedung, Alur Layanan &amp;{" "}
+                {t("mppGuideHub.title", "Denah Gedung, Alur Layanan &")}{" "}
                 <span className="font-serif-display italic font-semibold text-[#0F6B4F] dark:text-[#6EE7B7]">
-                  Fasilitas Publik
+                  {t("mppGuideHub.titleHighlight", "Fasilitas Publik")}
                 </span>
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300/90 max-w-2xl mt-1.5 leading-relaxed">
-                Pilih panduan di bawah ini sesuai kebutuhan kunjungan Anda tanpa harus menggulir seluruh halaman.
+                {t("mppGuideHub.subtitle", "Pilih panduan di bawah ini sesuai kebutuhan kunjungan Anda tanpa harus menggulir seluruh halaman.")}
               </p>
               <div className="gold-divider-diamond" aria-hidden="true">
                 <span className="gold-diamond-icon" />
@@ -3059,10 +3059,10 @@ export default function PortalMPP() {
 
             <div className="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar gap-1.5 p-1.5 rounded-2xl bg-[#F4F0E6] dark:bg-[#0B2035] border border-[#E2DACB] dark:border-white/[0.08] max-w-4xl mx-auto">
               {[
-                { id: 'denah' as const, label: 'Denah Gedung', icon: Layers },
-                { id: 'alur' as const, label: 'Alur, Jam Ramai & SLA', icon: FileCheck },
-                { id: 'fasilitas' as const, label: 'Fasilitas & Galeri Gedung', icon: Armchair },
-                { id: 'faq' as const, label: 'Tanya Jawab (FAQ)', icon: HelpCircle },
+                { id: 'denah' as const, label: t("mppGuideHub.tabs.denah", "Denah Gedung"), icon: Layers },
+                { id: 'alur' as const, label: t("mppGuideHub.tabs.alur", "Alur, Jam Ramai & SLA"), icon: FileCheck },
+                { id: 'fasilitas' as const, label: t("mppGuideHub.tabs.fasilitas", "Fasilitas & Galeri Gedung"), icon: Armchair },
+                { id: 'faq' as const, label: t("mppGuideHub.tabs.faq", "Tanya Jawab (FAQ)"), icon: HelpCircle },
               ].map((tab) => {
                 const TabIcon = tab.icon;
                 const isActive = guideHubTab === tab.id;

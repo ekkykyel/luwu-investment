@@ -3718,6 +3718,18 @@
     "completeness_count": "项材料准备就绪",
     "category_hint": "请选择所需办理的政务事项以自适应展示必备材料清单"
   },
+  "mppGuideHub": {
+    "eyebrow": "现场到访指南与办理流程",
+    "title": "大楼平面布局、服务流程与",
+    "titleHighlight": "公共服务设施",
+    "subtitle": "请根据您的到访需求选择下方指南，无需滚动浏览整个页面。",
+    "tabs": {
+      "denah": "大楼平面布局",
+      "alur": "办理流程、高峰时段与 SLA",
+      "fasilitas": "便民设施与大楼图集",
+      "faq": "常见问题解答 (FAQ)"
+    }
+  },
   "floorplan": {
     "badge": "政务前台综合空间交互式平面图",
     "title": "政务大厅平面布局与窗口指引",
@@ -3734,6 +3746,23 @@
     "searchPlaceholder": "搜索窗口/便民设施...",
     "viewList": "列表",
     "viewMap": "平面图",
+    "zoomIn": "放大",
+    "zoomOut": "缩小",
+    "resetView": "重置视图与筛选",
+    "centerMapTip": "地图居中（恢复初始位置）",
+    "centerMap": "地图居中",
+    "counterService": "服务窗口",
+    "infoUpdating": "服务信息更新中",
+    "infoUpdatingDesc": "该窗口/设施的运营数据与服务目录正在与相关部门同步中。",
+    "availableReady": "可用 / 可使用",
+    "estimateTime": "预计：± 5-10 分钟",
+    "statusNormalOpen": "正常 / 营业中",
+    "facilityAmenities": "便民设施与服务配套",
+    "servicesList": "办理事项与许可目录",
+    "wayfindingLabel": "路线指引：",
+    "hideRoute": "隐藏路线",
+    "getDirections": "获取路线",
+    "closeInfo": "关闭信息",
     "fullscreenBtn": "全屏视图",
     "statusOpen": "办理中",
     "statusBusy": "繁忙",

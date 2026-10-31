@@ -3748,6 +3748,18 @@
     "completeness_count": "Files Ready for Service",
     "category_hint": "Select service type to adjust required documents checklist"
   },
+  "mppGuideHub": {
+    "eyebrow": "PHYSICAL VISIT GUIDE & PROCEDURES",
+    "title": "Building Floor Plan, Service Flow &",
+    "titleHighlight": "Public Facilities",
+    "subtitle": "Select a guide below based on your visit needs without having to scroll through the entire page.",
+    "tabs": {
+      "denah": "Building Floor Plan",
+      "alur": "Flow, Peak Hours & SLA",
+      "fasilitas": "Facilities & Building Gallery",
+      "faq": "Frequently Asked Questions (FAQ)"
+    }
+  },
   "floorplan": {
     "badge": "INTERACTIVE FRONT OFFICE FLOOR PLAN",
     "title": "Room & Service Counter Layout",
@@ -3764,6 +3776,23 @@
     "searchPlaceholder": "Search counter/facility...",
     "viewList": "List",
     "viewMap": "Floor Plan",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "resetView": "Reset View & Filters",
+    "centerMapTip": "Center Map (Return to default position)",
+    "centerMap": "Center Map",
+    "counterService": "Service Booth",
+    "infoUpdating": "Service Information Updating",
+    "infoUpdatingDesc": "Operational data and service catalog for this booth/facility are currently synchronizing with the agency.",
+    "availableReady": "Available / Ready",
+    "estimateTime": "Est: ± 5-10 Mins",
+    "statusNormalOpen": "Normal / Open",
+    "facilityAmenities": "Facility Equipment & Amenities",
+    "servicesList": "Documents & Permits List",
+    "wayfindingLabel": "Direction Guide:",
+    "hideRoute": "Hide Path",
+    "getDirections": "Get Directions",
+    "closeInfo": "Close Information",
     "fullscreenBtn": "Fullscreen Mode",
     "statusOpen": "Open",
     "statusBusy": "Busy",

@@ -3748,6 +3748,18 @@
     "completeness_count": "Kelengkapan Berkas Siap",
     "category_hint": "Pilih jenis layanan untuk menyesuaikan dokumen persyaratan"
   },
+  "mppGuideHub": {
+    "eyebrow": "PANDUAN KUNJUNGAN FISIK & PROSEDUR",
+    "title": "Denah Gedung, Alur Layanan &",
+    "titleHighlight": "Fasilitas Publik",
+    "subtitle": "Pilih panduan di bawah ini sesuai kebutuhan kunjungan Anda tanpa harus menggulir seluruh halaman.",
+    "tabs": {
+      "denah": "Denah Gedung",
+      "alur": "Alur, Jam Ramai & SLA",
+      "fasilitas": "Fasilitas & Galeri Gedung",
+      "faq": "Tanya Jawab (FAQ)"
+    }
+  },
   "floorplan": {
     "badge": "DENAH INTERAKTIF FRONT OFFICE",
     "title": "Denah Ruangan & Loket Pelayanan",
@@ -3764,6 +3776,23 @@
     "searchPlaceholder": "Cari gerai/fasilitas...",
     "viewList": "Daftar",
     "viewMap": "Denah",
+    "zoomIn": "Perbesar Denah",
+    "zoomOut": "Perkecil Denah",
+    "resetView": "Reset Tampilan & Filter",
+    "centerMapTip": "Pusatkan Peta (Kembalikan ke posisi awal)",
+    "centerMap": "Pusatkan Peta",
+    "counterService": "Gerai Pelayanan",
+    "infoUpdating": "Informasi layanan sedang diperbarui",
+    "infoUpdatingDesc": "Data operasional dan katalog layanan untuk gerai/fasilitas ini sedang dalam tahap sinkronisasi dengan instansi terkait.",
+    "availableReady": "Tersedia / Siap Digunakan",
+    "estimateTime": "Estimasi: ± 5-10 Menit",
+    "statusNormalOpen": "Normal / Buka",
+    "facilityAmenities": "Kelengkapan & Sarana Fasilitas",
+    "servicesList": "Daftar Layanan Dokumen & Perizinan",
+    "wayfindingLabel": "Panduan Arah:",
+    "hideRoute": "Sembunyikan Jalur",
+    "getDirections": "Petunjuk Arah",
+    "closeInfo": "Tutup Informasi",
     "fullscreenBtn": "Ketuk Layar Lebar",
     "statusOpen": "Buka",
     "statusBusy": "Ramai",
