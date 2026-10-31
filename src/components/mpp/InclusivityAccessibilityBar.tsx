@@ -107,11 +107,12 @@ export const InclusivityAccessibilityBar: React.FC<InclusivityAccessibilityBarPr
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolledPastHero(window.scrollY > 120);
+      const portalScrollTop = document.getElementById('portal-top')?.scrollTop || 0;
+      setIsScrolledPastHero((window.scrollY || portalScrollTop) > 120);
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
     handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll, { capture: true });
   }, []);
 
   useEffect(() => {

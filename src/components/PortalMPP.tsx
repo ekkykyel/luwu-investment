@@ -13,7 +13,7 @@ import {
   HardHat, MapPin, User, Mail, Phone, X, Check, Briefcase,
   Instagram, Youtube, Facebook, Music2, Heart, MessageCircle, Share2, ExternalLink,
   Send, FileText, QrCode, Printer, Copy, RotateCcw, Download, FileCheck, Clock3, AlertCircle, Loader2
-, Globe, Map, Package, BadgeCheck, Lock, Unlock, Plus, Trash2, Volume2, VolumeX, Radio, Info, Mic, Maximize2, ZoomIn, Eye, EyeOff, BellRing, Zap, WifiOff, Newspaper } from 'lucide-react';
+, Globe, Map, Package, BadgeCheck, Lock, Unlock, Plus, Trash2, Volume2, VolumeX, Radio, Info, Mic, Maximize2, Minimize2, ZoomIn, Eye, EyeOff, BellRing, Zap, WifiOff, Newspaper } from 'lucide-react';
 import { CountUpNumber } from './common/CountUpNumber';
 import { useCountUp } from '../hooks/useCountUp';
 import { WeatherWidget } from './WeatherWidget';
@@ -386,11 +386,20 @@ export default function PortalMPP() {
   const [transparencyHubTab, setTransparencyHubTab] = useState<'skm' | 'statistik' | 'berita' | 'kemitraan'>('skm');
   const [showSocialMediaFeed, setShowSocialMediaFeed] = useState<boolean>(false);
 
+  const portalScrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollToPortalTop = useCallback((behavior: ScrollBehavior = 'smooth') => {
+    if (portalScrollRef.current) {
+      portalScrollRef.current.scrollTo({ top: 0, left: 0, behavior });
+    }
+    window.scrollTo({ top: 0, left: 0, behavior });
+  }, []);
+
   // Router navigasi pintar lintas seksi & tab Progressive Disclosure
   const navigateToMppSection = useCallback((rawId: string) => {
     const cleanId = rawId.replace(/^#/, '').trim();
     if (!cleanId || cleanId === 'hero' || cleanId === 'beranda') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollToPortalTop('smooth');
       return;
     }
 
@@ -447,7 +456,7 @@ export default function PortalMPP() {
     } else {
       scrollTarget();
     }
-  }, []);
+  }, [scrollToPortalTop]);
 
   // Animations & Viewport Scroll-Trigger Refs (Reduced-Motion compliant)
   const shouldReduceMotion = useReducedMotion();
@@ -654,14 +663,12 @@ export default function PortalMPP() {
     }
 
     const resetToTop = () => {
+      if (portalScrollRef.current) {
+        portalScrollRef.current.scrollTop = 0;
+      }
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       if (document.documentElement) document.documentElement.scrollTop = 0;
       if (document.body) document.body.scrollTop = 0;
-
-      const topTarget = document.getElementById('portal-top') || document.getElementById('hero') || document.getElementById('beranda');
-      if (topTarget) {
-        topTarget.scrollIntoView({ behavior: 'instant', block: 'start' });
-      }
     };
 
     // Eksekusi segera
@@ -704,10 +711,11 @@ export default function PortalMPP() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      const currentTop = portalScrollRef.current ? portalScrollRef.current.scrollTop : window.scrollY;
+      setIsScrolled(currentTop > 20);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
+    return () => window.removeEventListener('scroll', handleScroll, { capture: true } as EventListenerOptions);
   }, []);
   const [mottoImgError, setMottoImgError] = useState(false);
   const [antreanImgError, setAntreanImgError] = useState(false);
@@ -995,6 +1003,46 @@ export default function PortalMPP() {
   useGlobalFullscreenBackHandler(isAnyModalOpen, closeActiveModal);
 
   const { isAndroid } = useDeviceAutomation();
+  const [isMppDocFullscreen, setIsMppDocFullscreen] = useState<boolean>(false);
+  const manualFsExitRef = useRef<boolean>(false);
+
+  // Aktifkan sub-scroller khusus Portal MPP agar saat Fullscreen di Android,
+  // gestur usap & geser jari (touch swipe/drag scroll) berjalan 100% mulus tanpa dikunci oleh root viewport Chrome.
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    document.documentElement.classList.add("mpp-portal-active");
+    return () => {
+      document.documentElement.classList.remove("mpp-portal-active");
+    };
+  }, []);
+
+  // Pantau status Fullscreen dokumen secara reaktif
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const syncFsState = () => {
+      const doc = document as any;
+      const active = !!(
+        doc.fullscreenElement ||
+        doc.webkitFullscreenElement ||
+        doc.mozFullScreenElement ||
+        doc.msFullscreenElement
+      );
+      setIsMppDocFullscreen(active);
+    };
+
+    syncFsState();
+    document.addEventListener("fullscreenchange", syncFsState);
+    document.addEventListener("webkitfullscreenchange", syncFsState);
+    document.addEventListener("mozfullscreenchange", syncFsState);
+    document.addEventListener("MSFullscreenChange", syncFsState);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", syncFsState);
+      document.removeEventListener("webkitfullscreenchange", syncFsState);
+      document.removeEventListener("mozfullscreenchange", syncFsState);
+      document.removeEventListener("MSFullscreenChange", syncFsState);
+    };
+  }, []);
 
   // Otomatis terapkan mode Fullscreen & edge-to-edge layout pada perangkat Android di Portal MPP
   useEffect(() => {
@@ -1021,23 +1069,91 @@ export default function PortalMPP() {
     };
   }, [isAndroid]);
 
-  // Request Fullscreen secara mulus saat gestur interaksi pertama pada Android tanpa mengunci/mengganggu gestur usap & scroll
+  // Auto-enter Fullscreen khusus Android pada ketukan valid (click / tap tanpa geser scroll)
+  // sehingga tidak pernah memutus momentum usap jari (swipe scroll) pengguna.
   useEffect(() => {
     if (!isAndroidDevice()) return;
 
-    const handleFirstTouchFS = () => {
-      requestSmartFullscreen().catch(() => {});
-      window.removeEventListener("click", handleFirstTouchFS);
-      window.removeEventListener("touchstart", handleFirstTouchFS);
+    // Coba masuk fullscreen langsung jika navigasi membawa transient user activation
+    requestSmartFullscreen().catch(() => {});
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchMoved = false;
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches && e.touches.length > 0) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        touchMoved = false;
+      }
     };
 
-    window.addEventListener("click", handleFirstTouchFS, { passive: true });
-    window.addEventListener("touchstart", handleFirstTouchFS, { passive: true });
+    const onTouchMove = (e: TouchEvent) => {
+      if (!e.touches || e.touches.length === 0) return;
+      const dx = Math.abs(e.touches[0].clientX - touchStartX);
+      const dy = Math.abs(e.touches[0].clientY - touchStartY);
+      if (dx > 10 || dy > 10) {
+        touchMoved = true;
+      }
+    };
+
+    const tryEnterAndroidFullscreen = () => {
+      if (manualFsExitRef.current) return;
+      const lastExit = (window as any).__lastExitFullscreenTime || 0;
+      if (Date.now() - lastExit < 4000) return;
+
+      const doc = document as any;
+      const isCurrentFs = !!(
+        doc.fullscreenElement ||
+        doc.webkitFullscreenElement ||
+        doc.mozFullScreenElement ||
+        doc.msFullscreenElement
+      );
+      if (!isCurrentFs) {
+        requestSmartFullscreen().catch(() => {});
+      }
+    };
+
+    const onTouchEnd = () => {
+      if (!touchMoved) {
+        tryEnterAndroidFullscreen();
+      }
+    };
+
+    const onClick = () => {
+      tryEnterAndroidFullscreen();
+    };
+
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("click", onClick, { passive: true });
 
     return () => {
-      window.removeEventListener("click", handleFirstTouchFS);
-      window.removeEventListener("touchstart", handleFirstTouchFS);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("click", onClick);
     };
+  }, []);
+
+  const handleToggleMppFullscreen = useCallback(() => {
+    const doc = document as any;
+    const isCurrentFs = !!(
+      doc.fullscreenElement ||
+      doc.webkitFullscreenElement ||
+      doc.mozFullScreenElement ||
+      doc.msFullscreenElement
+    );
+    if (isCurrentFs) {
+      manualFsExitRef.current = true;
+      (window as any).__lastExitFullscreenTime = Date.now();
+      exitSmartFullscreen().catch(() => {});
+    } else {
+      manualFsExitRef.current = false;
+      requestSmartFullscreen(true).catch(() => {});
+    }
   }, []);
 
   // --- State Dinamis Supabase untuk SKM, Antrean & Ulasan (Doktrin Zero Dummy) ---
@@ -2030,7 +2146,10 @@ export default function PortalMPP() {
         // Jika hero tidak terlihat (scrolled past), aktifkan sticky quick-nav
         setShowQuickNav(!entry.isIntersecting);
       },
-      { threshold: 0.1 }
+      {
+        root: portalScrollRef.current || null,
+        threshold: 0.1,
+      }
     );
 
     observer.observe(heroEl);
@@ -2053,6 +2172,7 @@ export default function PortalMPP() {
         });
       },
       {
+        root: portalScrollRef.current || null,
         rootMargin: '-20% 0px -60% 0px',
         threshold: 0,
       }
@@ -2156,27 +2276,14 @@ export default function PortalMPP() {
   const averageSkm = skmScoreAverage;
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+    <div
+      ref={portalScrollRef}
       id="portal-top"
-      className="bg-[#FAF8F3] dark:bg-[#061320] text-slate-900 dark:text-[#E6ECF2] font-sans w-full overflow-x-hidden relative min-h-screen transition-colors duration-300"
-      style={{ touchAction: 'pan-x pan-y pinch-zoom' }}
+      data-android-scroll-root="true"
+      onScroll={(e) => setIsScrolled(e.currentTarget.scrollTop > 20)}
+      className="mpp-native-scroll-container bg-[#FAF8F3] dark:bg-[#061320] text-slate-900 dark:text-[#E6ECF2] font-sans w-full relative transition-colors duration-300"
     >
       <style>{`
-        html, body {
-          overflow-x: hidden !important;
-          overflow-y: auto !important;
-          height: auto !important;
-          min-height: 100% !important;
-          touch-action: pan-x pan-y pinch-zoom !important;
-          -webkit-overflow-scrolling: touch !important;
-        }
-        #root {
-          height: auto !important;
-          min-height: 100% !important;
-        }
         .font-sans { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
         .font-editorial { font-family: 'Fraunces', 'Playfair Display', Georgia, serif; }
         
@@ -2220,7 +2327,7 @@ export default function PortalMPP() {
             {/* Branding Logo & Title - Lambang Kabupaten Luwu & MPP Simpurusiang */}
             <div 
               className="flex items-center gap-2.5 sm:gap-3.5 min-w-0 group cursor-pointer select-none"
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              onClick={() => scrollToPortalTop('smooth')}
             >
               <div className="w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 rounded-full sm:rounded-2xl flex items-center justify-center shrink-0 border transition-all duration-300 bg-white dark:bg-white/[0.05] border-[#DFD6C5] dark:border-[#C9A24B]/25 shadow-2xs group-hover:scale-105">
                 <img 
@@ -2298,13 +2405,13 @@ export default function PortalMPP() {
             </nav>
 
             {/* Header Right Actions - Unified Circular Geometry Across Search, ID, Theme, Lite Mode & Accessibility */}
-            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
               <button
                 type="button"
                 onClick={() => setIsCommandPaletteOpen(true)}
                 aria-label="Cari layanan, izin, atau instansi (Ctrl+K)"
                 title="Cari Cepat Layanan & Instansi (Ctrl+K)"
-                className="flex w-9 h-9 xs:w-10 xs:h-10 min-w-[36px] min-h-[36px] xs:min-w-[40px] xs:min-h-[40px] rounded-full bg-slate-100/90 dark:bg-white/[0.06] hover:bg-slate-200/80 dark:hover:bg-white/[0.12] border border-slate-200/90 dark:border-white/[0.12] text-slate-700 dark:text-slate-200 hover:text-[#0F6B4F] dark:hover:text-emerald-400 items-center justify-center transition-all active:scale-95 cursor-pointer shrink-0"
+                className={`${isAndroid ? 'hidden sm:flex' : 'flex'} w-9 h-9 xs:w-10 xs:h-10 min-w-[36px] min-h-[36px] xs:min-w-[40px] xs:min-h-[40px] rounded-full bg-slate-100/90 dark:bg-white/[0.06] hover:bg-slate-200/80 dark:hover:bg-white/[0.12] border border-slate-200/90 dark:border-white/[0.12] text-slate-700 dark:text-slate-200 hover:text-[#0F6B4F] dark:hover:text-emerald-400 items-center justify-center transition-all active:scale-95 cursor-pointer shrink-0`}
               >
                 <Search className="w-[16px] h-[16px] sm:w-[17px] sm:h-[17px]" />
               </button>
@@ -2338,6 +2445,28 @@ export default function PortalMPP() {
                   {isLiteMode ? 'Mode Ringan Aktif (Hemat Kuota & Baterai)' : 'Mode Ringan (Hemat Kuota & Baterai)'}
                 </div>
               </div>
+
+              {/* Tombol Layar Penuh (Fullscreen) Khusus Android */}
+              {isAndroid && (
+                <button
+                  type="button"
+                  onClick={handleToggleMppFullscreen}
+                  aria-pressed={isMppDocFullscreen}
+                  aria-label={isMppDocFullscreen ? "Keluar dari Mode Layar Penuh" : "Aktifkan Mode Layar Penuh"}
+                  title={isMppDocFullscreen ? "Keluar Layar Penuh" : "Layar Penuh Android"}
+                  className={`flex w-9 h-9 xs:w-10 xs:h-10 min-w-[36px] min-h-[36px] xs:min-w-[40px] xs:min-h-[40px] rounded-full border items-center justify-center transition-all active:scale-95 cursor-pointer shrink-0 ${
+                    isMppDocFullscreen
+                      ? 'bg-[#0F6B4F] text-white border-[#0F6B4F] shadow-xs'
+                      : 'bg-slate-100/90 dark:bg-white/[0.06] hover:bg-slate-200/80 dark:hover:bg-white/[0.12] border-slate-200/90 dark:border-white/[0.12] text-slate-700 dark:text-slate-200'
+                  }`}
+                >
+                  {isMppDocFullscreen ? (
+                    <Minimize2 className="w-[15px] h-[15px] sm:w-[16px] sm:h-[16px]" />
+                  ) : (
+                    <Maximize2 className="w-[15px] h-[15px] sm:w-[16px] sm:h-[16px]" />
+                  )}
+                </button>
+              )}
 
               {/* Ramah Inklusif & Disabilitas Utility Button (Harmonized Circular Control) */}
               <div className="relative group shrink-0">
@@ -2471,7 +2600,7 @@ export default function PortalMPP() {
               <div className="pointer-events-none absolute top-0 right-0 bottom-0 w-8 sm:w-14 bg-gradient-to-l from-[#FAF8F3] dark:from-[#071728] to-transparent z-10" />
               <div className="pointer-events-none absolute top-0 left-0 bottom-0 w-6 sm:w-10 bg-gradient-to-r from-[#FAF8F3] dark:from-[#071728] to-transparent z-10" />
 
-              <div className="flex items-center overflow-x-auto snap-x snap-mandatory no-scrollbar py-1.5 px-4 gap-1.5 touch-pan-x">
+              <div className="flex items-center overflow-x-auto snap-x snap-mandatory no-scrollbar py-1.5 px-4 gap-1.5 touch-pan-x touch-pan-y">
                 <button
                   type="button"
                   onClick={() => setIsCommandPaletteOpen(true)}
@@ -3310,7 +3439,7 @@ export default function PortalMPP() {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.1 }}
-                className="overflow-x-auto snap-x snap-mandatory no-scrollbar flex gap-2.5 pb-2 px-4 touch-pan-x"
+                className="overflow-x-auto snap-x snap-mandatory no-scrollbar flex gap-2.5 pb-2 px-4 touch-pan-x touch-pan-y"
               >
                 {(facilitiesData || [])?.map((fac) => {
                   const Icon = fac.icon;
@@ -4372,7 +4501,7 @@ export default function PortalMPP() {
                       className={
                         communityReviews.length === 2
                           ? "grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl mx-auto"
-                          : "flex overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-x gap-4 sm:gap-5 pb-4 cursor-grab active:cursor-grabbing"
+                          : "flex overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-x touch-pan-y gap-4 sm:gap-5 pb-4 cursor-grab active:cursor-grabbing"
                       }
                     >
                       {communityReviews.map((item, idx) => (
@@ -7290,6 +7419,6 @@ export default function PortalMPP() {
           onOpenVoiceAssistant={() => window.dispatchEvent(new CustomEvent('open-mpp-voice-assistant'))}
         />
       </div>
-    </motion.div>
+    </div>
   );
 }

@@ -36,6 +36,17 @@ export function scrollElementIntoAndroidView(elementOrId: string | HTMLElement, 
   if (!el) return;
 
   const rect = el.getBoundingClientRect();
+  const customScrollRoot = el.closest('[data-android-scroll-root="true"]') as HTMLElement | null;
+  if (customScrollRoot) {
+    const rootRect = customScrollRoot.getBoundingClientRect();
+    const targetTop = rect.top - rootRect.top + customScrollRoot.scrollTop - offset;
+    customScrollRoot.scrollTo({
+      top: Math.max(0, targetTop),
+      behavior: "smooth",
+    });
+    return;
+  }
+
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
   const targetTop = rect.top + scrollTop - offset;
 

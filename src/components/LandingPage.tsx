@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { isMobileOrAndroidDevice, isAndroidDevice } from "../hooks/useDeviceAutomation";
 import { requestSmartFullscreen } from "../utils/fullscreen";
+import { FloatingAccessibilityMenu } from "./FloatingAccessibilityMenu";
 
 import {
   ChevronRight,
@@ -2624,7 +2625,8 @@ export default function LandingPage({
                   name: "MPP",
                   action: (e: any) => {
                     e?.preventDefault?.();
-                    window.location.href = "https://luwu-investment.vercel.app/mpp";
+                    requestSmartFullscreen();
+                    navigate("/mpp");
                   },
                 },
                 {
@@ -2798,7 +2800,8 @@ export default function LandingPage({
                     action: (e: any) => {
                       e?.preventDefault?.();
                       setIsMobileMenuOpen(false);
-                      window.location.href = "https://luwu-investment.vercel.app/mpp";
+                      requestSmartFullscreen();
+                      navigate("/mpp");
                     },
                   },
                   {
@@ -7261,6 +7264,9 @@ export default function LandingPage({
           </motion.button>
         )}
       </AnimatePresence>
+
+      {/* Floating Inclusive Accessibility Menu (UU No. 8/2016 Compliance) */}
+      <FloatingAccessibilityMenu isDark={isDark} />
 
       {/* GIS Spatial Engine Transition Loader */}
       <AnimatePresence>

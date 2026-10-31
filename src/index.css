@@ -1746,5 +1746,173 @@ body.mpp-lite-mode .glass-crystal {
   }
 }
 
+/* =========================================================================
+   9. LANDING PAGE INCLUSIVE ACCESSIBILITY SYSTEM (UU NO. 8 TAHUN 2016)
+   High Contrast AAA, Fixed-Safe Monochrome Backdrop, & Proportional Font Scale
+   ========================================================================= */
+.a11y-monochrome-backdrop {
+  backdrop-filter: grayscale(100%) contrast(108%) !important;
+  -webkit-backdrop-filter: grayscale(100%) contrast(108%) !important;
+}
+
+html[data-landing-font-scale="115"] {
+  --text-xs: 13.8px;
+  --text-sm: 16.1px;
+  --text-base: 18.4px;
+  --text-md: 20.7px;
+  --text-lg: 23px;
+  --text-xl: 27.6px;
+  --text-2xl: 34.5px;
+}
+
+html[data-landing-font-scale="130"] {
+  --text-xs: 15.6px;
+  --text-sm: 18.2px;
+  --text-base: 20.8px;
+  --text-md: 23.4px;
+  --text-lg: 26px;
+  --text-xl: 31.2px;
+  --text-2xl: 39px;
+}
+
+html[data-landing-font-scale="145"] {
+  --text-xs: 17.4px;
+  --text-sm: 20.3px;
+  --text-base: 23.2px;
+  --text-md: 26.1px;
+  --text-lg: 29px;
+  --text-xl: 34.8px;
+  --text-2xl: 43.5px;
+}
+
+html.landing-high-contrast,
+html.landing-high-contrast body {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+html.landing-high-contrast section,
+html.landing-high-contrast header,
+html.landing-high-contrast footer,
+html.landing-high-contrast main,
+html.landing-high-contrast nav,
+html.landing-high-contrast article {
+  background-color: #000000 !important;
+  background-image: none !important;
+  border-color: #facc15 !important;
+}
+
+html.landing-high-contrast div:not(.keep-original-color):not(.pointer-events-none) {
+  border-color: rgba(250, 204, 21, 0.75) !important;
+}
+
+/* Keep ambient blur blobs hidden while preserving photo visibility under scrims */
+html.landing-high-contrast div.pointer-events-none:not(.a11y-monochrome-backdrop) {
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+html.landing-high-contrast .glass-panel,
+html.landing-high-contrast .glass-crystal,
+html.landing-high-contrast .hero-canvas-card,
+html.landing-high-contrast [class*="rounded-2xl"]:not(.keep-original-color):not(img),
+html.landing-high-contrast [class*="rounded-3xl"]:not(.keep-original-color):not(img) {
+  background-color: #050505 !important;
+  background-image: none !important;
+  border: 1.5px solid #facc15 !important;
+  box-shadow: none !important;
+}
+
+html.landing-high-contrast h1:not(.keep-original-color *),
+html.landing-high-contrast h2:not(.keep-original-color *),
+html.landing-high-contrast h3:not(.keep-original-color *),
+html.landing-high-contrast h4:not(.keep-original-color *),
+html.landing-high-contrast .hero-gold-gradient-text,
+html.landing-high-contrast .text-gradient,
+html.landing-high-contrast .text-gradient-emerald,
+html.landing-high-contrast [class*="bg-clip-text"] {
+  color: #fde047 !important;
+  -webkit-text-fill-color: #fde047 !important;
+  background-image: none !important;
+  text-shadow: none !important;
+}
+
+html.landing-high-contrast p:not(.keep-original-color *),
+html.landing-high-contrast li:not(.keep-original-color *),
+html.landing-high-contrast label:not(.keep-original-color *),
+html.landing-high-contrast td:not(.keep-original-color *),
+html.landing-high-contrast th:not(.keep-original-color *) {
+  color: #ffffff !important;
+}
+
+html.landing-high-contrast span:not(.keep-original-color):not(.keep-original-color *) {
+  color: inherit;
+}
+
+html.landing-high-contrast button:not(.keep-original-color):not(.keep-original-color *),
+html.landing-high-contrast a:not(.keep-original-color):not(.keep-original-color *) {
+  background-color: #000000 !important;
+  background-image: none !important;
+  color: #fde047 !important;
+  border: 2px solid #fde047 !important;
+}
+
+html.landing-high-contrast button:not(.keep-original-color):hover,
+html.landing-high-contrast a:not(.keep-original-color):hover {
+  background-color: #fde047 !important;
+  color: #000000 !important;
+}
+
+html.landing-high-contrast input:not(.keep-original-color),
+html.landing-high-contrast select:not(.keep-original-color),
+html.landing-high-contrast textarea:not(.keep-original-color) {
+  background-color: #000000 !important;
+  color: #fde047 !important;
+  border: 2px solid #fde047 !important;
+}
+
+/* =========================================================================
+   10. PORTAL MPP ANDROID FULLSCREEN & FLUID NATIVE TOUCH SUB-SCROLLER
+   Prevents Android Chrome documentElement:fullscreen viewport scroll lockup
+   and ensures uninterrupted vertical finger swipe/drag across all sections.
+   ========================================================================= */
+html.mpp-portal-active,
+html.mpp-portal-active:fullscreen,
+html.mpp-portal-active:-webkit-full-screen,
+html.mpp-portal-active body,
+html.mpp-portal-active body.android-fullscreen-mode,
+html.mpp-portal-active #root,
+html.mpp-portal-active #root > div {
+  height: 100% !important;
+  max-height: 100dvh !important;
+  overflow: hidden !important;
+  overscroll-behavior-y: none !important;
+}
+
+.mpp-native-scroll-container {
+  height: 100vh !important;
+  height: 100dvh !important;
+  max-height: 100vh !important;
+  max-height: 100dvh !important;
+  width: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-x pan-y pinch-zoom !important;
+  overscroll-behavior-y: contain !important;
+  scroll-behavior: smooth;
+}
+
+html.mpp-portal-active:fullscreen .mpp-native-scroll-container,
+html.mpp-portal-active:-webkit-full-screen .mpp-native-scroll-container {
+  height: 100% !important;
+  max-height: 100% !important;
+}
+
+/* Allow vertical finger swipe scrolling even when gesture starts on horizontal carousels/chips */
+.mpp-native-scroll-container .touch-pan-x {
+  touch-action: pan-x pan-y pinch-zoom !important;
+}
+
 
 
