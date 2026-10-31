@@ -1,7 +1,14 @@
 import jwt from "jsonwebtoken";
 
 const GLOBAL_JWT_SECRET = process.env.JWT_SECRET || "luwu-investment-portal-secure-jwt-secret-2025";
-const SUPABASE_URL = (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "https://yeezhpdgafbefwipmldl.supabase.co").replace(/\/+$/, "");
+function getSanitizedSupabaseUrl(): string {
+  let raw = (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "https://yeezhpdgafbefwipmldl.supabase.co").trim();
+  if (!raw || raw.startsWith("postgres://") || raw.startsWith("postgresql://") || raw.includes("@") || raw.includes("placeholder")) {
+    return "https://yeezhpdgafbefwipmldl.supabase.co";
+  }
+  return raw.replace(/\/+$/, "");
+}
+const SUPABASE_URL = getSanitizedSupabaseUrl();
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || "sb_publishable_nycP7MydQUR1hT7lOCRD5w_HCdldhgN";
 
 export default async function handler(req: any, res: any) {

@@ -5,7 +5,7 @@ const rawUrl =
   (typeof import.meta !== 'undefined' && ((import.meta as any).env?.NEXT_PUBLIC_SUPABASE_URL || (import.meta as any).env?.VITE_SUPABASE_URL)) ||
   "https://yeezhpdgafbefwipmldl.supabase.co";
 
-const supabaseUrl = (!rawUrl || rawUrl.includes("svxugvxchjsjuyfeddor") || rawUrl.includes("placeholder"))
+const supabaseUrl = (!rawUrl || rawUrl.includes("svxugvxchjsjuyfeddor") || rawUrl.includes("placeholder") || rawUrl.startsWith("postgres://") || rawUrl.startsWith("postgresql://") || rawUrl.includes("@"))
   ? "https://yeezhpdgafbefwipmldl.supabase.co"
   : rawUrl;
 

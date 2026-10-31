@@ -16,11 +16,11 @@ export const GLOBAL_JWT_SECRET = (() => {
 })();
 
 export const SUPABASE_URL = (() => {
-  let url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+  let url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
 
-  if (!url || url.includes("svxugvxchjsjuyfeddor") || url.includes("placeholder")) {
+  if (!url || url.includes("svxugvxchjsjuyfeddor") || url.includes("placeholder") || url.startsWith("postgres://") || url.startsWith("postgresql://") || url.includes("@")) {
     isSupabaseConfigured = false;
-    console.warn("[WARN] SUPABASE_URL is not set or refers to revoked project. Using active URL fallback.");
+    console.warn("[WARN] SUPABASE_URL is not set or refers to revoked project / Postgres connection string. Using active HTTPS REST URL fallback.");
     return "https://yeezhpdgafbefwipmldl.supabase.co";
   }
   url = url.trim();
