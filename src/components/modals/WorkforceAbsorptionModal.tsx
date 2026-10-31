@@ -82,7 +82,7 @@ export const WorkforceAbsorptionModal: React.FC<WorkforceAbsorptionModalProps> =
           className={`w-[calc(100vw-20px)] sm:w-full h-[92vh] sm:h-auto max-h-[92vh] sm:max-h-[90vh] max-w-4xl rounded-2xl sm:rounded-3xl border shadow-2xl flex flex-col overflow-hidden ${
             isDark
               ? 'bg-slate-900 border-slate-800 text-white shadow-black/80'
-              : 'bg-[#FAF8F3] border-[#E5DFD3] text-slate-900 shadow-slate-900/10'
+              : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900 shadow-slate-900/10'
           }`}
           onClick={(e) => e.stopPropagation()}
         >
@@ -91,7 +91,7 @@ export const WorkforceAbsorptionModal: React.FC<WorkforceAbsorptionModalProps> =
             className={`p-3 sm:p-5 border-b flex items-center justify-between gap-3 shrink-0 ${
               isDark
                 ? 'bg-gradient-to-r from-emerald-950/70 via-slate-900 to-slate-900 border-slate-800'
-                : 'bg-gradient-to-r from-emerald-50/90 via-[#FAF8F3] to-teal-50/50 border-[#E5DFD3]'
+                : 'bg-[#F4F0E6] border-[#E2DACB]'
             }`}
           >
             <div className="flex items-center gap-3 min-w-0">
@@ -100,7 +100,7 @@ export const WorkforceAbsorptionModal: React.FC<WorkforceAbsorptionModalProps> =
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wider uppercase bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                  <span className="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wider uppercase bg-[#FAF7F0] dark:bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/30">
                     Perda Luwu No. 06/2011 & Perbup No. 42/2021
                   </span>
                 </div>
@@ -116,7 +116,7 @@ export const WorkforceAbsorptionModal: React.FC<WorkforceAbsorptionModalProps> =
               className={`p-2 rounded-xl transition-all cursor-pointer active:scale-95 shrink-0 ${
                 isDark
                   ? 'hover:bg-slate-800 text-slate-400 hover:text-white'
-                  : 'hover:bg-slate-100 text-slate-500 hover:text-slate-900'
+                  : 'bg-[#FAF7F0] hover:bg-[#ECE5D6] text-slate-600 hover:text-slate-900 border border-[#E2DACB]'
               }`}
               title="Tutup Modal"
             >
@@ -131,7 +131,7 @@ export const WorkforceAbsorptionModal: React.FC<WorkforceAbsorptionModalProps> =
               className={`p-3.5 sm:p-5 rounded-2xl border ${
                 isDark
                   ? 'bg-gradient-to-r from-emerald-950/40 via-slate-800/60 to-teal-950/30 border-emerald-500/30'
-                  : 'bg-gradient-to-r from-emerald-50/80 via-white to-teal-50/60 border-emerald-200'
+                  : 'bg-[#F4F0E6] border-[#E2DACB]'
               }`}
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -145,7 +145,7 @@ export const WorkforceAbsorptionModal: React.FC<WorkforceAbsorptionModalProps> =
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-white/70 dark:bg-slate-900/70 border border-emerald-500/30 text-xs space-y-1 sm:max-w-md">
+                <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-900/70 border border-[#E2DACB] dark:border-emerald-500/30 text-xs space-y-1 sm:max-w-md">
                   <div className="font-bold flex items-center gap-1.5 text-emerald-700 dark:text-emerald-300">
                     <Award size={15} />
                     <span>Ketentuan Tarif Insentif 35%–50%:</span>
@@ -160,7 +160,7 @@ export const WorkforceAbsorptionModal: React.FC<WorkforceAbsorptionModalProps> =
             {/* Interactive Mini Eligibility Simulator */}
             <div
               className={`p-3.5 sm:p-5 rounded-2xl border ${
-                isDark ? 'bg-slate-800/40 border-slate-700' : 'bg-slate-50 border-slate-200'
+                isDark ? 'bg-slate-800/40 border-slate-700' : 'bg-[#F4F0E6] border-[#E2DACB]'
               }`}
             >
               <div className="flex items-center gap-2 mb-3">
@@ -180,7 +180,7 @@ export const WorkforceAbsorptionModal: React.FC<WorkforceAbsorptionModalProps> =
                     min="1"
                     value={simTotalWorkers}
                     onChange={(e) => setSimTotalWorkers(Math.max(1, parseInt(e.target.value) || 0))}
-                    className="w-full px-3 py-2 rounded-xl text-xs font-mono font-bold border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full px-3 py-2 rounded-xl text-xs font-mono font-bold border border-[#E2DACB] dark:border-slate-700 bg-[#FAF7F0] dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                 </div>
 
@@ -194,7 +194,7 @@ export const WorkforceAbsorptionModal: React.FC<WorkforceAbsorptionModalProps> =
                     max={simTotalWorkers}
                     value={simLocalWorkers}
                     onChange={(e) => setSimLocalWorkers(Math.max(0, parseInt(e.target.value) || 0))}
-                    className="w-full px-3 py-2 rounded-xl text-xs font-mono font-bold border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full px-3 py-2 rounded-xl text-xs font-mono font-bold border border-[#E2DACB] dark:border-slate-700 bg-[#FAF7F0] dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                 </div>
               </div>
@@ -257,7 +257,7 @@ export const WorkforceAbsorptionModal: React.FC<WorkforceAbsorptionModalProps> =
                   {laborData.map((inv) => (
                     <div
                       key={inv.id}
-                      className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 flex items-center justify-between gap-3 text-xs"
+                      className="p-3 rounded-xl border border-[#E2DACB] dark:border-slate-800 bg-[#F4F0E6] dark:bg-slate-900/60 flex items-center justify-between gap-3 text-xs"
                     >
                       <div className="min-w-0">
                         <div className="font-extrabold truncate">{inv.name}</div>
@@ -279,7 +279,7 @@ export const WorkforceAbsorptionModal: React.FC<WorkforceAbsorptionModalProps> =
           {/* Footer Info */}
           <div
             className={`p-2.5 sm:p-4 border-t flex items-center justify-between text-xs shrink-0 ${
-              isDark ? 'border-slate-800 text-slate-400' : 'border-slate-200 text-slate-600'
+              isDark ? 'border-slate-800 text-slate-400' : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-600'
             }`}
           >
             <div className="flex items-center gap-1.5">

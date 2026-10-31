@@ -63,8 +63,8 @@ body:fullscreen {
 
   /* === ELEGAN NUSANTARA HERO DESIGN TOKENS (LIGHT THEME) === */
   --hero-bg-base: #FAF7F0;
-  --hero-surface-start: #FFFFFF;
-  --hero-surface-end: #F3EEDF;
+  --hero-surface-start: #FAF7F0;
+  --hero-surface-end: #F4F0E6;
   --hero-gold-line: rgba(133, 90, 20, 0.30);
   --hero-text-primary: #10261E;
   --hero-text-secondary: #334155;
@@ -75,9 +75,9 @@ body:fullscreen {
   --hero-scrim-top: rgba(250, 247, 240, 0.88);
   --hero-scrim-mid: rgba(250, 247, 240, 0.55);
   --hero-scrim-bottom: rgba(250, 247, 240, 0.22);
-  --hero-card-border: rgba(160, 122, 40, 0.28);
-  --hero-chip-bg: rgba(255, 255, 255, 0.85);
-  --hero-chip-border: rgba(160, 122, 40, 0.25);
+  --hero-card-border: #E2DACB;
+  --hero-chip-bg: #F4F0E6;
+  --hero-chip-border: #E2DACB;
 
   /* === SPACING SCALE === */
   --space-1: 4px;
@@ -129,14 +129,14 @@ body:fullscreen {
 
 @layer base {
   :root {
-    /* Base (Light Mode): Elegan Nusantara Alabaster (#FAF8F3) */
-    --bg-base: 250 248 243;
-    /* Surface (Light Mode): Warm Alabaster (#FAF8F3) */
-    --bg-surface: 250 248 243;
-    /* Elevated (Light Mode): Soft Warm Cream (#F4EFE4) */
-    --bg-elevated: 244 239 228;
-    --bg-overlay: #FAF8F3;
-    --border-subtle: rgba(229, 223, 211, 0.95);
+    /* Base (Light Mode): Elegan Nusantara Alabaster (#FAF7F0) */
+    --bg-base: 250 247 240;
+    /* Surface (Light Mode): Warm Cream (#F4F0E6) */
+    --bg-surface: 244 240 230;
+    /* Elevated (Light Mode): Warm Cream (#F4F0E6) */
+    --bg-elevated: 244 240 230;
+    --bg-overlay: #FAF7F0;
+    --border-subtle: #E2DACB;
 
     /* === UNIFIED AGENCY LOGO TOKENS === */
     --logo-card: 112px;
@@ -281,9 +281,9 @@ body:fullscreen {
   gap: 7px;
   padding: 5px 14px;
   border-radius: 9999px;
-  background-color: rgba(133, 90, 20, 0.08);
-  border: 1px solid rgba(133, 90, 20, 0.24);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  background-color: #F4F0E6;
+  border: 1px solid #E2DACB;
+  box-shadow: 0 1px 2px rgba(16, 38, 30, 0.04);
   backdrop-filter: blur(8px);
 }
 .dark .invest-eyebrow {
@@ -304,9 +304,9 @@ body:fullscreen {
   gap: 7px;
   padding: 5px 14px;
   border-radius: 9999px;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(20, 184, 166, 0.08) 100%);
-  border: 1px solid rgba(16, 185, 129, 0.32);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  background-color: #F4F0E6;
+  border: 1px solid #E2DACB;
+  box-shadow: 0 1px 2px rgba(16, 38, 30, 0.04);
   backdrop-filter: blur(8px);
 }
 .dark .invest-eyebrow-emerald {
@@ -578,12 +578,12 @@ body:fullscreen {
 }
 
 .ai-custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f5f9; /* slate-100 */
+  background: #FAF7F0;
   border-radius: 4px;
 }
 
 .ai-custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #cbd5e1; /* slate-300 */
+  background: #E2DACB;
   border-radius: 4px;
 }
 
@@ -714,9 +714,9 @@ canvas.maplibregl-canvas,
 
 /* Navigation layout overlay styles */
 .glass-overlay {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(244, 240, 230, 0.92);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: 1px solid #E2DACB;
 }
 
 .glass-overlay-dark {
@@ -727,11 +727,11 @@ canvas.maplibregl-canvas,
 
 /* Premium Classes */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(244, 240, 230, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid #E2DACB;
+  box-shadow: 0 4px 30px rgba(16, 38, 30, 0.05);
 }
 .dark .glass-panel {
   background: rgba(15, 23, 42, 0.6);
@@ -745,11 +745,11 @@ canvas.maplibregl-canvas,
 /* EXECUTIVE GLASSMORPHISM ARCHITECTURE (SPATIAL UI / OPTICAL FROSTED GLASS) */
 /* ========================================================================= */
 .glass-crystal {
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(244, 240, 230, 0.92);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  box-shadow: 0 10px 35px -5px rgba(15, 23, 42, 0.06), 0 2px 10px -2px rgba(15, 23, 42, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 0.7);
+  border: 1px solid #E2DACB;
+  box-shadow: 0 10px 35px -5px rgba(16, 38, 30, 0.06), 0 2px 10px -2px rgba(16, 38, 30, 0.04), inset 0 1px 1px 0 rgba(250, 247, 240, 0.75);
 }
 .dark .glass-crystal {
   background: rgba(15, 23, 42, 0.68);
@@ -770,7 +770,7 @@ canvas.maplibregl-canvas,
   left: 10%;
   right: 10%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  background: linear-gradient(90deg, transparent, rgba(250, 247, 240, 0.8), transparent);
   pointer-events: none;
   opacity: 0.85;
 }
@@ -780,7 +780,7 @@ canvas.maplibregl-canvas,
 }
 .glass-card-interactive:hover {
   transform: translateY(-4px);
-  box-shadow: 0 22px 50px -10px rgba(16, 185, 129, 0.16), 0 8px 20px -4px rgba(15, 23, 42, 0.08), inset 0 1px 2px 0 rgba(255, 255, 255, 0.9);
+  box-shadow: 0 22px 50px -10px rgba(16, 185, 129, 0.16), 0 8px 20px -4px rgba(16, 38, 30, 0.08), inset 0 1px 2px 0 rgba(250, 247, 240, 0.9);
   border-color: rgba(16, 185, 129, 0.45);
 }
 .dark .glass-card-interactive:hover {
@@ -790,11 +790,11 @@ canvas.maplibregl-canvas,
 }
 
 .glass-nav-pill {
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(244, 240, 230, 0.94);
   backdrop-filter: blur(24px) saturate(190%);
   -webkit-backdrop-filter: blur(24px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  border: 1px solid #E2DACB;
+  box-shadow: 0 12px 36px rgba(16, 38, 30, 0.08), inset 0 1px 1px rgba(250, 247, 240, 0.85);
 }
 .dark .glass-nav-pill {
   background: rgba(15, 23, 42, 0.78);
@@ -805,10 +805,10 @@ canvas.maplibregl-canvas,
 }
 
 .glass-badge {
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(244, 240, 230, 0.92);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid #E2DACB;
 }
 .dark .glass-badge {
   background: rgba(30, 41, 59, 0.55);

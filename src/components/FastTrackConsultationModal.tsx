@@ -105,12 +105,12 @@ export function FastTrackConsultationModal({
         className={`relative w-[calc(100vw-20px)] sm:w-full max-w-2xl max-h-[92vh] sm:max-h-[85vh] rounded-2xl sm:rounded-3xl shadow-2xl border overflow-hidden flex flex-col ${
           isDark 
             ? 'bg-[#0b1324] border-slate-700/80 text-white' 
-            : 'bg-[#FAF8F3] border-[#E5DFD3] text-slate-900'
+            : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-900'
         }`}
       >
         {/* Header Modal - Sticky Pin at Top with high contrast close button */}
         <div className={`sticky top-0 z-20 p-2.5 sm:px-5 sm:py-4 border-b flex items-center justify-between shrink-0 ${
-          isDark ? 'bg-[#0e172a] border-slate-800' : 'bg-[#F3EEE3] border-[#E5DFD3]'
+          isDark ? 'bg-[#0e172a] border-slate-800' : 'bg-[#FAF7F0] border-[#E2DACB]'
         }`}>
           <div className="flex items-center gap-2 sm:gap-3 min-w-0 pr-1">
             <div className="p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/20 shrink-0">
@@ -121,11 +121,13 @@ export function FastTrackConsultationModal({
                 <h2 className="text-xs sm:text-base md:text-lg font-bold font-sans truncate">
                   Investor Fast-Track Consultation
                 </h2>
-                <span className="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 uppercase tracking-wider shrink-0">
+                <span className={`px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold border uppercase tracking-wider shrink-0 ${
+                  isDark ? 'bg-amber-500/15 text-amber-400 border-amber-500/30' : 'bg-[#F4F0E6] text-amber-800 border-[#E2DACB]'
+                }`}>
                   VIP DPMPTSP
                 </span>
               </div>
-              <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 line-clamp-1">
+              <p className="text-[10px] sm:text-xs text-slate-600 dark:text-slate-400 line-clamp-1">
                 Booking konsultasi langsung dengan Tim Teknis DPMPTSP Luwu
               </p>
             </div>
@@ -134,7 +136,7 @@ export function FastTrackConsultationModal({
             type="button"
             onClick={onClose}
             aria-label="Tutup Formulir Konsultasi VIP"
-            className="p-2 sm:p-2.5 rounded-xl bg-slate-200/80 hover:bg-slate-300 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 border border-slate-300/80 dark:border-slate-700 transition-all cursor-pointer shrink-0 min-w-[42px] min-h-[42px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center shadow-xs active:scale-95 ml-2"
+            className="p-2 sm:p-2.5 rounded-xl bg-[#F4F0E6] hover:bg-[#ECE5D6] text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 border border-[#E2DACB] dark:border-slate-700 transition-all cursor-pointer shrink-0 min-w-[42px] min-h-[42px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center shadow-xs active:scale-95 ml-2"
           >
             <X className="w-5 h-5 stroke-[2.5]" />
           </button>
@@ -158,19 +160,21 @@ export function FastTrackConsultationModal({
 
               {/* e-Tiket Card */}
               <div className={`w-full max-w-md p-4 rounded-2xl border text-left space-y-3 ${
-                isDark ? 'bg-surface/80 border-slate-700' : 'bg-slate-50 border-slate-200'
+                isDark ? 'bg-surface/80 border-slate-700' : 'bg-[#FAF7F0] border-[#E2DACB]'
               }`}>
-                <div className="flex items-center justify-between pb-2 border-b border-slate-700/40">
-                  <span className="text-xs text-slate-400">Nomor Registrasi VIP</span>
+                <div className={`flex items-center justify-between pb-2 border-b ${isDark ? 'border-slate-700/40' : 'border-[#E2DACB]'}`}>
+                  <span className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600 font-medium'}`}>Nomor Registrasi VIP</span>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono font-bold text-amber-500 text-sm">{registrationCode}</span>
+                    <span className="font-mono font-bold text-amber-600 dark:text-amber-500 text-sm">{registrationCode}</span>
                     <button
                       type="button"
                       onClick={handleCopyCode}
-                      className="p-1 rounded bg-slate-700/50 hover:bg-slate-700 text-slate-300 text-xs transition"
+                      className={`p-1 rounded text-xs transition ${
+                        isDark ? 'bg-slate-700/50 hover:bg-slate-700 text-slate-300' : 'bg-[#F4F0E6] hover:bg-[#ECE5D6] text-slate-700 border border-[#E2DACB]'
+                      }`}
                       title="Salin Kode"
                     >
-                      {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <FileText className="w-3.5 h-3.5" />}
+                      {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <FileText className="w-3.5 h-3.5" />}
                     </button>
                   </div>
                 </div>
@@ -210,7 +214,7 @@ export function FastTrackConsultationModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="py-3 px-4 rounded-xl font-bold text-xs sm:text-sm bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
+                  className="py-3 px-4 rounded-xl font-bold text-xs sm:text-sm bg-[#FAF7F0] dark:bg-slate-800 hover:bg-[#ECE5D6] dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-[#E2DACB] dark:border-slate-700 transition-colors cursor-pointer"
                 >
                   Selesai
                 </button>
@@ -221,12 +225,12 @@ export function FastTrackConsultationModal({
               {/* Highlight Proyek Terpilih (Jika Ada) */}
               {selectedInvestment && (
                 <div className={`p-3.5 rounded-2xl border flex items-center gap-3 ${
-                  isDark ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-300' : 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                  isDark ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-300' : 'bg-[#FAF7F0] border-[#E2DACB] text-emerald-900'
                 }`}>
-                  <ShieldCheck className="w-5 h-5 text-emerald-500 shrink-0" />
+                  <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-500 shrink-0" />
                   <div className="text-xs min-w-0">
                     <span className="font-bold block truncate">Fokus Minat: {selectedInvestment.name}</span>
-                    <span className={`text-[11px] ${isDark ? 'text-slate-400' : 'text-emerald-900/80 font-medium'}`}>Kecamatan {selectedInvestment.districtId || 'Kab. Luwu'} • Est. Nilai: {formatRupiahSingkat(selectedInvestment.investmentValue)}</span>
+                    <span className={`text-[11px] ${isDark ? 'text-slate-400' : 'text-slate-700 font-medium'}`}>Kecamatan {selectedInvestment.districtId || 'Kab. Luwu'} • Est. Nilai: {formatRupiahSingkat(selectedInvestment.investmentValue)}</span>
                   </div>
                 </div>
               )}
@@ -245,7 +249,7 @@ export function FastTrackConsultationModal({
                       placeholder="Contoh: Ir. Hendra Saputra"
                       value={formData.investorName}
                       onChange={(e) => setFormData({ ...formData, investorName: e.target.value })}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 outline-none focus:border-amber-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-[#FAF7F0] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -261,7 +265,7 @@ export function FastTrackConsultationModal({
                       placeholder="PT / CV / Firma Investasi"
                       value={formData.companyName}
                       onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 outline-none focus:border-amber-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-[#FAF7F0] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -281,7 +285,7 @@ export function FastTrackConsultationModal({
                       placeholder="0812xxxxxxx"
                       value={formData.phoneNumber}
                       onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 outline-none focus:border-amber-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-[#FAF7F0] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -298,7 +302,7 @@ export function FastTrackConsultationModal({
                       placeholder="investor@company.co.id"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 outline-none focus:border-amber-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-[#FAF7F0] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -313,7 +317,7 @@ export function FastTrackConsultationModal({
                   <select
                     value={formData.sector}
                     onChange={(e) => setFormData({ ...formData, sector: e.target.value as any })}
-                    className="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 outline-none focus:border-amber-500 transition-colors"
+                    className="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-[#FAF7F0] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-colors"
                   >
                     <option value="PERTANIAN">Pertanian & Perkebunan (Kakao, Kopi, Kelapa Sawit)</option>
                     <option value="PERIKANAN">Perikanan & Kelautan (Rumput Laut, Bandeng)</option>
@@ -331,7 +335,7 @@ export function FastTrackConsultationModal({
                   <select
                     value={formData.capexRange}
                     onChange={(e) => setFormData({ ...formData, capexRange: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 outline-none focus:border-amber-500 transition-colors"
+                    className="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-[#FAF7F0] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-colors"
                   >
                     <option value="Rp 1 Miliar - Rp 5 Miliar">Rp 1 Miliar - Rp 5 Miliar (Usaha Kecil/Menengah)</option>
                     <option value="Rp 5 Miliar - Rp 25 Miliar">Rp 5 Miliar - Rp 25 Miliar</option>
@@ -352,8 +356,8 @@ export function FastTrackConsultationModal({
                     onClick={() => setFormData({ ...formData, consultationMode: 'daring' })}
                     className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                       formData.consultationMode === 'daring'
-                        ? 'bg-amber-500/20 border-amber-500 text-amber-600 dark:text-amber-400 shadow-xs'
-                        : 'bg-slate-100 dark:bg-slate-800/60 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400'
+                        ? 'bg-amber-500/20 border-amber-500 text-amber-700 dark:text-amber-400 shadow-xs'
+                        : 'bg-[#FAF7F0] hover:bg-[#ECE5D6] dark:bg-slate-800/60 border-[#E2DACB] dark:border-slate-700 text-slate-700 dark:text-slate-400'
                     }`}
                   >
                     <span>💻 Video Conference Daring</span>
@@ -364,8 +368,8 @@ export function FastTrackConsultationModal({
                     onClick={() => setFormData({ ...formData, consultationMode: 'tatap_muka' })}
                     className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                       formData.consultationMode === 'tatap_muka'
-                        ? 'bg-amber-500/20 border-amber-500 text-amber-600 dark:text-amber-400 shadow-xs'
-                        : 'bg-slate-100 dark:bg-slate-800/60 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400'
+                        ? 'bg-amber-500/20 border-amber-500 text-amber-700 dark:text-amber-400 shadow-xs'
+                        : 'bg-[#FAF7F0] hover:bg-[#ECE5D6] dark:bg-slate-800/60 border-[#E2DACB] dark:border-slate-700 text-slate-700 dark:text-slate-400'
                     }`}
                   >
                     <span>🏢 Tatap Muka di MPP Belopa</span>
@@ -385,7 +389,7 @@ export function FastTrackConsultationModal({
                       type="date"
                       value={formData.preferredDate}
                       onChange={(e) => setFormData({ ...formData, preferredDate: e.target.value })}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 outline-none focus:border-amber-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-[#FAF7F0] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -399,7 +403,7 @@ export function FastTrackConsultationModal({
                     <select
                       value={formData.preferredTime}
                       onChange={(e) => setFormData({ ...formData, preferredTime: e.target.value })}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 outline-none focus:border-amber-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-[#FAF7F0] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-colors"
                     >
                       <option value="09:00 WITA">09:00 WITA (Sesi Pagi I)</option>
                       <option value="10:30 WITA">10:30 WITA (Sesi Pagi II)</option>
@@ -420,7 +424,7 @@ export function FastTrackConsultationModal({
                   value={formData.agendaNotes}
                   onChange={(e) => setFormData({ ...formData, agendaNotes: e.target.value })}
                   placeholder="Sebutkan hal khusus yang ingin dikonsultasikan (misal: syarat PKKPR, skema insentif daerah, ketersediaan lahan, dll)..."
-                  className="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 outline-none focus:border-amber-500 transition-colors resize-none"
+                  className="w-full px-3 py-2 rounded-xl text-xs sm:text-sm bg-[#FAF7F0] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:border-amber-500 transition-colors resize-none"
                 />
               </div>
 
@@ -429,7 +433,7 @@ export function FastTrackConsultationModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-3 min-h-[44px] rounded-xl font-bold text-xs sm:text-sm bg-slate-200/90 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300/80 dark:border-slate-700 transition-all cursor-pointer shrink-0 active:scale-95"
+                  className="px-4 py-3 min-h-[44px] rounded-xl font-bold text-xs sm:text-sm bg-[#FAF7F0] dark:bg-slate-800 hover:bg-[#ECE5D6] dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-[#E2DACB] dark:border-slate-700 transition-all cursor-pointer shrink-0 active:scale-95"
                 >
                   Tutup
                 </button>

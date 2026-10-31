@@ -130,7 +130,7 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
           className={`w-[calc(100vw-20px)] sm:w-full h-[92vh] sm:h-auto max-h-[92vh] sm:max-h-[90vh] max-w-5xl rounded-2xl sm:rounded-3xl border shadow-2xl flex flex-col overflow-hidden ${
             isDark
               ? 'bg-slate-900 border-slate-800 text-white shadow-black/80'
-              : 'bg-[#FAF8F3] border-[#E5DFD3] text-slate-900 shadow-slate-900/10'
+              : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900 shadow-slate-900/10'
           }`}
           onClick={(e) => e.stopPropagation()}
         >
@@ -139,7 +139,7 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
             className={`p-3 sm:p-5 border-b flex items-center justify-between gap-3 shrink-0 ${
               isDark
                 ? 'bg-gradient-to-r from-emerald-950/70 via-slate-900 to-teal-950/50 border-slate-800'
-                : 'bg-gradient-to-r from-emerald-50/90 via-[#FAF8F3] to-teal-50/50 border-[#E5DFD3]'
+                : 'bg-[#F4F0E6] border-[#E2DACB]'
             }`}
           >
             <div className="flex items-center gap-3 min-w-0">
@@ -148,10 +148,10 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wider uppercase bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                  <span className="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wider uppercase bg-[#FAF7F0] dark:bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/30">
                     Portofolio IPRO BKPM RI
                   </span>
-                  <span className="hidden sm:inline px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-teal-500/15 text-teal-700 dark:text-teal-300 border border-teal-500/30">
+                  <span className="hidden sm:inline px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-[#FAF7F0] dark:bg-teal-500/15 text-teal-800 dark:text-teal-300 border border-[#E2DACB] dark:border-teal-500/30">
                     Clean & Clear
                   </span>
                 </div>
@@ -167,7 +167,7 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
               className={`p-2 rounded-xl transition-all cursor-pointer active:scale-95 shrink-0 ${
                 isDark
                   ? 'hover:bg-slate-800 text-slate-400 hover:text-white'
-                  : 'hover:bg-slate-100 text-slate-500 hover:text-slate-900'
+                  : 'bg-[#FAF7F0] hover:bg-[#ECE5D6] text-slate-600 hover:text-slate-900 border border-[#E2DACB]'
               }`}
               title="Tutup Modal"
             >
@@ -176,7 +176,7 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
           </div>
 
           {/* Search & Sector Filter Bar */}
-          <div className="p-2.5 sm:p-4 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center gap-3 shrink-0">
+          <div className="p-2.5 sm:p-4 border-b border-[#E2DACB] dark:border-slate-800 bg-[#F4F0E6]/60 dark:bg-transparent flex flex-col sm:flex-row items-center gap-3 shrink-0">
             {/* Search Input */}
             <div className="relative w-full sm:flex-1">
               <Search className="w-4 h-4 text-emerald-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -188,14 +188,14 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
                 className={`w-full pl-9 pr-4 py-2 rounded-xl border text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${
                   isDark
                     ? 'bg-slate-800/80 border-slate-700 text-white placeholder-slate-400'
-                    : 'bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400'
+                    : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900 placeholder-slate-400'
                 }`}
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 dark:hover:text-white"
                 >
                   <X size={14} />
                 </button>
@@ -212,7 +212,7 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
                     ? 'bg-emerald-600 text-white shadow-sm'
                     : isDark
                     ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    : 'bg-[#FAF7F0] text-slate-700 hover:bg-[#ECE5D6] border border-[#E2DACB]'
                 }`}
               >
                 Semua Sektor ({investments.length})
@@ -227,7 +227,7 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
                       ? 'bg-emerald-600 text-white shadow-sm'
                       : isDark
                       ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      : 'bg-[#FAF7F0] text-slate-700 hover:bg-[#ECE5D6] border border-[#E2DACB]'
                   }`}
                 >
                   {sec}
@@ -263,7 +263,7 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
                       className={`p-3.5 sm:p-4 rounded-2xl border flex flex-col justify-between transition-all hover:border-emerald-500/60 ${
                         isDark
                           ? 'bg-slate-800/60 border-slate-700/80 hover:bg-slate-800/90'
-                          : 'bg-slate-50/90 border-slate-200/90 hover:bg-white hover:shadow-md'
+                          : 'bg-[#F4F0E6] border-[#E2DACB] hover:bg-[#ECE5D6]/60 hover:shadow-md'
                       }`}
                     >
                       <div>
@@ -308,7 +308,7 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
 
                         {/* Metrics Grid */}
                         <div className="grid grid-cols-2 gap-2 mb-3 text-[11px]">
-                          <div className="p-2 rounded-xl bg-white/60 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800">
+                          <div className="p-2 rounded-xl bg-[#FAF7F0] dark:bg-slate-900/50 border border-[#E2DACB] dark:border-slate-800">
                             <span className="text-slate-600 dark:text-slate-400 block text-[9.5px] font-bold">Estimasi Nilai Investasi</span>
                             <span className="font-black font-mono text-emerald-600 dark:text-emerald-400">
                               {inv.investmentValue && inv.investmentValue > 0
@@ -316,7 +316,7 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
                                 : 'Dalam FS BKPM'}
                             </span>
                           </div>
-                          <div className="p-2 rounded-xl bg-white/60 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800">
+                          <div className="p-2 rounded-xl bg-[#FAF7F0] dark:bg-slate-900/50 border border-[#E2DACB] dark:border-slate-800">
                             <span className="text-slate-600 dark:text-slate-400 block text-[9.5px] font-bold">Luas Lahan Siap Pakai</span>
                             <span className="font-bold font-mono">
                               {inv.areaHa && inv.areaHa > 0 ? `${inv.areaHa} Hektar` : 'Sesuai Masterplan'}
@@ -333,7 +333,7 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
                       </div>
 
                       {/* Action Buttons Row */}
-                      <div className="pt-2 border-t border-slate-200 dark:border-slate-700/60 grid grid-cols-2 gap-2">
+                      <div className="pt-2 border-t border-[#E2DACB] dark:border-slate-700/60 grid grid-cols-2 gap-2">
                         <button
                           type="button"
                           onClick={() => {
@@ -366,7 +366,7 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
 
           {/* Letter of Intent (LOI) Submission Drawer */}
           {activeLoiInvestment && (
-            <div className="p-3 sm:p-5 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/90 animate-fadeIn">
+            <div className="p-3 sm:p-5 border-t border-[#E2DACB] dark:border-slate-800 bg-[#F4F0E6] dark:bg-slate-950/90 animate-fadeIn">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-emerald-500" />
@@ -380,7 +380,7 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setActiveLoiInvestment(null)}
-                  className="text-slate-400 hover:text-white text-xs font-bold flex items-center gap-1"
+                  className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white text-xs font-bold flex items-center gap-1"
                 >
                   <X size={14} /> Batalkan
                 </button>
@@ -402,14 +402,14 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
                       placeholder="Nama Lengkap Investor / Direksi *"
                       value={loiForm.investorName}
                       onChange={(e) => setLoiForm({ ...loiForm, investorName: e.target.value })}
-                      className="px-3 py-2 rounded-xl text-xs border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      className="px-3 py-2 rounded-xl text-xs border border-[#E2DACB] dark:border-slate-700 bg-[#FAF7F0] dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                     <input
                       type="text"
                       placeholder="Nama Perusahaan / Korporasi"
                       value={loiForm.company}
                       onChange={(e) => setLoiForm({ ...loiForm, company: e.target.value })}
-                      className="px-3 py-2 rounded-xl text-xs border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      className="px-3 py-2 rounded-xl text-xs border border-[#E2DACB] dark:border-slate-700 bg-[#FAF7F0] dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                     <input
                       type="tel"
@@ -417,7 +417,7 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
                       placeholder="Nomor WhatsApp / Telepon Aktif *"
                       value={loiForm.phone}
                       onChange={(e) => setLoiForm({ ...loiForm, phone: e.target.value })}
-                      className="px-3 py-2 rounded-xl text-xs border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      className="px-3 py-2 rounded-xl text-xs border border-[#E2DACB] dark:border-slate-700 bg-[#FAF7F0] dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                   </div>
                   <div className="flex flex-col sm:flex-row items-center gap-2.5">
@@ -426,7 +426,7 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
                       placeholder="Rencana Nominal Investasi (contoh: Rp 10 Miliar)"
                       value={loiForm.estimatedInvestment}
                       onChange={(e) => setLoiForm({ ...loiForm, estimatedInvestment: e.target.value })}
-                      className="w-full sm:flex-1 px-3 py-2 rounded-xl text-xs border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      className="w-full sm:flex-1 px-3 py-2 rounded-xl text-xs border border-[#E2DACB] dark:border-slate-700 bg-[#FAF7F0] dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                     <button
                       type="submit"
@@ -444,7 +444,7 @@ export const IproCatalogModal: React.FC<IproCatalogModalProps> = ({
           {/* Footer Info */}
           <div
             className={`p-2.5 sm:p-4 border-t flex items-center justify-between text-xs shrink-0 ${
-              isDark ? 'border-slate-800 text-slate-400' : 'border-slate-200 text-slate-600'
+              isDark ? 'border-slate-800 text-slate-400' : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-600'
             }`}
           >
             <div className="flex items-center gap-1.5">

@@ -125,7 +125,7 @@ export default function LocalPartnershipSection({
     <section
       id="kemitraan-umkm-section"
       className={`scroll-mt-20 sm:scroll-mt-24 py-12 sm:py-16 md:py-20 border-t relative overflow-hidden transition-colors duration-500 ${
-        isDark ? "bg-[#06181F] border-[rgba(201,162,75,0.22)]" : "bg-[#FAF7F0] border-[rgba(160,122,40,0.20)]"
+        isDark ? "bg-[#06181F] border-[rgba(201,162,75,0.22)]" : "bg-[#FAF7F0] border-[#E2DACB]"
       }`}
     >
       {/* Background Subtle Ambient Glow */}
@@ -156,21 +156,21 @@ export default function LocalPartnershipSection({
             className={`p-3.5 sm:p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1 ${
               isDark
                 ? "bg-[#0B2A20]/80 border-[rgba(201,162,75,0.25)] shadow-md shadow-black/40 hover:border-[rgba(201,162,75,0.45)]"
-                : "bg-white/95 border-[rgba(160,122,40,0.22)] shadow-sm hover:shadow-md"
+                : "bg-[#F4F0E6] border-[#E2DACB] shadow-sm hover:shadow-md"
             }`}
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="w-11 h-11 rounded-xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-[#FAF7F0] dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-[#E2DACB] dark:border-emerald-500/20 flex items-center justify-center">
                 <Award size={22} />
               </div>
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/25">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#FAF7F0] dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/25">
                 {t("localPartnership.prop1Badge", "B2B Matching")}
               </span>
             </div>
             <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white mb-1.5">
               {t("localPartnership.prop1Title", "Fasilitasi Business Matching Terkurasi")}
             </h4>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
               {t("localPartnership.prop1Desc", "DPMPTSP Luwu secara aktif mengorkestrasi temu bisnis berkala antara korporasi investor dengan klaster UMKM lokal untuk menjamin kontinuitas pasokan bahan baku dan jasa operasional.")}
             </p>
           </div>
@@ -179,21 +179,21 @@ export default function LocalPartnershipSection({
             className={`p-3.5 sm:p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1 ${
               isDark
                 ? "bg-[#0B2A20]/80 border-[rgba(201,162,75,0.25)] shadow-md shadow-black/40 hover:border-[rgba(201,162,75,0.45)]"
-                : "bg-white/95 border-[rgba(160,122,40,0.22)] shadow-sm hover:shadow-md"
+                : "bg-[#F4F0E6] border-[#E2DACB] shadow-sm hover:shadow-md"
             }`}
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="w-11 h-11 rounded-xl bg-sky-500/10 text-sky-700 dark:text-sky-400 border border-sky-500/20 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-[#FAF7F0] dark:bg-sky-500/10 text-sky-700 dark:text-sky-400 border border-[#E2DACB] dark:border-sky-500/20 flex items-center justify-center">
                 <ShieldCheck size={22} />
               </div>
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-800 dark:text-sky-300 border border-sky-500/25">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#FAF7F0] dark:bg-sky-500/10 text-sky-800 dark:text-sky-300 border border-[#E2DACB] dark:border-sky-500/25">
                 {t("localPartnership.prop2Badge", "Standard MPP Simpurusiang")}
               </span>
             </div>
             <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white mb-1.5">
               {t("localPartnership.prop2Title", "Legalitas & Sertifikasi Terjamin")}
             </h4>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
               {t("localPartnership.prop2Desc", "Seluruh mitra UMKM terdaftar di Mal Pelayanan Publik (MPP) Simpurusiang dengan kepemilikan NIB resmi, sertifikasi halal, uji higienitas/mutu, serta rekam jejak kepatuhan usaha.")}
             </p>
           </div>
@@ -202,21 +202,21 @@ export default function LocalPartnershipSection({
             className={`p-3.5 sm:p-6 rounded-2xl border transition-all duration-300 hover:-translate-y-1 ${
               isDark
                 ? "bg-[#0B2A20]/80 border-[rgba(201,162,75,0.25)] shadow-md shadow-black/40 hover:border-[rgba(201,162,75,0.45)]"
-                : "bg-white/95 border-[rgba(160,122,40,0.22)] shadow-sm hover:shadow-md"
+                : "bg-[#F4F0E6] border-[#E2DACB] shadow-sm hover:shadow-md"
             }`}
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="w-11 h-11 rounded-xl bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-[#FAF7F0] dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-[#E2DACB] dark:border-amber-500/20 flex items-center justify-center">
                 <Sparkles size={22} />
               </div>
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/25">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#FAF7F0] dark:bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-[#E2DACB] dark:border-amber-500/25">
                 {t("localPartnership.prop3Badge", "Regulasi BKPM & Perda")}
               </span>
             </div>
             <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white mb-1.5">
               {t("localPartnership.prop3Title", "Insentif Khusus Bagi Korporasi Mitra")}
             </h4>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
               {t("localPartnership.prop3Desc", "Investor yang bermitra dengan UMKM lokal berhak memperoleh poin prioritas perizinan, asistensi fiskal daerah, apresiasi CSR terpadu, dan pengawalan kelancaran operasional di lapangan.")}
             </p>
           </div>
@@ -227,10 +227,10 @@ export default function LocalPartnershipSection({
           className={`mb-10 p-2.5 sm:p-7 rounded-2xl sm:rounded-3xl border transition-colors ${
             isDark
               ? "bg-[#08201A]/90 border-[rgba(201,162,75,0.25)] shadow-xl shadow-black/50"
-              : "bg-white/95 border-[rgba(160,122,40,0.22)] shadow-md"
+              : "bg-[#F4F0E6] border-[#E2DACB] shadow-md"
           }`}
         >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-200 dark:border-white/10">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-[#E2DACB] dark:border-white/10">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <Workflow size={16} className="text-[#A07A28] dark:text-[#C9A24B]" />
@@ -238,11 +238,11 @@ export default function LocalPartnershipSection({
                   {t("localPartnership.flowTitle", "Alur Kemitraan Strategis Korporasi & UMKM")}
                 </h3>
               </div>
-              <p className="text-xs text-slate-600 dark:text-slate-300">
+              <p className="text-xs text-slate-700 dark:text-slate-300">
                 {t("localPartnership.flowSubtitle", "Mekanisme resmi fasilitasi rantai pasok daerah di bawah koordinasi DPMPTSP Kabupaten Luwu")}
               </p>
             </div>
-            <span className="self-start sm:self-auto text-[11px] font-mono px-3 py-1 rounded-full font-bold bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/25">
+            <span className="self-start sm:self-auto text-[11px] font-mono px-3 py-1 rounded-full font-bold bg-[#FAF7F0] dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/25">
               {t("localPartnership.flowBadge", "4 Tahap Terstruktur")}
             </span>
           </div>
@@ -259,22 +259,22 @@ export default function LocalPartnershipSection({
                     isActive
                       ? isDark
                         ? "bg-[#0F382B] border-[#C9A24B] shadow-md ring-1 ring-[#C9A24B]/50"
-                        : "bg-[#F3EEDF] border-[#A07A28] shadow-sm ring-1 ring-[#A07A28]/40"
+                        : "bg-[#FAF7F0] border-[#A07A28] shadow-sm ring-1 ring-[#A07A28]/40"
                       : isDark
                       ? "bg-[#0B2A20]/60 border-white/5 hover:border-[rgba(201,162,75,0.25)]"
-                      : "bg-slate-50 border-slate-200 hover:border-slate-300"
+                      : "bg-[#FAF7F0] border-[#E2DACB] hover:bg-[#ECE5D6]/60 hover:border-[#D5CBB8]"
                   }`}
                 >
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-xs font-mono font-extrabold text-[#A07A28] dark:text-[#C9A24B]">
                       {wf.step}
                     </span>
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-200/60 dark:bg-white/10 text-slate-700 dark:text-slate-300">
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[#F4F0E6] dark:bg-white/10 text-slate-800 dark:text-slate-300 border border-[#E2DACB] dark:border-transparent">
                       {wf.tag}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
+                    <div className="p-1.5 rounded-lg bg-[#F4F0E6] dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-[#E2DACB] dark:border-transparent">
                       <IconComp size={16} />
                     </div>
                     <h5 className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white leading-tight">
@@ -295,11 +295,11 @@ export default function LocalPartnershipSection({
           className={`p-2.5 sm:p-7 rounded-2xl sm:rounded-3xl border transition-colors ${
             isDark
               ? "bg-[#0B2A20]/90 border-[rgba(201,162,75,0.25)] shadow-xl shadow-black/50"
-              : "bg-white/95 border-[rgba(160,122,40,0.22)] shadow-lg shadow-slate-200/50"
+              : "bg-[#F4F0E6] border-[#E2DACB] shadow-lg shadow-[#10261E]/5"
           }`}
         >
           {/* Header Directory Filter & Search */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 pb-5 border-b border-slate-200 dark:border-white/10">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 pb-5 border-b border-[#E2DACB] dark:border-white/10">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <Store size={18} className="text-[#A07A28] dark:text-[#C9A24B]" />
@@ -307,7 +307,7 @@ export default function LocalPartnershipSection({
                   {t("localPartnership.dirTitle", "Katalog Terbina MPP Simpurusiang")}
                 </h3>
               </div>
-              <p className="text-xs text-slate-600 dark:text-slate-300">
+              <p className="text-xs text-slate-700 dark:text-slate-300">
                 {t("localPartnership.dirSubtitle", "Pemasok lokal siap kontrak, tersinkronisasi langsung dari database MPP DPMPTSP Kabupaten Luwu")}
               </p>
             </div>
@@ -317,7 +317,7 @@ export default function LocalPartnershipSection({
               <div className="relative w-full sm:w-72">
                 <Search
                   size={14}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400"
                 />
                 <input
                   type="text"
@@ -327,21 +327,21 @@ export default function LocalPartnershipSection({
                   className={`w-full pl-9 pr-8 py-2 text-xs rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#A07A28]/40 transition-colors ${
                     isDark
                       ? "bg-[#08201A] border-white/10 text-white placeholder-slate-400"
-                      : "bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-500"
+                      : "bg-[#FAF7F0] border-[#E2DACB] text-slate-900 placeholder-slate-500"
                   }`}
                 />
                 {searchQuery && (
                   <button
                     type="button"
                     onClick={() => setSearchQuery("")}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
                   >
                     <X size={13} />
                   </button>
                 )}
               </div>
 
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20 shrink-0 self-start sm:self-auto">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-[#FAF7F0] dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/20 shrink-0 self-start sm:self-auto">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span>{t("localPartnership.dirBadge", "{{count}} Mitra Siap Pasok", { count: filteredUmkm.length })}</span>
               </div>
@@ -350,7 +350,7 @@ export default function LocalPartnershipSection({
 
           {/* Category Filter Pills */}
           <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-6 scrollbar-thin">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 shrink-0 mr-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 shrink-0 mr-1">
               {t("localPartnership.clusterLabel", "Klaster:")}
             </span>
             {categories.map((cat) => {
@@ -365,7 +365,7 @@ export default function LocalPartnershipSection({
                       ? "bg-[#0F6B4F] text-white border-[#C9A24B] shadow-sm"
                       : isDark
                       ? "bg-[#08201A] text-slate-300 border-white/10 hover:bg-[#0D3025] hover:border-[rgba(201,162,75,0.25)]"
-                      : "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200 hover:border-slate-300"
+                      : "bg-[#FAF7F0] text-slate-800 border-[#E2DACB] hover:bg-[#ECE5D6] hover:border-[#D5CBB8]"
                   }`}
                 >
                   {cat === "ALL" ? t("localPartnership.allClusters", "Semua Klaster Usaha") : cat}
@@ -381,23 +381,23 @@ export default function LocalPartnershipSection({
                 <div
                   key={n}
                   className={`p-5 rounded-2xl border animate-pulse ${
-                    isDark ? "bg-[#08201A]/60 border-white/5" : "bg-slate-100 border-slate-200"
+                    isDark ? "bg-[#08201A]/60 border-white/5" : "bg-[#FAF7F0] border-[#E2DACB]"
                   }`}
                 >
-                  <div className="h-4 w-28 bg-slate-300 dark:bg-slate-700 rounded mb-3" />
-                  <div className="h-5 w-44 bg-slate-300 dark:bg-slate-700 rounded mb-2" />
-                  <div className="h-3 w-32 bg-slate-200 dark:bg-slate-800 rounded mb-4" />
-                  <div className="h-8 w-full bg-slate-200 dark:bg-slate-800 rounded-xl" />
+                  <div className="h-4 w-28 bg-[#E2DACB] dark:bg-slate-700 rounded mb-3" />
+                  <div className="h-5 w-44 bg-[#E2DACB] dark:bg-slate-700 rounded mb-2" />
+                  <div className="h-3 w-32 bg-[#ECE5D6] dark:bg-slate-800 rounded mb-4" />
+                  <div className="h-8 w-full bg-[#ECE5D6] dark:bg-slate-800 rounded-xl" />
                 </div>
               ))}
             </div>
           ) : filteredUmkm.length === 0 ? (
             <div
               className={`p-10 rounded-2xl border text-center ${
-                isDark ? "bg-[#08201A]/60 border-white/10" : "bg-slate-50 border-slate-200"
+                isDark ? "bg-[#08201A]/60 border-white/10" : "bg-[#FAF7F0] border-[#E2DACB]"
               }`}
             >
-              <div className="w-14 h-14 rounded-2xl mx-auto mb-3 flex items-center justify-center bg-slate-500/10 text-slate-400">
+              <div className="w-14 h-14 rounded-2xl mx-auto mb-3 flex items-center justify-center bg-[#F4F0E6] dark:bg-slate-500/10 border border-[#E2DACB] dark:border-transparent text-slate-500 dark:text-slate-400">
                 <Store size={28} />
               </div>
               <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 mb-1">
@@ -423,16 +423,16 @@ export default function LocalPartnershipSection({
                     className={`p-3.5 sm:p-5 rounded-2xl border flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 hover:shadow-lg ${
                       isDark
                         ? "bg-[#08201A]/85 border-[rgba(201,162,75,0.20)] hover:border-[rgba(201,162,75,0.45)]"
-                        : "bg-slate-50/90 border-slate-200 hover:border-emerald-600/40 shadow-xs"
+                        : "bg-[#FAF7F0] border-[#E2DACB] hover:border-emerald-600/40 shadow-xs"
                     }`}
                   >
                     <div>
                       {/* Top Badges */}
                       <div className="flex items-center justify-between gap-2 mb-2.5">
-                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-[#0F6B4F]/15 dark:bg-[#0F6B4F]/25 text-[#0F6B4F] dark:text-[#C9A24B] border border-[rgba(201,162,75,0.30)] truncate max-w-[65%]">
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-[#F4F0E6] dark:bg-[#0F6B4F]/25 text-[#0F6B4F] dark:text-[#C9A24B] border border-[#E2DACB] dark:border-[rgba(201,162,75,0.30)] truncate max-w-[65%]">
                           {umkm.category || "Klaster Binaan"}
                         </span>
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 shrink-0">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-[#F4F0E6] dark:bg-emerald-500/10 px-2 py-0.5 rounded-full border border-[#E2DACB] dark:border-emerald-500/20 shrink-0">
                           <CheckCircle2 size={11} /> {t("localPartnership.mppVerified", "MPP Verified")}
                         </span>
                       </div>
@@ -451,13 +451,13 @@ export default function LocalPartnershipSection({
                     </div>
 
                     {/* Action Bar */}
-                    <div className="pt-3 border-t border-slate-200 dark:border-white/10 flex items-center justify-between gap-2">
+                    <div className="pt-3 border-t border-[#E2DACB] dark:border-white/10 flex items-center justify-between gap-2">
                       {waUrl ? (
                         <a
                           href={waUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 transition-colors"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-800 dark:text-emerald-300 bg-[#F4F0E6] dark:bg-emerald-500/10 hover:bg-[#ECE5D6] dark:hover:bg-emerald-500/20 border border-[#E2DACB] dark:border-emerald-500/30 transition-colors"
                         >
                           <Phone size={13} />
                           <span>{t("localPartnership.contactPartner", "Hubungi Mitra")}</span>
@@ -480,11 +480,11 @@ export default function LocalPartnershipSection({
             className={`mt-8 p-3.5 sm:p-6 rounded-2xl border flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors ${
               isDark
                 ? "bg-gradient-to-r from-[#0F382B] to-[#08201A] border-[rgba(201,162,75,0.35)] text-white shadow-lg"
-                : "bg-gradient-to-r from-emerald-50 to-[#F3EEDF] border-[rgba(160,122,40,0.30)] text-slate-900 shadow-sm"
+                : "bg-[#FAF7F0] border-[#E2DACB] text-slate-900 shadow-sm"
             }`}
           >
             <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-[#0F6B4F]/20 text-[#0F6B4F] dark:text-[#C9A24B] border border-[rgba(201,162,75,0.30)] flex items-center justify-center shrink-0">
+              <div className="w-12 h-12 rounded-2xl bg-[#F4F0E6] dark:bg-[#0F6B4F]/20 text-[#0F6B4F] dark:text-[#C9A24B] border border-[#E2DACB] dark:border-[rgba(201,162,75,0.30)] flex items-center justify-center shrink-0">
                 <Store size={22} />
               </div>
               <div>

@@ -26,10 +26,10 @@ export const PreLaunchBanner: React.FC<PreLaunchBannerProps> = ({
       className={`flex items-center gap-2.5 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl border text-xs sm:text-xs font-sans transition-all ${
         isDark
           ? 'bg-amber-950/20 border-amber-500/30 text-amber-300'
-          : 'bg-amber-50 border-amber-200 text-amber-800'
+          : 'bg-[#F4F0E6] border-[#E2DACB] text-amber-900'
       } ${className}`}
     >
-      <Database className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0 animate-pulse" />
+      <Database className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600 dark:text-amber-400 shrink-0 animate-pulse" />
       <div className="flex-1 leading-snug">
         <span className="font-bold tracking-wide">Live Data Sync: </span>
         <span className="opacity-90">

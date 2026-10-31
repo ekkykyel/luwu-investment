@@ -60,7 +60,7 @@ export default function LanguageToggle({
         className={`flex items-center justify-between gap-2 p-1.5 rounded-xl border ${
           isDarkHeader
             ? 'bg-[#0F2942]/80 border-white/[0.10] text-slate-200'
-            : 'bg-slate-100/90 border-slate-200/90 text-slate-700'
+            : 'bg-[#FAF7F0] border-[#E2DACB] text-[#10261E]'
         } ${className}`}
       >
         <span className="flex items-center gap-1.5 pl-2 text-xs font-semibold">
@@ -79,10 +79,10 @@ export default function LanguageToggle({
                   isSelected
                     ? isDarkHeader
                       ? 'bg-emerald-500 text-white shadow-xs'
-                      : 'bg-white text-emerald-800 shadow-xs border border-slate-200/80'
+                      : 'bg-[#F4F0E6] text-emerald-800 shadow-xs border border-[#E2DACB]'
                     : isDarkHeader
                       ? 'text-slate-300 hover:text-white hover:bg-white/[0.06]'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                      : 'text-[#4A5A52] hover:text-[#10261E] hover:bg-[#F4F0E6]/70'
                 }`}
               >
                 {lang.label}
@@ -96,7 +96,7 @@ export default function LanguageToggle({
 
   const buttonClasses = isDarkHeader
     ? 'text-slate-200 hover:text-white bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.12]'
-    : 'text-slate-800 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white bg-slate-100/90 dark:bg-white/[0.06] hover:bg-slate-200/80 dark:hover:bg-white/[0.12] border border-slate-200/90 dark:border-white/[0.12]';
+    : 'text-[#10261E] dark:text-slate-200 hover:text-slate-950 dark:hover:text-white bg-[#FAF7F0] dark:bg-white/[0.06] hover:bg-[#ECE5D6] dark:hover:bg-white/[0.12] border border-[#E2DACB] dark:border-white/[0.12]';
 
   return (
     <div className={`relative inline-block text-left ${className}`} ref={dropdownRef}>
@@ -121,8 +121,8 @@ export default function LanguageToggle({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-44 rounded-2xl bg-white dark:bg-surface/95 border border-slate-200 dark:border-white/15 shadow-2xl py-1.5 z-[9999] backdrop-blur-xl animate-in fade-in zoom-in-95 duration-150">
-          <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-white/10 mb-1">
+        <div className="absolute right-0 mt-2 w-44 rounded-2xl bg-[#F4F0E6] dark:bg-surface/95 border border-[#E2DACB] dark:border-white/15 shadow-2xl py-1.5 z-[9999] backdrop-blur-xl animate-in fade-in zoom-in-95 duration-150">
+          <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#4A5A52] dark:text-slate-400 border-b border-[#E2DACB] dark:border-white/10 mb-1">
             Bahasa / Language
           </div>
           {LANGUAGES.map((lang) => {
@@ -135,7 +135,7 @@ export default function LanguageToggle({
                 className={`w-full text-left px-3 py-2 text-xs font-medium flex items-center justify-between transition-colors cursor-pointer ${
                   isSelected
                     ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 font-bold'
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white'
+                    : 'text-[#10261E] dark:text-slate-300 hover:bg-[#FAF7F0] dark:hover:bg-slate-800/80 hover:text-slate-950 dark:hover:text-white'
                 }`}
               >
                 <span className="flex items-center gap-2">

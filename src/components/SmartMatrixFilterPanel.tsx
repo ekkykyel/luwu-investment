@@ -98,7 +98,7 @@ export default function SmartMatrixFilterPanel({
       className={`p-4 sm:p-6 rounded-3xl border relative overflow-hidden transition-all duration-300 backdrop-blur-2xl ${
         isDark
           ? "bg-surface/90 border-slate-800/90 text-white shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
-          : "bg-white/95 border-slate-200/90 text-slate-900 shadow-2xl shadow-slate-200/80"
+          : "bg-[#F4F0E6]/95 border-[#E2DACB] text-slate-900 shadow-2xl shadow-[#10261E]/5"
       }`}
     >
       {/* Volumetric Top Glowing Accents */}
@@ -109,7 +109,7 @@ export default function SmartMatrixFilterPanel({
       {/* Top Header Bar */}
       <div
         className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b ${
-          isDark ? "border-slate-800/80" : "border-slate-200/90"
+          isDark ? "border-slate-800/80" : "border-[#E2DACB]"
         }`}
       >
         <div className="flex items-center gap-3 min-w-0">
@@ -117,7 +117,7 @@ export default function SmartMatrixFilterPanel({
             className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-inner border transition-all ${
               isDark
                 ? "bg-gradient-to-br from-emerald-500/20 to-teal-500/10 text-emerald-400 border-emerald-500/30"
-                : "bg-gradient-to-br from-emerald-50 to-teal-50 text-emerald-700 border-emerald-200"
+                : "bg-[#FAF7F0] text-emerald-800 border-[#E2DACB]"
             }`}
           >
             <Filter size={19} className="animate-pulse" />
@@ -134,7 +134,7 @@ export default function SmartMatrixFilterPanel({
                 className={`text-[9.5px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border shadow-xs ${
                   isDark
                     ? "bg-emerald-950/80 text-emerald-300 border-emerald-500/30"
-                    : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 border-emerald-300"
+                    : "bg-[#FAF7F0] text-emerald-800 border-[#E2DACB]"
                 }`}
               >
                 Smart Matrix
@@ -165,10 +165,10 @@ export default function SmartMatrixFilterPanel({
               className={`text-[10.5px] font-bold px-2.5 py-1 rounded-xl border flex items-center gap-1 ${
                 isDark
                   ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30"
-                  : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 border-emerald-200"
+                  : "bg-[#FAF7F0] text-emerald-800 border-[#E2DACB]"
               }`}
             >
-              <Zap size={11} className="text-amber-400" />
+              <Zap size={11} className="text-amber-500 dark:text-amber-400" />
               <span>{activeFiltersCount} Aktif</span>
             </span>
           )}
@@ -180,10 +180,10 @@ export default function SmartMatrixFilterPanel({
               activeFiltersCount > 0
                 ? isDark
                   ? "bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700 shadow-sm"
-                  : "bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300 shadow-sm"
+                  : "bg-[#FAF7F0] hover:bg-[#ECE5D6] text-slate-900 border-[#E2DACB] shadow-sm"
                 : isDark
                 ? "bg-surface/60 text-slate-500 border-slate-800/80 cursor-default opacity-60"
-                : "bg-slate-100 text-slate-500 border-slate-200 cursor-default opacity-60"
+                : "bg-[#FAF7F0]/70 text-slate-500 border-[#E2DACB] cursor-default opacity-60"
             }`}
           >
             <RotateCcw size={12} className="transition-transform group-hover:-rotate-90" />
@@ -196,10 +196,10 @@ export default function SmartMatrixFilterPanel({
       <div className="mt-3.5 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
         <span
           className={`text-[10px] font-extrabold uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1 ${
-            isDark ? "text-slate-400" : "text-slate-500"
+            isDark ? "text-slate-400" : "text-slate-600"
           }`}
         >
-          <Sparkles size={11} className="text-amber-400" />
+          <Sparkles size={11} className="text-amber-500 dark:text-amber-400" />
           <span>Preset:</span>
         </span>
         {POPULAR_PRESETS.map((preset, idx) => {
@@ -219,7 +219,7 @@ export default function SmartMatrixFilterPanel({
                     : "bg-emerald-600 text-white border-emerald-600 shadow-md shadow-black/25"
                   : isDark
                   ? "bg-base/60 hover:bg-slate-800/80 text-slate-300 border-slate-800 hover:border-slate-700"
-                  : "bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border-slate-200 hover:border-slate-300 font-bold"
+                  : "bg-[#FAF7F0] hover:bg-[#ECE5D6] text-slate-800 hover:text-slate-950 border-[#E2DACB] font-bold"
               }`}
             >
               {preset.label}
@@ -272,11 +272,11 @@ export default function SmartMatrixFilterPanel({
               className={`w-full rounded-2xl pl-10 pr-3.5 py-2.5 text-xs font-semibold focus:outline-none transition-all shadow-xs ${
                 filters.searchTerm
                   ? isDark
-                    ? "bg-emerald-950/30 border-emerald-500/60 text-white ring-1 ring-emerald-500/30"
-                    : "bg-emerald-50/50 border-emerald-500/60 text-slate-900 ring-1 ring-emerald-500/20"
+                    ? "bg-emerald-950/30 border border-emerald-500/60 text-white ring-1 ring-emerald-500/30"
+                    : "bg-[#FAF7F0] border border-emerald-600/60 text-slate-900 ring-1 ring-emerald-500/20"
                   : isDark
                   ? "bg-base/70 border border-slate-800 text-slate-100 placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
-                  : "bg-slate-50/90 border border-slate-200/90 text-slate-900 placeholder-slate-400 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20"
+                  : "bg-[#FAF7F0] border border-[#E2DACB] text-slate-900 placeholder-slate-500 focus:bg-[#FAF7F0] focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20"
               }`}
             />
           </div>
@@ -301,11 +301,11 @@ export default function SmartMatrixFilterPanel({
               className={`w-full rounded-2xl px-3.5 py-2.5 text-xs font-semibold focus:outline-none transition-all cursor-pointer appearance-none shadow-xs ${
                 filters.selectedSector !== "SEMUA"
                   ? isDark
-                    ? "bg-emerald-950/40 border-emerald-500/60 text-emerald-300 ring-1 ring-emerald-500/30 font-bold"
-                    : "bg-emerald-50 border-emerald-500/60 text-emerald-900 ring-1 ring-emerald-500/20 font-bold"
+                    ? "bg-emerald-950/40 border border-emerald-500/60 text-emerald-300 ring-1 ring-emerald-500/30 font-bold"
+                    : "bg-[#FAF7F0] border border-emerald-600/60 text-emerald-950 ring-1 ring-emerald-500/20 font-bold"
                   : isDark
                   ? "bg-base/70 border border-slate-800 text-slate-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
-                  : "bg-slate-50/90 border border-slate-200/90 text-slate-900 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20"
+                  : "bg-[#FAF7F0] border border-[#E2DACB] text-slate-900 focus:bg-[#FAF7F0] focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20"
               }`}
             >
               <option value="SEMUA">{t("smartMatrixFilter.allSectors", "Semua Sektor")}</option>
@@ -343,11 +343,11 @@ export default function SmartMatrixFilterPanel({
               className={`w-full rounded-2xl px-3.5 py-2.5 text-xs font-semibold focus:outline-none transition-all cursor-pointer appearance-none shadow-xs ${
                 filters.selectedDistrict !== "SEMUA"
                   ? isDark
-                    ? "bg-amber-950/40 border-amber-500/60 text-amber-300 ring-1 ring-amber-500/30 font-bold"
-                    : "bg-amber-50 border-amber-500/60 text-amber-900 ring-1 ring-amber-500/20 font-bold"
+                    ? "bg-amber-950/40 border border-amber-500/60 text-amber-300 ring-1 ring-amber-500/30 font-bold"
+                    : "bg-[#FAF7F0] border border-amber-600/60 text-amber-950 ring-1 ring-amber-500/20 font-bold"
                   : isDark
                   ? "bg-base/70 border border-slate-800 text-slate-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
-                  : "bg-slate-50/90 border border-slate-200/90 text-slate-900 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20"
+                  : "bg-[#FAF7F0] border border-[#E2DACB] text-slate-900 focus:bg-[#FAF7F0] focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20"
               }`}
             >
               <option value="SEMUA">{t("smartMatrixFilter.allDistricts", "Semua Kecamatan (22 Wilayah)")}</option>
@@ -384,11 +384,11 @@ export default function SmartMatrixFilterPanel({
               className={`w-full rounded-2xl px-3.5 py-2.5 text-xs font-semibold focus:outline-none transition-all cursor-pointer appearance-none shadow-xs ${
                 filters.rtrwStatus !== "SEMUA"
                   ? isDark
-                    ? "bg-indigo-950/40 border-indigo-500/60 text-indigo-300 ring-1 ring-indigo-500/30 font-bold"
-                    : "bg-indigo-50 border-indigo-500/60 text-indigo-900 ring-1 ring-indigo-500/20 font-bold"
+                    ? "bg-indigo-950/40 border border-indigo-500/60 text-indigo-300 ring-1 ring-indigo-500/30 font-bold"
+                    : "bg-[#FAF7F0] border border-indigo-600/60 text-indigo-950 ring-1 ring-indigo-500/20 font-bold"
                   : isDark
                   ? "bg-base/70 border border-slate-800 text-slate-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
-                  : "bg-slate-50/90 border border-slate-200/90 text-slate-900 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20"
+                  : "bg-[#FAF7F0] border border-[#E2DACB] text-slate-900 focus:bg-[#FAF7F0] focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20"
               }`}
             >
               <option value="SEMUA">{t("smartMatrixFilter.allRtrwZones", "Semua Zona RTRW")}</option>
@@ -407,7 +407,7 @@ export default function SmartMatrixFilterPanel({
       {/* Interactive Toggle Pills Bar with High-End Glass Badges */}
       <div
         className={`flex flex-wrap items-center gap-2.5 mt-4 pt-3.5 border-t ${
-          isDark ? "border-slate-800/80" : "border-slate-200/90"
+          isDark ? "border-slate-800/80" : "border-[#E2DACB]"
         }`}
       >
         <button
@@ -422,10 +422,10 @@ export default function SmartMatrixFilterPanel({
             filters.incentiveEligibleOnly
               ? isDark
                 ? "bg-gradient-to-r from-amber-500/25 to-amber-600/15 text-amber-300 border-amber-500/50 shadow-amber-950/40"
-                : "bg-amber-100/90 text-amber-950 border-amber-400 shadow-amber-200/50"
+                : "bg-[#FAF7F0] text-amber-950 border-amber-500/60 shadow-[#10261E]/5"
               : isDark
               ? "bg-base/60 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200"
-              : "bg-slate-100/80 text-slate-600 border-slate-200/80 hover:bg-slate-100 hover:text-slate-900"
+              : "bg-[#FAF7F0] text-slate-700 border-[#E2DACB] hover:bg-[#ECE5D6] hover:text-slate-950"
           }`}
         >
           <div
@@ -434,7 +434,7 @@ export default function SmartMatrixFilterPanel({
                 ? "bg-amber-500 text-slate-950 font-black"
                 : isDark
                 ? "bg-slate-800 text-slate-400"
-                : "bg-slate-200 text-slate-600"
+                : "bg-[#F4F0E6] text-slate-700 border border-[#E2DACB]"
             }`}
           >
             <Award size={12} />
@@ -454,10 +454,10 @@ export default function SmartMatrixFilterPanel({
             filters.cleanAndClearOnly
               ? isDark
                 ? "bg-gradient-to-r from-emerald-500/25 to-teal-600/15 text-emerald-300 border-emerald-500/50 shadow-black/25"
-                : "bg-emerald-100/90 text-emerald-950 border-emerald-400 shadow-black/25"
+                : "bg-[#FAF7F0] text-emerald-950 border-emerald-500/60 shadow-[#10261E]/5"
               : isDark
               ? "bg-base/60 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200"
-              : "bg-slate-100/80 text-slate-600 border-slate-200/80 hover:bg-slate-100 hover:text-slate-900"
+              : "bg-[#FAF7F0] text-slate-700 border-[#E2DACB] hover:bg-[#ECE5D6] hover:text-slate-950"
           }`}
         >
           <div
@@ -466,7 +466,7 @@ export default function SmartMatrixFilterPanel({
                 ? "bg-emerald-500 text-slate-950 font-black"
                 : isDark
                 ? "bg-slate-800 text-slate-400"
-                : "bg-slate-200 text-slate-600"
+                : "bg-[#F4F0E6] text-slate-700 border border-[#E2DACB]"
             }`}
           >
             <ShieldCheck size={12} />
@@ -486,10 +486,10 @@ export default function SmartMatrixFilterPanel({
             filters.hilirisasiOnly
               ? isDark
                 ? "bg-gradient-to-r from-teal-500/25 to-emerald-600/15 text-teal-300 border-teal-500/50 shadow-black/25"
-                : "bg-teal-100/90 text-teal-950 border-teal-400 shadow-black/25"
+                : "bg-[#FAF7F0] text-teal-950 border-teal-500/60 shadow-[#10261E]/5"
               : isDark
               ? "bg-base/60 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200"
-              : "bg-slate-100/80 text-slate-600 border-slate-200/80 hover:bg-slate-100 hover:text-slate-900"
+              : "bg-[#FAF7F0] text-slate-700 border-[#E2DACB] hover:bg-[#ECE5D6] hover:text-slate-950"
           }`}
         >
           <div
@@ -498,7 +498,7 @@ export default function SmartMatrixFilterPanel({
                 ? "bg-teal-500 text-slate-950 font-black"
                 : isDark
                 ? "bg-slate-800 text-slate-400"
-                : "bg-slate-200 text-slate-600"
+                : "bg-[#F4F0E6] text-slate-700 border border-[#E2DACB]"
             }`}
           >
             <Zap size={12} />

@@ -331,7 +331,7 @@ function getSectorColor(sector: string) {
       return {
         border: 'hover:border-sky-400/60',
         glow: 'hover:shadow-sky-500/25',
-        badgeBg: 'bg-sky-100 dark:bg-sky-400/20 text-sky-800 dark:text-sky-300 border border-sky-200 dark:border-sky-400/30 backdrop-blur-sm shadow-sm',
+        badgeBg: 'bg-[#F4F0E6]/95 dark:bg-sky-400/20 text-sky-800 dark:text-sky-300 border border-[#E2DACB] dark:border-sky-400/30 backdrop-blur-sm shadow-sm',
         progress: 'bg-gradient-to-r from-sky-400 to-blue-500',
         dot: 'bg-sky-400',
         gradient: 'from-sky-600 to-blue-800',
@@ -340,7 +340,7 @@ function getSectorColor(sector: string) {
       return {
         border: 'hover:border-emerald-400/60',
         glow: 'hover:shadow-black/25',
-        badgeBg: 'bg-emerald-100 dark:bg-emerald-400/20 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-400/30 backdrop-blur-sm shadow-sm',
+        badgeBg: 'bg-[#F4F0E6]/95 dark:bg-emerald-400/20 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-400/30 backdrop-blur-sm shadow-sm',
         progress: 'bg-gradient-to-r from-emerald-400 to-teal-500',
         dot: 'bg-emerald-400',
         gradient: 'from-emerald-600 to-teal-800',
@@ -349,7 +349,7 @@ function getSectorColor(sector: string) {
       return {
         border: 'hover:border-teal-400/60',
         glow: 'hover:shadow-black/25',
-        badgeBg: 'bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-500/30 backdrop-blur-sm shadow-sm',
+        badgeBg: 'bg-[#F4F0E6]/95 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-[#E2DACB] dark:border-teal-500/30 backdrop-blur-sm shadow-sm',
         progress: 'bg-gradient-to-r from-teal-500 to-emerald-500',
         dot: 'bg-teal-400',
         gradient: 'from-teal-600 to-emerald-800',
@@ -358,7 +358,7 @@ function getSectorColor(sector: string) {
       return {
         border: 'hover:border-[#C9A24B]/60',
         glow: 'hover:shadow-black/25',
-        badgeBg: 'bg-[#C9A24B]/10 text-[#A07A28] dark:text-[#C9A24B] border border-[#A07A28]/30 dark:border-[rgba(201,162,75,0.30)] backdrop-blur-sm shadow-sm',
+        badgeBg: 'bg-[#F4F0E6]/95 dark:bg-[#C9A24B]/15 text-[#855A14] dark:text-[#C9A24B] border border-[#E2DACB] dark:border-[rgba(201,162,75,0.30)] backdrop-blur-sm shadow-sm',
         progress: 'bg-gradient-to-r from-[#0F6B4F] via-[#1F9D74] to-[#C9A24B]',
         dot: 'bg-[#C9A24B]',
         gradient: 'from-[#0F6B4F] to-[#C9A24B]',
@@ -367,7 +367,7 @@ function getSectorColor(sector: string) {
       return {
         border: 'hover:border-emerald-400/60',
         glow: 'hover:shadow-black/25',
-        badgeBg: 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30 backdrop-blur-sm shadow-sm',
+        badgeBg: 'bg-[#F4F0E6]/95 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/30 backdrop-blur-sm shadow-sm',
         progress: 'bg-gradient-to-r from-emerald-500 to-teal-500',
         dot: 'bg-emerald-400',
         gradient: 'from-emerald-700 to-teal-900',
@@ -376,11 +376,11 @@ function getSectorColor(sector: string) {
 }
 
 function InvestmentCardSkeleton({ isDark }: { isDark: boolean }) {
-  const base = isDark ? 'bg-slate-800' : 'bg-slate-200';
+  const base = isDark ? 'bg-slate-800' : 'bg-[#E2DACB]/70';
   return (
     <div
       className={`rounded-2xl border overflow-hidden animate-pulse ${
-        isDark ? 'bg-slate-900/40 border-slate-800' : 'bg-white border-slate-200'
+        isDark ? 'bg-slate-900/40 border-slate-800' : 'bg-[#F4F0E6] border-[#E2DACB]'
       }`}
     >
       <div className={`h-44 w-full ${base}`} />
@@ -430,7 +430,7 @@ function InvestmentCard({
       className={`rounded-2xl border overflow-hidden flex flex-col transition-all duration-300 group hover:-translate-y-1.5 hover:shadow-xl ${
         isDark
           ? `bg-slate-900/50 border-slate-800 ${sectorColor.border}`
-          : `bg-white border-slate-200 ${sectorColor.border}`
+          : `bg-[#F4F0E6] border-[#E2DACB] ${sectorColor.border}`
       }`}
     >
       {/* Thumbnail */}
@@ -514,7 +514,7 @@ function InvestmentCard({
               {pct}%
             </span>
           </div>
-          <div className={`h-1 rounded-full overflow-hidden ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`}>
+          <div className={`h-1 rounded-full overflow-hidden ${isDark ? 'bg-slate-800' : 'bg-[#E2DACB]/60'}`}>
             <div
               className={`h-full rounded-full transition-all duration-700 ${sectorColor.progress}`}
               style={{ width: `${pct}%` }}
@@ -524,7 +524,7 @@ function InvestmentCard({
       </div>
 
       {/* Card footer — 2 tombol */}
-      <div className={`px-4 pb-4 flex gap-2 border-t pt-3 ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
+      <div className={`px-4 pb-4 flex gap-2 border-t pt-3 ${isDark ? 'border-slate-800' : 'border-[#E2DACB]'}`}>
         <button
           type="button"
           onClick={(e) => {
@@ -539,7 +539,7 @@ function InvestmentCard({
           className={`flex-1 py-2.5 rounded-xl text-xs font-medium border transition-all min-h-[44px] cursor-pointer flex items-center justify-center gap-1 ${
             isDark
               ? 'border-slate-700 text-slate-300 hover:bg-slate-800'
-              : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+              : 'bg-[#FAF7F0] border-[#E2DACB] text-[#10261E] hover:bg-[#ECE5D6]'
           }`}
         >
           Detail
@@ -1177,22 +1177,22 @@ export default function LandingPage({
     }
     const metaTag = document.getElementById("theme-color-meta");
     if (metaTag) {
-      metaTag.setAttribute("content", isDarkMode ? "#081c2e" : "#ffffff");
+      metaTag.setAttribute("content", isDarkMode ? "#081c2e" : "#F4F0E6");
     }
   }, [isDarkMode]);
 
-  // Tema Dinamis (Institusional Warm Navy ~210° & Elegan Nusantara Alabaster)
+  // Tema Dinamis (Institusional Warm Navy ~210° & Elegan Nusantara Warm Cream #F4F0E6 / #FAF7F0)
   const themeBg = isDark
     ? "bg-[#0A2238] text-slate-100"
-    : "bg-[#FAF8F3] text-slate-900";
+    : "bg-[#FAF7F0] text-[#10261E]";
   const cardBg = isDark
     ? "bg-[#0F2D4A] border-white/[0.09] shadow-none"
-    : "bg-[#FAF8F3] border-[#E5DFD3] shadow-xs";
+    : "bg-[#F4F0E6] border-[#E2DACB] shadow-xs";
   const textMuted = isDark ? "text-slate-400 font-medium" : "text-slate-600 font-medium";
   const textHighlight = isDark ? "text-sky-300 font-bold" : "text-sky-700 font-bold";
   const inputBg = isDark
     ? "bg-[#143755] border-white/[0.09] text-slate-100 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 transition-all duration-200 font-semibold"
-    : "bg-white border-[#DFD8CA] text-slate-900 placeholder:text-slate-400 focus:border-[#0F6B4F] focus:ring-2 focus:ring-[#0F6B4F]/25 transition-all duration-200 font-semibold";
+    : "bg-[#FAF7F0] border-[#E2DACB] text-[#10261E] placeholder:text-slate-500 focus:border-[#0F6B4F] focus:ring-2 focus:ring-[#0F6B4F]/25 transition-all duration-200 font-semibold";
 
   const handleToggleTheme = () => {
     const nextDark = !isDark;
@@ -2346,9 +2346,9 @@ export default function LandingPage({
       ambientGlow: "bg-[#C9A24B]/20",
       borderGlow: "border-[rgba(201,162,75,0.40)]",
       railColor: "via-[#C9A24B]",
-      activeBg: "bg-emerald-50 dark:bg-[#0B2A20] text-emerald-800 dark:text-[#F6F1E4] border-emerald-300 dark:border-[rgba(201,162,75,0.30)]",
+      activeBg: "bg-[#F4F0E6] dark:bg-[#0B2A20] text-emerald-800 dark:text-[#F6F1E4] border-[#E2DACB] dark:border-[rgba(201,162,75,0.30)]",
       dotColor: "bg-[#C9A24B]",
-      badgeClass: "bg-emerald-50 dark:bg-[#0B2A20] text-emerald-800 dark:text-[#C9A24B] border-emerald-300 dark:border-[rgba(201,162,75,0.30)]",
+      badgeClass: "bg-[#F4F0E6] dark:bg-[#0B2A20] text-emerald-800 dark:text-[#C9A24B] border-[#E2DACB] dark:border-[rgba(201,162,75,0.30)]",
       legalBasis: "PP No. 5 Tahun 2021 tentang Perizinan Berusaha Berbasis Risiko",
       portalUrl: "https://oss.go.id",
       portalLabel: "Portal OSS-RBA BKPM",
@@ -2376,9 +2376,9 @@ export default function LandingPage({
       ambientGlow: "bg-[#1F9D74]/20",
       borderGlow: "border-[rgba(31,157,116,0.40)]",
       railColor: "via-[#1F9D74]",
-      activeBg: "bg-emerald-50 dark:bg-[#0B2A20] text-emerald-800 dark:text-[#1F9D74] border-emerald-200 dark:border-[rgba(31,157,116,0.30)]",
+      activeBg: "bg-[#F4F0E6] dark:bg-[#0B2A20] text-emerald-800 dark:text-[#1F9D74] border-[#E2DACB] dark:border-[rgba(31,157,116,0.30)]",
       dotColor: "bg-[#1F9D74]",
-      badgeClass: "bg-emerald-50 dark:bg-[#0B2A20] text-emerald-800 dark:text-[#1F9D74] border-emerald-200 dark:border-[rgba(31,157,116,0.20)]",
+      badgeClass: "bg-[#F4F0E6] dark:bg-[#0B2A20] text-emerald-800 dark:text-[#1F9D74] border-[#E2DACB] dark:border-[rgba(31,157,116,0.20)]",
       legalBasis: "Perda Kab. Luwu No. 1 Tahun 2024 tentang RTRW Kabupaten Luwu",
       portalUrl: "https://gistaru.atrbpn.go.id/rtronline/",
       portalLabel: "GISTARU Spasial Luwu",
@@ -2406,9 +2406,9 @@ export default function LandingPage({
       ambientGlow: "bg-[#1F9D74]/20",
       borderGlow: "border-[rgba(31,157,116,0.40)]",
       railColor: "via-[#1F9D74]",
-      activeBg: "bg-emerald-50 dark:bg-[#0B2A20] text-emerald-800 dark:text-[#1F9D74] border-emerald-200 dark:border-[rgba(31,157,116,0.30)]",
+      activeBg: "bg-[#F4F0E6] dark:bg-[#0B2A20] text-emerald-800 dark:text-[#1F9D74] border-[#E2DACB] dark:border-[rgba(31,157,116,0.30)]",
       dotColor: "bg-[#1F9D74]",
-      badgeClass: "bg-emerald-50 dark:bg-[#0B2A20] text-emerald-800 dark:text-[#1F9D74] border-emerald-200 dark:border-[rgba(31,157,116,0.20)]",
+      badgeClass: "bg-[#F4F0E6] dark:bg-[#0B2A20] text-emerald-800 dark:text-[#1F9D74] border-[#E2DACB] dark:border-[rgba(31,157,116,0.20)]",
       legalBasis: "PP No. 22 Tahun 2021 tentang Perlindungan & Pengelolaan Lingkungan",
       portalUrl: "https://amdalnet.menlhk.go.id",
       portalLabel: "Portal AMDALNET KLHK",
@@ -2436,9 +2436,9 @@ export default function LandingPage({
       ambientGlow: "bg-[#C9A24B]/20",
       borderGlow: "border-[rgba(201,162,75,0.40)]",
       railColor: "via-[#C9A24B]",
-      activeBg: "bg-emerald-50 dark:bg-[#0B2A20] text-emerald-800 dark:text-[#C9A24B] border-emerald-300 dark:border-[rgba(201,162,75,0.30)]",
+      activeBg: "bg-[#F4F0E6] dark:bg-[#0B2A20] text-emerald-800 dark:text-[#C9A24B] border-[#E2DACB] dark:border-[rgba(201,162,75,0.30)]",
       dotColor: "bg-[#C9A24B]",
-      badgeClass: "bg-emerald-50 dark:bg-[#0B2A20] text-emerald-800 dark:text-[#C9A24B] border-emerald-300 dark:border-[rgba(201,162,75,0.30)]",
+      badgeClass: "bg-[#F4F0E6] dark:bg-[#0B2A20] text-emerald-800 dark:text-[#C9A24B] border-[#E2DACB] dark:border-[rgba(201,162,75,0.30)]",
       legalBasis: "PP No. 16 Tahun 2021 & Retribusi PBG Pemerintah Daerah Luwu",
       portalUrl: "https://simbg.pupr.go.id",
       portalLabel: "Portal SIMBG PUPR",
@@ -2569,7 +2569,7 @@ export default function LandingPage({
         className={`fixed top-0 left-0 w-full z-[100] border-b transition-colors duration-500 ease-in-out ${
           isDark 
             ? "bg-[#081C2E]/95 border-white/[0.09] shadow-[0_4px_24px_rgba(0,0,0,0.35)]" 
-            : "bg-white/95 border-slate-200/90 shadow-[0_4px_24px_rgba(15,23,42,0.06)]"
+            : "bg-[#F4F0E6]/95 border-[#E2DACB] shadow-[0_4px_24px_rgba(16,38,30,0.06)]"
         }`}
         style={{ paddingTop: 'env(safe-area-inset-top)', backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
       >
@@ -2583,7 +2583,7 @@ export default function LandingPage({
               <div className={`p-1.5 sm:p-2 rounded-xl border transition-all duration-300 group-hover:scale-105 ${
                 isDark
                   ? "bg-white/[0.05] border-white/[0.12]"
-                  : "bg-emerald-50/80 border-emerald-600/20"
+                  : "bg-[#FAF7F0] border-[#E2DACB]"
               }`}>
                 <img
                   src={LUWU_LOGO_BASE64}
@@ -2688,7 +2688,7 @@ export default function LandingPage({
                     ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/35"
                     : isDark
                       ? "bg-white/[0.06] text-slate-200 hover:text-white hover:bg-white/[0.12] border-white/[0.12]"
-                      : "bg-slate-100/90 text-slate-700 hover:text-slate-900 border-slate-200/90 hover:bg-slate-200/80"
+                      : "bg-[#FAF7F0] text-slate-700 hover:text-slate-900 border-[#E2DACB] hover:bg-[#ECE5D6]"
                 }`}
                 title={isFullscreen ? t("nav.exitFullscreen", "Keluar dari Layar Penuh") : t("nav.fullscreen", "Mode Layar Penuh (Fullscreen)")}
                 aria-label="Toggle Fullscreen"
@@ -2705,7 +2705,7 @@ export default function LandingPage({
                 className={`w-10 h-10 min-w-[40px] min-h-[40px] rounded-full flex items-center justify-center border transition-all duration-200 shrink-0 cursor-pointer ${
                   isDark
                     ? "bg-white/[0.06] text-amber-300 hover:text-amber-200 hover:bg-white/[0.12] border-white/[0.12]"
-                    : "bg-slate-100/90 text-slate-700 hover:text-slate-900 border-slate-200/90 hover:bg-slate-200/80"
+                    : "bg-[#FAF7F0] text-slate-700 hover:text-slate-900 border-[#E2DACB] hover:bg-[#ECE5D6]"
                 }`}
                 aria-label="Toggle Theme"
               >
@@ -2724,7 +2724,7 @@ export default function LandingPage({
                 className={`hidden sm:flex items-center justify-center w-10 h-10 min-w-[40px] min-h-[40px] rounded-full border transition-all duration-200 shrink-0 cursor-pointer ${
                   isDark 
                     ? "border-white/[0.12] bg-white/[0.06] text-slate-300 hover:text-white hover:bg-white/[0.12]" 
-                    : "border-slate-200/90 bg-slate-100/90 text-slate-600 hover:text-slate-900 hover:bg-slate-200/80"
+                    : "border-[#E2DACB] bg-[#FAF7F0] text-slate-600 hover:text-slate-900 hover:bg-[#ECE5D6]"
                 }`}
                 title={t("nav.loginAdmin", "Portal Petugas & Admin DPMPTSP")}
                 aria-label="Login Admin"
@@ -2755,7 +2755,7 @@ export default function LandingPage({
                 className={`md:hidden w-10 h-10 min-w-[40px] min-h-[40px] shrink-0 flex items-center justify-center rounded-full border transition-all duration-200 cursor-pointer ${
                   isDark
                     ? "border-white/[0.12] bg-white/[0.06] text-slate-200 hover:text-white hover:bg-white/[0.12]"
-                    : "border-slate-200/90 bg-slate-100/90 text-slate-800 hover:bg-slate-200/80 hover:text-slate-950"
+                    : "border-[#E2DACB] bg-[#FAF7F0] text-slate-800 hover:bg-[#ECE5D6] hover:text-slate-950"
                 }`}
                 aria-label="Toggle Mobile Menu"
               >
@@ -2776,7 +2776,7 @@ export default function LandingPage({
               className={`md:hidden border-t overflow-hidden ${
                 isDark
                   ? "bg-[#081C2E]/98 border-white/[0.09] text-white"
-                  : "bg-white/98 border-slate-200/90 text-slate-900"
+                  : "bg-[#F4F0E6]/98 border-[#E2DACB] text-[#10261E]"
               }`}
             >
               <div className="px-4 pt-3 pb-5 space-y-2">
@@ -2827,16 +2827,16 @@ export default function LandingPage({
                     className={`w-full text-left px-4 py-3 min-h-[44px] rounded-xl text-[15px] font-semibold transition-all ${
                       isDark
                         ? "text-slate-100 hover:bg-white/[0.06]"
-                        : "text-slate-900 hover:bg-slate-100 hover:text-emerald-800"
+                        : "text-[#10261E] hover:bg-[#FAF7F0] hover:text-emerald-800"
                     }`}
                   >
                     {item.name}
                   </motion.button>
                 ))}
-                <div className={`pt-3 pb-1 border-t flex flex-col gap-2.5 ${isDark ? "border-white/[0.08]" : "border-slate-200/80"}`}>
+                <div className={`pt-3 pb-1 border-t flex flex-col gap-2.5 ${isDark ? "border-white/[0.08]" : "border-[#E2DACB]"}`}>
                   
                   <div className={`flex flex-col gap-2 p-3 rounded-xl border ${
-                    isDark ? "bg-[#0F2942]/70 border-white/[0.09]" : "bg-slate-50 border-slate-200/90"
+                    isDark ? "bg-[#0F2942]/70 border-white/[0.09]" : "bg-[#FAF7F0] border-[#E2DACB]"
                   }`}>
                     <span className={`text-[10px] font-bold uppercase tracking-wider mb-0.5 ${isDark ? "text-slate-300" : "text-slate-600"}`}>
                       {t("nav.registerAs", "Registrasi Sebagai:")}
@@ -2852,7 +2852,7 @@ export default function LandingPage({
                       className={`w-full flex items-center justify-center gap-2 px-5 py-2.5 min-h-[42px] rounded-lg text-sm font-bold transition-all border ${
                         isDark
                           ? "bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border-emerald-400/30"
-                          : "bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-300/80"
+                          : "bg-[#F4F0E6] hover:bg-[#ECE5D6] text-emerald-800 border-[#E2DACB]"
                       }`}
                     >
                       <Building2 size={16} />
@@ -2877,7 +2877,7 @@ export default function LandingPage({
                         ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
                         : isDark
                           ? "bg-[#0F2942]/80 text-slate-200 border-white/[0.10] hover:bg-[#14304C]"
-                          : "bg-slate-100 text-slate-800 border-slate-200 hover:bg-slate-200/70"
+                          : "bg-[#FAF7F0] text-slate-800 border-[#E2DACB] hover:bg-[#ECE5D6]"
                     }`}
                   >
                     <span className="flex items-center gap-2">
@@ -2885,7 +2885,7 @@ export default function LandingPage({
                       <span>{isFullscreen ? t("nav.exitFullscreen", "Keluar dari Layar Penuh") : t("nav.fullscreenApp", "Mode Layar Penuh")}</span>
                     </span>
                     <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md ${
-                      isDark ? "bg-emerald-500/20 text-emerald-300" : "bg-emerald-100 text-emerald-800"
+                      isDark ? "bg-emerald-500/20 text-emerald-300" : "bg-[#F4F0E6] text-emerald-800 border border-[#E2DACB]"
                     }`}>
                       Android
                     </span>
@@ -2900,7 +2900,7 @@ export default function LandingPage({
                     className={`w-full flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl text-sm font-semibold transition-all border ${
                       isDark
                         ? "bg-[#0F2942]/80 text-emerald-300 border-white/[0.10]"
-                        : "bg-slate-100 text-emerald-800 border-slate-200"
+                        : "bg-[#FAF7F0] text-emerald-800 border-[#E2DACB] hover:bg-[#ECE5D6]"
                     }`}
                   >
                     <ShieldCheck size={16} />
@@ -2936,7 +2936,7 @@ export default function LandingPage({
           className={`relative w-full overflow-hidden border-b transition-colors duration-500 ${
             isDark
               ? "bg-[#071829] border-white/[0.07]"
-              : "bg-[#F6FAF8] border-slate-200/80"
+              : "bg-[#FAF7F0] border-[#E2DACB]"
           }`}
           style={{ minHeight: 'clamp(490px, 60vh, 660px)' }}
         >
@@ -2951,7 +2951,7 @@ export default function LandingPage({
                 ? `url(${heroImages?.[currentSlide] || heroImages?.[0]})`
                 : isDark
                   ? 'linear-gradient(135deg,#071829 0%,#0A2238 45%,#0F352E 100%)'
-                  : 'linear-gradient(135deg,#ECFDF5 0%,#F0FDFA 50%,#F8FAFC 100%)',
+                  : 'linear-gradient(135deg,#FAF7F0 0%,#F4F0E6 55%,#FAF7F0 100%)',
             }}
           />
 
@@ -2964,9 +2964,9 @@ export default function LandingPage({
             </>
           ) : (
             <>
-              <div className="sm:hidden absolute inset-0 pointer-events-none bg-gradient-to-b from-white/94 via-[#F5FAF8]/90 to-[#F8FAFC]/97" />
-              <div className="hidden sm:block absolute inset-0 pointer-events-none bg-gradient-to-r from-white/97 via-[#F6FBF9]/88 to-white/25" />
-              <div className="hidden sm:block absolute inset-0 pointer-events-none bg-gradient-to-b from-white/75 via-transparent to-[#F8FAFC]/96" />
+              <div className="sm:hidden absolute inset-0 pointer-events-none bg-gradient-to-b from-[#FAF7F0]/95 via-[#F4F0E6]/90 to-[#FAF7F0]/97" />
+              <div className="hidden sm:block absolute inset-0 pointer-events-none bg-gradient-to-r from-[#FAF7F0]/97 via-[#F4F0E6]/88 to-[#FAF7F0]/25" />
+              <div className="hidden sm:block absolute inset-0 pointer-events-none bg-gradient-to-b from-[#FAF7F0]/75 via-transparent to-[#FAF7F0]/96" />
             </>
           )}
 
@@ -3079,7 +3079,7 @@ export default function LandingPage({
                     className={`flex items-center gap-2.5 sm:gap-3 pl-3.5 pr-2 sm:pl-4 sm:pr-2.5 py-2 sm:py-2.5 rounded-2xl border transition-all duration-200 ${
                       isDark
                         ? "bg-[#0F2942]/92 border-white/[0.16] hover:border-white/25 focus-within:bg-[#133250]/95 focus-within:border-emerald-400/60 focus-within:ring-2 focus-within:ring-emerald-400/20 shadow-[0_12px_32px_rgba(0,0,0,0.38)] backdrop-blur-xl"
-                        : "bg-white/95 border-slate-200/95 hover:border-slate-300 focus-within:bg-white focus-within:border-emerald-600/60 focus-within:ring-2 focus-within:ring-emerald-500/20 shadow-[0_10px_28px_rgba(15,23,42,0.08)] backdrop-blur-xl"
+                        : "bg-[#F4F0E6]/95 border-[#E2DACB] hover:border-[#D4C9B6] focus-within:bg-[#FAF7F0] focus-within:border-emerald-600/60 focus-within:ring-2 focus-within:ring-emerald-500/20 shadow-[0_10px_28px_rgba(16,38,30,0.08)] backdrop-blur-xl"
                     }`}
                   >
                     <Search
@@ -3142,7 +3142,7 @@ export default function LandingPage({
                         className={`px-2.5 sm:px-3 py-1 rounded-lg text-xs font-semibold shrink-0 whitespace-nowrap border transition-all duration-150 min-h-[32px] cursor-pointer ${
                           isDark
                             ? "bg-[#14304C]/88 hover:bg-[#1A4366] text-slate-200 hover:text-white border-white/[0.14]"
-                            : "bg-white/92 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border-slate-200/95 shadow-2xs"
+                            : "bg-[#F4F0E6]/95 hover:bg-[#FAF7F0] text-slate-700 hover:text-emerald-800 border-[#E2DACB] shadow-2xs"
                         }`}
                       >
                         {tag}
@@ -3175,7 +3175,7 @@ export default function LandingPage({
                     className={`w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-3 sm:py-3.5 min-h-[48px] rounded-xl text-[13.5px] sm:text-sm font-semibold whitespace-nowrap border transition-all duration-200 backdrop-blur-md cursor-pointer ${
                       isDark
                         ? "bg-[#14304C]/90 hover:bg-[#1A4366] text-slate-100 border-white/20"
-                        : "bg-white/95 hover:bg-white text-slate-800 border-slate-300/90 shadow-xs"
+                        : "bg-[#F4F0E6]/95 hover:bg-[#FAF7F0] text-[#10261E] border-[#E2DACB] shadow-xs"
                     }`}
                   >
                     <MessageCircle size={16} className={`shrink-0 ${isDark ? "text-emerald-300" : "text-emerald-700"}`} />
@@ -3194,11 +3194,11 @@ export default function LandingPage({
                   className={`rounded-2xl p-6 border backdrop-blur-xl transition-colors duration-300 ${
                     isDark
                       ? "bg-[#0C233A]/88 border-white/[0.12] shadow-[0_20px_50px_rgba(0,0,0,0.45)]"
-                      : "bg-white/92 border-slate-200/95 shadow-[0_20px_48px_rgba(15,23,42,0.10)]"
+                      : "bg-[#F4F0E6]/95 border-[#E2DACB] shadow-[0_20px_48px_rgba(16,38,30,0.10)]"
                   }`}
                 >
                   {/* Panel Header */}
-                  <div className="flex items-center justify-between gap-2 pb-4 border-b border-slate-200/80 dark:border-white/[0.09]">
+                  <div className="flex items-center justify-between gap-2 pb-4 border-b border-[#E2DACB] dark:border-white/[0.09]">
                     <span
                       className={`text-xs font-bold uppercase tracking-[0.10em] ${
                         isDark ? "text-emerald-300" : "text-emerald-800"
@@ -3216,7 +3216,7 @@ export default function LandingPage({
                   </div>
 
                   {/* Primary Live Metric + 3D WebGIS Shortcut */}
-                  <div className="py-4 border-b border-slate-200/80 dark:border-white/[0.09] flex items-end justify-between gap-4">
+                  <div className="py-4 border-b border-[#E2DACB] dark:border-white/[0.09] flex items-end justify-between gap-4">
                     <div>
                       <div
                         className={`text-xs font-medium mb-1 ${
@@ -3241,7 +3241,7 @@ export default function LandingPage({
                       className={`inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[40px] rounded-xl text-xs font-semibold border transition-all cursor-pointer shrink-0 ${
                         isDark
                           ? "bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border-emerald-400/30"
-                          : "bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-300/80"
+                          : "bg-[#FAF7F0] hover:bg-[#ECE5D6] text-emerald-800 border-[#E2DACB]"
                       }`}
                     >
                       <span>Buka Peta 3D</span>
@@ -3250,7 +3250,7 @@ export default function LandingPage({
                   </div>
 
                   {/* 2x2 Hairline-Separated Live Data Matrix (Zero Nested Boxes) */}
-                  <div className="grid grid-cols-2 divide-x divide-slate-200/80 dark:divide-white/[0.08] border-b border-slate-200/80 dark:border-white/[0.09]">
+                  <div className="grid grid-cols-2 divide-x divide-[#E2DACB] dark:divide-white/[0.08] border-b border-[#E2DACB] dark:border-white/[0.09]">
                     <div className="py-3.5 pr-4">
                       <div className={`text-xs font-medium mb-0.5 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                         Cakupan Wilayah
@@ -3269,7 +3269,7 @@ export default function LandingPage({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 divide-x divide-slate-200/80 dark:divide-white/[0.08] border-b border-slate-200/80 dark:border-white/[0.09]">
+                  <div className="grid grid-cols-2 divide-x divide-[#E2DACB] dark:divide-white/[0.08] border-b border-[#E2DACB] dark:border-white/[0.09]">
                     <div className="py-3.5 pr-4">
                       <div className={`text-xs font-medium mb-0.5 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                         Validasi Tata Ruang
@@ -3296,7 +3296,7 @@ export default function LandingPage({
                       className={`flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 min-h-[40px] rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
                         isDark
                           ? "bg-[#14304C]/85 hover:bg-[#1A4366] text-slate-200 border-white/[0.12]"
-                          : "bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200"
+                          : "bg-[#FAF7F0] hover:bg-[#ECE5D6] text-[#10261E] border-[#E2DACB]"
                       }`}
                     >
                       <Compass size={14} className={isDark ? "text-emerald-300" : "text-emerald-700"} />
@@ -3308,7 +3308,7 @@ export default function LandingPage({
                       className={`flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 min-h-[40px] rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
                         isDark
                           ? "bg-[#14304C]/85 hover:bg-[#1A4366] text-slate-200 border-white/[0.12]"
-                          : "bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200"
+                          : "bg-[#FAF7F0] hover:bg-[#ECE5D6] text-[#10261E] border-[#E2DACB]"
                       }`}
                     >
                       <Calculator size={14} className={isDark ? "text-emerald-300" : "text-emerald-700"} />
@@ -3322,7 +3322,7 @@ export default function LandingPage({
             {/* Clean Real-Time Regional Summary Ticker with Smooth Horizontal Edge Fade Masks */}
             <div
               className={`w-full overflow-hidden pt-3 mt-1 border-t mask-fade-edges ${
-                isDark ? "border-white/[0.10]" : "border-slate-200/90"
+                isDark ? "border-white/[0.10]" : "border-[#E2DACB]"
               }`}
             >
               <div
@@ -3362,7 +3362,7 @@ export default function LandingPage({
                     </span>
                     <span
                       className={`w-px h-3 flex-shrink-0 ml-2 ${
-                        isDark ? "bg-white/14" : "bg-slate-300/85"
+                        isDark ? "bg-white/14" : "bg-[#E2DACB]"
                       }`}
                     />
                   </div>
@@ -3433,7 +3433,7 @@ export default function LandingPage({
               className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3.5 md:gap-4.5 rounded-2xl sm:rounded-3xl p-2 sm:p-4 md:p-5 border transition-colors duration-300 ${
                 isDark
                   ? "bg-[#0F2D4A] border-white/[0.10] shadow-[0_18px_42px_rgba(0,0,0,0.32)]"
-                  : "bg-white/90 backdrop-blur-2xl border-slate-200/90 shadow-xl shadow-slate-300/40"
+                  : "bg-[#F4F0E6]/95 backdrop-blur-2xl border-[#E2DACB] shadow-xl shadow-stone-300/35"
               }`}
             >
               {[
@@ -3448,8 +3448,8 @@ export default function LandingPage({
                   borderHover: 'hover:border-emerald-400/80 dark:hover:border-emerald-500/80',
                   glowHover: 'from-emerald-500/10 via-emerald-500/5 to-transparent',
                   iconColor: 'text-emerald-600 dark:text-emerald-400',
-                  iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
-                  iconBorder: 'border border-emerald-200/80 dark:border-emerald-500/30',
+                  iconBg: 'bg-[#F4F0E6] dark:bg-emerald-950/50',
+                  iconBorder: 'border border-[#E2DACB] dark:border-emerald-500/30',
                   sparkId: 'spark-emerald',
                   sparkColor: '#10b981',
                   sparkPoints: '0,22 13,18 26,20 39,12 52,14 65,7 80,4',
@@ -3466,8 +3466,8 @@ export default function LandingPage({
                   borderHover: 'hover:border-emerald-400/80 dark:hover:border-emerald-500/80',
                   glowHover: 'from-emerald-500/10 via-emerald-500/5 to-transparent',
                   iconColor: 'text-emerald-600 dark:text-emerald-400',
-                  iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
-                  iconBorder: 'border border-emerald-200/80 dark:border-emerald-500/30',
+                  iconBg: 'bg-[#F4F0E6] dark:bg-emerald-950/50',
+                  iconBorder: 'border border-[#E2DACB] dark:border-emerald-500/30',
                   sparkId: 'spark-teal',
                   sparkColor: '#10b981',
                   sparkPoints: '0,26 15,22 30,24 45,16 60,18 70,10 80,6',
@@ -3484,8 +3484,8 @@ export default function LandingPage({
                   borderHover: 'hover:border-emerald-400/80 dark:hover:border-emerald-500/80',
                   glowHover: 'from-emerald-500/10 via-emerald-500/5 to-transparent',
                   iconColor: 'text-emerald-600 dark:text-emerald-400',
-                  iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
-                  iconBorder: 'border border-emerald-200/80 dark:border-emerald-500/30',
+                  iconBg: 'bg-[#F4F0E6] dark:bg-emerald-950/50',
+                  iconBorder: 'border border-[#E2DACB] dark:border-emerald-500/30',
                   sparkId: 'spark-info',
                   sparkColor: '#10b981',
                   sparkPoints: '0,24 13,20 26,22 39,15 52,17 65,10 80,6',
@@ -3502,8 +3502,8 @@ export default function LandingPage({
                   borderHover: 'hover:border-emerald-400/80 dark:hover:border-emerald-500/80',
                   glowHover: 'from-emerald-500/10 via-emerald-500/5 to-transparent',
                   iconColor: 'text-emerald-600 dark:text-emerald-400',
-                  iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
-                  iconBorder: 'border border-emerald-200/80 dark:border-emerald-500/30',
+                  iconBg: 'bg-[#F4F0E6] dark:bg-emerald-950/50',
+                  iconBorder: 'border border-[#E2DACB] dark:border-emerald-500/30',
                   sparkId: 'spark-success',
                   sparkColor: '#10b981',
                   sparkPoints: '0,25 15,21 30,23 45,14 60,16 75,8 80,4',
@@ -3520,8 +3520,8 @@ export default function LandingPage({
                   borderHover: 'hover:border-emerald-400/80 dark:hover:border-emerald-500/80',
                   glowHover: 'from-emerald-500/10 via-emerald-500/5 to-transparent',
                   iconColor: 'text-emerald-600 dark:text-emerald-400',
-                  iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
-                  iconBorder: 'border border-emerald-200/80 dark:border-emerald-500/30',
+                  iconBg: 'bg-[#F4F0E6] dark:bg-emerald-950/50',
+                  iconBorder: 'border border-[#E2DACB] dark:border-emerald-500/30',
                   sparkId: 'spark-infra',
                   sparkColor: '#10b981',
                   sparkPoints: '0,26 20,26 40,20 60,16 80,10',
@@ -3538,8 +3538,8 @@ export default function LandingPage({
                   borderHover: 'hover:border-emerald-400/80 dark:hover:border-emerald-500/80',
                   glowHover: 'from-emerald-500/10 via-emerald-500/5 to-transparent',
                   iconColor: 'text-emerald-600 dark:text-emerald-400',
-                  iconBg: 'bg-emerald-50 dark:bg-emerald-950/50',
-                  iconBorder: 'border border-emerald-200/80 dark:border-emerald-500/30',
+                  iconBg: 'bg-[#F4F0E6] dark:bg-emerald-950/50',
+                  iconBorder: 'border border-[#E2DACB] dark:border-emerald-500/30',
                   sparkId: 'spark-labor',
                   sparkColor: '#10b981',
                   sparkPoints: '0,28 16,24 32,22 48,18 64,12 80,8',
@@ -3552,7 +3552,7 @@ export default function LandingPage({
                   className={`relative flex flex-col items-center justify-between p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl border transition-all duration-300 group overflow-hidden ${
                     isDark
                       ? "bg-[#143755] hover:bg-[#1A4366] border-white/[0.09] hover:border-emerald-400/35 shadow-none"
-                      : `${stat.borderHover} backdrop-blur-xl bg-white/95 hover:bg-white border-slate-200/80 shadow-[0_4px_20px_rgba(15,23,42,0.06)] hover:shadow-[0_12px_30px_rgba(15,23,42,0.12)]`
+                      : `${stat.borderHover} backdrop-blur-xl bg-[#FAF7F0] hover:bg-[#FAF7F0] border-[#E2DACB] shadow-[0_4px_20px_rgba(16,38,30,0.06)] hover:shadow-[0_12px_30px_rgba(16,38,30,0.12)]`
                   } hover:-translate-y-1 active:scale-[0.98] w-full min-h-[148px] sm:min-h-[192px] md:min-h-[208px]`}
                 >
                   {/* Top Edge Architectural Accent Line (Both Themes for Visual Parity) */}
@@ -3577,7 +3577,7 @@ export default function LandingPage({
                   {/* Prominent Value Typography with Functional Count-Up Animation */}
                   <div className="h-9 sm:h-11 flex items-center justify-center w-full px-0.5 mb-0.5">
                     {isLoading ? (
-                      <div className="animate-pulse bg-slate-700/50 dark:bg-slate-800/60 rounded-xl h-7 w-28" />
+                      <div className="animate-pulse bg-[#E2DACB]/70 dark:bg-slate-800/60 rounded-xl h-7 w-28" />
                     ) : (
                       <HeroStatCounter
                         value={stat.rawValue}
@@ -3622,7 +3622,7 @@ export default function LandingPage({
           </motion.div>
 
           {/* Wave divider — seamless dark/light transition into Executive Live Data Counter Panel */}
-          <div className={`relative z-10 mt-6 sm:mt-8 -mb-2 ${isDark ? 'text-[#081C2E]' : 'text-slate-50'}`}>
+          <div className={`relative z-10 mt-6 sm:mt-8 -mb-2 ${isDark ? 'text-[#081C2E]' : 'text-[#FAF7F0]'}`}>
             <svg viewBox="0 0 1440 48" className="w-full block" preserveAspectRatio="none" aria-hidden="true">
               <path
                 d="M0,48 C240,0 480,32 720,16 C960,0 1200,32 1440,48 L1440,48 L0,48 Z"
@@ -3634,7 +3634,7 @@ export default function LandingPage({
 
         {/* EXECUTIVE LIVE DATA COUNTER PANEL */}
         <section
-          className={`pt-10 pb-8 sm:pt-16 sm:pb-12 md:pt-20 md:pb-14 border-b relative z-20 ${isDark ? "bg-[#081C2E] border-white/[0.08]" : "bg-slate-50/80 border-slate-200/80"}`}
+          className={`pt-10 pb-8 sm:pt-16 sm:pb-12 md:pt-20 md:pb-14 border-b relative z-20 ${isDark ? "bg-[#081C2E] border-white/[0.08]" : "bg-[#FAF7F0] border-[#E2DACB]"}`}
         >
           <div className="container max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
             <div
@@ -3661,7 +3661,7 @@ export default function LandingPage({
                 onClick={() => setIsDistrictsModalOpen(true)}
                 role="button"
                 tabIndex={0}
-                className="w-full h-full group relative pt-5 sm:pt-6 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 glass-crystal glass-card-interactive bg-white/95 dark:bg-[#0F2D4A]/90 backdrop-blur-2xl shadow-[0_12px_36px_rgba(15,23,42,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.4)] border border-slate-200/80 dark:border-white/[0.10] hover:border-emerald-500/50 dark:hover:border-emerald-400/50 hover:shadow-[0_22px_45px_rgba(16,185,129,0.18)] cursor-pointer active:scale-[0.98]"
+                className="w-full h-full group relative pt-5 sm:pt-6 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 glass-crystal glass-card-interactive bg-[#F4F0E6]/95 dark:bg-[#0F2D4A]/90 backdrop-blur-2xl shadow-[0_12px_36px_rgba(16,38,30,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.4)] border border-[#E2DACB] dark:border-white/[0.10] hover:border-emerald-500/50 dark:hover:border-emerald-400/50 hover:shadow-[0_22px_45px_rgba(16,185,129,0.18)] cursor-pointer active:scale-[0.98]"
               >
                 {/* Elevated Circular Icon with Accent Rail */}
                 <div className="relative w-full flex items-center justify-center pt-1 mb-3.5">
@@ -3673,7 +3673,7 @@ export default function LandingPage({
                     {/* Ambient Glow */}
                     <div className="absolute inset-0 rounded-full bg-emerald-500/30 blur-md transform group-hover:scale-115 transition-transform duration-300" />
 
-                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full ring-4 ring-white dark:ring-[#0F2D4A] shadow-xl shadow-black/25 dark:shadow-black/55 bg-gradient-to-br from-[#0F6B4F] via-[#1F9D74] to-emerald-600 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
+                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full ring-4 ring-[#F4F0E6] dark:ring-[#0F2D4A] shadow-xl shadow-black/25 dark:shadow-black/55 bg-gradient-to-br from-[#0F6B4F] via-[#1F9D74] to-emerald-600 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
                       {/* Inner Delicate Ring Accent */}
                       <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
                       <Globe size={28} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
@@ -3693,8 +3693,8 @@ export default function LandingPage({
                 </div>
 
                 {/* Micro Status Chip */}
-                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 w-full flex justify-center">
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-500/30 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                <div className="mt-3 pt-3 border-t border-[#E2DACB] dark:border-slate-800/80 w-full flex justify-center">
+                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#FAF7F0] dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/30 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
                     <SonarRadarPulse color="emerald" size={8} />
                     <span>227 Desa & Kelurahan ↗</span>
                   </span>
@@ -3710,7 +3710,7 @@ export default function LandingPage({
                 onClick={() => setIsIproCatalogModalOpen(true)}
                 role="button"
                 tabIndex={0}
-                className="w-full h-full group relative pt-5 sm:pt-6 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 glass-crystal glass-card-interactive bg-white/95 dark:bg-[#0F2D4A]/90 backdrop-blur-2xl shadow-[0_12px_36px_rgba(15,23,42,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.4)] border border-slate-200/80 dark:border-white/[0.10] hover:border-emerald-500/50 dark:hover:border-emerald-400/50 hover:shadow-[0_22px_45px_rgba(16,185,129,0.18)] cursor-pointer active:scale-[0.98]"
+                className="w-full h-full group relative pt-5 sm:pt-6 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 glass-crystal glass-card-interactive bg-[#F4F0E6]/95 dark:bg-[#0F2D4A]/90 backdrop-blur-2xl shadow-[0_12px_36px_rgba(16,38,30,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.4)] border border-[#E2DACB] dark:border-white/[0.10] hover:border-emerald-500/50 dark:hover:border-emerald-400/50 hover:shadow-[0_22px_45px_rgba(16,185,129,0.18)] cursor-pointer active:scale-[0.98]"
               >
                 {/* Elevated Circular Icon with Accent Rail */}
                 <div className="relative w-full flex items-center justify-center pt-1 mb-3.5">
@@ -3722,7 +3722,7 @@ export default function LandingPage({
                     {/* Ambient Glow */}
                     <div className="absolute inset-0 rounded-full bg-emerald-500/30 blur-md transform group-hover:scale-115 transition-transform duration-300" />
 
-                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full ring-4 ring-white dark:ring-[#0F2D4A] shadow-xl shadow-black/25 dark:shadow-black/55 bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
+                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full ring-4 ring-[#F4F0E6] dark:ring-[#0F2D4A] shadow-xl shadow-black/25 dark:shadow-black/55 bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
                       <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
                       <MapPin size={28} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
                     </div>
@@ -3741,8 +3741,8 @@ export default function LandingPage({
                 </div>
 
                 {/* Micro Status Chip */}
-                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 w-full flex justify-center">
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                <div className="mt-3 pt-3 border-t border-[#E2DACB] dark:border-slate-800/80 w-full flex justify-center">
+                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#FAF7F0] dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
                     <SonarRadarPulse color="emerald" size={8} />
                     <span>Siap Ditawarkan ↗</span>
                   </span>
@@ -3758,7 +3758,7 @@ export default function LandingPage({
                 onClick={() => setIsWorkforceModalOpen(true)}
                 role="button"
                 tabIndex={0}
-                className="w-full h-full group relative pt-5 sm:pt-6 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 glass-crystal glass-card-interactive bg-white/95 dark:bg-[#0F2D4A]/90 backdrop-blur-2xl shadow-[0_12px_36px_rgba(15,23,42,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.4)] border border-slate-200/80 dark:border-white/[0.10] hover:border-emerald-500/50 dark:hover:border-emerald-400/50 hover:shadow-[0_22px_45px_rgba(16,185,129,0.18)] cursor-pointer active:scale-[0.98]"
+                className="w-full h-full group relative pt-5 sm:pt-6 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 glass-crystal glass-card-interactive bg-[#F4F0E6]/95 dark:bg-[#0F2D4A]/90 backdrop-blur-2xl shadow-[0_12px_36px_rgba(16,38,30,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.4)] border border-[#E2DACB] dark:border-white/[0.10] hover:border-emerald-500/50 dark:hover:border-emerald-400/50 hover:shadow-[0_22px_45px_rgba(16,185,129,0.18)] cursor-pointer active:scale-[0.98]"
               >
                 {/* Elevated Circular Icon with Accent Rail */}
                 <div className="relative w-full flex items-center justify-center pt-1 mb-3.5">
@@ -3770,7 +3770,7 @@ export default function LandingPage({
                     {/* Ambient Glow */}
                     <div className="absolute inset-0 rounded-full bg-emerald-500/30 blur-md transform group-hover:scale-115 transition-transform duration-300" />
 
-                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full ring-4 ring-white dark:ring-[#0F2D4A] shadow-xl shadow-black/25 dark:shadow-black/55 bg-gradient-to-br from-[#0F6B4F] via-[#1F9D74] to-[#047857] flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
+                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full ring-4 ring-[#F4F0E6] dark:ring-[#0F2D4A] shadow-xl shadow-black/25 dark:shadow-black/55 bg-gradient-to-br from-[#0F6B4F] via-[#1F9D74] to-[#047857] flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
                       <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
                       <Users size={28} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
                     </div>
@@ -3789,8 +3789,8 @@ export default function LandingPage({
                 </div>
 
                 {/* Micro Status Chip */}
-                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 w-full flex justify-center">
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-500/30 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                <div className="mt-3 pt-3 border-t border-[#E2DACB] dark:border-slate-800/80 w-full flex justify-center">
+                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#FAF7F0] dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/30 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
                     <SonarRadarPulse color="emerald" size={8} />
                     <span>TKL & TKA Terdata ↗</span>
                   </span>
@@ -3806,7 +3806,7 @@ export default function LandingPage({
                 onClick={() => setIsLuwuAiModalOpen(true)}
                 role="button"
                 tabIndex={0}
-                className="w-full h-full group relative pt-5 sm:pt-6 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 glass-crystal glass-card-interactive bg-white/95 dark:bg-[#0F2D4A]/90 backdrop-blur-2xl shadow-[0_12px_36px_rgba(15,23,42,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.4)] border border-slate-200/80 dark:border-white/[0.10] hover:border-teal-500/50 dark:hover:border-teal-400/50 hover:shadow-[0_22px_45px_rgba(13,148,136,0.18)] cursor-pointer active:scale-[0.98]"
+                className="w-full h-full group relative pt-5 sm:pt-6 pb-5 px-4 sm:px-5 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 glass-crystal glass-card-interactive bg-[#F4F0E6]/95 dark:bg-[#0F2D4A]/90 backdrop-blur-2xl shadow-[0_12px_36px_rgba(16,38,30,0.06)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.4)] border border-[#E2DACB] dark:border-white/[0.10] hover:border-teal-500/50 dark:hover:border-teal-400/50 hover:shadow-[0_22px_45px_rgba(13,148,136,0.18)] cursor-pointer active:scale-[0.98]"
               >
                 {/* Elevated Circular Icon with Accent Rail */}
                 <div className="relative w-full flex items-center justify-center pt-1 mb-3.5">
@@ -3818,7 +3818,7 @@ export default function LandingPage({
                     {/* Ambient Glow */}
                     <div className="absolute inset-0 rounded-full bg-teal-500/30 blur-md transform group-hover:scale-115 transition-transform duration-300" />
 
-                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full ring-4 ring-white dark:ring-[#0F2D4A] shadow-xl shadow-black/25 dark:shadow-black/55 bg-gradient-to-br from-teal-600 via-teal-700 to-emerald-700 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
+                    <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full ring-4 ring-[#F4F0E6] dark:ring-[#0F2D4A] shadow-xl shadow-black/25 dark:shadow-black/55 bg-gradient-to-br from-teal-600 via-teal-700 to-emerald-700 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105">
                       <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
                       <Bot size={28} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
                     </div>
@@ -3837,8 +3837,8 @@ export default function LandingPage({
                 </div>
 
                 {/* Micro Status Chip */}
-                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-white/[0.08] w-full flex justify-center">
-                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-teal-200/80 dark:border-teal-500/30 group-hover:bg-teal-500 group-hover:text-white transition-colors">
+                <div className="mt-3 pt-3 border-t border-[#E2DACB] dark:border-white/[0.08] w-full flex justify-center">
+                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#FAF7F0] dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-[#E2DACB] dark:border-teal-500/30 group-hover:bg-teal-500 group-hover:text-white transition-colors">
                     <SonarRadarPulse color="teal" size={8} />
                     <span>Konsultasi Cerdas 24/7 ↗</span>
                   </span>
@@ -3854,7 +3854,7 @@ export default function LandingPage({
                   const prev = (activeStatIndex - 1 + 4) % 4;
                   scrollToStatCard(prev);
                 }}
-                className="w-8 h-8 rounded-full flex items-center justify-center bg-white dark:bg-[#0F2D4A] border border-slate-200 dark:border-white/10 shadow-xs text-slate-600 dark:text-slate-300 active:scale-95 transition-transform cursor-pointer"
+                className="w-8 h-8 rounded-full flex items-center justify-center bg-[#F4F0E6] dark:bg-[#0F2D4A] border border-[#E2DACB] dark:border-white/10 shadow-xs text-slate-700 dark:text-slate-300 active:scale-95 transition-transform cursor-pointer"
                 aria-label="Slide sebelumnya"
               >
                 <ChevronLeft size={16} />
@@ -3869,7 +3869,7 @@ export default function LandingPage({
                     className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                       activeStatIndex === idx
                         ? "w-6 bg-emerald-600 dark:bg-emerald-400 shadow-xs"
-                        : "w-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400"
+                        : "w-2 bg-[#E2DACB] dark:bg-slate-700 hover:bg-[#D4C9B6]"
                     }`}
                     aria-label={`Pindah ke slide ${idx + 1}`}
                   />
@@ -3882,7 +3882,7 @@ export default function LandingPage({
                   const next = (activeStatIndex + 1) % 4;
                   scrollToStatCard(next);
                 }}
-                className="w-8 h-8 rounded-full flex items-center justify-center bg-white dark:bg-[#0F2D4A] border border-slate-200 dark:border-white/10 shadow-xs text-slate-600 dark:text-slate-300 active:scale-95 transition-transform cursor-pointer"
+                className="w-8 h-8 rounded-full flex items-center justify-center bg-[#F4F0E6] dark:bg-[#0F2D4A] border border-[#E2DACB] dark:border-white/10 shadow-xs text-slate-700 dark:text-slate-300 active:scale-95 transition-transform cursor-pointer"
                 aria-label="Slide berikutnya"
               >
                 <ChevronRight size={16} />
@@ -3907,7 +3907,7 @@ export default function LandingPage({
         {/* 2. DAFTAR POTENSI INVESTASI - EXECUTIVE SHOWCASE */}
         <section
           id="potensi-section"
-          className={`scroll-mt-28 sm:scroll-mt-32 w-full py-10 sm:py-14 md:py-16 min-h-[44px] border-t border-slate-200/80 dark:border-white/[0.08] relative transition-colors duration-300 ${isDark ? 'bg-[#071829]/90' : 'bg-slate-50/80'}`}
+          className={`scroll-mt-28 sm:scroll-mt-32 w-full py-10 sm:py-14 md:py-16 min-h-[44px] border-t border-[#E2DACB] dark:border-white/[0.08] relative transition-colors duration-300 ${isDark ? 'bg-[#071829]/90' : 'bg-[#FAF7F0]'}`}
         >
           <div className="container max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 relative">
           {/* Subtle Ambient Radial Glow for High-End Prestige Feel */}
@@ -3948,14 +3948,14 @@ export default function LandingPage({
             {/* Header Control Deck: Mode Switcher (Grid / Slider) & Peta GIS Quick Action */}
             <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 shrink-0 self-start lg:self-end">
               {/* Dual Layout View Switcher */}
-              <div className="flex items-center p-1 rounded-2xl bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 shadow-sm backdrop-blur-xl">
+              <div className="flex items-center p-1 rounded-2xl bg-[#F4F0E6]/95 dark:bg-slate-900/90 border border-[#E2DACB] dark:border-slate-800 shadow-sm backdrop-blur-xl">
                 <button
                   type="button"
                   onClick={() => setPotensiViewMode("grid")}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     potensiViewMode === "grid"
                       ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-sm shadow-emerald-900/20"
-                      : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60"
+                      : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-[#FAF7F0] dark:hover:bg-slate-800/60"
                   }`}
                   title={t("ui.gridView", "Tampilan Grid")}
                 >
@@ -3968,7 +3968,7 @@ export default function LandingPage({
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     potensiViewMode === "slider"
                       ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-sm shadow-emerald-900/20"
-                      : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60"
+                      : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-[#FAF7F0] dark:hover:bg-slate-800/60"
                   }`}
                   title={t("ui.sliderView", "Tampilan Slider")}
                 >
@@ -3979,7 +3979,7 @@ export default function LandingPage({
 
               {/* Slider Carousel Stepper Controls (Only active in slider mode) */}
               {potensiViewMode === "slider" && sortedInvestmentsList.length > 0 && (
-                <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 shadow-sm backdrop-blur-xl animate-fade-in">
+                <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[#F4F0E6]/95 dark:bg-slate-900/90 border border-[#E2DACB] dark:border-slate-800 shadow-sm backdrop-blur-xl animate-fade-in">
                   <button
                     type="button"
                     onClick={handlePrevPotensiSlide}
@@ -3988,13 +3988,13 @@ export default function LandingPage({
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
-                  <div className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-black text-slate-800 dark:text-slate-200">
+                  <div className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-transparent text-xs font-black text-slate-800 dark:text-slate-200">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                     <span className="font-mono">{activePotensiIndex + 1} / {sortedInvestmentsList.length}</span>
                     <button
                       type="button"
                       onClick={() => setIsPotensiAutoPlay(!isPotensiAutoPlay)}
-                      className="ml-0.5 p-1 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-slate-500 dark:text-slate-400 cursor-pointer"
+                      className="ml-0.5 p-1 rounded-md hover:bg-[#ECE5D6] dark:hover:bg-slate-700 transition-colors text-slate-500 dark:text-slate-400 cursor-pointer"
                       title={isPotensiAutoPlay ? "Jeda Auto-Slider" : "Putar Auto-Slider"}
                     >
                       {isPotensiAutoPlay ? <Pause className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Play className="w-3.5 h-3.5 text-slate-400" />}
@@ -4012,7 +4012,7 @@ export default function LandingPage({
               )}
 
               {/* Total Ready Count Pill */}
-              <div className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-emerald-500/10 dark:bg-emerald-950/40 border border-emerald-500/25 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+              <div className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-[#F4F0E6] dark:bg-emerald-950/40 border border-[#E2DACB] dark:border-emerald-500/25 text-xs font-bold text-emerald-700 dark:text-emerald-300">
                 <BadgeCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>{t("ui.readyPortfolios", "{{count}} Portofolio Siap", { count: sortedInvestmentsList.length })}</span>
               </div>
@@ -4030,7 +4030,7 @@ export default function LandingPage({
                 className={`hidden sm:flex shrink-0 px-4 py-2 rounded-2xl font-bold text-xs tracking-wider uppercase border items-center gap-1.5 transition-all duration-300 backdrop-blur-xl cursor-pointer ${
                   isDark
                     ? "bg-gradient-to-r from-emerald-900/40 via-slate-800/80 to-blue-900/40 border-emerald-500/40 text-emerald-300 hover:border-emerald-400 shadow-sm"
-                    : "bg-gradient-to-r from-emerald-50 via-white to-teal-50 border-emerald-300 text-emerald-700 hover:border-emerald-500 shadow-sm"
+                    : "bg-[#F4F0E6] border-[#E2DACB] text-emerald-800 hover:bg-[#ECE5D6] hover:border-emerald-500 shadow-sm"
                 }`}
               >
                 {t("ui.viewInteractiveMap", "Peta Spasial")} <ChevronRight size={14} />
@@ -4067,7 +4067,7 @@ export default function LandingPage({
                       ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
                       : isDark
                         ? 'border-slate-700 text-slate-400 hover:border-slate-500 bg-slate-900/40'
-                        : 'border-slate-300 text-slate-500 hover:border-slate-400 bg-white'
+                        : 'border-[#E2DACB] text-slate-700 hover:border-[#D4C9B6] bg-[#F4F0E6]'
                   }`}
                 >
                   {tier.label}
@@ -4077,7 +4077,7 @@ export default function LandingPage({
                         ? 'bg-white/20'
                         : isDark
                           ? 'bg-slate-800 text-slate-400'
-                          : 'bg-slate-100 text-slate-600'
+                          : 'bg-[#FAF7F0] text-slate-700 border border-[#E2DACB]'
                     }`}
                   >
                     {tier.count}
@@ -4122,7 +4122,7 @@ export default function LandingPage({
           <div className={`p-2.5 sm:p-5 rounded-2xl border mb-8 backdrop-blur-xl flex flex-col lg:flex-row lg:items-center justify-between gap-4 transition-all ${
             isDark 
               ? 'bg-gradient-to-r from-emerald-950/40 via-slate-900/70 to-teal-950/30 border-emerald-500/30 shadow-md shadow-black/20' 
-              : 'bg-gradient-to-r from-emerald-50/90 via-white to-teal-50/80 border-emerald-200 shadow-sm'
+              : 'bg-[#F4F0E6] border-[#E2DACB] shadow-sm'
           }`}>
             <div className="flex items-start sm:items-center gap-3.5">
               <div className="p-3 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md shadow-black/20 shrink-0">
@@ -4133,7 +4133,7 @@ export default function LandingPage({
                   <h3 className="text-sm sm:text-base font-bold font-sans text-slate-900 dark:text-white">
                     {t("fiscalRibbon.title", "Smart Fiscal Estimator: Kalkulator Insentif Daerah & ROI")}
                   </h3>
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 uppercase tracking-wider">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF7F0] dark:bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/30 uppercase tracking-wider">
                     {t("fiscalRibbon.badge", "Perda Luwu & PP 24/2019")}
                   </span>
                 </div>
@@ -4213,7 +4213,7 @@ export default function LandingPage({
 
                   {/* Below Slider: Touch Swipe Indicator & Pagination Dots */}
                   <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-                    <div className="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400 bg-surface/5 dark:bg-slate-800/40 px-3 py-1.5 rounded-xl border border-slate-200/50 dark:border-slate-800">
+                    <div className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400 bg-[#F4F0E6] dark:bg-slate-800/40 px-3 py-1.5 rounded-xl border border-[#E2DACB] dark:border-slate-800">
                       <span className="inline-block animate-pulse text-emerald-500 font-bold">←</span>
                       <span>Geser horizontal untuk mengeksplorasi {sortedInvestmentsList.length} potensi</span>
                       <span className="inline-block animate-pulse text-emerald-500 font-bold">→</span>
@@ -4221,7 +4221,7 @@ export default function LandingPage({
 
                     {/* Pagination Dots */}
                     {sortedInvestmentsList.length > 1 && (
-                      <div className="flex items-center gap-1.5 overflow-x-auto max-w-full py-1.5 px-3 rounded-full bg-surface/5 dark:bg-slate-800/60 border border-slate-200/50 dark:border-slate-700/50">
+                      <div className="flex items-center gap-1.5 overflow-x-auto max-w-full py-1.5 px-3 rounded-full bg-[#F4F0E6] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-700/50">
                         {sortedInvestmentsList.map((_, i) => (
                           <button
                             key={i}
@@ -4230,7 +4230,7 @@ export default function LandingPage({
                             className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                               activePotensiIndex === i
                                 ? "w-7 bg-emerald-500 shadow-sm shadow-black/25"
-                                : "w-2 bg-slate-300 dark:bg-slate-700 hover:bg-emerald-400/50"
+                                : "w-2 bg-[#E2DACB] dark:bg-slate-700 hover:bg-emerald-400/50"
                             }`}
                             title={`Ke Potensi #${i + 1}`}
                           />
@@ -4245,7 +4245,7 @@ export default function LandingPage({
             <div
               className={`p-12 rounded-2xl border text-center ${cardBg} ${textMuted}`}
             >
-              <div className="inline-flex p-4 rounded-full bg-slate-800/50 mb-4">
+              <div className="inline-flex p-4 rounded-full bg-[#FAF7F0] dark:bg-slate-800/50 border border-[#E2DACB] dark:border-slate-700 mb-4">
                 <MapPin size={32} className="font-medium text-slate-700 dark:text-slate-300" />
               </div>
               <p className="text-lg font-medium">
@@ -4278,7 +4278,7 @@ export default function LandingPage({
         {/* 3. LITERASI & KEUNTUNGAN LUTIM */}
         <section
           id="keuntungan-section"
-          className={`scroll-mt-20 sm:scroll-mt-24 w-full py-10 sm:py-14 md:py-16 transition-colors duration-300 ${isDark ? 'bg-slate-950/60' : 'bg-slate-50/80'}`}
+          className={`scroll-mt-20 sm:scroll-mt-24 w-full py-10 sm:py-14 md:py-16 transition-colors duration-300 ${isDark ? 'bg-slate-950/60' : 'bg-[#FAF7F0]'}`}
         >
           <div className="container max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 md:mb-16">
@@ -4309,7 +4309,7 @@ export default function LandingPage({
                 shadow: "shadow-black/40",
                 cardHover: "hover:border-emerald-500/50 hover:shadow-[0_20px_40px_rgba(16,185,129,0.2)]",
                 tag: "Konektivitas Multimoda",
-                badgeBg: "bg-emerald-100/90 text-emerald-950 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-300 dark:border-emerald-500/30 font-extrabold",
+                badgeBg: "bg-[#FAF7F0] text-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-300 border-[#E2DACB] dark:border-emerald-500/30 font-extrabold",
                 dotColor: "bg-emerald-600 dark:bg-emerald-400",
               },
               {
@@ -4322,7 +4322,7 @@ export default function LandingPage({
                 shadow: "shadow-black/40",
                 cardHover: "hover:border-teal-500/50 hover:shadow-[0_20px_40px_rgba(20,184,166,0.2)]",
                 tag: "Hilirisasi Komoditas",
-                badgeBg: "bg-teal-100/90 text-teal-950 dark:bg-teal-950/60 dark:text-teal-300 border-teal-300 dark:border-teal-500/30 font-extrabold",
+                badgeBg: "bg-[#FAF7F0] text-teal-900 dark:bg-teal-950/60 dark:text-teal-300 border-[#E2DACB] dark:border-teal-500/30 font-extrabold",
                 dotColor: "bg-teal-600 dark:bg-teal-400",
               },
               {
@@ -4335,7 +4335,7 @@ export default function LandingPage({
                 shadow: "shadow-black/40",
                 cardHover: "hover:border-[#C9A24B]/50 hover:shadow-[0_20px_40px_rgba(201,162,75,0.2)]",
                 tag: "Kemudahan & Kepastian Hukum",
-                badgeBg: "bg-amber-100/90 text-amber-950 dark:bg-amber-950/60 dark:text-[#C9A24B] border-amber-300 dark:border-[rgba(201,162,75,0.30)] font-extrabold",
+                badgeBg: "bg-[#FAF7F0] text-amber-900 dark:bg-amber-950/60 dark:text-[#C9A24B] border-[#E2DACB] dark:border-[rgba(201,162,75,0.30)] font-extrabold",
                 dotColor: "bg-amber-600 dark:bg-[#C9A24B]",
               },
             ].map((item, idx) => (
@@ -4346,7 +4346,7 @@ export default function LandingPage({
                 viewport={{ once: true, amount: 0.05 }}
                 transition={{ delay: idx * 0.15 }}
                 key={idx}
-                className={`group relative pt-14 sm:pt-16 pb-6 px-6 sm:px-7 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-white/90 dark:bg-surface border border-slate-200/80 dark:border-white/10 shadow-lg shadow-slate-200/50 dark:shadow-black/20 ${item.cardHover}`}
+                className={`group relative pt-14 sm:pt-16 pb-6 px-6 sm:px-7 rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 ease-out hover:-translate-y-2 bg-[#F4F0E6] dark:bg-surface border border-[#E2DACB] dark:border-white/10 shadow-lg shadow-stone-200/50 dark:shadow-black/20 ${item.cardHover}`}
               >
                 {/* Top Subtle Accent Rail */}
                 <div className={`absolute top-0 inset-x-8 h-[3px] bg-gradient-to-r from-transparent ${item.rail} to-transparent rounded-full`} />
@@ -4358,7 +4358,7 @@ export default function LandingPage({
                     <div className={`absolute inset-0 rounded-full ${item.ambientGlow} blur-md transform group-hover:scale-115 transition-transform duration-300`} />
                     
                     {/* Outer Elevated Podium Ring */}
-                    <div className={`relative w-20 h-20 sm:w-22 sm:h-22 rounded-full ring-4 sm:ring-[6px] ring-white dark:ring-[#0A2238] ${item.shadow} bg-gradient-to-br ${item.gradient} flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105`}>
+                    <div className={`relative w-20 h-20 sm:w-22 sm:h-22 rounded-full ring-4 sm:ring-[6px] ring-[#FAF7F0] dark:ring-[#0A2238] ${item.shadow} bg-gradient-to-br ${item.gradient} flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-105`}>
                       {/* Inner Delicate Ring Accent */}
                       <div className="absolute inset-1.5 rounded-full border border-white/30 pointer-events-none" />
                       <item.icon size={34} className="relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
@@ -4377,7 +4377,7 @@ export default function LandingPage({
                 </div>
 
                 {/* Micro Status Chip */}
-                <div className="mt-auto pt-4 border-t border-slate-200/80 dark:border-white/10 w-full flex justify-center">
+                <div className="mt-auto pt-4 border-t border-[#E2DACB] dark:border-white/10 w-full flex justify-center">
                   <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider border shadow-xs ${item.badgeBg}`}>
                     <span className={`w-1.5 h-1.5 rounded-full ${item.dotColor} animate-pulse`} />
                     {item.tag}
@@ -4447,7 +4447,7 @@ export default function LandingPage({
                 shadow: "shadow-black/40",
                 cardHover: "hover:border-[#C9A24B]/50 hover:shadow-[0_20px_40px_rgba(201,162,75,0.2)]",
                 tag: infraAirport?.tag || "Gerbang Udara & Kargo",
-                badgeBg: "bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-600/30 dark:border-amber-400/30",
+                badgeBg: "bg-[#FAF7F0] dark:bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-[#E2DACB] dark:border-amber-400/30",
                 dotColor: "bg-amber-500",
                 longitude: infraAirport?.longitude || (facilityCoords.airport ? facilityCoords.airport[0] : 120.24132322502385),
                 latitude: infraAirport?.latitude || (facilityCoords.airport ? facilityCoords.airport[1] : -3.086338491260946),
@@ -4465,7 +4465,7 @@ export default function LandingPage({
                 shadow: "shadow-black/40",
                 cardHover: "hover:border-teal-500/50 hover:shadow-[0_20px_40px_rgba(45,212,191,0.2)]",
                 tag: infraPort?.tag || "Dermaga Logistik Laut",
-                badgeBg: "bg-teal-500/10 text-teal-800 dark:text-teal-300 border border-teal-500/20",
+                badgeBg: "bg-[#FAF7F0] dark:bg-teal-500/10 text-teal-800 dark:text-teal-300 border border-[#E2DACB] dark:border-teal-500/20",
                 dotColor: "bg-teal-500",
                 longitude: infraPort?.longitude || (facilityCoords.port ? facilityCoords.port[0] : 120.39793462368112),
                 latitude: infraPort?.latitude || (facilityCoords.port ? facilityCoords.port[1] : -3.386061643485775),
@@ -4483,7 +4483,7 @@ export default function LandingPage({
                 shadow: "shadow-black/40",
                 cardHover: "hover:border-[#C9A24B]/50 hover:shadow-[0_20px_40px_rgba(201,162,75,0.2)]",
                 tag: infraIndustry?.tag || "Kawasan Industri Terpadu",
-                badgeBg: "bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-600/30 dark:border-amber-400/30",
+                badgeBg: "bg-[#FAF7F0] dark:bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-[#E2DACB] dark:border-amber-400/30",
                 dotColor: "bg-amber-500",
                 longitude: infraIndustry?.longitude || (facilityCoords.industrial ? facilityCoords.industrial[0] : 120.252),
                 latitude: infraIndustry?.latitude || (facilityCoords.industrial ? facilityCoords.industrial[1] : -3.125),
@@ -4501,7 +4501,7 @@ export default function LandingPage({
                 shadow: "shadow-black/40",
                 cardHover: "hover:border-emerald-500/50 hover:shadow-[0_20px_40px_rgba(16,185,129,0.2)]",
                 tag: infraMpp?.tag || "Mal Pelayanan Publik",
-                badgeBg: "bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20",
+                badgeBg: "bg-[#FAF7F0] dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/20",
                 dotColor: "bg-emerald-500",
                 longitude: infraMpp?.longitude || (facilityCoords.mpp ? facilityCoords.mpp[0] : 120.36547889067685),
                 latitude: infraMpp?.latitude || (facilityCoords.mpp ? facilityCoords.mpp[1] : -3.394828505594006),
@@ -4557,7 +4557,7 @@ export default function LandingPage({
                           setIsInfrastructureModalOpen(true);
                         }
                       }}
-                      className={`group relative pt-10 xs:pt-12 sm:pt-16 pb-4 sm:pb-6 px-3 xs:px-4 sm:px-6 rounded-2xl sm:rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 hover:-translate-y-1.5 hover:border-emerald-500/60 hover:shadow-2xl hover:shadow-emerald-900/30 bg-white/90 dark:bg-surface border border-slate-200/80 dark:border-white/10 w-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/50`}
+                      className={`group relative pt-10 xs:pt-12 sm:pt-16 pb-4 sm:pb-6 px-3 xs:px-4 sm:px-6 rounded-2xl sm:rounded-[28px] flex flex-col items-center text-center justify-between transition-all duration-300 hover:-translate-y-1.5 hover:border-emerald-500/60 hover:shadow-2xl hover:shadow-emerald-900/30 bg-[#F4F0E6] dark:bg-surface border border-[#E2DACB] dark:border-white/10 w-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/50`}
                     >
                       {/* Top Subtle Accent Rail */}
                       <div className={`absolute top-0 inset-x-5 sm:inset-x-8 h-[3px] bg-gradient-to-r from-transparent ${facility.rail} to-transparent rounded-full`} />
@@ -4576,7 +4576,7 @@ export default function LandingPage({
                           <div className={`absolute inset-0 rounded-full ${facility.ambientGlow} blur-md transform group-hover:scale-115 transition-transform duration-300`} />
                           
                           {/* Outer Elevated Podium Ring */}
-                          <div className={`relative w-14 h-14 xs:w-16 xs:h-16 sm:w-22 sm:h-22 rounded-full ring-2 sm:ring-[6px] ring-white dark:ring-[#0A2238] ${facility.shadow} bg-gradient-to-br ${facility.gradient} flex items-center justify-center text-white transition-all duration-300 group-hover:shadow-lg group-hover:shadow-emerald-500/40`}>
+                          <div className={`relative w-14 h-14 xs:w-16 xs:h-16 sm:w-22 sm:h-22 rounded-full ring-2 sm:ring-[6px] ring-[#FAF7F0] dark:ring-[#0A2238] ${facility.shadow} bg-gradient-to-br ${facility.gradient} flex items-center justify-center text-white transition-all duration-300 group-hover:shadow-lg group-hover:shadow-emerald-500/40`}>
                             {/* Inner Delicate Ring Accent */}
                             <div className="absolute inset-1 sm:inset-1.5 rounded-full border border-white/30 pointer-events-none" />
                             <facility.icon size={22} className="sm:hidden relative z-10 drop-shadow-md group-hover:scale-110 transition-transform duration-300" strokeWidth={2.2} />
@@ -4591,26 +4591,26 @@ export default function LandingPage({
                           {facility.name}
                         </h3>
                         <p
-                          className="text-[10px] xs:text-xs sm:text-sm leading-snug sm:leading-relaxed text-slate-600 dark:text-slate-300 text-center flex-grow mb-2 sm:mb-3 line-clamp-3 sm:line-clamp-none font-normal"
+                          className="text-[10px] xs:text-xs sm:text-sm leading-snug sm:leading-relaxed text-slate-700 dark:text-slate-300 text-center flex-grow mb-2 sm:mb-3 line-clamp-3 sm:line-clamp-none font-normal"
                         >
                           {facility.desc}
                         </p>
 
                         {/* Interactive Hint Indicator */}
-                        <div className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold text-emerald-600 dark:text-emerald-400 opacity-90 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all mb-2">
+                        <div className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold text-emerald-700 dark:text-emerald-400 opacity-90 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all mb-2">
                           <span>Foto &amp; Informasi Lengkap</span>
                           <ArrowRight size={12} className="shrink-0" />
                         </div>
                       </div>
 
                       {/* Bottom Info: Distance Calculation or Status Tag */}
-                      <div className="w-full mt-auto pt-2.5 sm:pt-3.5 border-t border-slate-200/80 dark:border-white/10 flex flex-col items-center gap-1.5 sm:gap-2">
+                      <div className="w-full mt-auto pt-2.5 sm:pt-3.5 border-t border-[#E2DACB] dark:border-white/10 flex flex-col items-center gap-1.5 sm:gap-2">
                         {facility.distanceKm !== null ? (
                           <div className="w-full flex items-center justify-between text-[9px] sm:text-[10px]">
-                            <span className="font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                            <span className="font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
                               {t("distance.estimation", "Estimasi Jarak")}
                             </span>
-                            <span className="font-mono font-black px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
+                            <span className="font-mono font-black px-2 py-0.5 rounded-lg bg-[#FAF7F0] dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/20">
                               {facility.distanceKm.toFixed(1)} km
                             </span>
                           </div>
@@ -4630,7 +4630,7 @@ export default function LandingPage({
         </div>
 
         {/* INTERACTIVE ROADMAP & LICENSING GUIDE - REIMAGINED WITH FLOATING MEDALLIONS & EXECUTIVE DOSSIER */}
-        <section id="roadmap-section" className="scroll-mt-20 sm:scroll-mt-24 py-10 sm:py-14 md:py-16 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0A2238] relative overflow-hidden transition-all duration-500">
+        <section id="roadmap-section" className="scroll-mt-20 sm:scroll-mt-24 py-10 sm:py-14 md:py-16 border-t border-[#E2DACB] dark:border-white/10 bg-[#FAF7F0] dark:bg-[#0A2238] relative overflow-hidden transition-all duration-500">
           {/* Subtle Ambient Background Gradients */}
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
           <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-[140px] pointer-events-none" />
@@ -4648,7 +4648,7 @@ export default function LandingPage({
               <div className="gold-divider-diamond">
                 <span className="gold-diamond-icon" />
               </div>
-              <p className="text-sm sm:text-base leading-relaxed text-slate-600 dark:text-slate-300 max-w-2xl mx-auto font-medium">
+              <p className="text-sm sm:text-base leading-relaxed text-slate-700 dark:text-slate-300 max-w-2xl mx-auto font-medium">
                 {t("roadmap.subtitle", "Kemudahan berinvestasi didukung integrasi digital perizinan satu pintu Kabupaten Luwu.")}
               </p>
             </div>
@@ -4656,7 +4656,7 @@ export default function LandingPage({
             {/* TOP HORIZONTAL MILESTONE PIPELINE TRACK (Interactive on all screens) */}
             <div className="mb-10 sm:mb-12 relative">
               {/* Connecting Pipeline Rail */}
-              <div className="hidden sm:block absolute top-7 inset-x-12 lg:inset-x-20 h-1 bg-slate-200 dark:bg-slate-800 rounded-full z-0">
+              <div className="hidden sm:block absolute top-7 inset-x-12 lg:inset-x-20 h-1 bg-[#E2DACB] dark:bg-slate-800 rounded-full z-0">
                 <div
                   className="h-full bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 rounded-full transition-all duration-500"
                   style={{ width: `${(activeRoadmapStep / (stepsData.length - 1)) * 100}%` }}
@@ -4677,8 +4677,8 @@ export default function LandingPage({
                       onClick={() => setActiveRoadmapStep(idx)}
                       className={`group p-2.5 xs:p-3 sm:p-4 rounded-xl sm:rounded-2xl border text-center flex flex-col items-center justify-between transition-all duration-300 relative ${
                         isActive
-                          ? "bg-emerald-50 dark:bg-[#0B2A20] border-emerald-400 dark:border-[rgba(201,162,75,0.45)] shadow-xl ring-2 ring-emerald-500/30"
-                          : "bg-white dark:bg-surface/80 border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-slate-800/80 shadow-xs"
+                          ? "bg-[#F4F0E6] dark:bg-[#0B2A20] border-emerald-500 dark:border-[rgba(201,162,75,0.45)] shadow-xl ring-2 ring-emerald-500/30"
+                          : "bg-[#F4F0E6]/85 dark:bg-surface/80 border-[#E2DACB] dark:border-white/10 hover:bg-[#F4F0E6] dark:hover:bg-slate-800/80 shadow-xs"
                       }`}
                     >
                       {/* Floating Circular Medallion */}
@@ -4687,10 +4687,10 @@ export default function LandingPage({
                         <div
                           className={`w-10 h-10 sm:w-14 sm:h-14 rounded-full flex items-center justify-center font-mono font-bold text-xs sm:text-base relative z-10 transition-all duration-300 ${
                             isActive
-                              ? `bg-gradient-to-br ${step.gradient} text-white ring-2 sm:ring-4 ring-white dark:ring-[#0A2238] ${step.shadow} scale-105`
+                              ? `bg-gradient-to-br ${step.gradient} text-white ring-2 sm:ring-4 ring-[#FAF7F0] dark:ring-[#0A2238] ${step.shadow} scale-105`
                               : isCompleted
                               ? `bg-emerald-500 text-white ring-2 ring-emerald-400`
-                              : `bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 group-hover:scale-105`
+                              : `bg-[#FAF7F0] dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-[#E2DACB] dark:border-white/10 group-hover:scale-105`
                           }`}
                         >
                           <div className="absolute inset-1 rounded-full border border-white/20 pointer-events-none" />
@@ -4706,20 +4706,20 @@ export default function LandingPage({
 
                       {/* Title & SLA Badge */}
                       <div className="w-full flex flex-col items-center">
-                        <span className="text-[11px] xs:text-xs sm:text-sm font-bold tracking-tight text-slate-800 dark:text-white line-clamp-1 mb-1 sm:mb-1.5">
+                        <span className="text-[11px] xs:text-xs sm:text-sm font-bold tracking-tight text-slate-900 dark:text-white line-clamp-1 mb-1 sm:mb-1.5">
                           {step.title}
                         </span>
                         <div className="flex items-center gap-1 flex-wrap justify-center">
                           <span className={`inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold border ${
                             isActive
                               ? step.badgeClass
-                              : "bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10"
+                              : "bg-[#FAF7F0] dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-[#E2DACB] dark:border-white/10"
                           }`}>
                             <Clock size={9} className="shrink-0" />
                             <span className="truncate max-w-[80px] sm:max-w-none">{step.duration}</span>
                           </span>
                           {stepCheckedCount > 0 && (
-                            <span className="px-1 py-0.5 rounded-md text-[8.5px] sm:text-[9px] font-mono font-bold bg-emerald-50 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-600/30">
+                            <span className="px-1 py-0.5 rounded-md text-[8.5px] sm:text-[9px] font-mono font-bold bg-[#FAF7F0] dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-600/30">
                               {stepCheckedCount}/{stepReqs.length}
                             </span>
                           )}
@@ -4728,7 +4728,7 @@ export default function LandingPage({
 
                       {/* Active Indicator Pulse Dot */}
                       {isActive && (
-                        <span className={`absolute -bottom-1 sm:-bottom-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ${step.dotColor} ring-2 ring-white dark:ring-[#0A2238] animate-pulse`} />
+                        <span className={`absolute -bottom-1 sm:-bottom-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ${step.dotColor} ring-2 ring-[#FAF7F0] dark:ring-[#0A2238] animate-pulse`} />
                       )}
                     </motion.button>
                   );
@@ -4763,14 +4763,14 @@ export default function LandingPage({
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -15 }}
                       transition={{ duration: 0.3, ease: "easeOut" }}
-                      className="p-5 sm:p-7 md:p-8 rounded-2xl sm:rounded-[28px] border min-h-full flex flex-col justify-between relative overflow-hidden bg-white dark:bg-surface border-slate-200/90 dark:border-white/10 shadow-lg dark:shadow-2xl dark:shadow-black/40"
+                      className="p-5 sm:p-7 md:p-8 rounded-2xl sm:rounded-[28px] border min-h-full flex flex-col justify-between relative overflow-hidden bg-[#F4F0E6] dark:bg-surface border-[#E2DACB] dark:border-white/10 shadow-lg dark:shadow-2xl dark:shadow-black/40"
                     >
                       {/* Top Accent Gradient Rail */}
                       <div className={`absolute top-0 inset-x-6 sm:inset-x-10 h-[3px] bg-gradient-to-r from-transparent ${curStep.railColor} to-transparent rounded-full`} />
 
                       <div>
                         {/* Dossier Header with Symmetrical Responsive Layout */}
-                        <div className="pb-4 sm:pb-6 mb-5 border-b border-slate-200 dark:border-white/10 flex flex-col gap-3">
+                        <div className="pb-4 sm:pb-6 mb-5 border-b border-[#E2DACB] dark:border-white/10 flex flex-col gap-3">
                           {/* Top Meta Bar: Badge + Authority Code + SLA Chip */}
                           <div className="flex items-center justify-between gap-2 flex-wrap">
                             <div className="flex items-center gap-1.5 flex-wrap">
@@ -4782,7 +4782,7 @@ export default function LandingPage({
                               </span>
                             </div>
 
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] sm:text-xs font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 shadow-xs shrink-0">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] sm:text-xs font-bold text-emerald-800 dark:text-emerald-300 bg-[#FAF7F0] dark:bg-emerald-500/10 border border-[#E2DACB] dark:border-emerald-500/20 shadow-xs shrink-0">
                               <Clock size={13} className="text-emerald-700 dark:text-emerald-400 shrink-0" />
                               <span>Target SLA: {curStep.duration}</span>
                             </span>
@@ -4792,7 +4792,7 @@ export default function LandingPage({
                           <div className="flex items-center gap-3 sm:gap-4 mt-1">
                             <div className="relative shrink-0">
                               <div className={`absolute inset-0 rounded-full ${curStep.ambientGlow} blur-md`} />
-                              <div className={`relative w-12 h-12 sm:w-16 sm:h-16 rounded-full ring-2 sm:ring-4 ring-white dark:ring-surface ${curStep.shadow} bg-gradient-to-br ${curStep.gradient} flex items-center justify-center text-white`}>
+                              <div className={`relative w-12 h-12 sm:w-16 sm:h-16 rounded-full ring-2 sm:ring-4 ring-[#FAF7F0] dark:ring-surface ${curStep.shadow} bg-gradient-to-br ${curStep.gradient} flex items-center justify-center text-white`}>
                                 <div className="absolute inset-1 sm:inset-1.5 rounded-full border border-white/30 pointer-events-none" />
                                 <curStep.icon size={22} className="sm:hidden drop-shadow-md" strokeWidth={2.2} />
                                 <curStep.icon size={28} className="hidden sm:block drop-shadow-md" strokeWidth={2.2} />
@@ -4812,7 +4812,7 @@ export default function LandingPage({
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start mb-6">
                           {/* Left: Narrative & Legal Basis */}
                           <div className="lg:col-span-7 flex flex-col gap-4">
-                            <div className="p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-elevated border border-slate-200/90 dark:border-white/10 flex items-start gap-2.5">
+                            <div className="p-3.5 sm:p-4 rounded-xl bg-[#FAF7F0] dark:bg-elevated border border-[#E2DACB] dark:border-white/10 flex items-start gap-2.5">
                               <ShieldCheck size={18} className="text-sky-700 dark:text-sky-400 shrink-0 mt-0.5" />
                               <div className="text-[11px] sm:text-xs leading-relaxed">
                                 <span className="font-extrabold text-slate-900 dark:text-white mr-1.5">
@@ -4825,14 +4825,14 @@ export default function LandingPage({
                             </div>
 
                             {curStep.num === "03" && (
-                              <div className="p-3.5 sm:p-4 rounded-xl bg-emerald-500/10 dark:bg-emerald-950/40 border border-emerald-500/30 flex items-start gap-3">
-                                <Leaf size={18} className="text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                              <div className="p-3.5 sm:p-4 rounded-xl bg-[#FAF7F0] dark:bg-emerald-950/40 border border-[#E2DACB] dark:border-emerald-500/30 flex items-start gap-3">
+                                <Leaf size={18} className="text-emerald-700 dark:text-emerald-400 shrink-0 mt-0.5" />
                                 <div className="text-xs leading-relaxed space-y-1">
                                   <div className="flex items-center gap-2 flex-wrap">
                                     <span className="font-extrabold text-emerald-800 dark:text-emerald-300 uppercase tracking-wide text-[10px]">
                                       Pilar 5 • Environment Ready (Fast-Track AMDALNET)
                                     </span>
-                                    <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                                    <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-[#F4F0E6] dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/30">
                                       SLA SPPL Instan • UKL-UPL 10 Hari
                                     </span>
                                   </div>
@@ -4844,7 +4844,7 @@ export default function LandingPage({
                             )}
 
                             <div className="space-y-2">
-                              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
                                 Ringkasan Tahapan & Kewenangan
                               </h4>
                               <p className="text-xs xs:text-sm sm:text-base leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
@@ -4854,7 +4854,7 @@ export default function LandingPage({
                           </div>
 
                           {/* Right: Requirements Checklist Box */}
-                          <div className="lg:col-span-5 p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-slate-50 dark:bg-elevated border border-slate-200/90 dark:border-white/10 flex flex-col justify-between">
+                          <div className="lg:col-span-5 p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-[#FAF7F0] dark:bg-elevated border border-[#E2DACB] dark:border-white/10 flex flex-col justify-between">
                             <div>
                               <div className="flex items-center justify-between gap-2 mb-2.5">
                                 <h4 className="text-[11px] sm:text-xs uppercase tracking-wider font-extrabold text-slate-900 dark:text-white truncate">
@@ -4862,14 +4862,14 @@ export default function LandingPage({
                                 </h4>
                                 <span className={`px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-bold shrink-0 ${
                                   isAllChecked
-                                    ? "bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700"
-                                    : "bg-sky-50 dark:bg-sky-950 text-sky-800 dark:text-sky-300 border border-sky-200 dark:border-sky-700"
+                                    ? "bg-[#F4F0E6] dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-700"
+                                    : "bg-[#F4F0E6] dark:bg-sky-950 text-sky-800 dark:text-sky-300 border border-[#E2DACB] dark:border-sky-700"
                                 }`}>
                                   {checkedCount}/{curReqs.length} Siap ({completionPercent}%)
                                 </span>
                               </div>
 
-                              <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full mb-3.5 overflow-hidden">
+                              <div className="w-full h-1.5 bg-[#E2DACB] dark:bg-slate-800 rounded-full mb-3.5 overflow-hidden">
                                 <div
                                   className="h-full bg-gradient-to-r from-sky-500 via-teal-500 to-emerald-500 rounded-full transition-all duration-300"
                                   style={{ width: `${completionPercent}%` }}
@@ -4885,15 +4885,15 @@ export default function LandingPage({
                                       onClick={() => toggleRequirement(activeRoadmapStep, i)}
                                       className={`p-2.5 sm:p-3 rounded-lg border flex items-start gap-2.5 text-xs cursor-pointer transition-all duration-200 select-none ${
                                         isChecked
-                                          ? "bg-emerald-50 dark:bg-emerald-950/50 border-emerald-300 dark:border-emerald-500/40 text-emerald-900 dark:text-emerald-200 shadow-xs"
-                                          : "bg-white dark:bg-surface border-slate-200/90 dark:border-white/10 text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/80 hover:border-slate-300 dark:hover:border-white/20 shadow-xs"
+                                          ? "bg-[#F4F0E6] dark:bg-emerald-950/50 border-emerald-500/60 dark:border-emerald-500/40 text-emerald-950 dark:text-emerald-200 shadow-xs"
+                                          : "bg-[#F4F0E6] dark:bg-surface border-[#E2DACB] dark:border-white/10 text-slate-800 dark:text-slate-200 hover:bg-[#ECE5D6] dark:hover:bg-slate-800/80 hover:border-[#D5CCB9] dark:hover:border-white/20 shadow-xs"
                                       }`}
                                     >
                                       <div
                                         className={`w-4 h-4 rounded-md flex items-center justify-center mt-0.5 shrink-0 transition-colors ${
                                           isChecked
                                             ? "bg-emerald-600 dark:bg-emerald-500 text-white"
-                                            : "border border-slate-300 dark:border-white/20 bg-slate-100 dark:bg-slate-800"
+                                            : "border border-[#E2DACB] dark:border-white/20 bg-[#FAF7F0] dark:bg-slate-800"
                                         }`}
                                       >
                                         {isChecked && <CheckCircle2 size={12} className="text-white" />}
@@ -4918,7 +4918,7 @@ export default function LandingPage({
                       </div>
 
                       {/* Direct Government Portals & VIP Consultation Footer */}
-                      <div className="pt-4 sm:pt-5 border-t border-slate-200 dark:border-white/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                      <div className="pt-4 sm:pt-5 border-t border-[#E2DACB] dark:border-white/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                         <div className="flex flex-col xs:flex-row items-center gap-2 w-full sm:w-auto">
                           {curStep.portalUrl && (
                             <a
@@ -4935,7 +4935,7 @@ export default function LandingPage({
                             href="https://wa.me/6281142011"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200 bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors w-full sm:w-auto border border-slate-200 dark:border-white/10 min-h-[40px]"
+                            className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200 bg-[#FAF7F0] hover:bg-[#ECE5D6] dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors w-full sm:w-auto border border-[#E2DACB] dark:border-white/10 min-h-[40px]"
                           >
                             <MessageSquare size={14} className="text-emerald-700 dark:text-emerald-400" />
                             <span>{t("roadmap.contactMpp", "Konsultasi MPP Luwu")}</span>
@@ -4947,7 +4947,7 @@ export default function LandingPage({
                           <button
                             disabled={activeRoadmapStep === 0}
                             onClick={() => setActiveRoadmapStep((prev) => Math.max(0, prev - 1))}
-                            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs font-bold border border-slate-200 dark:border-white/10 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 transition-colors min-h-[40px] flex items-center justify-center"
+                            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs font-bold bg-[#FAF7F0] dark:bg-transparent border border-[#E2DACB] dark:border-white/10 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#ECE5D6] dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 transition-colors min-h-[40px] flex items-center justify-center"
                           >
                             ← Sebelumnya
                           </button>
@@ -4974,7 +4974,7 @@ export default function LandingPage({
           className={`scroll-mt-20 sm:scroll-mt-24 py-10 sm:py-14 md:py-16 lg:py-20 pb-16 sm:pb-20 md:pb-24 border-y relative overflow-hidden z-10 ${
             isDark
               ? "border-white/[0.08] bg-[#081C2E]"
-              : "border-slate-200/80 bg-gradient-to-b from-slate-50/80 via-white to-emerald-50/30"
+              : "border-[#E2DACB] bg-[#FAF7F0]"
           }`}
         >
           {/* Ambient Glowing Atmospheric Elements */}
@@ -5008,7 +5008,7 @@ export default function LandingPage({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.05 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="p-4 sm:p-8 lg:p-12 pb-8 sm:pb-10 rounded-[28px] sm:rounded-[32px] relative overflow-hidden transition-all duration-500 bg-white/90 dark:bg-surface/75 glass-crystal backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 shadow-2xl shadow-slate-200/50 dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10"
+              className="p-4 sm:p-8 lg:p-12 pb-8 sm:pb-10 rounded-[28px] sm:rounded-[32px] relative overflow-hidden transition-all duration-500 bg-[#F4F0E6]/95 dark:bg-surface/75 glass-crystal backdrop-blur-2xl border border-[#E2DACB] dark:border-white/10 shadow-2xl shadow-stone-200/50 dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10"
             >
               {/* Subtle tech background line grid */}
               <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:32px_32px]" />
@@ -5020,7 +5020,7 @@ export default function LandingPage({
                 {/* LEFT COLUMN: Strategic Value Propositions & Actions */}
                 <div className="lg:col-span-7 flex flex-col justify-between space-y-5 sm:space-y-6">
                   {/* Live Operation Status Pill */}
-                  <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold text-emerald-800 dark:text-emerald-300 w-fit">
+                  <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#FAF7F0] dark:bg-emerald-950/60 border border-[#E2DACB] dark:border-emerald-800 text-xs font-semibold text-emerald-800 dark:text-emerald-300 w-fit">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
                     <span>{t("mppPreview.operatingBadge", "Layanan Prima Beroperasi • Senin - Jumat (08.00 - 15.30 WITA)")}</span>
                   </div>
@@ -5032,7 +5032,7 @@ export default function LandingPage({
                   {/* 3 SOVEREIGN KEY PILLARS (Optically Balanced & Symmetrical Bento Grid) */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                     {/* Pilar 1: 21 Instansi */}
-                    <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-50/90 dark:bg-slate-800/60 glass-crystal glass-card-interactive border border-slate-200/80 dark:border-white/10 flex flex-row sm:flex-col items-center sm:items-start gap-3.5 sm:gap-2 justify-between group hover:border-emerald-400 dark:hover:border-emerald-500/50 transition-all shadow-xs">
+                    <div className="p-3.5 sm:p-4 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/60 glass-crystal glass-card-interactive border border-[#E2DACB] dark:border-white/10 flex flex-row sm:flex-col items-center sm:items-start gap-3.5 sm:gap-2 justify-between group hover:border-emerald-400 dark:hover:border-emerald-500/50 transition-all shadow-xs">
                       <div className="w-10 h-10 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center sm:mb-2 shadow-xs group-hover:scale-105 transition-transform shrink-0">
                         <Building2 size={18} />
                       </div>
@@ -5044,13 +5044,13 @@ export default function LandingPage({
                           {t("mppPreview.p1Desc", "DPMPTSP, Pajak, BPN, Imigrasi, Samsat")}
                         </span>
                       </div>
-                      <div className="sm:hidden w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-700/60 flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shrink-0">
+                      <div className="sm:hidden w-7 h-7 rounded-full bg-[#F4F0E6] dark:bg-slate-700/60 border border-[#E2DACB] dark:border-transparent flex items-center justify-center text-slate-500 group-hover:text-emerald-600 transition-colors shrink-0">
                         <ChevronRight size={14} />
                       </div>
                     </div>
 
                     {/* Pilar 2: Fast-Track OSS */}
-                    <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-50/90 dark:bg-slate-800/60 glass-crystal glass-card-interactive border border-slate-200/80 dark:border-white/10 flex flex-row sm:flex-col items-center sm:items-start gap-3.5 sm:gap-2 justify-between group hover:border-sky-400 dark:hover:border-sky-500/50 transition-all shadow-xs">
+                    <div className="p-3.5 sm:p-4 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/60 glass-crystal glass-card-interactive border border-[#E2DACB] dark:border-white/10 flex flex-row sm:flex-col items-center sm:items-start gap-3.5 sm:gap-2 justify-between group hover:border-sky-400 dark:hover:border-sky-500/50 transition-all shadow-xs">
                       <div className="w-10 h-10 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 text-white flex items-center justify-center sm:mb-2 shadow-xs group-hover:scale-105 transition-transform shrink-0">
                         <Zap size={18} />
                       </div>
@@ -5062,13 +5062,13 @@ export default function LandingPage({
                           {t("mppPreview.p2Desc", "Penerbitan NIB & Validasi Ruang Instan")}
                         </span>
                       </div>
-                      <div className="sm:hidden w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-700/60 flex items-center justify-center text-slate-400 group-hover:text-sky-500 transition-colors shrink-0">
+                      <div className="sm:hidden w-7 h-7 rounded-full bg-[#F4F0E6] dark:bg-slate-700/60 border border-[#E2DACB] dark:border-transparent flex items-center justify-center text-slate-500 group-hover:text-sky-600 transition-colors shrink-0">
                         <ChevronRight size={14} />
                       </div>
                     </div>
 
                     {/* Pilar 3: Klinik Investasi VIP */}
-                    <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-50/90 dark:bg-slate-800/60 glass-crystal glass-card-interactive border border-slate-200/80 dark:border-white/10 flex flex-row sm:flex-col items-center sm:items-start gap-3.5 sm:gap-2 justify-between group hover:border-teal-400 dark:hover:border-teal-500/50 transition-all shadow-xs">
+                    <div className="p-3.5 sm:p-4 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/60 glass-crystal glass-card-interactive border border-[#E2DACB] dark:border-white/10 flex flex-row sm:flex-col items-center sm:items-start gap-3.5 sm:gap-2 justify-between group hover:border-teal-400 dark:hover:border-teal-500/50 transition-all shadow-xs">
                       <div className="w-10 h-10 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 text-white flex items-center justify-center sm:mb-2 shadow-xs group-hover:scale-105 transition-transform shrink-0">
                         <Award size={18} />
                       </div>
@@ -5080,7 +5080,7 @@ export default function LandingPage({
                           {t("mppPreview.p3Desc", "Konsultasi 1-on-1 & Pendampingan Lahan")}
                         </span>
                       </div>
-                      <div className="sm:hidden w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-700/60 flex items-center justify-center text-slate-400 group-hover:text-teal-500 transition-colors shrink-0">
+                      <div className="sm:hidden w-7 h-7 rounded-full bg-[#F4F0E6] dark:bg-slate-700/60 border border-[#E2DACB] dark:border-transparent flex items-center justify-center text-slate-500 group-hover:text-teal-600 transition-colors shrink-0">
                         <ChevronRight size={14} />
                       </div>
                     </div>
@@ -5114,9 +5114,9 @@ export default function LandingPage({
                       href="https://wa.me/6281142011"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="py-3.5 px-5 min-h-[48px] inline-flex items-center justify-center gap-2 text-emerald-950 dark:text-emerald-200 bg-emerald-500/10 dark:bg-emerald-950/50 hover:bg-emerald-500/15 dark:hover:bg-emerald-900/60 font-semibold text-xs rounded-2xl border border-emerald-500/30 dark:border-emerald-500/40 shadow-xs backdrop-blur-md transition-all group"
+                      className="py-3.5 px-5 min-h-[48px] inline-flex items-center justify-center gap-2 text-emerald-950 dark:text-emerald-200 bg-[#FAF7F0] dark:bg-emerald-950/50 hover:bg-[#ECE5D6] dark:hover:bg-emerald-900/60 font-semibold text-xs rounded-2xl border border-[#E2DACB] dark:border-emerald-500/40 shadow-xs backdrop-blur-md transition-all group"
                     >
-                      <MessageSquare size={16} className="text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform" />
+                      <MessageSquare size={16} className="text-emerald-700 dark:text-emerald-400 group-hover:scale-110 transition-transform" />
                       <span>{t("mppPreview.btnWa", "Konsultasi Front Office (WhatsApp)")}</span>
                     </a>
                   </div>
@@ -5128,7 +5128,7 @@ export default function LandingPage({
 
                     {/* Single Unified Floating Status Badge */}
                     <div className="w-full flex items-center justify-center mb-3 relative z-20">
-                      <div className="px-4 py-1.5 rounded-full bg-white/95 dark:bg-[#0A2238]/90 text-slate-800 dark:text-slate-100 border border-emerald-500/40 dark:border-emerald-400/40 shadow-xl shadow-slate-900/10 dark:shadow-black/25 backdrop-blur-xl flex items-center gap-2">
+                      <div className="px-4 py-1.5 rounded-full bg-[#FAF7F0]/95 dark:bg-[#0A2238]/90 text-slate-800 dark:text-slate-100 border border-[#E2DACB] dark:border-emerald-400/40 shadow-xl shadow-stone-900/10 dark:shadow-black/25 backdrop-blur-xl flex items-center gap-2">
                         <span className="relative flex h-2 w-2">
                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
                           <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600 dark:bg-emerald-500"></span>
@@ -5157,9 +5157,9 @@ export default function LandingPage({
 
                     {/* Elegant Frosted Pedestal Plinth at Base */}
                     <div className="w-full relative z-20 -mt-3 sm:-mt-4">
-                      <div className="mx-auto w-[94%] sm:w-[90%] p-2 sm:p-2.5 rounded-2xl bg-white/95 dark:bg-surface/90 border border-slate-200/80 dark:border-white/15 shadow-xl shadow-slate-950/10 dark:shadow-black/40 backdrop-blur-xl flex items-center justify-between gap-2 transition-all">
+                      <div className="mx-auto w-[94%] sm:w-[90%] p-2 sm:p-2.5 rounded-2xl bg-[#FAF7F0]/95 dark:bg-surface/90 border border-[#E2DACB] dark:border-white/15 shadow-xl shadow-stone-950/10 dark:shadow-black/40 backdrop-blur-xl flex items-center justify-between gap-2 transition-all">
                         <div className="flex items-center gap-2 min-w-0">
-                          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-500/15 dark:bg-emerald-500/25 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
+                          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-500/15 dark:bg-emerald-500/25 text-emerald-700 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
                             <BadgeCheck size={14} className="sm:scale-110" />
                           </div>
                           <div className="flex flex-col min-w-0 text-left">
@@ -5171,7 +5171,7 @@ export default function LandingPage({
                             </span>
                           </div>
                         </div>
-                        <span className="hidden xs:inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 shrink-0">
+                        <span className="hidden xs:inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-[#F4F0E6] dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/20 shrink-0">
                           {t("mppPreview.foReady", "Siap Melayani")}
                         </span>
                       </div>
@@ -5181,10 +5181,10 @@ export default function LandingPage({
               </div>
 
               {/* QUICK STATS RIBBON AT CARD BOTTOM - Symmetrical 2x2 Bento Grid on Mobile */}
-              <div className="mt-8 pt-6 border-t border-slate-200/80 dark:border-slate-800/80 grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
+              <div className="mt-8 pt-6 border-t border-[#E2DACB] dark:border-slate-800/80 grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
                 {/* Stat 1: 21 Instansi */}
-                <div className="p-3 sm:p-4 rounded-2xl bg-white/70 dark:bg-slate-800/50 border border-slate-200/90 dark:border-slate-700/60 shadow-xs flex items-start gap-2.5 sm:gap-3 transition-all hover:border-emerald-400 dark:hover:border-emerald-500/50">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="p-3 sm:p-4 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/50 border border-[#E2DACB] dark:border-slate-700/60 shadow-xs flex items-start gap-2.5 sm:gap-3 transition-all hover:border-emerald-400 dark:hover:border-emerald-500/50">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
                     <Building2 size={18} className="sm:hidden" />
                     <Building2 size={20} className="hidden sm:block" />
                   </div>
@@ -5192,15 +5192,15 @@ export default function LandingPage({
                     <div className="text-xs xs:text-sm sm:text-base font-black text-slate-900 dark:text-white font-mono leading-snug truncate">
                       {t("mppPreview.stat1Title", "21 Instansi")}
                     </div>
-                    <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
+                    <div className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-400 leading-tight mt-0.5">
                       {t("mppPreview.stat1Desc", "Pusat, Daerah & BUMN")}
                     </div>
                   </div>
                 </div>
 
                 {/* Stat 2: 100+ Layanan */}
-                <div className="p-3 sm:p-4 rounded-2xl bg-white/70 dark:bg-slate-800/50 border border-slate-200/90 dark:border-slate-700/60 shadow-xs flex items-start gap-2.5 sm:gap-3 transition-all hover:border-sky-400 dark:hover:border-sky-500/50">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-sky-500/10 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="p-3 sm:p-4 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/50 border border-[#E2DACB] dark:border-slate-700/60 shadow-xs flex items-start gap-2.5 sm:gap-3 transition-all hover:border-sky-400 dark:hover:border-sky-500/50">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-sky-500/10 dark:bg-sky-500/20 text-sky-700 dark:text-sky-400 flex items-center justify-center shrink-0 mt-0.5">
                     <FileText size={18} className="sm:hidden" />
                     <FileText size={20} className="hidden sm:block" />
                   </div>
@@ -5208,14 +5208,14 @@ export default function LandingPage({
                     <div className="text-xs xs:text-sm sm:text-base font-black text-slate-900 dark:text-white font-mono leading-snug truncate">
                       {t("mppPreview.stat2Title", "100+ Layanan")}
                     </div>
-                    <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
+                    <div className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-400 leading-tight mt-0.5">
                       {t("mppPreview.stat2Desc", "Administrasi & Izin Usaha")}
                     </div>
                   </div>
                 </div>
 
                 {/* Stat 3: 4.85 / 5.0 */}
-                <div className="p-3 sm:p-4 rounded-2xl bg-white/70 dark:bg-slate-800/50 border border-slate-200/90 dark:border-slate-700/60 shadow-xs flex items-start gap-2.5 sm:gap-3 transition-all hover:border-teal-400 dark:hover:border-teal-500/50">
+                <div className="p-3 sm:p-4 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/50 border border-[#E2DACB] dark:border-slate-700/60 shadow-xs flex items-start gap-2.5 sm:gap-3 transition-all hover:border-teal-400 dark:hover:border-teal-500/50">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-teal-500/10 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 flex items-center justify-center shrink-0 mt-0.5">
                     <Award size={18} className="sm:hidden" />
                     <Award size={20} className="hidden sm:block" />
@@ -5224,15 +5224,15 @@ export default function LandingPage({
                     <div className="text-xs xs:text-sm sm:text-base font-black text-slate-900 dark:text-white font-mono leading-snug truncate">
                       {t("mppPreview.stat3Title", "4.85 / 5.0")}
                     </div>
-                    <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
+                    <div className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-400 leading-tight mt-0.5">
                       {t("mppPreview.stat3Desc", "Indeks Kepuasan (IKM)")}
                     </div>
                   </div>
                 </div>
 
                 {/* Stat 4: Rp 0 (Nol) */}
-                <div className="p-3 sm:p-4 rounded-2xl bg-white/70 dark:bg-slate-800/50 border border-slate-200/90 dark:border-slate-700/60 shadow-xs flex items-start gap-2.5 sm:gap-3 transition-all hover:border-teal-400 dark:hover:border-teal-500/50">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-teal-500/10 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="p-3 sm:p-4 rounded-2xl bg-[#FAF7F0] dark:bg-slate-800/50 border border-[#E2DACB] dark:border-slate-700/60 shadow-xs flex items-start gap-2.5 sm:gap-3 transition-all hover:border-teal-400 dark:hover:border-teal-500/50">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-teal-500/10 dark:bg-teal-500/20 text-teal-700 dark:text-teal-400 flex items-center justify-center shrink-0 mt-0.5">
                     <ShieldCheck size={18} className="sm:hidden" />
                     <ShieldCheck size={20} className="hidden sm:block" />
                   </div>
@@ -5240,7 +5240,7 @@ export default function LandingPage({
                     <div className="text-xs xs:text-sm sm:text-base font-black text-slate-900 dark:text-white font-mono leading-snug truncate">
                       {t("mppPreview.stat4Title", "Rp 0 (Nol)")}
                     </div>
-                    <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
+                    <div className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-400 leading-tight mt-0.5">
                       {t("mppPreview.stat4Desc", "Transparan Tanpa Pungli")}
                     </div>
                   </div>
@@ -5253,7 +5253,7 @@ export default function LandingPage({
         {/* 5. SHOWCASE TEKNOLOGI AI & CALCULATOR */}
         <div
           id="ai-calculator-section"
-          className={`scroll-mt-20 sm:scroll-mt-24 pt-6 pb-4 sm:pt-8 sm:pb-6 md:pt-12 md:pb-8 lg:pt-16 lg:pb-8 border-t relative ${isDark ? "border-slate-800" : "border-slate-200"}`}
+          className={`scroll-mt-20 sm:scroll-mt-24 pt-6 pb-4 sm:pt-8 sm:pb-6 md:pt-12 md:pb-8 lg:pt-16 lg:pb-8 border-t relative ${isDark ? "border-slate-800" : "border-[#E2DACB] bg-[#FAF7F0]"}`}
         >
           <div className="absolute inset-0 overflow-hidden pointer-events-none hidden dark:block">
             <div className="absolute top-[10%] left-[20%] w-[40vw] h-[40vw] rounded-full bg-emerald-500/5 blur-[120px] mix-blend-screen" />
@@ -5283,12 +5283,12 @@ export default function LandingPage({
                 style={{ willChange: "transform, opacity" }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.05 }}
-                className="lg:col-span-12 p-2.5 sm:p-6 md:p-8 rounded-2xl border overflow-hidden h-full flex flex-col bg-white/95 dark:bg-surface/90 backdrop-blur-xl border-slate-200/90 dark:border-white/10 shadow-xl shadow-slate-200/50 dark:shadow-2xl dark:shadow-black/60 transition-all duration-500"
+                className="lg:col-span-12 p-2.5 sm:p-6 md:p-8 rounded-2xl border overflow-hidden h-full flex flex-col bg-[#F4F0E6]/95 dark:bg-surface/90 backdrop-blur-xl border-[#E2DACB] dark:border-white/10 shadow-xl shadow-stone-200/50 dark:shadow-2xl dark:shadow-black/60 transition-all duration-500"
               >
-                <div className="flex flex-col md:flex-row items-start md:items-center gap-3.5 md:gap-5 mb-5 md:mb-8 border-b pb-4 md:pb-6 border-slate-200/80 dark:border-white/10">
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-3.5 md:gap-5 mb-5 md:mb-8 border-b pb-4 md:pb-6 border-[#E2DACB] dark:border-white/10">
                   <div className="flex items-center gap-3 w-full md:w-auto">
                     <div
-                      className="p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl backdrop-blur-md border shadow-sm shrink-0 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 dark:border-emerald-400/40"
+                      className="p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl backdrop-blur-md border shadow-sm shrink-0 bg-[#FAF7F0] dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border-[#E2DACB] dark:border-emerald-400/40"
                     >
                       <Calculator className="w-5 h-5 sm:w-6 sm:h-6 drop-shadow-sm" />
                     </div>
@@ -5302,12 +5302,12 @@ export default function LandingPage({
                   {roiResult && (
                     <div className={`mt-2 md:mt-0 w-full md:w-auto flex justify-center md:ml-auto items-center gap-2 px-3.5 py-1.5 min-h-[38px] rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider backdrop-blur-md border shadow-sm transition-all
                       ${!selectedInvestmentId
-                        ? 'bg-sky-500/10 text-sky-700 border-sky-500/20 dark:bg-sky-500/15 dark:text-sky-300 dark:border-sky-400/30'
+                        ? 'bg-[#FAF7F0] text-sky-800 border-[#E2DACB] dark:bg-sky-500/15 dark:text-sky-300 dark:border-sky-400/30'
                         : roiResult.status === 'FEASIBLE'
-                          ? 'bg-emerald-500/10 text-emerald-800 border-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-400/40 shadow-xs'
+                          ? 'bg-[#FAF7F0] text-emerald-800 border-[#E2DACB] dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-400/40 shadow-xs'
                           : roiResult.status === 'NOT_FEASIBLE'
-                            ? 'bg-amber-500/10 text-amber-800 border-amber-500/20 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-400/30'
-                            : 'bg-blue-500/10 text-blue-800 border-blue-500/20 dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-400/40'}`}>
+                            ? 'bg-[#FAF7F0] text-amber-800 border-[#E2DACB] dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-400/30'
+                            : 'bg-[#FAF7F0] text-blue-800 border-[#E2DACB] dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-400/40'}`}>
                       <span className={`w-2 h-2 rounded-full shadow-sm
                         ${!selectedInvestmentId ? 'bg-sky-500 dark:bg-sky-400 animate-pulse'
                           : roiResult.status === 'FEASIBLE' ? 'bg-emerald-600 dark:bg-emerald-400 animate-pulse'
@@ -5355,24 +5355,24 @@ export default function LandingPage({
 
                     {selectedInvObj && (
                       <div
-                        className="mt-3 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-surface/80 overflow-hidden shadow-sm"
+                        className="mt-3 rounded-2xl border border-[#E2DACB] dark:border-white/10 bg-[#FAF7F0] dark:bg-surface/80 overflow-hidden shadow-sm"
                       >
                         <motion.button whileTap={{ scale: 0.98 }}
                           type="button"
                           onClick={() =>
                             setIsProfileExpanded(!isProfileExpanded)
                           }
-                          className="w-full px-4 sm:px-5 py-3 min-h-[44px] flex items-center justify-between hover:bg-slate-500/5 transition-colors focus:outline-none"
+                          className="w-full px-4 sm:px-5 py-3 min-h-[44px] flex items-center justify-between hover:bg-[#ECE5D6]/60 dark:hover:bg-slate-500/5 transition-colors focus:outline-none"
                         >
                           <div className="flex flex-row items-center gap-2 min-w-0 pr-2">
                             <div className="p-1.5 rounded-lg bg-emerald-500/10 dark:bg-emerald-400/10 shrink-0">
-                              <Info className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                              <Info className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
                             </div>
                             <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 truncate">
                               {t('profile_location')} - {selectedInvObj.name}
                             </span>
                           </div>
-                          <div className="p-1 rounded-full bg-slate-200 dark:bg-slate-800 shrink-0">
+                          <div className="p-1 rounded-full bg-[#F4F0E6] dark:bg-slate-800 border border-[#E2DACB] dark:border-transparent shrink-0">
                             {isProfileExpanded ? (
                               <ChevronUp className="w-4 h-4 text-slate-700 dark:text-slate-300" />
                             ) : (
@@ -5390,7 +5390,7 @@ export default function LandingPage({
                               className="overflow-hidden"
                             >
                               <div className="p-4 pt-1 text-xs">
-                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-white/10">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 rounded-xl bg-[#F4F0E6] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-white/10">
                                   <div className="space-y-0.5">
                                     <div className="text-[10px] uppercase font-semibold text-slate-500 dark:text-slate-400">{t('sector_title', 'Sektor')}</div>
                                     <div className="font-bold text-emerald-700 dark:text-emerald-400 truncate">
@@ -5477,7 +5477,7 @@ export default function LandingPage({
                             className={`w-full pl-5 pr-28 py-4 min-h-[44px] rounded-xl border font-bold text-sm sm:text-base outline-none transition-all ${inputBg}`}
                           />
                           <span
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md"}`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-700 bg-[#F4F0E6] px-2 py-0.5 rounded-md border border-[#E2DACB]"}`}
                           >
                             Orang / Hari
                           </span>
@@ -5507,7 +5507,7 @@ export default function LandingPage({
                             className={`w-full pl-5 pr-28 py-4 min-h-[44px] rounded-xl border font-bold text-sm sm:text-base outline-none transition-all ${inputBg}`}
                           />
                           <span
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md"}`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-700 bg-[#F4F0E6] px-2 py-0.5 rounded-md border border-[#E2DACB]"}`}
                           >
                             Hari / Pekan
                           </span>
@@ -5532,11 +5532,11 @@ export default function LandingPage({
                             className={`w-full pl-5 pr-28 py-4 min-h-[44px] rounded-xl border font-black text-sm sm:text-base outline-none transition-all ${
                               isDark
                                 ? "bg-[#0c2438] border-emerald-500/40 text-emerald-300"
-                                : "bg-slate-50 border-slate-300 text-slate-800"
+                                : "bg-[#ECE5D6]/70 border-[#E2DACB] text-[#10261E]"
                             } cursor-default`}
                           />
                           <span
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold pointer-events-none ${isDark ? "text-emerald-300 bg-emerald-950/70 px-2 py-0.5 rounded-md border border-emerald-500/40" : "text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200"}`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold pointer-events-none ${isDark ? "text-emerald-300 bg-emerald-950/70 px-2 py-0.5 rounded-md border border-emerald-500/40" : "text-emerald-800 bg-[#F4F0E6] px-2 py-0.5 rounded-md border border-[#E2DACB]"}`}
                           >
                             Orang / Pekan
                           </span>
@@ -5568,7 +5568,7 @@ export default function LandingPage({
                             className={`w-full pl-14 pr-24 py-4 min-h-[44px] rounded-xl border font-bold text-sm sm:text-base outline-none transition-all ${inputBg}`}
                           />
                           <span
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md"}`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-700 bg-[#F4F0E6] px-2 py-0.5 rounded-md border border-[#E2DACB]"}`}
                           >
                             / Orang
                           </span>
@@ -5599,7 +5599,7 @@ export default function LandingPage({
                             className={`w-full pl-5 pr-28 py-4 min-h-[44px] rounded-xl border font-bold text-sm sm:text-base outline-none transition-all ${inputBg}`}
                           />
                           <span
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md"}`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-700 bg-[#F4F0E6] px-2 py-0.5 rounded-md border border-[#E2DACB]"}`}
                           >
                             Kg / Panen
                           </span>
@@ -5629,7 +5629,7 @@ export default function LandingPage({
                             className={`w-full pl-5 pr-28 py-4 min-h-[44px] rounded-xl border font-bold text-sm sm:text-base outline-none transition-all ${inputBg}`}
                           />
                           <span
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md"}`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-700 bg-[#F4F0E6] px-2 py-0.5 rounded-md border border-[#E2DACB]"}`}
                           >
                             Kali / Tahun
                           </span>
@@ -5654,11 +5654,11 @@ export default function LandingPage({
                             className={`w-full pl-5 pr-28 py-4 min-h-[44px] rounded-xl border font-black text-sm sm:text-base outline-none transition-all ${
                               isDark
                                 ? "bg-[#0c2438] border-emerald-500/40 text-emerald-300"
-                                : "bg-slate-50 border-slate-300 text-slate-800"
+                                : "bg-[#ECE5D6]/70 border-[#E2DACB] text-[#10261E]"
                             } cursor-default`}
                           />
                           <span
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold pointer-events-none ${isDark ? "text-emerald-300 bg-emerald-950/70 px-2 py-0.5 rounded-md border border-emerald-500/40" : "text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200"}`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold pointer-events-none ${isDark ? "text-emerald-300 bg-emerald-950/70 px-2 py-0.5 rounded-md border border-emerald-500/40" : "text-emerald-800 bg-[#F4F0E6] px-2 py-0.5 rounded-md border border-[#E2DACB]"}`}
                           >
                             Kg / Tahun
                           </span>
@@ -5693,7 +5693,7 @@ export default function LandingPage({
                             className={`w-full pl-14 pr-20 py-4 min-h-[44px] rounded-xl border font-bold text-sm sm:text-base outline-none transition-all ${inputBg}`}
                           />
                           <span
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md"}`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-700 bg-[#F4F0E6] px-2 py-0.5 rounded-md border border-[#E2DACB]"}`}
                           >
                             / Kg
                           </span>
@@ -5727,7 +5727,7 @@ export default function LandingPage({
                             className={`w-full pl-5 pr-28 py-4 min-h-[44px] rounded-xl border font-bold text-sm sm:text-base outline-none transition-all ${inputBg}`}
                           />
                           <span
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md"}`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-700 bg-[#F4F0E6] px-2 py-0.5 rounded-md border border-[#E2DACB]"}`}
                           >
                             Unit / Hari
                           </span>
@@ -5757,7 +5757,7 @@ export default function LandingPage({
                             className={`w-full pl-5 pr-28 py-4 min-h-[44px] rounded-xl border font-bold text-sm sm:text-base outline-none transition-all ${inputBg}`}
                           />
                           <span
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md"}`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-700 bg-[#F4F0E6] px-2 py-0.5 rounded-md border border-[#E2DACB]"}`}
                           >
                             Hari / Bulan
                           </span>
@@ -5782,11 +5782,11 @@ export default function LandingPage({
                             className={`w-full pl-5 pr-28 py-4 min-h-[44px] rounded-xl border font-black text-sm sm:text-base outline-none transition-all ${
                               isDark
                                 ? "bg-[#0c2438] border-emerald-500/40 text-emerald-300"
-                                : "bg-slate-50 border-slate-300 text-slate-800"
+                                : "bg-[#ECE5D6]/70 border-[#E2DACB] text-[#10261E]"
                             } cursor-default`}
                           />
                           <span
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold pointer-events-none ${isDark ? "text-emerald-300 bg-emerald-950/70 px-2 py-0.5 rounded-md border border-emerald-500/40" : "text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200"}`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold pointer-events-none ${isDark ? "text-emerald-300 bg-emerald-950/70 px-2 py-0.5 rounded-md border border-emerald-500/40" : "text-emerald-800 bg-[#F4F0E6] px-2 py-0.5 rounded-md border border-[#E2DACB]"}`}
                           >
                             Unit / Bulan
                           </span>
@@ -5821,7 +5821,7 @@ export default function LandingPage({
                             className={`w-full pl-14 pr-24 py-4 min-h-[44px] rounded-xl border font-bold text-sm sm:text-base outline-none transition-all ${inputBg}`}
                           />
                           <span
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md"}`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-700 bg-[#F4F0E6] px-2 py-0.5 rounded-md border border-[#E2DACB]"}`}
                           >
                             / Satuan
                           </span>
@@ -5859,7 +5859,7 @@ export default function LandingPage({
                             className={`w-full pl-14 pr-24 py-4 min-h-[44px] rounded-xl border font-bold text-base sm:text-lg outline-none transition-all ${inputBg}`}
                           />
                           <span
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md"}`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold pointer-events-none ${isDark ? "text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded-md border border-slate-700/60" : "text-slate-700 bg-[#F4F0E6] px-2 py-0.5 rounded-md border border-[#E2DACB]"}`}
                           >
                             / Tahun
                           </span>
@@ -5869,19 +5869,19 @@ export default function LandingPage({
                   )}
 
                   {/* PARAMETER EKONOMI INVESTASI */}
-                  <div className="md:col-span-2 border-t pt-6 border-slate-200 dark:border-white/10 mt-2">
+                  <div className="md:col-span-2 border-t pt-6 border-[#E2DACB] dark:border-white/10 mt-2">
                     <div className="flex items-center justify-between gap-2 mb-4">
-                      <h4 className="text-sm font-bold flex items-center gap-2 text-blue-700 dark:text-sky-400">
+                      <h4 className="text-sm font-bold flex items-center gap-2 text-[#0F6B4F] dark:text-sky-400">
                         <TrendingUp size={16} />{t('financial.parameterTitle', 'Parameter Ekonomi & Asumsi Pasar')}
                       </h4>
-                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 hidden sm:inline">
+                      <span className="text-[11px] font-medium text-slate-600 dark:text-slate-400 hidden sm:inline">
                         Sentuh preset untuk penyesuaian cepat
                       </span>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                       {/* WACC */}
-                      <div className="p-3 sm:p-4 rounded-xl border bg-slate-50/80 dark:bg-elevated border-slate-200/90 dark:border-white/10 shadow-xs flex flex-col justify-between">
+                      <div className="p-3 sm:p-4 rounded-xl border bg-[#FAF7F0] dark:bg-elevated border-[#E2DACB] dark:border-white/10 shadow-xs flex flex-col justify-between">
                         <div>
                           <div className="flex items-center justify-between mb-1.5">
                             <label className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
@@ -5903,7 +5903,7 @@ export default function LandingPage({
                               onChange={(e) => setDiscountRate(Math.max(1, parseInt(e.target.value) || 0))}
                               className={`w-full px-3.5 py-2.5 min-h-[42px] rounded-lg border font-bold text-sm outline-none transition-all ${inputBg}`}
                             />
-                            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 pointer-events-none">%</span>
+                            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500 pointer-events-none">%</span>
                           </div>
                           {/* Tactile Preset Chips */}
                           <div className="flex flex-wrap gap-1.5">
@@ -5920,7 +5920,7 @@ export default function LandingPage({
                                 className={`px-2 py-1 rounded-md text-[10px] font-semibold transition-all border ${
                                   discountRate === chip.val
                                     ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
-                                    : "bg-white hover:bg-slate-100 text-slate-700 border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-white/10 dark:hover:bg-slate-700"
+                                    : "bg-[#F4F0E6] hover:bg-[#ECE5D6] text-slate-700 border-[#E2DACB] dark:bg-slate-800 dark:text-slate-300 dark:border-white/10 dark:hover:bg-slate-700"
                                 }`}
                               >
                                 {chip.label}
@@ -5928,11 +5928,11 @@ export default function LandingPage({
                             ))}
                           </div>
                         </div>
-                        <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 mt-2 block">{t('financial.descWacc')}</span>
+                        <span className="text-[10px] font-medium text-slate-600 dark:text-slate-400 mt-2 block">{t('financial.descWacc')}</span>
                       </div>
 
                       {/* Tenor */}
-                      <div className="p-3 sm:p-4 rounded-xl border bg-slate-50/80 dark:bg-elevated border-slate-200/90 dark:border-white/10 shadow-xs flex flex-col justify-between">
+                      <div className="p-3 sm:p-4 rounded-xl border bg-[#FAF7F0] dark:bg-elevated border-[#E2DACB] dark:border-white/10 shadow-xs flex flex-col justify-between">
                         <div>
                           <div className="flex items-center justify-between mb-1.5">
                             <label className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
@@ -5954,7 +5954,7 @@ export default function LandingPage({
                               onChange={(e) => setProjectionTenor(Math.max(1, parseInt(e.target.value) || 0))}
                               className={`w-full px-3.5 py-2.5 min-h-[42px] rounded-lg border font-bold text-sm outline-none transition-all ${inputBg}`}
                             />
-                            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 pointer-events-none">Thn</span>
+                            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500 pointer-events-none">Thn</span>
                           </div>
                           {/* Tactile Preset Chips */}
                           <div className="flex flex-wrap gap-1.5">
@@ -5971,7 +5971,7 @@ export default function LandingPage({
                                 className={`px-2 py-1 rounded-md text-[10px] font-semibold transition-all border ${
                                   projectionTenor === chip.val
                                     ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
-                                    : "bg-white hover:bg-slate-100 text-slate-700 border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-white/10 dark:hover:bg-slate-700"
+                                    : "bg-[#F4F0E6] hover:bg-[#ECE5D6] text-slate-700 border-[#E2DACB] dark:bg-slate-800 dark:text-slate-300 dark:border-white/10 dark:hover:bg-slate-700"
                                 }`}
                               >
                                 {chip.label}
@@ -5979,11 +5979,11 @@ export default function LandingPage({
                             ))}
                           </div>
                         </div>
-                        <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 mt-2 block">{t('financial.descTenor')}</span>
+                        <span className="text-[10px] font-medium text-slate-600 dark:text-slate-400 mt-2 block">{t('financial.descTenor')}</span>
                       </div>
 
                       {/* Inflasi */}
-                      <div className="p-3 sm:p-4 rounded-xl border bg-slate-50/80 dark:bg-elevated border-slate-200/90 dark:border-white/10 shadow-xs flex flex-col justify-between">
+                      <div className="p-3 sm:p-4 rounded-xl border bg-[#FAF7F0] dark:bg-elevated border-[#E2DACB] dark:border-white/10 shadow-xs flex flex-col justify-between">
                         <div>
                           <div className="flex items-center justify-between mb-1.5">
                             <label className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
@@ -6006,7 +6006,7 @@ export default function LandingPage({
                               onChange={(e) => setInflationRate(Math.max(0, parseFloat(e.target.value) || 0))}
                               className={`w-full px-3.5 py-2.5 min-h-[42px] rounded-lg border font-bold text-sm outline-none transition-all ${inputBg}`}
                             />
-                            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 pointer-events-none">%</span>
+                            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500 pointer-events-none">%</span>
                           </div>
                           {/* Tactile Preset Chips */}
                           <div className="flex flex-wrap gap-1.5">
@@ -6022,7 +6022,7 @@ export default function LandingPage({
                                 className={`px-2 py-1 rounded-md text-[10px] font-semibold transition-all border ${
                                   inflationRate === chip.val
                                     ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
-                                    : "bg-white hover:bg-slate-100 text-slate-700 border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-white/10 dark:hover:bg-slate-700"
+                                    : "bg-[#F4F0E6] hover:bg-[#ECE5D6] text-slate-700 border-[#E2DACB] dark:bg-slate-800 dark:text-slate-300 dark:border-white/10 dark:hover:bg-slate-700"
                                 }`}
                               >
                                 {chip.label}
@@ -6030,7 +6030,7 @@ export default function LandingPage({
                             ))}
                           </div>
                         </div>
-                        <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 mt-2 block">{t('financial.descInflation')}</span>
+                        <span className="text-[10px] font-medium text-slate-600 dark:text-slate-400 mt-2 block">{t('financial.descInflation')}</span>
                       </div>
                     </div>
                   </div>
@@ -6055,12 +6055,12 @@ export default function LandingPage({
                       className="overflow-hidden mb-6"
                     >
                       <div
-                        className="p-6 rounded-2xl border bg-slate-50 dark:bg-surface/80 border-slate-200 dark:border-white/10"
+                        className="p-6 rounded-2xl border bg-[#FAF7F0] dark:bg-surface/80 border-[#E2DACB] dark:border-white/10"
                       >
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div className="h-24 bg-slate-200 dark:bg-slate-800 rounded-xl animate-pulse"></div>
-                          <div className="h-24 bg-slate-200 dark:bg-slate-800 rounded-xl animate-pulse"></div>
-                          <div className="h-24 bg-slate-200 dark:bg-slate-800 rounded-xl animate-pulse col-span-full"></div>
+                          <div className="h-24 bg-[#E2DACB]/70 dark:bg-slate-800 rounded-xl animate-pulse"></div>
+                          <div className="h-24 bg-[#E2DACB]/70 dark:bg-slate-800 rounded-xl animate-pulse"></div>
+                          <div className="h-24 bg-[#E2DACB]/70 dark:bg-slate-800 rounded-xl animate-pulse col-span-full"></div>
                         </div>
                       </div>
                     </motion.div>
@@ -6074,7 +6074,7 @@ export default function LandingPage({
                       className="overflow-hidden"
                     >
                       <div
-                        className="p-0 sm:p-5 md:p-6 rounded-none sm:rounded-2xl border-0 sm:border bg-transparent sm:bg-slate-50/60 dark:sm:bg-surface/50 sm:border-slate-200/90 dark:sm:border-white/10 sm:backdrop-blur-xl"
+                        className="p-0 sm:p-5 md:p-6 rounded-none sm:rounded-2xl border-0 sm:border bg-transparent sm:bg-[#FAF7F0]/80 dark:sm:bg-surface/50 sm:border-[#E2DACB] dark:sm:border-white/10 sm:backdrop-blur-xl"
                       >
                         {(() => {
                           const baseScore = Math.min(100, Math.max(0,
@@ -6090,13 +6090,13 @@ export default function LandingPage({
                           const offset = typeof rawOffset === 'number' && !isNaN(rawOffset) ? rawOffset : circ;
                           const scoreColor = score >= 70 ? '#059669' : score >= 45 ? '#d97706' : '#e11d48';
                           return (
-                            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 p-4 sm:p-5 rounded-2xl mb-4 backdrop-blur-xl border bg-white/95 dark:bg-surface border-slate-200/90 dark:border-white/10 shadow-lg shadow-slate-200/50 dark:shadow-black/40">
+                            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 p-4 sm:p-5 rounded-2xl mb-4 backdrop-blur-xl border bg-[#F4F0E6] dark:bg-surface border-[#E2DACB] dark:border-white/10 shadow-lg shadow-stone-200/50 dark:shadow-black/40">
                               {/* Gauge */}
                               <div className="flex items-center gap-4 sm:flex-col sm:justify-center shrink-0">
                                 <div className="relative w-[96px] h-[96px] sm:w-[110px] sm:h-[110px]">
                                   <svg viewBox="0 0 110 110" className="w-full h-full">
                                     <circle cx="55" cy="55" r={R} fill="none"
-                                            className="stroke-slate-200 dark:stroke-slate-800" strokeWidth="9"/>
+                                            className="stroke-[#E2DACB] dark:stroke-slate-800" strokeWidth="9"/>
                                     <circle cx="55" cy="55" r={R} fill="none"
                                             stroke={scoreColor} strokeWidth="9"
                                             strokeLinecap="round"
@@ -6113,7 +6113,7 @@ export default function LandingPage({
                                     <span className="text-xl sm:text-2xl font-black tracking-tight" style={{ color: scoreColor }}>
                                       <AnimatedNumberValue value={score} decimals={0} />
                                     </span>
-                                    <span className="text-[9px] sm:text-[10px] uppercase tracking-widest font-bold text-slate-500 dark:text-slate-300">
+                                    <span className="text-[9px] sm:text-[10px] uppercase tracking-widest font-bold text-slate-600 dark:text-slate-300">
                                       Skor
                                     </span>
                                   </div>
@@ -6128,35 +6128,35 @@ export default function LandingPage({
 
                               {/* KPI ringkas di sebelah gauge */}
                               <div className="grid grid-cols-2 gap-2 sm:gap-3 w-full flex-1">
-                                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-50 dark:bg-elevated border border-slate-200/90 dark:border-white/10 flex flex-col justify-between">
-                                  <div className="text-[10px] sm:text-xs uppercase tracking-wider mb-0.5 font-bold text-slate-500 dark:text-slate-400 truncate">{t("landing.annualRoi", "ROI Tahunan")}</div>
-                                  <div className="text-sm xs:text-base sm:text-lg md:text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight">
+                                <div className="p-2.5 sm:p-3 rounded-xl bg-[#FAF7F0] dark:bg-elevated border border-[#E2DACB] dark:border-white/10 flex flex-col justify-between">
+                                  <div className="text-[10px] sm:text-xs uppercase tracking-wider mb-0.5 font-bold text-slate-600 dark:text-slate-400 truncate">{t("landing.annualRoi", "ROI Tahunan")}</div>
+                                  <div className="text-sm xs:text-base sm:text-lg md:text-xl font-black text-emerald-700 dark:text-emerald-400 font-mono tracking-tight">
                                     <AnimatedNumberValue value={roiResult.roi} suffix="%" />
                                   </div>
-                                  <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400 truncate">
+                                  <div className="text-[10px] font-medium text-slate-600 dark:text-slate-400 truncate">
                                     {projectionTenor}th: <AnimatedNumberValue value={roiResult.cumulativeRoi} suffix="%" />
                                   </div>
                                 </div>
-                                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-50 dark:bg-elevated border border-slate-200/90 dark:border-white/10 flex flex-col justify-between">
-                                  <div className="text-[10px] sm:text-xs uppercase tracking-wider mb-0.5 font-bold text-slate-500 dark:text-slate-400 truncate">{t("landing.netProfit", "Net Profit")}</div>
+                                <div className="p-2.5 sm:p-3 rounded-xl bg-[#FAF7F0] dark:bg-elevated border border-[#E2DACB] dark:border-white/10 flex flex-col justify-between">
+                                  <div className="text-[10px] sm:text-xs uppercase tracking-wider mb-0.5 font-bold text-slate-600 dark:text-slate-400 truncate">{t("landing.netProfit", "Net Profit")}</div>
                                   <div className="text-sm xs:text-base sm:text-lg md:text-xl font-black text-sky-700 dark:text-sky-400 font-mono tracking-tight whitespace-nowrap">
                                     <AnimatedNumberValue value={roiResult.netProfit} formatFn={formatRupiahKompak} />
                                   </div>
-                                  <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400 truncate">{t("landing.perYearNet", "Per tahun bersih")}</div>
+                                  <div className="text-[10px] font-medium text-slate-600 dark:text-slate-400 truncate">{t("landing.perYearNet", "Per tahun bersih")}</div>
                                 </div>
-                                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-50 dark:bg-elevated border border-slate-200/90 dark:border-white/10 flex flex-col justify-between">
-                                  <div className="text-[10px] sm:text-xs uppercase tracking-wider mb-0.5 font-bold text-slate-500 dark:text-slate-400 truncate">NPV ({discountRate}%)</div>
-                                  <div className={`text-sm xs:text-base sm:text-lg md:text-xl font-black font-mono tracking-tight whitespace-nowrap ${roiResult.npv >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                                <div className="p-2.5 sm:p-3 rounded-xl bg-[#FAF7F0] dark:bg-elevated border border-[#E2DACB] dark:border-white/10 flex flex-col justify-between">
+                                  <div className="text-[10px] sm:text-xs uppercase tracking-wider mb-0.5 font-bold text-slate-600 dark:text-slate-400 truncate">NPV ({discountRate}%)</div>
+                                  <div className={`text-sm xs:text-base sm:text-lg md:text-xl font-black font-mono tracking-tight whitespace-nowrap ${roiResult.npv >= 0 ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                                     <AnimatedNumberValue value={roiResult.npv} formatFn={(val) => `${val >= 0 ? '+' : ''}${formatRupiahKompak(val)}`} />
                                   </div>
-                                  <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400 truncate">Net Present Value</div>
+                                  <div className="text-[10px] font-medium text-slate-600 dark:text-slate-400 truncate">Net Present Value</div>
                                 </div>
-                                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-50 dark:bg-elevated border border-slate-200/90 dark:border-white/10 flex flex-col justify-between">
-                                  <div className="text-[10px] sm:text-xs uppercase tracking-wider mb-0.5 font-bold text-slate-500 dark:text-slate-400 truncate">IRR</div>
-                                  <div className={`text-sm xs:text-base sm:text-lg md:text-xl font-black font-mono tracking-tight ${roiResult.irr >= discountRate ? 'text-emerald-600 dark:text-emerald-400' : roiResult.irr >= 0 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                                <div className="p-2.5 sm:p-3 rounded-xl bg-[#FAF7F0] dark:bg-elevated border border-[#E2DACB] dark:border-white/10 flex flex-col justify-between">
+                                  <div className="text-[10px] sm:text-xs uppercase tracking-wider mb-0.5 font-bold text-slate-600 dark:text-slate-400 truncate">IRR</div>
+                                  <div className={`text-sm xs:text-base sm:text-lg md:text-xl font-black font-mono tracking-tight ${roiResult.irr >= discountRate ? 'text-emerald-700 dark:text-emerald-400' : roiResult.irr >= 0 ? 'text-amber-700 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}`}>
                                     <AnimatedNumberValue value={roiResult.irr} suffix="%" />
                                   </div>
-                                  <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400 truncate">Target WACC: {discountRate}%</div>
+                                  <div className="text-[10px] font-medium text-slate-600 dark:text-slate-400 truncate">Target WACC: {discountRate}%</div>
                                 </div>
                               </div>
                             </div>
@@ -6169,8 +6169,8 @@ export default function LandingPage({
                           <div
                             className={`p-4 sm:p-5 rounded-2xl border flex flex-col justify-between backdrop-blur-md transition-all ${
                               roiResult.roi >= 10
-                                ? "bg-emerald-50/90 border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-500/30 shadow-sm dark:shadow-lg dark:shadow-black/20"
-                                : "bg-amber-50/90 border-amber-200 dark:bg-amber-950/30 dark:border-amber-500/30 shadow-sm dark:shadow-lg dark:shadow-black/20"
+                                ? "bg-[#F4F0E6] border-[#E2DACB] dark:bg-emerald-950/30 dark:border-emerald-500/30 shadow-sm dark:shadow-lg dark:shadow-black/20"
+                                : "bg-[#F4F0E6] border-[#E2DACB] dark:bg-amber-950/30 dark:border-amber-500/30 shadow-sm dark:shadow-lg dark:shadow-black/20"
                             }`}
                           >
                             <div>
@@ -6178,19 +6178,19 @@ export default function LandingPage({
                                 <span className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
                                   {t('financial.estRoiTitle', 'Estimasi ROI')}
                                 </span>
-                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border border-emerald-500/20">
+                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#FAF7F0] dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border border-[#E2DACB] dark:border-emerald-500/20">
                                   {roiResult.roi >= 10 ? 'Menguntungkan' : 'Moderat'}
                                 </span>
                               </div>
                               <div className="space-y-2 mt-3">
-                                <div className="flex items-center justify-between border-b border-dashed border-slate-200 dark:border-white/10 pb-2">
-                                  <span className="text-xs font-medium text-slate-600 dark:text-slate-300">{t('financial.roiAnnual', 'ROI Tahunan')}</span>
+                                <div className="flex items-center justify-between border-b border-dashed border-[#E2DACB] dark:border-white/10 pb-2">
+                                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">{t('financial.roiAnnual', 'ROI Tahunan')}</span>
                                   <span className={`font-black font-mono text-base sm:text-lg ${roiResult.roi >= 10 ? "text-emerald-700 dark:text-emerald-400" : "text-amber-700 dark:text-amber-400"}`}>
                                     <AnimatedNumberValue value={roiResult.roi} suffix="%" />
                                   </span>
                                 </div>
                                 <div className="flex items-center justify-between pt-0.5">
-                                  <span className="text-xs font-medium text-slate-600 dark:text-slate-300">{t('financial.roiCumulativeDynamic', { years: projectionTenor })}</span>
+                                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">{t('financial.roiCumulativeDynamic', { years: projectionTenor })}</span>
                                   <span className="font-black font-mono text-base sm:text-lg text-emerald-700 dark:text-emerald-400">
                                     <AnimatedNumberValue value={roiResult.cumulativeRoi} suffix="%" />
                                   </span>
@@ -6201,26 +6201,26 @@ export default function LandingPage({
 
                           {/* Card 2: Periode Pengembalian Modal (BEP) */}
                           <div
-                            className="p-4 sm:p-5 rounded-2xl border flex flex-col justify-between backdrop-blur-md transition-all bg-white dark:bg-surface border-slate-200/90 dark:border-white/10 shadow-sm dark:shadow-lg dark:shadow-black/20"
+                            className="p-4 sm:p-5 rounded-2xl border flex flex-col justify-between backdrop-blur-md transition-all bg-[#F4F0E6] dark:bg-surface border-[#E2DACB] dark:border-white/10 shadow-sm dark:shadow-lg dark:shadow-black/20"
                           >
                             <div>
                               <div className="flex items-center justify-between mb-2">
                                 <span className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
                                   {t("roiSimulator.paybackPeriod", "Periode Pengembalian Modal")} (BEP)
                                 </span>
-                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border border-emerald-500/20">
+                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#FAF7F0] dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border border-[#E2DACB] dark:border-emerald-500/20">
                                   Tenor: {projectionTenor} Thn
                                 </span>
                               </div>
                               <div className="space-y-2 mt-3">
-                                <div className="flex items-center justify-between border-b border-dashed border-slate-200 dark:border-white/10 pb-2">
-                                  <span className="text-xs font-medium text-slate-600 dark:text-slate-300">{t('financial.paybackSimple', 'Payback Sederhana')}</span>
+                                <div className="flex items-center justify-between border-b border-dashed border-[#E2DACB] dark:border-white/10 pb-2">
+                                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">{t('financial.paybackSimple', 'Payback Sederhana')}</span>
                                   <span className="font-black font-mono text-sm sm:text-base text-[#10261E] dark:text-[#F6F1E4]">
                                     {roiResult.payback > 99 ? t('financial.statusNotRecovered', 'Belum Kembali') : `${roiResult.payback.toFixed(2)} Tahun`}
                                   </span>
                                 </div>
                                 <div className="flex items-center justify-between pt-0.5">
-                                  <span className="text-xs font-medium text-slate-600 dark:text-slate-300">{t('financial.paybackDiscountedDynamic', { rate: discountRate })}</span>
+                                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">{t('financial.paybackDiscountedDynamic', { rate: discountRate })}</span>
                                   <span className={`font-black font-mono text-sm sm:text-base ${roiResult.discountedPayback <= projectionTenor ? "text-emerald-700 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
                                     {roiResult.discountedPayback > projectionTenor ? t('financial.statusNotRecovered', 'Belum Kembali') : `${roiResult.discountedPayback.toFixed(2)} Tahun`}
                                   </span>
@@ -6231,7 +6231,7 @@ export default function LandingPage({
 
                           {/* Card 3: Status & Indeks Kelayakan */}
                           <div
-                            className="p-4 sm:p-5 rounded-2xl border flex flex-col justify-between backdrop-blur-md transition-all bg-white dark:bg-surface border-slate-200/90 dark:border-white/10 shadow-sm dark:shadow-lg dark:shadow-black/20"
+                            className="p-4 sm:p-5 rounded-2xl border flex flex-col justify-between backdrop-blur-md transition-all bg-[#F4F0E6] dark:bg-surface border-[#E2DACB] dark:border-white/10 shadow-sm dark:shadow-lg dark:shadow-black/20"
                           >
                             <div>
                               <div className="flex items-center justify-between mb-2">
@@ -6243,10 +6243,10 @@ export default function LandingPage({
                                 <div
                                   className={`px-3 py-2 rounded-xl text-center font-bold text-xs sm:text-sm flex items-center justify-center gap-2 ${
                                     (roiResult.npv > 0 && roiResult.irr >= discountRate)
-                                      ? "bg-emerald-50 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/30"
+                                      ? "bg-[#FAF7F0] text-emerald-800 border border-[#E2DACB] dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/30"
                                       : !(roiResult.npv > 0 && roiResult.irr >= discountRate) && !(roiResult.netProfit <= 0 || roiResult.npv < 0 || roiResult.irr < 0)
-                                        ? "bg-emerald-50 text-emerald-800 border border-emerald-300 dark:bg-[#0B2A20] dark:text-[#C9A24B] dark:border-[rgba(201,162,75,0.30)]"
-                                        : "bg-amber-50 text-amber-800 border border-amber-300 dark:bg-amber-500/15 dark:text-amber-400 dark:border-amber-500/30"
+                                        ? "bg-[#FAF7F0] text-emerald-800 border border-[#E2DACB] dark:bg-[#0B2A20] dark:text-[#C9A24B] dark:border-[rgba(201,162,75,0.30)]"
+                                        : "bg-[#FAF7F0] text-amber-800 border border-[#E2DACB] dark:bg-amber-500/15 dark:text-amber-400 dark:border-amber-500/30"
                                   }`}
                                 >
                                   <span className="w-2 h-2 rounded-full bg-current animate-pulse"></span>
@@ -6258,7 +6258,7 @@ export default function LandingPage({
                                         : t("financial.statusModerate", "Zona Moderat / Cukup Layak")}
                                   </span>
                                 </div>
-                                <div className="text-[11px] text-slate-500 dark:text-slate-400 text-center font-medium">
+                                <div className="text-[11px] text-slate-600 dark:text-slate-400 text-center font-medium">
                                   Berdasarkan tolok ukur suku bunga {discountRate}% & inflasi {inflationRate}%
                                 </div>
                               </div>
@@ -6267,7 +6267,7 @@ export default function LandingPage({
 
                           {/* Card 4: Nilai Tambah & Imbal Hasil (NPV & IRR) */}
                           <div
-                            className="p-4 sm:p-5 rounded-2xl border flex flex-col justify-between backdrop-blur-md transition-all bg-[#FAF7F0] border-[rgba(160,122,40,0.22)] dark:bg-[#0B2A20] dark:border-[rgba(201,162,75,0.30)] shadow-sm dark:shadow-lg dark:shadow-black/20"
+                            className="p-4 sm:p-5 rounded-2xl border flex flex-col justify-between backdrop-blur-md transition-all bg-[#F4F0E6] border-[#E2DACB] dark:bg-[#0B2A20] dark:border-[rgba(201,162,75,0.30)] shadow-sm dark:shadow-lg dark:shadow-black/20"
                           >
                             <div>
                               <div className="flex items-center justify-between mb-2">
@@ -6276,7 +6276,7 @@ export default function LandingPage({
                                 </span>
                               </div>
                               <div className="space-y-2 mt-3">
-                                <div className="flex items-center justify-between border-b border-dashed border-[rgba(160,122,40,0.20)] dark:border-[rgba(201,162,75,0.20)] pb-2">
+                                <div className="flex items-center justify-between border-b border-dashed border-[#E2DACB] dark:border-[rgba(201,162,75,0.20)] pb-2">
                                   <span className="text-xs font-medium text-slate-700 dark:text-slate-300">NPV ({discountRate}%)</span>
                                   <span className={`font-black font-mono text-sm sm:text-base tracking-tight whitespace-nowrap ${roiResult.npv >= 0 ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                                     <AnimatedNumberValue value={roiResult.npv} formatFn={(val) => `${val >= 0 ? '+' : ''}${formatRupiahKompak(val)}`} />
@@ -6295,7 +6295,7 @@ export default function LandingPage({
                           {/* Analisis Sensitivitas NPV (Lebar Penuh) */}
                           <div className="col-span-full mt-2">
                             <div
-                              className="p-4 sm:p-5 rounded-2xl border backdrop-blur-xl transition-all bg-white/95 dark:bg-surface border-slate-200/90 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 shadow-sm dark:shadow-lg dark:shadow-black/20"
+                              className="p-4 sm:p-5 rounded-2xl border backdrop-blur-xl transition-all bg-[#F4F0E6] dark:bg-surface border-[#E2DACB] dark:border-white/10 hover:border-[#D5CCB9] dark:hover:border-white/20 shadow-sm dark:shadow-lg dark:shadow-black/20"
                             >
                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 mb-4">
                                 <div>
@@ -6303,13 +6303,13 @@ export default function LandingPage({
                                     <Activity className="w-4 h-4 text-[#A07A28] dark:text-[#C9A24B]" />
                                     {t('financial.sensitivityTitle', 'Uji Sensitivitas NPV')}
                                   </h4>
-                                  <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t('financial.sensitivitySubtitle', 'Ketahanan terhadap variasi inflasi dan biaya')}</p>
+                                  <p className="text-[11px] font-medium text-slate-600 dark:text-slate-400 mt-0.5">{t('financial.sensitivitySubtitle', 'Ketahanan terhadap variasi inflasi dan biaya')}</p>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF7F0] dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border border-[#E2DACB] dark:border-emerald-500/20">
                                     Real-time ⚡
                                   </span>
-                                  <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">{t("financial.unitMillionRp", "Satuan: Juta Rp")}</span>
+                                  <span className="text-[10px] font-medium text-slate-600 dark:text-slate-400">{t("financial.unitMillionRp", "Satuan: Juta Rp")}</span>
                                 </div>
                               </div>
 
@@ -6375,9 +6375,9 @@ export default function LandingPage({
                                           </div>
                                           
                                           {/* Diverging Bar Track */}
-                                          <div className="flex-1 h-3 rounded-md overflow-hidden bg-slate-100 dark:bg-slate-800/90 relative flex items-center border border-slate-200/80 dark:border-slate-700/60">
+                                          <div className="flex-1 h-3 rounded-md overflow-hidden bg-[#FAF7F0] dark:bg-slate-800/90 relative flex items-center border border-[#E2DACB] dark:border-slate-700/60">
                                             {/* Center 0 Line */}
-                                            <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-300 dark:bg-slate-600 z-10" />
+                                            <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-[#D5CCB9] dark:bg-slate-600 z-10" />
 
                                             {/* Left (Negative) Container */}
                                             <div className="w-1/2 h-full flex justify-end">
@@ -6418,7 +6418,7 @@ export default function LandingPage({
 
                               {/* Executive Summary Briefing */}
                               <div className="mt-3.5 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                                <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-[#0B2A20] border border-[rgba(160,122,40,0.25)] dark:border-[rgba(201,162,75,0.25)] text-[11px] space-y-1">
+                                <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-[#0B2A20] border border-[#E2DACB] dark:border-[rgba(201,162,75,0.25)] text-[11px] space-y-1">
                                   <div className="font-bold text-[#10261E] dark:text-[#F6F1E4] flex items-center gap-1.5">
                                     <span>🛡️ {t("financial.resilienceWacc", "Resiliensi Biaya Modal (WACC)")}</span>
                                   </div>
@@ -6428,7 +6428,7 @@ export default function LandingPage({
                                       .replace('{rate}', String(discountRate))}
                                   </p>
                                 </div>
-                                <div className="p-3 rounded-xl bg-emerald-50/80 dark:bg-emerald-500/5 border border-emerald-200 dark:border-emerald-500/10 text-[11px] space-y-1">
+                                <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-emerald-500/5 border border-[#E2DACB] dark:border-emerald-500/10 text-[11px] space-y-1">
                                   <div className="font-bold text-emerald-900 dark:text-emerald-400 flex items-center gap-1.5">
                                     <span>📈 {t("financial.inflationHedging", "Ketahanan Inflasi Komoditas")}</span>
                                   </div>
@@ -6442,7 +6442,7 @@ export default function LandingPage({
                           </div>
 
                           {/* Tombol AI & Analisis Lanjutan (Mobile Optimized & Symmetrical) */}
-                          <div className="col-span-full mt-4 pt-5 border-t border-slate-200 dark:border-slate-500/15 flex flex-col gap-4">
+                          <div className="col-span-full mt-4 pt-5 border-t border-[#E2DACB] dark:border-slate-500/15 flex flex-col gap-4">
                             {/* 1. Baris Dua CTA Utama (Primary Action Row) */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                               <motion.button whileTap={{ scale: 0.97 }}
@@ -6468,10 +6468,10 @@ export default function LandingPage({
                             </div>
 
                             {/* 2. Referensi & Peralatan Analisis Lanjutan (Unified Glass Grid) */}
-                            <div className="p-2.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-surface/60 border border-slate-200 dark:border-white/10 flex flex-col gap-2.5">
+                            <div className="p-2.5 sm:p-4 rounded-2xl bg-[#FAF7F0] dark:bg-surface/60 border border-[#E2DACB] dark:border-white/10 flex flex-col gap-2.5">
                               <div className="flex items-center justify-between px-1">
-                                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 font-sans flex items-center gap-1.5">
-                                  <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-400 font-sans flex items-center gap-1.5">
+                                  <Sparkles className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
                                   Peralatan & Referensi Investasi Terpadu
                                 </span>
                               </div>
@@ -6480,36 +6480,36 @@ export default function LandingPage({
                                 <button
                                   type="button"
                                   onClick={() => setIsSpatialAiModalOpen(true)}
-                                  className="min-h-[44px] py-2.5 px-3 rounded-xl bg-white hover:bg-emerald-50 text-slate-800 hover:text-emerald-700 border border-slate-200 hover:border-emerald-300 dark:bg-slate-800/90 dark:hover:bg-emerald-950/40 dark:text-slate-200 dark:hover:text-emerald-300 dark:border-white/10 dark:hover:border-emerald-500/40 font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                                  className="min-h-[44px] py-2.5 px-3 rounded-xl bg-[#F4F0E6] hover:bg-[#ECE5D6] text-slate-800 hover:text-emerald-800 border border-[#E2DACB] hover:border-emerald-500/50 dark:bg-slate-800/90 dark:hover:bg-emerald-950/40 dark:text-slate-200 dark:hover:text-emerald-300 dark:border-white/10 dark:hover:border-emerald-500/40 font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                                 >
-                                  <Compass size={16} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                  <Compass size={16} className="text-emerald-700 dark:text-emerald-400 shrink-0" />
                                   <span className="line-clamp-2 leading-tight text-center">{t('roiSimulator.analyzePotential', 'Analisis Spasial GIS')}</span>
                                 </button>
 
                                 <button
                                   type="button"
                                   onClick={() => setIsIproPitchModalOpen(true)}
-                                  className="min-h-[44px] py-2.5 px-3 rounded-xl bg-white hover:bg-emerald-50 text-slate-800 hover:text-emerald-700 border border-slate-200 hover:border-emerald-300 dark:bg-slate-800/90 dark:hover:bg-emerald-950/40 dark:text-slate-200 dark:hover:text-emerald-300 dark:border-white/10 dark:hover:border-emerald-500/40 font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                                  className="min-h-[44px] py-2.5 px-3 rounded-xl bg-[#F4F0E6] hover:bg-[#ECE5D6] text-slate-800 hover:text-emerald-800 border border-[#E2DACB] hover:border-emerald-500/50 dark:bg-slate-800/90 dark:hover:bg-emerald-950/40 dark:text-slate-200 dark:hover:text-emerald-300 dark:border-white/10 dark:hover:border-emerald-500/40 font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                                 >
-                                  <Building2 size={16} className="text-teal-600 dark:text-teal-400 shrink-0" />
+                                  <Building2 size={16} className="text-teal-700 dark:text-teal-400 shrink-0" />
                                   <span className="line-clamp-2 leading-tight text-center">Pitch Deck IPRO BKPM</span>
                                 </button>
 
                                 <button
                                   type="button"
                                   onClick={() => setIsRtrwModalOpen(true)}
-                                  className="min-h-[44px] py-2.5 px-3 rounded-xl bg-white hover:bg-emerald-50 text-slate-800 hover:text-emerald-700 border border-slate-200 hover:border-emerald-300 dark:bg-slate-800/90 dark:hover:bg-emerald-950/40 dark:text-slate-200 dark:hover:text-emerald-300 dark:border-white/10 dark:hover:border-emerald-500/40 font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                                  className="min-h-[44px] py-2.5 px-3 rounded-xl bg-[#F4F0E6] hover:bg-[#ECE5D6] text-slate-800 hover:text-emerald-800 border border-[#E2DACB] hover:border-emerald-500/50 dark:bg-slate-800/90 dark:hover:bg-emerald-950/40 dark:text-slate-200 dark:hover:text-emerald-300 dark:border-white/10 dark:hover:border-emerald-500/40 font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                                 >
-                                  <ShieldCheck size={16} className="text-sky-600 dark:text-sky-400 shrink-0" />
+                                  <ShieldCheck size={16} className="text-sky-700 dark:text-sky-400 shrink-0" />
                                   <span className="line-clamp-2 leading-tight text-center">{t('rtrwZoning.button', 'Zona Spasial RTRW')}</span>
                                 </button>
 
                                 <button
                                   type="button"
                                   onClick={() => setIsIncentiveModalOpen(true)}
-                                  className="min-h-[44px] py-2.5 px-3 rounded-xl bg-white hover:bg-emerald-50 text-slate-800 hover:text-emerald-700 border border-slate-200 hover:border-emerald-300 dark:bg-slate-800/90 dark:hover:bg-emerald-950/40 dark:text-slate-200 dark:hover:text-emerald-300 dark:border-white/10 dark:hover:border-emerald-500/40 font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                                  className="min-h-[44px] py-2.5 px-3 rounded-xl bg-[#F4F0E6] hover:bg-[#ECE5D6] text-slate-800 hover:text-emerald-800 border border-[#E2DACB] hover:border-emerald-500/50 dark:bg-slate-800/90 dark:hover:bg-emerald-950/40 dark:text-slate-200 dark:hover:text-emerald-300 dark:border-white/10 dark:hover:border-emerald-500/40 font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                                 >
-                                  <Award size={16} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                                  <Award size={16} className="text-emerald-700 dark:text-emerald-400 shrink-0" />
                                   <span className="line-clamp-2 leading-tight text-center">{t('incentiveCalculator.button', 'Insentif Fiskal Perda')}</span>
                                 </button>
                               </div>
@@ -6544,7 +6544,7 @@ export default function LandingPage({
         />
 
         {/* Akuntabilitas Kinerja DPMPTSP */}
-        <section className={`relative py-10 sm:py-14 md:py-16 border-t transition-colors duration-500 ${isDark ? "bg-[#06130F] border-[rgba(201,162,75,0.25)]" : "bg-[#FAF7F0] border-[rgba(160,122,40,0.22)]"}`}>
+        <section className={`relative py-10 sm:py-14 md:py-16 border-t transition-colors duration-500 ${isDark ? "bg-[#06130F] border-[rgba(201,162,75,0.25)]" : "bg-[#FAF7F0] border-[#E2DACB]"}`}>
           <div className="container mx-auto px-3 sm:px-4 lg:px-6 relative z-10 max-w-5xl">
             <div className="text-center mb-10 sm:mb-12">
               <div className="invest-eyebrow mb-3.5">
@@ -6565,22 +6565,22 @@ export default function LandingPage({
             <div className={`rounded-2xl border overflow-hidden backdrop-blur-md shadow-xl ${
               isDark 
                 ? "bg-[#0B2A20]/90 border-[rgba(201,162,75,0.25)] shadow-black/80" 
-                : "bg-white/95 border-[rgba(160,122,40,0.22)] shadow-slate-200/50"
+                : "bg-[#F4F0E6] border-[#E2DACB] shadow-stone-200/50"
             }`}>
               {/* Header Bar */}
               <div className={`p-5 sm:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b ${
-                isDark ? "bg-[#08201A] border-[rgba(201,162,75,0.20)]" : "bg-[#F3EEDF]/80 border-[rgba(160,122,40,0.20)]"
+                isDark ? "bg-[#08201A] border-[rgba(201,162,75,0.20)]" : "bg-[#FAF7F0] border-[#E2DACB]"
               }`}>
                 <div className="flex items-center gap-3.5">
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-inner ${
-                    isDark ? "bg-[#0B2A20] text-[#C9A24B] border border-[rgba(201,162,75,0.30)]" : "bg-white text-[#A07A28] border border-[rgba(160,122,40,0.25)]"
+                    isDark ? "bg-[#0B2A20] text-[#C9A24B] border border-[rgba(201,162,75,0.30)]" : "bg-[#F4F0E6] text-[#A07A28] border border-[#E2DACB]"
                   }`}>
                     <ShieldCheck size={26} />
                   </div>
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <h4 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">{t("performance.title", "Indikator Utama Layanan & Kepatuhan Regulasi")}</h4>
-                      <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border border-emerald-500/20">
+                      <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-[#F4F0E6] dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border border-[#E2DACB] dark:border-emerald-500/20">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" /> {t("performance.postgisConnected", "TERHUBUNG POSTGIS SUPABASE")}
                       </span>
                     </div>
@@ -6589,66 +6589,66 @@ export default function LandingPage({
                 </div>
 
                 <div className={`flex items-center gap-2 text-[10px] sm:text-xs font-semibold px-3 py-1.5 rounded-xl self-start sm:self-auto shadow-xs border ${
-                  isDark ? "bg-[#0B2A20] text-amber-300 border-amber-500/30" : "bg-white text-amber-900 border-amber-600/30"
+                  isDark ? "bg-[#0B2A20] text-amber-300 border-amber-500/30" : "bg-[#F4F0E6] text-amber-900 border-[#E2DACB]"
                 }`}>
                   <BadgeCheck size={14} className="text-amber-700 dark:text-amber-400" /> {t("performance.ombudsmanStandard", "Standar Kemenpan RB & Ombudsman RI")}
                 </div>
               </div>
 
               {/* Performance Metric Pods */}
-              <div className={`divide-y ${isDark ? "divide-[rgba(201,162,75,0.15)]" : "divide-[rgba(160,122,40,0.15)]"}`}>
+              <div className={`divide-y ${isDark ? "divide-[rgba(201,162,75,0.15)]" : "divide-[#E2DACB]"}`}>
                 {[
                   { 
                     icon: Award,
                     title: t("performance.ikmTitle", "Indeks Kepuasan Masyarakat (IKM)"), 
                     desc: t("performance.ikmDesc", "Survei berkala kepuasan investor terhadap 9 unsur pelayanan publik MPP Simpurusiang."),
                     tag: "Permenpan RB 14/2017",
-                    color: "text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border-emerald-500/20",
+                    color: "text-emerald-700 dark:text-emerald-300 bg-[#FAF7F0] dark:bg-emerald-500/10 border-[#E2DACB] dark:border-emerald-500/20",
                     val: "88.54 / 100",
                     progress: 88.5,
                     benchmark: t("performance.ikmBenchmark", "Standar Nasional: 80.00"),
                     badge: t("performance.ikmBadge", "Predikat A (Sangat Baik)"),
-                    badgeColor: "bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border-emerald-500/30"
+                    badgeColor: "bg-[#FAF7F0] dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border-[#E2DACB] dark:border-emerald-500/30"
                   },
                   { 
                     icon: Zap,
                     title: t("performance.slaTitle", "SLA Penerbitan NIB & Perizinan Berusaha"), 
                     desc: t("performance.slaDesc", "Pemrosesan izin risiko rendah terbit seketika secara otomatis dan verifikasi teknis terjadwal."),
                     tag: "OSS-RBA Engine",
-                    color: "text-amber-700 dark:text-amber-400 bg-amber-500/10 border-amber-600/30 dark:border-amber-400/30",
+                    color: "text-amber-700 dark:text-amber-400 bg-[#FAF7F0] dark:bg-amber-500/10 border-[#E2DACB] dark:border-amber-400/30",
                     val: t("performance.slaVal", "98.6% Tepat Waktu"),
                     progress: 98.6,
                     benchmark: t("performance.slaBenchmark", "SLA Risiko Rendah < 24 Jam"),
                     badge: t("performance.slaBadge", "Standar Pelayanan Prima"),
-                    badgeColor: "bg-amber-500/10 text-amber-800 dark:text-amber-300 border-amber-600/30 dark:border-amber-400/30"
+                    badgeColor: "bg-[#FAF7F0] dark:bg-amber-500/10 text-amber-800 dark:text-amber-300 border-[#E2DACB] dark:border-amber-400/30"
                   },
                   { 
                     icon: Compass,
                     title: t("performance.spatialTitle", "Akurasi Verifikasi Tata Ruang Spasial (KKPR)"), 
                     desc: t("performance.spatialDesc", "Plotting koordinat otomatis dan tervalidasi terhadap Perda RTRW Kab. Luwu No. 34/2020 & peta LP2B."),
                     tag: "PostGIS Precision",
-                    color: "text-teal-700 dark:text-teal-300 bg-teal-500/10 border-teal-500/20",
+                    color: "text-teal-700 dark:text-teal-300 bg-[#FAF7F0] dark:bg-teal-500/10 border-[#E2DACB] dark:border-teal-500/20",
                     val: t("performance.spatialVal", "100% Valid Spasial"),
                     progress: 100,
                     benchmark: t("performance.spatialBenchmark", "Zero Konflik Tumpang Tindih"),
                     badge: t("performance.spatialBadge", "Peta RTRW Presisi"),
-                    badgeColor: "bg-teal-500/10 text-teal-800 dark:text-teal-300 border-teal-500/30"
+                    badgeColor: "bg-[#FAF7F0] dark:bg-teal-500/10 text-teal-800 dark:text-teal-300 border-[#E2DACB] dark:border-teal-500/30"
                   },
                   { 
                     icon: ShieldCheck,
                     title: t("performance.ombudsmanTitle", "Kepatuhan Standar Pelayanan Ombudsman RI"), 
                     desc: t("performance.ombudsmanDesc", "Penilaian menyeluruh kepatuhan terhadap UU No. 25/2009 tentang Pelayanan Publik tanpa maladministrasi."),
                     tag: t("performance.ombudsmanTag", "Opini Ombudsman"),
-                    color: "text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border-emerald-500/20",
+                    color: "text-emerald-700 dark:text-emerald-300 bg-[#FAF7F0] dark:bg-emerald-500/10 border-[#E2DACB] dark:border-emerald-500/20",
                     val: "92.40 / 100",
                     progress: 92.4,
                     benchmark: t("performance.ombudsmanBenchmark", "Zona Hijau (Kualitas Tertinggi)"),
                     badge: t("performance.ombudsmanBadge", "Zona Hijau Ombudsman RI"),
-                    badgeColor: "bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border-emerald-500/30"
+                    badgeColor: "bg-[#FAF7F0] dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border-[#E2DACB] dark:border-emerald-500/30"
                   }
                 ].map((item, idx) => (
                   <div key={idx} className={`p-5 sm:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-5 transition-colors ${
-                    isDark ? "hover:bg-[#08201A]/60" : "hover:bg-[#F3EEDF]/50"
+                    isDark ? "hover:bg-[#08201A]/60" : "hover:bg-[#FAF7F0]/70"
                   }`}>
                     <div className="flex items-start gap-4 max-w-xl">
                       <div className={`w-11 h-11 rounded-xl flex items-center justify-center border shrink-0 ${item.color}`}>
@@ -6658,27 +6658,27 @@ export default function LandingPage({
                         <div className="flex items-center gap-2 flex-wrap mb-1">
                           <h5 className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white">{item.title}</h5>
                           <span className={`text-[9px] font-mono px-2 py-0.5 rounded-md border ${
-                            isDark ? "bg-[#08201A] text-[#B9C4BC] border-[rgba(201,162,75,0.20)]" : "bg-slate-100 text-slate-700 border-slate-200"
+                            isDark ? "bg-[#08201A] text-[#B9C4BC] border-[rgba(201,162,75,0.20)]" : "bg-[#FAF7F0] text-slate-700 border-[#E2DACB]"
                           }`}>{item.tag}</span>
                         </div>
-                        <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-2">{item.desc}</p>
+                        <p className="text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 leading-relaxed mb-2">{item.desc}</p>
                         
                         {/* Progress Bar Gauge */}
                         <div className="flex items-center gap-3">
-                          <div className="w-36 sm:w-48 h-2 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
+                          <div className="w-36 sm:w-48 h-2 rounded-full bg-[#E2DACB] dark:bg-white/10 overflow-hidden">
                             <div
                               className="h-full rounded-full bg-gradient-to-r from-[#0F6B4F] via-[#C9A24B] to-[#1F9D74]"
                               style={{ width: `${Math.min(item.progress, 100)}%` }}
                             />
                           </div>
-                          <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400">
+                          <span className="text-[10px] font-mono text-slate-600 dark:text-slate-400">
                             {item.benchmark}
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between gap-2 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-200 dark:border-white/5 shrink-0">
+                    <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between gap-2 pt-3 sm:pt-0 border-t sm:border-t-0 border-[#E2DACB] dark:border-white/5 shrink-0">
                       <span className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white font-mono tracking-tight">{item.val}</span>
                       <span className={`px-2.5 py-1 rounded-lg text-[9px] sm:text-[10px] font-bold uppercase tracking-wider border ${item.badgeColor}`}>
                         {item.badge}
@@ -6690,11 +6690,11 @@ export default function LandingPage({
 
               {/* Regulatory Reference Footer Bar */}
               <div className={`p-4 sm:p-5 border-t flex flex-col sm:flex-row items-center justify-between gap-3 text-xs ${
-                isDark ? "bg-[#08201A]/80 border-[rgba(201,162,75,0.15)] text-slate-300" : "bg-[#F3EEDF]/60 border-[rgba(160,122,40,0.15)] text-slate-700"
+                isDark ? "bg-[#08201A]/80 border-[rgba(201,162,75,0.15)] text-slate-300" : "bg-[#FAF7F0] border-[#E2DACB] text-slate-700"
               }`}>
                 <div className="flex items-center gap-2 text-center sm:text-left">
                   <BadgeCheck size={16} className="text-[#A07A28] dark:text-[#C9A24B] shrink-0" />
-                  <span className="text-[11px] text-slate-600 dark:text-slate-300">
+                  <span className="text-[11px] text-slate-700 dark:text-slate-300">
                     {t("performance.legalBasis", "Dasar Hukum: UU No. 25/2009 (Pelayanan Publik) • PP No. 5/2021 (Penyelenggaraan Perizinan Berusaha) • Perda Kab. Luwu No. 34/2020.")}
                   </span>
                 </div>
@@ -6712,7 +6712,7 @@ export default function LandingPage({
         </section>
 
         {/* Ekosistem DPMPTSP (Sovereign Glass Pavilion Style) */}
-        <section className={`relative py-10 sm:py-14 md:py-16 border-t transition-colors duration-500 ${isDark ? "bg-[#08201A] border-[rgba(201,162,75,0.25)]" : "bg-[#F3EEDF]/70 border-[rgba(160,122,40,0.22)]"}`}>
+        <section className={`relative py-10 sm:py-14 md:py-16 border-t transition-colors duration-500 ${isDark ? "bg-[#08201A] border-[rgba(201,162,75,0.25)]" : "bg-[#FAF7F0] border-[#E2DACB]"}`}>
           <div className="container mx-auto px-3 sm:px-6 lg:px-8 relative z-10 max-w-6xl">
             <div className="text-center mb-12 sm:mb-16">
               <div className="invest-eyebrow mb-3.5">
@@ -6739,10 +6739,10 @@ export default function LandingPage({
                   role: t("ecosystem.promotionRole", "Penanaman Modal & Fasilitasi Minat"),
                   desc: t("ecosystem.promotionDesc", "Penjaringan minat investor, diplomasi investasi, dan pendampingan Letter of Intent (LoI)."), 
                   color: "text-amber-700 dark:text-amber-400", 
-                  bg: "bg-amber-500/10 border-amber-600/30 dark:border-amber-400/30",
+                  bg: "bg-[#FAF7F0] dark:bg-amber-500/10 border-[#E2DACB] dark:border-amber-400/30",
                   rail: "from-[#0F6B4F] via-[#C9A24B] to-[#1F9D74]",
                   badge: t("ecosystem.promotionBadge", "Respon < 2 Jam"),
-                  badgeColor: "bg-amber-500/10 text-amber-900 dark:text-amber-300 border-amber-600/30 dark:border-amber-400/30",
+                  badgeColor: "bg-[#FAF7F0] dark:bg-amber-500/10 text-amber-900 dark:text-amber-300 border-[#E2DACB] dark:border-amber-400/30",
                   deliverables: [
                     t("ecosystem.promotionDeliv1", "Penyusunan Pitch Deck IPRO Terkurasi"),
                     t("ecosystem.promotionDeliv2", "Fasilitasi Letter of Intent (LoI) Resmi"),
@@ -6757,10 +6757,10 @@ export default function LandingPage({
                   role: t("ecosystem.dalakRole", "Pengendalian & Pengawasan Pelaksanaan"),
                   desc: t("ecosystem.dalakDesc", "Kawal site visit lapangan, kepastian batas clean and clear lahan, dan mediasi kendala investasi."), 
                   color: "text-teal-700 dark:text-teal-300", 
-                  bg: "bg-teal-500/10 border-teal-500/20",
+                  bg: "bg-[#FAF7F0] dark:bg-teal-500/10 border-[#E2DACB] dark:border-teal-500/20",
                   rail: "from-teal-500 via-emerald-400 to-teal-600",
                   badge: t("ecosystem.dalakBadge", "Kawal On-Site 1x24 Jam"),
-                  badgeColor: "bg-teal-500/10 text-teal-900 dark:text-teal-300 border-teal-500/25",
+                  badgeColor: "bg-[#FAF7F0] dark:bg-teal-500/10 text-teal-900 dark:text-teal-300 border-[#E2DACB] dark:border-teal-500/25",
                   deliverables: [
                     t("ecosystem.dalakDeliv1", "Pendampingan Site Visit Lapangan Bersama"),
                     t("ecosystem.dalakDeliv2", "Mediasi Sosial & Kepastian Clean & Clear Lahan"),
@@ -6775,10 +6775,10 @@ export default function LandingPage({
                   role: t("ecosystem.licensingRole", "Perizinan & Non-Perizinan Berusaha"),
                   desc: t("ecosystem.licensingDesc", "Pemrosesan legalitas terintegrasi sistem OSS-RBA, verifikasi KKPR teknis, dan perizinan terpadu di MPP."), 
                   color: "text-emerald-700 dark:text-emerald-400", 
-                  bg: "bg-emerald-500/10 border-emerald-500/20",
+                  bg: "bg-[#FAF7F0] dark:bg-emerald-500/10 border-[#E2DACB] dark:border-emerald-500/20",
                   rail: "from-emerald-500 via-teal-400 to-emerald-600",
                   badge: t("ecosystem.licensingBadge", "Persetujuan Instan OSS"),
-                  badgeColor: "bg-emerald-500/10 text-emerald-900 dark:text-emerald-400 border-emerald-500/25",
+                  badgeColor: "bg-[#FAF7F0] dark:bg-emerald-500/10 text-emerald-900 dark:text-emerald-400 border-[#E2DACB] dark:border-emerald-500/25",
                   deliverables: [
                     t("ecosystem.licensingDeliv1", "Penerbitan NIB Instan Berbasis Risiko"),
                     t("ecosystem.licensingDeliv2", "Verifikasi Kesesuaian KKPR Spasial"),
@@ -6793,10 +6793,10 @@ export default function LandingPage({
                   role: t("ecosystem.dataRole", "Sistem Informasi & Analitik Investasi"),
                   desc: t("ecosystem.dataDesc", "Pusat komando spasial PostGIS, pemantauan realisasi investasi per sektor, dan dashboard eksekutif satu data."), 
                   color: "text-amber-700 dark:text-amber-400", 
-                  bg: "bg-amber-500/10 border-amber-600/30 dark:border-amber-400/30",
+                  bg: "bg-[#FAF7F0] dark:bg-amber-500/10 border-[#E2DACB] dark:border-amber-400/30",
                   rail: "from-[#C9A24B] via-[#1F9D74] to-[#0F6B4F]",
                   badge: t("ecosystem.dataBadge", "Live PostGIS Center"),
-                  badgeColor: "bg-amber-500/10 text-amber-900 dark:text-amber-300 border-amber-600/30 dark:border-amber-400/30",
+                  badgeColor: "bg-[#FAF7F0] dark:bg-amber-500/10 text-amber-900 dark:text-amber-300 border-[#E2DACB] dark:border-amber-400/30",
                   deliverables: [
                     t("ecosystem.dataDeliv1", "Pusat Komando Geospasial Multi-Layer"),
                     t("ecosystem.dataDeliv2", "Dashboard Analisis Realisasi Investasi"),
@@ -6811,7 +6811,7 @@ export default function LandingPage({
                   className={`group relative rounded-2xl border p-4 sm:p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 overflow-hidden backdrop-blur-md shadow-md ${
                     isDark 
                       ? "bg-[#0B2A20]/90 border-[rgba(201,162,75,0.25)] hover:border-[rgba(201,162,75,0.45)] shadow-black/40" 
-                      : "bg-white/95 border-[rgba(160,122,40,0.22)] hover:border-[rgba(160,122,40,0.40)] shadow-slate-200/40"
+                      : "bg-[#F4F0E6] border-[#E2DACB] hover:border-[#C9A24B]/60 shadow-stone-200/40"
                   }`}
                 >
                   {/* Top Glowing Rail Accent Line */}
@@ -6841,16 +6841,16 @@ export default function LandingPage({
                       <span className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 block mb-2">
                         {item.role}
                       </span>
-                      <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-snug">
+                      <p className="text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 leading-snug">
                         {item.desc}
                       </p>
                     </div>
 
                     {/* Key Deliverables Checklist */}
-                    <div className="space-y-1.5 pt-3 border-t border-slate-200 dark:border-white/10 mb-4">
+                    <div className="space-y-1.5 pt-3 border-t border-[#E2DACB] dark:border-white/10 mb-4">
                       {item.deliverables.map((deliv, dIdx) => (
                         <div key={dIdx} className="flex items-start gap-1.5 text-[10px] sm:text-[11px] text-slate-700 dark:text-slate-300">
-                          <CheckCircle2 size={12} className="text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                          <CheckCircle2 size={12} className="text-emerald-700 dark:text-emerald-400 shrink-0 mt-0.5" />
                           <span className="leading-tight">{deliv}</span>
                         </div>
                       ))}
@@ -6861,7 +6861,7 @@ export default function LandingPage({
                   <button
                     type="button"
                     onClick={item.actionTarget}
-                    className="w-full mt-2 pt-2.5 pb-1 border-t border-[rgba(201,162,75,0.15)] dark:border-[rgba(201,162,75,0.20)] flex items-center justify-center gap-1 text-[11px] font-bold text-[#A07A28] dark:text-[#C9A24B] hover:text-[#0F6B4F] dark:hover:text-emerald-300 transition-colors cursor-pointer"
+                    className="w-full mt-2 pt-2.5 pb-1 border-t border-[#E2DACB] dark:border-[rgba(201,162,75,0.20)] flex items-center justify-center gap-1 text-[11px] font-bold text-[#A07A28] dark:text-[#C9A24B] hover:text-[#0F6B4F] dark:hover:text-emerald-300 transition-colors cursor-pointer"
                   >
                     <span>{item.actionLabel}</span>
                     <ChevronRight size={13} className="shrink-0 group-hover:translate-x-1 transition-transform" />
@@ -6873,10 +6873,10 @@ export default function LandingPage({
         </section>
 
         {/* PUSAT PEMANTAUAN MIKROIKLIM & BURSA KOMODITAS LUWU (Unified Real-time Intelligence) */}
-        <section id="weather-bursa-section" className={`scroll-mt-20 sm:scroll-mt-24 relative py-8 sm:py-12 border-t transition-colors duration-500 ${isDark ? "bg-[#030712] border-white/10" : "bg-slate-50 border-slate-200"}`}>
+        <section id="weather-bursa-section" className={`scroll-mt-20 sm:scroll-mt-24 relative py-8 sm:py-12 border-t transition-colors duration-500 ${isDark ? "bg-[#030712] border-white/10" : "bg-[#FAF7F0] border-[#E2DACB]"}`}>
           <div className="container mx-auto px-3 sm:px-6 max-w-5xl flex flex-col items-center gap-6">
             <div className="flex flex-col items-center text-center">
-              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 text-[10px] font-bold tracking-wider uppercase font-sans mb-1.5">
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F4F0E6] dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border border-[#E2DACB] dark:border-emerald-500/20 text-[10px] font-bold tracking-wider uppercase font-sans mb-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span>Indikator Lapangan & Pasar Terkini</span>
               </div>
@@ -6891,7 +6891,7 @@ export default function LandingPage({
             </div>
 
             {/* Live Commodity Ticker */}
-            <div className={`w-full flex justify-center py-2 px-3 rounded-2xl border backdrop-blur-md shadow-md transition-colors duration-500 ${isDark ? "bg-surface/70 border-white/10" : "bg-white/80 border-slate-200"}`}>
+            <div className={`w-full flex justify-center py-2 px-3 rounded-2xl border backdrop-blur-md shadow-md transition-colors duration-500 ${isDark ? "bg-surface/70 border-white/10" : "bg-[#F4F0E6] border-[#E2DACB]"}`}>
               <LiveMarketTicker
                 isDark={isDark}
                 onSelectCommodity={handleSelectCommodityFromTicker}
@@ -7143,7 +7143,7 @@ export default function LandingPage({
         className={`md:hidden fixed bottom-0 left-0 right-0 z-[100] backdrop-blur-xl border-t px-1.5 pt-1.5 grid grid-cols-5 items-center transition-colors duration-300 pb-[calc(env(safe-area-inset-bottom,0px)+6px)] ${
           isDark
             ? "bg-[#081C2E]/96 border-white/[0.10] shadow-[0_-8px_28px_rgba(0,0,0,0.45)]"
-            : "bg-white/96 border-slate-200/90 shadow-[0_-6px_24px_rgba(15,23,42,0.08)]"
+            : "bg-[#F4F0E6]/96 border-[#E2DACB] shadow-[0_-6px_24px_rgba(16,38,30,0.08)]"
         }`}
       >
         {[
@@ -7164,7 +7164,7 @@ export default function LandingPage({
                     : "text-emerald-800"
                   : isDark
                     ? "text-slate-400 hover:text-slate-200"
-                    : "text-slate-500 hover:text-slate-800"
+                    : "text-slate-600 hover:text-slate-900"
               }`}
             >
               <span
@@ -7172,7 +7172,7 @@ export default function LandingPage({
                   isActive
                     ? isDark
                       ? "bg-emerald-500/18 text-emerald-300"
-                      : "bg-emerald-50 text-emerald-700"
+                      : "bg-[#FAF7F0] text-emerald-800 border border-[#E2DACB]"
                     : "bg-transparent"
                 }`}
               >
@@ -7190,7 +7190,7 @@ export default function LandingPage({
           type="button"
           onClick={(e: any) => handleGisClick(e, "default")}
           className={`flex flex-col items-center justify-center gap-1 min-h-[48px] w-full transition-colors cursor-pointer group ${
-            isDark ? "text-slate-200 hover:text-white" : "text-slate-700 hover:text-slate-950"
+            isDark ? "text-slate-200 hover:text-white" : "text-[#10261E] hover:text-emerald-900"
           }`}
           title={t("nav.gisMap", "Peta Spasial GIS")}
         >
@@ -7198,7 +7198,7 @@ export default function LandingPage({
             className={`flex items-center justify-center w-11 h-7 rounded-full border transition-all group-active:scale-95 ${
               isDark
                 ? "bg-[#133250] border-emerald-400/35 text-emerald-300 group-hover:bg-[#194066]"
-                : "bg-slate-100/90 border-emerald-600/30 text-emerald-700 group-hover:bg-emerald-50"
+                : "bg-[#FAF7F0] border-[#E2DACB] text-emerald-800 group-hover:bg-[#ECE5D6]"
             }`}
           >
             <Globe className="w-[18px] h-[18px]" strokeWidth={2.1} />
@@ -7226,7 +7226,7 @@ export default function LandingPage({
                     : "text-emerald-800"
                   : isDark
                     ? "text-slate-400 hover:text-slate-200"
-                    : "text-slate-500 hover:text-slate-800"
+                    : "text-slate-600 hover:text-slate-900"
               }`}
             >
               <span
@@ -7234,7 +7234,7 @@ export default function LandingPage({
                   isActive
                     ? isDark
                       ? "bg-emerald-500/18 text-emerald-300"
-                      : "bg-emerald-50 text-emerald-700"
+                      : "bg-[#FAF7F0] text-emerald-800 border border-[#E2DACB]"
                     : "bg-transparent"
                 }`}
               >

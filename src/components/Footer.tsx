@@ -81,7 +81,7 @@ export const Footer: React.FC<FooterProps> = ({
               <div className={`w-11 h-11 rounded-xl flex items-center justify-center p-1.5 shrink-0 ${
                 isDark
                   ? 'bg-[#0B2A20] border border-[rgba(201,162,75,0.30)] shadow-inner'
-                  : 'bg-white border border-[rgba(160,122,40,0.25)] shadow-xs'
+                  : 'bg-[#FAF7F0] border border-[#E2DACB] shadow-xs'
               }`}>
                 <img
                   src={LUWU_LOGO_BASE64}
@@ -228,7 +228,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <span className={`px-2.5 py-1 rounded-lg border flex items-center gap-1.5 font-medium ${
                   isDark
                     ? 'bg-[#0B2A20] text-[#F6F1E4] border-[rgba(201,162,75,0.30)]'
-                    : 'bg-white text-[#10261E] border-[rgba(160,122,40,0.25)]'
+                    : 'bg-[#FAF7F0] text-[#10261E] border-[#E2DACB]'
                 }`}>
                   <ShieldCheck className={`w-3.5 h-3.5 shrink-0 ${
                     isDark ? 'text-[#C9A24B]' : 'text-[#A07A28]'
@@ -238,7 +238,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <span className={`px-2.5 py-1 rounded-lg border flex items-center gap-1.5 font-medium ${
                   isDark
                     ? 'bg-[#0B2A20] text-[#F6F1E4] border-[rgba(201,162,75,0.30)]'
-                    : 'bg-white text-[#10261E] border-[rgba(160,122,40,0.25)]'
+                    : 'bg-[#FAF7F0] text-[#10261E] border-[#E2DACB]'
                 }`}>
                   <Building2 className={`w-3.5 h-3.5 shrink-0 ${
                     isDark ? 'text-[#1F9D74]' : 'text-[#0F6B4F]'

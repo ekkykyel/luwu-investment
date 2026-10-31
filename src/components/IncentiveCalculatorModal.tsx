@@ -177,22 +177,24 @@ export default function IncentiveCalculatorModal({
         className={`relative w-[calc(100vw-20px)] sm:w-full max-w-4xl rounded-2xl sm:rounded-3xl shadow-2xl border overflow-hidden max-h-[92vh] sm:max-h-[85vh] flex flex-col ${
           isDark
             ? "bg-black border-neutral-800 text-white"
-            : "bg-[#FAF8F3] border-[#E5DFD3] text-slate-900"
+            : "bg-[#F4F0E6] border-[#E2DACB] text-slate-900"
         }`}
       >
         {/* Header Banner */}
         <div className={`relative p-2.5 sm:p-5 border-b flex items-center justify-between gap-2.5 sm:gap-3 shrink-0 ${
           isDark 
             ? "bg-gradient-to-r from-neutral-950 via-neutral-900 to-black border-amber-500/30" 
-            : "bg-gradient-to-r from-amber-50/50 via-white to-amber-50/30 border-amber-500/30 text-slate-900"
+            : "bg-[#F4F0E6] border-[#E2DACB] text-slate-900"
         }`}>
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <div className="p-2 sm:p-3 bg-amber-500/10 rounded-xl sm:rounded-2xl border border-amber-500/30 text-amber-500 shrink-0">
+            <div className={`p-2 sm:p-3 rounded-xl sm:rounded-2xl border shrink-0 ${
+              isDark ? "bg-amber-500/10 border-amber-500/30 text-amber-500" : "bg-[#FAF7F0] border-[#E2DACB] text-amber-700"
+            }`}>
               <Award size={22} className="sm:w-6 sm:h-6" />
             </div>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-0.5">
-                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-800 dark:text-amber-300 text-[9px] sm:text-[10px] font-bold tracking-wider uppercase border border-amber-500/30 whitespace-nowrap">
+                <span className="px-2.5 py-0.5 rounded-full bg-[#FAF7F0] dark:bg-amber-500/10 text-amber-800 dark:text-amber-300 text-[9px] sm:text-[10px] font-bold tracking-wider uppercase border border-[#E2DACB] dark:border-amber-500/30 whitespace-nowrap">
                   {t('badge_perda_incentive', 'Perda Kabupaten Luwu - Insentif Investasi')}
                 </span>
               </div>
@@ -209,7 +211,7 @@ export default function IncentiveCalculatorModal({
             className={`p-2 rounded-xl active:scale-95 transition-all cursor-pointer shrink-0 min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center border ${
               isDark 
                 ? "bg-neutral-900 active:bg-neutral-800 text-slate-300 hover:text-white border-neutral-800" 
-                : "bg-slate-100 active:bg-slate-200 text-slate-800 dark:text-slate-200 hover:text-slate-900 border-slate-200"
+                : "bg-[#FAF7F0] hover:bg-[#ECE5D6] text-slate-800 hover:text-slate-950 border-[#E2DACB]"
             }`}
             aria-label="Tutup"
           >
@@ -219,14 +221,14 @@ export default function IncentiveCalculatorModal({
 
         {/* Content Body */}
         <div className={`p-2.5 sm:p-5 md:p-6 overflow-y-auto space-y-2.5 sm:space-y-6 flex-1 scrollbar-thin ${
-          isDark ? "scrollbar-thumb-neutral-800 bg-black" : "scrollbar-thumb-slate-200 bg-slate-50/50"
+          isDark ? "scrollbar-thumb-neutral-800 bg-black" : "scrollbar-thumb-[#E2DACB] bg-[#FAF7F0]"
         }`}>
           {/* Synchronized Simulation ROI Badge */}
           {simulationContext && (
-            <div className={`p-2.5 sm:p-4 rounded-2xl border shadow-lg space-y-3 ${
+            <div className={`p-2.5 sm:p-4 rounded-2xl border shadow-md space-y-3 ${
               isDark 
                 ? "bg-gradient-to-r from-amber-950/80 via-neutral-900 to-indigo-950/80 border-amber-500/30" 
-                : "bg-gradient-to-r from-amber-50 via-indigo-50/30 to-blue-50 border-amber-500/40 text-slate-900"
+                : "bg-[#F4F0E6] border-[#E2DACB] text-slate-900"
             }`}>
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
@@ -235,25 +237,25 @@ export default function IncentiveCalculatorModal({
                     ⚡ {t('sync_roi_general', 'TERSINKRONISASI DENGAN SIMULASI ROI')}: {simulationContext.name}
                   </span>
                 </div>
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 shrink-0">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#FAF7F0] dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/30 shrink-0">
                   {simulationContext.status === "FEASIBLE" ? t('incentiveCalculator.feasible', 'Sangat Layak (Feasible)') : t('eval_potential_btn', 'EVALUASI POTENSI')}
                 </span>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 font-mono">
-                <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-center flex flex-col items-center justify-center">
+                <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700 shadow-sm text-center flex flex-col items-center justify-center">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block font-sans">{t('simulated_capex', 'CAPEX SIMULASI')}</span>
                   <span className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-tight">{formatRupiahSingkat(simulationContext.capex)}</span>
                 </div>
-                <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-center flex flex-col items-center justify-center">
+                <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700 shadow-sm text-center flex flex-col items-center justify-center">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block font-sans">{t('annual_roi', 'ROI TAHUNAN')}</span>
                   <span className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-tight">{(Number(simulationContext.roi) || 0).toFixed(1)}%</span>
                 </div>
-                <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-center flex flex-col items-center justify-center">
+                <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700 shadow-sm text-center flex flex-col items-center justify-center">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block font-sans">{t('incentiveCalculator.npvDiscount', 'NPV (Discount 9%)')}</span>
                   <span className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-tight">{formatRupiahSingkat(simulationContext.npv)}</span>
                 </div>
-                <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-center flex flex-col items-center justify-center">
+                <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700 shadow-sm text-center flex flex-col items-center justify-center">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block font-sans">{t('payback_period', 'PAYBACK PERIOD')}</span>
                   <span className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-tight">{(Number(simulationContext.bep) || 0).toFixed(2)} {t('incentiveCalculator.years', 'Thn')}</span>
                 </div>
@@ -266,7 +268,7 @@ export default function IncentiveCalculatorModal({
                 const annualProfit = simulationContext.netProfit || (simulationContext.asumsiPendapatan - simulationContext.opex) || 1;
                 const adjustedPayback = (netCapex / Math.max(1, annualProfit)).toFixed(2);
                 return (
-                  <div className="p-3.5 sm:p-4 rounded-xl text-xs sm:text-sm leading-relaxed font-sans bg-amber-50 dark:bg-amber-900/20 text-amber-900 dark:text-amber-200">
+                  <div className="p-3.5 sm:p-4 rounded-xl text-xs sm:text-sm leading-relaxed font-sans bg-[#FAF7F0] dark:bg-amber-900/20 text-amber-900 dark:text-amber-200 border border-[#E2DACB] dark:border-amber-500/20">
                     💡 <strong>{t('impact_incentive_title', 'Dampak Insentif Daerah terhadap Kelayakan ROI:')}</strong>{" "}
                     {t('impact_incentive_desc', {
                       capex: formatRupiah(capexInput),
@@ -282,8 +284,8 @@ export default function IncentiveCalculatorModal({
           )}
 
           {/* Input Parameter Form */}
-          <div className={`p-3.5 sm:p-5 rounded-2xl border space-y-4 shadow-md ${
-            isDark ? "bg-neutral-900/90 border-neutral-800" : "bg-white border-slate-200 text-slate-900"
+          <div className={`p-3.5 sm:p-5 rounded-2xl border space-y-4 shadow-sm ${
+            isDark ? "bg-neutral-900/90 border-neutral-800" : "bg-[#F4F0E6] border-[#E2DACB] text-slate-900"
           }`}>
             <h4 className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 flex items-center gap-2">
               <Calculator size={16} />
@@ -310,20 +312,20 @@ export default function IncentiveCalculatorModal({
                     placeholder={t('incentiveCalculator.capexPlaceholder', 'Masukkan nilai modal (cth: 25.000.000.000)')}
                     className={`w-full border rounded-xl pl-9 pr-3.5 h-12 sm:h-10 text-sm sm:text-xs font-bold focus:outline-none tracking-wide font-mono ${
                       isDark 
-                        ? "bg-black border-neutral-800 text-emerald-700 dark:text-emerald-400 focus:border-amber-500/80" 
-                        : "bg-slate-50 border-slate-300 text-emerald-800 focus:border-amber-600"
+                        ? "bg-black border-neutral-800 text-emerald-400 focus:border-amber-500/80" 
+                        : "bg-[#FAF7F0] border-[#E2DACB] text-emerald-800 focus:border-amber-600"
                     }`}
                   />
                 </div>
-                <div className={`flex items-center justify-between gap-1 mt-1 text-[10px] font-medium ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>
+                <div className={`flex items-center justify-between gap-1 mt-1 text-[10px] font-medium ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                   <span>≈ {(capexInput / 1000000000).toLocaleString("id-ID", { maximumFractionDigits: 2 })} {t('incentiveCalculator.billionRupiah', 'Miliar Rupiah')}</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">{formatRupiah(capexInput)}</span>
+                  <span className="text-emerald-700 dark:text-emerald-400 font-bold">{formatRupiah(capexInput)}</span>
                 </div>
               </div>
 
               {/* % Tenaga Kerja Lokal Luwu */}
               <div>
-                <label className={`text-[11px] sm:text-[10px] font-bold uppercase block mb-1 ${isDark ? "text-slate-300" : "text-slate-800 dark:text-slate-200"}`}>
+                <label className={`text-[11px] sm:text-[10px] font-bold uppercase block mb-1 ${isDark ? "text-slate-300" : "text-slate-800"}`}>
                   {t('input_local_labor', 'KOMITMEN TENAGA KERJA LOKAL LUWU (%)')}
                 </label>
                 <div className="flex items-center gap-3 h-12 sm:h-10">
@@ -333,20 +335,20 @@ export default function IncentiveCalculatorModal({
                     max="100"
                     value={laborLocalPercent}
                     onChange={(e) => setLaborLocalPercent(Number(e.target.value))}
-                    className={`w-full accent-amber-500 cursor-pointer h-3 sm:h-2 rounded-lg ${isDark ? "bg-black" : "bg-slate-200"}`}
+                    className={`w-full accent-amber-500 cursor-pointer h-3 sm:h-2 rounded-lg ${isDark ? "bg-black" : "bg-[#E2DACB]"}`}
                   />
-                  <span className="text-sm sm:text-xs font-bold text-amber-600 dark:text-amber-400 font-mono w-12 text-right shrink-0">
+                  <span className="text-sm sm:text-xs font-bold text-amber-700 dark:text-amber-400 font-mono w-12 text-right shrink-0">
                     {laborLocalPercent}%
                   </span>
                 </div>
-                <span className={`text-[10px] block mt-0.5 font-medium ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>
+                <span className={`text-[10px] block mt-0.5 font-medium ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                   {t('target_perda_labor', 'Target Perda: Min. 60% - 70% untuk potongan maksimal')}
                 </span>
               </div>
 
               {/* Sektor Usaha */}
               <div className="sm:col-span-2 lg:col-span-1">
-                <label className={`text-[11px] sm:text-[10px] font-bold uppercase block mb-1 ${isDark ? "text-slate-300" : "text-slate-800 dark:text-slate-200"}`}>
+                <label className={`text-[11px] sm:text-[10px] font-bold uppercase block mb-1 ${isDark ? "text-slate-300" : "text-slate-800"}`}>
                   {t('strategic_sector', 'SEKTOR STRATEGIS')}
                 </label>
                 <select
@@ -355,7 +357,7 @@ export default function IncentiveCalculatorModal({
                   className={`w-full border rounded-xl px-3.5 h-12 sm:h-10 text-sm sm:text-xs font-semibold focus:outline-none cursor-pointer ${
                     isDark 
                       ? "bg-black border-neutral-800 text-slate-100 focus:border-amber-500/80" 
-                      : "bg-slate-50 border-slate-300 text-slate-900 focus:border-amber-600"
+                      : "bg-[#FAF7F0] border-[#E2DACB] text-slate-900 focus:border-amber-600"
                   }`}
                 >
                   <option value="Kakao & Agroindustri">Kakao & Olahan Kakao Premium</option>
@@ -369,13 +371,13 @@ export default function IncentiveCalculatorModal({
             </div>
 
             {/* Checkboxes Options */}
-            <div className={`flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 pt-3 border-t ${isDark ? "border-neutral-800" : "border-slate-200"}`}>
+            <div className={`flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 pt-3 border-t ${isDark ? "border-neutral-800" : "border-[#E2DACB]"}`}>
               <label className={`flex items-center gap-2.5 cursor-pointer text-xs font-medium active:text-amber-500 min-h-[36px] ${isDark ? "text-slate-200" : "text-slate-800"}`}>
                 <input
                   type="checkbox"
                   checked={isExportOriented}
                   onChange={(e) => setIsExportOriented(e.target.checked)}
-                  className={`w-5 h-5 sm:w-4 sm:h-4 rounded border-slate-400 text-amber-500 focus:ring-amber-500/50 ${isDark ? "bg-black" : "bg-slate-100"}`}
+                  className={`w-5 h-5 sm:w-4 sm:h-4 rounded border-[#E2DACB] text-amber-500 focus:ring-amber-500/50 ${isDark ? "bg-black" : "bg-[#FAF7F0]"}`}
                 />
                 <span>{t('check_export_oriented', 'Orientasi Ekspor Pasifik / Global')}</span>
               </label>
@@ -385,7 +387,7 @@ export default function IncentiveCalculatorModal({
                   type="checkbox"
                   checked={isEcoFriendly}
                   onChange={(e) => setIsEcoFriendly(e.target.checked)}
-                  className={`w-5 h-5 sm:w-4 sm:h-4 rounded border-slate-400 text-emerald-500 focus:ring-emerald-500/50 ${isDark ? "bg-black" : "bg-slate-100"}`}
+                  className={`w-5 h-5 sm:w-4 sm:h-4 rounded border-[#E2DACB] text-emerald-500 focus:ring-emerald-500/50 ${isDark ? "bg-black" : "bg-[#FAF7F0]"}`}
                 />
                 <span>{t('check_green_economy', 'Menggunakan Teknologi Ramah Lingkungan (Green Economy)')}</span>
               </label>
@@ -396,45 +398,45 @@ export default function IncentiveCalculatorModal({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             {/* Retribusi Diskon */}
             <div className={`p-3.5 sm:p-5 rounded-2xl border relative overflow-hidden space-y-1 ${
-              isDark ? "bg-neutral-900/90 border-amber-500/30" : "bg-amber-50/50 border-amber-300 text-slate-900"
+              isDark ? "bg-neutral-900/90 border-amber-500/30" : "bg-[#F4F0E6] border-[#E2DACB] text-slate-900 shadow-xs"
             }`}>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 block">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 block">
                 {t('discount_retribusi', 'DISKON RETRIBUSI DAERAH & PBG')}
               </span>
-              <div className="text-xl sm:text-2xl font-extrabold tracking-tight text-amber-600 dark:text-amber-300 font-sans">
+              <div className="text-xl sm:text-2xl font-extrabold tracking-tight text-amber-700 dark:text-amber-300 font-sans">
                 {incentiveResult.retribDiscount}%
               </div>
-              <span className={`text-[11px] block leading-snug pt-1 ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+              <span className={`text-[11px] block leading-snug pt-1 ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                 {t('discount_retribusi_desc', { amount: formatRupiahSingkat(incentiveResult.pbgSavings) })}
               </span>
             </div>
 
             {/* Diskon Sewa Lahan */}
             <div className={`p-3.5 sm:p-5 rounded-2xl border relative overflow-hidden space-y-1 ${
-              isDark ? "bg-neutral-900/90 border-emerald-500/30" : "bg-emerald-50/50 border-emerald-300 text-slate-900"
+              isDark ? "bg-neutral-900/90 border-emerald-500/30" : "bg-[#F4F0E6] border-[#E2DACB] text-slate-900 shadow-xs"
             }`}>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 block">
                 {t('discount_sewa', 'DISKON SEWA ASET DAERAH')}
               </span>
-              <div className="text-xl sm:text-2xl font-extrabold tracking-tight text-emerald-600 dark:text-emerald-300 font-sans">
+              <div className="text-xl sm:text-2xl font-extrabold tracking-tight text-emerald-700 dark:text-emerald-300 font-sans">
                 {incentiveResult.landLeaseDiscount}%
               </div>
-              <span className={`text-[11px] block leading-snug pt-1 ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+              <span className={`text-[11px] block leading-snug pt-1 ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                 {t('discount_sewa_desc', { percent: laborLocalPercent })}
               </span>
             </div>
 
             {/* SLA OSS RBA */}
             <div className={`p-3.5 sm:p-5 rounded-2xl border relative overflow-hidden space-y-1 ${
-              isDark ? "bg-neutral-900/90 border-neutral-800" : "bg-white border-slate-200 text-slate-900 shadow-xs"
+              isDark ? "bg-neutral-900/90 border-neutral-800" : "bg-[#F4F0E6] border-[#E2DACB] text-slate-900 shadow-xs"
             }`}>
               <span className={`text-[10px] font-bold uppercase tracking-wider block ${isDark ? "text-slate-300" : "text-slate-600"}`}>
                 {t('fast_track_service', 'LAYANAN FAST-TRACK DPMPTSP')}
               </span>
-              <div className="text-xl sm:text-2xl font-extrabold tracking-tight text-amber-600 dark:text-amber-300 font-sans">
+              <div className="text-xl sm:text-2xl font-extrabold tracking-tight text-amber-700 dark:text-amber-300 font-sans">
                 {incentiveResult.slaDays}
               </div>
-              <span className={`text-[11px] block leading-snug pt-1 ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+              <span className={`text-[11px] block leading-snug pt-1 ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                 {incentiveResult.isVipAssistance
                   ? t('incentiveCalculator.vipAssistance', '⭐ Didampingi khusus oleh Tim Pengawalan Investasi VIP DPMPTSP Luwu.')
                   : t('fast_track_desc', 'Proses perizinan diprioritaskan via jalur OSS-RBA.')}
@@ -444,25 +446,25 @@ export default function IncentiveCalculatorModal({
 
           {/* Tax Allowance & Fasilitas Pusat Banner */}
           <div className={`p-3.5 sm:p-5 rounded-2xl border space-y-3 ${
-            isDark ? "bg-neutral-900/90 border-neutral-800" : "bg-white border-slate-200"
+            isDark ? "bg-neutral-900/90 border-neutral-800" : "bg-[#F4F0E6] border-[#E2DACB]"
           }`}>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
               <Coins size={16} />
               <span>{t('tax_facility_match', 'KESESUAIAN FASILITAS PAJAK (KEMENKEU & BKPM)')}</span>
             </h4>
 
             <div className={`p-3.5 sm:p-4 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
-              isDark ? "bg-black border-neutral-800" : "bg-slate-50 border-slate-200"
+              isDark ? "bg-black border-neutral-800" : "bg-[#FAF7F0] border-[#E2DACB]"
             }`}>
               <div className="space-y-1">
                 <span className={`text-xs font-bold block ${isDark ? "text-slate-100" : "text-slate-900"}`}>
                   {t('eligible_tax_allowance', incentiveResult.taxHolidayStatus)}
                 </span>
-                <p className={`text-[11px] leading-relaxed ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
+                <p className={`text-[11px] leading-relaxed ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                   {t('tax_allowance_desc', { capex: formatRupiah(capexInput) })}
                 </p>
               </div>
-              <span className="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 text-xs font-bold whitespace-nowrap shrink-0">
+              <span className="px-3 py-1.5 rounded-xl bg-[#F4F0E6] dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/20 text-xs font-bold whitespace-nowrap shrink-0">
                 {t('auto_facility_btn', 'Fasilitas Otomatis')}
               </span>
             </div>
@@ -472,43 +474,45 @@ export default function IncentiveCalculatorModal({
           <div className={`p-3.5 sm:p-5 rounded-2xl border space-y-3 ${
             isDark 
               ? "bg-gradient-to-br from-amber-950/40 via-neutral-900 to-black border-amber-500/40" 
-              : "bg-gradient-to-br from-amber-50/60 via-white to-amber-50/30 border-amber-300 text-slate-900"
+              : "bg-[#F4F0E6] border-[#E2DACB] text-slate-900"
           }`}>
             <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b pb-3 ${
-              isDark ? "border-amber-500/20" : "border-amber-200"
+              isDark ? "border-amber-500/20" : "border-[#E2DACB]"
             }`}>
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                <div className={`p-2 rounded-xl border ${
+                  isDark ? "bg-amber-500/10 text-amber-500 border-amber-500/20" : "bg-[#FAF7F0] text-amber-700 border-[#E2DACB]"
+                }`}>
                   <Percent size={18} />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-amber-700 dark:text-amber-300">
+                    <span className="text-xs font-bold text-amber-800 dark:text-amber-300">
                       {t('regional_incentive_pct', { percent: incentiveResult.baseRegionalIncentivePercent })}
                     </span>
-                    <span className="px-2 py-0.5 rounded text-[9px] font-extrabold bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30 uppercase">
+                    <span className="px-2 py-0.5 rounded text-[9px] font-extrabold bg-[#FAF7F0] dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-[#E2DACB] dark:border-amber-500/30 uppercase">
                       {t('incentiveCalculator.pemkabLuwuBadge', 'Pemkab Luwu')}
                     </span>
                   </div>
-                  <span className={`text-[11px] block ${isDark ? "text-slate-300" : "text-slate-800 dark:text-slate-200"}`}>
+                  <span className={`text-[11px] block ${isDark ? "text-slate-300" : "text-slate-700"}`}>
                     {t('basic_deduction_desc', 'Potongan Dasar Retribusi Daerah & Meringankan Sewa Barang Milik Daerah (BMD)')}
                   </span>
                 </div>
               </div>
               <div className="text-left sm:text-right shrink-0">
-                <span className={`text-[10px] block ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>{t('est_nominal_incentive', 'Estimasi Nominal Insentif:')}</span>
-                <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                <span className={`text-[10px] block ${isDark ? "text-slate-400" : "text-slate-600"}`}>{t('est_nominal_incentive', 'Estimasi Nominal Insentif:')}</span>
+                <span className="text-sm font-bold text-emerald-700 dark:text-emerald-400 font-mono">
                   {formatRupiah(incentiveResult.regionalIncentiveNominal)}
                 </span>
               </div>
             </div>
 
-            <div className={`space-y-2 text-xs ${isDark ? "text-slate-300" : "text-slate-800 dark:text-slate-200"}`}>
-              <p className="font-bold text-amber-700 dark:text-amber-200 flex items-center gap-1.5">
-                <ShieldCheck size={15} className="text-amber-500" />
+            <div className={`space-y-2 text-xs ${isDark ? "text-slate-300" : "text-slate-800"}`}>
+              <p className="font-bold text-amber-800 dark:text-amber-200 flex items-center gap-1.5">
+                <ShieldCheck size={15} className="text-amber-600 dark:text-amber-500" />
                 <span>{t('legal_basis_title', 'Sumber Perhitungan & Dasar Hukum Sesuai Perda:')}</span>
               </p>
-              <ul className={`space-y-1.5 pl-5 list-disc text-[11px] leading-relaxed ${isDark ? "text-slate-300" : "text-slate-800 dark:text-slate-200"}`}>
+              <ul className={`space-y-1.5 pl-5 list-disc text-[11px] leading-relaxed ${isDark ? "text-slate-300" : "text-slate-700"}`}>
                 <li>
                   {t('legal_perda_06', 'Peraturan Daerah Kabupaten Luwu No. 06 Tahun 2011 (BAB VIII - Ketentuan Pengendalian & Insentif Penanaman Modal).')}
                 </li>
@@ -524,7 +528,7 @@ export default function IncentiveCalculatorModal({
         </div>
 
         {/* Footer */}
-        <div className="p-2.5 sm:px-6 py-2.5 sm:py-3.5 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-surface shadow-[0_-8px_15px_-3px_rgba(0,0,0,0.05)] flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-3 shrink-0 z-10">
+        <div className="p-2.5 sm:px-6 py-2.5 sm:py-3.5 border-t border-[#E2DACB] dark:border-slate-800 bg-[#F4F0E6] dark:bg-surface shadow-[0_-8px_15px_-3px_rgba(0,0,0,0.05)] flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-3 shrink-0 z-10">
           <div className={`flex items-center gap-2 text-[10px] sm:text-xs text-center sm:text-left ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
             <ShieldCheck size={15} className="text-amber-500 shrink-0" />
             <span>{t('footer_perbup_info', 'Peraturan Bupati Luwu tentang Insentif Penanaman Modal')}</span>

@@ -88,11 +88,11 @@ export default function ResponsiveChatInput({
   return (
     <div 
        ref={containerRef}
-       className={`p-2.5 sm:p-3.5 border-t sticky bottom-0 z-[60] transition-all duration-300 bg-slate-50 dark:bg-surface border-slate-200 dark:border-slate-800 ${className}`}
+       className={`p-2.5 sm:p-3.5 border-t sticky bottom-0 z-[60] transition-all duration-300 bg-[#F4F0E6] dark:bg-surface border-[#E2DACB] dark:border-slate-800 ${className}`}
        style={{ paddingBottom: Math.max(12, viewportBottomPadding + 12) + 'px' }}
     >
       <form 
-        className={`flex gap-2 relative border border-slate-200 dark:border-slate-700/80 rounded-2xl overflow-hidden focus-within:ring-2 transition-all bg-white dark:bg-slate-800/90 focus-within:border-indigo-500 focus-within:ring-indigo-500/20 shadow-sm`}
+        className={`flex gap-2 relative border border-[#E2DACB] dark:border-slate-700/80 rounded-2xl overflow-hidden focus-within:ring-2 transition-all bg-[#FAF7F0] dark:bg-slate-800/90 focus-within:border-indigo-500 focus-within:ring-indigo-500/20 shadow-sm`}
         onSubmit={(e) => { e.preventDefault(); onSubmit(); }}
       >
         <textarea 

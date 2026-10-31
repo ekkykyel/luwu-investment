@@ -156,17 +156,17 @@ export const WeatherWidget = () => {
 
   if (loading && !weather) {
     return (
-      <div className="w-full p-5 sm:p-6 bg-white dark:bg-surface/90 backdrop-blur-xl rounded-2xl border border-slate-200 dark:border-white/10 shadow-lg dark:shadow-black/20 animate-pulse">
+      <div className="w-full p-5 sm:p-6 bg-[#F4F0E6] dark:bg-surface/90 backdrop-blur-xl rounded-2xl border border-[#E2DACB] dark:border-white/10 shadow-lg dark:shadow-black/20 animate-pulse">
         <div className="flex items-center justify-between mb-4">
           <div className="space-y-2">
-            <div className="h-3.5 bg-slate-200 dark:bg-slate-800 rounded-md w-32"></div>
-            <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded-md w-48"></div>
+            <div className="h-3.5 bg-[#E2DACB] dark:bg-slate-800 rounded-md w-32"></div>
+            <div className="h-5 bg-[#E2DACB] dark:bg-slate-800 rounded-md w-48"></div>
           </div>
-          <div className="h-10 w-10 bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
+          <div className="h-10 w-10 bg-[#E2DACB] dark:bg-slate-800 rounded-xl"></div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-20 bg-slate-100 dark:bg-slate-800/60 rounded-xl"></div>
+            <div key={i} className="h-20 bg-[#FAF7F0] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-transparent rounded-xl"></div>
           ))}
         </div>
       </div>
@@ -175,19 +175,19 @@ export const WeatherWidget = () => {
 
   if (errorMessage && !weather) {
     return (
-      <div className="w-full p-5 bg-white dark:bg-surface/90 backdrop-blur-xl rounded-2xl border border-slate-200 dark:border-amber-500/30 shadow-lg dark:shadow-black/20 text-center">
+      <div className="w-full p-5 bg-[#F4F0E6] dark:bg-surface/90 backdrop-blur-xl rounded-2xl border border-[#E2DACB] dark:border-amber-500/30 shadow-lg dark:shadow-black/20 text-center">
         <div className="flex flex-col items-center justify-center gap-2 py-2">
-          <AlertCircle className="w-8 h-8 text-amber-500 dark:text-amber-400" />
+          <AlertCircle className="w-8 h-8 text-amber-600 dark:text-amber-400" />
           <p className="text-xs font-bold text-slate-800 dark:text-white">
             Prakiraan Cuaca Sementara Belum Dapat Dimuat
           </p>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400">
+          <p className="text-[11px] text-slate-600 dark:text-slate-400">
             {errorMessage}
           </p>
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => fetchWeather(true)}
-            className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 transition-colors"
+            className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-[#FAF7F0] dark:bg-emerald-500/10 hover:bg-[#ECE5D6] dark:hover:bg-emerald-500/20 border border-[#E2DACB] dark:border-emerald-500/30 transition-colors"
           >
             <RotateCw className="w-3.5 h-3.5" />
             Coba Sinkron Ulang
@@ -206,17 +206,17 @@ export const WeatherWidget = () => {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="w-full relative overflow-hidden p-4 sm:p-6 bg-white/95 dark:bg-surface/90 backdrop-blur-xl rounded-2xl border border-slate-200 dark:border-white/10 shadow-lg dark:shadow-black/20 transition-all duration-300 group hover:border-emerald-500/30"
+      className="w-full relative overflow-hidden p-4 sm:p-6 bg-[#F4F0E6]/95 dark:bg-surface/90 backdrop-blur-xl rounded-2xl border border-[#E2DACB] dark:border-white/10 shadow-lg shadow-[#10261E]/5 dark:shadow-black/20 transition-all duration-300 group hover:border-emerald-500/30"
     >
       {/* Subtle background ambient glows */}
       <div className="absolute top-0 right-0 -mt-8 -mr-8 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 -mb-8 -ml-8 w-36 h-36 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
 
       {/* Header Bar */}
-      <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-200 dark:border-white/10">
+      <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-[#E2DACB] dark:border-white/10">
         <div>
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-mono font-extrabold uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30 shadow-xs">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-mono font-extrabold uppercase tracking-widest bg-[#FAF7F0] dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/30 shadow-xs">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600 dark:bg-emerald-400"></span>
@@ -244,8 +244,8 @@ export const WeatherWidget = () => {
             title={cooldown > 0 ? `Tunggu ${cooldown}d untuk pembaruan berikutnya` : "Perbarui data cuaca"}
             className={`min-h-[44px] min-w-[44px] px-2.5 rounded-xl border transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 ${
               cooldown > 0 || isRefreshing
-                ? "bg-slate-50 dark:bg-slate-800/80 border-slate-200 dark:border-white/10 text-slate-400 dark:text-slate-500 cursor-not-allowed"
-                : "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-slate-200 dark:hover:bg-slate-700/80 hover:border-emerald-500/40 shadow-xs font-bold"
+                ? "bg-[#FAF7F0]/70 dark:bg-slate-800/80 border-[#E2DACB] dark:border-white/10 text-slate-400 dark:text-slate-500 cursor-not-allowed"
+                : "bg-[#FAF7F0] dark:bg-slate-800 border-[#E2DACB] dark:border-white/10 text-slate-800 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-[#ECE5D6] dark:hover:bg-slate-700/80 hover:border-emerald-500/40 shadow-xs font-bold"
             }`}
             aria-label="Perbarui data cuaca"
           >
@@ -261,7 +261,7 @@ export const WeatherWidget = () => {
 
           {/* Weather Condition Icon Container */}
           <div 
-            className="min-h-[44px] min-w-[44px] px-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 shadow-xs flex items-center justify-center"
+            className="min-h-[44px] min-w-[44px] px-2.5 rounded-xl bg-[#FAF7F0] dark:bg-slate-800/80 border border-[#E2DACB] dark:border-white/10 shadow-xs flex items-center justify-center"
             title={weather.weather?.[0]?.description || 'Kondisi Cuaca'}
           >
             {getWeatherIcon(weather.weather?.[0]?.main)}
@@ -272,9 +272,9 @@ export const WeatherWidget = () => {
       {/* 4 Meteorological Metric Cards */}
       <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
         {/* Metric 1: Suhu + Timestamp */}
-        <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-elevated border border-slate-200 dark:border-white/10 hover:border-emerald-500/30 transition-all flex flex-col justify-between shadow-sm">
+        <div className="p-3 sm:p-3.5 rounded-xl bg-[#FAF7F0] dark:bg-elevated border border-[#E2DACB] dark:border-white/10 hover:border-emerald-500/30 transition-all flex flex-col justify-between shadow-sm">
           <div className="flex items-center gap-2 mb-1.5">
-            <div className="p-1.5 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400">
+            <div className="p-1.5 rounded-lg bg-[#F4F0E6] dark:bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-[#E2DACB] dark:border-transparent">
               <Thermometer className="h-4 w-4 shrink-0" />
             </div>
             <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 font-sans">Suhu</span>
@@ -297,9 +297,9 @@ export const WeatherWidget = () => {
         </div>
 
         {/* Metric 2: Kelembapan */}
-        <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-elevated border border-slate-200 dark:border-white/10 hover:border-blue-500/30 transition-all flex flex-col justify-between shadow-sm">
+        <div className="p-3 sm:p-3.5 rounded-xl bg-[#FAF7F0] dark:bg-elevated border border-[#E2DACB] dark:border-white/10 hover:border-blue-500/30 transition-all flex flex-col justify-between shadow-sm">
           <div className="flex items-center gap-2 mb-1.5">
-            <div className="p-1.5 rounded-lg bg-blue-500/15 text-blue-600 dark:text-blue-400">
+            <div className="p-1.5 rounded-lg bg-[#F4F0E6] dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-[#E2DACB] dark:border-transparent">
               <Droplets className="h-4 w-4 shrink-0" />
             </div>
             <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 font-sans">Kelembapan</span>
@@ -315,9 +315,9 @@ export const WeatherWidget = () => {
         </div>
 
         {/* Metric 3: Kecepatan Angin (Anti-truncation fix) */}
-        <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-elevated border border-slate-200 dark:border-white/10 hover:border-cyan-500/30 transition-all flex flex-col justify-between shadow-sm">
+        <div className="p-3 sm:p-3.5 rounded-xl bg-[#FAF7F0] dark:bg-elevated border border-[#E2DACB] dark:border-white/10 hover:border-cyan-500/30 transition-all flex flex-col justify-between shadow-sm">
           <div className="flex items-center gap-2 mb-1.5">
-            <div className="p-1.5 rounded-lg bg-cyan-500/15 text-cyan-700 dark:text-cyan-400">
+            <div className="p-1.5 rounded-lg bg-[#F4F0E6] dark:bg-cyan-500/15 text-cyan-700 dark:text-cyan-400 border border-[#E2DACB] dark:border-transparent">
               <Wind className="h-4 w-4 shrink-0" />
             </div>
             <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 font-sans whitespace-nowrap">
@@ -336,9 +336,9 @@ export const WeatherWidget = () => {
         </div>
 
         {/* Metric 4: Kondisi Cuaca */}
-        <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-elevated border border-slate-200 dark:border-white/10 hover:border-indigo-500/30 transition-all flex flex-col justify-between shadow-sm">
+        <div className="p-3 sm:p-3.5 rounded-xl bg-[#FAF7F0] dark:bg-elevated border border-[#E2DACB] dark:border-white/10 hover:border-indigo-500/30 transition-all flex flex-col justify-between shadow-sm">
           <div className="flex items-center gap-2 mb-1.5">
-            <div className="p-1.5 rounded-lg bg-indigo-500/15 text-indigo-600 dark:text-indigo-400">
+            <div className="p-1.5 rounded-lg bg-[#F4F0E6] dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-[#E2DACB] dark:border-transparent">
               <Compass className="h-4 w-4 shrink-0" />
             </div>
             <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 font-sans">Kondisi</span>

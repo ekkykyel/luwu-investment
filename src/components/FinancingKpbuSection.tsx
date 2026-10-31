@@ -120,7 +120,7 @@ export default function FinancingKpbuSection({
       className={`mt-10 sm:mt-12 p-2.5 sm:p-7 md:p-9 rounded-2xl sm:rounded-3xl border relative overflow-hidden transition-all duration-300 backdrop-blur-2xl ${
         isDark
           ? "bg-[#0B1E2E]/95 border-white/10 text-white shadow-2xl shadow-black/60"
-          : "bg-white/95 border-slate-200 text-slate-900 shadow-xl shadow-slate-200/50"
+          : "bg-[#F4F0E6]/95 border-[#E2DACB] text-slate-900 shadow-xl shadow-[#10261E]/5"
       }`}
     >
       {/* Top Gold & Emerald Gradient Accent Rail */}
@@ -133,7 +133,7 @@ export default function FinancingKpbuSection({
       {/* Header with Executive Presentation */}
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5 mb-8 sm:mb-10 relative z-10">
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider border backdrop-blur-md shadow-xs bg-amber-100/90 text-amber-950 dark:bg-amber-950/60 dark:text-amber-300 border-amber-300 dark:border-amber-500/30">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider border backdrop-blur-md shadow-xs bg-[#FAF7F0] text-amber-950 dark:bg-amber-950/60 dark:text-amber-300 border-[#E2DACB] dark:border-amber-500/30">
             <Coins size={14} className="text-amber-600 dark:text-amber-400" />
             <span>{t("kpbu.eyebrow", "Pilar 4 • Financing Ready")}</span>
           </div>
@@ -154,7 +154,7 @@ export default function FinancingKpbuSection({
               className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 ${
                 isDark
                   ? "bg-slate-800/80 hover:bg-slate-800 text-slate-200 border-slate-700 hover:text-white"
-                  : "bg-slate-100/90 hover:bg-slate-200 text-slate-900 border-slate-200"
+                  : "bg-[#FAF7F0] hover:bg-[#ECE5D6] text-slate-900 border-[#E2DACB]"
               }`}
             >
               <MessageSquare size={14} />
@@ -181,7 +181,7 @@ export default function FinancingKpbuSection({
             <Building2 size={16} className="text-emerald-600 dark:text-emerald-400" />
             <span>{t("kpbu.pipelineTitle", "Daftar Pipeline Proyek KPBU Potensial:")}</span>
           </h4>
-          <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-900 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/30">
+          <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#FAF7F0] dark:bg-emerald-950/80 text-emerald-900 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/30">
             {t("kpbu.pipelineBadge", "3 PROYEK STRATEGIS TERBUKA")}
           </span>
         </div>
@@ -195,7 +195,7 @@ export default function FinancingKpbuSection({
                 className={`p-2.5 sm:p-5 rounded-2xl border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 ${
                   isDark
                     ? "bg-[#071725]/85 border-slate-800 hover:border-emerald-500/50 hover:shadow-xl hover:shadow-emerald-950/20"
-                    : "bg-white border-slate-200/90 hover:border-emerald-400 hover:shadow-xl hover:shadow-slate-200/60 shadow-xs"
+                    : "bg-[#FAF7F0] border-[#E2DACB] hover:border-emerald-500/50 hover:shadow-xl hover:shadow-[#10261E]/5 shadow-xs"
                 }`}
               >
                 <div>
@@ -205,12 +205,12 @@ export default function FinancingKpbuSection({
                       <div className={`w-7 h-7 rounded-lg flex items-center justify-center border ${p.iconBg}`}>
                         <Icon size={14} className={p.iconColor} />
                       </div>
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20">
+                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-[#F4F0E6] dark:bg-amber-500/10 text-amber-900 dark:text-amber-300 border border-[#E2DACB] dark:border-amber-500/20">
                         {p.sector}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-mono font-extrabold border shadow-2xs">
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-mono font-extrabold bg-[#F4F0E6] dark:bg-transparent border border-[#E2DACB] dark:border-white/10 shadow-2xs">
                       <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${p.dotColor}`} />
                       <span className={p.statusColor.split(" ")[2]}>{p.status}</span>
                     </div>
@@ -235,13 +235,13 @@ export default function FinancingKpbuSection({
                   </p>
                 </div>
 
-                <div className="space-y-3 pt-3.5 border-t border-slate-200/80 dark:border-slate-800/80">
+                <div className="space-y-3 pt-3.5 border-t border-[#E2DACB] dark:border-slate-800/80">
                   <div className="text-[11px] text-slate-600 dark:text-slate-400">
                     <span className="font-bold text-slate-800 dark:text-slate-200">{t("kpbu.schemeLabel", "Skema:")}</span>{" "}
                     <span className="font-medium">{p.scheme}</span>
                   </div>
 
-                  <div className="text-[11px] text-emerald-800 dark:text-emerald-300 font-semibold flex items-start gap-1.5 bg-emerald-500/10 dark:bg-emerald-500/15 p-2 rounded-xl border border-emerald-500/20">
+                  <div className="text-[11px] text-emerald-800 dark:text-emerald-300 font-semibold flex items-start gap-1.5 bg-[#F4F0E6] dark:bg-emerald-500/15 p-2 rounded-xl border border-[#E2DACB] dark:border-emerald-500/20">
                     <CheckCircle2 size={13} className="shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400" />
                     <span className="leading-tight">{p.support}</span>
                   </div>
@@ -254,7 +254,7 @@ export default function FinancingKpbuSection({
                       className={`w-full py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98 ${
                         isDark
                           ? "bg-slate-800/80 hover:bg-emerald-600/20 text-slate-200 hover:text-emerald-300 border border-slate-700 hover:border-emerald-500/40"
-                          : "bg-slate-100/90 hover:bg-emerald-50 text-slate-800 hover:text-emerald-900 border border-slate-200 hover:border-emerald-300"
+                          : "bg-[#F4F0E6] hover:bg-[#ECE5D6] text-slate-900 hover:text-emerald-950 border border-[#E2DACB] hover:border-emerald-500/40"
                       }`}
                     >
                       <span>{t("kpbu.btnProjectConsult", "Konsultasi Skema Proyek")}</span>
@@ -275,7 +275,7 @@ export default function FinancingKpbuSection({
             <Award size={16} className="text-amber-500" />
             <span>{t("kpbu.fiscalTitle", "Fasilitas & Insentif Investasi Daerah:")}</span>
           </h4>
-          <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-500/30">
+          <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#FAF7F0] dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 border border-[#E2DACB] dark:border-amber-500/30">
             {t("kpbu.fiscalBadge", "REGULASI & FASILITASI RESMI")}
           </span>
         </div>
@@ -289,15 +289,15 @@ export default function FinancingKpbuSection({
                 className={`p-2.5 sm:p-5 rounded-2xl border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 ${
                   isDark
                     ? "bg-[#071725]/70 border-slate-800 hover:border-amber-500/40"
-                    : "bg-slate-50/80 border-slate-200 hover:bg-white hover:border-amber-400 hover:shadow-lg hover:shadow-slate-200/50 shadow-xs"
+                    : "bg-[#FAF7F0] border-[#E2DACB] hover:bg-[#ECE5D6]/50 hover:border-amber-500/50 hover:shadow-lg hover:shadow-[#10261E]/5 shadow-xs"
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300/50 dark:border-slate-700">
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-[#F4F0E6] dark:bg-slate-800 text-slate-800 dark:text-slate-300 border border-[#E2DACB] dark:border-slate-700">
                       {inc.badge}
                     </span>
-                    <div className="w-6 h-6 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                    <div className="w-6 h-6 rounded-lg bg-[#F4F0E6] dark:bg-amber-500/10 border border-[#E2DACB] dark:border-transparent flex items-center justify-center text-amber-600 dark:text-amber-400">
                       <Icon size={14} />
                     </div>
                   </div>
@@ -321,7 +321,7 @@ export default function FinancingKpbuSection({
                   </p>
                 </div>
 
-                <div className="pt-3.5 mt-3.5 border-t border-slate-200 dark:border-slate-800">
+                <div className="pt-3.5 mt-3.5 border-t border-[#E2DACB] dark:border-slate-800">
                   <button
                     type="button"
                     onClick={onOpenIncentiveModal}
@@ -342,7 +342,7 @@ export default function FinancingKpbuSection({
         className={`p-4 sm:p-5 rounded-2xl border transition-all relative z-10 ${
           isDark
             ? "bg-gradient-to-br from-[#061522] to-[#0A2238] border-emerald-500/30"
-            : "bg-gradient-to-br from-emerald-50/90 to-teal-50/70 border-emerald-200 shadow-xs"
+            : "bg-[#FAF7F0] border-[#E2DACB] shadow-xs"
         }`}
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
@@ -362,11 +362,11 @@ export default function FinancingKpbuSection({
         </p>
 
         {/* Institutional Partner Badges */}
-        <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-emerald-500/20 text-[10px] font-bold">
+        <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-[#E2DACB] dark:border-emerald-500/20 text-[10px] font-bold">
           {institutionalPartners.map((inst, idx) => (
             <div
               key={idx}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 text-slate-900 dark:text-slate-200 shadow-2xs"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#F4F0E6] dark:bg-slate-900/80 border border-[#E2DACB] dark:border-slate-800 text-slate-900 dark:text-slate-200 shadow-2xs"
             >
               <span className="font-extrabold text-emerald-700 dark:text-emerald-400">{inst.name}</span>
               <span className="text-slate-400 dark:text-slate-500 font-normal">•</span>

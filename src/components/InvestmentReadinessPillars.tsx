@@ -335,7 +335,7 @@ export default function InvestmentReadinessPillars({
     <section
       id="readiness-section"
       className={`py-12 sm:py-16 md:py-20 border-t relative overflow-hidden transition-colors duration-500 ${
-        isDark ? "bg-[#061826] border-white/10" : "bg-gradient-to-b from-slate-50 via-white to-slate-50 border-slate-200"
+        isDark ? "bg-[#061826] border-white/10" : "bg-[#FAF7F0] border-[#E2DACB]"
       }`}
     >
       {/* Decorative ambient radial gradients */}
@@ -346,7 +346,7 @@ export default function InvestmentReadinessPillars({
         {/* Section Header with Elevated Terverifikasi Resmi Badge */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <div className="text-xs font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-[.1em] mb-1">
+            <div className="text-xs font-medium text-emerald-700 dark:text-emerald-400 uppercase tracking-[.1em] mb-1">
               {t("readiness.eyebrow", "Blueprint & Pilar Kesiapan • Standar Kementerian Investasi / BKPM RI")}
             </div>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
@@ -354,13 +354,13 @@ export default function InvestmentReadinessPillars({
             </h2>
           </div>
           {/* Badge pindah ke sini — jauh lebih visible */}
-          <div className="sm:ml-auto flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex-shrink-0 self-start sm:self-auto">
-            <ShieldCheck size={16} className="text-emerald-500" />
+          <div className="sm:ml-auto flex items-center gap-2 px-4 py-2 rounded-xl bg-[#F4F0E6] dark:bg-emerald-500/10 border border-[#E2DACB] dark:border-emerald-500/25 flex-shrink-0 self-start sm:self-auto">
+            <ShieldCheck size={16} className="text-emerald-600 dark:text-emerald-500" />
             <div>
-              <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-[.06em]">
+              <div className="text-[10px] font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-[.06em]">
                 {t("readiness.officialVerified", "Terverifikasi Resmi")}
               </div>
-              <div className="text-[9px] text-slate-500 dark:text-slate-400">
+              <div className="text-[9px] text-slate-600 dark:text-slate-400">
                 Data sumber DPMPTSP Luwu
               </div>
             </div>
@@ -383,7 +383,7 @@ export default function InvestmentReadinessPillars({
                       ? "bg-emerald-600 text-white shadow-[0_2px_8px_rgba(16,185,129,.3)]"
                       : isDark
                         ? "bg-slate-800/60 text-slate-400 hover:bg-slate-700 hover:text-slate-200"
-                        : "bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700"
+                        : "bg-[#F4F0E6] text-slate-700 border border-[#E2DACB] hover:bg-[#ECE5D6] hover:text-slate-900"
                   }`}
                 >
                   <Icon size={15} />
@@ -397,7 +397,7 @@ export default function InvestmentReadinessPillars({
                         ? "bg-white/20 text-white"
                         : isDark
                           ? "bg-slate-700 text-slate-300"
-                          : "bg-slate-200 text-slate-600"
+                          : "bg-[#FAF7F0] text-slate-800 border border-[#E2DACB]"
                     }`}
                   >
                     {pilar.score}
@@ -419,7 +419,7 @@ export default function InvestmentReadinessPillars({
             className={`p-2.5 sm:p-7 md:p-9 rounded-2xl border relative overflow-hidden backdrop-blur-2xl shadow-xl transition-all duration-300 ${
               isDark
                 ? "bg-[#0D253A]/95 border-white/10 shadow-black/60"
-                : "bg-white/95 border-slate-200 shadow-xl shadow-slate-200/50"
+                : "bg-[#F4F0E6]/95 border-[#E2DACB] shadow-xl shadow-[#10261E]/5"
             }`}
           >
             {/* Top Volumetric Glow Bar */}
@@ -430,10 +430,10 @@ export default function InvestmentReadinessPillars({
               <div className="lg:col-span-7 space-y-4 sm:space-y-6">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap mb-2 sm:mb-2.5">
-                    <span className="text-[11px] sm:text-xs font-mono font-black px-2.5 sm:px-3 py-1 rounded-lg bg-emerald-100/90 text-emerald-950 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/40">
+                    <span className="text-[11px] sm:text-xs font-mono font-black px-2.5 sm:px-3 py-1 rounded-lg bg-[#FAF7F0] text-emerald-950 dark:bg-emerald-950/80 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/40">
                       PILAR {currentPillar.number} • {currentPillar.badge}
                     </span>
-                    <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                    <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#FAF7F0] dark:bg-slate-800 text-slate-800 dark:text-slate-300 border border-[#E2DACB] dark:border-slate-700">
                       <Activity size={12} className="text-emerald-600 dark:text-emerald-400" />
                       <span>{currentPillar.readinessRating}</span>
                     </span>
@@ -455,7 +455,7 @@ export default function InvestmentReadinessPillars({
                   className={`p-2.5 sm:p-4.5 rounded-xl sm:rounded-2xl border space-y-2.5 sm:space-y-3 ${
                     isDark
                       ? "bg-[#081827]/80 border-slate-800"
-                      : "bg-slate-50/90 border-slate-200/90"
+                      : "bg-[#FAF7F0] border-[#E2DACB]"
                   }`}
                 >
                   <div className="flex items-start gap-2 sm:gap-2.5">
@@ -499,11 +499,11 @@ export default function InvestmentReadinessPillars({
                         className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border flex flex-col justify-between transition-all ${
                           isDark
                             ? "bg-[#091D2E]/90 border-slate-800 hover:border-slate-700"
-                            : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-md shadow-xs"
+                            : "bg-[#FAF7F0] border-[#E2DACB] hover:bg-[#ECE5D6]/60 hover:border-[#D5CBB8] hover:shadow-md shadow-xs"
                         }`}
                       >
                         <div>
-                          <span className="inline-block text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2 border border-slate-200 dark:border-slate-700">
+                          <span className="inline-block text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-[#F4F0E6] dark:bg-slate-800 text-slate-800 dark:text-slate-300 mb-1.5 sm:mb-2 border border-[#E2DACB] dark:border-slate-700">
                             {pt.standard}
                           </span>
                           <h5 className="text-xs font-black text-slate-950 dark:text-white mb-1 sm:mb-1.5 leading-snug">
@@ -537,7 +537,7 @@ export default function InvestmentReadinessPillars({
                       className={`px-4.5 py-3 rounded-2xl text-xs sm:text-sm font-bold border transition-all cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 ${
                         isDark
                           ? "bg-slate-800/80 hover:bg-slate-800 text-slate-200 border-slate-700 hover:text-white"
-                          : "bg-slate-100/90 hover:bg-slate-200 text-slate-900 border-slate-200 font-bold"
+                          : "bg-[#FAF7F0] hover:bg-[#ECE5D6] text-slate-900 border-[#E2DACB] font-bold"
                       }`}
                     >
                       <span>{currentPillar.secondaryActionLabel}</span>
@@ -554,7 +554,7 @@ export default function InvestmentReadinessPillars({
                     <CurrentIcon size={15} className={currentPillar.accentColor} />
                     <span>{t("readiness.quantitativeIndicator", "Indikator Kuantitatif Kesiapan")}</span>
                   </span>
-                  <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold border border-slate-200 dark:border-slate-700">
+                  <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-[#FAF7F0] dark:bg-slate-800 text-slate-800 dark:text-slate-300 font-bold border border-[#E2DACB] dark:border-slate-700">
                     Standar BKPM RI
                   </span>
                 </div>
@@ -566,7 +566,7 @@ export default function InvestmentReadinessPillars({
                       className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all ${
                         isDark
                           ? "bg-[#091D2E]/80 border-slate-800 hover:border-slate-700"
-                          : "bg-slate-50/90 border-slate-200/90 hover:bg-white hover:border-slate-300 hover:shadow-md shadow-xs"
+                          : "bg-[#FAF7F0] border-[#E2DACB] hover:bg-[#ECE5D6]/60 hover:border-[#D5CBB8] hover:shadow-md shadow-xs"
                       }`}
                     >
                       <div className="flex items-baseline justify-between gap-2 mb-1">
@@ -589,7 +589,7 @@ export default function InvestmentReadinessPillars({
                   className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all ${
                     isDark
                       ? "bg-gradient-to-br from-emerald-950/40 to-teal-950/30 border-emerald-500/30 text-slate-200"
-                      : "bg-gradient-to-br from-emerald-50 to-teal-50/70 border-emerald-200 text-slate-800 shadow-xs"
+                      : "bg-[#FAF7F0] border-[#E2DACB] text-slate-800 shadow-xs"
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-1.5">
@@ -601,11 +601,11 @@ export default function InvestmentReadinessPillars({
                   <p className="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed font-medium mb-2.5">
                     {t("readiness.legalDesc", "Sistem InvestLuwu menghubungkan seluruh perizinan dan tata ruang langsung dengan DPMPTSP Kabupaten Luwu, Dinas PUPR, DLH, dan Kementerian Investasi RI / BKPM melalui Online Single Submission (OSS).")}
                   </p>
-                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap pt-1 border-t border-emerald-500/20 text-[10px] font-bold text-emerald-800 dark:text-emerald-300">
-                    <span className="px-2.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">DPMPTSP Luwu</span>
-                    <span className="px-2.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">Dinas PUPR</span>
-                    <span className="px-2.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">DLH Luwu</span>
-                    <span className="px-2.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">OSS-RBA BKPM</span>
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap pt-1 border-t border-[#E2DACB] dark:border-emerald-500/20 text-[10px] font-bold text-emerald-800 dark:text-emerald-300">
+                    <span className="px-2.5 py-0.5 rounded bg-[#F4F0E6] dark:bg-emerald-500/10 border border-[#E2DACB] dark:border-emerald-500/20">DPMPTSP Luwu</span>
+                    <span className="px-2.5 py-0.5 rounded bg-[#F4F0E6] dark:bg-emerald-500/10 border border-[#E2DACB] dark:border-emerald-500/20">Dinas PUPR</span>
+                    <span className="px-2.5 py-0.5 rounded bg-[#F4F0E6] dark:bg-emerald-500/10 border border-[#E2DACB] dark:border-emerald-500/20">DLH Luwu</span>
+                    <span className="px-2.5 py-0.5 rounded bg-[#F4F0E6] dark:bg-emerald-500/10 border border-[#E2DACB] dark:border-emerald-500/20">OSS-RBA BKPM</span>
                   </div>
                 </div>
               </div>

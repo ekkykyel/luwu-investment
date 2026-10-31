@@ -160,7 +160,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
   // Computed Card Styling with Bento Glassmorphic Aesthetics
   const computedCardBg = isDark
     ? "bg-surface/80 backdrop-blur-xl border-slate-800/90 shadow-xl shadow-black/30 hover:border-slate-700 hover:shadow-2xl"
-    : "bg-white/95 backdrop-blur-xl border-slate-200/90 shadow-lg shadow-slate-200/40 hover:border-slate-300 hover:shadow-xl";
+    : "bg-[#F4F0E6]/95 backdrop-blur-xl border-[#E2DACB] shadow-lg shadow-[#10261E]/5 hover:border-[#D5CBB8] hover:shadow-xl";
 
   const axisTextColor = isDark ? "#94a3b8" : "#64748b";
 
@@ -205,7 +205,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
       {/* 4. DATA SPASIAL & GRAFIK MODERN */}
       <div
         id="analitik-spasial-section"
-        className={`py-16 sm:py-24 border-t transition-colors duration-500 ${isDark ? "bg-[#06130F] border-[rgba(201,162,75,0.25)]" : "bg-[#FAF7F0] border-[rgba(160,122,40,0.22)]"}`}
+        className={`py-16 sm:py-24 border-t transition-colors duration-500 ${isDark ? "bg-[#06130F] border-[rgba(201,162,75,0.25)]" : "bg-[#FAF7F0] border-[#E2DACB]"}`}
       >
         <div className="container max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
@@ -316,9 +316,9 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
               <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/10 dark:bg-emerald-400/5 blur-3xl pointer-events-none" />
 
               {/* Header */}
-              <div className="flex items-center gap-3 mb-3 border-b pb-4 border-slate-500/10">
+              <div className="flex items-center gap-3 mb-3 border-b pb-4 border-[#E2DACB] dark:border-slate-500/10">
                 <div
-                  className={`p-2.5 sm:p-3 rounded-2xl ${isDark ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-emerald-50 text-emerald-600 border border-emerald-200"}`}
+                  className={`p-2.5 sm:p-3 rounded-2xl ${isDark ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-[#FAF7F0] text-emerald-700 border border-[#E2DACB]"}`}
                 >
                   <TrendingUp size={20} className="group-hover:scale-110 transition-transform duration-300" />
                 </div>
@@ -332,7 +332,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold font-mono">
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FAF7F0] dark:bg-emerald-500/10 border border-[#E2DACB] dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-[11px] font-bold font-mono">
                       <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                       <span>Rp {currentTotalBillion} Miliar</span>
                     </div>
@@ -407,7 +407,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                         r: 6,
                         stroke: "#10b981",
                         strokeWidth: 3,
-                        fill: isDark ? "#0f172a" : "#ffffff",
+                        fill: isDark ? "#0f172a" : "#FAF7F0",
                       }}
                     />
                   </AreaChart>
@@ -415,12 +415,12 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
               </div>
 
               {/* Bottom Quick Metric Rail */}
-              <div className="mt-3 pt-3 border-t border-slate-500/10 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+              <div className="mt-3 pt-3 border-t border-[#E2DACB] dark:border-slate-500/10 flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                   <span className="text-[11px] font-medium">Realisasi Modal: <strong>Rp {currentTotalBillion} Miliar</strong></span>
                 </div>
-                <div className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                <div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
                   <ShieldCheck size={14} /> Terverifikasi DPMPTSP
                 </div>
               </div>
@@ -435,9 +435,9 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
               <div className="absolute top-0 right-0 w-36 h-36 bg-[#1F9D74]/10 dark:bg-[#1F9D74]/5 blur-3xl pointer-events-none" />
 
               {/* Header */}
-              <div className="flex items-center gap-3 mb-3 border-b pb-4 border-slate-500/10">
+              <div className="flex items-center gap-3 mb-3 border-b pb-4 border-[#E2DACB] dark:border-slate-500/10">
                 <div
-                  className={`p-2.5 sm:p-3 rounded-2xl ${isDark ? "bg-[#0B2A20] text-[#C9A24B] border border-[rgba(201,162,75,0.25)]" : "bg-emerald-50 text-emerald-800 border border-emerald-200"}`}
+                  className={`p-2.5 sm:p-3 rounded-2xl ${isDark ? "bg-[#0B2A20] text-[#C9A24B] border border-[rgba(201,162,75,0.25)]" : "bg-[#FAF7F0] text-emerald-800 border border-[#E2DACB]"}`}
                 >
                   <PieChartIcon size={20} className="group-hover:scale-110 transition-transform duration-300" />
                 </div>
@@ -468,7 +468,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                               ? `Rp ${(safeTotalValue / 1e9).toFixed(1)} M` 
                               : formatRupiah(safeTotalValue)}
                         </span>
-                        <span className="text-[10px] font-bold px-2 py-0.5 mt-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                        <span className="text-[10px] font-bold px-2 py-0.5 mt-0.5 rounded-full bg-[#FAF7F0] dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-[#E2DACB] dark:border-emerald-500/20">
                           {safeSectorData.length} Sektor Aktif
                         </span>
                       </div>
@@ -488,7 +488,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                             stroke="none"
                             isAnimationActive={false}
                           >
-                            <Cell fill={isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.04)"} />
+                            <Cell fill={isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)"} />
                           </Pie>
 
                           {/* Authentic Slices */}
@@ -501,7 +501,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                             paddingAngle={safeSectorData.length > 1 ? 4 : 0}
                             cornerRadius={6}
                             dataKey="value"
-                            stroke={isDark ? "#0f172a" : "#ffffff"}
+                            stroke={isDark ? "#0f172a" : "#F4F0E6"}
                             strokeWidth={2}
                             isAnimationActive={animatePieChart}
                             animationDuration={600}
@@ -544,9 +544,9 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                     </div>
 
                     {/* Sector Breakdown List (Eliminates Blank Whitespace) */}
-                    <div className="w-full mt-2 pt-2 border-t border-slate-500/10 space-y-2">
+                    <div className="w-full mt-2 pt-2 border-t border-[#E2DACB] dark:border-slate-500/10 space-y-2">
                       {sectorListWithPercentages.map((item, idx) => (
-                        <div key={idx} className="flex flex-col gap-1 p-2 rounded-xl bg-slate-500/5 hover:bg-slate-500/10 transition-colors">
+                        <div key={idx} className="flex flex-col gap-1 p-2 rounded-xl bg-[#FAF7F0] dark:bg-slate-500/5 hover:bg-[#ECE5D6] dark:hover:bg-slate-500/10 border border-[#E2DACB] dark:border-transparent transition-colors">
                           <div className="flex items-center justify-between text-xs">
                             <div className="flex items-center gap-2 font-semibold text-slate-800 dark:text-slate-200 truncate">
                               <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
@@ -557,15 +557,15 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                             </span>
                           </div>
                           {/* Mini Progress Bar */}
-                          <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                          <div className="w-full bg-[#E2DACB] dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
                             <div
                               className="h-full rounded-full transition-all duration-700"
                               style={{ width: `${item.pct}%`, backgroundColor: item.color }}
                             />
                           </div>
-                          <div className="flex justify-between items-center text-[10px] text-slate-500 dark:text-slate-400">
+                          <div className="flex justify-between items-center text-[10px] text-slate-600 dark:text-slate-400">
                             <span>Nilai Realisasi</span>
-                            <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                            <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400">
                               {formatRupiah(item.value)}
                             </span>
                           </div>
@@ -591,7 +591,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
             {/* 1. TOP ROW: TOP 5 KONSENTRASI SPASIAL (FULL WIDTH: lg:col-span-2) */}
             <div
               className={`w-full lg:col-span-2 p-6 rounded-3xl border flex flex-col justify-between relative overflow-hidden transition-all duration-300 hover:border-emerald-500/40 group ${
-                isDark ? "bg-surface/90 border-slate-800 text-slate-100" : "bg-white border-slate-100 text-slate-900 shadow-sm"
+                isDark ? "bg-surface/90 border-slate-800 text-slate-100" : "bg-[#F4F0E6] border-[#E2DACB] text-slate-900 shadow-sm"
               }`}
             >
               {/* Top Accent Glowing Rail */}
@@ -599,9 +599,9 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
               <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-500/10 dark:bg-emerald-400/5 blur-3xl pointer-events-none" />
 
               {/* Header */}
-              <div className="flex items-center gap-3 mb-4 border-b pb-4 border-slate-500/10">
+              <div className="flex items-center gap-3 mb-4 border-b pb-4 border-[#E2DACB] dark:border-slate-500/10">
                 <div
-                  className={`p-3 rounded-2xl ${isDark ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-emerald-50 text-emerald-600 border border-emerald-200"}`}
+                  className={`p-3 rounded-2xl ${isDark ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-[#FAF7F0] text-emerald-700 border border-[#E2DACB]"}`}
                 >
                   <MapPin size={22} className="group-hover:scale-110 transition-transform duration-300" />
                 </div>
@@ -626,7 +626,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                     >
                       <CartesianGrid
                         strokeDasharray="3 3"
-                        stroke={isDark ? "rgba(241, 245, 249, 0.06)" : "#f1f5f9"}
+                        stroke={isDark ? "rgba(241, 245, 249, 0.06)" : "#E2DACB"}
                         horizontal={true}
                         vertical={false}
                       />
@@ -692,9 +692,9 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
               </div>
 
               {/* Footer Note */}
-              <div className="mt-3 pt-3 border-t border-slate-500/10 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+              <div className="mt-3 pt-3 border-t border-[#E2DACB] dark:border-slate-500/10 flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
                 <span className="text-[11px]">Berdasarkan pemetaan spasial RTRW & katalog IPRO Kab. Luwu</span>
-                <span className="font-bold text-emerald-600 dark:text-emerald-400 text-[11px] flex items-center gap-1">
+                <span className="font-bold text-emerald-700 dark:text-emerald-400 text-[11px] flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   Sistem Geospasial Aktif
                 </span>
@@ -704,7 +704,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
             {/* 2. BOTTOM ROW (LEFT): SUMBER MODAL: PMA VS PMDN (lg:col-span-1) */}
             <div
               className={`w-full lg:col-span-1 h-full p-6 rounded-3xl border flex flex-col justify-between relative overflow-hidden transition-all duration-300 hover:border-emerald-500/40 group ${
-                isDark ? "bg-surface/90 border-slate-800 text-slate-100" : "bg-white border-slate-100 text-slate-900 shadow-sm"
+                isDark ? "bg-surface/90 border-slate-800 text-slate-100" : "bg-[#F4F0E6] border-[#E2DACB] text-slate-900 shadow-sm"
               }`}
             >
               {/* Top Accent Glowing Rail */}
@@ -712,9 +712,9 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
               <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-500/10 dark:bg-emerald-400/5 blur-3xl pointer-events-none" />
 
               {/* Header */}
-              <div className="flex items-center gap-3 mb-4 border-b pb-4 border-slate-500/10">
+              <div className="flex items-center gap-3 mb-4 border-b pb-4 border-[#E2DACB] dark:border-slate-500/10">
                 <div
-                  className={`p-3 rounded-2xl ${isDark ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-emerald-50 text-emerald-600 border border-emerald-200"}`}
+                  className={`p-3 rounded-2xl ${isDark ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-[#FAF7F0] text-emerald-700 border border-[#E2DACB]"}`}
                 >
                   <Globe size={22} className="group-hover:scale-110 transition-transform duration-300" />
                 </div>
@@ -771,7 +771,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                         paddingAngle={5}
                         cornerRadius={8}
                         strokeLinecap="round"
-                        stroke={isDark ? "#0f172a" : "#ffffff"}
+                        stroke={isDark ? "#0f172a" : "#F4F0E6"}
                         strokeWidth={3}
                       >
                         <Cell key="cell-pmdn" fill="url(#gradEmeraldTeal)" />
@@ -797,29 +797,29 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                 </div>
 
                 {/* Bottom Legend Cards using clean, rounded pill badges */}
-                <div className="grid grid-cols-2 gap-3 w-full mt-4 pt-3 border-t border-slate-500/10">
-                  <div className="rounded-2xl p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
+                <div className="grid grid-cols-2 gap-3 w-full mt-4 pt-3 border-t border-[#E2DACB] dark:border-slate-500/10">
+                  <div className="rounded-2xl p-3 bg-[#FAF7F0] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-800 flex flex-col justify-between">
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-1.5">
                         <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                        <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">PMDN</span>
+                        <span className="text-[11px] font-bold text-slate-800 dark:text-slate-300 uppercase tracking-wider">PMDN</span>
                       </div>
-                      <span className="text-xs font-mono font-black text-emerald-600 dark:text-emerald-400">85%</span>
+                      <span className="text-xs font-mono font-black text-emerald-700 dark:text-emerald-400">85%</span>
                     </div>
-                    <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 mt-1">
+                    <span className="text-xs font-mono font-bold text-slate-600 dark:text-slate-400 mt-1">
                       Rp {(currentTotalBillion * 0.85).toFixed(1)} Miliar
                     </span>
                   </div>
 
-                  <div className="rounded-2xl p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
+                  <div className="rounded-2xl p-3 bg-[#FAF7F0] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-800 flex flex-col justify-between">
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-1.5">
                         <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                        <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">PMA</span>
+                        <span className="text-[11px] font-bold text-slate-800 dark:text-slate-300 uppercase tracking-wider">PMA</span>
                       </div>
-                      <span className="text-xs font-mono font-black text-amber-600 dark:text-amber-400">15%</span>
+                      <span className="text-xs font-mono font-black text-amber-700 dark:text-amber-400">15%</span>
                     </div>
-                    <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 mt-1">
+                    <span className="text-xs font-mono font-bold text-slate-600 dark:text-slate-400 mt-1">
                       Rp {(currentTotalBillion * 0.15).toFixed(1)} Miliar
                     </span>
                   </div>
@@ -830,7 +830,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
             {/* 2. BOTTOM ROW (RIGHT): REALISASI TARGET INVESTASI (lg:col-span-1) */}
             <div
               className={`w-full lg:col-span-1 h-full p-6 rounded-3xl border flex flex-col justify-between relative overflow-hidden transition-all duration-300 hover:border-emerald-500/40 group ${
-                isDark ? "bg-surface/90 border-slate-800 text-slate-100" : "bg-white border-slate-100 text-slate-900 shadow-sm"
+                isDark ? "bg-surface/90 border-slate-800 text-slate-100" : "bg-[#F4F0E6] border-[#E2DACB] text-slate-900 shadow-sm"
               }`}
             >
               {/* Top Accent Glowing Rail */}
@@ -838,9 +838,9 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
               <div className="absolute top-0 right-0 w-36 h-36 bg-teal-500/10 dark:bg-teal-400/5 blur-3xl pointer-events-none" />
 
               {/* Header */}
-              <div className="flex items-center gap-3 mb-4 border-b pb-4 border-slate-500/10">
+              <div className="flex items-center gap-3 mb-4 border-b pb-4 border-[#E2DACB] dark:border-slate-500/10">
                 <div
-                  className={`p-3 rounded-2xl ${isDark ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-emerald-50 text-emerald-600 border border-emerald-200"}`}
+                  className={`p-3 rounded-2xl ${isDark ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-[#FAF7F0] text-emerald-700 border border-[#E2DACB]"}`}
                 >
                   <Target size={22} className="group-hover:scale-110 transition-transform duration-300 text-emerald-500" />
                 </div>
@@ -896,18 +896,18 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                       cornerRadius={8}
                       strokeLinecap="round"
                       dataKey="value"
-                      stroke={isDark ? "#0f172a" : "#ffffff"}
+                      stroke={isDark ? "#0f172a" : "#F4F0E6"}
                       strokeWidth={2}
                     >
                       <Cell key="cell-realisasi" fill="url(#gradTargetGauge)" />
-                      <Cell key="cell-sisa" fill={isDark ? "rgba(30, 41, 59, 0.4)" : "rgba(226, 232, 240, 0.6)"} />
+                      <Cell key="cell-sisa" fill={isDark ? "rgba(30, 41, 59, 0.4)" : "#E2DACB"} />
                     </Pie>
                     <Tooltip
                       formatter={(value: number, name: string) => [formatRupiah(value), name]}
                       contentStyle={{
-                        background: isDark ? "rgba(15, 23, 42, 0.95)" : "rgba(255, 255, 255, 0.95)",
+                        background: isDark ? "rgba(15, 23, 42, 0.95)" : "rgba(244, 240, 230, 0.98)",
                         backdropFilter: "blur(12px)",
-                        border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(15, 23, 42, 0.08)"}`,
+                        border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.1)" : "#E2DACB"}`,
                         borderRadius: "16px",
                         boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2)",
                       }}
@@ -917,29 +917,29 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
               </div>
 
               {/* Bottom Legend Cards using clean, rounded pill badges */}
-              <div className="grid grid-cols-2 gap-3 w-full mt-4 pt-3 border-t border-slate-500/10">
-                <div className="rounded-2xl p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
-                  <span className="text-[10px] uppercase tracking-wider block font-bold text-slate-400 dark:text-slate-500">
+              <div className="grid grid-cols-2 gap-3 w-full mt-4 pt-3 border-t border-[#E2DACB] dark:border-slate-500/10">
+                <div className="rounded-2xl p-3 bg-[#FAF7F0] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-800 flex flex-col justify-between">
+                  <span className="text-[10px] uppercase tracking-wider block font-bold text-slate-600 dark:text-slate-500">
                     {t("performance.rpjmdTarget", "Target RPJMD")}
                   </span>
-                  <span className="text-sm font-black font-mono text-teal-600 dark:text-teal-400 mt-0.5">
+                  <span className="text-sm font-black font-mono text-teal-700 dark:text-teal-400 mt-0.5">
                     Rp 2,50 T
                   </span>
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">Tahun 2026</span>
+                  <span className="text-[10px] text-slate-600 dark:text-slate-500 mt-0.5">Tahun 2026</span>
                 </div>
 
-                <div className="rounded-2xl p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
-                  <span className="text-[10px] uppercase tracking-wider block font-bold text-slate-400 dark:text-slate-500">
+                <div className="rounded-2xl p-3 bg-[#FAF7F0] dark:bg-slate-800/60 border border-[#E2DACB] dark:border-slate-800 flex flex-col justify-between">
+                  <span className="text-[10px] uppercase tracking-wider block font-bold text-slate-600 dark:text-slate-500">
                     {t("performance.currentRealization", "Realisasi Terdata")}
                   </span>
-                  <span className="text-sm font-black font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">
+                  <span className="text-sm font-black font-mono text-emerald-700 dark:text-emerald-400 mt-0.5">
                     {safeTotalValue >= 1e12 
                       ? `Rp ${(safeTotalValue / 1e12).toFixed(2)} T` 
                       : safeTotalValue >= 1e9 
                         ? `Rp ${(safeTotalValue / 1e9).toFixed(1)} M` 
                         : formatRupiah(safeTotalValue)}
                   </span>
-                  <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">OSS Terverifikasi</span>
+                  <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-semibold mt-0.5">OSS Terverifikasi</span>
                 </div>
               </div>
             </div>
@@ -957,10 +957,10 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-amber-500 via-emerald-400 to-cyan-500" />
               <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/10 dark:bg-amber-400/5 blur-3xl pointer-events-none" />
 
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 border-b pb-4 border-slate-500/10">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 border-b pb-4 border-[#E2DACB] dark:border-slate-500/10">
                 <div className="flex items-center gap-3">
                   <div
-                    className={`p-2.5 sm:p-3 rounded-2xl ${isDark ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" : "bg-amber-50 text-amber-600 border border-amber-200"}`}
+                    className={`p-2.5 sm:p-3 rounded-2xl ${isDark ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" : "bg-[#FAF7F0] text-amber-700 border border-[#E2DACB]"}`}
                   >
                     <Layers size={20} className="group-hover:scale-110 transition-transform duration-300" />
                   </div>
@@ -974,7 +974,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-500/10 border border-slate-500/20 text-slate-600 dark:text-slate-300">
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#FAF7F0] dark:bg-slate-500/10 border border-[#E2DACB] dark:border-slate-500/20 text-slate-700 dark:text-slate-300">
                     Stacked Analytics Mode
                   </span>
                 </div>
@@ -1022,9 +1022,9 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                                 : name,
                         ]}
                         contentStyle={{
-                          background: isDark ? "rgba(15, 23, 42, 0.95)" : "rgba(255, 255, 255, 0.95)",
+                          background: isDark ? "rgba(15, 23, 42, 0.95)" : "rgba(244, 240, 230, 0.98)",
                           backdropFilter: "blur(12px)",
-                          border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(15, 23, 42, 0.08)"}`,
+                          border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.1)" : "#E2DACB"}`,
                           borderRadius: "16px",
                           boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2)",
                         }}
@@ -1087,10 +1087,10 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-500" />
               <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/10 dark:bg-emerald-400/5 blur-3xl pointer-events-none" />
 
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 border-b pb-4 border-slate-500/10">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 border-b pb-4 border-[#E2DACB] dark:border-slate-500/10">
                 <div className="flex items-center gap-3">
                   <div
-                    className={`p-2.5 sm:p-3 rounded-2xl ${isDark ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-emerald-50 text-emerald-600 border border-emerald-200"}`}
+                    className={`p-2.5 sm:p-3 rounded-2xl ${isDark ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-[#FAF7F0] text-emerald-700 border border-[#E2DACB]"}`}
                   >
                     <Users size={20} className="group-hover:scale-110 transition-transform duration-300" />
                   </div>
@@ -1104,7 +1104,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                  <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#FAF7F0] dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-[#E2DACB] dark:border-emerald-500/20 flex items-center gap-1">
                     <CheckCircle2 size={12} /> Supabase Realtime Sync
                   </span>
                 </div>
@@ -1113,7 +1113,7 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Metrics */}
                 <div className="col-span-1 flex flex-col justify-center gap-4">
-                  <div className={`p-4 sm:p-5 rounded-2xl border ${isDark ? "bg-slate-800/40 border-slate-700/60" : "bg-slate-50 border-slate-200"}`}>
+                  <div className={`p-4 sm:p-5 rounded-2xl border ${isDark ? "bg-slate-800/40 border-slate-700/60" : "bg-[#FAF7F0] border-[#E2DACB]"}`}>
                     <p className={`text-[10px] font-bold uppercase tracking-wider mb-1.5 ${textMuted}`}>{t("chartsExtra.absorptionTarget", "Target Serapan 2026")}</p>
                     <div className="flex items-baseline gap-2">
                       <span className="text-2xl sm:text-3xl font-mono font-black text-slate-900 dark:text-white">{targetSerapan.toLocaleString("id-ID")}</span>
@@ -1121,26 +1121,26 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                     </div>
                   </div>
                   
-                  <div className={`p-4 sm:p-5 rounded-2xl border ${isDark ? "bg-slate-800/40 border-slate-700/60" : "bg-slate-50 border-slate-200"}`}>
+                  <div className={`p-4 sm:p-5 rounded-2xl border ${isDark ? "bg-slate-800/40 border-slate-700/60" : "bg-[#FAF7F0] border-[#E2DACB]"}`}>
                     <div className="flex items-center justify-between mb-1.5">
                       <p className={`text-[10px] font-bold uppercase tracking-wider ${textMuted}`}>{t("chartsExtra.absorptionRealization", "Realisasi Serapan")}</p>
-                      <span className="text-[10px] font-black text-emerald-500 font-mono">{serapanPercentage}%</span>
+                      <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-500 font-mono">{serapanPercentage}%</span>
                     </div>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-2xl sm:text-3xl font-mono font-black text-emerald-600 dark:text-emerald-400">{realisasiSerapan.toLocaleString("id-ID")}</span>
+                      <span className="text-2xl sm:text-3xl font-mono font-black text-emerald-700 dark:text-emerald-400">{realisasiSerapan.toLocaleString("id-ID")}</span>
                       <span className={`text-xs font-semibold ${textMuted}`}>{t("chartsExtra.people", "Orang")}</span>
                     </div>
-                    <div className="mt-2.5 flex items-center gap-2 text-[11px] font-medium text-slate-600 dark:text-slate-300">
+                    <div className="mt-2.5 flex items-center gap-2 text-[11px] font-medium text-slate-700 dark:text-slate-300">
                       <span className="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
-                      <span>TKL (Komitmen Lokal): <strong className="font-mono text-emerald-600 dark:text-emerald-400">{totalTKL}</strong> Orang</span>
+                      <span>TKL (Komitmen Lokal): <strong className="font-mono text-emerald-700 dark:text-emerald-400">{totalTKL}</strong> Orang</span>
                       {totalTKA > 0 && (
                         <>
                           <span className="text-slate-400">•</span>
-                          <span>TKA: <strong className="font-mono text-amber-500">{totalTKA}</strong></span>
+                          <span>TKA: <strong className="font-mono text-amber-600 dark:text-amber-500">{totalTKA}</strong></span>
                         </>
                       )}
                     </div>
-                    <div className="mt-3 w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
+                    <div className="mt-3 w-full bg-[#E2DACB] dark:bg-slate-700 rounded-full h-2 overflow-hidden">
                       <div className="bg-gradient-to-r from-teal-500 to-emerald-500 h-2 rounded-full transition-all duration-700" style={{ width: `${serapanPercentage}%` }}></div>
                     </div>
                   </div>
@@ -1175,9 +1175,9 @@ export const AnalitikSpasialSection: React.FC<AnalitikSpasialSectionProps> = ({
                       <Tooltip
                         cursor={{ fill: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)" }}
                         contentStyle={{
-                          background: isDark ? "rgba(15, 23, 42, 0.95)" : "rgba(255, 255, 255, 0.95)",
+                          background: isDark ? "rgba(15, 23, 42, 0.95)" : "rgba(244, 240, 230, 0.98)",
                           backdropFilter: "blur(12px)",
-                          border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(15, 23, 42, 0.08)"}`,
+                          border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.1)" : "#E2DACB"}`,
                           borderRadius: "16px",
                           boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2)",
                         }}

@@ -212,7 +212,7 @@ export default function LuwuInvestmentAiModal({
       
       if (trimmed.startsWith("###")) {
         return (
-          <h4 key={idx} className="text-base font-bold text-blue-700 dark:text-blue-400 mt-5 mb-2 flex items-center gap-1.5 border-b border-slate-205 dark:border-slate-800 pb-1">
+          <h4 key={idx} className="text-base font-bold text-blue-700 dark:text-blue-400 mt-5 mb-2 flex items-center gap-1.5 border-b border-[#E2DACB] dark:border-slate-800 pb-1">
             {trimmed.replace("###", "").trim()}
           </h4>
         );
@@ -275,26 +275,26 @@ export default function LuwuInvestmentAiModal({
         className={`w-full h-[100dvh] sm:w-[95vw] sm:max-w-5xl sm:h-[88vh] sm:max-h-[88vh] sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col transform transition-all duration-300 ${
           isDarkMode 
             ? "bg-slate-900 border border-slate-800 text-slate-100" 
-            : "bg-white text-slate-800 border border-slate-100"
+            : "bg-[#FAF7F0] text-slate-900 border border-[#E2DACB]"
         }`}
       >
         {/* COMPACT INTEGRATED HEADER */}
         <div className={`px-3.5 py-2 sm:px-5 sm:py-2.5 flex items-center justify-between border-b shrink-0 gap-2 ${
-          isDarkMode ? "bg-surface/95 border-slate-800" : "bg-slate-50/95 border-slate-200/80"
+          isDarkMode ? "bg-surface/95 border-slate-800" : "bg-[#F4F0E6] border-[#E2DACB]"
         }`}>
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <div className="relative shrink-0">
               <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-tr from-sky-500 via-blue-600 to-indigo-600 flex items-center justify-center shadow-md text-white">
                 <Bot size={16} className="animate-pulse" />
               </div>
-              <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 border border-white dark:border-slate-900"></span>
+              <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 border border-[#F4F0E6] dark:border-slate-900"></span>
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5 flex-wrap">
                 <h3 className="font-extrabold text-xs sm:text-sm uppercase tracking-wider text-slate-900 dark:text-white truncate leading-tight">
                   {aiLanguage === "en" ? "AI Spatial & GIS Validation Assistant" : aiLanguage === "zh" ? "AI 空间数据合规验证助手" : "Asisten AI Validasi Data Spasial & Peta GIS"}
                 </h3>
-                <span className="px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-mono font-bold tracking-wider bg-sky-500/10 text-sky-600 dark:text-sky-300 border border-sky-400/30">
+                <span className="px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-mono font-bold tracking-wider bg-[#FAF7F0] dark:bg-sky-500/10 text-sky-700 dark:text-sky-300 border border-[#E2DACB] dark:border-sky-400/30">
                   PostGIS • RTRW & LP2B
                 </span>
               </div>
@@ -316,13 +316,13 @@ export default function LuwuInvestmentAiModal({
 
           <div className="flex items-center gap-1.5 shrink-0">
             {/* LANGUAGE SELECTOR */}
-            <div className="flex items-center p-0.5 rounded-lg bg-slate-200/60 dark:bg-slate-800 border border-slate-300/40 dark:border-slate-700">
+            <div className="flex items-center p-0.5 rounded-lg bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700">
               <button
                 type="button"
                 onClick={() => setAiLanguage("id")}
                 className={`px-2 py-0.5 text-[10px] sm:text-[11px] font-bold rounded transition-all ${
                   aiLanguage === "id"
-                    ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-cyan-400 shadow-sm"
+                    ? "bg-[#F4F0E6] dark:bg-slate-700 text-blue-700 dark:text-cyan-400 border border-[#E2DACB] dark:border-transparent shadow-sm"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                 }`}
               >
@@ -333,7 +333,7 @@ export default function LuwuInvestmentAiModal({
                 onClick={() => setAiLanguage("en")}
                 className={`px-2 py-0.5 text-[10px] sm:text-[11px] font-bold rounded transition-all ${
                   aiLanguage === "en"
-                    ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-cyan-400 shadow-sm"
+                    ? "bg-[#F4F0E6] dark:bg-slate-700 text-blue-700 dark:text-cyan-400 border border-[#E2DACB] dark:border-transparent shadow-sm"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                 }`}
               >
@@ -344,7 +344,7 @@ export default function LuwuInvestmentAiModal({
                 onClick={() => setAiLanguage("zh")}
                 className={`px-2 py-0.5 text-[10px] sm:text-[11px] font-bold rounded transition-all ${
                   aiLanguage === "zh"
-                    ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-cyan-400 shadow-sm"
+                    ? "bg-[#F4F0E6] dark:bg-slate-700 text-blue-700 dark:text-cyan-400 border border-[#E2DACB] dark:border-transparent shadow-sm"
                     : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                 }`}
               >
@@ -357,7 +357,7 @@ export default function LuwuInvestmentAiModal({
               id="close-luwu-ai-modal-top"
               onClick={onClose}
               className={`p-1.5 rounded-lg transition-colors shrink-0 flex items-center justify-center ${
-                isDarkMode ? "hover:bg-slate-800 text-slate-400 hover:text-slate-200" : "hover:bg-slate-200/60 text-slate-500 hover:text-slate-800"
+                isDarkMode ? "hover:bg-slate-800 text-slate-400 hover:text-slate-200" : "bg-[#FAF7F0] hover:bg-[#ECE5D6] text-slate-600 hover:text-slate-900 border border-[#E2DACB]"
               }`}
               aria-label="Tutup asisten"
             >
@@ -368,13 +368,13 @@ export default function LuwuInvestmentAiModal({
 
         {/* MICRO SPATIAL STATUS BAR */}
         <div className={`px-3 py-1.5 text-[10px] sm:text-xs font-semibold border-b flex justify-between items-center shrink-0 ${
-          isDarkMode ? "bg-base/60 text-indigo-300 border-slate-800/80" : "bg-indigo-50/60 text-indigo-800 border-indigo-100/80"
+          isDarkMode ? "bg-base/60 text-indigo-300 border-slate-800/80" : "bg-[#F4F0E6]/80 text-indigo-900 border-[#E2DACB]"
         }`}>
            <div className="flex items-center gap-1.5 truncate">
              <MapPin size={12} className="text-indigo-500 shrink-0" />
              <span className="truncate">RTRW Spasial PostGIS Aktif • Evaluasi Zonasi & Regulasi Luwu</span>
            </div>
-           <span className="font-mono bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded text-[9px] uppercase font-bold shrink-0">
+           <span className="font-mono bg-[#FAF7F0] dark:bg-indigo-500/15 text-indigo-800 dark:text-indigo-300 border border-[#E2DACB] dark:border-transparent px-2 py-0.5 rounded text-[9px] uppercase font-bold shrink-0">
              Terverifikasi
            </span>
         </div>
@@ -388,7 +388,7 @@ export default function LuwuInvestmentAiModal({
               ref={chatContainerRef}
               onScroll={handleScroll}
               className={`flex-1 overflow-y-auto overscroll-contain touch-pan-y ai-custom-scrollbar px-3 sm:px-5 py-3 space-y-3 min-h-0 ${
-                isDarkMode ? "bg-base/40" : "bg-slate-50/40"
+                isDarkMode ? "bg-base/40" : "bg-[#FAF7F0]"
               }`}
               style={{ WebkitOverflowScrolling: "touch" }}
             >
@@ -408,11 +408,11 @@ export default function LuwuInvestmentAiModal({
                         ? "max-w-[92%] sm:max-w-[85%] bg-indigo-600 text-white rounded-tr-sm border-indigo-500 shadow-indigo-600/20"
                         : isDarkMode
                           ? "w-full bg-surface/90 border-slate-700/60 text-slate-100 rounded-tl-sm"
-                          : "w-full bg-white border-slate-200/80 text-slate-900 rounded-tl-sm"
+                          : "w-full bg-[#F4F0E6] border-[#E2DACB] text-slate-900 rounded-tl-sm"
                     }`}
                   >
                     {msg.role === "model" && (
-                      <div className="flex items-center justify-between gap-2 mb-1 pb-1 border-b border-slate-100 dark:border-slate-800">
+                      <div className="flex items-center justify-between gap-2 mb-1 pb-1 border-b border-[#E2DACB] dark:border-slate-800">
                         <div className="flex items-center gap-1.5">
                           <span className="text-[10px] uppercase font-bold text-indigo-600 dark:text-indigo-400 tracking-wider">
                             Asisten Spasial Luwu
@@ -433,8 +433,8 @@ export default function LuwuInvestmentAiModal({
 
               {isAiTyping && (
                 <div className="flex gap-2 items-start justify-start animate-in fade-in slide-in-from-left-2 duration-300">
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0 animate-pulse mt-0.5"></div>
-                  <div className="px-3.5 py-2.5 bg-slate-200 dark:bg-slate-700 rounded-2xl rounded-tl-sm flex items-center justify-center gap-1.5 animate-pulse shadow-sm border border-slate-300/50 dark:border-slate-600/50">
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-[#F4F0E6] border border-[#E2DACB] dark:border-transparent dark:bg-slate-700 flex items-center justify-center shrink-0 animate-pulse mt-0.5"></div>
+                  <div className="px-3.5 py-2.5 bg-[#F4F0E6] dark:bg-slate-700 rounded-2xl rounded-tl-sm flex items-center justify-center gap-1.5 animate-pulse shadow-sm border border-[#E2DACB] dark:border-slate-600/50">
                      <div className="w-1.5 h-1.5 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: '0ms' }}></div>
                      <div className="w-1.5 h-1.5 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: '150ms' }}></div>
                      <div className="w-1.5 h-1.5 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: '300ms' }}></div>
@@ -464,9 +464,9 @@ export default function LuwuInvestmentAiModal({
 
             {/* QUICK SUGGESTION CHIPS (HORIZONTALLY SCROLLABLE ON MOBILE) */}
             <div className={`px-2.5 py-1.5 border-t flex items-center gap-1.5 overflow-x-auto no-scrollbar [scrollbar-width:none] [&::-webkit-scrollbar]:hidden shrink-0 ${
-              isDarkMode ? "bg-surface/90 border-slate-800" : "bg-slate-100/80 border-slate-200/80"
+              isDarkMode ? "bg-surface/90 border-slate-800" : "bg-[#F4F0E6] border-[#E2DACB]"
             }`}>
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 flex items-center gap-1 shrink-0 px-1">
+              <span className="text-[10px] font-bold text-slate-500 dark:text-slate-500 flex items-center gap-1 shrink-0 px-1">
                 <Zap size={11} className="text-amber-500" /> Cepat:
               </span>
               {suggestedQuestions.map((q, i) => (
@@ -475,7 +475,7 @@ export default function LuwuInvestmentAiModal({
                   type="button"
                   onClick={() => handleAiSubmit(undefined, q)}
                   disabled={isAiTyping}
-                  className="px-2.5 py-1 text-[10px] font-semibold rounded-full border whitespace-nowrap transition-all shrink-0 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-700 dark:text-slate-300 shadow-2xs active:scale-95"
+                  className="px-2.5 py-1 text-[10px] font-semibold rounded-full border whitespace-nowrap transition-all shrink-0 bg-[#FAF7F0] dark:bg-slate-800 border-[#E2DACB] dark:border-slate-700 hover:bg-[#ECE5D6] dark:hover:bg-slate-700 hover:border-indigo-500 dark:hover:border-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-400 text-slate-700 dark:text-slate-300 shadow-2xs active:scale-95"
                 >
                   {q}
                 </button>
@@ -484,7 +484,7 @@ export default function LuwuInvestmentAiModal({
 
             {/* STICKY CHAT INPUT & FOOTER */}
             <div className={`p-2.5 sm:p-3 border-t shrink-0 ${
-              isDarkMode ? "bg-surface/95 border-slate-800" : "bg-slate-50/95 border-slate-200/80"
+              isDarkMode ? "bg-surface/95 border-slate-800" : "bg-[#F4F0E6] border-[#E2DACB]"
             }`}>
               <ResponsiveChatInput
                 value={aiInput}
@@ -495,7 +495,7 @@ export default function LuwuInvestmentAiModal({
                 isDarkMode={isDarkMode}
                 className="p-0 border-0 bg-transparent dark:bg-transparent"
               />
-              <div className="mt-1.5 px-1 flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500">
+              <div className="mt-1.5 px-1 flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-500">
                 <span className="truncate">*Pemkab Luwu Tata Ruang Vertikal AI • Basis Data Spasial RTRW Resmi</span>
                 <span className="hidden sm:inline-block font-mono">MPP Simpurusiang</span>
               </div>
@@ -504,7 +504,7 @@ export default function LuwuInvestmentAiModal({
 
           {/* RIGHT SIDEBAR: QUICK INSTRUCTIONS & PROMPTS (DESKTOP ONLY) */}
           <div className={`hidden md:flex md:w-72 border-l flex-col divide-y shrink-0 ${
-            isDarkMode ? "bg-base/20 border-slate-800 divide-slate-800" : "bg-slate-50/50 border-slate-200/80 divide-slate-200/80"
+            isDarkMode ? "bg-base/20 border-slate-800 divide-slate-800" : "bg-[#F4F0E6]/60 border-[#E2DACB] divide-[#E2DACB]"
           }`}>
             {/* Guide Info */}
             <div className="p-4">
@@ -516,7 +516,7 @@ export default function LuwuInvestmentAiModal({
                 Sistem ini ditenagai basis data spasial PostGIS dan AI Spasial Terpadu Pemkab Luwu. Evaluasi keselarasan tata ruang RTRW Kabupaten Luwu dilakukan secara dinamis.
               </p>
               
-              <div className="p-2.5 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-700 dark:text-orange-300 text-[10px] leading-relaxed">
+              <div className="p-2.5 rounded-xl bg-[#FAF7F0] dark:bg-orange-500/10 border border-[#E2DACB] dark:border-orange-500/20 text-amber-900 dark:text-orange-300 text-[10px] leading-relaxed">
                 <strong>Zero Dummy Policy:</strong> Asisten menyajikan data riil resmi arsip tata ruang daerah Luwu.
               </div>
             </div>
@@ -536,7 +536,7 @@ export default function LuwuInvestmentAiModal({
                     className={`w-full text-left p-2.5 rounded-xl border text-[11px] font-medium leading-normal transition-all flex items-start gap-2 ${
                       isDarkMode
                         ? "bg-slate-900 border-slate-800 hover:bg-slate-800 hover:border-slate-700 text-slate-300"
-                        : "bg-white border-slate-200 hover:bg-slate-50 hover:border-slate-300 text-slate-800 shadow-2xs"
+                        : "bg-[#F4F0E6] border-[#E2DACB] hover:bg-[#ECE5D6]/80 text-slate-800 shadow-2xs"
                     }`}
                   >
                     <ArrowRight size={12} className="text-indigo-500 shrink-0 mt-0.5" />

@@ -305,7 +305,7 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
       className={`w-full py-16 sm:py-24 border-t relative overflow-hidden transition-colors duration-500 ${
         isDark 
           ? 'bg-[#061522] border-white/10 text-white' 
-          : 'bg-gradient-to-b from-slate-50 via-white to-slate-50 border-slate-200 text-slate-900'
+          : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900'
       }`}
     >
       {/* Decorative Ambient Background Gradients */}
@@ -337,21 +337,21 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
           <div className={`grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto mt-8 p-3.5 rounded-2xl border backdrop-blur-xl shadow-md transition-all ${
             isDark
               ? 'bg-[#0B253A]/90 border-emerald-500/30 shadow-black/40'
-              : 'bg-white/95 border-slate-200/90 shadow-slate-200/60'
+              : 'bg-[#F4F0E6]/95 border-[#E2DACB] shadow-stone-300/30'
           }`}>
-            <div className="flex flex-col items-center p-2 text-center border-r border-slate-200 dark:border-slate-800 last:border-r-0">
+            <div className="flex flex-col items-center p-2 text-center border-r border-[#E2DACB] dark:border-slate-800 last:border-r-0">
               <span className="text-xl sm:text-2xl font-black text-amber-600 dark:text-amber-400 tracking-tight flex items-center gap-1 font-mono">
                 4.9<Star className="w-4 h-4 fill-amber-500 text-amber-500" />
               </span>
               <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 mt-0.5">{t('testimonials.metricSatisfaction', 'Kepuasan Investor')}</span>
               <span className="text-[9px] text-slate-500 dark:text-slate-400">{t('testimonials.metricSatisfactionDesc', 'Survei IKM Berkala')}</span>
             </div>
-            <div className="flex flex-col items-center p-2 text-center border-r border-slate-200 dark:border-slate-800 last:border-r-0">
+            <div className="flex flex-col items-center p-2 text-center border-r border-[#E2DACB] dark:border-slate-800 last:border-r-0">
               <span className="text-xl sm:text-2xl font-black text-emerald-700 dark:text-emerald-400 tracking-tight font-mono">100%</span>
               <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 mt-0.5">{t('testimonials.metricNib', 'NIB & OSS Valid')}</span>
               <span className="text-[9px] text-slate-500 dark:text-slate-400">{t('testimonials.metricNibDesc', 'Tanpa Sengketa')}</span>
             </div>
-            <div className="flex flex-col items-center p-2 text-center border-r border-slate-200 dark:border-slate-800 last:border-r-0">
+            <div className="flex flex-col items-center p-2 text-center border-r border-[#E2DACB] dark:border-slate-800 last:border-r-0">
               <span className="text-xl sm:text-2xl font-black text-emerald-700 dark:text-emerald-400 tracking-tight font-mono">&lt; 24 Jam</span>
               <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 mt-0.5">{t('testimonials.metricHelpdesk', 'Respon Helpdesk')}</span>
               <span className="text-[9px] text-slate-500 dark:text-slate-400">{t('testimonials.metricHelpdeskDesc', 'Layanan Prioritas')}</span>
@@ -365,7 +365,7 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
         </div>
 
         {/* Category Filter & Controls Header */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-3 border-b border-[#E2DACB] dark:border-slate-800">
           <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
             {[
               { id: 'all', label: t('testimonials.tabAll', 'Semua Ulasan Verified') },
@@ -384,7 +384,7 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
                     ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md'
                     : isDark 
                       ? 'bg-slate-800/80 text-slate-300 hover:text-white border border-slate-700' 
-                      : 'bg-white text-slate-700 hover:text-slate-950 border border-slate-200 shadow-xs hover:border-slate-300'
+                      : 'bg-[#F4F0E6] text-slate-700 hover:text-slate-950 hover:bg-[#ECE5D6] border border-[#E2DACB] shadow-xs'
                 }`}
               >
                 {cat.label}
@@ -401,7 +401,7 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
                 className={`p-2 rounded-xl border text-xs flex items-center gap-1 transition-colors ${
                   isDark
                     ? 'bg-slate-800 text-slate-300 border-slate-700 hover:text-white'
-                    : 'bg-white text-slate-700 border-slate-200 hover:text-slate-950'
+                    : 'bg-[#F4F0E6] text-slate-700 border-[#E2DACB] hover:bg-[#ECE5D6] hover:text-slate-950'
                 }`}
                 title={isAutoplayPaused ? "Lanjutkan putar otomatis" : "Jeda putar otomatis"}
               >
@@ -415,7 +415,7 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
                   className={`p-2 rounded-xl border transition-all active:scale-95 cursor-pointer ${
                     isDark
                       ? 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700'
-                      : 'bg-white border-slate-200 text-slate-800 hover:bg-slate-100 shadow-xs'
+                      : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-800 hover:bg-[#ECE5D6] shadow-xs'
                   }`}
                   aria-label="Halaman Sebelumnya"
                 >
@@ -432,7 +432,7 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
                   className={`p-2 rounded-xl border transition-all active:scale-95 cursor-pointer ${
                     isDark
                       ? 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700'
-                      : 'bg-white border-slate-200 text-slate-800 hover:bg-slate-100 shadow-xs'
+                      : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-800 hover:bg-[#ECE5D6] shadow-xs'
                   }`}
                   aria-label="Halaman Selanjutnya"
                 >
@@ -479,7 +479,7 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
                       className={`p-6 sm:p-7 rounded-3xl border flex flex-col justify-between relative overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
                         isDark
                           ? 'bg-[#0B253A]/90 border-slate-800 hover:border-emerald-500/50 hover:shadow-2xl hover:shadow-black/60'
-                          : 'bg-white border-slate-200/90 hover:border-emerald-400 hover:shadow-xl hover:shadow-slate-200/60 shadow-xs'
+                          : 'bg-[#F4F0E6] border-[#E2DACB] hover:border-emerald-500/60 hover:shadow-xl hover:shadow-stone-300/30 shadow-xs'
                       }`}
                     >
                       {/* Top Accent Strip */}
@@ -506,7 +506,7 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
                           </div>
 
                           {item.investment_scale && (
-                            <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-950 dark:text-amber-300 border border-amber-300 dark:border-amber-500/30">
+                            <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#FAF7F0] dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 border border-[#E2DACB] dark:border-amber-500/30">
                               {item.investment_scale}
                             </span>
                           )}
@@ -519,7 +519,7 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
                       </div>
 
                       {/* Investor Identity Footer */}
-                      <div className="pt-4 border-t border-slate-200 dark:border-slate-800/80 space-y-3 relative z-10">
+                      <div className="pt-4 border-t border-[#E2DACB] dark:border-slate-800/80 space-y-3 relative z-10">
                         <div className="flex items-center gap-3">
                           <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-700 text-white flex items-center justify-center font-black text-sm shadow-md shrink-0">
                             {initials}
@@ -557,10 +557,10 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
         <div className={`mt-12 p-6 sm:p-7 rounded-3xl border backdrop-blur-xl flex flex-col md:flex-row items-center justify-between gap-5 ${
           isDark 
             ? 'bg-[#0B253A]/90 border-emerald-500/30 text-slate-200 shadow-xl' 
-            : 'bg-white/95 border-slate-200 text-slate-800 shadow-lg shadow-slate-200/50'
+            : 'bg-[#F4F0E6]/95 border-[#E2DACB] text-slate-800 shadow-lg shadow-stone-300/30'
         }`}>
           <div className="flex items-center gap-3.5 text-center md:text-left">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-[#FAF7F0] dark:bg-emerald-950/80 border border-[#E2DACB] dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-400 flex items-center justify-center shrink-0">
               <ShieldCheck className="w-7 h-7" />
             </div>
             <div>
@@ -598,18 +598,26 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
               className={`w-full max-w-lg p-6 sm:p-8 rounded-3xl border shadow-2xl relative overflow-hidden ${
                 isDark 
                   ? 'bg-slate-900 border-slate-800 text-white shadow-black' 
-                  : 'bg-white border-slate-200 text-slate-900'
+                  : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-900'
               }`}
             >
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-500/10 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                className={`absolute top-4 right-4 p-2 rounded-full transition-colors cursor-pointer ${
+                  isDark
+                    ? 'hover:bg-slate-800 text-slate-400 hover:text-white'
+                    : 'bg-[#FAF7F0] hover:bg-[#ECE5D6] text-slate-700 border border-[#E2DACB]'
+                }`}
               >
                 <X className="w-5 h-5" />
               </button>
 
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center">
+                <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center ${
+                  isDark
+                    ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                    : 'bg-[#FAF7F0] border-[#E2DACB] text-emerald-700'
+                }`}>
                   <Briefcase className="w-6 h-6" />
                 </div>
                 <div>
@@ -639,7 +647,7 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
                       value={formData.nama}
                       onChange={e => setFormData({ ...formData, nama: e.target.value })}
                       className={`w-full px-3.5 py-2.5 rounded-xl text-xs border transition-colors outline-none focus:ring-2 focus:ring-emerald-500 ${
-                        isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
+                        isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900'
                       }`}
                     />
                   </div>
@@ -650,7 +658,7 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
                       value={formData.layanan}
                       onChange={e => setFormData({ ...formData, layanan: e.target.value })}
                       className={`w-full px-3.5 py-2.5 rounded-xl text-xs border transition-colors outline-none focus:ring-2 focus:ring-emerald-500 ${
-                        isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
+                        isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900'
                       }`}
                     >
                       <option value="Perizinan Berusaha (NIB / OSS)">Perizinan Berusaha (NIB / OSS)</option>
@@ -695,7 +703,7 @@ export default function TestimonialSection({ isDark }: { isDark: boolean }) {
                       value={formData.teks}
                       onChange={e => setFormData({ ...formData, teks: e.target.value })}
                       className={`w-full px-3.5 py-2.5 rounded-xl text-xs border transition-colors outline-none focus:ring-2 focus:ring-emerald-500 ${
-                        isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
+                        isDark ? 'bg-slate-800 border-slate-700 text-white' : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900'
                       }`}
                     />
                   </div>

@@ -115,13 +115,13 @@ export function OssRoiSimulatorInputs({
   const getBusinessScaleBadge = (capitalStr: string) => {
     const capitalVal = parseFloat(capitalStr) || 0;
     if (capitalVal <= 1000000000) {
-      return { label: t("business_micro", "Usaha Mikro"), color: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20" };
+      return { label: t("business_micro", "Usaha Mikro"), color: "bg-[#F4F0E6] dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border border-[#E2DACB] dark:border-emerald-500/20" };
     } else if (capitalVal <= 5000000000) {
-      return { label: t("business_small", "Usaha Kecil"), color: "bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/20" };
+      return { label: t("business_small", "Usaha Kecil"), color: "bg-[#F4F0E6] dark:bg-blue-500/10 text-blue-800 dark:text-blue-400 border border-[#E2DACB] dark:border-blue-500/20" };
     } else if (capitalVal <= 10000000000) {
-      return { label: t("business_medium", "Usaha Menengah"), color: "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20" };
+      return { label: t("business_medium", "Usaha Menengah"), color: "bg-[#F4F0E6] dark:bg-amber-500/10 text-amber-800 dark:text-amber-400 border border-[#E2DACB] dark:border-amber-500/20" };
     } else {
-      return { label: t("business_large", "Usaha Besar"), color: "bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border border-indigo-500/20" };
+      return { label: t("business_large", "Usaha Besar"), color: "bg-[#F4F0E6] dark:bg-indigo-500/10 text-indigo-800 dark:text-indigo-400 border border-[#E2DACB] dark:border-indigo-500/20" };
     }
   };
 
@@ -132,9 +132,9 @@ export function OssRoiSimulatorInputs({
   return (
     <div className="space-y-4 sm:space-y-5">
       {/* Toggle OSS/Odoo Standard Switcher */}
-      <div className={`flex items-center justify-between gap-3 p-3 sm:p-3.5 rounded-2xl border transition-all duration-300 ${isDetailed ? 'bg-emerald-50 dark:bg-emerald-500/15 border-emerald-300 dark:border-emerald-500/30' : 'bg-slate-50 dark:bg-[#0A2238]/60 border-slate-200 dark:border-white/10'}`}>
+      <div className={`flex items-center justify-between gap-3 p-3 sm:p-3.5 rounded-2xl border transition-all duration-300 ${isDetailed ? 'bg-[#FAF7F0] dark:bg-emerald-500/15 border-emerald-500/50 dark:border-emerald-500/30' : 'bg-[#FAF7F0] dark:bg-[#0A2238]/60 border-[#E2DACB] dark:border-white/10'}`}>
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="p-2 rounded-xl bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 shrink-0">
+          <div className="p-2 rounded-xl bg-[#F4F0E6] dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-[#E2DACB] dark:border-transparent shrink-0">
             <Settings2 className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
           <div className="min-w-0">
@@ -153,7 +153,7 @@ export function OssRoiSimulatorInputs({
             checked={isDetailed}
             onChange={(e) => toggleDetailed(e.target.checked)}
           />
-          <div className="w-11 h-6 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+          <div className="w-11 h-6 bg-[#E2DACB] dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[#FAF7F0] after:border-[#D5CBB8] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
         </label>
       </div>
 
@@ -168,7 +168,7 @@ export function OssRoiSimulatorInputs({
             className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5"
           >
             {/* CAPEX Input Card */}
-            <div className="p-4 rounded-2xl border bg-slate-50/80 dark:bg-elevated border-slate-200/90 dark:border-white/10 shadow-sm dark:shadow-lg dark:shadow-black/20 flex flex-col justify-between">
+            <div className="p-4 rounded-2xl border bg-[#FAF7F0] dark:bg-elevated border-[#E2DACB] dark:border-white/10 shadow-sm dark:shadow-lg dark:shadow-black/20 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2">
                   <label className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
@@ -193,14 +193,14 @@ export function OssRoiSimulatorInputs({
                       e.target.select();
                     }}
                     onChange={(e) => handleNumericInput(e.target.value, setCapital)}
-                    className="w-full pl-10 pr-3 py-2.5 sm:py-3 min-h-[44px] rounded-xl border border-slate-300 dark:border-slate-700 font-mono font-bold text-sm sm:text-base outline-none transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/50 bg-white text-gray-900 placeholder-gray-400 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400"
+                    className="w-full pl-10 pr-3 py-2.5 sm:py-3 min-h-[44px] rounded-xl border border-[#E2DACB] dark:border-slate-700 font-mono font-bold text-sm sm:text-base outline-none transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/50 bg-[#F4F0E6] text-slate-900 placeholder-slate-500 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400"
                     placeholder="Contoh: 5.000.000.000"
                   />
                 </div>
 
                 {/* Tactile Preset Chips (Anti-Form Fatigue on Mobile) */}
                 <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold mr-0.5 flex items-center gap-1">
+                  <span className="text-[10px] text-slate-600 dark:text-slate-400 font-semibold mr-0.5 flex items-center gap-1">
                     <Sparkles className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> Cepat:
                   </span>
                   {capexPresets.map((preset) => (
@@ -211,7 +211,7 @@ export function OssRoiSimulatorInputs({
                       className={`px-2.5 py-1 rounded-lg text-[10.5px] font-bold transition-all cursor-pointer ${
                         capital === preset.value
                           ? 'bg-emerald-600 text-white shadow-sm'
-                          : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 dark:bg-surface dark:hover:bg-slate-700 dark:text-slate-300 dark:border-white/10'
+                          : 'bg-[#F4F0E6] hover:bg-[#ECE5D6] text-slate-800 border border-[#E2DACB] dark:bg-surface dark:hover:bg-slate-700 dark:text-slate-300 dark:border-white/10'
                       }`}
                     >
                       {preset.label}
@@ -222,7 +222,7 @@ export function OssRoiSimulatorInputs({
             </div>
 
             {/* OPEX Input Card */}
-            <div className="p-4 rounded-2xl border bg-slate-50/80 dark:bg-elevated border-slate-200/90 dark:border-white/10 shadow-sm dark:shadow-lg dark:shadow-black/20 flex flex-col justify-between">
+            <div className="p-4 rounded-2xl border bg-[#FAF7F0] dark:bg-elevated border-[#E2DACB] dark:border-white/10 shadow-sm dark:shadow-lg dark:shadow-black/20 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2">
                   <label className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
@@ -247,14 +247,14 @@ export function OssRoiSimulatorInputs({
                       e.target.select();
                     }}
                     onChange={(e) => handleNumericInput(e.target.value, setOpex)}
-                    className="w-full pl-10 pr-3 py-2.5 sm:py-3 min-h-[44px] rounded-xl border border-slate-300 dark:border-slate-700 font-mono font-bold text-sm sm:text-base outline-none transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/50 bg-white text-gray-900 placeholder-gray-400 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400"
+                    className="w-full pl-10 pr-3 py-2.5 sm:py-3 min-h-[44px] rounded-xl border border-[#E2DACB] dark:border-slate-700 font-mono font-bold text-sm sm:text-base outline-none transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/50 bg-[#F4F0E6] text-slate-900 placeholder-slate-500 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400"
                     placeholder="Contoh: 1.000.000.000"
                   />
                 </div>
 
                 {/* Tactile Preset Chips for OPEX */}
                 <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold mr-0.5 flex items-center gap-1">
+                  <span className="text-[10px] text-slate-600 dark:text-slate-400 font-semibold mr-0.5 flex items-center gap-1">
                     <Sparkles className="w-3 h-3 text-indigo-600 dark:text-indigo-400" /> Cepat:
                   </span>
                   {opexPresets.map((preset) => {
@@ -268,7 +268,7 @@ export function OssRoiSimulatorInputs({
                         className={`px-2.5 py-1 rounded-lg text-[10.5px] font-bold transition-all cursor-pointer ${
                           isSelected
                             ? 'bg-indigo-600 text-white shadow-sm'
-                            : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 dark:bg-surface dark:hover:bg-slate-700 dark:text-slate-300 dark:border-white/10'
+                            : 'bg-[#F4F0E6] hover:bg-[#ECE5D6] text-slate-800 border border-[#E2DACB] dark:bg-surface dark:hover:bg-slate-700 dark:text-slate-300 dark:border-white/10'
                         }`}
                       >
                         {preset.label}
@@ -288,14 +288,14 @@ export function OssRoiSimulatorInputs({
             className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-4 w-full"
           >
             {/* CAPEX Detailed Form */}
-            <div className="p-3.5 sm:p-4 rounded-2xl border overflow-hidden transition-all duration-300 flex flex-col bg-slate-50/90 dark:bg-elevated border-slate-200/90 dark:border-white/10 shadow-sm dark:shadow-lg dark:shadow-black/20">
+            <div className="p-3.5 sm:p-4 rounded-2xl border overflow-hidden transition-all duration-300 flex flex-col bg-[#FAF7F0] dark:bg-elevated border-[#E2DACB] dark:border-white/10 shadow-sm dark:shadow-lg dark:shadow-black/20">
               <button 
                 type="button"
                 onClick={() => setIsCapexExpanded(!isCapexExpanded)}
                 className="w-full flex items-center justify-between gap-2 group text-left min-h-[44px]"
               >
                 <div className="flex items-center gap-2 min-w-0">
-                  <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 shrink-0">
+                  <div className="p-1.5 rounded-lg bg-[#F4F0E6] dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-[#E2DACB] dark:border-transparent shrink-0">
                     <Calculator className="w-4 h-4" />
                   </div>
                   <div className="min-w-0">
@@ -308,7 +308,7 @@ export function OssRoiSimulatorInputs({
                   <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 font-mono">
                     {formatRupiahKompak(capital)}
                   </span>
-                  <div className="p-1 rounded-full bg-slate-200 dark:bg-slate-800 transition-colors">
+                  <div className="p-1 rounded-full bg-[#F4F0E6] border border-[#E2DACB] dark:border-transparent dark:bg-slate-800 transition-colors">
                     <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isCapexExpanded ? 'rotate-180 text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`} />
                   </div>
                 </div>
@@ -344,13 +344,13 @@ export function OssRoiSimulatorInputs({
                                 const numericValue = e.target.value.replace(/\D/g, "");
                                 setCapexDetails(prev => ({ ...prev, [field.id]: numericValue }));
                               }}
-                              className="w-full pl-8 pr-2.5 py-1.5 min-h-[40px] text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 outline-none transition-all focus:ring-2 focus:ring-emerald-500/30 bg-white text-gray-900 placeholder-gray-400 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400"
+                              className="w-full pl-8 pr-2.5 py-1.5 min-h-[40px] text-xs font-semibold rounded-xl border border-[#E2DACB] dark:border-slate-700 outline-none transition-all focus:ring-2 focus:ring-emerald-500/30 bg-[#F4F0E6] text-slate-900 placeholder-slate-500 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400"
                             />
                           </div>
                         </div>
                       ))}
                     </div>
-                    <div className="mt-2 pt-2.5 border-t border-dashed border-slate-200 dark:border-white/10 flex justify-between items-center gap-2">
+                    <div className="mt-2 pt-2.5 border-t border-dashed border-[#E2DACB] dark:border-white/10 flex justify-between items-center gap-2">
                       <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
                         {t("total_capex", "Total CAPEX:")}
                       </span>
@@ -364,14 +364,14 @@ export function OssRoiSimulatorInputs({
             </div>
 
             {/* Labor Detailed Form */}
-            <div className="p-3.5 sm:p-4 rounded-2xl border overflow-hidden transition-all duration-300 flex flex-col bg-slate-50/90 dark:bg-elevated border-slate-200/90 dark:border-white/10 shadow-sm dark:shadow-lg dark:shadow-black/20">
+            <div className="p-3.5 sm:p-4 rounded-2xl border overflow-hidden transition-all duration-300 flex flex-col bg-[#FAF7F0] dark:bg-elevated border-[#E2DACB] dark:border-white/10 shadow-sm dark:shadow-lg dark:shadow-black/20">
               <button 
                 type="button"
                 onClick={() => setIsLaborExpanded(!isLaborExpanded)}
                 className="w-full flex items-center justify-between gap-2 group text-left min-h-[44px]"
               >
                 <div className="flex items-center gap-2 min-w-0">
-                  <div className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 shrink-0">
+                  <div className="p-1.5 rounded-lg bg-[#F4F0E6] dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border border-[#E2DACB] dark:border-transparent shrink-0">
                     <Users className="w-4 h-4" />
                   </div>
                   <h4 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-slate-900 dark:text-white truncate">
@@ -382,7 +382,7 @@ export function OssRoiSimulatorInputs({
                   <span className="text-xs font-bold text-indigo-700 dark:text-indigo-400 font-mono">
                     {formatRupiahKompak((((parseInt(tkaCount) || 0) * (parseInt(tkaSalary) || 0)) + ((parseInt(tklCount) || 0) * (parseInt(tklSalary) || 0))) * 12)}
                   </span>
-                  <div className="p-1 rounded-full bg-slate-200 dark:bg-slate-800 transition-colors">
+                  <div className="p-1 rounded-full bg-[#F4F0E6] border border-[#E2DACB] dark:border-transparent dark:bg-slate-800 transition-colors">
                     <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isLaborExpanded ? 'rotate-180 text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'}`} />
                   </div>
                 </div>
@@ -398,10 +398,10 @@ export function OssRoiSimulatorInputs({
                   >
                     <div className="pt-3 pb-2 space-y-3">
                       {/* TKL Input Group */}
-                      <div className="p-2.5 rounded-xl bg-white dark:bg-[#0A2238]/60 border border-slate-200 dark:border-white/10 space-y-2">
+                      <div className="p-2.5 rounded-xl bg-[#F4F0E6] dark:bg-[#0A2238]/60 border border-[#E2DACB] dark:border-white/10 space-y-2">
                         <div className="flex items-center justify-between">
                           <h5 className="text-[11px] font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-400">{t("local_workers", "Tenaga Kerja Lokal (TKL)")}</h5>
-                          <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                          <span className="text-[10px] text-slate-600 dark:text-slate-400 font-mono">
                             {formatRupiahKompak((parseInt(tklCount) || 0) * (parseInt(tklSalary) || 0) * 12)} / thn
                           </span>
                         </div>
@@ -416,7 +416,7 @@ export function OssRoiSimulatorInputs({
                               value={formatInputAmount(tklCount)}
                               onFocus={(e) => { e.target.select(); setTklCount(""); }}
                               onChange={(e) => setTklCount(e.target.value.replace(/\D/g, ""))}
-                              className="w-full px-2.5 py-1.5 min-h-[40px] text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 outline-none transition-all focus:ring-2 focus:ring-indigo-500/30 bg-white text-gray-900 placeholder-gray-400 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400"
+                              className="w-full px-2.5 py-1.5 min-h-[40px] text-xs font-semibold rounded-xl border border-[#E2DACB] dark:border-slate-700 outline-none transition-all focus:ring-2 focus:ring-indigo-500/30 bg-[#FAF7F0] text-slate-900 placeholder-slate-500 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400"
                               placeholder="50"
                             />
                           </div>
@@ -430,7 +430,7 @@ export function OssRoiSimulatorInputs({
                               value={formatInputAmount(tklSalary)}
                               onFocus={(e) => { e.target.select(); setTklSalary(""); }}
                               onChange={(e) => setTklSalary(e.target.value.replace(/\D/g, ""))}
-                              className="w-full px-2.5 py-1.5 min-h-[40px] text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 outline-none transition-all focus:ring-2 focus:ring-indigo-500/30 bg-white text-gray-900 placeholder-gray-400 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400"
+                              className="w-full px-2.5 py-1.5 min-h-[40px] text-xs font-semibold rounded-xl border border-[#E2DACB] dark:border-slate-700 outline-none transition-all focus:ring-2 focus:ring-indigo-500/30 bg-[#FAF7F0] text-slate-900 placeholder-slate-500 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400"
                               placeholder="3.500.000"
                             />
                           </div>
@@ -438,10 +438,10 @@ export function OssRoiSimulatorInputs({
                       </div>
 
                       {/* TKA Input Group */}
-                      <div className="p-2.5 rounded-xl bg-white dark:bg-[#0A2238]/60 border border-slate-200 dark:border-white/10 space-y-2">
+                      <div className="p-2.5 rounded-xl bg-[#F4F0E6] dark:bg-[#0A2238]/60 border border-[#E2DACB] dark:border-white/10 space-y-2">
                         <div className="flex items-center justify-between">
                           <h5 className="text-[11px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400">{t("foreign_workers", "Tenaga Asing (TKA)")}</h5>
-                          <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                          <span className="text-[10px] text-slate-600 dark:text-slate-400 font-mono">
                             {formatRupiahKompak((parseInt(tkaCount) || 0) * (parseInt(tkaSalary) || 0) * 12)} / thn
                           </span>
                         </div>
@@ -456,7 +456,7 @@ export function OssRoiSimulatorInputs({
                               value={formatInputAmount(tkaCount)}
                               onFocus={(e) => { e.target.select(); setTkaCount(""); }}
                               onChange={(e) => setTkaCount(e.target.value.replace(/\D/g, ""))}
-                              className="w-full px-2.5 py-1.5 min-h-[40px] text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 outline-none transition-all focus:ring-2 focus:ring-indigo-500/30 bg-white text-gray-900 placeholder-gray-400 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400"
+                              className="w-full px-2.5 py-1.5 min-h-[40px] text-xs font-semibold rounded-xl border border-[#E2DACB] dark:border-slate-700 outline-none transition-all focus:ring-2 focus:ring-indigo-500/30 bg-[#FAF7F0] text-slate-900 placeholder-slate-500 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400"
                               placeholder="2"
                             />
                           </div>
@@ -470,7 +470,7 @@ export function OssRoiSimulatorInputs({
                               value={formatInputAmount(tkaSalary)}
                               onFocus={(e) => { e.target.select(); setTkaSalary(""); }}
                               onChange={(e) => setTkaSalary(e.target.value.replace(/\D/g, ""))}
-                              className="w-full px-2.5 py-1.5 min-h-[40px] text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 outline-none transition-all focus:ring-2 focus:ring-indigo-500/30 bg-white text-gray-900 placeholder-gray-400 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400"
+                              className="w-full px-2.5 py-1.5 min-h-[40px] text-xs font-semibold rounded-xl border border-[#E2DACB] dark:border-slate-700 outline-none transition-all focus:ring-2 focus:ring-indigo-500/30 bg-[#FAF7F0] text-slate-900 placeholder-slate-500 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400"
                               placeholder="15.000.000"
                             />
                           </div>
@@ -478,7 +478,7 @@ export function OssRoiSimulatorInputs({
                       </div>
                     </div>
                     
-                    <div className="mt-2 pt-2.5 border-t border-dashed border-slate-200 dark:border-white/10 flex justify-between items-center gap-2">
+                    <div className="mt-2 pt-2.5 border-t border-dashed border-[#E2DACB] dark:border-white/10 flex justify-between items-center gap-2">
                       <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
                         {t("total_labor_year", "Total Biaya TK:")}
                       </span>
@@ -492,14 +492,14 @@ export function OssRoiSimulatorInputs({
             </div>
 
             {/* OPEX Detailed Form */}
-            <div className="p-3.5 sm:p-4 rounded-2xl border overflow-hidden transition-all duration-300 flex flex-col bg-slate-50/90 dark:bg-elevated border-slate-200/90 dark:border-white/10 shadow-sm dark:shadow-lg dark:shadow-black/20">
+            <div className="p-3.5 sm:p-4 rounded-2xl border overflow-hidden transition-all duration-300 flex flex-col bg-[#FAF7F0] dark:bg-elevated border-[#E2DACB] dark:border-white/10 shadow-sm dark:shadow-lg dark:shadow-black/20">
               <button 
                 type="button"
                 onClick={() => setIsOpexExpanded(!isOpexExpanded)}
                 className="w-full flex items-center justify-between gap-2 group text-left min-h-[44px]"
               >
                 <div className="flex items-center gap-2 min-w-0">
-                  <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-700 dark:text-blue-400 shrink-0">
+                  <div className="p-1.5 rounded-lg bg-[#F4F0E6] dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-[#E2DACB] dark:border-transparent shrink-0">
                     <Calculator className="w-4 h-4" />
                   </div>
                   <h4 className="font-bold text-xs sm:text-sm uppercase tracking-wider text-slate-900 dark:text-white truncate">
@@ -510,7 +510,7 @@ export function OssRoiSimulatorInputs({
                   <span className="text-xs font-bold text-blue-700 dark:text-blue-400 font-mono">
                     {formatRupiahKompak(opex)}
                   </span>
-                  <div className="p-1 rounded-full bg-slate-200 dark:bg-slate-800 transition-colors">
+                  <div className="p-1 rounded-full bg-[#F4F0E6] border border-[#E2DACB] dark:border-transparent dark:bg-slate-800 transition-colors">
                     <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isOpexExpanded ? 'rotate-180 text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'}`} />
                   </div>
                 </div>
@@ -546,13 +546,13 @@ export function OssRoiSimulatorInputs({
                                 const numericValue = e.target.value.replace(/\D/g, "");
                                 setOpexDetails(prev => ({ ...prev, [field.id]: numericValue }));
                               }}
-                              className="w-full pl-8 pr-2.5 py-1.5 min-h-[40px] text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 outline-none transition-all focus:ring-2 focus:ring-blue-500/30 bg-white text-gray-900 placeholder-gray-400 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400"
+                              className="w-full pl-8 pr-2.5 py-1.5 min-h-[40px] text-xs font-semibold rounded-xl border border-[#E2DACB] dark:border-slate-700 outline-none transition-all focus:ring-2 focus:ring-blue-500/30 bg-[#F4F0E6] text-slate-900 placeholder-slate-500 dark:bg-slate-800 dark:text-white dark:placeholder-slate-400"
                             />
                           </div>
                         </div>
                       ))}
                     </div>
-                    <div className="mt-2 pt-2.5 border-t border-dashed border-slate-200 dark:border-white/10 flex justify-between items-center gap-2">
+                    <div className="mt-2 pt-2.5 border-t border-dashed border-[#E2DACB] dark:border-white/10 flex justify-between items-center gap-2">
                       <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
                         {t("total_opex", "Total OPEX:")}
                       </span>

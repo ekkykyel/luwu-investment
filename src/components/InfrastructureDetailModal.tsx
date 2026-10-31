@@ -76,22 +76,22 @@ export const InfrastructureDetailModal: React.FC<InfrastructureDetailModalProps>
           className={`relative w-[calc(100vw-20px)] sm:w-full max-w-3xl max-h-[92vh] sm:max-h-[88vh] rounded-2xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden border transition-all ${
             isDark 
               ? 'bg-slate-900 text-white border-slate-700/80 shadow-black/80' 
-              : 'bg-white text-slate-900 border-slate-200 shadow-2xl'
+              : 'bg-[#F4F0E6] text-slate-900 border-[#E2DACB] shadow-2xl'
           }`}
         >
           {/* HEADER */}
           <div className={`p-3.5 sm:p-5 flex items-center justify-between border-b shrink-0 ${
-            isDark ? 'bg-slate-950/70 border-slate-800' : 'bg-slate-50 border-slate-200'
+            isDark ? 'bg-slate-950/70 border-slate-800' : 'bg-[#FAF7F0] border-[#E2DACB]'
           }`}>
             <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
               <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 shadow-inner ${
                 facility.type === 'airport' 
-                  ? 'bg-amber-500/15 text-amber-500 border border-amber-500/30'
+                  ? isDark ? 'bg-amber-500/15 text-amber-500 border border-amber-500/30' : 'bg-[#F4F0E6] text-amber-700 border border-[#E2DACB]'
                   : facility.type === 'port'
-                  ? 'bg-teal-500/15 text-teal-400 border border-teal-500/30'
+                  ? isDark ? 'bg-teal-500/15 text-teal-400 border border-teal-500/30' : 'bg-[#F4F0E6] text-teal-700 border border-[#E2DACB]'
                   : facility.type === 'mpp'
-                  ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                  : 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/30'
+                  ? isDark ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : 'bg-[#F4F0E6] text-emerald-700 border border-[#E2DACB]'
+                  : isDark ? 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/30' : 'bg-[#F4F0E6] text-indigo-700 border border-[#E2DACB]'
               }`}>
                 <IconComp size={22} className="shrink-0" />
               </div>
@@ -99,16 +99,16 @@ export const InfrastructureDetailModal: React.FC<InfrastructureDetailModalProps>
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase border ${
                     facility.status === 'Beroperasi Aktif' || facility.status === 'Published'
-                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                      : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                      ? isDark ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-[#F4F0E6] text-emerald-800 border-[#E2DACB]'
+                      : isDark ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' : 'bg-[#F4F0E6] text-amber-800 border-[#E2DACB]'
                   }`}>
                     <span className={`w-1.5 h-1.5 rounded-full ${
-                      facility.status === 'Beroperasi Aktif' || facility.status === 'Published' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'
+                      facility.status === 'Beroperasi Aktif' || facility.status === 'Published' ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
                     }`} />
                     {facility.status}
                   </span>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
-                    isDark ? 'bg-slate-800 text-slate-300' : 'bg-slate-200 text-slate-700'
+                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border ${
+                    isDark ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-[#F4F0E6] text-slate-700 border-[#E2DACB]'
                   }`}>
                     {facility.tag}
                   </span>
@@ -127,7 +127,7 @@ export const InfrastructureDetailModal: React.FC<InfrastructureDetailModalProps>
                   className={`p-2 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 ${
                     isDark
                       ? 'bg-slate-800 hover:bg-slate-700 text-emerald-400 border-slate-700'
-                      : 'bg-slate-100 hover:bg-slate-200 text-emerald-700 border-slate-300'
+                      : 'bg-[#F4F0E6] hover:bg-[#ECE5D6] text-emerald-700 border-[#E2DACB]'
                   }`}
                   title="Edit Data Infrastruktur"
                 >
@@ -141,7 +141,7 @@ export const InfrastructureDetailModal: React.FC<InfrastructureDetailModalProps>
                 className={`p-2 rounded-xl border transition-all cursor-pointer min-h-[40px] min-w-[40px] flex items-center justify-center ${
                   isDark 
                     ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border-slate-700' 
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border-slate-300'
+                    : 'bg-[#F4F0E6] hover:bg-[#ECE5D6] text-slate-700 hover:text-slate-900 border-[#E2DACB]'
                 }`}
                 title="Tutup"
               >
@@ -190,9 +190,9 @@ export const InfrastructureDetailModal: React.FC<InfrastructureDetailModalProps>
 
             {/* OVERVIEW & DETAILED INFO */}
             <div className={`p-3.5 sm:p-5 rounded-2xl border ${
-              isDark ? 'bg-slate-800/40 border-slate-700/60' : 'bg-slate-50 border-slate-200/80'
+              isDark ? 'bg-slate-800/40 border-slate-700/60' : 'bg-[#FAF7F0] border-[#E2DACB]'
             }`}>
-              <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider mb-2 flex items-center gap-2 text-emerald-500">
+              <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider mb-2 flex items-center gap-2 text-emerald-700 dark:text-emerald-500">
                 <FileText size={15} />
                 <span>Deskripsi & Fungsi Strategis</span>
               </h4>
@@ -204,7 +204,7 @@ export const InfrastructureDetailModal: React.FC<InfrastructureDetailModalProps>
             {/* TECHNICAL SPECIFICATIONS GRID */}
             {facility.specs && facility.specs.length > 0 && (
               <div>
-                <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider mb-2.5 flex items-center gap-2 text-indigo-400">
+                <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider mb-2.5 flex items-center gap-2 text-indigo-700 dark:text-indigo-400">
                   <Compass size={15} />
                   <span>Spesifikasi & Kapasitas Teknis</span>
                 </h4>
@@ -213,7 +213,7 @@ export const InfrastructureDetailModal: React.FC<InfrastructureDetailModalProps>
                     <div
                       key={idx}
                       className={`p-2.5 sm:p-3 rounded-xl border flex flex-col justify-between ${
-                        isDark ? 'bg-slate-800/60 border-slate-700/60' : 'bg-white border-slate-200 shadow-2xs'
+                        isDark ? 'bg-slate-800/60 border-slate-700/60' : 'bg-[#FAF7F0] border-[#E2DACB] shadow-2xs'
                       }`}
                     >
                       <span className={`text-[10px] uppercase font-mono tracking-wider font-bold mb-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
@@ -231,16 +231,16 @@ export const InfrastructureDetailModal: React.FC<InfrastructureDetailModalProps>
             {/* STRATEGIC ADVANTAGES */}
             {facility.advantages && facility.advantages.length > 0 && (
               <div>
-                <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider mb-2.5 flex items-center gap-2 text-amber-500">
+                <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider mb-2.5 flex items-center gap-2 text-amber-700 dark:text-amber-500">
                   <Sparkles size={15} />
                   <span>Keunggulan & Manfaat bagi Investor</span>
                 </h4>
                 <div className={`p-3.5 sm:p-4 rounded-2xl border space-y-2 ${
-                  isDark ? 'bg-slate-800/40 border-slate-700/60' : 'bg-emerald-50/40 border-emerald-100'
+                  isDark ? 'bg-slate-800/40 border-slate-700/60' : 'bg-[#FAF7F0] border-[#E2DACB]'
                 }`}>
                   {facility.advantages.map((adv, idx) => (
                     <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm">
-                      <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" />
+                      <CheckCircle2 size={16} className="text-emerald-600 dark:text-emerald-500 shrink-0 mt-0.5" />
                       <span className={isDark ? 'text-slate-300' : 'text-slate-800'}>
                         {adv}
                       </span>
@@ -253,9 +253,9 @@ export const InfrastructureDetailModal: React.FC<InfrastructureDetailModalProps>
             {/* CONNECTIVITY & ACCESS */}
             {facility.connectivity && (
               <div className={`p-3 sm:p-4 rounded-xl border flex items-center gap-3 ${
-                isDark ? 'bg-blue-950/20 border-blue-500/20 text-blue-300' : 'bg-blue-50 border-blue-200 text-blue-900'
+                isDark ? 'bg-blue-950/20 border-blue-500/20 text-blue-300' : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-800'
               }`}>
-                <Navigation size={18} className="text-blue-500 shrink-0" />
+                <Navigation size={18} className="text-blue-600 dark:text-blue-500 shrink-0" />
                 <div className="text-xs sm:text-sm">
                   <span className="font-bold mr-1">Aksesibilitas Wilayah:</span>
                   <span>{facility.connectivity}</span>
@@ -266,7 +266,7 @@ export const InfrastructureDetailModal: React.FC<InfrastructureDetailModalProps>
 
           {/* FOOTER ACTIONS */}
           <div className={`p-3 sm:p-4 border-t flex flex-col sm:flex-row items-center justify-between gap-2.5 shrink-0 ${
-            isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+            isDark ? 'bg-slate-950 border-slate-800' : 'bg-[#FAF7F0] border-[#E2DACB]'
           }`}>
             <div className={`text-[11px] font-mono text-center sm:text-left ${isDark ? 'text-slate-400' : 'text-slate-600 font-semibold'}`}>
               Basis Data Spasial Resmi Pemerintah Kabupaten Luwu
@@ -279,7 +279,7 @@ export const InfrastructureDetailModal: React.FC<InfrastructureDetailModalProps>
                 className={`flex-1 sm:flex-none px-4 py-2.5 rounded-xl text-xs font-bold border transition-all active:scale-95 cursor-pointer ${
                   isDark
                     ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
-                    : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-300'
+                    : 'bg-[#F4F0E6] hover:bg-[#ECE5D6] text-slate-700 border-[#E2DACB]'
                 }`}
               >
                 Tutup

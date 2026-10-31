@@ -170,7 +170,7 @@ export const FloatingAccessibilityMenu: React.FC<FloatingAccessibilityMenuProps>
                   ? 'bg-black text-white border-2 border-yellow-400'
                   : isDark
                     ? 'bg-[#0B2136]/98 text-slate-100 border-white/15 backdrop-blur-xl'
-                    : 'bg-[#FAF8F3]/98 text-slate-900 border-[#DFD6C5] backdrop-blur-xl'
+                    : 'bg-[#F4F0E6]/98 text-[#10261E] border-[#E2DACB] backdrop-blur-xl'
               }`}
             >
               {/* Panel Header */}
@@ -180,7 +180,7 @@ export const FloatingAccessibilityMenu: React.FC<FloatingAccessibilityMenuProps>
                     ? 'border-yellow-400/70 bg-black'
                     : isDark
                       ? 'border-white/10 bg-[#08192B]'
-                      : 'border-[#E5DFD3] bg-white/90'
+                      : 'border-[#E2DACB] bg-[#FAF7F0]/90'
                 }`}
               >
                 <div className="keep-original-color flex items-center gap-2.5 min-w-0">
@@ -223,7 +223,7 @@ export const FloatingAccessibilityMenu: React.FC<FloatingAccessibilityMenuProps>
                       ? 'border border-yellow-400 text-yellow-300 hover:bg-yellow-400 hover:text-black'
                       : isDark
                         ? 'text-slate-300 hover:text-white hover:bg-white/10'
-                        : 'text-slate-600 hover:text-slate-950 hover:bg-slate-200/60'
+                        : 'text-slate-600 hover:text-slate-950 hover:bg-[#E2DACB]/60'
                   }`}
                 >
                   <X className="w-4 h-4" />
@@ -243,7 +243,7 @@ export const FloatingAccessibilityMenu: React.FC<FloatingAccessibilityMenuProps>
                       ? 'bg-yellow-400 text-black border-2 border-yellow-300 font-bold'
                       : isDark
                         ? 'bg-[#102A44] hover:bg-[#153454] border-white/10 text-slate-100'
-                        : 'bg-white hover:bg-emerald-50/50 border-[#E2DACB] text-slate-900'
+                        : 'bg-[#FAF7F0] hover:bg-[#ECE5D6] border-[#E2DACB] text-slate-900'
                   }`}
                 >
                   <div className="keep-original-color flex items-center gap-3 min-w-0">
@@ -309,7 +309,7 @@ export const FloatingAccessibilityMenu: React.FC<FloatingAccessibilityMenuProps>
                         ? 'bg-black text-yellow-300 border border-yellow-400/80 hover:bg-zinc-900'
                         : isDark
                           ? 'bg-[#102A44] hover:bg-[#153454] border-white/10 text-slate-100'
-                          : 'bg-white hover:bg-slate-50 border-[#E2DACB] text-slate-900'
+                          : 'bg-[#FAF7F0] hover:bg-[#ECE5D6] border-[#E2DACB] text-slate-900'
                   }`}
                 >
                   <div className="keep-original-color flex items-center gap-3 min-w-0">
@@ -321,7 +321,7 @@ export const FloatingAccessibilityMenu: React.FC<FloatingAccessibilityMenuProps>
                             ? 'bg-zinc-900 text-yellow-300 border border-yellow-400/50'
                             : isDark
                               ? 'bg-slate-700/80 text-slate-200'
-                              : 'bg-slate-100 text-slate-700 border border-slate-200'
+                              : 'bg-[#F4F0E6] text-slate-700 border border-[#E2DACB]'
                       }`}
                     >
                       <Eye className="w-4 h-4" />
@@ -371,7 +371,7 @@ export const FloatingAccessibilityMenu: React.FC<FloatingAccessibilityMenuProps>
                       ? 'bg-black border-yellow-400/80 text-white'
                       : isDark
                         ? 'bg-[#102A44] border-white/10 text-slate-100'
-                        : 'bg-white border-[#E2DACB] text-slate-900'
+                        : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900'
                   }`}
                 >
                   <div className="keep-original-color flex items-center justify-between gap-2 mb-2.5">
@@ -410,7 +410,7 @@ export const FloatingAccessibilityMenu: React.FC<FloatingAccessibilityMenuProps>
                           ? 'border-yellow-400 text-yellow-300 hover:bg-yellow-400 hover:text-black'
                           : isDark
                             ? 'bg-[#0B2136] hover:bg-white/10 border-white/15 text-white'
-                            : 'bg-[#FAF8F3] hover:bg-slate-100 border-[#DFD6C5] text-slate-800'
+                            : 'bg-[#F4F0E6] hover:bg-[#E2DACB]/70 border-[#E2DACB] text-slate-800'
                       }`}
                     >
                       <Minus className="w-4 h-4" />
@@ -423,7 +423,7 @@ export const FloatingAccessibilityMenu: React.FC<FloatingAccessibilityMenuProps>
                           ? 'border-yellow-400/50 bg-zinc-950 text-yellow-300'
                           : isDark
                             ? 'border-white/10 bg-[#08192B] text-slate-200'
-                            : 'border-[#E5DFD3] bg-[#FAF8F3] text-slate-800'
+                            : 'border-[#E2DACB] bg-[#F4F0E6] text-slate-800'
                       }`}
                     >
                       <span className="text-xs font-extrabold leading-tight">
@@ -471,7 +471,7 @@ export const FloatingAccessibilityMenu: React.FC<FloatingAccessibilityMenuProps>
                                 ? 'bg-black text-yellow-300 border-yellow-400/60 hover:bg-zinc-900'
                                 : isDark
                                   ? 'bg-[#0B2136] text-slate-300 border-white/10 hover:text-white'
-                                  : 'bg-[#FAF8F3] text-slate-700 border-[#DFD6C5] hover:bg-slate-100'
+                                  : 'bg-[#F4F0E6] text-slate-700 border-[#E2DACB] hover:bg-[#E2DACB]/70'
                           }`}
                         >
                           {item.percent}%
@@ -491,7 +491,7 @@ export const FloatingAccessibilityMenu: React.FC<FloatingAccessibilityMenuProps>
                       ? 'bg-black text-yellow-300 border-yellow-400 hover:bg-yellow-400 hover:text-black'
                       : isDark
                         ? 'bg-white/[0.06] hover:bg-white/[0.12] border-white/12 text-slate-200'
-                        : 'bg-slate-100 hover:bg-slate-200/80 border-slate-300/80 text-slate-800'
+                        : 'bg-[#FAF7F0] hover:bg-[#E2DACB]/70 border-[#E2DACB] text-slate-800'
                   }`}
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
@@ -506,7 +506,7 @@ export const FloatingAccessibilityMenu: React.FC<FloatingAccessibilityMenuProps>
                     ? 'border-yellow-400/70 bg-black text-yellow-300'
                     : isDark
                       ? 'border-white/10 bg-[#08192B] text-slate-300'
-                      : 'border-[#E5DFD3] bg-white/80 text-slate-600'
+                      : 'border-[#E2DACB] bg-[#FAF7F0]/85 text-slate-600'
                 }`}
               >
                 <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
@@ -544,7 +544,7 @@ export const FloatingAccessibilityMenu: React.FC<FloatingAccessibilityMenuProps>
                 ? 'bg-[#0F6B4F] hover:bg-[#0B533D] text-white border-emerald-300/60 shadow-emerald-950/35'
                 : isDark
                   ? 'bg-[#0D2740]/95 hover:bg-[#133455] text-white border-white/20 shadow-black/45 backdrop-blur-md'
-                  : 'bg-white/95 hover:bg-[#FAF8F3] text-slate-900 border-[#D5CBB8] shadow-slate-900/12 backdrop-blur-md'
+                  : 'bg-[#F4F0E6]/95 hover:bg-[#ECE5D6] text-[#10261E] border-[#E2DACB] shadow-slate-900/12 backdrop-blur-md'
           }`}
         >
           <Accessibility

@@ -567,22 +567,22 @@ export default function ProximityDistanceMatrixModal({
         className={`relative w-full max-w-4xl rounded-3xl shadow-2xl border overflow-hidden max-h-[85vh] flex flex-col ${
           isDark
             ? "bg-black border-neutral-800 text-white"
-            : "bg-[#FAF8F3] border-[#E5DFD3] text-slate-900"
+            : "bg-[#FAF7F0] border-[#E2DACB] text-slate-900"
         }`}
       >
         {/* Header Banner */}
         <div className={`relative p-3.5 sm:p-5 border-b flex items-center justify-between gap-3 shrink-0 ${
           isDark 
             ? "bg-gradient-to-r from-neutral-950 via-neutral-900 to-black border-amber-500/30" 
-            : "bg-gradient-to-r from-slate-100 via-white to-slate-100 border-amber-500/30 text-slate-900"
+            : "bg-[#F4F0E6] border-[#E2DACB] text-slate-900"
         }`}>
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div className="p-2 sm:p-3 bg-amber-500/10 rounded-2xl border border-amber-500/30 text-amber-500 shrink-0">
+            <div className="p-2 sm:p-3 bg-[#FAF7F0] dark:bg-amber-500/10 rounded-2xl border border-[#E2DACB] dark:border-amber-500/30 text-amber-600 dark:text-amber-500 shrink-0">
               <Navigation size={22} className="sm:w-6 sm:h-6" />
             </div>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-0.5">
-                <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-300 text-[9px] sm:text-[10px] font-bold tracking-wider uppercase border border-amber-500/30 whitespace-nowrap">
+                <span className="px-2 py-0.5 rounded-full bg-[#FAF7F0] dark:bg-amber-500/10 text-amber-800 dark:text-amber-300 text-[9px] sm:text-[10px] font-bold tracking-wider uppercase border border-[#E2DACB] dark:border-amber-500/30 whitespace-nowrap">
                   {t('matrix_badge_realtime', 'Perhitungan Spasial Real-Time (Turf.js)')}
                 </span>
                 <span className={`text-[10px] sm:text-xs whitespace-nowrap ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600 dark:text-slate-400"}`}>{t('matrix_network_luwu', 'Jaringan Infrastruktur Luwu')}</span>
@@ -609,7 +609,7 @@ export default function ProximityDistanceMatrixModal({
               className={`p-2.5 rounded-xl active:scale-95 transition-all cursor-pointer shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center border ${
                 isDark 
                   ? "bg-neutral-900 active:bg-neutral-800 text-slate-300 hover:text-white border-neutral-800" 
-                  : "bg-slate-100 active:bg-slate-200 text-slate-800 dark:text-slate-200 hover:text-slate-900 border-slate-200"
+                  : "bg-[#FAF7F0] hover:bg-[#ECE5D6] active:bg-[#E2DACB] text-slate-700 hover:text-slate-900 border-[#E2DACB]"
               }`}
               aria-label="Tutup"
             >
@@ -619,13 +619,13 @@ export default function ProximityDistanceMatrixModal({
         </div>
 
         {/* Content Body */}
-        <div className={`p-3.5 sm:p-5 md:p-6 overflow-y-auto space-y-4 sm:space-y-6 flex-1 scrollbar-thin ${isDark ? "scrollbar-thumb-neutral-800 bg-black" : "scrollbar-thumb-slate-200 bg-slate-50/50"}`}>
+        <div className={`p-3.5 sm:p-5 md:p-6 overflow-y-auto space-y-4 sm:space-y-6 flex-1 scrollbar-thin ${isDark ? "scrollbar-thumb-neutral-800 bg-black" : "scrollbar-thumb-[#E2DACB] bg-[#FAF7F0]"}`}>
           {/* Synchronized Simulation ROI Badge */}
           {simulationContext && (
             <div className={`p-4 rounded-2xl border shadow-lg space-y-3 ${
               isDark 
                 ? "bg-gradient-to-r from-blue-950/90 via-neutral-900 to-amber-950/90 border-amber-500/30" 
-                : "bg-gradient-to-r from-blue-50 via-amber-50/30 to-indigo-50 border-amber-500/40"
+                : "bg-[#F4F0E6] border-[#E2DACB]"
             }`}>
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
@@ -634,27 +634,27 @@ export default function ProximityDistanceMatrixModal({
                     ⚡ {t('sync_roi_general', 'TERSINKRONISASI DENGAN SIMULASI ROI')}: {simulationContext.name}
                   </span>
                 </div>
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-500/30 shrink-0">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#FAF7F0] dark:bg-blue-500/20 text-blue-800 dark:text-blue-300 border border-[#E2DACB] dark:border-blue-500/30 shrink-0">
                   {t('matrix_roi_sync_badge', 'AKSESIBILITAS SUPPLY CHAIN')}
                 </span>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 font-mono">
-                <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-center flex flex-col items-center justify-center">
+                <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700 shadow-sm text-center flex flex-col items-center justify-center">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block font-sans">{t('simulated_capex', 'Capex Simulasi')}</span>
                   <span className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-tight">
                     {formatRupiahSingkat(simulationContext.capex)}
                   </span>
                 </div>
-                <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-center flex flex-col items-center justify-center">
+                <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700 shadow-sm text-center flex flex-col items-center justify-center">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block font-sans">{t('annual_roi', 'ROI Tahunan')}</span>
                   <span className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-tight">{(Number(simulationContext.roi) || 0).toFixed(1)}%</span>
                 </div>
-                <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-center flex flex-col items-center justify-center">
+                <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700 shadow-sm text-center flex flex-col items-center justify-center">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block font-sans">IRR Proyek</span>
                   <span className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-tight">{(Number(simulationContext.irr) || 0).toFixed(2)}%</span>
                 </div>
-                <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-center flex flex-col items-center justify-center">
+                <div className="p-3 rounded-xl bg-[#FAF7F0] dark:bg-slate-800 border border-[#E2DACB] dark:border-slate-700 shadow-sm text-center flex flex-col items-center justify-center">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block font-sans">{t('payback_period', 'BEP Payback')}</span>
                   <span className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-tight">{(Number(simulationContext.bep) || 0).toFixed(2)} Thn</span>
                 </div>
@@ -669,7 +669,7 @@ export default function ProximityDistanceMatrixModal({
                 const freightOpexRatio = Math.min(100, ((estAnnualFreightCost / opexVal) * 100)).toFixed(1);
 
                 return (
-                  <div className="p-3.5 sm:p-4 rounded-xl text-xs sm:text-sm leading-relaxed font-sans bg-amber-50 dark:bg-amber-900/20 text-amber-900 dark:text-amber-200">
+                  <div className="p-3.5 sm:p-4 rounded-xl text-xs sm:text-sm leading-relaxed font-sans bg-[#FAF7F0] dark:bg-amber-900/20 border border-[#E2DACB] dark:border-transparent text-amber-900 dark:text-amber-200">
                     💡 <strong>{t('matrix_roi_analysis', 'Analisis Konektivitas Spasial pada ROI:')}</strong>{" "}
                     {t('matrix_roi_desc', {
                       distance: `${closestHub.roadDistKm.toFixed(1)} km`,
@@ -686,10 +686,10 @@ export default function ProximityDistanceMatrixModal({
 
           {/* Active Project Card with Project Dropdown Switcher */}
           <div className={`p-3.5 sm:p-4 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md ${
-            isDark ? "bg-neutral-900/90 border-neutral-800" : "bg-white border-slate-200 text-slate-900"
+            isDark ? "bg-neutral-900/90 border-neutral-800" : "bg-[#F4F0E6] border-[#E2DACB] text-slate-900"
           }`}>
             <div className="flex items-center gap-3 min-w-0 flex-1">
-              <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shrink-0">
+              <div className="p-2.5 rounded-xl bg-[#FAF7F0] dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 border border-[#E2DACB] dark:border-emerald-500/20 shrink-0">
                 <MapPin size={20} />
               </div>
               <div className="min-w-0 flex-1">
@@ -698,7 +698,7 @@ export default function ProximityDistanceMatrixModal({
                     {t('matrix_point_title', 'TITIK PROYEK PELUANG INVESTASI')}
                   </span>
                   {investments.length > 1 && (
-                    <span className="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                    <span className="text-[10px] text-amber-800 dark:text-amber-400 bg-[#FAF7F0] dark:bg-amber-500/10 px-2 py-0.5 rounded-full border border-[#E2DACB] dark:border-amber-500/20">
                       Ganti Proyek:
                     </span>
                   )}
@@ -709,11 +709,11 @@ export default function ProximityDistanceMatrixModal({
                     value={(currentInv as any)?.id || ""}
                     onChange={(e) => setChosenInvId(e.target.value)}
                     className={`mt-0.5 text-xs sm:text-sm font-bold truncate rounded-lg p-1.5 border w-full max-w-md focus:outline-none cursor-pointer ${
-                      isDark ? "bg-black text-white border-neutral-700" : "bg-slate-50 text-slate-900 border-slate-300"
+                      isDark ? "bg-black text-white border-neutral-700" : "bg-[#FAF7F0] text-slate-900 border-[#E2DACB]"
                     }`}
                   >
                     {investments.map((inv) => (
-                      <option key={inv.id} value={inv.id} className={isDark ? "bg-neutral-900 text-white" : "bg-white text-slate-900"}>
+                      <option key={inv.id} value={inv.id} className={isDark ? "bg-neutral-900 text-white" : "bg-[#FAF7F0] text-slate-900"}>
                         {(inv as any).name || (inv as any).title} (Kec. {(inv as any).districtName || (inv as any).districtId || (inv as any).lokasi || "Luwu"})
                       </option>
                     ))}
@@ -731,13 +731,13 @@ export default function ProximityDistanceMatrixModal({
               </div>
             </div>
 
-            <div className={`w-full sm:w-auto px-4 py-2 border border-emerald-500/30 rounded-xl text-left sm:text-right shrink-0 flex sm:block items-center justify-between ${
-              isDark ? "bg-black" : "bg-emerald-50/60"
+            <div className={`w-full sm:w-auto px-4 py-2 border rounded-xl text-left sm:text-right shrink-0 flex sm:block items-center justify-between ${
+              isDark ? "bg-black border-emerald-500/30" : "bg-[#FAF7F0] border-[#E2DACB]"
             }`}>
               <span className={`text-[10px] font-bold uppercase ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                 {t('matrix_score', 'SKOR KONEKTIVITAS SPASIAL')}
               </span>
-              <span className="text-base sm:text-lg font-black text-emerald-500 dark:text-emerald-400 font-mono">
+              <span className="text-base sm:text-lg font-black text-emerald-700 dark:text-emerald-400 font-mono">
                 {accessibilityScore} / 100
               </span>
             </div>
@@ -745,7 +745,7 @@ export default function ProximityDistanceMatrixModal({
 
           {/* Multi-Radius Concentric Rings Filter */}
           <div className={`p-2.5 sm:p-3 rounded-2xl border flex flex-col sm:flex-row gap-2 sm:items-center ${
-            isDark ? "bg-neutral-900/90 border-neutral-800" : "bg-white border-slate-200"
+            isDark ? "bg-neutral-900/90 border-neutral-800" : "bg-[#F4F0E6] border-[#E2DACB]"
           }`}>
             <span className={`text-[10px] font-bold uppercase tracking-wider shrink-0 px-1 ${isDark ? "text-slate-400" : "text-slate-600"}`}>
               ZONA RADIUS KONSENTRIS:
@@ -766,7 +766,7 @@ export default function ProximityDistanceMatrixModal({
                       ? "bg-emerald-600 text-white font-bold shadow-md"
                       : isDark
                       ? "bg-black text-slate-300 hover:text-white border border-neutral-800"
-                      : "bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200"
+                      : "bg-[#FAF7F0] text-slate-700 hover:bg-[#ECE5D6] hover:text-slate-900 border border-[#E2DACB]"
                   }`}
                 >
                   {ring.label}
@@ -777,7 +777,7 @@ export default function ProximityDistanceMatrixModal({
 
           {/* Category Filter Bar - Touch-friendly scrollable */}
           <div className={`p-2.5 sm:p-3 rounded-2xl border flex flex-col sm:flex-row gap-2 sm:items-center ${
-            isDark ? "bg-neutral-900/90 border-neutral-800" : "bg-white border-slate-200"
+            isDark ? "bg-neutral-900/90 border-neutral-800" : "bg-[#F4F0E6] border-[#E2DACB]"
           }`}>
             <span className={`text-[10px] font-bold uppercase tracking-wider shrink-0 px-1 ${isDark ? "text-slate-400" : "text-slate-600"}`}>
               {t('filter_nodes', 'FILTER SIMPUL INFRASTRUKTUR:')}
@@ -800,7 +800,7 @@ export default function ProximityDistanceMatrixModal({
                       ? "bg-amber-500 text-slate-950 font-bold shadow-md"
                       : isDark 
                         ? "bg-black text-slate-300 hover:text-white border border-neutral-800" 
-                        : "bg-white/5 text-slate-300 border border-white/10 dark:text-slate-200 hover:text-slate-900 border border-slate-200"
+                        : "bg-[#FAF7F0] text-slate-700 hover:bg-[#ECE5D6] hover:text-slate-900 border border-[#E2DACB]"
                   }`}
                 >
                   {cat.label}
@@ -819,16 +819,16 @@ export default function ProximityDistanceMatrixModal({
                   className={`p-3.5 sm:p-4 rounded-2xl border transition-all space-y-3 group shadow-sm ${
                     isDark 
                       ? "bg-neutral-900/90 border-neutral-800 hover:border-amber-500/40 text-white" 
-                      : "bg-white border-slate-200 hover:border-amber-500/50 text-slate-900"
+                      : "bg-[#F4F0E6] border-[#E2DACB] hover:border-amber-600/50 text-slate-900"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="p-2 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20 shrink-0 group-hover:bg-amber-500/20 transition-colors">
+                      <div className="p-2 rounded-xl bg-[#FAF7F0] dark:bg-amber-500/10 text-amber-600 dark:text-amber-500 border border-[#E2DACB] dark:border-amber-500/20 shrink-0 group-hover:bg-[#ECE5D6] dark:group-hover:bg-amber-500/20 transition-colors">
                         <IconComp size={18} />
                       </div>
                       <div className="min-w-0">
-                        <h5 className={`text-xs sm:text-sm font-bold leading-tight transition-colors ${isDark ? "text-white group-hover:text-amber-300" : "text-slate-900 group-hover:text-amber-700"}`}>
+                        <h5 className={`text-xs sm:text-sm font-bold leading-tight transition-colors ${isDark ? "text-white group-hover:text-amber-300" : "text-slate-900 group-hover:text-amber-800"}`}>
                           {(item as any).nameKey ? t((item as any).nameKey, item.name) : item.name}
                         </h5>
                         <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
@@ -836,7 +836,7 @@ export default function ProximityDistanceMatrixModal({
                             {t((item as any).typeKey, item.type)}
                           </span>
                           <span className={`text-[9px] px-1.5 py-0.2 rounded border font-mono font-semibold ${
-                            isDark ? "bg-black text-slate-300 border-neutral-800" : "bg-white/5 text-slate-300 border border-white/10 dark:text-slate-200 border-slate-200"
+                            isDark ? "bg-black text-slate-300 border-neutral-800" : "bg-[#FAF7F0] text-slate-700 border-[#E2DACB]"
                           }`}>
                             {(item as any).mstClassKey ? t((item as any).mstClassKey, item.mstClass) : item.mstClass}
                           </span>
@@ -862,20 +862,20 @@ export default function ProximityDistanceMatrixModal({
 
                   {/* Operational Capacity Spec */}
                   <div className={`px-2.5 py-1.5 rounded-xl border text-[10px] flex items-center justify-between ${
-                    isDark ? "bg-black/80 border-neutral-800 text-slate-300" : "bg-slate-50 border-slate-200 text-slate-800 dark:text-slate-200"
+                    isDark ? "bg-black/80 border-neutral-800 text-slate-300" : "bg-[#FAF7F0] border-[#E2DACB] text-slate-800"
                   }`}>
                     <span className={`${isDark ? "text-slate-400" : "text-slate-600"} font-medium`}>{t('metric_operational_capacity', 'Kapasitas Operasional:')}</span>
-                    <span className="font-bold text-amber-500 dark:text-amber-300 text-right truncate ml-2">
+                    <span className="font-bold text-amber-700 dark:text-amber-300 text-right truncate ml-2">
                       {(item as any).capacityKey ? t((item as any).capacityKey, item.capacity) : item.capacity}
                     </span>
                   </div>
 
-                  <div className={`grid grid-cols-3 gap-1.5 sm:gap-2 pt-2.5 border-t text-center ${isDark ? "border-neutral-800/80" : "border-slate-200"}`}>
-                    <div className={`p-2 rounded-xl border ${isDark ? "bg-black border-neutral-800/60" : "bg-slate-50 border-slate-200"}`}>
+                  <div className={`grid grid-cols-3 gap-1.5 sm:gap-2 pt-2.5 border-t text-center ${isDark ? "border-neutral-800/80" : "border-[#E2DACB]"}`}>
+                    <div className={`p-2 rounded-xl border ${isDark ? "bg-black border-neutral-800/60" : "bg-[#FAF7F0] border-[#E2DACB]"}`}>
                       <span className={`text-[9px] font-bold uppercase block whitespace-nowrap ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                         {t('metric_travel_distance', 'JARAK TEMPUH')}
                       </span>
-                      <span className="text-xs font-bold text-amber-500 dark:text-amber-300 font-mono block mt-0.5">
+                      <span className="text-xs font-bold text-amber-700 dark:text-amber-300 font-mono block mt-0.5">
                         {item.roadDistKm} km
                       </span>
                       <span className={`text-[9px] block ${isDark ? "text-slate-400" : "text-slate-600"}`}>
@@ -885,23 +885,23 @@ export default function ProximityDistanceMatrixModal({
                       </span>
                     </div>
 
-                    <div className={`p-2 rounded-xl border ${isDark ? "bg-black border-neutral-800/60" : "bg-slate-50 border-slate-200"}`}>
+                    <div className={`p-2 rounded-xl border ${isDark ? "bg-black border-neutral-800/60" : "bg-[#FAF7F0] border-[#E2DACB]"}`}>
                       <span className={`text-[9px] font-bold uppercase block whitespace-nowrap ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                         {t('metric_est_trucking', 'ESTIMASI WAKTU')}
                       </span>
-                      <span className="text-xs font-bold text-emerald-500 dark:text-emerald-300 font-mono block mt-0.5">
-                        {item.estMinutes} mnt <span className="text-[10px] font-normal text-slate-400">(Truk)</span>
+                      <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 font-mono block mt-0.5">
+                        {item.estMinutes} mnt <span className="text-[10px] font-normal text-slate-500 dark:text-slate-400">(Truk)</span>
                       </span>
-                      <span className={`text-[9px] block text-cyan-400`}>
+                      <span className="text-[9px] block text-cyan-700 dark:text-cyan-400">
                         {item.estCarMinutes} mnt (Mobil)
                       </span>
                     </div>
 
-                    <div className={`p-2 rounded-xl border ${isDark ? "bg-black border-neutral-800/60" : "bg-slate-50 border-slate-200"}`}>
+                    <div className={`p-2 rounded-xl border ${isDark ? "bg-black border-neutral-800/60" : "bg-[#FAF7F0] border-[#E2DACB]"}`}>
                       <span className={`text-[9px] font-bold uppercase block whitespace-nowrap ${isDark ? "text-slate-400" : "text-slate-600"}`}>
                         {t('metric_cost_per_ton', 'BIAYA / TON')}
                       </span>
-                      <span className="text-xs font-bold text-amber-500 dark:text-amber-300 font-mono block mt-0.5">
+                      <span className="text-xs font-bold text-amber-700 dark:text-amber-300 font-mono block mt-0.5">
                         {formatRupiah(item.estFreightPerTon)}
                       </span>
                       <span className={`text-[9px] block ${isDark ? "text-slate-400" : "text-slate-600"}`}>
@@ -918,9 +918,9 @@ export default function ProximityDistanceMatrixModal({
           <div className={`p-4 rounded-2xl border text-xs space-y-3 shadow-lg ${
             isDark 
               ? "bg-gradient-to-br from-black via-neutral-900 to-neutral-950 border-amber-500/30 text-slate-300" 
-              : "bg-gradient-to-br from-slate-100 via-white to-slate-100 border-amber-500/30 text-slate-800 dark:text-slate-200"
+              : "bg-[#F4F0E6] border-[#E2DACB] text-slate-800"
           }`}>
-            <div className={`flex items-center gap-2.5 border-b pb-2.5 ${isDark ? "border-neutral-800" : "border-slate-200"}`}>
+            <div className={`flex items-center gap-2.5 border-b pb-2.5 ${isDark ? "border-neutral-800" : "border-[#E2DACB]"}`}>
               <Compass size={20} className="text-amber-500 shrink-0" />
               <div>
                 <h5 className={`font-bold text-sm ${isDark ? "text-amber-300" : "text-amber-800"}`}>
@@ -933,7 +933,7 @@ export default function ProximityDistanceMatrixModal({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px] leading-relaxed">
-              <div className={`space-y-1.5 p-3 rounded-xl border ${isDark ? "bg-neutral-900/60 border-neutral-800" : "bg-white border-slate-200"}`}>
+              <div className={`space-y-1.5 p-3 rounded-xl border ${isDark ? "bg-neutral-900/60 border-neutral-800" : "bg-[#FAF7F0] border-[#E2DACB]"}`}>
                 <strong className={`block font-semibold text-xs ${isDark ? "text-white" : "text-slate-900"}`}>
                   {t('method_1_title', '1. Pemodelan Jarak Jaringan Jalan (Road Network Distance)')}
                 </strong>
@@ -942,7 +942,7 @@ export default function ProximityDistanceMatrixModal({
                 </p>
               </div>
 
-              <div className={`space-y-1.5 p-3 rounded-xl border ${isDark ? "bg-neutral-900/60 border-neutral-800" : "bg-white border-slate-200"}`}>
+              <div className={`space-y-1.5 p-3 rounded-xl border ${isDark ? "bg-neutral-900/60 border-neutral-800" : "bg-[#FAF7F0] border-[#E2DACB]"}`}>
                 <strong className={`block font-semibold text-xs ${isDark ? "text-white" : "text-slate-900"}`}>
                   {t('method_2_title', '2. Estimasi Tarif Fleet Industri & Kecepatan')}
                 </strong>
@@ -955,7 +955,7 @@ export default function ProximityDistanceMatrixModal({
         </div>
 
         {/* Footer */}
-        <div className="p-4 sm:px-6 py-3.5 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-surface shadow-[0_-8px_15px_-3px_rgba(0,0,0,0.05)] flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0 z-10">
+        <div className="p-4 sm:px-6 py-3.5 border-t border-[#E2DACB] dark:border-slate-800 bg-[#F4F0E6] dark:bg-surface shadow-[0_-8px_15px_-3px_rgba(0,0,0,0.05)] flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0 z-10">
           <div className={`flex items-center gap-2 text-[11px] sm:text-xs text-center sm:text-left ${isDark ? "text-slate-600 dark:text-slate-400" : "text-slate-600"}`}>
             <ShieldCheck size={15} className="text-amber-500 shrink-0" />
             <span>{t('footer_auto_matrix', 'Matriks Jarak Spasial Otomatis · DPMPTSP Kab. Luwu')}</span>

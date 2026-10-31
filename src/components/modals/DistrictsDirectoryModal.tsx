@@ -139,7 +139,7 @@ export const DistrictsDirectoryModal: React.FC<DistrictsDirectoryModalProps> = (
           className={`w-[calc(100vw-20px)] sm:w-full h-[92vh] sm:h-auto max-h-[92vh] sm:max-h-[90vh] max-w-5xl rounded-2xl sm:rounded-3xl border shadow-2xl flex flex-col overflow-hidden ${
             isDark
               ? 'bg-slate-900 border-slate-800 text-white shadow-black/80'
-              : 'bg-[#FAF8F3] border-[#E5DFD3] text-slate-900 shadow-slate-900/10'
+              : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900 shadow-slate-900/10'
           }`}
           onClick={(e) => e.stopPropagation()}
         >
@@ -148,7 +148,7 @@ export const DistrictsDirectoryModal: React.FC<DistrictsDirectoryModalProps> = (
             className={`p-3 sm:p-5 border-b flex items-center justify-between gap-3 shrink-0 ${
               isDark
                 ? 'bg-gradient-to-r from-emerald-950/70 via-slate-900 to-slate-900 border-slate-800'
-                : 'bg-gradient-to-r from-emerald-50/90 via-[#FAF8F3] to-teal-50/50 border-[#E5DFD3]'
+                : 'bg-[#F4F0E6] border-[#E2DACB]'
             }`}
           >
             <div className="flex items-center gap-3 min-w-0">
@@ -157,7 +157,7 @@ export const DistrictsDirectoryModal: React.FC<DistrictsDirectoryModalProps> = (
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wider uppercase bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                  <span className="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wider uppercase bg-[#FAF7F0] dark:bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/30">
                     Batas Administrasi Wilayah Luwu
                   </span>
                 </div>
@@ -173,7 +173,7 @@ export const DistrictsDirectoryModal: React.FC<DistrictsDirectoryModalProps> = (
               className={`p-2 rounded-xl transition-all cursor-pointer active:scale-95 shrink-0 ${
                 isDark
                   ? 'hover:bg-slate-800 text-slate-400 hover:text-white'
-                  : 'hover:bg-slate-100 text-slate-500 hover:text-slate-900'
+                  : 'bg-[#FAF7F0] hover:bg-[#ECE5D6] text-slate-600 hover:text-slate-900 border border-[#E2DACB]'
               }`}
               title="Tutup Modal"
             >
@@ -182,7 +182,7 @@ export const DistrictsDirectoryModal: React.FC<DistrictsDirectoryModalProps> = (
           </div>
 
           {/* Quick Metrics Bar & Search Box */}
-          <div className="p-2.5 sm:p-4 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center gap-3 shrink-0">
+          <div className="p-2.5 sm:p-4 border-b border-[#E2DACB] dark:border-slate-800 bg-[#F4F0E6]/60 dark:bg-transparent flex flex-col sm:flex-row items-center gap-3 shrink-0">
             {/* Search Input */}
             <div className="relative w-full sm:flex-1">
               <Search className="w-4 h-4 text-emerald-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -194,14 +194,14 @@ export const DistrictsDirectoryModal: React.FC<DistrictsDirectoryModalProps> = (
                 className={`w-full pl-9 pr-4 py-2 rounded-xl border text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${
                   isDark
                     ? 'bg-slate-800/80 border-slate-700 text-white placeholder-slate-400'
-                    : 'bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400'
+                    : 'bg-[#FAF7F0] border-[#E2DACB] text-slate-900 placeholder-slate-400'
                 }`}
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 dark:hover:text-white"
                 >
                   <X size={14} />
                 </button>
@@ -218,7 +218,7 @@ export const DistrictsDirectoryModal: React.FC<DistrictsDirectoryModalProps> = (
                     ? 'bg-emerald-600 text-white shadow-sm'
                     : isDark
                     ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    : 'bg-[#FAF7F0] text-slate-700 hover:bg-[#ECE5D6] border border-[#E2DACB]'
                 }`}
               >
                 Semua ({enrichedDistricts.length})
@@ -231,7 +231,7 @@ export const DistrictsDirectoryModal: React.FC<DistrictsDirectoryModalProps> = (
                     ? 'bg-emerald-600 text-white shadow-sm'
                     : isDark
                     ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    : 'bg-[#FAF7F0] text-slate-700 hover:bg-[#ECE5D6] border border-[#E2DACB]'
                 }`}
               >
                 Ada Proyek ({enrichedDistricts.filter((d) => d.projectCount > 0).length})
@@ -259,7 +259,7 @@ export const DistrictsDirectoryModal: React.FC<DistrictsDirectoryModalProps> = (
                     className={`p-3.5 sm:p-4 rounded-2xl border transition-all flex flex-col justify-between hover:border-emerald-500/60 ${
                       isDark
                         ? 'bg-slate-800/60 border-slate-700/80 hover:bg-slate-800/90'
-                        : 'bg-slate-50/90 border-slate-200/90 hover:bg-white hover:shadow-md'
+                        : 'bg-[#F4F0E6] border-[#E2DACB] hover:bg-[#ECE5D6]/60 hover:shadow-md'
                     }`}
                   >
                     <div>
@@ -274,11 +274,11 @@ export const DistrictsDirectoryModal: React.FC<DistrictsDirectoryModalProps> = (
                           </span>
                         </div>
                         {district.projectCount > 0 ? (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 whitespace-nowrap shrink-0">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF7F0] dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/30 whitespace-nowrap shrink-0">
                             {district.projectCount} Proyek IPRO
                           </span>
                         ) : (
-                          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold text-slate-400 bg-slate-200/60 dark:bg-slate-700/50 border border-transparent whitespace-nowrap shrink-0">
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold text-slate-500 dark:text-slate-400 bg-[#FAF7F0] dark:bg-slate-700/50 border border-[#E2DACB] dark:border-transparent whitespace-nowrap shrink-0">
                             Belum Ada Proyek
                           </span>
                         )}
@@ -286,13 +286,13 @@ export const DistrictsDirectoryModal: React.FC<DistrictsDirectoryModalProps> = (
 
                       {/* District Metrics */}
                       <div className="grid grid-cols-2 gap-2 my-2.5 text-[11px]">
-                        <div className="p-2 rounded-xl bg-white/60 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800">
+                        <div className="p-2 rounded-xl bg-[#FAF7F0] dark:bg-slate-900/50 border border-[#E2DACB] dark:border-slate-800">
                           <span className="text-slate-500 block text-[9.5px]">Desa / Kelurahan</span>
                           <span className="font-black font-mono text-emerald-600 dark:text-emerald-400">
                             {district.calculatedVillageCount || district.villageCount || '10+'} Desa
                           </span>
                         </div>
-                        <div className="p-2 rounded-xl bg-white/60 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800">
+                        <div className="p-2 rounded-xl bg-[#FAF7F0] dark:bg-slate-900/50 border border-[#E2DACB] dark:border-slate-800">
                           <span className="text-slate-500 block text-[9.5px]">Luas Wilayah</span>
                           <span className="font-bold font-mono">
                             {district.areaHa ? `${district.areaHa.toLocaleString('id-ID')} Ha` : 'Terpetakan'}
@@ -343,7 +343,7 @@ export const DistrictsDirectoryModal: React.FC<DistrictsDirectoryModalProps> = (
           {/* Footer Info */}
           <div
             className={`p-2.5 sm:p-4 border-t flex items-center justify-between text-xs shrink-0 ${
-              isDark ? 'border-slate-800 text-slate-400' : 'border-slate-200 text-slate-600'
+              isDark ? 'border-slate-800 text-slate-400' : 'bg-[#F4F0E6] border-[#E2DACB] text-slate-600'
             }`}
           >
             <div className="flex items-center gap-1.5">

@@ -62,7 +62,7 @@ export default function SpatialRdtrBanner({
       className={`p-2.5 sm:p-6 rounded-2xl sm:rounded-3xl border mb-6 sm:mb-8 relative overflow-hidden backdrop-blur-2xl transition-all ${
         isDark
           ? "bg-gradient-to-r from-emerald-950/40 via-surface/90 to-sky-950/30 border-slate-800 shadow-xl shadow-black/40"
-          : "bg-gradient-to-r from-emerald-50/90 via-white to-sky-50/80 border-slate-200/90 shadow-md shadow-slate-100"
+          : "bg-[#F4F0E6] border-[#E2DACB] shadow-md shadow-[#10261E]/5"
       }`}
     >
       {/* Top Border Line */}
@@ -71,7 +71,7 @@ export default function SpatialRdtrBanner({
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-5">
         <div className="space-y-2 max-w-2xl">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-[#FAF7F0] dark:bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-[#E2DACB] dark:border-emerald-500/30">
               <Layers size={11} className="text-emerald-500" />
               <span>{t("spatialBanner.eyebrow", "Spatial Ready • Integrasi RDTR Digital")}</span>
             </span>
@@ -93,11 +93,11 @@ export default function SpatialRdtrBanner({
               <div
                 key={idx}
                 className={`p-2.5 rounded-xl border text-left ${
-                  isDark ? "bg-base/60 border-slate-800" : "bg-white border-slate-200 shadow-xs"
+                  isDark ? "bg-base/60 border-slate-800" : "bg-[#FAF7F0] border-[#E2DACB] shadow-xs"
                 }`}
               >
                 <div className="flex items-center justify-between mb-0.5">
-                  <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-200/60 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                  <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#F4F0E6] dark:bg-slate-800 text-slate-800 dark:text-slate-300 border border-[#E2DACB] dark:border-transparent">
                     {z.code}
                   </span>
                   <CheckCircle2 size={11} className="text-emerald-500" />
@@ -130,7 +130,7 @@ export default function SpatialRdtrBanner({
             className={`px-3.5 sm:px-4 py-2.5 rounded-xl text-xs font-bold border flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition-all ${
               isDark
                 ? "bg-slate-800/80 hover:bg-slate-800 text-slate-200 border-slate-700"
-                : "bg-white hover:bg-slate-50 text-slate-800 border-slate-200 shadow-xs"
+                : "bg-[#FAF7F0] hover:bg-[#ECE5D6] text-slate-900 border-[#E2DACB] shadow-xs"
             }`}
           >
             <Maximize2 size={13} />

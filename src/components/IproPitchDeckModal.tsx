@@ -36,6 +36,7 @@ export default function IproPitchDeckModal({
   onClose,
   investment,
   district,
+  isDarkMode = false,
 }: IproPitchDeckModalProps) {
   useTranslation();
   const printContainerRef = useRef<HTMLDivElement>(null);
@@ -253,19 +254,35 @@ export default function IproPitchDeckModal({
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ type: "spring", damping: 25, stiffness: 350 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-[calc(100vw-20px)] sm:w-full max-w-4xl bg-[#FAF8F3] text-slate-900 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border border-[#E5DFD3] max-h-[92vh] sm:max-h-[88vh] flex flex-col transition-all"
+        className="w-[calc(100vw-20px)] sm:w-full max-w-4xl bg-[#FAF7F0] text-slate-900 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border border-[#E2DACB] max-h-[92vh] sm:max-h-[88vh] flex flex-col transition-all"
       >
         {/* ── TOP ACTION BAR (Android-First Touch Targets) ── */}
-        <div className="print:hidden p-2.5 sm:px-6 py-2.5 sm:py-3.5 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800 shrink-0">
+        <div
+          className={`print:hidden p-2.5 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between border-b shrink-0 ${
+            isDarkMode
+              ? "bg-slate-900 text-white border-slate-800"
+              : "bg-[#F4F0E6] text-slate-900 border-[#E2DACB]"
+          }`}
+        >
           <div className="flex items-center gap-2 sm:gap-3 min-w-0 pr-1">
-            <div className="p-1.5 sm:p-2 rounded-xl bg-emerald-500/20 text-emerald-400 shrink-0">
+            <div
+              className={`p-1.5 sm:p-2 rounded-xl shrink-0 ${
+                isDarkMode
+                  ? "bg-emerald-500/20 text-emerald-400"
+                  : "bg-[#FAF7F0] text-emerald-700 border border-[#E2DACB]"
+              }`}
+            >
               <FileText className="w-5 h-5" />
             </div>
             <div className="min-w-0">
               <h2 className="text-xs sm:text-base font-bold font-sans truncate">
                 Profil Investasi &amp; Dossier IPRO
               </h2>
-              <span className="text-[10px] sm:text-xs text-slate-400 font-mono truncate block">
+              <span
+                className={`text-[10px] sm:text-xs font-mono truncate block ${
+                  isDarkMode ? "text-slate-400" : "text-slate-600"
+                }`}
+              >
                 DPMPTSP Kab. Luwu · {docId}
               </span>
             </div>
@@ -298,7 +315,11 @@ export default function IproPitchDeckModal({
               type="button"
               onClick={() => window.print()}
               title="Cetak via Printer Desktop"
-              className="hidden sm:flex p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/60 transition-all min-w-[42px] min-h-[42px] items-center justify-center cursor-pointer"
+              className={`hidden sm:flex p-2.5 rounded-xl border transition-all min-w-[42px] min-h-[42px] items-center justify-center cursor-pointer ${
+                isDarkMode
+                  ? "bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700/60"
+                  : "bg-[#FAF7F0] hover:bg-[#ECE5D6] text-slate-700 border-[#E2DACB]"
+              }`}
             >
               <Printer className="w-4 h-4" />
             </button>
@@ -306,7 +327,11 @@ export default function IproPitchDeckModal({
               type="button"
               onClick={onClose}
               aria-label="Tutup Dossier IPRO"
-              className="p-2 sm:p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/60 transition-all min-w-[42px] min-h-[42px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center cursor-pointer active:scale-95"
+              className={`p-2 sm:p-2.5 rounded-xl border transition-all min-w-[42px] min-h-[42px] sm:min-w-[44px] sm:min-h-[44px] flex items-center justify-center cursor-pointer active:scale-95 ${
+                isDarkMode
+                  ? "bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border-slate-700/60"
+                  : "bg-[#FAF7F0] hover:bg-[#ECE5D6] text-slate-600 hover:text-slate-900 border-[#E2DACB]"
+              }`}
             >
               <X className="w-5 h-5 stroke-[2.5]" />
             </button>
@@ -316,12 +341,12 @@ export default function IproPitchDeckModal({
         {/* ── OFFICIAL PEMKAB LUWU A4 DOSSIER SHEET ── */}
         <div
           ref={printContainerRef}
-          className="p-3.5 sm:p-8 space-y-4 sm:space-y-5 bg-[#FAF8F3] text-slate-900 print:bg-white print:p-0 print:space-y-4 print:text-black font-sans relative flex-1 overflow-y-auto"
+          className="p-3.5 sm:p-8 space-y-4 sm:space-y-5 bg-[#FAF7F0] text-slate-900 print:bg-white print:p-0 print:space-y-4 print:text-black font-sans relative flex-1 overflow-y-auto"
         >
           {/* KOP SURAT RESMI PEMERINTAH KABUPATEN LUWU */}
           <div className="border-b-[3px] border-double border-slate-900 pb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3.5 sm:gap-4">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center p-1.5 shrink-0">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#F4F0E6] border border-[#E2DACB] flex items-center justify-center p-1.5 shrink-0">
                 <img
                   src={LUWU_LOGO_BASE64}
                   alt="Logo Pemerintah Kabupaten Luwu"
@@ -341,7 +366,7 @@ export default function IproPitchDeckModal({
               </div>
             </div>
 
-            <div className="text-left sm:text-right bg-slate-50 p-2.5 rounded-xl border border-slate-200 shrink-0 min-w-[175px]">
+            <div className="text-left sm:text-right bg-[#F4F0E6] p-2.5 rounded-xl border border-[#E2DACB] shrink-0 min-w-[175px]">
               <span className="text-[10px] font-extrabold text-emerald-700 block">
                 PROFIL PROYEK SIAP TAWAR (IPRO)
               </span>
@@ -353,7 +378,7 @@ export default function IproPitchDeckModal({
           </div>
 
           {/* PROJECT TITLE & SECTOR BANNER */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="p-4 sm:p-5 rounded-2xl bg-[#F4F0E6] border border-[#E2DACB] flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-2 max-w-2xl">
               <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600">
                 <span className="font-extrabold" style={{ color: sectorColor }}>
@@ -381,7 +406,7 @@ export default function IproPitchDeckModal({
                   "Profil peluang investasi daerah terdata pada Sistem Informasi Geospasial Pelayanan Investasi DPMPTSP Kabupaten Luwu."}
               </p>
             </div>
-            <div className="md:text-right border-t md:border-t-0 md:border-l border-slate-200 pt-3 md:pt-0 md:pl-5 shrink-0 flex flex-col justify-center">
+            <div className="md:text-right border-t md:border-t-0 md:border-l border-[#E2DACB] pt-3 md:pt-0 md:pl-5 shrink-0 flex flex-col justify-center">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 block">
                 Nilai Investasi (CAPEX)
               </span>
@@ -399,33 +424,33 @@ export default function IproPitchDeckModal({
           {/* 3-GRID SUMMARY: FINANCIALS, SPATIAL, & LEGAL */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* 1. FINANCIAL FEASIBILITY */}
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-3">
-              <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
+            <div className="p-4 rounded-2xl bg-[#F4F0E6] border border-[#E2DACB] space-y-3">
+              <div className="flex items-center gap-2 border-b border-[#E2DACB] pb-2">
                 <TrendingUp className="w-4 h-4 text-emerald-600 shrink-0" />
                 <h3 className="text-xs font-extrabold text-slate-900 font-sans">
                   Kelayakan Finansial
                 </h3>
               </div>
               <div className="space-y-2 text-xs">
-                <div className="flex justify-between items-center py-0.5 border-b border-slate-50 gap-2">
+                <div className="flex justify-between items-center py-0.5 border-b border-[#E2DACB]/60 gap-2">
                   <span className="text-slate-600 font-medium">IRR Proyeksi:</span>
                   <span className="font-mono tabular-nums font-bold text-emerald-700">
                     {irr > 0 ? `${irr}% / thn` : "Menunggu FS"}
                   </span>
                 </div>
-                <div className="flex justify-between items-center py-0.5 border-b border-slate-50 gap-2">
+                <div className="flex justify-between items-center py-0.5 border-b border-[#E2DACB]/60 gap-2">
                   <span className="text-slate-600 font-medium">Payback (BEP):</span>
                   <span className="font-mono tabular-nums font-bold text-slate-800">
                     {bep > 0 ? `${bep} Tahun` : "Menunggu FS"}
                   </span>
                 </div>
-                <div className="flex justify-between items-center py-0.5 border-b border-slate-50 gap-2">
+                <div className="flex justify-between items-center py-0.5 border-b border-[#E2DACB]/60 gap-2">
                   <span className="text-slate-600 font-medium">Net Present Value:</span>
                   <span className="font-mono tabular-nums font-bold text-slate-800">
                     {npv !== 0 ? formatRupiahSingkat(npv) : "Menunggu FS"}
                   </span>
                 </div>
-                <div className="flex justify-between items-center py-0.5 border-b border-slate-50 gap-2">
+                <div className="flex justify-between items-center py-0.5 border-b border-[#E2DACB]/60 gap-2">
                   <span className="text-slate-600 font-medium">Proyeksi Revenue:</span>
                   <span className="font-mono tabular-nums font-bold text-slate-800">
                     {revenue > 0 ? formatRupiahSingkat(revenue) : "Menunggu FS"}
@@ -441,33 +466,33 @@ export default function IproPitchDeckModal({
             </div>
 
             {/* 2. SPATIAL & LOGISTICS CONNECTIVITY */}
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-3">
-              <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
+            <div className="p-4 rounded-2xl bg-[#F4F0E6] border border-[#E2DACB] space-y-3">
+              <div className="flex items-center gap-2 border-b border-[#E2DACB] pb-2">
                 <Navigation className="w-4 h-4 text-blue-600 shrink-0" />
                 <h3 className="text-xs font-extrabold text-slate-900 font-sans">
                   Aksesibilitas Geospasial
                 </h3>
               </div>
               <div className="space-y-2 text-xs">
-                <div className="flex justify-between items-center py-0.5 border-b border-slate-50 gap-2">
+                <div className="flex justify-between items-center py-0.5 border-b border-[#E2DACB]/60 gap-2">
                   <span className="text-slate-600 font-medium">Bandara I La Galigo Bua:</span>
                   <span className="font-mono tabular-nums font-bold text-slate-800">
                     {distAirportBua !== null ? `± ${distAirportBua} km` : "Belum Terpetakan"}
                   </span>
                 </div>
-                <div className="flex justify-between items-center py-0.5 border-b border-slate-50 gap-2">
+                <div className="flex justify-between items-center py-0.5 border-b border-[#E2DACB]/60 gap-2">
                   <span className="text-slate-600 font-medium">Pelabuhan Belopa:</span>
                   <span className="font-mono tabular-nums font-bold text-slate-800">
                     {distPortBelopa !== null ? `± ${distPortBelopa} km` : "Belum Terpetakan"}
                   </span>
                 </div>
-                <div className="flex justify-between items-center py-0.5 border-b border-slate-50 gap-2">
+                <div className="flex justify-between items-center py-0.5 border-b border-[#E2DACB]/60 gap-2">
                   <span className="text-slate-600 font-medium">Jalan Trans-Sulawesi:</span>
                   <span className="font-mono tabular-nums font-bold text-blue-700">
                     {distTransSulawesi !== null ? `± ${distTransSulawesi} km` : "Belum Terpetakan"}
                   </span>
                 </div>
-                <div className="flex justify-between items-center py-0.5 border-b border-slate-50 gap-2">
+                <div className="flex justify-between items-center py-0.5 border-b border-[#E2DACB]/60 gap-2">
                   <span className="text-slate-600 font-medium">Gardu Induk PLN 150kV:</span>
                   <span className="font-mono tabular-nums font-bold text-slate-800">
                     {distPlnSubstation !== null ? `± ${distPlnSubstation} km` : "Belum Terpetakan"}
@@ -483,33 +508,33 @@ export default function IproPitchDeckModal({
             </div>
 
             {/* 3. LEGAL & REGULATORY READINESS */}
-            <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-3">
-              <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
+            <div className="p-4 rounded-2xl bg-[#F4F0E6] border border-[#E2DACB] space-y-3">
+              <div className="flex items-center gap-2 border-b border-[#E2DACB] pb-2">
                 <ShieldCheck className="w-4 h-4 text-indigo-600 shrink-0" />
                 <h3 className="text-xs font-extrabold text-slate-900 font-sans">
                   Kepastian Regulasi &amp; Tata Ruang
                 </h3>
               </div>
               <div className="space-y-2 text-xs">
-                <div className="flex justify-between items-center py-0.5 border-b border-slate-50 gap-2">
+                <div className="flex justify-between items-center py-0.5 border-b border-[#E2DACB]/60 gap-2">
                   <span className="text-slate-600 font-medium">Pola Ruang RTRW:</span>
                   <span className="font-semibold text-emerald-700 truncate max-w-[140px] text-right" title={polaRuang}>
                     {polaRuang}
                   </span>
                 </div>
-                <div className="flex justify-between items-center py-0.5 border-b border-slate-50 gap-2">
+                <div className="flex justify-between items-center py-0.5 border-b border-[#E2DACB]/60 gap-2">
                   <span className="text-slate-600 font-medium">Klasifikasi Risiko OSS:</span>
                   <span className="font-mono font-bold text-slate-800 text-right">
                     {ossRiskLevel}
                   </span>
                 </div>
-                <div className="flex justify-between items-center py-0.5 border-b border-slate-50 gap-2">
+                <div className="flex justify-between items-center py-0.5 border-b border-[#E2DACB]/60 gap-2">
                   <span className="text-slate-600 font-medium">Status Lahan:</span>
                   <span className="font-semibold text-indigo-700 truncate max-w-[140px] text-right" title={landStatus}>
                     {landStatus}
                   </span>
                 </div>
-                <div className="flex justify-between items-center py-0.5 border-b border-slate-50 gap-2">
+                <div className="flex justify-between items-center py-0.5 border-b border-[#E2DACB]/60 gap-2">
                   <span className="text-slate-600 font-medium">Komitmen Naker Lokal:</span>
                   <span className="font-mono tabular-nums font-bold text-emerald-700">
                     {laborLocalPercent > 0 ? `${laborLocalPercent} Jiwa / TKL` : "Sesuai Perda Luwu"}
@@ -524,13 +549,13 @@ export default function IproPitchDeckModal({
           </div>
 
           {/* SPATIAL COORDINATES & STRATEGIC CONTACT */}
-          <div className="p-4 rounded-2xl border border-slate-200 bg-slate-50 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+          <div className="p-4 rounded-2xl border border-[#E2DACB] bg-[#F4F0E6] grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             <div className="space-y-1">
               <h4 className="font-extrabold text-slate-800 font-sans mb-1 flex items-center gap-1.5">
                 <Globe className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Georeferensi Titik Spasial PostGIS</span>
               </h4>
-              <p className="font-mono tabular-nums text-slate-800 bg-white border border-slate-200 px-2.5 py-1 rounded-lg w-fit">
+              <p className="font-mono tabular-nums text-slate-800 bg-[#FAF7F0] border border-[#E2DACB] px-2.5 py-1 rounded-lg w-fit">
                 {hasValidCoords ? (
                   <>
                     Lat: <strong className="text-slate-900">{rawLat.toFixed(5)}</strong> · Long:{" "}
@@ -560,7 +585,7 @@ export default function IproPitchDeckModal({
           </div>
 
           {/* FOOTER VERIFIKASI RESMI */}
-          <div className="pt-3 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-slate-500 gap-2">
+          <div className="pt-3 border-t border-[#E2DACB] flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-slate-500 gap-2">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               <span className="font-medium">
