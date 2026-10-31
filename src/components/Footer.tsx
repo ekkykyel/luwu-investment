@@ -85,7 +85,7 @@ export const Footer: React.FC<FooterProps> = ({
               }`}>
                 <img
                   src={LUWU_LOGO_BASE64}
-                  alt="Lambang Resmi Kabupaten Luwu"
+                  alt={t('footer.logoAlt', 'Lambang Resmi Kabupaten Luwu')}
                   className="w-8 h-8 object-contain drop-shadow-xs"
                 />
               </div>
@@ -194,7 +194,7 @@ export const Footer: React.FC<FooterProps> = ({
                   <ChevronRight className={`w-3.5 h-3.5 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all ${
                     isDark ? 'text-[#C9A24B]' : 'text-[#A07A28]'
                   }`} />
-                  <span>Portal MPP Simpurusiang</span>
+                  <span>{t('footer.mppPortal', 'Portal MPP Simpurusiang')}</span>
                 </button>
               </li>
               <li>
@@ -219,7 +219,7 @@ export const Footer: React.FC<FooterProps> = ({
             <h4 className={`text-xs font-bold uppercase tracking-wider ${
               isDark ? 'text-[#C9A24B]' : 'text-[#A07A28]'
             }`}>
-              Integritas & Sumber Data
+              {t('footer.dataIntegrityTitle', 'Integritas & Sumber Data')}
             </h4>
 
             {/* Official Source Badges */}
@@ -233,7 +233,7 @@ export const Footer: React.FC<FooterProps> = ({
                   <ShieldCheck className={`w-3.5 h-3.5 shrink-0 ${
                     isDark ? 'text-[#C9A24B]' : 'text-[#A07A28]'
                   }`} />
-                  <span>Data terverifikasi DPMPTSP</span>
+                  <span>{t('footer.verifiedDataBadge', 'Data terverifikasi DPMPTSP')}</span>
                 </span>
                 <span className={`px-2.5 py-1 rounded-lg border flex items-center gap-1.5 font-medium ${
                   isDark
@@ -243,13 +243,13 @@ export const Footer: React.FC<FooterProps> = ({
                   <Building2 className={`w-3.5 h-3.5 shrink-0 ${
                     isDark ? 'text-[#1F9D74]' : 'text-[#0F6B4F]'
                   }`} />
-                  <span>Kesesuaian RTRW & OSS-RBA</span>
+                  <span>{t('footer.rtrwOssBadge', 'Kesesuaian RTRW & OSS-RBA')}</span>
                 </span>
               </div>
               <p className={`text-xs leading-relaxed font-normal ${
                 isDark ? 'text-[#B9C4BC]' : 'text-[#4A5A52]'
               }`}>
-                Penyajian potensi investasi resmi berbasis tata ruang wilayah dan regulasi perizinan berusaha satu pintu Pemerintah Kabupaten Luwu.
+                {t('footer.officialPresentation', 'Penyajian potensi investasi resmi berbasis tata ruang wilayah dan regulasi perizinan berusaha satu pintu Pemerintah Kabupaten Luwu.')}
               </p>
             </div>
           </div>
@@ -277,7 +277,7 @@ export const Footer: React.FC<FooterProps> = ({
             <span className={`text-[11px] ${
               isDark ? 'text-[#B9C4BC]/90' : 'text-[#4A5A52]'
             }`}>
-              Data bersumber dari DPMPTSP, RTRW, dan OSS-RBA
+              {t('footer.dataSourceSummary', 'Data bersumber dari DPMPTSP, RTRW, dan OSS-RBA')}
             </span>
             {onOpenDiagnostic && (
               <>
@@ -289,7 +289,7 @@ export const Footer: React.FC<FooterProps> = ({
                     isDark ? 'text-emerald-300/90 hover:text-emerald-200' : 'text-emerald-800 hover:text-emerald-950'
                   }`}
                 >
-                  Diagnostik Koneksi
+                  {t('nav.diagnostic', 'Diagnostik Koneksi')}
                 </button>
               </>
             )}

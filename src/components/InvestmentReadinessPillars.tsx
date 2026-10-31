@@ -361,7 +361,7 @@ export default function InvestmentReadinessPillars({
                 {t("readiness.officialVerified", "Terverifikasi Resmi")}
               </div>
               <div className="text-[9px] text-slate-600 dark:text-slate-400">
-                Data sumber DPMPTSP Luwu
+                {t("readiness.officialDataSource", "Data sumber DPMPTSP Luwu")}
               </div>
             </div>
           </div>

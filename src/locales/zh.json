@@ -364,7 +364,16 @@
     "interactiveDashboard": "交互式仪表板",
     "pemkabLuwu": "卢武县人民政府",
     "copyright": "© 2026 卢武县人民政府。保留所有权利。",
-    "version": "版本 2.0.1 (高精度空间引擎)"
+    "version": "版本 2.0.1 (高精度空间引擎)",
+    "navTitle": "门户导航",
+    "tagline": "鲁乌县公共服务整合与投资便利之门。",
+    "mppPortal": "Simpurusiang 公共服务中心门户",
+    "dataIntegrityTitle": "数据诚信与来源",
+    "verifiedDataBadge": "DPMPTSP 验证数据",
+    "rtrwOssBadge": "RTRW 规划与 OSS-RBA 合规",
+    "officialPresentation": "基于鲁乌县人民政府区域空间规划和一站式企业许可法规展示的官方投资潜力。",
+    "dataSourceSummary": "数据来源于 DPMPTSP、RTRW 和 OSS-RBA",
+    "logoAlt": "鲁乌县官方徽标"
   },
   "chartsExtra": {
     "commodityAnalysis": "各镇大宗商品分析",
@@ -4039,6 +4048,7 @@
     "subtitle": "芦梧县综合评估体系，全面保障土地空间确定性、多式联运基础设施可靠性、法规稳定性、财税激励扶持以及可持续本地合作。",
     "quantitativeIndicator": "量化就绪指标",
     "officialVerified": "官方法定核实",
+    "officialDataSource": "数据来源 鲁乌县DPMPTSP",
     "statusLabel": "芦梧就绪现状：",
     "standardLabel": "国家投资部蓝图标准：",
     "featuresTitle": "综合就绪核心功能与解决方案：",

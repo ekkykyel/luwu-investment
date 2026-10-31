@@ -796,7 +796,16 @@
     "interactiveDashboard": "Interactive Dashboard",
     "pemkabLuwu": "Government of Luwu Regency",
     "copyright": "© 2026 Government of Luwu Regency. All Rights Reserved.",
-    "version": "Version 2.0.1 (Precision Engine)"
+    "version": "Version 2.0.1 (Precision Engine)",
+    "navTitle": "Portal Navigation",
+    "tagline": "Gateway to Public Service Integration & Ease of Investment in Luwu Regency.",
+    "mppPortal": "Simpurusiang MPP Portal",
+    "dataIntegrityTitle": "Integrity & Data Sources",
+    "verifiedDataBadge": "DPMPTSP Verified Data",
+    "rtrwOssBadge": "RTRW Zoning & OSS-RBA Compliance",
+    "officialPresentation": "Official presentation of regional spatial investment potential and one-stop business licensing regulations of Luwu Regency Government.",
+    "dataSourceSummary": "Data sourced from DPMPTSP, RTRW, and OSS-RBA",
+    "logoAlt": "Official Emblem of Luwu Regency"
   },
   "chartsExtra": {
     "commodityAnalysis": "Commodity Analysis by Sub-district",
@@ -4069,6 +4078,7 @@
     "subtitle": "Comprehensive validation framework of Luwu Regency ensuring spatial certainty, multimodal infrastructure reliability, regulatory certainty, fiscal incentives, and sustainable partnerships.",
     "quantitativeIndicator": "Quantitative Readiness Indicators",
     "officialVerified": "OFFICIALLY VERIFIED",
+    "officialDataSource": "DPMPTSP Luwu Data Source",
     "statusLabel": "Luwu Readiness Status:",
     "standardLabel": "Ministry Blueprint Reference:",
     "featuresTitle": "Integrated Readiness Features & Solutions:",

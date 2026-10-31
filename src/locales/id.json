@@ -796,7 +796,16 @@
     "interactiveDashboard": "Dashboard Interaktif",
     "pemkabLuwu": "Pemerintah Kabupaten Luwu",
     "copyright": "© 2026 Pemerintah Kabupaten Luwu. Hak Cipta Dilindungi Undang-Undang.",
-    "version": "Versi 2.0.1 (Precision Engine)"
+    "version": "Versi 2.0.1 (Precision Engine)",
+    "navTitle": "Navigasi Portal",
+    "tagline": "Pintu Gerbang Integrasi Pelayanan Publik & Kemudahan Berinvestasi Kabupaten Luwu.",
+    "mppPortal": "Portal MPP Simpurusiang",
+    "dataIntegrityTitle": "Integritas & Sumber Data",
+    "verifiedDataBadge": "Data terverifikasi DPMPTSP",
+    "rtrwOssBadge": "Kesesuaian RTRW & OSS-RBA",
+    "officialPresentation": "Penyajian potensi investasi resmi berbasis tata ruang wilayah dan regulasi perizinan berusaha satu pintu Pemerintah Kabupaten Luwu.",
+    "dataSourceSummary": "Data bersumber dari DPMPTSP, RTRW, dan OSS-RBA",
+    "logoAlt": "Lambang Resmi Kabupaten Luwu"
   },
   "chartsExtra": {
     "commodityAnalysis": "Analisis Komoditas per Kecamatan",
@@ -4069,6 +4078,7 @@
     "subtitle": "Instrumen validasi komprehensif Kabupaten Luwu menjamin kepastian tata ruang, keandalan infrastruktur multimoda, kepastian regulasi, insentif fiskal, dan kemitraan berkelanjutan.",
     "quantitativeIndicator": "Indikator Kuantitatif Kesiapan",
     "officialVerified": "TERVERIFIKASI RESMI",
+    "officialDataSource": "Data sumber DPMPTSP Luwu",
     "statusLabel": "Status Kesiapan Luwu:",
     "standardLabel": "Acuan Blueprint Kementerian:",
     "featuresTitle": "Fitur & Solusi Kesiapan Terintegrasi:",
