@@ -8277,8 +8277,98 @@ app.put("/api/kpbu/incentives/:id", async (req, res) => {
   }
 });
 
+// Investment Readiness Pillars SSOT API Endpoints
+app.get("/api/readiness/pillars", async (req, res) => {
+  try {
+    const isAll = req.query.all === 'true';
+    let query = supabase.from("investment_readiness_pillars").select("*").order("urutan", { ascending: true });
+    if (!isAll) {
+      query = query.eq("is_active", true);
+    }
+    const { data, error } = await query;
+    if (error) throw error;
+    res.json({ data: data || [] });
+  } catch (err: any) {
+    console.error("Error at GET /api/readiness/pillars:", err?.message || err);
+    res.status(500).json({ data: [], error: "Gagal mengambil data pilar kesiapan investasi" });
+  }
+});
 
+app.put("/api/readiness/pillars/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData: Record<string, any> = {
+      updated_at: new Date().toISOString()
+    };
+    const allowedFields = [
+      'badge', 'short_label', 'title', 'subtitle', 'accent_color', 'accent_bg',
+      'score', 'readiness_rating', 'tagline', 'blueprint_standard', 'luwu_readiness_status',
+      'key_metrics', 'strategic_points', 'primary_action_label', 'secondary_action_label',
+      'urutan', 'is_active'
+    ];
+    for (const field of allowedFields) {
+      if (req.body?.[field] !== undefined) {
+        updateData[field] = req.body[field];
+      }
+    }
 
+    const isUUID = String(id).includes('-');
+    const query = supabase.from("investment_readiness_pillars").update(updateData);
+    const { data, error } = isUUID
+      ? await query.eq("id", id).select()
+      : await query.eq("pillar_id", id).select();
+
+    if (error) throw error;
+    res.json({ data: data?.[0] });
+  } catch (err: any) {
+    console.error("Error at PUT /api/readiness/pillars:", err?.message || err);
+    res.status(500).json({ error: err?.message || "Gagal memperbarui pilar kesiapan investasi" });
+  }
+});
+
+// Spatial RDTR Zones SSOT API Endpoints
+app.get("/api/spatial/rdtr-zones", async (req, res) => {
+  try {
+    const isAll = req.query.all === 'true';
+    let query = supabase.from("spatial_rdtr_zones").select("*").order("urutan", { ascending: true });
+    if (!isAll) {
+      query = query.eq("is_active", true);
+    }
+    const { data, error } = await query;
+    if (error) throw error;
+    res.json({ data: data || [] });
+  } catch (err: any) {
+    console.error("Error at GET /api/spatial/rdtr-zones:", err?.message || err);
+    res.status(500).json({ data: [], error: "Gagal mengambil data zona RDTR" });
+  }
+});
+
+app.put("/api/spatial/rdtr-zones/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData: Record<string, any> = {
+      updated_at: new Date().toISOString()
+    };
+    const allowedFields = ['name', 'type', 'status', 'color', 'urutan', 'is_active'];
+    for (const field of allowedFields) {
+      if (req.body?.[field] !== undefined) {
+        updateData[field] = req.body[field];
+      }
+    }
+
+    const isUUID = String(id).includes('-');
+    const query = supabase.from("spatial_rdtr_zones").update(updateData);
+    const { data, error } = isUUID
+      ? await query.eq("id", id).select()
+      : await query.eq("code", id).select();
+
+    if (error) throw error;
+    res.json({ data: data?.[0] });
+  } catch (err: any) {
+    console.error("Error at PUT /api/spatial/rdtr-zones:", err?.message || err);
+    res.status(500).json({ error: err?.message || "Gagal memperbarui zona RDTR" });
+  }
+});
 app.post("/api/site-settings", async (req, res) => {
   try {
     const { setting_key, setting_value } = req.body || {};

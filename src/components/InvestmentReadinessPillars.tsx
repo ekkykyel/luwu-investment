@@ -71,265 +71,110 @@ export default function InvestmentReadinessPillars({
   onScrollToUmkm,
 }: InvestmentReadinessPillarsProps) {
   const { t } = useTranslation();
-  const [activePillar, setActivePillar] = useState<PillarId>("spatial");
+  const [activePillar, setActivePillar] = useState<string>("spatial");
+  const [dbPillars, setDbPillars] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const pillars: PillarItem[] = [
-    {
-      id: "spatial",
-      number: "01",
-      badge: t("readiness.p1Badge", "Tata Ruang Digital"),
-      shortLabel: "Tata Ruang",
-      title: t("readiness.p1Title", "Spatial Ready"),
-      subtitle: t("readiness.p1Subtitle", "Integrasi RDTR Digital, OSS & Kesesuaian Ruang (KKPR)"),
-      icon: Layers,
-      accentColor: "text-emerald-600 dark:text-emerald-400",
-      accentBg: "bg-emerald-500/10 border-emerald-500/30",
-      score: t("readiness.p1Score", "98%"),
-      readinessRating: t("readiness.p1Rating", "Tingkat Kesiapan A1 • Clean & Clear"),
-      tagline: t("readiness.p1Tagline", "Kepastian plot koordinat investasi 0% sengketa dengan sinkronisasi PostGIS & GISTARU."),
-      blueprintStandard: t("readiness.p1Standard", "Integrasi RDTR Digital OSS-RBA, Percepatan Konfirmasi KKPR & Kepastian Zonasi"),
-      luwuReadinessStatus: t("readiness.p1Status", "100% Valid Spasial (Perda RTRW No. 1/2024 & Modul Digital KKPR)"),
-      keyMetrics: [
-        { label: t("readiness.p1m1Label", "Validasi Spasial"), value: t("readiness.p1m1Value", "Real-Time"), desc: t("readiness.p1m1Desc", "Sinkronisasi otomatis layer RTRW 22 kecamatan") },
-        { label: t("readiness.p1m2Label", "SLA Konfirmasi KKPR"), value: t("readiness.p1m2Value", "3 - 5 Hari"), desc: t("readiness.p1m2Desc", "Pemeriksaan teknis PUPR terintegrasi DPMPTSP") },
-        { label: t("readiness.p1m3Label", "Luas Lahan Terpetakan"), value: t("readiness.p1m3Value", "3.000+ Ha"), desc: t("readiness.p1m3Desc", "Polygon terverifikasi Clean & Clear") },
-      ],
-      strategicPoints: [
-        {
-          title: t("readiness.p1sp1Title", "Peta RDTR Digital Terintegrasi"),
-          desc: t("readiness.p1sp1Desc", "Plotting koordinat investasi langsung terhubung layer zonasi KIB (Kawasan Industri Bua), agropolitan, dan pariwisata."),
-          standard: t("readiness.p1sp1Std", "OSS-RBA Digital GISTARU"),
-        },
-        {
-          title: t("readiness.p1sp2Title", "Sertifikasi KKPR Bebas Sengketa"),
-          desc: t("readiness.p1sp2Desc", "Alur perizinan tata ruang terverifikasi langsung via sistem GIS tanpa tumpang tindih kawasan hutan lindung."),
-          standard: t("readiness.p1sp2Std", "PP No. 21/2021"),
-        },
-        {
-          title: t("readiness.p1sp3Title", "Katalog Spasial IPRO Presisi"),
-          desc: t("readiness.p1sp3Desc", "Setiap paket investasi dilengkapi polygon WGS84 resmi, status kepemilikan SHM/HPL, dan buffer infrastruktur."),
-          standard: t("readiness.p1sp3Std", "Standar BKPM RI"),
-        },
-      ],
-      primaryActionLabel: t("readiness.p1Action1", "Cek Kesesuaian Lahan (RTRW)"),
-      secondaryActionLabel: t("readiness.p1Action2", "Buka Peta Spasial GIS"),
-      onPrimaryClick: onOpenRtrwModal,
-      onSecondaryClick: onOpenSpatialMap,
-    },
-    {
-      id: "infrastructure",
-      number: "02",
-      badge: t("readiness.p2Badge", "Konektivitas & Utilitas"),
-      shortLabel: "Infrastruktur",
-      title: t("readiness.p2Title", "Infrastructure Ready"),
-      subtitle: t("readiness.p2Subtitle", "Konektivitas Multimoda, Energi Hijau & Kawasan Industri"),
-      icon: Building,
-      accentColor: "text-amber-600 dark:text-amber-400",
-      accentBg: "bg-amber-500/10 border-amber-500/30",
-      score: t("readiness.p2Score", "96%"),
-      readinessRating: t("readiness.p2Rating", "Tingkat Kesiapan A1 • Koridor Terkoneksi"),
-      tagline: t("readiness.p2Tagline", "Akses logistik darat, laut, dan udara terhubung langsung koridor Trans-Sulawesi."),
-      blueprintStandard: t("readiness.p2Standard", "Akses Jalan Arteri, Dermaga Pelabuhan, Runway Bandara, Utilitas Listrik & Air Bersih"),
-      luwuReadinessStatus: t("readiness.p2Status", "Terkoneksi Penuh (Bandara Bua, Pelabuhan Ulo-Ulo, PLTA Bakaru Grid)"),
-      keyMetrics: [
-        { label: t("readiness.p2m1Label", "Runway Bandara Bua"), value: t("readiness.p2m1Value", "1.660 m"), desc: t("readiness.p2m1Desc", "Siap melayani penerbangan kargo & eksekutif ATR-72") },
-        { label: t("readiness.p2m2Label", "Pelabuhan Ulo-Ulo"), value: t("readiness.p2m2Value", "5.000 DWT"), desc: t("readiness.p2m2Desc", "Dermaga curah dan peti kemas Teluk Bone") },
-        { label: t("readiness.p2m3Label", "Kapasitas Listrik Grid"), value: t("readiness.p2m3Value", "Surplus 150MW"), desc: t("readiness.p2m3Desc", "Interkoneksi transmisi PLN Sulselrabar") },
-      ],
-      strategicPoints: [
-        {
-          title: t("readiness.p2sp1Title", "Kawasan Industri Terpadu Bua (KIB)"),
-          desc: t("readiness.p2sp1Desc", "Zonasi industri seluas 1.000 Ha tepat di samping Bandara Bua dengan akses pelabuhan langsung 15 menit."),
-          standard: t("readiness.p2sp1Std", "Masterplan Kawasan Strategis"),
-        },
-        {
-          title: t("readiness.p2sp2Title", "Koridor Logistik Jalan Nasional"),
-          desc: t("readiness.p2sp2Desc", "Jaringan jalan arteri Trans-Sulawesi menghubungkan Makassar - Palopo - Morowali tanpa hambatan tonase berat."),
-          standard: t("readiness.p2sp2Std", "Standar Muatan Sumbu Terberat"),
-        },
-        {
-          title: t("readiness.p2sp3Title", "Jaminan Utilitas Serat Optik & Air Baku"),
-          desc: t("readiness.p2sp3Desc", "Ketersediaan debit air DAS Poringan & Sungai Suso dengan backbone internet serat optik 1 Gbps."),
-          standard: t("readiness.p2sp3Std", "Standar Infrastruktur Kemenperin"),
-        },
-      ],
-      primaryActionLabel: t("readiness.p2Action1", "Lihat Fasilitas Infrastruktur"),
-      secondaryActionLabel: t("readiness.p2Action2", "Katalog Proyek Siap Tawar"),
-      onPrimaryClick: onScrollToPotensi,
-      onSecondaryClick: onScrollToPotensi,
-    },
-    {
-      id: "industry",
-      number: "03",
-      badge: t("readiness.p3Badge", "Hilirisasi Komoditas"),
-      shortLabel: "Hilirisasi",
-      title: t("readiness.p3Title", "Industry Ready"),
-      subtitle: t("readiness.p3Subtitle", "Hilirisasi Kakao, Kopi, Nikel & Ekosistem Perintis"),
-      icon: TrendingUp,
-      accentColor: "text-teal-600 dark:text-teal-400",
-      accentBg: "bg-teal-500/10 border-teal-500/30",
-      score: t("readiness.p3Score", "94%"),
-      readinessRating: t("readiness.p3Rating", "Tingkat Kesiapan A2 • Ekosistem Terpadu"),
-      tagline: t("readiness.p3Tagline", "Transformasi komoditas mentah menjadi produk hilir bernilai tambah tinggi di Kabupaten Luwu."),
-      blueprintStandard: t("readiness.p3Standard", "Kawasan Hilirisasi Terpadu, Anchor Investor, Klaster Komoditas Unggulan Daerah"),
-      luwuReadinessStatus: t("readiness.p3Status", "Sentra Hilirisasi Noling & Koridor Smelter Terpadu"),
-      keyMetrics: [
-        { label: t("readiness.p3m1Label", "Produksi Kakao"), value: t("readiness.p3m1Value", "24.500 Ton/Th"), desc: t("readiness.p3m1Desc", "Bahan baku biji fermentasi kualitas ekspor") },
-        { label: t("readiness.p3m2Label", "Produksi Kopi Latimojong"), value: t("readiness.p3m2Value", "4.200 Ton/Th"), desc: t("readiness.p3m2Desc", "Spesialti Arabika & Robusta pegunungan") },
-        { label: t("readiness.p3m3Label", "Potensi Nilai Tambah"), value: t("readiness.p3m3Value", "+340%"), desc: t("readiness.p3m3Desc", "Multiplier ekonomi hilirisasi pengolahan lokal") },
-      ],
-      strategicPoints: [
-        {
-          title: t("readiness.p3sp1Title", "Hilirisasi Sentra Kakao Noling"),
-          desc: t("readiness.p3sp1Desc", "Fasilitas pengolahan pasta, cocoa butter, dan bubuk cokelat premium untuk rantai pasok industri makanan global."),
-          standard: t("readiness.p3sp1Std", "Program Prioritas Hilirisasi Nasional"),
-        },
-        {
-          title: t("readiness.p3sp2Title", "Klaster Industri Pengolahan Rumput Laut & Ikan"),
-          desc: t("readiness.p3sp2Desc", "Garis pantai 122 km menghasilkan Gracilaria & Bandeng unggulan siap olah cold-storage modern."),
-          standard: t("readiness.p3sp2Std", "Blue Economy Framework"),
-        },
-        {
-          title: t("readiness.p3sp3Title", "Ketersediaan Anchor Investor & Rantai Pasok"),
-          desc: t("readiness.p3sp3Desc", "Keberadaan industri manufaktur pionir yang menjamin kepastian serapan bahan baku dan pasar ekspor."),
-          standard: t("readiness.p3sp3Std", "Industrial Ecosystem Ready"),
-        },
-      ],
-      primaryActionLabel: t("readiness.p3Action1", "Eksplorasi Proyek Hilirisasi"),
-      secondaryActionLabel: t("readiness.p3Action2", "Konsultasi Sektor Industri"),
-      onPrimaryClick: onScrollToPotensi,
-      onSecondaryClick: onScrollToRoadmap,
-    },
-    {
-      id: "financing",
-      number: "04",
-      badge: t("readiness.p4Badge", "Skema Pembiayaan & Insentif"),
-      shortLabel: "Fiskal",
-      title: t("readiness.p4Title", "Financing Ready"),
-      subtitle: t("readiness.p4Subtitle", "Peluang KPBU, Blended Finance & Insentif Fiskal Perda"),
-      icon: Coins,
-      accentColor: "text-yellow-600 dark:text-yellow-400",
-      accentBg: "bg-yellow-500/10 border-yellow-500/30",
-      score: t("readiness.p4Score", "95%"),
-      readinessRating: t("readiness.p4Rating", "Tingkat Kesiapan A1 • Regulasi Terbit"),
-      tagline: t("readiness.p4Tagline", "Kombinasi insentif fiskal daerah dan kemudahan kemitraan pembiayaan publik-swasta."),
-      blueprintStandard: t("readiness.p4Standard", "Skema KPBU (Kerjasama Pemerintah & Badan Usaha), Blended Finance, Fasilitas Tax Holiday"),
-      luwuReadinessStatus: t("readiness.p4Status", "Perda Insentif Penanaman Modal & Fasilitasi Fiskal PBG/PBB-P2"),
-      keyMetrics: [
-        { label: t("readiness.p4m1Label", "Insentif PBG Daerah"), value: t("readiness.p4m1Value", "Hingga 50%"), desc: t("readiness.p4m1Desc", "Pembebasan retribusi izin gedung industri baru") },
-        { label: t("readiness.p4m2Label", "Pengurangan PBB-P2"), value: t("readiness.p4m2Value", "s/d 5 Tahun"), desc: t("readiness.p4m2Desc", "Masa keringanan pajak selama fase konstruksi") },
-        { label: t("readiness.p4m3Label", "Skema KPBU Terbuka"), value: t("readiness.p4m3Value", "Infrastruktur"), desc: t("readiness.p4m3Desc", "Proyek air minum, dermaga & logistik pergudangan") },
-      ],
-      strategicPoints: [
-        {
-          title: t("readiness.p4sp1Title", "Kalkulator Insentif Fiskal & Simulasi ROI"),
-          desc: t("readiness.p4sp1Desc", "Perhitungan interaktif penghematan biaya modal (Capex/Opex) sesuai Perda Luwu dan PP No. 24/2019."),
-          standard: t("readiness.p4sp1Std", "Smart Fiscal Estimator"),
-        },
-        {
-          title: t("readiness.p4sp2Title", "Peluang KPBU Infrastruktur Strategis"),
-          desc: t("readiness.p4sp2Desc", "Dukungan penyiapan proyek (PDF) dan penjaminan kelayakan pembiayaan untuk investor institusional."),
-          standard: t("readiness.p4sp2Std", "Perpres No. 38/2015 KPBU"),
-        },
-        {
-          title: t("readiness.p4sp3Title", "Fasilitasi Blended Finance & Perbankan Daerah"),
-          desc: t("readiness.p4sp3Desc", "Kemitraan sindikasi Bank Sulselbar dan lembaga pembiayaan nasional untuk proyek strategis daerah."),
-          standard: t("readiness.p4sp3Std", "OJK Sustainable Finance"),
-        },
-      ],
-      primaryActionLabel: t("readiness.p4Action1", "Hitung Insentif Fiskal & ROI"),
-      secondaryActionLabel: t("readiness.p4Action2", "Simulasi Finansial"),
-      onPrimaryClick: onOpenIncentiveModal,
-      onSecondaryClick: onScrollToCalculator,
-    },
-    {
-      id: "environment",
-      number: "05",
-      badge: t("readiness.p5Badge", "Standar ESG & Amdal"),
-      shortLabel: "Lingkungan",
-      title: t("readiness.p5Title", "Environment Ready"),
-      subtitle: t("readiness.p5Subtitle", "Percepatan Izin Lingkungan AMDAL, UKL-UPL & Keberlanjutan"),
-      icon: Leaf,
-      accentColor: "text-emerald-600 dark:text-emerald-400",
-      accentBg: "bg-emerald-500/10 border-emerald-500/30",
-      score: t("readiness.p5Score", "100%"),
-      readinessRating: t("readiness.p5Rating", "Tingkat Kesiapan A1 • Fast-Track Digital"),
-      tagline: t("readiness.p5Tagline", "Kajian dampak lingkungan cepat dan transparan melalui integrasi digital AMDALNET."),
-      blueprintStandard: t("readiness.p5Standard", "Percepatan Persetujuan Lingkungan, Standar Emisi Terkendali, Kepatuhan Ekologi Rendah Karbon"),
-      luwuReadinessStatus: t("readiness.p5Status", "Asistensi Digital DLH Luwu (AMDALNET Terpadu SLA < 15 Hari Kerja)"),
-      keyMetrics: [
-        { label: t("readiness.p5m1Label", "SLA SPPL Otomatis"), value: t("readiness.p5m1Value", "Instan (< 1 Jam)"), desc: t("readiness.p5m1Desc", "Penerbitan via OSS-RBA untuk risiko rendah/menengah") },
-        { label: t("readiness.p5m2Label", "SLA Rekomendasi UKL-UPL"), value: t("readiness.p5m2Value", "10 - 14 Hari"), desc: t("readiness.p5m2Desc", "Verifikasi dokumen lingkungan oleh tim teknis DLH") },
-        { label: t("readiness.p5m3Label", "Komitmen Hijau Luwu"), value: t("readiness.p5m3Value", "Standar ESG"), desc: t("readiness.p5m3Desc", "Perlindungan tutupan hutan lindung & hulu DAS") },
-      ],
-      strategicPoints: [
-        {
-          title: t("readiness.p5sp1Title", "Percepatan Izin Lingkungan (Fast-Track AMDALNET)"),
-          desc: t("readiness.p5sp1Desc", "Dinas Lingkungan Hidup Kab. Luwu menyediakan desk asistensi penyusunan formulir UKL-UPL satu pintu."),
-          standard: t("readiness.p5sp1Std", "PP No. 22/2021"),
-        },
-        {
-          title: t("readiness.p5sp2Title", "Buffer Proteksi Bencana & Tata Air Spasial"),
-          desc: t("readiness.p5sp2Desc", "Pengecekan otomatis risiko banjir dan longsor memastikan lokasi pabrik bebas dari ancaman hidrologis."),
-          standard: t("readiness.p5sp2Std", "Kajian Spasial Kebencanaan BPBD"),
-        },
-        {
-          title: t("readiness.p5sp3Title", "Standar Investasi Hijau & Sirkular"),
-          desc: t("readiness.p5sp3Desc", "Dukungan penuh untuk pemanfaatan limbah biomassa kelapa sawit dan kulit kakao sebagai energi terbarukan."),
-          standard: t("readiness.p5sp3Std", "Green Investment Taxonomy"),
-        },
-      ],
-      primaryActionLabel: t("readiness.p5Action1", "Pelajari Roadmap Perizinan DLH"),
-      secondaryActionLabel: t("readiness.p5Action2", "Persetujuan Lingkungan"),
-      onPrimaryClick: onScrollToRoadmap,
-      onSecondaryClick: onScrollToRoadmap,
-    },
-    {
-      id: "local_economy",
-      number: "06",
-      badge: t("readiness.p6Badge", "Kemitraan UMKM & Naker"),
-      shortLabel: "Kemitraan",
-      title: t("readiness.p6Title", "Local Economy Ready"),
-      subtitle: t("readiness.p6Subtitle", "Kemitraan Wajib UMKM Daerah & Kesiapan SDM Bersertifikat"),
-      icon: Users,
-      accentColor: "text-sky-600 dark:text-sky-400",
-      accentBg: "bg-sky-500/10 border-sky-500/30",
-      score: t("readiness.p6Score", "92%"),
-      readinessRating: t("readiness.p6Rating", "Tingkat Kesiapan A2 • Kemitraan Aktif"),
-      tagline: t("readiness.p6Tagline", "Mempertemukan investor skala besar dengan rantai pasok pengusaha dan tenaga kerja lokal Luwu."),
-      blueprintStandard: t("readiness.p6Standard", "Business Matching Investor - UMKM, Sertifikasi Keterampilan Lokal, Kemitraan Rantai Pasok"),
-      luwuReadinessStatus: t("readiness.p6Status", "Direktori UMKM Terverifikasi MPP & Komitmen Penyerapan Naker Lokal 70%+"),
-      keyMetrics: [
-        { label: t("readiness.p6m1Label", "UMKM Binaan Terdaftar"), value: t("readiness.p6m1Value", "1.200+ Unit"), desc: t("readiness.p6m1Desc", "Sektor agribisnis, katering, logistik & suplier lokal") },
-        { label: t("readiness.p6m2Label", "Sertifikasi BLK Luwu"), value: t("readiness.p6m2Value", "Siap Kerja"), desc: t("readiness.p6m2Desc", "Pelatihan las industri, alat berat, dan pengolahan hasil tani") },
-        { label: t("readiness.p6m3Label", "Insentif Kemitraan"), value: t("readiness.p6m3Value", "Prioritas"), desc: t("readiness.p6m3Desc", "Kemudahan perizinan bagi investor bermitra dengan UMKM lokal") },
-      ],
-      strategicPoints: [
-        {
-          title: t("readiness.p6sp1Title", "Fasilitasi Business Matching Terjadwal"),
-          desc: t("readiness.p6sp1Desc", "DPMPTSP Luwu secara aktif mengorkestrasi forum kemitraan antara pengusaha besar dan UMKM daerah."),
-          standard: t("readiness.p6sp1Std", "Perpres No. 10/2021 tentang PM"),
-        },
-        {
-          title: t("readiness.p6sp2Title", "Direktori Pemasok Daerah Terverifikasi"),
-          desc: t("readiness.p6sp2Desc", "Akses langsung profil pengusaha lokal penyedia bahan baku, transportasi logistik, dan jasa konstruksi."),
-          standard: t("readiness.p6sp2Std", "Database UMKM MPP Simpurusiang"),
-        },
-        {
-          title: t("readiness.p6sp3Title", "Perlindungan & Peningkatan Nilai Tambah Daerah"),
-          desc: t("readiness.p6sp3Desc", "Investasi yang masuk dipastikan memicu pertumbuhan ekonomi inklusif bagi masyarakat Kabupaten Luwu."),
-          standard: t("readiness.p6sp3Std", "Inklusivitas Ekonomi BKPM"),
-        },
-      ],
-      primaryActionLabel: t("readiness.p6Action1", "Lihat Direktori Kemitraan UMKM"),
-      secondaryActionLabel: t("readiness.p6Action2", "Data Tenaga Kerja Lokal"),
-      onPrimaryClick: onScrollToUmkm,
-      onSecondaryClick: onScrollToPotensi,
-    },
-  ];
+  React.useEffect(() => {
+    let isMounted = true;
+    const fetchPillars = async () => {
+      try {
+        setIsLoading(true);
+        const res = await fetch("/api/readiness/pillars");
+        if (res.ok) {
+          const json = await res.json();
+          if (isMounted && json && Array.isArray(json.data)) {
+            setDbPillars(json.data);
+            if (json.data.length > 0 && !json.data.some((p: any) => p.pillar_id === activePillar)) {
+              setActivePillar(json.data[0].pillar_id);
+            }
+          }
+        }
+      } catch {
+        if (isMounted) setDbPillars([]);
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    };
+    fetchPillars();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const PILLAR_ICON_MAP: Record<string, React.ElementType> = {
+    spatial: Layers,
+    infrastructure: Building,
+    industry: TrendingUp,
+    financing: Coins,
+    environment: Leaf,
+    local_economy: Users,
+  };
+
+  const getPillarActions = (pillarId: string) => {
+    switch (pillarId) {
+      case "spatial":
+        return { onPrimaryClick: onOpenRtrwModal, onSecondaryClick: onOpenSpatialMap };
+      case "infrastructure":
+        return { onPrimaryClick: onScrollToRoadmap, onSecondaryClick: onOpenSpatialMap };
+      case "industry":
+        return { onPrimaryClick: onScrollToPotensi, onSecondaryClick: onOpenSpatialMap };
+      case "financing":
+        return { onPrimaryClick: onOpenIncentiveModal, onSecondaryClick: onScrollToCalculator };
+      case "environment":
+        return { onPrimaryClick: onOpenRtrwModal, onSecondaryClick: onOpenSpatialMap };
+      case "local_economy":
+        return { onPrimaryClick: onScrollToUmkm, onSecondaryClick: onScrollToPotensi };
+      default:
+        return { onPrimaryClick: onOpenSpatialMap, onSecondaryClick: onScrollToPotensi };
+    }
+  };
+
+  const pillars: PillarItem[] = dbPillars.map((row: any) => {
+    const actions = getPillarActions(row.pillar_id);
+    return {
+      id: row.pillar_id as PillarId,
+      number: row.number,
+      badge: row.badge,
+      shortLabel: row.short_label,
+      title: row.title,
+      subtitle: row.subtitle,
+      icon: PILLAR_ICON_MAP[row.pillar_id] || Layers,
+      accentColor: row.accent_color,
+      accentBg: row.accent_bg,
+      score: row.score,
+      readinessRating: row.readiness_rating,
+      tagline: row.tagline,
+      blueprintStandard: row.blueprint_standard,
+      luwuReadinessStatus: row.luwu_readiness_status,
+      keyMetrics: Array.isArray(row.key_metrics) ? row.key_metrics : [],
+      strategicPoints: Array.isArray(row.strategic_points) ? row.strategic_points : [],
+      primaryActionLabel: row.primary_action_label,
+      secondaryActionLabel: row.secondary_action_label,
+      onPrimaryClick: actions.onPrimaryClick,
+      onSecondaryClick: actions.onSecondaryClick,
+    };
+  });
 
   const currentPillar = pillars.find((p) => p.id === activePillar) || pillars[0];
-  const CurrentIcon = currentPillar.icon;
+  const CurrentIcon = currentPillar ? currentPillar.icon : Layers;
+
+  if (!isLoading && pillars.length === 0) {
+    return (
+      <section
+        id="readiness-section"
+        className={`py-12 sm:py-16 md:py-20 border-t relative overflow-hidden transition-colors duration-500 ${
+          isDark ? "bg-[#061826] border-white/10" : "bg-[#FAF7F0] border-[#E2DACB]"
+        }`}
+      >
+        <div className="container max-w-7xl mx-auto px-4 text-center py-12">
+          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+            {t("readiness.emptyState", "Data pilar kesiapan investasi belum tersedia di database.")}
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
