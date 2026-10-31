@@ -1397,21 +1397,21 @@ export function InvestmentDetailModal({
 
     return (
       <div className="flex flex-col gap-1.5 w-full border-b border-slate-100 dark:border-slate-800/60 pb-3 last:border-b-0 last:pb-0 last:mb-0 mb-3">
-        <div className={`flex items-center justify-between`}>
-          <div className="flex items-center gap-2">
-            <span className="text-xs w-4.5 text-center">{icon}</span>
-            <span className={`text-[13px] font-normal text-slate-800 dark:text-slate-200`}>{label}</span>
+        <div className="flex items-start sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <span className="text-xs w-4.5 text-center shrink-0">{icon}</span>
+            <span className="text-[13px] font-medium text-slate-800 dark:text-slate-200 leading-snug">{label}</span>
           </div>
-          <div className="flex items-center gap-2.5">
-            <span className={`text-xs font-normal tracking-tight text-slate-800 dark:text-slate-200`}>
+          <div className="flex items-center gap-2 shrink-0 whitespace-nowrap">
+            <span className="text-xs font-mono font-semibold tracking-tight text-slate-800 dark:text-slate-200">
               {typeof distanceKm === 'number' ? distanceKm.toFixed(2) : distanceKm} KM
             </span>
-            <span className={`px-2 py-0.5 rounded text-[10px] border ${statusBg} font-normal tracking-wide`}>
+            <span className={`px-2 py-0.5 rounded text-xs border ${statusBg} font-medium tracking-wide`}>
               {statusText}
             </span>
           </div>
         </div>
-        <div className="pl-6.5 pr-0.5 mt-0.5">
+        <div className="pl-0 sm:pl-6.5 pr-0.5 mt-0.5">
           <div
             className={`h-1.5 ${isDarkMode ? "bg-slate-800" : "bg-slate-200/70"} rounded-full overflow-hidden w-full relative mb-1.5`}
           >
@@ -1421,12 +1421,12 @@ export function InvestmentDetailModal({
             ></div>
           </div>
           {isNetworkRouting ? (
-             <div className="text-[10px] text-emerald-600 dark:text-emerald-400/90 font-medium ml-0.5 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse"></span>
+             <div className="text-xs text-emerald-600 dark:text-emerald-400/90 font-medium ml-0.5 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse shrink-0"></span>
                 <span>{t('investmentProfile.ruteDarat', 'Jalur Darat (pgRouting Aktif)')}</span>
              </div>
           ) : (
-             <div className="text-[10px] text-amber-500 dark:text-amber-400/90 font-normal ml-0.5">
+             <div className="text-xs text-amber-600 dark:text-amber-400/90 font-normal ml-0.5">
                 {t('investmentProfile.estimasiUdara', '* Estimasi Udara (Garis Lurus)')}
              </div>
           )}
@@ -1465,39 +1465,127 @@ export function InvestmentDetailModal({
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex overflow-hidden transition-all duration-300 animate-fade-in ${isMinimized ? "items-end justify-end pointer-events-none p-4 sm:p-8" : "bg-base/40 items-center justify-center p-2.5 sm:p-4 lg:p-6"}`}
+      className={`fixed inset-0 z-[9999] flex overflow-hidden transition-all duration-300 animate-fade-in ${isMinimized ? "items-end justify-end pointer-events-none p-3 sm:p-6" : "bg-base/40 items-center justify-center p-1 sm:p-3 lg:p-5"}`}
       onClick={isMinimized ? undefined : () => onClose()}
     >
       <div
-        className={`relative w-[calc(100vw-20px)] sm:w-full sm:h-auto sm:max-h-[90vh] lg:max-h-[95vh] max-w-5xl lg:max-w-[1000px] rounded-2xl sm:rounded-lg shadow-2xl overflow-hidden flex flex-col animate-[fadeInUp_0.3s_ease-out_forwards] ${modalBg} ${isMinimized ? "pointer-events-auto h-auto max-w-[400px]" : "h-full mx-auto"}`}
+        className={`relative w-full max-w-[calc(100vw-8px)] sm:max-w-3xl md:max-w-4xl lg:max-w-6xl xl:max-w-[1200px] sm:h-auto sm:max-h-[92vh] lg:max-h-[94vh] rounded-xl shadow-2xl overflow-hidden flex flex-col animate-[fadeInUp_0.3s_ease-out_forwards] ${modalBg} ${isMinimized ? "pointer-events-auto h-auto max-w-[400px]" : "h-[calc(100dvh-8px)] mx-auto"}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER BRAND */}
         <div
-          className={`p-2.5 sm:p-4 md:p-6 shrink-0 border-b ${sectionBorder} flex flex-col md:flex-row items-start md:items-center gap-3 sm:gap-4 md:gap-6 ${effectiveDarkMode ? "bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/40 text-white" : "bg-gradient-to-r from-slate-50 via-teal-50/20 to-white text-slate-900"}`}
+          className={`px-3 py-2.5 sm:px-5 sm:py-4 shrink-0 border-b ${sectionBorder} flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 sm:gap-4 ${effectiveDarkMode ? "bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/40 text-white" : "bg-gradient-to-r from-slate-50 via-teal-50/20 to-white text-slate-900"}`}
         >
-          <div
-            className={`w-20 h-20 rounded-xl shadow-inner border flex items-center justify-center relative overflow-hidden shrink-0 ${
-              effectiveDarkMode ? "bg-gradient-to-br from-slate-800 to-indigo-950/80 border-slate-700" : "bg-gradient-to-br from-emerald-50 to-indigo-50/80 border-slate-200"
-            }`}
-          >
-            {featuredPhoto ? (
-              <ProgressiveImage
-                src={featuredPhoto}
-                alt={profileData?.name || "Featured Investment"}
-                loading="eager"
-                fallbackIcon={<Building className={`w-8 h-8 ${effectiveDarkMode ? "text-emerald-400" : "text-emerald-600"}`} />}
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center gap-0.5 p-1 text-center">
-                <Building className={`w-7 h-7 ${effectiveDarkMode ? "text-emerald-400" : "text-emerald-600"}`} />
-                <span className={`text-[8px] font-mono font-bold uppercase tracking-wider ${effectiveDarkMode ? "text-emerald-300" : "text-emerald-700"}`}>IPRO GIS</span>
+          {/* Top row on mobile: Thumbnail + Action Buttons; Left block on md+ */}
+          <div className="flex items-center justify-between md:justify-start gap-3 sm:gap-4 min-w-0 flex-1">
+            <div
+              className={`w-14 h-14 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-xl shadow-inner border flex items-center justify-center relative overflow-hidden shrink-0 ${
+                effectiveDarkMode ? "bg-gradient-to-br from-slate-800 to-indigo-950/80 border-slate-700" : "bg-gradient-to-br from-emerald-50 to-indigo-50/80 border-slate-200"
+              }`}
+            >
+              {featuredPhoto ? (
+                <ProgressiveImage
+                  src={featuredPhoto}
+                  alt={profileData?.name || "Featured Investment"}
+                  loading="eager"
+                  fallbackIcon={<Building className={`w-7 h-7 sm:w-8 sm:h-8 ${effectiveDarkMode ? "text-emerald-400" : "text-emerald-600"}`} />}
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center gap-0.5 p-1 text-center">
+                  <Building className={`w-6 h-6 sm:w-7 sm:h-7 ${effectiveDarkMode ? "text-emerald-400" : "text-emerald-600"}`} />
+                  <span className={`text-xs font-mono font-bold uppercase tracking-wider ${effectiveDarkMode ? "text-emerald-300" : "text-emerald-700"}`}>IPRO</span>
+                </div>
+              )}
+            </div>
+
+            {/* Desktop/Tablet inline title block */}
+            <div className="hidden md:block flex-1 min-w-0">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h2 className="text-base lg:text-lg font-bold tracking-tight leading-snug">
+                  <AutoTranslatedText
+                    text={
+                      profileData?.name ||
+                      geo?.nama_potensi ||
+                      profileData?.nama_potensi ||
+                      "Untitled Project"
+                    }
+                    inline
+                  />
+                </h2>
+                {isPublished ? (
+                  <span className="px-2 py-0.5 text-xs font-bold rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 whitespace-nowrap">
+                    PUBLISHED
+                  </span>
+                ) : (
+                  <span className={`px-2 py-0.5 text-xs font-bold rounded border whitespace-nowrap ${
+                    effectiveDarkMode ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-slate-100 text-slate-700 border-slate-300"
+                  }`}>
+                    DRAFT
+                  </span>
+                )}
               </div>
-            )}
+              <div className={`flex flex-row items-center justify-start gap-2 flex-wrap mt-1.5 text-xs ${effectiveDarkMode ? "text-slate-300" : "text-slate-600"}`}>
+                <span
+                  className={`px-2.5 py-0.5 rounded font-medium border ${
+                    effectiveDarkMode ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-slate-100 text-slate-700 border-slate-200"
+                  }`}
+                >
+                  {(() => {
+                    const rawSec = profileData?.sector || geo?.sektor_utama || "Sektor";
+                    return t(getSectorI18nKey(rawSec), rawSec);
+                  })()}
+                </span>
+                {geo?.sub_sektor && (
+                  <span
+                    className={`px-2.5 py-0.5 rounded font-medium border ${
+                      effectiveDarkMode ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-slate-100 text-slate-700 border-slate-200"
+                    }`}
+                  >
+                    <AutoTranslatedText text={geo.sub_sektor} inline />
+                  </span>
+                )}
+                <span className={`font-medium flex items-center gap-1.5 ${effectiveDarkMode ? "text-slate-400" : "text-slate-600"}`}>
+                  <Navigation className="w-3.5 h-3.5 text-indigo-500 shrink-0" />{" "}
+                  {t('investmentProfile.kecamatan', 'Kecamatan')} {getActualDistrictName()}, {t('investmentProfile.kabLuwu', 'Kabupaten Luwu')}
+                </span>
+              </div>
+            </div>
+
+            {/* Mobile Action Buttons (aligned cleanly with thumbnail on top row) */}
+            <div className="flex md:hidden items-center gap-1.5 shrink-0">
+              <motion.button whileTap={{ scale: 0.95 }}
+                onClick={onClose}
+                className="px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm border border-emerald-400/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer min-h-[44px] min-w-[44px]"
+                title="Arahkan & Lihat Lokasi Potensi di Peta Spasial"
+              >
+                <MapPin className="w-4 h-4 text-emerald-100 animate-pulse shrink-0" />
+                <span className="hidden sm:inline">Lihat di Peta</span>
+              </motion.button>
+              <motion.button whileTap={{ scale: 0.95 }}
+                onClick={() => setIsMinimized(!isMinimized)}
+                className={`p-2.5 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors shadow-xs border ${
+                  effectiveDarkMode ? "hover:bg-slate-800 text-slate-300 bg-slate-800/80 border-slate-700" : "hover:bg-slate-100 text-slate-600 bg-white border-slate-200"
+                }`}
+                title="Minimize / Maximize"
+              >
+                {isMinimized ? <Maximize2 className="w-4.5 h-4.5" /> : <Minimize2 className="w-4.5 h-4.5" />}
+              </motion.button>
+              <motion.button whileTap={{ scale: 0.95 }}
+                onClick={onClose}
+                className={`p-2.5 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors shadow-xs border ${
+                  effectiveDarkMode ? "hover:bg-slate-800 text-slate-300 bg-slate-800/80 border-slate-700" : "hover:bg-slate-100 text-slate-600 bg-white border-slate-200"
+                }`}
+                title="Tutup Modal"
+              >
+                <X className="w-4.5 h-4.5" />
+              </motion.button>
+            </div>
           </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <h2 className="text-sm sm:text-base font-bold tracking-tight">
+
+          {/* Mobile full-width title & metadata block (zero horizontal squeezing) */}
+          <div className="block md:hidden w-full min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-sm sm:text-base font-bold tracking-tight leading-snug">
                 <AutoTranslatedText
                   text={
                     profileData?.name ||
@@ -1509,53 +1597,58 @@ export function InvestmentDetailModal({
                 />
               </h2>
               {isPublished ? (
-                <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
+                <span className="px-2 py-0.5 text-xs font-bold rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 whitespace-nowrap">
                   PUBLISHED
                 </span>
               ) : (
-                <span className={`px-2 py-0.5 text-[10px] font-bold rounded border ${
-                  effectiveDarkMode ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-white/5 text-slate-300 border border-white/10 border-slate-300"
+                <span className={`px-2 py-0.5 text-xs font-bold rounded border whitespace-nowrap ${
+                  effectiveDarkMode ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-slate-100 text-slate-700 border-slate-300"
                 }`}>
                   DRAFT
                 </span>
               )}
             </div>
-            <div className={`flex flex-row items-center justify-start gap-2 flex-wrap mt-2 text-xs ${effectiveDarkMode ? "text-slate-300" : "text-slate-600"}`}>
+            <div className={`flex flex-row items-center justify-start gap-2 flex-wrap mt-1.5 text-xs ${effectiveDarkMode ? "text-slate-300" : "text-slate-600"}`}>
               <span
-                className={`px-2 py-0.5 rounded border ${
-                  effectiveDarkMode ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-white/5 text-slate-300 border border-white/10 border-slate-200"
+                className={`px-2 py-0.5 rounded font-medium border ${
+                  effectiveDarkMode ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-slate-100 text-slate-700 border-slate-200"
                 }`}
               >
-                {t(getSectorI18nKey(profileData?.sector || geo?.sektor_utama || "Sektor"))}
+                {(() => {
+                  const rawSec = profileData?.sector || geo?.sektor_utama || "Sektor";
+                  return t(getSectorI18nKey(rawSec), rawSec);
+                })()}
               </span>
               {geo?.sub_sektor && (
                 <span
-                  className={`px-2 py-0.5 rounded border ${
-                    effectiveDarkMode ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-white/5 text-slate-300 border border-white/10 border-slate-200"
+                  className={`px-2 py-0.5 rounded font-medium border ${
+                    effectiveDarkMode ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-slate-100 text-slate-700 border-slate-200"
                   }`}
                 >
                   <AutoTranslatedText text={geo.sub_sektor} inline />
                 </span>
               )}
-              <span className={`font-medium flex items-center gap-1.5 ml-1 ${effectiveDarkMode ? "text-slate-400" : "text-slate-500"}`}>
-                <Navigation className="w-3.5 h-3.5 text-indigo-500" />{" "}
-                {t('investmentProfile.kecamatan', 'Kecamatan')} {profileData?.districtId || geo?.kecamatan || getActualDistrictName()}, {t('investmentProfile.kabLuwu', 'Kabupaten Luwu')}
+              <span className={`font-medium flex items-center gap-1 ${effectiveDarkMode ? "text-slate-400" : "text-slate-600"}`}>
+                <Navigation className="w-3.5 h-3.5 text-indigo-500 shrink-0" />{" "}
+                {t('investmentProfile.kecamatan', 'Kecamatan')} {getActualDistrictName()}, {t('investmentProfile.kabLuwu', 'Kabupaten Luwu')}
               </span>
             </div>
           </div>
-          <div className="absolute top-4 right-4 md:top-6 md:right-6 z-50 flex items-center gap-2">
+
+          {/* Desktop Action Buttons */}
+          <div className="hidden md:flex items-center gap-2 shrink-0">
             <motion.button whileTap={{ scale: 0.95 }}
               onClick={onClose}
-              className="px-3.5 py-2 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-black/25 border border-emerald-400/30 flex items-center gap-2 transition-all cursor-pointer min-h-[40px]"
+              className="px-3.5 py-2 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-black/20 border border-emerald-400/30 flex items-center gap-2 transition-all cursor-pointer min-h-[40px]"
               title="Arahkan & Lihat Lokasi Potensi di Peta Spasial"
             >
               <MapPin className="w-4 h-4 text-emerald-200 animate-pulse shrink-0" />
-              <span className="hidden sm:inline">Lihat di Peta Spasial</span>
+              <span>Lihat di Peta Spasial</span>
             </motion.button>
             <motion.button whileTap={{ scale: 0.95 }}
               onClick={() => setIsMinimized(!isMinimized)}
-              className={`p-2.5 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors shadow-sm ${
-                effectiveDarkMode ? "hover:bg-slate-800 text-slate-300 bg-slate-800/80 border border-slate-700" : "hover:bg-white/5 text-slate-300 border border-white/10 bg-white border border-slate-200"
+              className={`p-2.5 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors shadow-xs border ${
+                effectiveDarkMode ? "hover:bg-slate-800 text-slate-300 bg-slate-800/80 border-slate-700" : "hover:bg-slate-100 text-slate-600 bg-white border-slate-200"
               }`}
               title="Minimize / Maximize"
             >
@@ -1563,8 +1656,8 @@ export function InvestmentDetailModal({
             </motion.button>
             <motion.button whileTap={{ scale: 0.95 }}
               onClick={onClose}
-              className={`p-2.5 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors shadow-sm ${
-                effectiveDarkMode ? "hover:bg-slate-800 text-slate-300 bg-slate-800/80 border border-slate-700" : "hover:bg-white/5 text-slate-300 border border-white/10 bg-white border border-slate-200"
+              className={`p-2.5 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors shadow-xs border ${
+                effectiveDarkMode ? "hover:bg-slate-800 text-slate-300 bg-slate-800/80 border-slate-700" : "hover:bg-slate-100 text-slate-600 bg-white border-slate-200"
               }`}
               title="Tutup Modal"
             >
@@ -1577,58 +1670,54 @@ export function InvestmentDetailModal({
           {!isMinimized && (
             <div
               key="content"
-              
-              
-              
-              
               className="flex flex-col flex-1 overflow-hidden"
             >
         {/* TAB CONTROLS */}
-        <div className={`flex shrink-0 border-b ${sectionBorder} ${effectiveDarkMode ? "bg-surface/80" : "bg-slate-100/90"} p-2 gap-2 overflow-x-auto hide-scrollbar whitespace-nowrap`}>
+        <div className={`flex shrink-0 border-b ${sectionBorder} ${effectiveDarkMode ? "bg-surface/80" : "bg-slate-100/90"} px-2 py-1.5 sm:p-2 gap-2 overflow-x-auto hide-scrollbar whitespace-nowrap`}>
           <motion.button whileTap={{ scale: 0.95 }}
             onClick={() => setActiveTab("profile")}
-            className={`flex-1 min-h-[44px] py-3 px-4 rounded-md text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
+            className={`flex-1 min-h-[44px] py-2.5 px-3 sm:px-4 rounded-md text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all ${
               activeTab === "profile"
-                ? "bg-emerald-600 text-white shadow-md shadow-black/25"
+                ? "bg-emerald-600 text-white shadow-md shadow-black/20"
                 : effectiveDarkMode
                 ? "text-slate-300 hover:bg-slate-800"
                 : "text-slate-700 hover:bg-slate-200/70"
             }`}
           >
-            <User className="w-5 h-5" /> 
+            <User className="w-4.5 h-4.5 shrink-0" /> 
             <span className="truncate">{t('investmentProfile.profileGisTab')}</span>
           </motion.button>
           <motion.button whileTap={{ scale: 0.95 }}
             onClick={() => setActiveTab("simulator")}
-            className={`flex-1 min-h-[44px] py-3 px-4 rounded-md text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
+            className={`flex-1 min-h-[44px] py-2.5 px-3 sm:px-4 rounded-md text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all ${
               activeTab === "simulator"
-                ? "bg-emerald-600 text-white shadow-md shadow-black/25"
+                ? "bg-emerald-600 text-white shadow-md shadow-black/20"
                 : effectiveDarkMode
                 ? "text-slate-300 hover:bg-slate-800"
                 : "text-slate-700 hover:bg-slate-200/70"
             }`}
           >
-            <Calculator className="w-5 h-5" /> 
+            <Calculator className="w-4.5 h-4.5 shrink-0" /> 
             <span className="truncate">{t('investmentProfile.simulatorTab')}</span>
           </motion.button>
         </div>
 
         {/* COMPONENT BODY */}
-        <div className="overflow-y-auto flex-1 h-full min-h-0 p-2.5 sm:p-4">
+        <div className="overflow-y-auto flex-1 h-full min-h-0 px-2 py-2.5 sm:p-4 md:p-5">
           {activeTab === "profile" && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 sm:gap-5">
               {/* VIRTUAL DATA ROOM (unduh pdf) - SPAN FULL WIDTH AT THE TOP */}
               <div className="col-span-full">
                 <div
-                  className={`p-5 rounded-lg border-2 border-dashed ${sectionBorder} ${effectiveDarkMode ? "bg-indigo-950/20" : "bg-slate-50"}`}
+                  className={`p-3.5 sm:p-5 rounded-lg border-2 border-dashed ${sectionBorder} ${effectiveDarkMode ? "bg-indigo-950/20" : "bg-slate-50"}`}
                 >
-                  <h3 className="text-sm font-bold flex items-center gap-2 mb-3 text-slate-800 dark:text-slate-100">
-                    <FileText className="w-4 h-4" /> {t('investmentProfile.vdrTitle')}
+                  <h3 className="text-sm font-bold flex items-center gap-2 mb-2 text-slate-800 dark:text-slate-100">
+                    <FileText className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" /> {t('investmentProfile.vdrTitle')}
                   </h3>
-                  <p className="text-xs text-slate-800 dark:text-slate-200 mb-4">
+                  <p className="text-xs sm:text-[13px] leading-relaxed text-slate-700 dark:text-slate-200 mb-3.5">
                     {t('investmentProfile.vdrDesc')}
                   </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <motion.button whileTap={{ scale: 0.95 }}
                       onClick={() =>
                         handleDownloadClick(
@@ -1636,20 +1725,20 @@ export function InvestmentDetailModal({
                           "Kajian Teknis & Akademik",
                         )
                       }
-                      className={`px-4 py-3.5 border rounded-md text-left flex items-start gap-3 transition-all duration-300 ease-in-out active:scale-95 group w-full min-h-[44px] cursor-pointer ${
+                      className={`p-3 sm:px-4 sm:py-3.5 border rounded-md text-left flex items-center gap-3 transition-all duration-300 ease-in-out active:scale-95 group w-full min-h-[48px] cursor-pointer ${
                         effectiveDarkMode
                           ? "bg-slate-800 border-slate-700 hover:border-emerald-500 text-slate-100"
                           : "bg-white border-slate-200 hover:border-emerald-500 text-slate-900 shadow-xs hover:shadow-md"
                       }`}
                     >
-                      <FileText className="w-5 h-5 text-emerald-500 mt-0.5 group-hover:scale-110 transition-transform shrink-0" />
-                      <div>
-                        <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">
+                      <FileText className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <span className="text-xs uppercase tracking-wider font-semibold text-slate-700 dark:text-slate-300 block mb-0.5">
                           {t('investmentProfile.vdrKajian', 'Kajian Teknis & Akademik')}
                         </span>
-                        <span className="block mb-1 text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1">
+                        <span className="text-xs uppercase tracking-wider font-semibold text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
                           📄 {t('investmentProfile.vdrUnduh', 'UNDUH DOKUMEN')}{" "}
-                          <ExternalLink className="w-2.5 h-2.5" />
+                          <ExternalLink className="w-3 h-3 shrink-0" />
                         </span>
                       </div>
                     </motion.button>
@@ -1661,48 +1750,48 @@ export function InvestmentDetailModal({
                           "Rancangan Feasibility Study (FS)",
                         )
                       }
-                      className={`px-4 py-3.5 border rounded-md text-left flex items-start gap-3 transition-all duration-300 ease-in-out active:scale-95 group w-full min-h-[44px] cursor-pointer ${
+                      className={`p-3 sm:px-4 sm:py-3.5 border rounded-md text-left flex items-center gap-3 transition-all duration-300 ease-in-out active:scale-95 group w-full min-h-[48px] cursor-pointer ${
                         effectiveDarkMode
                           ? "bg-slate-800 border-slate-700 hover:border-emerald-500 text-slate-100"
                           : "bg-white border-slate-200 hover:border-emerald-500 text-slate-900 shadow-xs hover:shadow-md"
                       }`}
                     >
-                      <Briefcase className="w-5 h-5 text-emerald-500 mt-0.5 group-hover:scale-110 transition-transform shrink-0" />
-                      <div>
-                        <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">
+                      <Briefcase className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <span className="text-xs uppercase tracking-wider font-semibold text-slate-700 dark:text-slate-300 block mb-0.5">
                           {t('investmentProfile.vdrFs', 'Feasibility Study (FS)')}
                         </span>
-                        <span className="block mb-1 text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1">
+                        <span className="text-xs uppercase tracking-wider font-semibold text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
                           💼 {t('investmentProfile.vdrUnduh', 'UNDUH DOKUMEN')}{" "}
-                          <ExternalLink className="w-2.5 h-2.5" />
+                          <ExternalLink className="w-3 h-3 shrink-0" />
                         </span>
                       </div>
                     </motion.button>
                   </div>
 
                   {/* ADVANCED IPRO & SPATIAL INSPECTION TOOLS */}
-                  <div className={`grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3 pt-3 border-t ${sectionBorder}`}>
+                  <div className={`grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 mt-3 pt-3 border-t ${sectionBorder}`}>
                     {/* Tool 1: IPRO Pitch Deck Generator */}
                     <motion.button whileTap={{ scale: 0.95 }}
                       onClick={() => setShowIproPitchDeck(true)}
-                      className={`px-4 py-3 rounded-md text-left flex items-start gap-3 border transition-all group w-full min-h-[44px] cursor-pointer ${
+                      className={`p-3 sm:px-4 sm:py-3 rounded-md text-left flex items-center gap-2.5 sm:gap-3 border transition-all group w-full min-h-[48px] cursor-pointer ${
                         effectiveDarkMode
                           ? "bg-gradient-to-br from-slate-900 to-indigo-950 text-white border-indigo-500/30 hover:border-indigo-400"
                           : "bg-gradient-to-br from-emerald-50 via-teal-50 to-indigo-50/40 text-slate-900 border-emerald-200 hover:border-emerald-400 shadow-xs"
                       }`}
                     >
-                      <FileCheck className="w-5 h-5 text-emerald-500 mt-0.5 group-hover:scale-110 transition-transform shrink-0" />
-                      <div>
-                        <span className={`text-[10px] uppercase tracking-wider font-bold block mb-0.5 ${
+                      <FileCheck className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <span className={`text-xs uppercase tracking-wider font-bold block mb-0.5 ${
                           effectiveDarkMode ? "text-emerald-300" : "text-emerald-700"
                         }`}>
                           Standard BKPM / IPRO
                         </span>
-                        <span className={`block text-xs font-bold flex items-center gap-1 ${
+                        <span className={`text-xs font-bold flex items-center gap-1 ${
                           effectiveDarkMode ? "text-white" : "text-slate-900"
                         }`}>
                           IPRO Pitch Deck & Dossier
-                          <ArrowUpRight className={`w-3 h-3 ${effectiveDarkMode ? "text-emerald-300" : "text-emerald-600"}`} />
+                          <ArrowUpRight className={`w-3.5 h-3.5 shrink-0 ${effectiveDarkMode ? "text-emerald-300" : "text-emerald-600"}`} />
                         </span>
                       </div>
                     </motion.button>
@@ -1710,20 +1799,20 @@ export function InvestmentDetailModal({
                     {/* Tool 2: Logistics & Routing Inspector */}
                     <motion.button whileTap={{ scale: 0.95 }}
                       onClick={() => setShowLogisticsInspector(true)}
-                      className={`px-4 py-3 border rounded-md text-left flex items-start gap-3 transition-all group w-full min-h-[44px] cursor-pointer ${
+                      className={`p-3 sm:px-4 sm:py-3 border rounded-md text-left flex items-center gap-2.5 sm:gap-3 transition-all group w-full min-h-[48px] cursor-pointer ${
                         effectiveDarkMode
                           ? "bg-slate-900 border-slate-800 text-slate-100 hover:border-blue-400"
                           : "bg-white border-slate-200 text-slate-900 shadow-xs hover:border-blue-400"
                       }`}
                     >
-                      <Navigation className="w-5 h-5 text-blue-500 mt-0.5 group-hover:scale-110 transition-transform shrink-0" />
-                      <div>
-                        <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-0.5">
+                      <Navigation className="w-5 h-5 text-blue-500 group-hover:scale-110 transition-transform shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-0.5">
                           Aksesibilitas Simpul
                         </span>
-                        <span className="block text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1">
+                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1">
                           Inspektur Logistik & Rute
-                          <ArrowUpRight className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                          <ArrowUpRight className="w-3.5 h-3.5 shrink-0 text-blue-600 dark:text-blue-400" />
                         </span>
                       </div>
                     </motion.button>
@@ -1731,20 +1820,20 @@ export function InvestmentDetailModal({
                     {/* Tool 3: Spatial Risk & ESG Shield */}
                     <motion.button whileTap={{ scale: 0.95 }}
                       onClick={() => setShowEsgShield(true)}
-                      className={`px-4 py-3 border rounded-md text-left flex items-start gap-3 transition-all group w-full min-h-[44px] cursor-pointer ${
+                      className={`p-3 sm:px-4 sm:py-3 border rounded-md text-left flex items-center gap-2.5 sm:gap-3 transition-all group w-full min-h-[48px] cursor-pointer ${
                         effectiveDarkMode
                           ? "bg-slate-900 border-slate-800 text-slate-100 hover:border-emerald-400"
                           : "bg-white border-slate-200 text-slate-900 shadow-xs hover:border-emerald-400"
                       }`}
                     >
-                      <ShieldCheck className="w-5 h-5 text-emerald-500 mt-0.5 group-hover:scale-110 transition-transform shrink-0" />
-                      <div>
-                        <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-0.5">
+                      <ShieldCheck className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-0.5">
                           Kepatuhan Lingkungan
                         </span>
-                        <span className="block text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1">
+                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1">
                           Audit Risiko Spasial & ESG
-                          <ArrowUpRight className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                          <ArrowUpRight className="w-3.5 h-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
                         </span>
                       </div>
                     </motion.button>
@@ -1753,182 +1842,185 @@ export function InvestmentDetailModal({
               </div>
 
               {/* LEFT COLUMN: GIS, READINESS DIAL */}
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-3.5 sm:gap-5">
                 {/* STATUS TATA RUANG (PKKPR) CARD */}
                 <div
-                  className={`p-5 rounded-lg ${sectionBg} border ${sectionBorder} transition-all duration-300`}
+                  className={`p-3.5 sm:p-5 rounded-lg ${sectionBg} border ${sectionBorder} transition-all duration-300`}
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-2.5">
+                  <div className="flex flex-wrap items-center justify-between gap-2.5 mb-2">
+                    <div className="flex items-center gap-2.5 min-w-0">
                       <div className="p-2 rounded-md bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shrink-0">
                         <Compass className="w-4 h-4" />
                       </div>
-                      <div>
-                        <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                          Status Tata Ruang (PKKPR)
-                        </h3>
-                        <p className="text-[11px] text-slate-600 dark:text-slate-300">
-                          Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (Perda No. 06/2011)
-                        </p>
-                      </div>
+                      <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 leading-snug">
+                        Status Tata Ruang (PKKPR)
+                      </h3>
                     </div>
 
-                    <div>
+                    <div className="shrink-0">
                       {loadingPkkpr ? (
-                        <div className="animate-pulse px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-[11px] text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                        <div className="animate-pulse px-2.5 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />
                           <span>Evaluasi Spasial...</span>
                         </div>
                       ) : pkkprStatus?.isIndustrialCommercial ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
-                          <CheckCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800">
+                          <CheckCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                           Kesesuaian: Tinggi
                         </span>
                       ) : pkkprStatus?.isGreenZone ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 dark:bg-amber-950/70 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
-                          <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300 dark:bg-amber-950/70 dark:text-amber-300 dark:border-amber-800">
+                          <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
                           Kesesuaian: Bersyarat (Zona Hijau/Pertanian)
                         </span>
                       ) : pkkprStatus?.isConservation ? (
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-red-100 text-red-800 dark:bg-red-950/70 dark:text-red-300 border border-red-300 dark:border-red-800">
-                          <AlertCircle className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
+                          <AlertCircle className="w-3.5 h-3.5 text-red-600 dark:text-red-400 shrink-0" />
                           Kesesuaian: Dibatasi (Kawasan Lindung)
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-950/70 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-800">
-                          <Info className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                          <Info className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
                           {pkkprStatus?.suitabilityLabel || "Kesesuaian: Sesuai"}
                         </span>
                       )}
                     </div>
                   </div>
+                  <p className="text-xs sm:text-[13px] text-slate-600 dark:text-slate-300 leading-relaxed mb-3.5">
+                    Persetujuan Kesesuaian Kegiatan Pemanfaatan Ruang (Perda No. 06/2011)
+                  </p>
 
                   {/* Warning Note / Restriction Banner */}
                   {pkkprStatus?.warningNote && (
                     <div
-                      className={`mb-3.5 p-3 rounded-md border flex items-start gap-2.5 text-xs ${
+                      className={`mb-3.5 p-3 sm:p-3.5 rounded-md border text-xs ${
                         pkkprStatus?.isConservation
                           ? "bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-900/60 text-red-800 dark:text-red-200"
                           : "bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-900/60 text-amber-900 dark:text-amber-200"
                       }`}
                     >
-                      <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-                      <div className="flex-1">
-                        <span className="font-bold text-[11px] uppercase tracking-wider block mb-0.5">
+                      <div className="flex items-center gap-2 mb-1">
+                        <AlertTriangle className="w-4 h-4 shrink-0" />
+                        <span className="font-bold text-xs uppercase tracking-wider">
                           {pkkprStatus?.isConservation
                             ? "Restriksi Kawasan Lindung"
                             : "Catatan Pembatasan & Regulasi Lahan"}
                         </span>
-                        <p className="text-[11.5px] leading-relaxed m-0 font-medium">
-                          {pkkprStatus?.warningNote}
-                        </p>
                       </div>
+                      <p className="text-xs leading-relaxed m-0 font-medium">
+                        {pkkprStatus?.warningNote}
+                      </p>
                     </div>
                   )}
 
                   {/* Zoning & Intensity Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-3.5">
+                  <div className="flex flex-col gap-2.5 mb-3.5">
                     <div
-                      className={`p-2.5 rounded-md ${
+                      className={`p-2.5 sm:p-3 rounded-md flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 ${
                         isDarkMode
                           ? "bg-surface/60 border border-slate-800"
                           : "bg-slate-50 border border-slate-200/80"
                       }`}
                     >
-                      <span className="text-[10px] uppercase font-semibold text-slate-600 dark:text-slate-400 block mb-0.5">
+                      <span className="text-xs uppercase font-semibold text-slate-600 dark:text-slate-400 shrink-0">
                         Zona Pola Ruang
                       </span>
                       <span
-                        className="text-xs font-bold text-slate-800 dark:text-slate-100 line-clamp-2"
+                        className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 sm:text-right"
                         title={pkkprStatus?.matchedZone}
                       >
                         {pkkprStatus?.matchedZone || "-"}
                       </span>
                     </div>
 
-                    <div
-                      className={`p-2.5 rounded-md ${
-                        isDarkMode
-                          ? "bg-surface/60 border border-slate-800"
-                          : "bg-slate-50 border border-slate-200/80"
-                      }`}
-                    >
-                      <span className="text-[10px] uppercase font-semibold text-slate-600 dark:text-slate-400 block mb-0.5">
-                        Koefisien Dasar (KDB)
-                      </span>
-                      <span className="text-xs font-bold font-mono text-emerald-600 dark:text-emerald-400">
-                        {pkkprStatus?.kdb || "-"}
-                      </span>
-                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div
+                        className={`p-2.5 rounded-md text-center sm:text-left ${
+                          isDarkMode
+                            ? "bg-surface/60 border border-slate-800"
+                            : "bg-slate-50 border border-slate-200/80"
+                        }`}
+                      >
+                        <span className="text-xs uppercase font-semibold text-slate-600 dark:text-slate-400 block mb-0.5">
+                          <span className="xl:hidden">KDB</span>
+                          <span className="hidden xl:inline">Koefisien Dasar (KDB)</span>
+                        </span>
+                        <span className="text-xs sm:text-sm font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                          {pkkprStatus?.kdb || "-"}
+                        </span>
+                      </div>
 
-                    <div
-                      className={`p-2.5 rounded-md ${
-                        isDarkMode
-                          ? "bg-surface/60 border border-slate-800"
-                          : "bg-slate-50 border border-slate-200/80"
-                      }`}
-                    >
-                      <span className="text-[10px] uppercase font-semibold text-slate-600 dark:text-slate-400 block mb-0.5">
-                        Koefisien Lantai (KLB)
-                      </span>
-                      <span className="text-xs font-bold font-mono text-indigo-600 dark:text-indigo-400">
-                        {pkkprStatus?.klb || "-"}
-                      </span>
-                    </div>
+                      <div
+                        className={`p-2.5 rounded-md text-center sm:text-left ${
+                          isDarkMode
+                            ? "bg-surface/60 border border-slate-800"
+                            : "bg-slate-50 border border-slate-200/80"
+                        }`}
+                      >
+                        <span className="text-xs uppercase font-semibold text-slate-600 dark:text-slate-400 block mb-0.5">
+                          <span className="xl:hidden">KLB</span>
+                          <span className="hidden xl:inline">Koefisien Lantai (KLB)</span>
+                        </span>
+                        <span className="text-xs sm:text-sm font-bold font-mono text-indigo-600 dark:text-indigo-400">
+                          {pkkprStatus?.klb || "-"}
+                        </span>
+                      </div>
 
-                    <div
-                      className={`p-2.5 rounded-md ${
-                        isDarkMode
-                          ? "bg-surface/60 border border-slate-800"
-                          : "bg-slate-50 border border-slate-200/80"
-                      }`}
-                    >
-                      <span className="text-[10px] uppercase font-semibold text-slate-600 dark:text-slate-400 block mb-0.5">
-                        Koefisien Hijau (KDH)
-                      </span>
-                      <span className="text-xs font-bold font-mono text-teal-600 dark:text-teal-400">
-                        {pkkprStatus?.kdh || "-"}
-                      </span>
+                      <div
+                        className={`p-2.5 rounded-md text-center sm:text-left ${
+                          isDarkMode
+                            ? "bg-surface/60 border border-slate-800"
+                            : "bg-slate-50 border border-slate-200/80"
+                        }`}
+                      >
+                        <span className="text-xs uppercase font-semibold text-slate-600 dark:text-slate-400 block mb-0.5">
+                          <span className="xl:hidden">KDH</span>
+                          <span className="hidden xl:inline">Koefisien Hijau (KDH)</span>
+                        </span>
+                        <span className="text-xs sm:text-sm font-bold font-mono text-teal-600 dark:text-teal-400">
+                          {pkkprStatus?.kdh || "-"}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
                   {/* Recommendation & In-depth Checker Link */}
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-3 border-t border-slate-200 dark:border-slate-800 text-xs">
-                    <div className="flex-1">
-                      <span className="text-[10px] uppercase font-bold text-slate-600 dark:text-slate-300 block">
+                  <div className="flex flex-col gap-3 pt-3 border-t border-slate-200 dark:border-slate-800 text-xs">
+                    <div className="w-full">
+                      <span className="text-xs uppercase font-bold text-slate-600 dark:text-slate-300 block">
                         Alur Rekomendasi OSS-RBA:
                       </span>
-                      <p className="text-xs text-slate-800 dark:text-slate-200 font-medium m-0 mt-0.5">
+                      <p className="text-xs sm:text-[13px] text-slate-800 dark:text-slate-200 font-medium leading-relaxed m-0 mt-0.5">
                         {pkkprStatus?.rekomendasi ||
                           "Persetujuan KKPR Otomatis (RTRW/RDTR Compliant) melalui integrasi OSS-RBA DPMPTSP."}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0 flex-wrap">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full">
                       <button
                         type="button"
                         onClick={() => setIsLp2bModalOpen(true)}
-                        className="px-3 py-1.5 rounded-lg bg-teal-700 hover:bg-teal-600 text-white font-semibold text-[11px] flex items-center gap-1.5 transition-colors shadow-sm cursor-pointer"
+                        className="min-h-[44px] sm:min-h-[38px] px-3 py-2 rounded-lg bg-teal-700 hover:bg-teal-600 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs cursor-pointer"
                         title="Uji Tumpang Tindih LP2B & Lahan Sawah Dilindungi"
                       >
-                        <Wheat className="w-3.5 h-3.5 text-teal-200" />
-                        Uji LP2B / Sawah
+                        <Wheat className="w-3.5 h-3.5 text-teal-200 shrink-0" />
+                        <span>Uji LP2B / Sawah</span>
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsSwipeModalOpen(true)}
-                        className="px-3 py-1.5 rounded-lg bg-cyan-700 hover:bg-cyan-600 text-white font-semibold text-[11px] flex items-center gap-1.5 transition-colors shadow-sm cursor-pointer"
+                        className="min-h-[44px] sm:min-h-[38px] px-3 py-2 rounded-lg bg-cyan-700 hover:bg-cyan-600 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs cursor-pointer"
                         title="Mode Tirai Perbandingan (Swipe): Citra Satelit vs Pola Ruang & LP2B"
                       >
-                        <Sliders className="w-3.5 h-3.5 text-cyan-200" />
-                        Mode Tirai (Swipe)
+                        <Sliders className="w-3.5 h-3.5 text-cyan-200 shrink-0" />
+                        <span>Mode Tirai (Swipe)</span>
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsRtrwModalOpen(true)}
-                        className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-[11px] flex items-center gap-1.5 transition-colors shadow-sm cursor-pointer"
+                        className="min-h-[44px] sm:min-h-[38px] px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs cursor-pointer"
                       >
-                        <FileCheck className="w-3.5 h-3.5" />
-                        Simulasi & Matriks RTRW
+                        <FileCheck className="w-3.5 h-3.5 shrink-0" />
+                        <span>Simulasi RTRW</span>
                       </button>
                     </div>
                   </div>
@@ -1938,82 +2030,88 @@ export function InvestmentDetailModal({
                 {/* SECTION: LANGKAH SELANJUTNYA: PERIZINAN PBG (SIMBG GATEWAY) */}
                 {/* ------------------------------------------------------------- */}
                 <div
-                  className={`p-5 rounded-lg ${sectionBg} border ${sectionBorder} transition-all duration-300 relative overflow-hidden`}
+                  className={`p-3.5 sm:p-5 rounded-lg ${sectionBg} border ${sectionBorder} transition-all duration-300 relative overflow-hidden`}
                 >
                   {/* Accent glow background */}
                   <div className="absolute top-0 right-0 w-36 h-36 bg-amber-500/5 dark:bg-amber-400/5 rounded-full blur-2xl pointer-events-none" />
 
-                  {/* Header Section */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                    <div className="flex items-center gap-2.5">
+                  {/* Header Section - Full-width resilient layout without column squeezing */}
+                  <div className="flex items-start justify-between gap-2.5 mb-2">
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
                       <div className="p-2 rounded-md bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800 shrink-0">
                         <HardHat className="w-4 h-4" />
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">
-                            Langkah Selanjutnya: Perizinan PBG
-                          </h3>
-                          <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
-                            SIMBG Gateway
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-slate-600 dark:text-slate-300">
-                          Persetujuan Bangunan Gedung (PP No. 16/2021) terintegrasi batas intensitas KKPR
-                        </p>
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 min-w-0">
+                        <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 leading-snug">
+                          Langkah Selanjutnya: Perizinan PBG
+                        </h3>
+                        <span className="px-2 py-0.5 rounded-md text-xs font-bold whitespace-nowrap shrink-0 bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+                          SIMBG Gateway
+                        </span>
                       </div>
                     </div>
 
                     {/* Document Readiness Counter */}
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-2 shrink-0">
                       <div className="text-right hidden sm:block">
-                        <span className="text-[10px] font-semibold text-slate-600 dark:text-slate-400 uppercase block">Kesiapan Berkas</span>
-                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200 dark:text-slate-200">
-                          {pbgPreparedCount} dari {pbgInfo.documents.length} Dokumen ({pbgProgressPercent}%)
+                        <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase block">Kesiapan Berkas</span>
+                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                          {pbgPreparedCount}/{pbgInfo.documents.length} ({pbgProgressPercent}%)
                         </span>
                       </div>
-                      <div className="w-9 h-9 rounded-md border border-slate-200 dark:border-slate-700 flex items-center justify-center font-bold font-mono text-xs text-amber-600 dark:text-amber-400 bg-amber-50/50 dark:bg-surface shadow-sm">
+                      <div className="px-2.5 h-9 min-w-[42px] rounded-md border border-slate-200 dark:border-slate-700 flex items-center justify-center font-bold font-mono text-xs text-amber-700 dark:text-amber-400 bg-amber-50/70 dark:bg-surface shadow-xs">
                         {pbgProgressPercent}%
                       </div>
                     </div>
                   </div>
 
-                  {/* Contextual Bridging Info Banner (Adherence to KDB/KLB/KDH) */}
-                  <div className="p-3.5 rounded-md mb-4 bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-indigo-500/10 border border-amber-200/80 dark:border-amber-900/40 text-xs">
-                    <div className="flex items-start gap-2.5">
-                      <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                      <div className="flex-1">
-                        <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-                          <span className="font-bold text-slate-800 dark:text-slate-100 text-[11.5px] uppercase tracking-wider">
-                            Mandat Kepatuhan Batas Intensitas Spasial
-                          </span>
-                          <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300">
-                            Estimasi Pelayanan: {pbgInfo.processingTimelineDays}
-                          </span>
-                        </div>
-                        <p className="text-slate-600 dark:text-slate-300 text-[11.5px] leading-relaxed mb-2.5">
-                          Penerbitan Surat Keputusan (SK) PBG oleh Dinas PUPR & DPMPTSP Kab. Luwu mensyaratkan dokumen rencana arsitektur dan struktur wajib mematuhi batas intensitas hasil evaluasi tata ruang:
-                        </p>
-                        <div className="grid grid-cols-3 gap-2 text-center text-[11px]">
-                          <div className="p-1.5 rounded-lg bg-white/70 dark:bg-surface border border-slate-200 dark:border-slate-800">
-                            <span className="text-[9px] text-slate-600 dark:text-slate-400 uppercase font-semibold block">KDB Maksimum</span>
-                            <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono">{pbgInfo.kdbLimit}</span>
-                          </div>
-                          <div className="p-1.5 rounded-lg bg-white/70 dark:bg-surface border border-slate-200 dark:border-slate-800">
-                            <span className="text-[9px] text-slate-600 dark:text-slate-400 uppercase font-semibold block">KLB Maksimum</span>
-                            <span className="font-bold text-indigo-600 dark:text-indigo-400 font-mono">{pbgInfo.klbLimit}</span>
-                          </div>
-                          <div className="p-1.5 rounded-lg bg-white/70 dark:bg-surface border border-slate-200 dark:border-slate-800">
-                            <span className="text-[9px] text-slate-600 dark:text-slate-400 uppercase font-semibold block">KDH Minimum</span>
-                            <span className="font-bold text-teal-600 dark:text-teal-400 font-mono">{pbgInfo.kdhLimit}</span>
-                          </div>
-                        </div>
+                  <p className="text-xs sm:text-[13px] text-slate-600 dark:text-slate-300 leading-relaxed mb-3.5">
+                    Persetujuan Bangunan Gedung (PP No. 16/2021) terintegrasi batas intensitas KKPR
+                  </p>
+
+                  {/* Contextual Bridging Info Banner (Adherence to KDB/KLB/KDH) - Full inner width */}
+                  <div className="p-3 sm:p-4 rounded-md mb-4 bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-indigo-500/10 border border-amber-200/80 dark:border-amber-900/40 text-xs">
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                        <span className="font-bold text-slate-800 dark:text-slate-100 text-xs uppercase tracking-wide leading-snug">
+                          Mandat Kepatuhan Batas Intensitas Spasial
+                        </span>
+                      </div>
+                      <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 whitespace-nowrap">
+                        Estimasi Pelayanan: {pbgInfo.processingTimelineDays}
+                      </span>
+                    </div>
+                    <p className="text-slate-700 dark:text-slate-300 text-xs sm:text-[13px] leading-relaxed mb-3">
+                      Penerbitan Surat Keputusan (SK) PBG oleh Dinas PUPR & DPMPTSP Kab. Luwu mensyaratkan dokumen rencana arsitektur dan struktur wajib mematuhi batas intensitas hasil evaluasi tata ruang:
+                    </p>
+                    <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                      <div className="p-2 rounded-lg bg-white/80 dark:bg-surface border border-slate-200 dark:border-slate-800">
+                        <span className="text-xs text-slate-600 dark:text-slate-400 uppercase font-semibold block mb-0.5">
+                          <span className="sm:hidden">KDB Maks</span>
+                          <span className="hidden sm:inline">KDB Maksimum</span>
+                        </span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono">{pbgInfo.kdbLimit}</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-white/80 dark:bg-surface border border-slate-200 dark:border-slate-800">
+                        <span className="text-xs text-slate-600 dark:text-slate-400 uppercase font-semibold block mb-0.5">
+                          <span className="sm:hidden">KLB Maks</span>
+                          <span className="hidden sm:inline">KLB Maksimum</span>
+                        </span>
+                        <span className="font-bold text-indigo-600 dark:text-indigo-400 font-mono">{pbgInfo.klbLimit}</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-white/80 dark:bg-surface border border-slate-200 dark:border-slate-800">
+                        <span className="text-xs text-slate-600 dark:text-slate-400 uppercase font-semibold block mb-0.5">
+                          <span className="sm:hidden">KDH Min</span>
+                          <span className="hidden sm:inline">KDH Minimum</span>
+                        </span>
+                        <span className="font-bold text-teal-600 dark:text-teal-400 font-mono">{pbgInfo.kdhLimit}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Category Filter Tabs */}
-                  <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-3 scrollbar-none">
+                  <div className="flex items-center gap-2 overflow-x-auto flex-nowrap pb-2 mb-3 scrollbar-hide">
                     {pbgCategories.map((cat) => {
                       const count = cat === "ALL" ? pbgInfo.documents.length : pbgInfo.documents.filter((d) => d.category === cat).length;
                       const isActive = pbgCategoryFilter === cat;
@@ -2022,14 +2120,14 @@ export function InvestmentDetailModal({
                           key={cat}
                           type="button"
                           onClick={() => setPbgCategoryFilter(cat)}
-                          className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                          className={`min-h-[40px] sm:min-h-[34px] px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
                             isActive
-                              ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 shadow-sm"
+                              ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 shadow-xs"
                               : "bg-slate-100 dark:bg-slate-800/80 text-slate-800 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800"
                           }`}
                         >
                           <span>{cat === "ALL" ? "Semua Berkas" : cat}</span>
-                          <span className={`text-[9.5px] px-1.5 py-0.2 rounded-full ${
+                          <span className={`text-xs px-1.5 py-0.5 rounded-full font-mono ${
                             isActive ? "bg-white/20 dark:bg-black/20" : "bg-slate-200 dark:bg-slate-700"
                           }`}>
                             {count}
@@ -2040,14 +2138,14 @@ export function InvestmentDetailModal({
                   </div>
 
                   {/* Dynamic Document Checklist Items */}
-                  <div className="space-y-2 mb-4">
+                  <div className="space-y-2.5 mb-4">
                     {filteredPbgDocs.map((doc) => {
                       const isChecked = !!checkedPbgDocs[doc.id];
                       return (
                         <div
                           key={doc.id}
                           onClick={() => togglePbgDoc(doc.id)}
-                          className={`p-3 rounded-md border transition-all cursor-pointer select-none flex items-start gap-3 ${
+                          className={`p-3 sm:p-3.5 rounded-md border transition-all cursor-pointer select-none flex items-start gap-2.5 sm:gap-3 ${
                             isChecked
                               ? "bg-emerald-50/60 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/60"
                               : isDarkMode
@@ -2057,24 +2155,24 @@ export function InvestmentDetailModal({
                         >
                           <div className="mt-0.5 text-emerald-600 dark:text-emerald-400 shrink-0">
                             {isChecked ? (
-                              <CheckSquare className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                              <CheckSquare className="w-4.5 h-4.5 text-emerald-600 dark:text-emerald-400" />
                             ) : (
-                              <Square className="w-4 h-4 text-slate-600 dark:text-slate-400 hover:text-slate-600" />
+                              <Square className="w-4.5 h-4.5 text-slate-500 dark:text-slate-400 hover:text-slate-700" />
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex flex-wrap items-center justify-between gap-1.5 mb-1">
-                              <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <span className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
                                   {doc.category}
                                 </span>
                                 {doc.isSpecificToZoning && (
-                                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                                  <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
                                     Spesifik Zona
                                   </span>
                                 )}
                               </div>
-                              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                              <span className={`text-xs font-bold px-2 py-0.5 rounded ${
                                 doc.mandatory
                                   ? "bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800"
                                   : "bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200"
@@ -2082,18 +2180,18 @@ export function InvestmentDetailModal({
                                 {doc.mandatory ? "WAJIB" : "KONDISIONAL"}
                               </span>
                             </div>
-                            <h4 className={`text-xs font-bold leading-snug ${
+                            <h4 className={`text-xs sm:text-sm font-bold leading-snug ${
                               isChecked
                                 ? "text-emerald-900 dark:text-emerald-200"
                                 : "text-slate-800 dark:text-slate-100"
                             }`}>
                               {doc.title}
                             </h4>
-                            <p className="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed">
+                            <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
                               {doc.description}
                             </p>
-                            <div className="flex items-center gap-1.5 mt-1.5 text-[10px] font-mono text-slate-600 dark:text-slate-300">
-                              <Award className="w-3 h-3 text-amber-500 shrink-0" />
+                            <div className="flex items-center gap-1.5 mt-1.5 text-xs font-mono text-slate-600 dark:text-slate-300">
+                              <Award className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                               <span>Standar: {doc.standard}</span>
                             </div>
                           </div>
@@ -2103,65 +2201,60 @@ export function InvestmentDetailModal({
                   </div>
 
                   {/* CTA & Actions Bar */}
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3.5 border-t border-slate-200 dark:border-slate-800">
-                    <div className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug">
+                  <div className="flex flex-col gap-3 pt-3.5 border-t border-slate-200 dark:border-slate-800">
+                    <div className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                       💡 Tandai dokumen yang telah disiapkan untuk verifikasi pra-pengajuan ke portal SIMBG PUPR.
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <button
-                        type="button"
-                        onClick={handleAjukanPbg}
-                        className="w-full sm:w-auto px-4 py-2.5 rounded-md bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-amber-600/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                      >
-                        <HardHat className="w-4 h-4" />
-                        <span>Ajukan Persetujuan Bangunan Gedung</span>
-                        <ArrowUpRight className="w-3.5 h-3.5 opacity-80" />
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAjukanPbg}
+                      className="w-full min-h-[44px] px-4 py-2.5 rounded-md bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md shadow-amber-600/20 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+                    >
+                      <HardHat className="w-4 h-4 shrink-0" />
+                      <span>Ajukan Persetujuan Bangunan Gedung</span>
+                      <ArrowUpRight className="w-4 h-4 opacity-80 shrink-0" />
+                    </button>
                   </div>
                 </div>
 
                 {/* METRICS SUMMARY */}
                 <div
-                  className={`p-5 rounded-lg ${sectionBg} border ${sectionBorder}`}
+                  className={`p-3.5 sm:p-5 rounded-lg ${sectionBg} border ${sectionBorder}`}
                 >
                   <h3 className="text-sm font-bold flex items-center gap-2 mb-3 text-slate-800 dark:text-slate-100">
-                    <Layers className="w-4 h-4" /> {t('investmentProfile.paramLahanTitle')}
+                    <Layers className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" /> {t('investmentProfile.paramLahanTitle')}
                   </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                  <div className="grid grid-cols-2 gap-2.5 sm:gap-3 mb-4">
                     <div
-                      className={`p-0 md:p-3 bg-transparent ${isDarkMode ? "md:bg-surface/50 md:border md:border-slate-700/50" : "md:bg-slate-100 md:border md:border-slate-200/50"} rounded-none md:rounded-md flex flex-col justify-center transition-all duration-300 ease-in-out  hover:shadow-lg hover:shadow-black/25 hover:border-emerald-500/50`}
+                      className={`p-3 ${isDarkMode ? "bg-surface/60 border border-slate-700/60" : "bg-slate-50 border border-slate-200/80"} rounded-md flex flex-col justify-center transition-all duration-300 ease-in-out hover:border-emerald-500/50`}
                     >
-                      <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">{t('investmentProfile.luasPlot')}</span>
-                      <span className="text-xs sm:text-sm font-bold flex items-center gap-2 text-slate-800 dark:text-slate-100">{Number(calculatedAreaHa || 0).toFixed(2)} Ha
-                      </span>
+                      <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">{t('investmentProfile.luasPlot')}</span>
+                      <span className="text-sm font-bold font-mono text-slate-800 dark:text-slate-100">{Number(calculatedAreaHa || 0).toFixed(2)} Ha</span>
                     </div>
                     <div
-                      className={`p-0 md:p-3 bg-transparent ${isDarkMode ? "md:bg-surface/50 md:border md:border-slate-700/50" : "md:bg-slate-100 md:border md:border-slate-200/50"} rounded-none md:rounded-md flex flex-col justify-center transition-all duration-300 ease-in-out  hover:shadow-lg hover:shadow-black/25 hover:border-emerald-500/50`}
+                      className={`p-3 ${isDarkMode ? "bg-surface/60 border border-slate-700/60" : "bg-slate-50 border border-slate-200/80"} rounded-md flex flex-col justify-center transition-all duration-300 ease-in-out hover:border-emerald-500/50`}
                     >
-                      <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">{t('investmentProfile.batasKeliling')}</span>
-                      <span className="text-xs sm:text-sm font-bold flex items-center gap-2 text-slate-800 dark:text-slate-100">{Number(calculatedPerimeterKm || 0).toFixed(2)} KM
-                      </span>
+                      <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">{t('investmentProfile.batasKeliling')}</span>
+                      <span className="text-sm font-bold font-mono text-slate-800 dark:text-slate-100">{Number(calculatedPerimeterKm || 0).toFixed(2)} KM</span>
                     </div>
                   </div>
                   <div className="flex flex-col gap-2 font-mono text-xs">
-                    <div className="flex justify-between border-b pb-1.5 dark:border-slate-800">
-                      <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">{t('investmentProfile.tipeGeometri')}</span>
-                      <span className="text-xs sm:text-sm font-bold flex items-center gap-2 text-slate-800 dark:text-slate-100">{geo?.geometry?.type || geo?.geom?.type || "Polygon"}
-                      </span>
+                    <div className="flex items-center justify-between gap-2 border-b pb-2 dark:border-slate-800">
+                      <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400">{t('investmentProfile.tipeGeometri')}</span>
+                      <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">{geo?.geometry?.type || geo?.geom?.type || "Polygon"}</span>
                     </div>
-                    <div className="flex justify-between border-b pb-1.5 dark:border-slate-800">
-                      <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">{t('investmentProfile.latitude')}</span>
-                      <span className="text-xs sm:text-sm font-bold flex items-center gap-2 text-slate-800 dark:text-slate-100">
+                    <div className="flex items-center justify-between gap-2 border-b pb-2 dark:border-slate-800">
+                      <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400">{t('investmentProfile.latitude')}</span>
+                      <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">
                         {(() => {
                           const val = geo?.latitude || loc?.latitude;
                           return val && !isNaN(Number(val)) ? Number(val).toFixed(6) : (val || "-");
                         })()}
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">{t('investmentProfile.longitude')}</span>
-                      <span className="text-xs sm:text-sm font-bold flex items-center gap-2 text-slate-800 dark:text-slate-100">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400">{t('investmentProfile.longitude')}</span>
+                      <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">
                         {(() => {
                           const val = geo?.longitude || loc?.longitude;
                           return val && !isNaN(Number(val)) ? Number(val).toFixed(6) : (val || "-");
@@ -2173,12 +2266,12 @@ export function InvestmentDetailModal({
 
                 {/* RELATIVE DISTANCE TO INFRASTRUCTURE */}
                 <div
-                  className={`p-5 rounded-lg ${sectionBg} border ${sectionBorder}`}
+                  className={`p-3.5 sm:p-5 rounded-lg ${sectionBg} border ${sectionBorder}`}
                 >
-                  <h3 className="text-sm font-bold flex items-center gap-2 mb-3 text-slate-800 dark:text-slate-100">
-                    <TrendingUp className="w-4 h-4" /> {t('investmentProfile.proksimitasTitle')}
+                  <h3 className="text-sm font-bold flex items-center gap-2 mb-2 text-slate-800 dark:text-slate-100">
+                    <TrendingUp className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" /> {t('investmentProfile.proksimitasTitle')}
                   </h3>
-                  <p className="text-xs text-slate-800 dark:text-slate-200">
+                  <p className="text-xs sm:text-[13px] text-slate-700 dark:text-slate-200 leading-relaxed mb-3.5">
                     ℹ️ {t('investmentProfile.proksimitasDesc')}
                   </p>
                   {loadingSpatial ? (
@@ -2201,13 +2294,13 @@ export function InvestmentDetailModal({
                       </p>
                       <motion.button whileTap={{ scale: 0.95 }}
                         onClick={fetchSpatial}
-                        className="mt-2 text-xs font-normal text-indigo-500"
+                        className="mt-2 text-xs font-medium text-indigo-600 dark:text-indigo-400"
                       >
                         {t('investmentProfile.refreshSpatial', 'Picu Analisis Spasial 🔄')}
                       </motion.button>
                     </div>
                   ) : (
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-3">
                       {renderDistanceBar(
                         t('investmentProfile.aksesJalan'),
                         "🛣️",
@@ -2244,9 +2337,9 @@ export function InvestmentDetailModal({
                         spatialData?.distances?.nearestTelco?.isNetworkRouting,
                       )}
 
-                      <div className="mt-2 p-3 rounded-md bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900 flex items-center justify-between">
-                        <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">{t('investmentProfile.skorAksesibilitas')}</span>
-                        <span className="text-xs sm:text-sm font-bold flex items-center gap-2 text-slate-800 dark:text-slate-100">
+                      <div className="mt-2 p-3 rounded-md bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900 flex flex-wrap items-center justify-between gap-2">
+                        <span className="text-xs uppercase tracking-wider font-semibold text-slate-700 dark:text-slate-300">{t('investmentProfile.skorAksesibilitas')}</span>
+                        <span className="text-xs sm:text-sm font-bold flex items-center gap-1.5 text-slate-800 dark:text-slate-100">
                           {spatialData?.accessibilityScore}/100 ({t('investmentProfile.mudahDiakses')} 🟢)
                         </span>
                       </div>
@@ -2256,14 +2349,14 @@ export function InvestmentDetailModal({
 
                 {/* AI READINESS SCORE */}
                 <div
-                  className={`p-5 rounded-lg bg-gradient-to-br ${isDarkMode ? "from-indigo-950/20 to-purple-950/40 border border-indigo-900/60" : "from-indigo-50 to-purple-50 border border-indigo-100"} flex flex-col justify-between`}
+                  className={`p-3.5 sm:p-5 rounded-lg bg-gradient-to-br ${isDarkMode ? "from-indigo-950/20 to-purple-950/40 border border-indigo-900/60" : "from-indigo-50 to-purple-50 border border-indigo-100"} flex flex-col justify-between`}
                 >
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1"><Sparkles className="w-4 h-4 animate-bounce" /> {t('investmentProfile.aiReadinessTitle')}</span>
-                    <span className="text-xs sm:text-sm font-bold flex items-center gap-2 text-slate-800 dark:text-slate-100">
-                      {geo?.ai_score || profileData?.aiScore || 85}
-                      <span className="text-xs sm:text-sm font-bold flex items-center gap-2 text-slate-800 dark:text-slate-100">/100
-                      </span>
+                  <div className="flex justify-between items-center gap-2 mb-3">
+                    <span className="text-xs uppercase tracking-wider font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-indigo-500 shrink-0 animate-bounce" /> {t('investmentProfile.aiReadinessTitle')}
+                    </span>
+                    <span className="text-sm font-bold font-mono flex items-center gap-0.5 text-slate-800 dark:text-slate-100 shrink-0">
+                      {geo?.ai_score || profileData?.aiScore || 85}/100
                     </span>
                   </div>
                   <div className="w-full h-2.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden mb-3">
@@ -2274,7 +2367,7 @@ export function InvestmentDetailModal({
                       }}
                     ></div>
                   </div>
-                  <p className="text-xs text-slate-800 dark:text-slate-200">
+                  <p className="text-xs sm:text-[13px] leading-relaxed text-slate-800 dark:text-slate-200">
                     {geo?.ai_narasi ||
                       profileData?.ai_narasi ||
                       t('investmentProfile.aiReadinessDesc')}
@@ -2283,19 +2376,19 @@ export function InvestmentDetailModal({
               </div>
 
               {/* RIGHT COLUMN: SPECS, UTILITIES, REAL CONTACTS, PHOTO SLIDER */}
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-3.5 sm:gap-5">
                 {/* FISIK & UTILITAS */}
                 <div
-                  className={`p-5 rounded-lg ${sectionBg} border ${sectionBorder}`}
+                  className={`p-3.5 sm:p-5 rounded-lg ${sectionBg} border ${sectionBorder}`}
                 >
                   <h3 className="text-sm font-bold flex items-center gap-2 mb-3 text-slate-800 dark:text-slate-100">
-                    <CheckCircle className="w-4 h-4" /> {t('investmentProfile.fisikUtilitasTitle')}
+                    <CheckCircle className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" /> {t('investmentProfile.fisikUtilitasTitle')}
                   </h3>
 
                   {/* Parameter Fisik */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 pb-4 border-b border-dashed border-slate-200 dark:border-slate-800">
-                    <div className="p-3 bg-slate-50/50 dark:bg-zinc-800/40 rounded-md flex flex-col gap-1">
-                      <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 pb-4 border-b border-dashed border-slate-200 dark:border-slate-800">
+                    <div className="p-3 bg-slate-50/80 dark:bg-zinc-800/40 border border-slate-200/70 dark:border-slate-700/60 rounded-md flex flex-col gap-1">
+                      <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block">
                         {t('investmentProfile.kondisiTopografi')}{" "}
                       </span>
                       <span className="text-xs sm:text-sm font-bold flex items-center gap-2 text-slate-800 dark:text-slate-100">
@@ -2304,8 +2397,8 @@ export function InvestmentDetailModal({
                         <AutoTranslatedText text={geo.kondisi_topografi || "Datar (Topografi Prima)"} inline />
                       </span>
                     </div>
-                    <div className="p-3 bg-slate-50/50 dark:bg-zinc-800/40 rounded-md flex flex-col gap-1">
-                      <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">
+                    <div className="p-3 bg-slate-50/80 dark:bg-zinc-800/40 border border-slate-200/70 dark:border-slate-700/60 rounded-md flex flex-col gap-1">
+                      <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block">
                         {t('investmentProfile.aksesLahan')}{" "}
                       </span>
                       <span className="text-xs sm:text-sm font-bold flex items-center gap-2 text-slate-800 dark:text-slate-100">
@@ -2317,23 +2410,23 @@ export function InvestmentDetailModal({
                   </div>
 
                   {/* Utilitas Badge */}
-                  <div className="flex flex-col gap-3.5">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
-                      <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-2"><Zap className="w-4 h-4 text-amber-500" /> {t('investmentProfile.pasokanListrik')}</span>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4">
+                      <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-2"><Zap className="w-4 h-4 text-amber-500 shrink-0" /> {t('investmentProfile.pasokanListrik')}</span>
                       <span className="text-xs sm:text-sm font-bold flex items-center gap-2 text-slate-800 dark:text-slate-100">
                         <AutoTranslatedText text={geo.pasokan_listrik || "Tersedia Jaringan PLN"} inline />
                       </span>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
-                      <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-2"><Droplet className="w-4 h-4 text-blue-500" /> {t('investmentProfile.sumberAir')}</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4">
+                      <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-2"><Droplet className="w-4 h-4 text-blue-500 shrink-0" /> {t('investmentProfile.sumberAir')}</span>
                       <span className="text-xs sm:text-sm font-bold flex items-center gap-2 text-slate-800 dark:text-slate-100">
                         <AutoTranslatedText text={geo.sumber_air_bersih || "PDAM / Air Tanah Bersih"} inline />
                       </span>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
-                      <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-2"><Wifi className="w-4 h-4 text-indigo-500" /> {t('investmentProfile.jaringanTelko')}</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4">
+                      <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-2"><Wifi className="w-4 h-4 text-indigo-500 shrink-0" /> {t('investmentProfile.jaringanTelko')}</span>
                       <span className="text-xs sm:text-sm font-bold flex items-center gap-2 text-slate-800 dark:text-slate-100">
                         <AutoTranslatedText text={geo.jaringan_telekomunikasi || "Fiber Optic / Sinyal 4G Kuat"} inline />
                       </span>
@@ -2343,16 +2436,16 @@ export function InvestmentDetailModal({
 
                 {/* SKEMA INVESTASI & PIC CONTACTS */}
                 <div
-                  className={`p-5 rounded-lg ${sectionBg} border ${sectionBorder}`}
+                  className={`p-3.5 sm:p-5 rounded-lg ${sectionBg} border ${sectionBorder}`}
                 >
                   <h3 className="text-sm font-bold flex items-center gap-2 mb-3 text-slate-800 dark:text-slate-100">
-                    <Briefcase className="w-4 h-4" /> {t('investmentProfile.kriteriaBisnisTitle')}
+                    <Briefcase className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" /> {t('investmentProfile.kriteriaBisnisTitle')}
                   </h3>
 
                   {/* Parameter Bisnis */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                    <div className="p-3 bg-slate-50/50 dark:bg-zinc-800/40 rounded-md flex flex-col gap-1">
-                      <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                    <div className="p-3 bg-slate-50/80 dark:bg-zinc-800/40 border border-slate-200/70 dark:border-slate-700/60 rounded-md flex flex-col gap-1">
+                      <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block">
                         {t('investmentProfile.skemaKemitraan')}{" "}
                       </span>
                       <span className="text-xs sm:text-sm font-bold flex items-center gap-2 text-slate-800 dark:text-slate-100">
@@ -2360,8 +2453,8 @@ export function InvestmentDetailModal({
                         <AutoTranslatedText text={geo.skema_kemitraan || "Joint Venture / Kemitraan Swasta"} inline />
                       </span>
                     </div>
-                    <div className="p-3 bg-slate-50/50 dark:bg-zinc-800/40 rounded-md flex flex-col gap-1">
-                      <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">
+                    <div className="p-3 bg-slate-50/80 dark:bg-zinc-800/40 border border-slate-200/70 dark:border-slate-700/60 rounded-md flex flex-col gap-1">
+                      <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block">
                         {t('investmentProfile.targetInvestor')}{" "}
                       </span>
                       <span className="text-xs sm:text-sm font-bold flex items-center gap-2 text-slate-800 dark:text-slate-100">
@@ -2434,7 +2527,7 @@ export function InvestmentDetailModal({
                           setLoiMessage("");
                           setIsLoiModalOpen(true);
                         }}
-                        className="w-full flex items-center justify-center gap-2.5 py-3.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-md text-xs sm:text-sm min-h-[44px] transition-all shadow-sm hover:shadow-md transform active:scale-95 cursor-pointer"
+                        className="w-full flex items-center justify-center gap-2.5 py-3 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-md text-xs sm:text-sm min-h-[44px] transition-all shadow-sm hover:shadow-md transform active:scale-95 cursor-pointer"
                       >
                         <Handshake size={18} className="shrink-0" />
                         <span>{t('investmentProfile.btnSubmitLoi', 'Ajukan Minat Investasi (LoI)')}</span>
@@ -2444,14 +2537,14 @@ export function InvestmentDetailModal({
 
                   {/* PIC Card */}
                   <div
-                    className={`p-4 rounded-md border border-dashed ${effectiveDarkMode ? "border-slate-700 bg-surface/60" : "border-slate-300 bg-slate-50"} flex flex-col gap-3.5`}
+                    className={`p-3 sm:p-4 rounded-md border border-dashed ${effectiveDarkMode ? "border-slate-700 bg-surface/60" : "border-slate-300 bg-slate-50"} flex flex-col gap-3`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex flex-col items-center justify-center text-slate-600 dark:text-slate-400">
-                        <User className="w-5 h-5 text-indigo-500" />
+                      <div className="p-2 rounded-md bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 shrink-0">
+                        <User className="w-4.5 h-4.5" />
                       </div>
-                      <div>
-                        <h4 className="font-bold text-slate-800 dark:text-slate-100">
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100 leading-snug">
                           <AutoTranslatedText
                             text={
                               geo.nama_kontak_person ||
@@ -2461,29 +2554,32 @@ export function InvestmentDetailModal({
                             inline
                           />
                         </h4>
-                        <p className="text-xs text-slate-800 dark:text-slate-200">
+                        <p className="text-xs text-slate-600 dark:text-slate-300">
                           <AutoTranslatedText text={geo.jabatan_kontak || "PIC Hubungan Investor"} inline />
                         </p>
                       </div>
                     </div>
-                    <div className="mt-4 pt-3 border-t border-dashed border-slate-200 dark:border-slate-800">
+                    <div className="pt-3 border-t border-dashed border-slate-200 dark:border-slate-800">
                       <div className="flex flex-col gap-2.5 text-xs">
-                        <span className="font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-[10px]">
+                        <span className="font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider text-xs">
                           {t('investmentProfile.verifikasiWilayahLahan', 'Verifikasi Wilayah Lahan (SOP Single Window)')}
                         </span>
-                        <div className="flex items-start gap-2 bg-slate-50/50 dark:bg-surface p-3 rounded-md border border-slate-100 dark:border-slate-800/80">
+                        <div className="flex items-start gap-2.5 bg-white/80 dark:bg-surface p-2.5 sm:p-3 rounded-md border border-slate-200/80 dark:border-slate-800/80">
                           <MapPin className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
-                          <div className="flex flex-col gap-0.5">
+                          <div className="flex flex-col gap-0.5 min-w-0">
                             <span className="font-bold text-slate-800 dark:text-slate-200">
                               {t('investmentProfile.desa', 'Desa')} {getActualVillageName()}, {t('investmentProfile.kecamatan', 'Kecamatan')} {getActualDistrictName()}
                             </span>
-                            <span className="text-[11px] text-slate-600 dark:text-slate-300">
+                            <span className="text-xs text-slate-600 dark:text-slate-300">
                               {t('investmentProfile.kabupatenLuwuSulsel', 'Kabupaten Luwu, Sulawesi Selatan')}
                             </span>
                           </div>
                         </div>
-                        <div className="text-[11px] leading-relaxed text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50/40 dark:bg-indigo-950/20 border border-indigo-100/50 dark:border-indigo-900/30 p-3 rounded-md flex items-start gap-2.5">
-                          <Handshake size={15} className="shrink-0 text-indigo-500 dark:text-indigo-400 mt-0.5" />
+                        <div className="text-xs leading-relaxed text-indigo-700 dark:text-indigo-300 font-medium bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-200/60 dark:border-indigo-900/40 p-3 rounded-md">
+                          <div className="flex items-center gap-2 font-bold uppercase tracking-wide text-xs mb-1 text-indigo-800 dark:text-indigo-300">
+                            <Handshake size={15} className="shrink-0 text-indigo-600 dark:text-indigo-400" />
+                            <span>SOP Mediasi Single Window</span>
+                          </div>
                           <span dangerouslySetInnerHTML={{ __html: t('investmentProfile.sopMediasiSingleWindowText', 'Sesuai dengan SOP mediasi <strong>Single Window DPMPTSP Luwu</strong>, investor dilarang menghubungi pemilik lahan secara langsung. Hubungi tim verifikator kami melalui formulir minat <strong>LoI di atas</strong> untuk proses mediasi resmi.') }} />
                         </div>
                       </div>
@@ -2492,7 +2588,7 @@ export function InvestmentDetailModal({
                 </div>
 
                 {/* AUTO-PHOTO SLIDER SECTION WITH LAZY LOADING & PROGRESSIVE PLACEHOLDER */}
-                <div className={`rounded-lg overflow-hidden relative shadow-sm border ${isDarkMode ? "border-slate-700 bg-surface/50" : "border-slate-200 bg-slate-100"} w-full min-h-[250px] sm:min-h-[300px] aspect-video shrink-0 z-10 group flex flex-col justify-center items-center`}>
+                <div className={`rounded-lg overflow-hidden relative shadow-sm border ${isDarkMode ? "border-slate-700 bg-surface/50" : "border-slate-200 bg-slate-100"} w-full min-h-[220px] sm:min-h-[280px] aspect-video shrink-0 z-10 group flex flex-col justify-center items-center`}>
                   {sliderPhotos.length > 0 ? (
                     <>
                       {sliderPhotos.map((photoUrl, idx) => {
@@ -2546,33 +2642,33 @@ export function InvestmentDetailModal({
 
               {/* ANALISIS JARAK FASILITAS / PROXIMITY - SPAN FULL WIDTH AT THE BOTTOM */}
               <div className="col-span-full">
-                <div className={`p-5 rounded-lg ${sectionBg} border ${sectionBorder}`}>
+                <div className={`p-3.5 sm:p-5 rounded-lg ${sectionBg} border ${sectionBorder}`}>
                   <h3 className="text-sm font-bold flex items-center gap-2 mb-3 text-slate-800 dark:text-slate-100">
-                    <Navigation className="w-4 h-4 text-emerald-500" /> {t('investmentProfile.analisisJarakFasilitas', 'Analisis Jarak Fasilitas')}
+                    <Navigation className="w-4 h-4 text-emerald-500 shrink-0" /> {t('investmentProfile.analisisJarakFasilitas', 'Analisis Jarak Fasilitas')}
                   </h3>
-                  <div className="flex flex-col gap-5">
+                  <div className="flex flex-col gap-4">
                     {(!proximityIntel || proximityIntel.length === 0) ? (
                       <div className="text-xs text-slate-600 dark:text-slate-400 italic p-3 text-center bg-slate-50 dark:bg-slate-800/50 rounded-md">
                         {t('investmentProfile.dataFasilitasTidakTersedia', 'Data fasilitas tidak tersedia')}
                       </div>
                     ) : (
                       <>
-                        <div className="w-full h-64 min-h-[250px] p-4 bg-slate-50 dark:bg-slate-800/50 rounded-md border border-slate-100 dark:border-slate-800">
+                        <div className="w-full h-64 min-h-[240px] p-2.5 sm:p-4 bg-slate-50 dark:bg-slate-800/50 rounded-md border border-slate-100 dark:border-slate-800">
                           <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                             <BarChart 
                              layout="vertical" 
                               data={proximityIntel.map((inf: any) => ({ 
-                                name: inf.name?.length > 24 ? inf.name.substring(0, 24) + "..." : (inf.name || "Fasilitas"), 
+                                name: inf.name?.length > 22 ? inf.name.substring(0, 22) + "..." : (inf.name || "Fasilitas"), 
                                 distance: Number(inf.distance.toFixed(1)), 
                                 exactDistance: inf.distance,
                                 fullName: inf.name, 
                                 type: inf.type 
                               }))} 
-                              margin={{ top: 10, right: 30, left: 10, bottom: 10 }}
+                              margin={{ top: 8, right: 20, left: 4, bottom: 8 }}
                             >
                               <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={isDarkMode ? "#334155" : "#e2e8f0"} />
                               <XAxis type="number" unit="km" stroke={isDarkMode ? "#64748b" : "#94a3b8"} fontSize={10} />
-                              <YAxis type="category" dataKey="name" width={150} tick={{ fontSize: 12, fill: isDarkMode ? '#94a3b8' : '#475569' }} />
+                              <YAxis type="category" dataKey="name" width={125} tick={{ fontSize: 11, fill: isDarkMode ? '#94a3b8' : '#475569' }} />
                               <Tooltip 
                                 cursor={{fill: isDarkMode ? "#334155" : "#f1f5f9"}}
                                 content={({ active, payload }) => {
@@ -2697,89 +2793,89 @@ export function InvestmentDetailModal({
           )}
 
           {activeTab === "simulator" && (
-            <div className="flex flex-col gap-4 sm:gap-6 p-2.5 sm:p-4 md:p-6 pb-20 sm:pb-6">
+            <div className="flex flex-col gap-3.5 sm:gap-5 pb-4">
               {/* TOP BANNER & SCENARIO CONTROLLER */}
-              <div className={`p-4 md:p-5 rounded-lg border ${isDarkMode ? "bg-surface/80 border-slate-800" : "bg-gradient-to-r from-emerald-50/80 via-indigo-50/50 to-purple-50/50 border-emerald-100"} flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm`}>
-                <div className="flex items-center gap-3">
+              <div className={`p-3.5 sm:p-5 rounded-lg border ${isDarkMode ? "bg-surface/80 border-slate-800" : "bg-gradient-to-r from-emerald-50/80 via-indigo-50/50 to-purple-50/50 border-emerald-100"} flex flex-col md:flex-row md:items-center justify-between gap-3.5 shadow-xs`}>
+                <div className="flex items-start sm:items-center gap-3 min-w-0">
                   <div className="p-2.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shrink-0">
                     <TrendingUp className="w-5 h-5" />
                   </div>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">
                         {i18n.language?.startsWith("zh") ? "财务可行性分析模型 (UNIDO / IFC 标准)" : i18n.language?.startsWith("en") ? "Financial Feasibility Analysis Model (UNIDO / IFC Standard)" : "Model Analisis Kelayakan Finansial (UNIDO / IFC Standard)"}
                       </h3>
-                      <span className="px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+                      <span className="px-2 py-0.5 text-xs font-mono font-bold uppercase tracking-wider rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 whitespace-nowrap">
                         Discounted Cash Flow (DCF)
                       </span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
                       {i18n.language?.startsWith("zh") ? "基于 Luwu 县政府基准参数的净现金流、IRR、NPV 和投资回收期的动态模拟。" : i18n.language?.startsWith("en") ? "Dynamic simulation of net cash flow, IRR, NPV, and payback period based on Luwu Regency baseline parameters." : "Simulasi dinamis arus kas neto, IRR, NPV, dan payback period berdasarkan parameter baseline Pemkab Luwu."}
                     </p>
                   </div>
                 </div>
 
                 {/* SCENARIO PRESETS */}
-                <div className="flex items-center gap-1.5 p-1 rounded-md bg-slate-200/50 dark:bg-slate-800/80 border border-slate-300/50 dark:border-slate-700/50 shrink-0">
+                <div className="grid grid-cols-3 md:flex items-center gap-1.5 p-1 rounded-md bg-slate-200/50 dark:bg-slate-800/80 border border-slate-300/50 dark:border-slate-700/50 shrink-0 w-full md:w-auto">
                   <motion.button whileTap={{ scale: 0.95 }}
                     onClick={() => applyScenario("bear")}
-                    className={`min-h-[44px] py-2 px-3 text-xs font-semibold rounded-lg flex items-center justify-center transition-all cursor-pointer ${
+                    className={`min-h-[44px] py-2 px-2.5 sm:px-3 text-xs font-semibold rounded-lg flex items-center justify-center text-center transition-all cursor-pointer ${
                       activeScenario === "bear"
-                        ? "bg-rose-500 text-white shadow-sm"
-                        : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+                        ? "bg-rose-500 text-white shadow-xs"
+                        : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
                     }`}
                   >
-                    {i18n.language?.startsWith("zh") ? "保守 (看跌)" : i18n.language?.startsWith("en") ? "Conservative (Bear)" : "Konservatif (Bear)"}
+                    {i18n.language?.startsWith("zh") ? "保守 (看跌)" : i18n.language?.startsWith("en") ? "Conservative" : "Konservatif"}
                   </motion.button>
                   <motion.button whileTap={{ scale: 0.95 }}
                     onClick={() => applyScenario("base")}
-                    className={`min-h-[44px] py-2 px-3 text-xs font-semibold rounded-lg flex items-center justify-center transition-all cursor-pointer ${
+                    className={`min-h-[44px] py-2 px-2.5 sm:px-3 text-xs font-semibold rounded-lg flex items-center justify-center text-center transition-all cursor-pointer ${
                       activeScenario === "base"
-                        ? "bg-emerald-600 dark:bg-emerald-500 text-white shadow-sm"
-                        : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+                        ? "bg-emerald-600 dark:bg-emerald-500 text-white shadow-xs"
+                        : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
                     }`}
                   >
-                    {i18n.language?.startsWith("zh") ? "基本情况 (政府)" : i18n.language?.startsWith("en") ? "Base Case (Gov)" : "Base Case (Pemkab)"}
+                    {i18n.language?.startsWith("zh") ? "基本情况" : i18n.language?.startsWith("en") ? "Base Case" : "Base Case"}
                   </motion.button>
                   <motion.button whileTap={{ scale: 0.95 }}
                     onClick={() => applyScenario("bull")}
-                    className={`min-h-[44px] py-2 px-3 text-xs font-semibold rounded-lg flex items-center justify-center transition-all cursor-pointer ${
+                    className={`min-h-[44px] py-2 px-2.5 sm:px-3 text-xs font-semibold rounded-lg flex items-center justify-center text-center transition-all cursor-pointer ${
                       activeScenario === "bull"
-                        ? "bg-emerald-600 dark:bg-emerald-500 text-white shadow-sm"
-                        : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+                        ? "bg-emerald-600 dark:bg-emerald-500 text-white shadow-xs"
+                        : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
                     }`}
                   >
-                    {i18n.language?.startsWith("zh") ? "激进 (看涨)" : i18n.language?.startsWith("en") ? "Aggressive (Bull)" : "Agresif (Bull)"}
+                    {i18n.language?.startsWith("zh") ? "激进 (看涨)" : i18n.language?.startsWith("en") ? "Aggressive" : "Agresif"}
                   </motion.button>
                 </div>
               </div>
 
               {/* TWO COLUMN GRID */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-5">
                 {/* LEFT: BASELINE DATA & SANDBOX CONTROLS */}
-                <div className="col-span-1 lg:col-span-5 flex flex-col gap-5">
+                <div className="col-span-1 lg:col-span-5 flex flex-col gap-3.5 sm:gap-5">
                   {/* DATA BAKU PEMKAB */}
-                  <div className={`p-5 rounded-lg ${sectionBg} border ${sectionBorder}`}>
-                    <h3 className="text-xs font-bold uppercase tracking-wider flex items-center gap-2 mb-3.5 text-slate-800 dark:text-slate-200 dark:text-slate-200">
-                      <Database className="w-4 h-4 text-emerald-500" /> {t('investmentProfile.simDataBaku')}
+                  <div className={`p-3.5 sm:p-5 rounded-lg ${sectionBg} border ${sectionBorder}`}>
+                    <h3 className="text-xs font-bold uppercase tracking-wider flex items-center gap-2 mb-3.5 text-slate-800 dark:text-slate-200">
+                      <Database className="w-4 h-4 text-emerald-500 shrink-0" /> {t('investmentProfile.simDataBaku')}
                     </h3>
 
-                    <div className="grid grid-cols-2 gap-3 mb-4">
-                      <div className="border border-slate-200/60 dark:border-slate-800 bg-white/50 dark:bg-surface/40 p-3 rounded-md">
-                        <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">{t('investmentProfile.capexValue')}</span>
+                    <div className="grid grid-cols-2 gap-2.5 sm:gap-3 mb-4">
+                      <div className="border border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-surface/40 p-3 rounded-md">
+                        <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">{t('investmentProfile.capexValue')}</span>
                         <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 block">{formatCompactRupiah(capex)}</span>
-                        <span className="text-[10px] font-mono text-slate-600 dark:text-slate-400 block mt-0.5">{formatUsd(capex)}</span>
+                        <span className="text-xs font-mono text-slate-600 dark:text-slate-400 block mt-0.5">{formatUsd(capex)}</span>
                       </div>
-                      <div className="border border-slate-200/60 dark:border-slate-800 bg-white/50 dark:bg-surface/40 p-3 rounded-md">
-                        <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">{t('investmentProfile.opexEst')}</span>
+                      <div className="border border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-surface/40 p-3 rounded-md">
+                        <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block mb-1">{t('investmentProfile.opexEst')}</span>
                         <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 block">{formatCompactRupiah(opex)}</span>
-                        <span className="text-[10px] font-mono text-slate-600 dark:text-slate-400 block mt-0.5">{formatUsd(opex)}</span>
+                        <span className="text-xs font-mono text-slate-600 dark:text-slate-400 block mt-0.5">{formatUsd(opex)}</span>
                       </div>
                     </div>
 
                     <div className="flex flex-col gap-2 font-mono text-xs">
-                      <div className="flex justify-between border-b pb-1.5 dark:border-slate-800">
-                        <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400">{t('investmentProfile.legalStatus')}</span>
+                      <div className="flex items-center justify-between gap-2 border-b pb-1.5 dark:border-slate-800">
+                        <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400">{t('investmentProfile.legalStatus')}</span>
                         <span className="text-xs font-bold text-slate-800 dark:text-slate-100">
                           <AutoTranslatedText
                             text={leg.ownership_status || profileData?.landStatus || "Sertifikat"}
@@ -2787,39 +2883,42 @@ export function InvestmentDetailModal({
                           />
                         </span>
                       </div>
-                      <div className="flex justify-between border-b pb-1.5 dark:border-slate-800">
-                        <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400">{t('investmentProfile.targetRoi')}</span>
+                      <div className="flex items-center justify-between gap-2 border-b pb-1.5 dark:border-slate-800">
+                        <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400">{t('investmentProfile.targetRoi')}</span>
                         <span className="text-xs font-bold text-slate-800 dark:text-slate-100">{geo?.roi_estimasi || fin?.roi || 12.5}% / {t('investmentProfile.thn', 'Thn')}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400">{t('investmentProfile.mainSector')}</span>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400">{t('investmentProfile.mainSector')}</span>
                         <span className="text-xs font-bold text-slate-800 dark:text-slate-100">
-                          {t(getSectorI18nKey(profileData?.sector || geo?.sektor_utama || "Sektor"))}
+                          {(() => {
+                            const rawSec = profileData?.sector || geo?.sektor_utama || "Sektor";
+                            return t(getSectorI18nKey(rawSec), rawSec);
+                          })()}
                         </span>
                       </div>
                     </div>
                   </div>
 
                   {/* THE SANDBOX DYNAMIC CONTROLS */}
-                  <div className={`p-5 rounded-lg ${sectionBg} border ${sectionBorder} flex flex-col gap-5`}>
+                  <div className={`p-3.5 sm:p-5 rounded-lg ${sectionBg} border ${sectionBorder} flex flex-col gap-4 sm:gap-5`}>
                     <div className="border-b pb-3 border-slate-200/60 dark:border-slate-800">
                       <h3 className="text-xs font-bold uppercase tracking-wider flex items-center gap-2 text-slate-800 dark:text-slate-100">
-                        <Calculator className="w-4 h-4 text-indigo-500" /> {t('investmentProfile.sandboxTitle')}
+                        <Calculator className="w-4 h-4 text-indigo-500 shrink-0" /> {t('investmentProfile.sandboxTitle')}
                       </h3>
-                      <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                      <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
                         {t('investmentProfile.sandboxDesc')}
                       </p>
                     </div>
 
                     {/* Asumsi Pendapatan */}
                     <div className="flex flex-col gap-2">
-                      <div className="flex justify-between items-center">
+                      <div className="flex justify-between items-center gap-2">
                         <label className="text-xs font-semibold text-slate-600 dark:text-slate-300">
                           {t('investmentProfile.grossRev')}
                         </label>
-                        <div className="text-right">
+                        <div className="text-right shrink-0">
                           <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 block">{formatCompactRupiah(asumsiPendapatan)}/{t('investmentProfile.tahun', 'Thn')}</span>
-                          <span className="text-[10px] font-mono text-slate-600 dark:text-slate-400 block">{formatUsd(asumsiPendapatan)}</span>
+                          <span className="text-xs font-mono text-slate-600 dark:text-slate-400 block">{formatUsd(asumsiPendapatan)}</span>
                         </div>
                       </div>
                       <input
@@ -2831,7 +2930,7 @@ export function InvestmentDetailModal({
                         onChange={(e) => setAsumsiPendapatan(Number(e.target.value))}
                         className="w-full accent-emerald-600 cursor-pointer h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none"
                       />
-                      <div className="flex justify-between text-[10px] text-slate-600 dark:text-slate-400 font-mono">
+                      <div className="flex justify-between text-xs text-slate-600 dark:text-slate-400 font-mono">
                         <span>Min: {formatCompactRupiah(opex * 0.1 || 10000000)}</span>
                         <span>Max: {formatCompactRupiah(capex * 0.4 || 2000000000)}</span>
                       </div>
@@ -2839,11 +2938,11 @@ export function InvestmentDetailModal({
 
                     {/* Suku Bunga Discount */}
                     <div className="flex flex-col gap-2">
-                      <div className="flex justify-between items-center">
+                      <div className="flex justify-between items-center gap-2">
                         <label className="text-xs font-semibold text-slate-600 dark:text-slate-300">
                           {t('investmentProfile.interestRate')} (WACC / Discount Rate)
                         </label>
-                        <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{sukuBunga}%</span>
+                        <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 shrink-0">{sukuBunga}%</span>
                       </div>
                       <input
                         type="range"
@@ -2854,7 +2953,7 @@ export function InvestmentDetailModal({
                         onChange={(e) => setSukuBunga(Number(e.target.value))}
                         className="w-full accent-indigo-600 cursor-pointer h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none"
                       />
-                      <div className="flex justify-between text-[10px] text-slate-600 dark:text-slate-400 font-mono">
+                      <div className="flex justify-between text-xs text-slate-600 dark:text-slate-400 font-mono">
                         <span>Min: 1.0%</span>
                         <span>BI / IFC Avg: 8.5%</span>
                         <span>Max: 30.0%</span>
@@ -2863,11 +2962,11 @@ export function InvestmentDetailModal({
 
                     {/* Tenor Umur Proyek */}
                     <div className="flex flex-col gap-2">
-                      <div className="flex justify-between items-center">
+                      <div className="flex justify-between items-center gap-2">
                         <label className="text-xs font-semibold text-slate-600 dark:text-slate-300">
                           {t('investmentProfile.tenor')} (Project Horizon)
                         </label>
-                        <span className="text-xs font-bold text-purple-600 dark:text-purple-400">{tenorWaktu} {t('investmentProfile.tahun', 'Tahun')}</span>
+                        <span className="text-xs font-bold text-purple-600 dark:text-purple-400 shrink-0">{tenorWaktu} {t('investmentProfile.tahun', 'Tahun')}</span>
                       </div>
                       <input
                         type="range"
@@ -2878,7 +2977,7 @@ export function InvestmentDetailModal({
                         onChange={(e) => setTenorWaktu(Number(e.target.value))}
                         className="w-full accent-purple-600 cursor-pointer h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none"
                       />
-                      <div className="flex justify-between text-[10px] text-slate-600 dark:text-slate-400 font-mono">
+                      <div className="flex justify-between text-xs text-slate-600 dark:text-slate-400 font-mono">
                         <span>Min: 1 {i18n.language?.startsWith("zh") ? "年" : i18n.language?.startsWith("en") ? "Yr" : "Thn"}</span>
                         <span>Standard: 10 {i18n.language?.startsWith("zh") ? "年" : i18n.language?.startsWith("en") ? "Yr" : "Thn"}</span>
                         <span>Max: 25 {i18n.language?.startsWith("zh") ? "年" : i18n.language?.startsWith("en") ? "Yr" : "Thn"}</span>
@@ -2886,45 +2985,45 @@ export function InvestmentDetailModal({
                     </div>
 
                     {/* FITUR UNGGULAN SPASIAL & INSENTIF DILINTASI PERDA LUWU */}
-                    <div className="pt-3 border-t border-slate-200/60 dark:border-slate-800 flex flex-col gap-2">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                    <div className="pt-3 border-t border-slate-200/60 dark:border-slate-800 flex flex-col gap-2.5">
+                      <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
                         {t('rtrwZoning.integratedTitle', 'Matriks & Analisis Terpadu Luwu:')}
                       </span>
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      <div className="grid grid-cols-2 gap-2">
                         <button
                           type="button"
                           onClick={() => setIsRtrwModalOpen(true)}
-                          className="p-2.5 rounded-md bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                          className="min-h-[44px] sm:min-h-[40px] p-2.5 rounded-md bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
                         >
-                          <ShieldCheck size={14} />
+                          <ShieldCheck size={14} className="shrink-0" />
                           <span>{t('rtrwZoning.shortButton', 'Kesesuaian RTRW')}</span>
                         </button>
 
                         <button
                           type="button"
                           onClick={() => setIsLp2bModalOpen(true)}
-                          className="p-2.5 rounded-md bg-teal-500/10 hover:bg-teal-500/20 text-teal-600 dark:text-teal-300 border border-teal-500/30 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                          className="min-h-[44px] sm:min-h-[40px] p-2.5 rounded-md bg-teal-500/10 hover:bg-teal-500/20 text-teal-700 dark:text-teal-300 border border-teal-500/30 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
                           title="Uji Tumpang Tindih LP2B & Lahan Sawah Dilindungi"
                         >
-                          <Wheat size={14} />
+                          <Wheat size={14} className="shrink-0" />
                           <span>Uji LP2B Sawah</span>
                         </button>
 
                         <button
                           type="button"
                           onClick={() => setIsIncentiveModalOpen(true)}
-                          className="p-2.5 rounded-md bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/30 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                          className="min-h-[44px] sm:min-h-[40px] p-2.5 rounded-md bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
                         >
-                          <Award size={14} />
+                          <Award size={14} className="shrink-0" />
                           <span>{t('incentiveCalculator.shortButton', 'Insentif Perda')}</span>
                         </button>
 
                         <button
                           type="button"
                           onClick={() => setIsProximityModalOpen(true)}
-                          className="p-2.5 rounded-md bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 border border-cyan-500/30 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                          className="min-h-[44px] sm:min-h-[40px] p-2.5 rounded-md bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
                         >
-                          <Navigation size={14} />
+                          <Navigation size={14} className="shrink-0" />
                           <span>{t('proximityMatrix.shortButton', 'Supply Chain')}</span>
                         </button>
                       </div>
@@ -2933,34 +3032,34 @@ export function InvestmentDetailModal({
                 </div>
 
                 {/* RIGHT: REAL-TIME EXECUTIVE CALCULATION DISPLAY */}
-                <div className="col-span-1 lg:col-span-7 flex flex-col gap-5">
-                  <div className={`p-5 md:p-6 rounded-lg border ${isDarkMode ? "bg-surface/60 border-slate-800" : "bg-white border-slate-200/80"} shadow-sm flex flex-col gap-5`}>
+                <div className="col-span-1 lg:col-span-7 flex flex-col gap-3.5 sm:gap-5">
+                  <div className={`p-3.5 sm:p-5 md:p-6 rounded-lg border ${isDarkMode ? "bg-surface/60 border-slate-800" : "bg-white border-slate-200/80"} shadow-xs flex flex-col gap-4 sm:gap-5`}>
                     
                     {/* EXECUTIVE FEASIBILITY HEADLINE BADGE */}
-                    <div className={`p-4 rounded-md border flex items-center justify-between gap-4 ${
+                    <div className={`p-3 sm:p-4 rounded-md border flex items-center justify-between gap-3 sm:gap-4 ${
                       cashFlow <= 0 || npv < 0 || irr < sukuBunga
                         ? isDarkMode ? "bg-rose-950/30 border-rose-800/40 text-rose-300" : "bg-rose-50 border-rose-200 text-rose-800"
                         : npv > 0 && irr > sukuBunga + 5
                           ? isDarkMode ? "bg-emerald-950/30 border-emerald-800/40 text-emerald-300" : "bg-emerald-50 border-emerald-200 text-emerald-900"
                           : isDarkMode ? "bg-amber-950/30 border-amber-800/40 text-amber-300" : "bg-amber-50 border-amber-200 text-amber-900"
                     }`}>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-start sm:items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                         {cashFlow <= 0 || npv < 0 || irr < sukuBunga ? (
-                          <div className="p-2.5 rounded-md bg-rose-500/20 text-rose-500 shrink-0">
-                            <HelpCircle className="w-6 h-6" />
+                          <div className="p-2 sm:p-2.5 rounded-md bg-rose-500/20 text-rose-500 shrink-0">
+                            <HelpCircle className="w-5 h-5 sm:w-6 sm:h-6" />
                           </div>
                         ) : npv > 0 && irr > sukuBunga + 5 ? (
-                          <div className="p-2.5 rounded-md bg-emerald-500/20 text-emerald-500 shrink-0">
-                            <ShieldCheck className="w-6 h-6" />
+                          <div className="p-2 sm:p-2.5 rounded-md bg-emerald-500/20 text-emerald-500 shrink-0">
+                            <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" />
                           </div>
                         ) : (
-                          <div className="p-2.5 rounded-md bg-amber-500/20 text-amber-500 shrink-0">
-                            <Info className="w-6 h-6" />
+                          <div className="p-2 sm:p-2.5 rounded-md bg-amber-500/20 text-amber-500 shrink-0">
+                            <Info className="w-5 h-5 sm:w-6 sm:h-6" />
                           </div>
                         )}
-                        <div>
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400 block">Status Kelayakan Regional</span>
-                          <h4 className="text-sm font-extrabold uppercase tracking-wide">
+                        <div className="min-w-0 flex-1">
+                          <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 block">Status Kelayakan Regional</span>
+                          <h4 className="text-xs sm:text-sm font-extrabold uppercase tracking-wide leading-snug mt-0.5">
                             {cashFlow <= 0 || npv < 0 || irr < sukuBunga
                               ? "HIGH RISK / UNFEASIBLE (RESTRUCTURE REQUIRED)"
                               : npv > 0 && irr > sukuBunga + 5
@@ -2970,7 +3069,7 @@ export function InvestmentDetailModal({
                         </div>
                       </div>
                       <div className="text-right shrink-0 hidden sm:block">
-                        <span className="text-[10px] uppercase font-mono text-slate-600 dark:text-slate-400 block">Hurdle Rate Spread</span>
+                        <span className="text-xs uppercase font-mono text-slate-600 dark:text-slate-400 block">Hurdle Rate Spread</span>
                         <span className={`text-xs font-bold font-mono ${irr >= sukuBunga ? "text-emerald-500" : "text-rose-500"}`}>
                           {(irr - sukuBunga) >= 0 ? `+${(irr - sukuBunga).toFixed(2)}%` : `${(irr - sukuBunga).toFixed(2)}%`}
                         </span>
@@ -2978,16 +3077,16 @@ export function InvestmentDetailModal({
                     </div>
 
                     {/* METRIC GRID */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       {/* IRR CARD */}
-                      <div className={`p-4 rounded-md border transition-all duration-300 hover:shadow-md flex flex-col justify-between ${
+                      <div className={`p-3.5 sm:p-4 rounded-md border transition-all duration-300 hover:shadow-md flex flex-col justify-between ${
                         irr > sukuBunga
                           ? isDarkMode ? "border-emerald-500/30 bg-emerald-950/10" : "border-emerald-200 bg-emerald-50/30"
                           : isDarkMode ? "border-rose-500/30 bg-rose-950/10" : "border-rose-200 bg-rose-50/30"
                       }`}>
-                        <div className="flex justify-between items-start mb-2">
-                          <div>
-                            <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block">{t('investmentProfile.irrTitle', 'Internal Rate of Return')}</span>
+                        <div className="flex justify-between items-start gap-2 mb-2">
+                          <div className="min-w-0">
+                            <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block">{t('investmentProfile.irrTitle', 'Internal Rate of Return')}</span>
                             <span className="text-xs text-slate-600 dark:text-slate-400 font-mono">Vs Hurdle Rate ({sukuBunga}%)</span>
                           </div>
                           <TrendingUp className={`w-4 h-4 shrink-0 ${irr > sukuBunga ? "text-emerald-500" : "text-rose-500"}`} />
@@ -2995,7 +3094,7 @@ export function InvestmentDetailModal({
                         <div className="mt-2">
                           <div className="flex items-baseline justify-between mb-1">
                             <span className="text-lg font-black text-slate-800 dark:text-slate-100 font-mono">{irr.toFixed(2)}%</span>
-                            <span className="text-[10px] font-semibold text-slate-600 dark:text-slate-400">IRR Tahunan</span>
+                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">IRR Tahunan</span>
                           </div>
                           {/* Progress bar comparing IRR to Discount Rate */}
                           <div className="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
@@ -3008,14 +3107,14 @@ export function InvestmentDetailModal({
                       </div>
 
                       {/* NPV CARD */}
-                      <div className={`p-4 rounded-md border transition-all duration-300 hover:shadow-md flex flex-col justify-between ${
+                      <div className={`p-3.5 sm:p-4 rounded-md border transition-all duration-300 hover:shadow-md flex flex-col justify-between ${
                         npv > 0
                           ? isDarkMode ? "border-emerald-500/30 bg-emerald-950/10" : "border-emerald-200 bg-emerald-50/30"
                           : isDarkMode ? "border-rose-500/30 bg-rose-950/10" : "border-rose-200 bg-rose-50/30"
                       }`}>
-                        <div className="flex justify-between items-start mb-2">
-                          <div>
-                            <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block">{t('investmentProfile.npvTitle', 'Net Present Value')}</span>
+                        <div className="flex justify-between items-start gap-2 mb-2">
+                          <div className="min-w-0">
+                            <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block">{t('investmentProfile.npvTitle', 'Net Present Value')}</span>
                             <span className="text-xs text-slate-600 dark:text-slate-400 font-mono">{formatUsd(npv)}</span>
                           </div>
                           <DollarSign className={`w-4 h-4 shrink-0 ${npv > 0 ? "text-emerald-500" : "text-rose-500"}`} />
@@ -3024,30 +3123,30 @@ export function InvestmentDetailModal({
                           <span className="text-lg font-black text-slate-800 dark:text-slate-100 font-mono block truncate">
                             {npv >= 0 ? "+" : ""}{formatRupiah(npv)}
                           </span>
-                          <span className="text-[10px] font-semibold text-slate-600 dark:text-slate-400 block mt-0.5">
+                          <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 block mt-0.5">
                             {i18n.language?.startsWith("zh") ? `净现值 (${tenorWaktu} 年)` : i18n.language?.startsWith("en") ? `Net Present Value (${tenorWaktu} Yr)` : `Nilai Bersih Diskonto (${tenorWaktu} Thn)`}
                           </span>
                         </div>
                       </div>
 
                       {/* PAYBACK PERIOD CARD */}
-                      <div className={`p-4 rounded-md border transition-all duration-300 hover:shadow-md flex flex-col justify-between ${
+                      <div className={`p-3.5 sm:p-4 rounded-md border transition-all duration-300 hover:shadow-md flex flex-col justify-between ${
                         bep > 0 && bep <= 5
                           ? isDarkMode ? "border-emerald-500/30 bg-emerald-950/10" : "border-emerald-200 bg-emerald-50/30"
                           : isDarkMode ? "border-amber-500/30 bg-amber-950/10" : "border-amber-200 bg-amber-50/30"
                       }`}>
-                        <div className="flex justify-between items-start mb-2">
-                          <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block">{t('investmentProfile.paybackTitle', 'Payback Period')}</span>
+                        <div className="flex justify-between items-start gap-2 mb-2">
+                          <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block">{t('investmentProfile.paybackTitle', 'Payback Period')}</span>
                           <Clock className="w-4 h-4 text-indigo-500 shrink-0" />
                         </div>
                         <div className="space-y-1 mt-1">
-                          <div className="flex justify-between text-xs">
+                          <div className="flex justify-between gap-2 text-xs">
                             <span className="text-slate-600 dark:text-slate-400">Simple Payback:</span>
                             <span className="font-bold text-slate-800 dark:text-slate-200 font-mono">
                               {cashFlow <= 0 || bep > 99 ? "N/A" : `${bep.toFixed(1)} ${i18n.language?.startsWith("zh") ? "年" : i18n.language?.startsWith("en") ? "Yr" : "Thn"}`}
                             </span>
                           </div>
-                          <div className="flex justify-between text-xs border-t pt-1 border-slate-200/50 dark:border-slate-800">
+                          <div className="flex justify-between gap-2 text-xs border-t pt-1 border-slate-200/50 dark:border-slate-800">
                             <span className="text-slate-600 dark:text-slate-400">Discounted Payback:</span>
                             <span className="font-bold text-slate-800 dark:text-slate-200 font-mono">
                               {discountedPayback > tenorWaktu ? (i18n.language?.startsWith("zh") ? "超出期限" : "Exceeds Horizon") : `${discountedPayback.toFixed(1)} ${i18n.language?.startsWith("zh") ? "年" : i18n.language?.startsWith("en") ? "Yr" : "Thn"}`}
@@ -3057,14 +3156,14 @@ export function InvestmentDetailModal({
                       </div>
 
                       {/* ANNUAL NET CASH FLOW CARD */}
-                      <div className={`p-4 rounded-md border transition-all duration-300 hover:shadow-md flex flex-col justify-between ${
+                      <div className={`p-3.5 sm:p-4 rounded-md border transition-all duration-300 hover:shadow-md flex flex-col justify-between ${
                         cashFlow > 0
                           ? isDarkMode ? "border-emerald-500/30 bg-emerald-950/10" : "border-emerald-200 bg-emerald-50/30"
                           : isDarkMode ? "border-rose-500/30 bg-rose-950/10" : "border-rose-200 bg-rose-50/30"
                       }`}>
-                        <div className="flex justify-between items-start mb-2">
-                          <div>
-                            <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block">
+                        <div className="flex justify-between items-start gap-2 mb-2">
+                          <div className="min-w-0">
+                            <span className="text-xs uppercase tracking-wider font-semibold text-slate-600 dark:text-slate-400 block">
                               {i18n.language?.startsWith("zh") ? "年净现金流" : i18n.language?.startsWith("en") ? "Annual Net Cash Flow" : "Arus Kas Neto Tahunan"}
                             </span>
                             <span className="text-xs text-slate-600 dark:text-slate-400 font-mono">{formatUsd(cashFlow)}/{i18n.language?.startsWith("zh") ? "年" : i18n.language?.startsWith("en") ? "Yr" : "Thn"}</span>
@@ -3075,7 +3174,7 @@ export function InvestmentDetailModal({
                           <span className="text-lg font-black text-slate-800 dark:text-slate-100 font-mono block truncate">
                             {formatRupiah(cashFlow)}
                           </span>
-                          <span className="text-[10px] font-semibold text-slate-600 dark:text-slate-400 block mt-0.5">
+                          <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 block mt-0.5">
                             {i18n.language?.startsWith("zh") ? "净利润率" : i18n.language?.startsWith("en") ? "Net Margin" : "Margin Neto"}: {((cashFlow / (asumsiPendapatan || 1)) * 100).toFixed(1)}% | ROI: {roi.toFixed(1)}%
                           </span>
                         </div>
@@ -3085,20 +3184,20 @@ export function InvestmentDetailModal({
                     {/* AI CONSULTANT CTA BUTTON */}
                     <div className="col-span-full pt-1">
                       <motion.button whileTap={{ scale: 0.95 }}
-                        className="w-full py-3.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 hover:from-emerald-700 hover:to-indigo-700 text-white font-bold text-xs uppercase tracking-wider rounded-md shadow-lg shadow-black/25 transition-all flex items-center justify-center gap-2.5 group cursor-pointer"
+                        className="w-full min-h-[44px] px-4 py-3 bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 hover:from-emerald-700 hover:to-indigo-700 text-white font-bold text-xs uppercase tracking-wider rounded-md shadow-lg shadow-black/25 transition-all flex items-center justify-center gap-2.5 group cursor-pointer"
                         onClick={() => {
                           setIsRoiAiModalOpen(true);
                         }}
                       >
-                        <Sparkles className="w-4 h-4 group-hover:scale-125 group-hover:rotate-12 transition-all" />
-                        {t('investmentProfile.requestAi', 'Minta AI Analisa Finansial Spasial ✨')}
+                        <Sparkles className="w-4 h-4 shrink-0 group-hover:scale-125 group-hover:rotate-12 transition-all" />
+                        <span>{t('investmentProfile.requestAi', 'Minta AI Analisa Finansial Spasial ✨')}</span>
                       </motion.button>
                     </div>
 
                     {/* MICRO DECISION EXPLANATION BADGE */}
-                    <div className={`p-3.5 rounded-md border text-[11px] leading-relaxed font-normal ${
+                    <div className={`p-3 sm:p-3.5 rounded-md border text-xs leading-relaxed font-normal ${
                       cashFlow <= 0 || npv < 0 || irr < sukuBunga
-                        ? "bg-rose-500/10 border-rose-500/20 text-rose-500 dark:text-rose-400"
+                        ? "bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400"
                         : npv > 0 && irr > sukuBunga + 5
                           ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-300"
                           : "bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-300"
@@ -3120,19 +3219,19 @@ export function InvestmentDetailModal({
 
                     {/* VISUAL CASHFLOW TRAJECTORY CHART */}
                     <div className="pt-3 border-t border-slate-200/60 dark:border-slate-800">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <Activity className="w-4 h-4 text-emerald-500" />
-                          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 dark:text-slate-200">
+                      <div className="flex flex-wrap items-center justify-between gap-1.5 mb-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Activity className="w-4 h-4 text-emerald-500 shrink-0" />
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
                             {i18n.language?.startsWith("zh") ? "累计现金流预测 (DCF 交叉范围)" : i18n.language?.startsWith("en") ? "Accumulated Cash Flow Projection (DCF Crossover Horizon)" : "Proyeksi Akumulasi Arus Kas (DCF Crossover Horizon)"}
                           </h4>
                         </div>
-                        <span className="text-[10px] font-mono text-slate-600 dark:text-slate-400">
+                        <span className="text-xs font-mono text-slate-600 dark:text-slate-400">
                           {i18n.language?.startsWith("zh") ? "面值: 百万印尼盾" : i18n.language?.startsWith("en") ? "Nominal: Million IDR" : "Nominal: Juta Rp"}
                         </span>
                       </div>
                       
-                      <div className="h-40 w-full pt-1">
+                      <div className="h-44 sm:h-40 w-full pt-1">
                         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                           <BarChart data={cashFlowTrajectory} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDarkMode ? "#334155" : "#e2e8f0"} />
@@ -3154,10 +3253,10 @@ export function InvestmentDetailModal({
                                       isDarkMode ? "bg-slate-900 border-slate-700 text-slate-100" : "bg-white border-slate-200 text-slate-800"
                                     }`}>
                                       <p className="font-bold text-xs border-b pb-1 mb-1 border-slate-200 dark:border-slate-800">{data.year}</p>
-                                      <p className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400">
+                                      <p className="text-xs font-mono text-emerald-600 dark:text-emerald-400">
                                         {i18n.language?.startsWith("zh") ? `年度 DCF: Rp ${data.aruskas.toLocaleString("id-ID")} 百万` : i18n.language?.startsWith("en") ? `Annual DCF: Rp ${data.aruskas.toLocaleString("id-ID")} Million` : `DCF Tahunan: Rp ${data.aruskas.toLocaleString("id-ID")} Juta`}
                                       </p>
-                                      <p className={`text-[11px] font-mono font-bold ${data.kumulatif >= 0 ? "text-emerald-500" : "text-rose-500"}`}>
+                                      <p className={`text-xs font-mono font-bold ${data.kumulatif >= 0 ? "text-emerald-500" : "text-rose-500"}`}>
                                         {i18n.language?.startsWith("zh") ? `累计 DCF: Rp ${data.kumulatif.toLocaleString("id-ID")} 百万` : i18n.language?.startsWith("en") ? `Cumulative DCF: Rp ${data.kumulatif.toLocaleString("id-ID")} Million` : `Kumulatif DCF: Rp ${data.kumulatif.toLocaleString("id-ID")} Juta`}
                                       </p>
                                     </div>
@@ -3178,13 +3277,13 @@ export function InvestmentDetailModal({
                         </ResponsiveContainer>
                       </div>
 
-                      <div className="flex items-center justify-between text-[10px] font-mono text-slate-600 dark:text-slate-400 mt-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-3 text-xs font-mono text-slate-600 dark:text-slate-400 mt-2.5">
                         <div className="flex items-center gap-1.5">
-                          <span className="w-2.5 h-2.5 rounded-sm bg-rose-500 inline-block" />
+                          <span className="w-2.5 h-2.5 rounded-sm bg-rose-500 inline-block shrink-0" />
                           <span>{i18n.language?.startsWith("zh") ? "初始投资 (负现金流)" : i18n.language?.startsWith("en") ? "Initial Investment (Negative Net Cash Outflow)" : "Investasi Awal (Negative Net Cash Outflow)"}</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500 inline-block" />
+                          <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500 inline-block shrink-0" />
                           <span>{i18n.language?.startsWith("zh") ? "累计正 DCF (投资回收后)" : i18n.language?.startsWith("en") ? "Cumulative Positive DCF (Post-Payback)" : "Kumulatif DCF Positif (Post-Payback)"}</span>
                         </div>
                       </div>
@@ -3193,22 +3292,22 @@ export function InvestmentDetailModal({
                   </div>
                 </div>
               </div>
-              <ROICalculator isDarkMode={isDarkMode} />
+              <ROICalculator isDarkMode={effectiveDarkMode} />
             </div>
           )}
         </div>
 
         {/* FOOTER */}
         <div
-          className={`p-4 shrink-0 border-t ${sectionBorder} flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 ${effectiveDarkMode ? "bg-slate-900" : "bg-white"}`}
+          className={`px-3 py-2.5 sm:px-5 sm:py-3.5 shrink-0 border-t ${sectionBorder} flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-3 ${effectiveDarkMode ? "bg-slate-900" : "bg-white"}`}
         >
-          <div className="flex gap-2 items-center flex-wrap">
+          <div className="grid grid-cols-2 sm:flex gap-2 items-center w-full sm:w-auto">
             <motion.button whileTap={{ scale: 0.95 }}
               onClick={onClose}
-              className={`w-full sm:w-auto px-5 py-3 sm:py-2 flex justify-center font-semibold text-xs uppercase tracking-wider rounded-lg border transition-all ${
+              className={`min-h-[44px] sm:min-h-[40px] px-3 sm:px-5 py-2.5 sm:py-2 flex items-center justify-center font-semibold text-xs uppercase tracking-wider rounded-lg border transition-all cursor-pointer ${
                 effectiveDarkMode
-                  ? "border-slate-700 hover:bg-slate-800 text-slate-200"
-                  : "border-slate-300 hover:bg-white/5 text-slate-300 border border-white/10 shadow-2xs"
+                  ? "border-slate-700 hover:bg-slate-800 text-slate-200 bg-slate-900"
+                  : "border-slate-300 hover:bg-slate-100 text-slate-700 bg-white shadow-2xs"
               }`}
             >
               {t('investmentProfile.kembali')} &times;
@@ -3216,7 +3315,7 @@ export function InvestmentDetailModal({
             <motion.button whileTap={{ scale: 0.95 }}
               onClick={handleGeneratePdf}
               disabled={isGeneratingPdf}
-              className={`w-full sm:w-auto px-4 py-3 sm:py-2 flex justify-center items-center gap-2 font-bold text-xs uppercase tracking-wider rounded-lg shadow-xs border disabled:opacity-60 transition-all cursor-pointer ${
+              className={`min-h-[44px] sm:min-h-[40px] px-3 sm:px-4 py-2.5 sm:py-2 flex justify-center items-center gap-1.5 sm:gap-2 font-bold text-xs uppercase tracking-wider rounded-lg shadow-xs border disabled:opacity-60 transition-all cursor-pointer ${
                 effectiveDarkMode
                   ? "bg-slate-800 hover:bg-slate-700 text-slate-100 border-slate-700"
                   : "bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300"
@@ -3225,12 +3324,12 @@ export function InvestmentDetailModal({
               {isGeneratingPdf ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin shrink-0" />
-                  <span>Menerbitkan PDF...</span>
+                  <span className="truncate">Menerbitkan...</span>
                 </>
               ) : (
                 <>
                   <FileText className="w-4 h-4 shrink-0 text-emerald-600" />
-                  <span>Cetak Resume (PDF)</span>
+                  <span className="truncate">Cetak Resume (PDF)</span>
                 </>
               )}
             </motion.button>
@@ -3240,7 +3339,7 @@ export function InvestmentDetailModal({
                   onClose();
                   onEdit();
                 }}
-                className={`w-full sm:w-auto px-5 py-3 sm:py-2 flex justify-center items-center gap-2 font-normal text-xs uppercase tracking-wider rounded-lg border border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-all`}
+                className={`col-span-2 sm:col-span-1 min-h-[44px] sm:min-h-[40px] px-4 py-2.5 sm:py-2 flex justify-center items-center gap-2 font-semibold text-xs uppercase tracking-wider rounded-lg border border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-all cursor-pointer`}
               >
                 <Pencil className="w-4 h-4 shrink-0" /> {t('investmentProfile.editData', 'Edit Data')}
               </motion.button>
@@ -3251,7 +3350,7 @@ export function InvestmentDetailModal({
           {isInvestor() && (
             <motion.button whileTap={{ scale: 0.95 }}
               onClick={handleOpenLoi}
-              className="w-full sm:w-auto px-5 py-3 sm:py-2 flex justify-center items-center gap-2 font-black text-xs uppercase tracking-wider rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md shadow-black/25 border border-emerald-400/40 transition-all cursor-pointer"
+              className="w-full sm:w-auto min-h-[44px] sm:min-h-[40px] px-5 py-2.5 sm:py-2 flex justify-center items-center gap-2 font-black text-xs uppercase tracking-wider rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md shadow-black/20 border border-emerald-400/40 transition-all cursor-pointer"
             >
               <Handshake className="w-4 h-4 text-emerald-100 shrink-0" />
               <span>{t('investmentProfile.btnAjukanMinat', 'Ajukan Minat (LOI)')}</span>
@@ -3281,9 +3380,9 @@ export function InvestmentDetailModal({
       )}
 
       {isLoiModalOpen && (
-        <div className="fixed inset-0 bg-base/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-base/80 backdrop-blur-sm z-[200] flex items-center justify-center p-2 sm:p-4">
           <div
-            className={`w-full max-w-lg rounded-lg border p-6 shadow-2xl relative overflow-hidden ${
+            className={`w-full max-w-xl rounded-xl border p-4 sm:p-6 shadow-2xl relative overflow-y-auto max-h-[92dvh] ${
               effectiveDarkMode ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-slate-200 text-slate-800"
             }`}
           >

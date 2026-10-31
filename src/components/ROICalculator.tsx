@@ -51,14 +51,14 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({
   const breakEvenYear = chartData.findIndex(d => d.profit >= 0);
 
   return (
-    <div className={`mt-6 p-5 rounded-2xl border ${isDarkMode ? 'bg-slate-900 border-indigo-500/20' : 'bg-slate-50 border-indigo-100'}`}>
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-        <h3 className={`flex items-center gap-2 font-bold ${isDarkMode ? 'text-indigo-400' : 'text-indigo-600'}`}>
-          <Calculator className="w-5 h-5" />
-          {t('roiCalculator.title', 'Kalkulator ROI & Kelayakan Finansial')}
+    <div className={`mt-4 sm:mt-6 p-3.5 sm:p-5 rounded-xl border ${isDarkMode ? 'bg-slate-900 border-indigo-500/20' : 'bg-slate-50 border-indigo-100'}`}>
+      <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3 mb-4">
+        <h3 className={`flex items-center gap-2 font-bold text-sm sm:text-base ${isDarkMode ? 'text-indigo-400' : 'text-indigo-600'}`}>
+          <Calculator className="w-5 h-5 shrink-0" />
+          <span>{t('roiCalculator.title', 'Kalkulator ROI & Kelayakan Finansial')}</span>
         </h3>
         <div className="flex items-center gap-2">
-          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${roiPercentage >= 10 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : roiPercentage > 0 ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' : 'bg-rose-500/10 text-rose-400 border-rose-500/30'}`}>
+          <span className={`text-xs font-semibold px-2.5 py-1 rounded-md border ${roiPercentage >= 10 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' : roiPercentage > 0 ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30'}`}>
             ROI: <strong className="font-mono">{roiPercentage.toFixed(2)}%</strong>
           </span>
         </div>
@@ -125,15 +125,16 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({
         </div>
       </div>
 
-      <div className="h-64 w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 5 }}>
+      <div className="h-60 sm:h-64 w-full">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+          <LineChart data={chartData} margin={{ top: 10, right: 12, left: 0, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#334155' : '#e2e8f0'} />
-            <XAxis dataKey="year" stroke={isDarkMode ? '#94a3b8' : '#64748b'} fontSize={12} />
+            <XAxis dataKey="year" stroke={isDarkMode ? '#94a3b8' : '#64748b'} fontSize={11} />
             <YAxis 
               tickFormatter={(val) => formatRupiahKompak(val * 1e6)} 
               stroke={isDarkMode ? '#94a3b8' : '#64748b'} 
-              fontSize={12}
+              fontSize={11}
+              width={56}
             />
             <Tooltip 
               formatter={(value: number) => [formatCurrency(Number(value)), t('roiCalculator.cumProfit', 'Profit Kumulatif')]} 
@@ -153,12 +154,12 @@ export const ROICalculator: React.FC<ROICalculatorProps> = ({
         </ResponsiveContainer>
       </div>
 
-      <div className="mt-4 flex items-center justify-between">
-        <div className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+      <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-4">
+        <div className={`text-xs sm:text-sm ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
           {t('roiCalculator.bepYear', 'Titik Impas (BEP):')} <strong className={isDarkMode ? 'text-white' : 'text-slate-900'}>{breakEvenYear > 0 ? `${t('roiCalculator.yearN', 'Tahun ke-')}${breakEvenYear}` : t('roiCalculator.notBreakeven', 'Belum BEP')}</strong>
         </div>
-        <div className={`text-sm ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-          {t('roiCalculator.profitYear10', 'Profit Thn 10:')} <strong className={(chartData[10]?.profit || 0) > 0 ? 'text-emerald-500' : 'text-rose-500'}>{formatCurrency(chartData[10]?.profit || 0)}</strong>
+        <div className={`text-xs sm:text-sm ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+          {t('roiCalculator.profitYear10', 'Profit Thn 10:')} <strong className={`font-mono ${(chartData[10]?.profit || 0) > 0 ? 'text-emerald-500' : 'text-rose-500'}`}>{formatCurrency(chartData[10]?.profit || 0)}</strong>
         </div>
       </div>
     </div>
