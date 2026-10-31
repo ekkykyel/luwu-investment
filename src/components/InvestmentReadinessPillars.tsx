@@ -156,10 +156,24 @@ export default function InvestmentReadinessPillars({
     };
   });
 
-  const currentPillar = pillars.find((p) => p.id === activePillar) || pillars[0];
-  const CurrentIcon = currentPillar ? currentPillar.icon : Layers;
+  if (isLoading) {
+    return (
+      <section
+        id="readiness-section"
+        className={`py-12 sm:py-16 md:py-20 border-t relative overflow-hidden transition-colors duration-500 ${
+          isDark ? "bg-[#061826] border-white/10" : "bg-[#FAF7F0] border-[#E2DACB]"
+        }`}
+      >
+        <div className="container max-w-7xl mx-auto px-4">
+          <div className="h-4 w-48 bg-slate-200 dark:bg-slate-800/80 rounded animate-pulse mb-3" />
+          <div className="h-8 w-72 bg-slate-200 dark:bg-slate-800/80 rounded animate-pulse mb-8" />
+          <div className="h-56 w-full bg-slate-200/50 dark:bg-slate-800/40 rounded-2xl animate-pulse" />
+        </div>
+      </section>
+    );
+  }
 
-  if (!isLoading && pillars.length === 0) {
+  if (pillars.length === 0) {
     return (
       <section
         id="readiness-section"
@@ -175,6 +189,10 @@ export default function InvestmentReadinessPillars({
       </section>
     );
   }
+
+  const currentPillar = pillars.find((p) => p.id === activePillar) || pillars[0];
+  if (!currentPillar) return null;
+  const CurrentIcon = currentPillar.icon || Layers;
 
   return (
     <section
