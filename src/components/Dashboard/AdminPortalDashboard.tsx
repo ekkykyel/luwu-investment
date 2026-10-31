@@ -4762,7 +4762,7 @@ Ulas secara mendalam:
             </div>
           </div>
         ) : activeTab === 'manage_kpbu' ? (
-          <AdminKpbuManager isDark={isDark} />
+          <AdminKpbuManager isDark={true} />
         ) : ['pengaduan', 'pengawasan', 'fasilitasi', 'laporan', 'field_inspection'].includes(activeTab) ? (
           <DalakWorkspaceView activeTab={activeTab} setActiveTab={setActiveTab} investments={investments} districts={districts} onSelectInvestment={setSelectedInvestmentId} />
         ) : activeTab === 'komoditas' ? (

@@ -1,12 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 const supabase = createClient(
   process.env.SUPABASE_URL || 'https://yeezhpdgafbefwipmldl.supabase.co',
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InllZXpocGRnYWZiZWZ3aXBtbGRsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MDA4NDg2OSwiZXhwIjoyMTA1NjYwODY5fQ.zj_4YRbhVhdq8KPaX0SlVPU8EY2IEfLv3N9bUWmgmjQ'
 );
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: any, res: any) {
   const { id } = req.query;
 
   // 1. GET: Fetch Investment Readiness Pillars (SSOT Supabase)
