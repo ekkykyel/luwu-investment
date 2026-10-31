@@ -1532,7 +1532,7 @@ export function InvestmentDetailModal({
                 >
                   {(() => {
                     const rawSec = profileData?.sector || geo?.sektor_utama || "Sektor";
-                    return t(getSectorI18nKey(rawSec), rawSec);
+                    return String(t(getSectorI18nKey(rawSec), rawSec));
                   })()}
                 </span>
                 {geo?.sub_sektor && (
@@ -1616,7 +1616,7 @@ export function InvestmentDetailModal({
               >
                 {(() => {
                   const rawSec = profileData?.sector || geo?.sektor_utama || "Sektor";
-                  return t(getSectorI18nKey(rawSec), rawSec);
+                  return String(t(getSectorI18nKey(rawSec), rawSec));
                 })()}
               </span>
               {geo?.sub_sektor && (
@@ -2892,7 +2892,7 @@ export function InvestmentDetailModal({
                         <span className="text-xs font-bold text-slate-800 dark:text-slate-100">
                           {(() => {
                             const rawSec = profileData?.sector || geo?.sektor_utama || "Sektor";
-                            return t(getSectorI18nKey(rawSec), rawSec);
+                            return String(t(getSectorI18nKey(rawSec), rawSec));
                           })()}
                         </span>
                       </div>
